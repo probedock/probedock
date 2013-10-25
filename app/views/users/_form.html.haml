@@ -1,0 +1,30 @@
+= record_form_for @user, create_url: create_users_path do |f|
+  .modal-body
+    = render_record_errors @user
+    .control-group
+      = f.label :name, class: 'control-label'
+      .controls
+        = f.text_field :name, autofocus: true
+    .control-group
+      = f.label :email, class: 'control-label'
+      .controls
+        = f.email_field :email
+    .control-group
+      = f.label :active, class: 'control-label'
+      .controls
+        = f.check_box :active
+    - if ROXCenter::AUTHENTICATION_MODULE == 'database'
+      .control-group
+        = f.label :password, class: 'control-label'
+        .controls
+          = f.password_field :password, autocomplete: 'off'
+          - unless @user.new_record?
+            %span.help-inline= t('.passwordInstructions')
+      - if @user.new_record?
+        .control-group
+          = f.label :password_confirmation, class: 'control-label'
+          .controls
+            = f.password_field :password_confirmation
+  .modal-footer
+    = link_to t('common.cancel'), @user.new_record? ? users_path : user_path(@user), class: 'btn'
+    = f.submit t('common.save'), class: 'btn btn-primary'

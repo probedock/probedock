@@ -1,0 +1,10 @@
+%table.table.table-striped.table-hover
+  %thead
+    %tr
+      %th.endedAt.sorting{ :'data-field' => 'ended_at' }= I18n.t('activerecord.attributes.test_run.ended_at')
+      %th.status.sorting{ :'data-field' => 'status' }= I18n.t('activerecord.attributes.test_run.status')
+      %th.numberOfResults{ :'data-field' => 'results_count' }= I18n.t('activerecord.attributes.test_run.number_of_results')
+      %th.duration.sorting{ :'data-field' => 'duration' }= I18n.t('activerecord.attributes.test_run.duration')
+      %th.runner.sorting{ :'data-field' => 'runner' }= I18n.t('activerecord.attributes.test_run.runner')
+      %th.group.sorting{ :'data-field' => 'group' }= I18n.t('activerecord.attributes.test_run.group')
+  %tbody

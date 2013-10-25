@@ -1,0 +1,17 @@
+%button.open.btn.btn-primary{ type: 'button' }
+%form.form-horizontal.well{ method: 'POST', action: '#' }
+  .controls
+    %h3.title
+  .control-group
+    %label.control-label{ for: 'projectName' }= I18n.t('activerecord.attributes.project.name')
+    .controls
+      %input#projectName.input-xlarge{ type: 'text', name: 'name', maxlength: 255, value: @name }
+  .control-group
+    %label.control-label{ for: 'projectUrlToken' }= I18n.t('activerecord.attributes.project.url_token')
+    .controls
+      %input#projectUrlToken{ type: 'text', name: 'urlToken', maxlength: 25, value: @urlToken }
+      .help-inline= I18n.t('jst.projectEditor.urlTokenInstructions');
+  .form-controls
+    .controls
+      %button.save.btn.btn-primary{ type: 'submit' }= I18n.t('jst.common.save')
+      %button.cancel.btn{ type: 'button' }= I18n.t('jst.common.cancel')

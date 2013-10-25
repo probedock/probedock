@@ -1,0 +1,13 @@
+
+project:
+  name: ROX Center
+  version: 1.0.4
+  apiId: 4f9fc8cdad66
+
+payload:
+  save: true
+  cache: true
+  print: false
+
+workspace: tmp/rox
+server: rox.onlotaris.com

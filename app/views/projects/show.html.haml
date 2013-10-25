@@ -1,0 +1,4 @@
+%h2= @project.name
+- if can? :manage, Project
+  .projectEditor{ data: { module: :projectEditor, config: @project_editor_config.to_json } }
+.testsTable{ data: { module: :testsTable, config: { path: tests_page_legacy_api_project_path(@project), search: @test_search_config }.to_json } }

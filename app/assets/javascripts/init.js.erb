@@ -1,0 +1,77 @@
+
+I18n.defaultLocale = "<%= I18n.default_locale %>";
+
+Backbone.Marionette.Renderer.render = function(template, data) {
+  if (template === false) {
+    return;
+  } else if (typeof(template) == 'function') {
+    return template(data);
+  }
+  template = 'template/' + template;
+  if (!JST[template]) {
+    throw new Error("Unknown template '" + template + "'");
+  }
+  return JST[template](data);
+};
+
+$.fn.tagcloud.defaults = {
+  size: { start: 0.9, end: 2, unit: 'em' },
+  color: { start: '#6599e6', end: '#ff5522' }
+};
+
+var App = new Backbone.Marionette.Application();
+
+App.version = <%= ROXCenter::Application::VERSION.to_json %>;
+App.environment = <%= Rails.env.to_json %>;
+App.pollingFrequency = App.environment == 'development' ? 1000 : (Meta.get('session') ? 3000 : 10000);
+App.secure = App.environment == 'production';
+
+App.debug = function(msg) {
+  if (App.environment == 'development') {
+    console.log(msg);
+  }
+};
+
+if (App.environment == 'development') {
+  Tableling.debug = true;
+}
+
+App.pageConfig = function() {
+  if (!App._pageConfig) {
+    App._pageConfig = $('body').data('config') || {};
+  }
+  return App._pageConfig;
+};
+
+App.watchStatus = function(source, func, options) {
+
+  var only = options && options.only ? (_.isArray(options.only) ? options.only : [ options.only ]) : null,
+      except = options && options.except ? (_.isArray(options.except) ? options.except : [ options.except ]) : [],
+      context = options ? options.context : null;
+
+  source.listenTo(App.vent, 'statusChanged', function(changed) {
+    only = only || _.keys(changed);
+    if (!_.isEmpty(_.difference(_.intersection(_.keys(changed), only), except))) {
+      func.call(context || source, changed);
+    }
+  });
+};
+
+$(function() {
+
+  App.start();
+
+  $('.alert').alert();
+  $('a[rel="tooltip"]').tooltip();
+  $('.dropdown-toggle').dropdown();
+
+  var models = App.module('models'),
+      User = models.User,
+      views = App.module('views'),
+      UserAvatar = views.UserAvatar;
+
+  $('.autoUserAvatar').each(function() {
+    var el = $(this);
+    new UserAvatar({ el : el, model : new User(el.data('user')) }).render();
+  });
+});

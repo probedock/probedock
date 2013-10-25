@@ -1,0 +1,10 @@
+%ul
+  %li
+    %strong Key:
+    %span.monospace= @key
+  %li
+    %strong Duration:
+    = @duration
+  %li
+    %strong Result:
+    = @result

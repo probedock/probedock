@@ -1,0 +1,19 @@
+source $HOME/.screenrc
+
+screen -t server 0
+stuff "rails server\012"
+screen -t task 1
+stuff "VERBOSE=1 INTERVAL=2 QUEUE=* rake resque:work\012"
+screen -t redis 2
+stuff "redis-cli\012"
+screen -t db 3
+stuff "mysql -uroot ROX_CENTER\012"
+screen -t vim 4 $EDITOR -c GG
+screen -t zsh 5
+screen -t spec 6
+stuff "rake"
+screen -t console 7
+stuff "rails console\012"
+screen -t ssh 8
+stuff "ssh lmetst1"
+select vim

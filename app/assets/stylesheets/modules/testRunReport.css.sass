@@ -1,0 +1,164 @@
+@mixin gradient($from, $to)
+  /* fallback/image non-cover color */
+  :background-color $from
+  /* Firefox 3.6+ */
+  :background-image -moz-linear-gradient($from, $to)
+  /* Safari 4+, Chrome 1+ */
+  :background-image -webkit-gradient(linear, 0% 0%, 0% 100%, from($from), to($to))
+  /* Safari 5.1+, Chrome 10+ */
+  :background-image -webkit-linear-gradient($from, $to)
+  /* Opera 11.10+ */
+  :background-image -o-linear-gradient($from, $to)
+
+.loadingTestRunReport
+  h2
+    :text-align center
+  .endedAt
+    :text-align center
+    :font-size 1.2em
+  .autoUserAvatar
+    :text-align center
+  table
+    :width 100%
+    :margin 2em 0
+    .passed, .failed, .inactive, .all, .duration
+      :text-align center
+  .progress
+    :width 400px
+    :margin 3em auto 1em auto
+  .text-error, .text-warning
+    :text-align center
+
+.testRunReport
+  .resultsLoading
+    :margin-top 2em
+    :text-align center
+  .visualReport
+    a
+      &.p, &.f, &.i
+        :display block
+        :float left
+        :width 20px
+        :height 20px
+        :margin 0 0 1px 1px
+      &.p
+        @include gradient(#62c462, #51a351)
+      &.f
+        @include gradient(#ee5f5b, #bd362f)
+      &.i
+        @include gradient(#fbb450, #f89406)
+    hr
+      :clear both
+    .back
+      :margin-top 1em
+      :text-align right
+    .noResults
+      :display none
+    .projectVisualReport
+      h3
+        .version
+          :margin-left 1em
+          :line-height 1em
+          :font-size 0.8em
+          :font-weight normal
+  .filters
+    form
+      :margin-top 0.6em
+      :margin-bottom 0.6em
+      :text-align right
+      .tags, .clear
+        :margin-top 0.4em
+      .btn-toolbar
+        :display inline
+      .search
+        :margin-left 1em
+        :width 22em
+    .tags
+      :width 30em
+  .resultDetails
+    .well
+      :margin-bottom 0
+  .runInfo
+    dd.runner
+      .userAvatar
+        :margin-top 0.2em
+    dt.endedAt
+      :margin-top 0.4em
+    .group
+      .name
+        :font-weight bold
+        :font-size 1.4em
+        :text-align center
+      .pager
+        :margin 1em 0 1em 0
+    dl
+      :margin 0
+  .summary
+    table
+      th, td
+        &.passed, &.failed, &.inactive, &.all
+          :text-align center
+  .details
+    :margin-top 4em
+    .onlyFailed
+      .p, .i
+        :display none
+        &.ignoreOnlyFailed
+          :display block
+    .container
+      :margin-top 1em
+      .p
+        h3
+          a
+            :color #51a351
+      .f
+        h3
+          a
+            :color #bd362f
+      .i
+        h3
+          a
+            :color #c09853
+      .b
+        :margin-top 1em
+        :margin-bottom 0
+        :text-align right
+      pre
+        :max-height 340px
+        :overflow-y scroll
+      dd.k
+        :font-family Monaco, Monospace
+      .tags
+        a
+          :margin-right 0.4em
+      .tickets
+        a
+          :margin-right 0.4em
+  .visualReport, .details
+    .well, .categoryResults a
+      &.excludedBySearch, &.excludedByTags, &.excludedByStatus
+        :display none
+    &.hidePassed
+      .p
+        :display none
+        &.ignoreOnlyFailed
+          :display none
+    &.hideFailed
+      .f
+        :display none
+    &.hideInactive
+      .i
+        :display none
+        &.ignoreOnlyFailed
+          :display none
+  .popover
+    ul
+      :margin 0
+      :padding 0
+      :list-style-type none
+    .p
+      :color #51a351
+    .f
+      :color #bd362f
+    .i
+      :color #c09853

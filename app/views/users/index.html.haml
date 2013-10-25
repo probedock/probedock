@@ -1,0 +1,4 @@
+%h2= t('.title')
+- if ROXCenter::AUTHENTICATION_MODULE == 'database' && can?(:create, User)
+  = link_to t('.new'), new_user_path, class: :btn
+.usersTable{ data: { module: :usersTable } }

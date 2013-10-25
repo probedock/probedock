@@ -1,0 +1,19 @@
+%h2= I18n.t('jst.linksManager.title')
+%p.instructions= I18n.t('jst.linksManager.instructions')
+%table.table.table-striped.table-hover
+  %thead
+    %tr
+      %th.actions
+      %th.name= I18n.t('activerecord.attributes.link.name')
+      %th.url= I18n.t('activerecord.attributes.link.url')
+  %tfoot
+    %tr
+      %td{ :colspan => 3 }
+        %form.form-inline
+          .actions
+            %button.btn{ :type => 'submit' }= I18n.t('common.create')
+          .control-group
+            %input.name{ :type => 'text', :name => 'link[name]', :placeholder => I18n.t('activerecord.attributes.link.name') }
+          .control-group
+            %input.url{ :type => 'text', :name => 'link[url]', :placeholder => I18n.t('activerecord.attributes.link.url') }
+  %tbody

@@ -1,0 +1,10 @@
+%table.table.table-striped.table-hover
+  %thead
+    %tr
+      %th.identifier.sorting{ :'data-field' => 'identifier' }= I18n.t('activerecord.attributes.api_key.identifier')
+      %th.sharedSecret= I18n.t('activerecord.attributes.api_key.shared_secret')
+      %th.createdAt.sorting{ :'data-field' => 'createdAt' }= I18n.t('activerecord.attributes.api_key.created_at')
+      %th.usageCount.sorting{ :'data-field' => 'usageCount' }= I18n.t('activerecord.attributes.api_key.usage_count')
+      %th.lastUsedAt.sorting{ :'data-field' => 'lastUsedAt' }= I18n.t('activerecord.attributes.api_key.last_used_at')
+      %th.actions
+  %tbody

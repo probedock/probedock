@@ -1,0 +1,13 @@
+%select.status{ :'data-placeholder' => I18n.t('jst.testsTable.search.status.placeholder') }
+  %option
+%select.authors{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testsTable.search.authors.placeholder') }
+  %option
+%select.breakers{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testsTable.search.breakers.placeholder') }
+  %option
+%br/
+%select.projects{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testsTable.search.projects.placeholder') }
+  %option
+%select.categories{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testsTable.search.categories.placeholder') }
+  %option
+%select.tags{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testsTable.search.tags.placeholder') }
+  %option

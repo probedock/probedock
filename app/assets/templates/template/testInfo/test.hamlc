@@ -1,0 +1,19 @@
+%dl.dl-horizontal
+  %dt= I18n.t('activerecord.attributes.test_info.key')
+  %dd.key.monospace
+  %dt= I18n.t('activerecord.attributes.test_info.author')
+  %dd.author
+  %dt= I18n.t('activerecord.attributes.test_info.project')
+  %dd.project
+  %dt= I18n.t('activerecord.attributes.test_info.created_at')
+  %dd.createdAt
+  %dt= I18n.t('activerecord.attributes.test_info.category')
+  %dd.category
+  %dt= I18n.t('activerecord.attributes.test_info.tags')
+  %dd.tags
+  %dt= I18n.t('activerecord.attributes.test_info.tickets')
+  %dd.tickets
+  %dt.inactive= I18n.t('activerecord.attributes.test_info.inactive')
+  %dd.inactive.text-warning= I18n.t('activerecord.attributes.test_info.inactiveInstructions')
+  %dt.deprecated= I18n.t('activerecord.attributes.test_info.deprecated')
+  %dd.deprecated.text-warning= I18n.t('activerecord.attributes.test_info.deprecatedInstructions')

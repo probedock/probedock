@@ -1,0 +1,28 @@
+.navbar.navbar-inverse.navbar-fixed-top
+  .navbar-inner
+    .container
+      = render partial: 'layouts/brand'
+      - if user_signed_in?
+        %ul.nav
+          - if can? :manage, :account
+            %li= link_to t('.you'), account_path
+          - if can? :read, TestInfo
+            %li= link_to t('.projects'), projects_path
+          - if can? :read, TestInfo
+            %li= link_to t('.tests'), test_infos_path
+          - if can? :read, TestRun
+            %li= link_to t('.test_runs'), test_runs_path
+          - if can? :read, User
+            %li= link_to t('.users'), users_path
+          %li= link_to t('metrics.index.title'), metrics_path
+        %ul.nav.pull-right
+          %li.dropdown
+            %a.dropdown-toggle{ :href => '#', :'data-toggle' => 'dropdown' }
+              = t('.docs')
+              %b.caret
+            %ul.dropdown-menu
+              = render partial: 'layouts/docs'
+          - if can? :manage, :settings
+            %li= link_to t('.settings'), settings_path
+          %li= link_to t('.status'), status_path
+          %li= link_to t('.logout'), destroy_user_session_path

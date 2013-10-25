@@ -1,0 +1,13 @@
+.title
+.data.well
+  %dl
+    %dt= I18n.t('activerecord.attributes.user.email')
+    %dd.email
+    %dt.active= I18n.t('activerecord.attributes.user.active')
+    %dd.active
+    %dt= I18n.t('activerecord.attributes.user.created_at')
+    %dd.createdAt
+.btn-group
+  %a.btn.edit= I18n.t('common.edit')
+  %button.btn.toggleActivated
+  %button.btn.delete= I18n.t('common.delete')

@@ -1,0 +1,234 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  common:
+    title: "ROX Center"
+    title_separator: " > "
+    home: "Home"
+    loading: "Loading..."
+    edit: "Edit"
+    save: "Save"
+    delete: "Delete"
+    create: "Create"
+    cancel: "Cancel"
+    no_data: '-'
+
+  flash:
+    warning: "Sorry."
+    error: "Oops."
+    success: "Ok!"
+    notice: "FYI."
+
+  devise:
+    shared:
+      links:
+        register: "Register"
+        login: "Log in"
+    registrations:
+      new:
+        title: "Register"
+        submit: "Sign up"
+      edit:
+        title: "Edit Account"
+        leave_password_blank: "Leave blank if you don't want to change it."
+        current_password: "We need your current password to confirm your changes."
+        submit: "Update"
+    sessions:
+      new:
+        title: "Login"
+        remember_me: "Remember me"
+        submit: "Submit"
+
+  layouts:
+    navbar:
+      you: "You"
+      tests: "Tests"
+      logout: "Logout"
+      docs: "Doc"
+      users: "Users"
+      test_runs: "Runs"
+      settings: "Settings"
+      status: "Status"
+      projects: "Projects"
+    docs:
+      overview: "Overview"
+      changelog: "Changelog"
+      deploy: "Deployment"
+      clients: "Clients Configuration"
+      api:
+        title: "API"
+        overview: "Overview"
+        relations: "Relations"
+        browser: "HAL Browser"
+        media_types: "Media Types"
+        resources: "Resources"
+      integration: "Integration"
+    footer:
+      version: "v%{version}"
+
+  doc:
+    title: "Documentation"
+    api:
+      title: "API"
+      titles:
+        overview: "Documentation"
+        browser: "HAL Browser"
+        media_types: "Media Types"
+        relations: "Relations"
+        resources: "Resources"
+        listings: "Listings"
+
+  projects:
+    index:
+      title: "Projects"
+    go:
+      not_found: "No project was found matching your criteria."
+
+  test_runs:
+    show:
+      window_title: "Test Run Report"
+    go:
+      not_found: "No test run was found matching your criteria."
+    report:
+      title: "Test Run Report"
+      filterByTags: "Filter by tag..."
+      filterBySearch: "Filter by name or key..."
+      resultsByProject: "Results by project"
+      details: "Details"
+      showAll: "Show Passed & Inactive"
+      uncategorized: "Uncategorized"
+      backToSummary: "Back to summary"
+      backToProject: "Back to project"
+      group:
+        previous: "Previous"
+        next: "Next"
+      status:
+        passed: "Passed"
+        failed: "Failed"
+        inactive: "Inactive"
+      summary:
+        all: "All"
+        project: "Project"
+        duration: "Duration"
+        total: "Total"
+    loading_report:
+      title: "Loading Report Data"
+
+  home:
+    latest_test_run_groups:
+      title: "Jump to latest run:"
+    latest_projects:
+      title: "Jump to newest tests:"
+    status:
+      title: "Status"
+
+  tags:
+    show:
+      title: "Tests with the \"%{name}\" tag"
+
+  settings:
+    show:
+      title: "Settings"
+      metrics: "Metrics Management"
+
+  users:
+    index:
+      title: "Registered Users"
+      new: "Create a new user"
+    show:
+      tests: "Tests written by this user"
+    new:
+      title: "Creating user"
+    edit:
+      title: "Editing user \"%{user}\""
+      updateNotice: "Successfully updated user \"%{user}\"."
+    form:
+      passwordInstructions: "Leave blank if you don't want to change it."
+    destroy:
+      restricted: "This user is still associated with tests, test results or test counters. It can be deactivated but not deleted."
+      success: "Successfully deleted user \"%{user}\"."
+
+  test_infos:
+    index:
+      title: "Tests"
+
+  metrics:
+    dimensions:
+      user: "User"
+      project: "Project"
+      category: "Test Category"
+    index:
+      title: "Metrics"
+      test_breakdown: "Test Breakdown"
+
+  accounts:
+    show:
+      title: "You"
+      edit: "Edit"
+      test_keys:
+        title: "Your Test Keys"
+      latest:
+        title: "Your Latest Tests"
+      api_keys:
+        title: "API Keys"
+
+  activerecord:
+    models:
+      metric: "Metric"
+      test_info: "Test"
+    attributes:
+      test_key:
+        key: "Key"
+        created_at: "Date"
+      user:
+        name: "Username"
+        password: "Password"
+        email: "E-mail"
+        created_at: "Registered Since"
+        runner_key: "Runner Key"
+        active: "Active"
+      test_result:
+        run_at: "Run at"
+        duration: "Duration"
+        runner: "Runner"
+        version: "Version"
+        status: "Status"
+      test_info:
+        name: "Name"
+        project: "Project"
+        author: "Author"
+        key: "Key"
+        created_at: "Created at"
+        last_run_at: "Last run"
+        last_run_duration: "Duration"
+        status: "Status"
+        category: "Category"
+        tags: "Tags"
+        tickets: "Tickets"
+        inactive: "Inactive"
+        inactiveInstructions: "This test will not be counted as either passed or failed."
+        deprecated: "Deprecated"
+        deprecatedInstructions: "This test is no longer used. It will not show up in the list of outdated tests."
+      api_key:
+        identifier: "ID"
+        shared_secret: "Shared secret"
+        created_at: "Created at"
+        last_used_at: "Last used at"
+        usage_count: "Uses"
+      project:
+        name: "Name"
+        active_tests_count: "Number of tests"
+        created_at: "First tested at"
+        api_id: "API identifier"
+        url_token: "URL token"
+      test_run:
+        runner: "Runner"
+        status: "Status"
+        ended_at: "End Date"
+        duration: "Duration"
+        number_of_results: "Tests"
+        group: "Group"
+      link:
+        name: "Name"
+        url: "URL"

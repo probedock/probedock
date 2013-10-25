@@ -1,0 +1,7 @@
+%td.name
+%td.project
+%td.author
+%td.createdAt
+%td.lastRunAt
+%td.lastRunDuration
+%td.status

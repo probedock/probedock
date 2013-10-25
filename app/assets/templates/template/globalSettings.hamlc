@@ -1,0 +1,24 @@
+%h2= I18n.t('settings.show.title')
+%form.form-horizontal{ :action => '#' }
+  .control-group
+    %label.control-label{ :for => 'settings_ticketing_system_url' }= I18n.t('jst.globalSettings.ticketingSystemUrl')
+    .controls
+      %input#settings_ticketing_system_url.input-xxlarge{ :type => 'text', :name => 'settings[ticketing_system_url]' }
+  .control-group
+    %label.control-label{ :for => 'settings_reports_cache_size' }= I18n.t('jst.globalSettings.reportsCacheSize')
+    .controls
+      %input#settings_reports_cache_size.input-mini{ :type => 'number', :min => 0, :name => 'settings[reports_cache_size]' }
+      .help-inline= I18n.t('jst.globalSettings.reportsCacheSizeInstructions')
+  .control-group
+    %label.control-label{ :for => 'settings_tag_cloud_size' }= I18n.t('jst.globalSettings.tagCloudSize')
+    .controls
+      %input#settings_tag_cloud_size.input-mini{ :type => 'number', :min => 1, :name => 'settings[tag_cloud_size]' }
+      .help-inline= I18n.t('jst.globalSettings.tagCloudSizeInstructions')
+  .control-group
+    %label.control-label{ :for => 'settings_test_outdated_days' }= I18n.t('jst.globalSettings.testOutdatedDays')
+    .controls
+      %input#settings_test_outdated_days.input-mini{ :type => 'number', :min => 1, :name => 'settings[test_outdated_days]' }
+      .help-inline= I18n.t('jst.globalSettings.testOutdatedDaysInstructions')
+  .control-group.form-controls
+    .controls
+      %button.btn.btn-primary{ :type => 'submit', :'data-loading-text' => 'Save' }= I18n.t('jst.globalSettings.save')

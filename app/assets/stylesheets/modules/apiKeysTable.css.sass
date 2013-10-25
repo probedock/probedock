@@ -1,0 +1,26 @@
+.apiKeysTable
+  .header
+    .new
+      :margin-left 1em
+  table
+    th, td
+      &.identifier
+        :width 12em
+      &.createdAt
+        :width 12em
+      &.usageCount
+        :width 5em
+        :text-align center
+      &.lastUsedAt
+        :width 12em
+      &.actions
+        :width 6em
+        :text-align right
+    td
+      &.identifier
+        :font-size 0.8em
+      &.sharedSecret
+        :font-size 0.8em
+        a
+          &:hover
+            :text-decoration none

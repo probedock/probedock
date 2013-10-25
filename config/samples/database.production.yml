@@ -1,0 +1,11 @@
+
+production:
+  adapter: mysql2
+  host: 127.0.0.1
+  port: 3306
+  encoding: utf8
+  database: rox-center
+  username: rox-center
+  password: secret
+  pool: 5
+  timeout: 5000

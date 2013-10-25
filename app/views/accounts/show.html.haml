@@ -1,0 +1,22 @@
+%h2= t('.test_keys.title')
+.row
+  .span8
+    .keyGenerator{ data: { module: :keyGenerator, config: @key_generator_config.to_json } }
+  .span4
+    .well
+      - if respond_to? :edit_user_registration_path
+        = link_to t('.edit'), edit_user_registration_path, class: 'btn pull-right'
+      %dl#user-info
+        %dt= User.human_attribute_name :name
+        %dd= current_user.name
+        - if current_user.email
+          %dt= User.human_attribute_name :email
+          %dd= current_user.email
+        %dt= User.human_attribute_name :created_at
+        %dd= l current_user.created_at, :format => :long
+
+%h2= t('.api_keys.title')
+.apiKeysTable.clearfix{ data: { module: :apiKeysTable, config: { path: api_keys_path }.to_json } }
+
+%h2= t('.latest.title')
+.testsTable{ data: { module: :testsTable, config: { path: tests_legacy_api_account_path, search: @test_search_config }.to_json } }

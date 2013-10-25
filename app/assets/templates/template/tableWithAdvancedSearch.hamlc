@@ -1,0 +1,14 @@
+.header.clearfix
+  .pageSize.pull-left
+  .quickSearch.pull-right
+  .advancedSearchControls.pull-right
+    %button.btn{ :type => 'button' }= I18n.t('jst.tableWithAdvancedSearch.search.show')
+.advancedSearch.well.well-small
+  %form.form-inline
+    %button.clear.btn.pull-right{ :type => 'button' }
+      %i.icon-remove-circle
+    != JST['template/' + @advancedSearchTemplate]()
+.table
+.footer
+  .info.pull-left
+  .page.pull-right

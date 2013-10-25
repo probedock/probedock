@@ -1,0 +1,10 @@
+en:
+  api:
+    root:
+      title: "API root"
+      help: "API documentation"
+      changelog: "Changelog"
+      payloads: "Submission of test payloads"
+      api_keys: "API keys"
+      projects: "Tested projects"
+      test_keys: "Test keys"

@@ -1,0 +1,142 @@
+- index = report_index
+.testRunReport{ data: { module: :testRunReport, config: { index: index }.to_json } }
+  %h1= t('.title')
+  .row
+    .span8
+      .summary.well
+        %table.table
+          %thead
+            %tr
+              %th.project= I18n.t('test_runs.report.summary.project')
+              %th.passed= I18n.t('test_runs.report.status.passed')
+              %th.failed= I18n.t('test_runs.report.status.failed')
+              %th.inactive= I18n.t('test_runs.report.status.inactive')
+              %th.all= I18n.t('test_runs.report.summary.all')
+              %th.duration= I18n.t('test_runs.report.summary.duration')
+          %tfoot
+            %tr
+              %th= I18n.t('test_runs.report.summary.total')
+              %td.passed
+                %span.badge.badge-success= @test_run.passed_results_count - @test_run.inactive_passed_results_count
+              %td.failed
+                %span.badge.badge-important= @test_run.results_count - @test_run.passed_results_count - @test_run.inactive_results_count + @test_run.inactive_passed_results_count
+              %td.inactive
+                %span.badge.badge-warning= @test_run.inactive_results_count
+              %td.all
+                %span.badge.badge-info= @test_run.results_count
+              %td.duration= human_duration @test_run.duration, format: :short
+          %tbody
+            - @test_run.results.collect{ |r| r.test_info.project }.uniq.each do |project|
+              - results = @test_run.results.select{ |r| r.test_info.project == project }
+              %tr
+                %td.project= link_to project.name, "#project-#{project.name}"
+                %td.passed
+                  %span.badge.badge-success= results.select{ |r| r.passed and r.active }.length
+                %td.failed
+                  %span.badge.badge-important= results.select{ |r| !r.passed and r.active }.length
+                %td.inactive
+                  %span.badge.badge-warning= results.reject{ |r| r.active }.length
+                %td.all
+                  %span.badge.badge-info= results.length
+                %td.duration= human_duration results.inject(0){ |memo,r| memo + r.duration }, format: :short
+    .span4
+      .runInfo.well
+        - if @test_run.group.present?
+          .group
+            .name= @test_run.group
+            %ul.pager
+              %li.previousInGroup
+                %a{ href: previous_test_run_path(@test_run) }
+                  &larr;
+                  = I18n.t('test_runs.report.group.previous')
+              %li.nextInGroup
+                %a{ href: next_test_run_path(@test_run) }
+                  = I18n.t('test_runs.report.group.next')
+                  &rarr;
+        %dl
+          %dt.runner= I18n.t('activerecord.attributes.test_run.runner')
+          %dd.runner= link_to @test_run.runner.name, user_path(@test_run.runner)
+          %dt.endedAt= I18n.t('activerecord.attributes.test_run.ended_at')
+          %dd.endedAt= l @test_run.ended_at.localtime, format: :long
+          %dt.duration= I18n.t('activerecord.attributes.test_run.duration')
+          %dd.duration= human_duration @test_run.duration
+  .filters
+    %form.form-inline.pull-right
+      .status.btn-toolbar
+        .btn-group{ :'data-toggle' => 'buttons-checkbox' }
+          %button.passed.btn.btn-success.active{ :type => 'button' }
+            %i.icon-thumbs-up
+          %button.failed.btn.btn-danger.active{ :type => 'button' }
+            %i.icon-thumbs-down
+          %button.inactive.btn.btn-warning.active{ :type => 'button' }
+            %i.icon-warning-sign
+      %input.search{ :type => 'text', :disabled => 'disabled', :placeholder => I18n.t('test_runs.report.filterBySearch') }
+      %br
+      %select.tags{ :multiple => 'multiple', :'data-placeholder' => I18n.t('test_runs.report.filterByTags') }
+        %option
+        - index[:tags].each do |tag|
+          %option{ value: tag }= tag
+      %button.clear.btn{ :type => 'button', :disabled => 'disabled' }
+        %i.icon-remove-circle
+  .visualReport
+    %h2= I18n.t('test_runs.report.resultsByProject')
+    - i = 0
+    - @test_run.results.collect{ |r| r.test_info.project }.uniq.each do |project|
+      - project_results = @test_run.results.select{ |r| r.test_info.project == project }
+      .projectVisualReport.clearfix{ id: "project-#{project.name}" }
+        %hr
+        %h3
+          = project.name
+          %span.version= project_results.first.project_version.name
+        .projectResults.clearfix
+          - project_results.collect{ |r| r.test_info.category }.uniq.each do |category|
+            - category_results = project_results.select{ |r| r.test_info.category == category }
+            %h4= category.try(:name) || t('test_runs.report.uncategorized')
+            .categoryResults.clearfix
+              - category_results.each do |result|
+                = result_card_link result, i, index[:tags]
+                - i += 1
+        %p.back
+          %a{ :href => '#top' }= I18n.t('test_runs.report.backToSummary')
+  .details
+    %h2= I18n.t('test_runs.report.details')
+    %button.showAll.btn{ :type => 'button' }= I18n.t('test_runs.report.showAll')
+    .container.onlyFailed
+      - @test_run.results.each_with_index do |result,i|
+        .well{ id: "r#{i.to_s(36)}", class: result_details_class(result, index[:tags]) }
+          = result_details_indicator result
+          %h3= link_to result.test_info.name, test_info_path(result.test_info)
+          %dl.dl-horizontal
+            %dt= I18n.t('activerecord.attributes.test_info.key')
+            %dd.k= result.test_info.key.key
+            %dt= I18n.t('activerecord.attributes.test_info.author')
+            %dd= link_to result.test_info.author.name, user_path(result.test_info.author)
+            %dt= I18n.t('activerecord.attributes.test_info.project')
+            %dd= link_to result.test_info.project.name, go_project_path(apiId: result.test_info.project.api_id)
+            %dt= I18n.t('activerecord.attributes.test_result.version')
+            %dd= result.project_version.present? ? result.project_version.name : t('common.no_data')
+            %dt= I18n.t('activerecord.attributes.test_result.duration')
+            %dd.d= human_duration result.duration
+            %dt= I18n.t('activerecord.attributes.test_info.category')
+            - if result.test_info.category
+              %dd= link_to result.test_info.category.name, test_infos_path(categories: [ result.test_info.category.name ])
+            - else
+              %dd= t('common.no_data')
+            %dt= I18n.t('activerecord.attributes.test_info.tags')
+            %dd
+              - if result.test_info.tags.blank?
+                = t('common.no_data')
+              - else
+                - result.test_info.tags.sort{ |a,b| a.name.downcase <=> b.name.downcase }.each do |tag|
+                  = link_to tag.name, test_infos_path(tags: [ tag.name ]), class: 'badge badge-info'
+            %dt= I18n.t('activerecord.attributes.test_info.tickets')
+            %dd
+              - if result.test_info.tickets.blank?
+                = t('common.no_data')
+              - else
+                - result.test_info.tickets.sort{ |a,b| a.name.downcase <=> b.name.downcase }.each do |ticket|
+                  = link_to_if ticket.url, ticket.name, ticket.url, class: 'badge badge-warning'
+          - if result.message.present?
+            %pre= result.message
+          %p.b
+            = link_to I18n.t('test_runs.report.backToProject'), "#project-#{result.test_info.project.name}"

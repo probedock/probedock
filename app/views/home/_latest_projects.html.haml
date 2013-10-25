@@ -1,0 +1,5 @@
+%p.jumpToLatest
+  %strong= t('.title')
+  - projects.each_with_index do |project,i|
+    = succeed i < projects.length - 1 ? ',' : '' do
+      = link_to project['name'], project_path(id: project['url_token'])

@@ -1,0 +1,44 @@
+%table.table.table-hover
+  %caption= I18n.t('jst.appData.headers.general')
+  %tbody
+    %tr.info
+      %td.header= I18n.t('jst.appData.environment')
+      %td.environment
+    %tr.info
+      %td.header= I18n.t('jst.appData.users')
+      %td.users
+    %tr.info
+      %td.header= I18n.t('jst.appData.databaseSize')
+      %td.databaseSize
+    %tr.info
+      %td.header= I18n.t('jst.appData.cacheSize')
+      %td.cacheSize
+%table.table.table-striped.table-hover
+  %caption.jobs= I18n.t('jst.appData.headers.jobs')
+  %tbody
+    %tr.workers
+      %td.header= I18n.t('jst.appData.jobs.workers')
+      %td.workers
+    %tr.working
+      %td.header= I18n.t('jst.appData.jobs.working')
+      %td.working
+    %tr.pending
+      %td.header= I18n.t('jst.appData.jobs.pending')
+      %td.pending
+    %tr.success
+      %td.header= I18n.t('jst.appData.jobs.processed')
+      %td.processed
+    %tr.failed
+      %td.header= I18n.t('jst.appData.jobs.failed')
+      %td.failed
+%table.table.table-striped.table-hover
+  %caption= I18n.t('jst.appData.headers.tests')
+    %tr.info
+      %td.header= I18n.t('jst.testsData.tests')
+      %td.tests
+    %tr.info
+      %td.header= I18n.t('jst.testsData.testResults')
+      %td.results
+    %tr.info
+      %td.header= I18n.t('jst.testsData.testRuns')
+      %td.runs

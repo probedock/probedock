@@ -1,0 +1,6 @@
+%td.description
+%td.results
+  .progress
+    .bar.bar-success
+    .bar.bar-warning
+    .bar.bar-danger

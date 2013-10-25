@@ -1,0 +1,28 @@
+.loadingTestRunReport{ data: { module: :testRunReport, config: { path: legacy_api_test_run_path(@test_run), loading: true }.to_json } }
+  .row
+    .span8.offset2
+      .well
+        %h2= t('.title')
+        %p.endedAt= l @test_run.ended_at.localtime, format: :long
+        .autoUserAvatar{ data: { user: @test_run.runner.to_client_hash.to_json } }
+        %table.table
+          %thead
+            %tr
+              %th.passed= I18n.t('test_runs.report.status.passed')
+              %th.failed= I18n.t('test_runs.report.status.failed')
+              %th.inactive= I18n.t('test_runs.report.status.inactive')
+              %th.all= I18n.t('test_runs.report.summary.all')
+              %th.duration= I18n.t('test_runs.report.summary.duration')
+          %tbody
+            %tr
+              %td.passed
+                %span.badge.badge-success= @test_run.passed_results_count - @test_run.inactive_passed_results_count
+              %td.failed
+                %span.badge.badge-important= @test_run.results_count - @test_run.passed_results_count - @test_run.inactive_results_count + @test_run.inactive_passed_results_count
+              %td.inactive
+                %span.badge.badge-warning= @test_run.inactive_results_count
+              %td.all
+                %span.badge.badge-info= @test_run.results_count
+              %td.duration= human_duration @test_run.duration, format: :short
+        .progress.progress-striped.active
+          .bar{ style: 'width:100%;' }

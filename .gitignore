@@ -1,0 +1,10 @@
+config/database.yml
+config/redis.yml
+config/ldap.yml
+config/rox-center.yml
+db/test.*
+doc/app
+local
+log
+node_modules
+tmp

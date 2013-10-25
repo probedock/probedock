@@ -1,0 +1,3 @@
+.userInfo{ data: { module: :userInfo, config: @user_info_config.to_json } }
+%h2= t('.tests')
+.testsTable{ data: { module: :testsTable, config: { path: tests_legacy_api_user_path(@user), search: @test_search_config }.to_json } }

@@ -1,0 +1,10 @@
+%dl.dl-horizontal
+  %dt= I18n.t('activerecord.attributes.test_result.version')
+  %dd.version
+  %dt= I18n.t('activerecord.attributes.test_result.run_at')
+  %dd.runAt
+  %dt= I18n.t('activerecord.attributes.test_result.duration')
+  %dd.duration
+  %dt= I18n.t('activerecord.attributes.test_result.status')
+  %dd.status
+%pre.message.pre-scrollable

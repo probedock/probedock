@@ -1,0 +1,10 @@
+%td.actions
+  .btn-group
+    %button.edit.btn{ :type => 'button' }= I18n.t('common.edit')
+    %button.btn.dropdown-toggle{ data: { toggle: 'dropdown' } }
+      %span.caret
+    %ul.dropdown-menu
+      %li
+        %a.delete{ :href => '#' }= I18n.t('common.delete')
+%td.name
+%td.url

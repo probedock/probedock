@@ -1,0 +1,11 @@
+{
+  "name": "ROX-Center",
+  "version": "1.0.4",
+  "private": true,
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jasmine": "git://github.com/AlphaHydrae/grunt-contrib-jasmine.git#metadata",
+    "underscore": "~1.4.4",
+    "fs-extra": "~0.6.1"
+  }
+}

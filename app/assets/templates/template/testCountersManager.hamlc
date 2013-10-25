@@ -1,0 +1,23 @@
+%thead
+  %tr
+    %th.title{ colspan: 2 }= I18n.t('jst.testCountersManager.title')
+  %tr
+    %th.instructions{ colspan: 2 }= I18n.t('jst.testCountersManager.instructions')
+%tbody
+  %tr
+    %th= I18n.t('jst.testCountersManager.status')
+    %td
+      %span.badge
+  %tr
+    %th= I18n.t('jst.testCountersManager.jobs')
+    %td.jobs
+  %tr
+    %th= I18n.t('jst.testCountersManager.remainingResults')
+    %td.remainingResults
+  %tr
+    %th= I18n.t('jst.testCountersManager.totalCounters')
+    %td.totalCounters
+%tfoot
+  %tr
+    %td{ colspan: 2 }
+      %button.btn.recompute{ type: 'button' }= I18n.t('jst.testCountersManager.recompute')

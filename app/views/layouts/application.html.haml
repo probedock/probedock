@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    = render :partial => 'layouts/head'
+  %body{ data: (@page_config ? { config: @page_config.to_json } : nil) }
+    %a#top{ :name => :top }
+    = render :partial => 'layouts/navbar'
+    .container.page-container
+      - { warning: nil, success: :success, error: :error }.each_pair do |key,klass|
+        - if flash[key]
+          .alert.fade.in{ :class => (klass ? "alert-#{klass}" : nil) }
+            %button.close{ type: :button, data: { dismiss: :alert } } &times;
+            %strong= t("flash.#{key}")
+            = flash[key]
+      = yield
+    = render :partial => 'layouts/footer'

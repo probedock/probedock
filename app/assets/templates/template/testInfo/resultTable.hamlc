@@ -1,0 +1,10 @@
+%table.table.table-hover
+  %thead
+    %tr
+      %th.runner.sorting{ :'data-field' => 'runner' }= I18n.t('activerecord.attributes.test_result.runner')
+      %th.version.sorting{ :'data-field' => 'version' }= I18n.t('activerecord.attributes.test_result.version')
+      %th.duration.sorting{ :'data-field' => 'duration' }= I18n.t('activerecord.attributes.test_result.duration')
+      %th.runAt.sorting{ :'data-field' => 'run_at' }= I18n.t('activerecord.attributes.test_result.run_at')
+  %tbody
+    %tr.loading
+      %td{ :colspan => 4 }= I18n.t('common.loading')

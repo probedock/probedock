@@ -1,0 +1,11 @@
+!!!
+%html
+  %head
+    = render :partial => 'layouts/head'
+  %body#top
+    = render :partial => 'layouts/navbar'
+    .container
+      #documentation
+        = preserve do
+          = yield
+    = render :partial => 'layouts/footer'

@@ -1,0 +1,8 @@
+.header.clearfix
+  .pageSize.pull-left
+  %button.new.btn.btn-primary.pull-right= I18n.t('jst.apiKeysTable.new')
+  .quickSearch.pull-right
+.table
+.footer
+  .info.pull-left
+  .page.pull-right

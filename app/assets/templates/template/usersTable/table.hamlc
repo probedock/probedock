@@ -1,0 +1,6 @@
+%table.table.table-striped.table-hover
+  %thead
+    %tr
+      %th.name.sorting{ :'data-field' => 'name' }= I18n.t('activerecord.attributes.user.name')
+      %th.createdAt.sorting{ :'data-field' => 'created_at' }= I18n.t('activerecord.attributes.user.created_at')
+  %tbody

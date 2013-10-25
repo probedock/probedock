@@ -1,0 +1,4 @@
+%select.groups{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testRunsTable.search.groups.placeholder') }
+  %option
+%select.runners{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testRunsTable.search.runners.placeholder') }
+  %option

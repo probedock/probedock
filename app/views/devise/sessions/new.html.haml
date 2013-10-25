@@ -1,0 +1,30 @@
+#login.modal
+  .modal-header
+    %h3= t('.title')
+  = form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => { :class => 'form-horizontal' }) do |f|
+    .modal-body
+      .control-group
+        = f.label :name, :class => 'control-label'
+        .controls
+          = f.text_field :name, autofocus: true
+      .control-group
+        = f.label :password, :class => 'control-label'
+        .controls
+          = f.password_field :password
+      - if devise_mapping.rememberable?
+        .control-group
+          .controls
+            = f.label :remember_me, :class => :checkbox do
+              = f.check_box :remember_me
+              = t('.remember_me')
+      - if notice
+        .alert.alert-info
+          %button.close{ :type => :button, :data => { :dismiss => :alert } } x
+          = notice
+      - if alert
+        .alert
+          %button.close{ :type => :button, :data => { :dismiss => :alert } } x
+          = alert
+    .modal-footer
+      = render partial: "devise/shared/links"
+      = f.submit t('.submit'), class: 'btn btn-primary'

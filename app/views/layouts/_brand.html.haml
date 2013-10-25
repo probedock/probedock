@@ -1,0 +1,9 @@
+- if @links.present?
+  %ul.nav.nav-links
+    %li.dropdown.brand-dropdown
+      %a.dropdown-toggle{ :href => '#', :'data-toggle' => 'dropdown' }
+        %i.icon-align-justify
+      %ul.dropdown-menu{ role: :menu }
+        - @links.each do |l|
+          %li= link_to l['name'], l['url']
+%a.brand{ :href => root_path }= t('common.title')

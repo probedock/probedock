@@ -1,0 +1,10 @@
+%td.identifier.monospace
+%td.sharedSecret.monospace
+%td= @humanCreatedAt
+%td.usageCount= @usageCount
+%td= @humanLastUsedAt
+%td.actions
+  %button.toggle.btn.btn-small
+    %i
+  %button.delete.btn.btn-small
+    %i.icon-remove-circle
