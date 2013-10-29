@@ -18,6 +18,23 @@ In the `rox-center.yml` file, you must choose between database authentication (R
 * `config/ldap.yml` contains the configuration to connect to your LDAP server.
 * `config/initializers/ldap.rb` customizes the LDAP configuration.
 
+### GCC
+
+The `libv8` gem requires GCC for compilation.
+Install it with your package manager before running `bundle install`.
+
+```bash
+# MacPorts
+port install apple-gcc42
+port select --set gcc apple-gcc42
+
+# Yum
+yum install gcc gcc-c++ autoconf automake
+
+# Aptitude
+apt-get install build-essential
+```
+
 ### Development Setup
 
 ```bash
