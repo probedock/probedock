@@ -90,7 +90,7 @@ class TestInfo < ActiveRecord::Base
 
       quick_search do |query,term|
         term = "%#{term.downcase}%"
-        query.joins(:key).joins(:author).where('LOWER(test_infos.name) LIKE ? OR LOWER(test_infos.project) LIKE ? OR LOWER(test_keys.key) LIKE ? OR LOWER(users.name) LIKE ?', term, term, term, term)
+        query.joins(:key).joins(:author).joins(:project).where('LOWER(test_infos.name) LIKE ? OR LOWER(projects.name) LIKE ? OR LOWER(test_keys.key) LIKE ? OR LOWER(users.name) LIKE ?', term, term, term, term)
       end
     end
   end
