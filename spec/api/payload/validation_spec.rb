@@ -258,7 +258,7 @@ describe "API payload validations", rox: { tags: :unit } do
 
   it "should fail if two tests have the same key in the same project", rox: { key: '2b74ac95de1f' } do
     sample_payload[:r][0][:t][1][:k] = sample_payload[:r][0][:t][0][:k]
-    assert_fail sample_payload, :duplicateTestKey, "/r/0/t/1/k", got(sample_payload[:r][0][:t][0][:k])
+    assert_fail sample_payload, :duplicateTestKey, "/r/0/t/1/k", got(sample_payload[:r][0][:t][0][:k]), got(sample_payload[:r][0][:j])
   end
 
   it "should fail if a test has the same key as a previously stored test result in the same run (by UID)", rox: { key: '5667ad1f4c51' } do
@@ -266,19 +266,19 @@ describe "API payload validations", rox: { tags: :unit } do
     create :test, key: test_keys[0], test_run: run
     test_keys[0].update_attribute :free, false
     sample_payload[:u] = run.uid
-    assert_fail sample_payload, :duplicateTestKey, "/r/0/t/0/k", got(test_keys[0].key)
+    assert_fail sample_payload, :duplicateTestKey, "/r/0/t/0/k", got(test_keys[0].key), got(test_keys[0].project.api_id)
   end
 
   it "should fail if a test has an unknown key", rox: { key: 'fb21e10441ce' } do
     sample_payload[:r][1][:t][0][:k] = 'x' * 12
-    assert_fail sample_payload, :unknownTestKey, "/r/1/t/0/k", got('x' * 12)
+    assert_fail sample_payload, :unknownTestKey, "/r/1/t/0/k", got('x' * 12), got(sample_payload[:r][1][:j])
   end
 
   it "should fail if a test has a key from the wrong project", rox: { key: '2b6f47717974' } do
     key = sample_payload[:r][0][:t][0][:k]
     sample_payload[:r][0][:t][0][:k] = sample_payload[:r][1][:t][0][:k]
     sample_payload[:r][1][:t][0][:k] = key
-    assert_fail sample_payload, :unknownTestKey, "/r/0/t/0/k", got(sample_payload[:r][0][:t][0][:k])
+    assert_fail sample_payload, :unknownTestKey, "/r/0/t/0/k", got(sample_payload[:r][0][:t][0][:k]), got(sample_payload[:r][0][:j])
   end
 
   it "should fail if a test has no name", rox: { key: '4093268a4caa' } do
