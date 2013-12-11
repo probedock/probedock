@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TestCounter < ActiveRecord::Base
   DEFAULT_TIMEZONE = 'Bern'
   BASE_ATTRIBUTES = [ :timezone, :user, :category, :project ]
@@ -84,7 +83,9 @@ class TestCounter < ActiveRecord::Base
     delete_all
     clean_token_cache true
 
-    TestInfo.deprecated.select('id, deprecated_at').all.each{ |test| CountDeprecationJob.enqueue_test test, timezones: timezones }
+    TestDeprecation.select('id, deprecated, test_info_id, created_at').all.each do |deprecation|
+      CountDeprecationJob.enqueue_deprecation deprecation, timezones: timezones
+    end
 
     start_from = TestRun.order('ended_at ASC').limit(1).first.try(:ended_at)
 

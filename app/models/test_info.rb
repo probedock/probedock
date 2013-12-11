@@ -26,6 +26,7 @@ class TestInfo < ActiveRecord::Base
   belongs_to :key, class_name: "TestKey"
   belongs_to :project
   belongs_to :category
+  belongs_to :deprecation, class_name: "TestDeprecation"
   has_many :results, class_name: "TestResult"
   belongs_to :effective_result, class_name: "TestResult"
   has_many :custom_values, class_name: "TestValue"
@@ -67,7 +68,11 @@ class TestInfo < ActiveRecord::Base
       field :last_run_duration
       field :passing, order: false
       field :active, order: false
-      field :deprecated_at
+
+      field :deprecated_at, includes: :deprecation do
+        order{ |q,d| q.joins(:deprecation).order("test_deprecations.created_at #{d}") }
+        value{ |o| o.deprecation.created_at }
+      end
 
       field :author, includes: :author do
         order{ |q,d| q.joins(:author).order("users.name #{d}") }
@@ -96,7 +101,7 @@ class TestInfo < ActiveRecord::Base
   end
 
   def self.standard
-    where 'deprecated_at IS NULL'
+    where 'deprecation_id IS NULL'
   end
 
   def self.outdated settings = nil
@@ -112,7 +117,7 @@ class TestInfo < ActiveRecord::Base
   end
 
   def self.deprecated
-    where 'deprecated_at IS NOT NULL'
+    where 'deprecation_id IS NOT NULL'
   end
 
   def self.find_by_key_value key
@@ -127,6 +132,10 @@ class TestInfo < ActiveRecord::Base
     key.try :key
   end
 
+  def deprecated?
+    !!deprecation_id
+  end
+
   def to_client_hash options = {}
     {
       key: key.key,
@@ -138,7 +147,7 @@ class TestInfo < ActiveRecord::Base
 
       h[:category] = category.name if category.present?
       h[:values] = custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo } if custom_values.any?
-      h[:deprecated_at] = deprecated_at.to_i * 1000 if deprecated_at
+      h[:deprecated_at] = deprecation.to_i * 1000 if deprecation
 
       if options[:type] == :test_run
         h[:author] = author_id

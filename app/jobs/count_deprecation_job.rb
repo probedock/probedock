@@ -14,40 +14,35 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class CountDeprecationJob
   @queue = 'metrics:test_counters'
 
   include RoxHook
-  on('test:deprecated', 'test:undeprecated'){ |test| enqueue_test test, timezones: ROXCenter::Application.metrics_timezones }
+  on('test:deprecated', 'test:undeprecated'){ |deprecation| enqueue_deprecation deprecation, timezones: ROXCenter::Application.metrics_timezones }
 
-  def self.enqueue_test test, options = {}
-    deprecated, time = !!test.deprecated_at, (test.deprecated_at || test.updated_at)
-    Rails.logger.debug "Updating test counters for deprecation (#{deprecated}) of test #{test.id} at #{time} in background job"
-    Resque.enqueue self, test.id, time.to_r.to_s, deprecated, options
+  def self.enqueue_deprecation deprecation, options = {}
+    Rails.logger.debug "Updating test counters for deprecation (#{deprecation.deprecated}) of test #{deprecation.test_info_id} at #{deprecation.created_at} in background job"
+    Resque.enqueue self, deprecation.id, options
   end
 
-  def self.perform test_id, time_string, deprecated, options = {}
+  def self.perform deprecation_id, options = {}
     options = HashWithIndifferentAccess.new options
 
-    test = TestInfo.select('id, project_id, category_id, author_id').includes(:project, :category, :author).find test_id
-    time = Time.at Rational(time_string)
+    deprecation = TestDeprecation.includes(test_info: [ :project, :author ], test_result: [ :category ]).find deprecation_id
 
-    new test, time, deprecated, options
+    new deprecation, options
 
     ROXCenter::Application.events.fire 'test:counters'
   end
 
-  def initialize test, time, deprecated, options = {}
+  def initialize deprecation, options = {}
     raise ":timezones option is missing" if !options[:timezones].kind_of?(Array)
 
-    following_result = TestResult.select('previous_category_id').where('test_info_id = ? AND run_at >= ?', test.id, time).order('run_at ASC').limit(1).first
+    project = deprecation.test_info.project
+    user = deprecation.test_info.author
+    category = deprecation.test_result.category
 
-    project = test.project
-    user = test.author
-    category = following_result ? following_result.previous_category : test.category
-
-    @counter_base = { cache: {}, time: time, written: deprecated ? -1 : 1 }
+    @counter_base = { cache: {}, time: deprecation.created_at, written: deprecation.deprecated ? -1 : 1 }
     options[:timezones].each do |timezone|
       @counter_base[:timezone] = timezone
 

@@ -261,7 +261,7 @@ describe ProcessApiTest do
 
     it "should create a deprecated result if the test is deprecated", rox: { key: '760d40320462' } do
 
-      existing_test.update_attribute :deprecated_at, 1.day.ago
+      existing_test.deprecation = create(:deprecation, test_info: existing_test, created_at: 1.day.ago)
 
       p = nil
       expect{ p = process_existing_test }.to change(TestResult, :count).by(1)

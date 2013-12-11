@@ -34,19 +34,39 @@ class TestInfosController < ApplicationController
 
   def deprecate
     # FIXME: block deprecation/undeprecation if test counters are recomputing
-    @test_info.first.tap do |test|
-      test.touch :deprecated_at
-      ROXCenter::Application.events.fire 'test:deprecated', test
-    end
-    render :nothing => true, :status => 204
+
+    @test_info = @test_info.first
+    return render nothing: true, status: 204 if @test_info.deprecated?
+
+    deprecation = TestDeprecation.new
+    deprecation.deprecated = true
+    deprecation.test_info = @test_info
+    deprecation.test_result = @test_info.effective_result
+    deprecation.user = current_user
+    deprecation.save!
+
+    @test_info.update_attribute :deprecation_id, deprecation.id
+    ROXCenter::Application.events.fire 'test:deprecated', deprecation
+
+    render nothing: true, status: 204
   end
 
   def undeprecate
-    @test_info.first.tap do |test|
-      test.update_attribute :deprecated_at, nil
-      ROXCenter::Application.events.fire 'test:undeprecated', test
-    end
-    render :nothing => true, :status => 204
+
+    @test_info = @test_info.first
+    return render nothing: true, status: 204 unless @test_info.deprecated?
+
+    deprecation = TestDeprecation.new
+    deprecation.deprecated = false
+    deprecation.test_info = @test_info
+    deprecation.test_result = @test_info.effective_result
+    deprecation.user = current_user
+    deprecation.save!
+
+    @test_info.update_attribute :deprecation_id, nil
+    ROXCenter::Application.events.fire 'test:undeprecated', deprecation
+
+    render nothing: true, status: 204
   end
 
   def page

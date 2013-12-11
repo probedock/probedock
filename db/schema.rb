@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131211130324) do
+ActiveRecord::Schema.define(:version => 20131211142007) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "identifier",    :limit => 20,                   :null => false
@@ -107,6 +107,18 @@ ActiveRecord::Schema.define(:version => 20131211130324) do
   add_index "test_counters", ["unique_token"], :name => "index_test_counters_on_unique_token", :unique => true
   add_index "test_counters", ["user_id"], :name => "test_counters_user_id_fk"
 
+  create_table "test_deprecations", :force => true do |t|
+    t.boolean  "deprecated",     :null => false
+    t.integer  "test_result_id", :null => false
+    t.integer  "test_info_id",   :null => false
+    t.integer  "user_id",        :null => false
+    t.datetime "created_at",     :null => false
+  end
+
+  add_index "test_deprecations", ["test_info_id"], :name => "test_deprecations_test_info_id_fk"
+  add_index "test_deprecations", ["test_result_id"], :name => "test_deprecations_test_result_id_fk"
+  add_index "test_deprecations", ["user_id"], :name => "test_deprecations_user_id_fk"
+
   create_table "test_infos", :force => true do |t|
     t.string   "name",                                  :null => false
     t.integer  "author_id",                             :null => false
@@ -120,11 +132,12 @@ ActiveRecord::Schema.define(:version => 20131211130324) do
     t.integer  "last_run_duration",                     :null => false
     t.integer  "project_id",                            :null => false
     t.integer  "category_id"
-    t.datetime "deprecated_at"
+    t.integer  "deprecation_id"
   end
 
   add_index "test_infos", ["author_id"], :name => "test_infos_author_id_fk"
   add_index "test_infos", ["category_id"], :name => "test_infos_category_id_fk"
+  add_index "test_infos", ["deprecation_id"], :name => "test_infos_deprecation_id_fk"
   add_index "test_infos", ["effective_result_id"], :name => "test_infos_effective_result_id_fk"
   add_index "test_infos", ["key_id", "project_id"], :name => "index_test_infos_on_key_id_and_project_id", :unique => true
   add_index "test_infos", ["project_id"], :name => "test_infos_project_id_fk"
@@ -244,8 +257,13 @@ ActiveRecord::Schema.define(:version => 20131211130324) do
   add_foreign_key "test_counters", "projects", :name => "test_counters_project_id_fk"
   add_foreign_key "test_counters", "users", :name => "test_counters_user_id_fk"
 
+  add_foreign_key "test_deprecations", "test_infos", :name => "test_deprecations_test_info_id_fk"
+  add_foreign_key "test_deprecations", "test_results", :name => "test_deprecations_test_result_id_fk"
+  add_foreign_key "test_deprecations", "users", :name => "test_deprecations_user_id_fk"
+
   add_foreign_key "test_infos", "categories", :name => "test_infos_category_id_fk"
   add_foreign_key "test_infos", "projects", :name => "test_infos_project_id_fk"
+  add_foreign_key "test_infos", "test_deprecations", :name => "test_infos_deprecation_id_fk", :column => "deprecation_id"
   add_foreign_key "test_infos", "test_results", :name => "test_infos_effective_result_id_fk", :column => "effective_result_id"
   add_foreign_key "test_infos", "users", :name => "test_infos_author_id_fk", :column => "author_id"
 

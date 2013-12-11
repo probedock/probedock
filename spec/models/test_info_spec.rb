@@ -145,7 +145,7 @@ describe TestInfo, rox: { tags: :unit } do
   context "mass assignment" do
 
     context "protected", rox: { key: 'e5fc61ed4d67', grouped: true } do
-      %w(name passing deprecated_at category_id author_id project_id key_id effective_result_id created_at updated_at last_run_at last_run_duration).each do |attr|
+      %w(name passing deprecation_id category_id author_id project_id key_id effective_result_id created_at updated_at last_run_at last_run_duration).each do |attr|
         it{ should_not allow_mass_assignment_of(attr) }
       end
     end
@@ -166,13 +166,13 @@ describe TestInfo, rox: { tags: :unit } do
     it(nil, rox: { key: '41a8ca79612d' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '76ee96170b5c' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
     it(nil, rox: { key: '480d04cafa66' }){ should have_db_column(:passing).of_type(:boolean).with_options(null: false) }
-    it(nil, rox: { key: 'ebe42ba9512b' }){ should have_db_column(:deprecated_at).of_type(:datetime).with_options(null: true) }
     it(nil, rox: { key: 'a573e61d78bc' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false, default: true) }
     it(nil, rox: { key: 'cab7facebcac' }){ should have_db_column(:key_id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: 'cab0ca24ef7c' }){ should have_db_column(:author_id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '17e9f6c4987a' }){ should have_db_column(:project_id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '213e37d69970' }){ should have_db_column(:category_id).of_type(:integer).with_options(null: true) }
     it(nil, rox: { key: '8bb2389e0e69' }){ should have_db_column(:effective_result_id).of_type(:integer).with_options(null: true) }
+    it(nil, rox: { key: 'ebe42ba9512b' }){ should have_db_column(:deprecation_id).of_type(:integer).with_options(null: true) }
     it(nil, rox: { key: 'a38d95731133' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, rox: { key: 'e6a98cbba2a1' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
     it(nil, rox: { key: 'b80a47e5de7d' }){ should have_db_column(:last_run_at).of_type(:datetime).with_options(null: false) }

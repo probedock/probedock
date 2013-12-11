@@ -200,9 +200,9 @@ describe TestCounter do
       end
 
       it "should queue a job for each deprecated test", rox: { key: '73bf31307244' } do
-        expect(CountDeprecationJob).to receive(:enqueue_test).ordered.with(tests[1], timezones: timezones)
-        expect(CountDeprecationJob).to receive(:enqueue_test).ordered.with(tests[3], timezones: timezones)
-        expect(CountDeprecationJob).not_to receive(:enqueue_test).ordered
+        expect(CountDeprecationJob).to receive(:enqueue_deprecation).ordered.with(tests[1].deprecation, timezones: timezones)
+        expect(CountDeprecationJob).to receive(:enqueue_deprecation).ordered.with(tests[3].deprecation, timezones: timezones)
+        expect(CountDeprecationJob).not_to receive(:enqueue_deprecation).ordered
         recompute
       end
 

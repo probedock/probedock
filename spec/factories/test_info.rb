@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 FactoryGirl.define do
 
   factory :test_info, aliases: [ :test ] do
@@ -25,6 +24,7 @@ FactoryGirl.define do
       run_at nil
       run_duration nil
       project_version nil
+      deprecated_at nil
     end
 
     key
@@ -52,6 +52,9 @@ FactoryGirl.define do
       test.last_run_at = result.run_at
       test.last_run_duration = result.duration
       test.effective_result_id = result.id
+
+      test.deprecation = create(:deprecation, test_info: test, created_at: evaluator.deprecated_at) if evaluator.deprecated_at
+
       test.save!
     end
   end

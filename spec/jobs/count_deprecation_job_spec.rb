@@ -28,42 +28,43 @@ describe CountDeprecationJob do
   end
 
   describe "events" do
-    let(:test_double){ double }
+    let(:deprecation_double){ double }
     let(:timezones){ [ 'UTC', 'Bern' ] }
     before(:each){ ROXCenter::Application.stub metrics_timezones: timezones }
 
     it "should enqueue a job on the test:deprecated event", rox: { key: '490db0b2e66a' } do
-      expect(described_class).to receive(:enqueue_test).with(test_double, timezones: timezones)
-      described_class.fire 'test:deprecated', test_double
+      expect(described_class).to receive(:enqueue_deprecation).with(deprecation_double, timezones: timezones)
+      described_class.fire 'test:deprecated', deprecation_double
     end
 
     it "should enqueue a job on the test:undeprecated event", rox: { key: 'fd13a157d54f' } do
-      expect(described_class).to receive(:enqueue_test).with(test_double, timezones: timezones)
-      described_class.fire 'test:undeprecated', test_double
+      expect(described_class).to receive(:enqueue_deprecation).with(deprecation_double, timezones: timezones)
+      described_class.fire 'test:undeprecated', deprecation_double
     end
   end
 
-  describe ".enqueue_test" do
+  describe ".enqueue_deprecation" do
 
     it "should enqueue a job with a deprecated test", rox: { key: '56f6f6191ca3' } do
       deprecated_at = 2.days.ago
       test = create :test, deprecated_at: deprecated_at
-      described_class.enqueue_test test, foo: 'bar'
-      expect(described_class).to have_queued(test.id, deprecated_at.to_r.to_s, true, foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
+      described_class.enqueue_deprecation test.deprecation, foo: 'bar'
+      expect(described_class).to have_queued(test.deprecation.id, foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
       expect(described_class).to have_queue_size_of(1)
     end
     
     it "should enqueue a job with an undeprecated test", rox: { key: '73e4f5f519ff' } do
-      test = create :test, deprecated_at: nil
-      described_class.enqueue_test test, foo: 'bar'
-      expect(described_class).to have_queued(test.id, test.updated_at.to_r.to_s, false, foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
+      test = create :test
+      deprecation = create :deprecation, deprecated: false, test_info: test
+      described_class.enqueue_deprecation deprecation, foo: 'bar'
+      expect(described_class).to have_queued(deprecation.id, foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
       expect(described_class).to have_queue_size_of(1)
     end
 
     it "should log information about the test", rox: { key: 'de215dfad87f' } do
       test = create :test, deprecated_at: 2.days.ago
       expect(Rails.logger).to receive(:debug).with(/updating test counters.*deprecation.*#{test.id}/i)
-      described_class.enqueue_test test, foo: 'bar'
+      described_class.enqueue_deprecation test.deprecation, foo: 'bar'
     end
   end
 
@@ -74,18 +75,16 @@ describe CountDeprecationJob do
     it "should instantiate a job with loaded data", rox: { key: '45622943f63f' } do
       described_class.stub new: nil
       expect(described_class).to receive(:new) do |*args|
-        expect(args[0]).to eq(deprecated_test)
-        expect(args[1]).to eq(deprecated_at)
-        expect(args[2]).to be_true
-        expect(args[3]).to eq(HashWithIndifferentAccess.new(foo: 'bar'))
+        expect(args[0]).to eq(deprecated_test.deprecation)
+        expect(args[1]).to eq(HashWithIndifferentAccess.new(foo: 'bar'))
       end
-      described_class.perform deprecated_test.id, deprecated_at.to_r.to_s, true, foo: 'bar'
+      described_class.perform deprecated_test.deprecation_id, foo: 'bar'
     end
 
     it "should trigger a test:counters event on the application", rox: { key: 'd311529e3b65' } do
       described_class.stub new: nil
       ROXCenter::Application.events.should_receive(:fire).with 'test:counters'
-      described_class.perform deprecated_test.id, deprecated_at.to_r.to_s, true, foo: 'bar'
+      described_class.perform deprecated_test.deprecation_id, foo: 'bar'
     end
   end
 
@@ -97,6 +96,7 @@ describe CountDeprecationJob do
     let(:project){ create :project }
     let(:category){ create :category }
     let(:test){ create :test, key: test_key, project: project, category: category, deprecated_at: time, run_at: time - 3.days, runner: runner }
+    let(:deprecation){ test.deprecation }
     let(:timezones){ [ 'Bern' ] }
     let(:job_options){ { timezones: timezones } }
     let(:measures){ [] }
@@ -107,13 +107,13 @@ describe CountDeprecationJob do
     end
   
     it "should fail with no timezones", rox: { key: '4e12e642ba40' } do
-      expect{ described_class.new test, time, true, {} }.to raise_error(StandardError, ":timezones option is missing")
+      expect{ described_class.new deprecation, {} }.to raise_error(StandardError, ":timezones option is missing")
     end
 
     shared_examples_for "a deprecation job" do
 
       it "should decrease all matching test counters by one" do
-        described_class.new test, time, true, job_options
+        described_class.new deprecation.tap{ |d| d.deprecated = true }, job_options
 
         caches = measures.collect{ |m| m.delete :cache }.compact
         expect(caches).to have(7).items
@@ -131,7 +131,9 @@ describe CountDeprecationJob do
       end
 
       it "should increase all matching test counters by one if the test was undeprecated" do
-        described_class.new test, time, false, job_options
+        deprecation.update_attribute :deprecated, false
+        test.update_attribute :deprecation_id, nil
+        described_class.new deprecation, job_options
 
         caches = measures.collect{ |m| m.delete :cache }.compact
         expect(caches).to have(7).items
@@ -169,7 +171,7 @@ describe CountDeprecationJob do
       let!(:following_result){ create :result, runner: runner, test_info: test, previous_category: other_category, category: category, run_at: time + 2.days }
       let!(:future_result){ create :result, runner: author, test_info: test, previous_category: category, category: other_category, run_at: time + 5.days }
       let(:expected_project){ project }
-      let(:expected_category){ other_category }
+      let(:expected_category){ category } # category should remain the same as it was linked to the (un)deprecation
       let(:expected_user){ author }
       it_should_behave_like "a deprecation job"
 
