@@ -85,6 +85,7 @@ class ProcessApiTest
       result.project_version =  project_version
       result.message = data[:m].to_s if data[:m].present?
       result.run_at = run.ended_at
+      result.deprecated = !!test.deprecated_at
 
       if test.new_record?
         result.new_test = true

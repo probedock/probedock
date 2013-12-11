@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131022073814) do
+ActiveRecord::Schema.define(:version => 20131211130324) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "identifier",    :limit => 20,                   :null => false
@@ -166,6 +166,7 @@ ActiveRecord::Schema.define(:version => 20131022073814) do
     t.integer  "previous_category_id"
     t.boolean  "previous_passed"
     t.boolean  "previous_active"
+    t.boolean  "deprecated",           :default => false, :null => false
   end
 
   add_index "test_results", ["category_id"], :name => "test_results_category_id_fk"

@@ -132,6 +132,7 @@ describe ProcessApiTest do
         expect(result.previous_category).to be_nil
         expect(result.previous_passed).to be_nil
         expect(result.previous_active).to be_nil
+        expect(result.deprecated).to be_false
       end
     end
 
@@ -254,6 +255,34 @@ describe ProcessApiTest do
         expect(result.previous_category).to eq(existing_category)
         expect(result.previous_passed).to be_false
         expect(result.previous_active).to be_false
+        expect(result.deprecated).to be_false
+      end
+    end
+
+    it "should create a deprecated result if the test is deprecated", rox: { key: '760d40320462' } do
+
+      existing_test.update_attribute :deprecated_at, 1.day.ago
+
+      p = nil
+      expect{ p = process_existing_test }.to change(TestResult, :count).by(1)
+
+      p.test_result.tap do |result|
+        expect(result.runner).to eq(user)
+        expect(result.test_info).to eq(p.test)
+        expect(result.test_run).to eq(test_run)
+        expect(result.passed).to be_true
+        expect(result.active).to be_true
+        expect(result.duration).to eq(sample_data[:d].to_i)
+        expect(result.project_version).to eq(project_version)
+        expect(result.message).to eq(sample_data[:m])
+        expect(result.run_at).to eq(test_run.ended_at)
+
+        expect(result.new_test).to be_false
+        expect(result.category).to eq(new_category)
+        expect(result.previous_category).to eq(existing_category)
+        expect(result.previous_passed).to be_false
+        expect(result.previous_active).to be_false
+        expect(result.deprecated).to be_true
       end
     end
 

@@ -99,7 +99,7 @@ class CountTestsJob
       count :written, category: category
       count :written, category: category, user: author
       count :written, user: author
-    elsif category != previous_category # FIXME: don't count category changes when deprecated
+    elsif !result.deprecated && category != previous_category
       count :written, { category: category }, 1
       count :written, { category: category, project: project }, 1
       count :written, { category: category, user: author }, 1

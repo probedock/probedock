@@ -386,6 +386,46 @@ describe CountTestsJob do
       expect_cached category: result.previous_category, user: result.test_info.author, written: -1
     end
 
+    it "should cache an existing deprecated test with a changed category", rox: { key: 'f3b474090323' } do
+      result = process runner: runner, new_test: false, deprecated: true, previous_category: categories[0], category: categories[1]
+      expect(cache).to have(7).items
+      expect_cached run: 1
+      expect_cached project: result.test_info.project, run: 1
+      expect_cached project: result.test_info.project, category: result.category, run: 1
+      expect_cached project: result.test_info.project, user: result.runner, run: 1
+      expect_cached category: result.category, run: 1
+      expect_cached category: result.category, user: result.runner, run: 1
+      expect_cached user: result.runner, run: 1
+    end
+
+    it "should cache an existing deprecated test with a changed category when it was nil before", rox: { key: 'fc7f9c943024' } do
+      result = process runner: runner, new_test: false, deprecated: true, previous_category: nil, category: categories[0]
+      expect(cache).to have(7).items
+      expect(result.category).not_to be_nil
+      expect(result.previous_category).to be_nil
+      expect_cached run: 1
+      expect_cached project: result.test_info.project, run: 1
+      expect_cached project: result.test_info.project, category: result.category, run: 1
+      expect_cached project: result.test_info.project, user: result.runner, run: 1
+      expect_cached category: result.category, run: 1
+      expect_cached category: result.category, user: result.runner, run: 1
+      expect_cached user: result.runner, run: 1
+    end
+
+    it "should cache an existing deprecated test with a changed category when it's nil now", rox: { key: '607fdb0f7b4b' } do
+      result = process runner: runner, new_test: false, deprecated: true, previous_category: categories[1], category: nil
+      expect(cache).to have(7).items
+      expect(result.category).to be_nil
+      expect(result.previous_category).not_to be_nil
+      expect_cached run: 1
+      expect_cached project: result.test_info.project, run: 1
+      expect_cached project: result.test_info.project, category: result.category, run: 1
+      expect_cached project: result.test_info.project, user: result.runner, run: 1
+      expect_cached category: result.category, run: 1
+      expect_cached category: result.category, user: result.runner, run: 1
+      expect_cached user: result.runner, run: 1
+    end
+
     def expect_cached options = {}
       updates = { written: options.delete(:written).to_i, run: options.delete(:run).to_i }
       expect(cache[{ timezone: timezone, time: run_at }.merge(options)]).to eq(updates)

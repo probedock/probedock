@@ -30,6 +30,7 @@ class PrepareTestResults < ActiveRecord::Migration
       t.foreign_key :categories, column: :previous_category_id
       t.column :previous_passed, :boolean
       t.column :previous_active, :boolean
+      t.column :deprecated, :boolean, null: false, default: false
     end
   end
 
@@ -41,7 +42,7 @@ class PrepareTestResults < ActiveRecord::Migration
       t.remove :project_version_id
 
       # for duplicate_result_data migration
-      t.remove :new_test, :category_id, :previous_category_id, :previous_passed, :previous_active
+      t.remove :new_test, :category_id, :previous_category_id, :previous_passed, :previous_active, :deprecated
     end
   end
 end
