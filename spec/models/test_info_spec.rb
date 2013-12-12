@@ -226,6 +226,7 @@ describe TestInfo, rox: { tags: :unit } do
     it(nil, rox: { key: '5325459980d4' }){ should belong_to(:effective_result).class_name('TestResult') }
     it(nil, rox: { key: '54dd25e1a5b9' }){ should have_many(:custom_values).class_name('TestValue') }
     it(nil, rox: { key: '3f942894c522' }){ should belong_to(:deprecation).class_name('TestDeprecation') }
+    it(nil, rox: { key: 'cc1c7ebded24' }){ should have_many(:deprecations).class_name('TestDeprecation') }
     it(nil, rox: { key: '2432961a8bd0' }){ should have_and_belong_to_many(:tags) }
     it(nil, rox: { key: 'f317cd684dc0' }){ should have_and_belong_to_many(:tickets) }
   end
