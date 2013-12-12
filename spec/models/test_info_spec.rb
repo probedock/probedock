@@ -50,6 +50,73 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
+  context "#deprecated?" do
+
+    it "should return true if the test is linked to a deprecation", rox: { key: '28ef7683957f' } do
+      user = create :user
+      expect(create(:test, key: create(:key, user: user)).deprecated?).to be_false
+      expect(create(:test, key: create(:key, user: user), deprecated_at: 10.days.ago).deprecated?).to be_true
+    end
+  end
+
+  context "lookup" do
+    let(:user){ create :user }
+    let! :tests do
+      [
+        create(:test, key: create(:key, user: user)),
+        create(:test, key: create(:key, user: user), run_at: 3.days.ago),
+        create(:test, key: create(:key, user: user), passing: false),
+        create(:test, key: create(:key, user: user), active: false, deprecated_at: 4.days.ago, run_at: 6.days.ago),
+        create(:test, key: create(:key, user: user), passing: false, active: false, run_at: 1.day.ago),
+        create(:test, key: create(:key, user: user), run_at: 5.days.ago),
+        create(:test, key: create(:key, user: user), active: false, deprecated_at: 3.days.ago),
+        create(:test, key: create(:key, user: user), run_at: 7.days.ago),
+        create(:test, key: create(:key, user: user), passing: false, deprecated_at: 3.days.ago)
+      ]
+    end
+
+    context ".standard" do
+
+      it "should return all tests that are not deprecated", rox: { key: 'f83868e2b6ee' } do
+        expect(described_class.standard.all).to match_array([ 0, 1, 2, 4, 5, 7 ].collect{ |i| tests[i] })
+      end
+    end
+
+    context ".outdated" do
+
+      it "should return standard tests that have not been run since the outdated delay", rox: { key: 'f72aff790693' } do
+        Settings.stub app: double(test_outdated_days: 2)
+        expect(described_class.outdated.all).to match_array([ tests[1], tests[5], tests[7] ])
+      end
+
+      it "should return standard tests that have not been run since the specified outdated delay", rox: { key: 'a0cc9a663a31' } do
+        settings = double test_outdated_days: 4
+        expect(described_class.outdated(settings).all).to match_array([ tests[5], tests[7] ])
+      end
+    end
+
+    context ".failing" do
+    
+      it "should return standard tests that are failing and active", rox: { key: '0ea768c88ca1' } do
+        expect(described_class.failing).to match_array([ tests[2] ])
+      end
+    end
+
+    context ".inactive" do
+    
+      it "should return standard tests that are inactive", rox: { key: '839f48a7da82' } do
+        expect(described_class.inactive).to match_array([ tests[4] ])
+      end
+    end
+
+    context ".deprecated" do
+    
+      it "should return deprecated tests", rox: { key: '41c26a95578d' } do
+        expect(described_class.deprecated).to match_array([ 3, 6, 8 ].collect{ |i| tests[i] })
+      end
+    end
+  end
+
   context ".count_by_category" do
     
     it "should return the list of categories with the corresponding number of tests", rox: { key: '1c1962a3d10d' } do
@@ -158,6 +225,7 @@ describe TestInfo, rox: { tags: :unit } do
     it(nil, rox: { key: 'b5128767d8bf' }){ should have_many(:results).class_name('TestResult') }
     it(nil, rox: { key: '5325459980d4' }){ should belong_to(:effective_result).class_name('TestResult') }
     it(nil, rox: { key: '54dd25e1a5b9' }){ should have_many(:custom_values).class_name('TestValue') }
+    it(nil, rox: { key: '3f942894c522' }){ should belong_to(:deprecation).class_name('TestDeprecation') }
     it(nil, rox: { key: '2432961a8bd0' }){ should have_and_belong_to_many(:tags) }
     it(nil, rox: { key: 'f317cd684dc0' }){ should have_and_belong_to_many(:tickets) }
   end

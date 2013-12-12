@@ -152,7 +152,7 @@ describe TestCounter do
     before :each do
       ResqueSpec.reset!
       CountTestsJob.stub enqueue_runs: nil
-      CountDeprecationJob.stub enqueue_test: nil
+      CountDeprecationJob.stub enqueue_deprecation: nil
     end
 
     it "should delete existing counters", rox: { key: 'c54f3b3fa06c' } do

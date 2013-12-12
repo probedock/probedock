@@ -17,7 +17,6 @@
 require 'spec_helper'
 
 describe AccountApiKeysController, rox: { tags: :unit } do
-
   let(:user){ create :user }
 
   it "should not authenticate clients with api keys", rox: { key: '02331e558e38' } do

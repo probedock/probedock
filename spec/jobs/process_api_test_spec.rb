@@ -53,6 +53,7 @@ describe ProcessApiTest do
       keys: [ test_key ],
       tests: [],
       custom_values: [],
+      deprecations: [],
       categories: [ new_category ],
       tags: sample_data[:g] ? sample_data[:g].collect{ |name| Tag.find_or_create_by_name name } : [],
       tickets: sample_data[:t] ? sample_data[:t].collect{ |name| Ticket.find_or_create_by_name name } : []
@@ -284,6 +285,17 @@ describe ProcessApiTest do
         expect(result.previous_active).to be_false
         expect(result.deprecated).to be_true
       end
+    end
+
+    it "should create a deprecated result if the test was deprecated while the payload was waiting for processing", rox: { key: 'b0b29e19f8e9' } do
+      cache[:deprecations] << create(:deprecation, test_info: existing_test, created_at: time_received + 1.minute)
+      expect(process_existing_test.test_result.deprecated).to be_true
+    end
+
+    it "should create a non-deprecated result if the test was undeprecated while the payload was waiting for processing", rox: { key: '88cac9b42ffe' } do
+      existing_test.deprecation = create(:deprecation, test_info: existing_test, created_at: 1.day.ago)
+      cache[:deprecations] << create(:deprecation, deprecated: false, test_info: existing_test, created_at: time_received + 1.minute)
+      expect(process_existing_test.test_result.deprecated).to be_false
     end
 
     context "with a previous result" do

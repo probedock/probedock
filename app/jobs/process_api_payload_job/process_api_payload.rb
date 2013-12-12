@@ -31,7 +31,7 @@ class ProcessApiPayload
 
       TestRun.transaction do
 
-        @cache = build_cache data
+        @cache = self.class.build_cache data, @time_received
         @processed_test_run = ProcessApiTestRun.new data, @user, @time_received, @cache
 
         # Mark test keys as used.
@@ -49,7 +49,7 @@ class ProcessApiPayload
 
   private
 
-  def build_cache data
+  def self.build_cache data, time_received
     Hash.new.tap do |cache|
 
       time = Benchmark.realtime do
@@ -61,8 +61,9 @@ class ProcessApiPayload
           cache[:project_versions] = build_project_versions_cache data, projects
 
           keys_by_project = data[:r].inject({}){ |memo,results| memo[results[:j]] = results[:t].collect{ |t| t[:k] }; memo }
-          cache[:keys] = TestKey.for_projects_and_keys(keys_by_project).includes([ :user, :project, { test_info: [ :tags, :tickets ] } ]).all
+          cache[:keys] = TestKey.for_projects_and_keys(keys_by_project).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).all
           cache[:tests] = cache[:keys].collect(&:test_info).compact
+          cache[:deprecations] = build_deprecations_cache cache[:tests], time_received
 
           custom_value_names = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:a].keys if test[:a].present? }; memo }
           cache[:custom_values] = TestValue.select('id, name, test_info_id').where(name: custom_value_names, test_info_id: cache[:tests].collect(&:id))
@@ -79,7 +80,12 @@ class ProcessApiPayload
     end
   end
 
-  def build_categories_cache data
+  def self.build_deprecations_cache tests, time_received
+    return [] if tests.empty?
+    TestDeprecation.select('id, test_info_id, created_at, deprecated').where('test_info_id IN (?) AND created_at >= ?', tests.collect{ |t| t.id }, time_received).all
+  end
+
+  def self.build_categories_cache data
     category_names = data[:r].inject([]){ |memo,results| memo.concat results[:t].collect{ |test| test[:c] } }.select(&:present?).uniq{ |name| name.downcase }
     Category.where('LOWER(name) IN (?)', category_names.collect(&:downcase)).all.tap do |categories|
       category_names.reject{ |name| categories.find{ |cat| cat.name.downcase == name.downcase } }.each do |name|
@@ -88,19 +94,19 @@ class ProcessApiPayload
     end
   end
 
-  def build_tags_cache data
+  def self.build_tags_cache data
     tags = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:g] if test[:g].present? }; memo }.select(&:present?).uniq{ |name| name.downcase }
     existing_tags = Tag.where('LOWER(name) IN (?)', tags.collect(&:downcase))
     tags.collect{ |name| existing_tags.find{ |tag| tag.name.downcase == name.downcase } || Tag.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
   end
 
-  def build_tickets_cache data
+  def self.build_tickets_cache data
     tickets = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:t] if test[:t].present? }; memo }.select(&:present?).uniq{ |name| name.downcase }
     existing_tickets = Ticket.where('LOWER(name) IN (?)', tickets.collect(&:downcase))
     tickets.collect{ |name| existing_tickets.find{ |ticket| ticket.name.downcase == name.downcase } || Ticket.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
   end
 
-  def build_project_versions_cache data, projects
+  def self.build_project_versions_cache data, projects
 
     versions_by_project = data[:r].inject({}){ |memo,results| memo[projects.find{ |p| p.api_id == results[:j] }.id] = results[:v]; memo }
 

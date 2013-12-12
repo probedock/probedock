@@ -30,6 +30,7 @@ class TestInfo < ActiveRecord::Base
   has_many :results, class_name: "TestResult"
   belongs_to :effective_result, class_name: "TestResult"
   has_many :custom_values, class_name: "TestValue"
+  has_many :deprecations, class_name: "TestDeprecation"
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
 
@@ -71,7 +72,7 @@ class TestInfo < ActiveRecord::Base
 
       field :deprecated_at, includes: :deprecation do
         order{ |q,d| q.joins(:deprecation).order("test_deprecations.created_at #{d}") }
-        value{ |o| o.deprecation.created_at }
+        value{ |o| o.deprecation.try :created_at }
       end
 
       field :author, includes: :author do
@@ -147,7 +148,7 @@ class TestInfo < ActiveRecord::Base
 
       h[:category] = category.name if category.present?
       h[:values] = custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo } if custom_values.any?
-      h[:deprecated_at] = deprecation.to_i * 1000 if deprecation
+      h[:deprecated_at] = deprecation.created_at.to_i * 1000 if deprecation
 
       if options[:type] == :test_run
         h[:author] = author_id

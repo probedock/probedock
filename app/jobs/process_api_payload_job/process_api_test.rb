@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class ProcessApiTest
   attr_reader :test, :test_result
 
@@ -40,7 +39,7 @@ class ProcessApiTest
       @test.project = key.project
     end
 
-    @test_result = build_result data, test, test_run, project_version
+    @test_result = build_result data, test, test_run, project_version, cache
 
     @test.name = data[:n].to_s if data[:n].present?
     @test.category = category if data.key?(:c)
@@ -73,7 +72,7 @@ class ProcessApiTest
     @test.quick_validation = false
   end
 
-  def build_result data, test, run, project_version
+  def build_result data, test, run, project_version, cache
 
     TestResult.new.tap do |result|
       result.runner = run.runner
@@ -85,9 +84,7 @@ class ProcessApiTest
       result.project_version =  project_version
       result.message = data[:m].to_s if data[:m].present?
       result.run_at = run.ended_at
-
-      # FIXME: do not mark result as deprecated if test was undeprecated while payload was waiting for processing
-      result.deprecated = test.deprecated?
+      result.deprecated = test_deprecated? test, cache
 
       if test.new_record?
         result.new_test = true
@@ -101,6 +98,10 @@ class ProcessApiTest
         result.previous_active = test.active
       end
     end
+  end
+
+  def test_deprecated? test, cache
+    !!([ test.deprecation ] + cache[:deprecations].select{ |d| d.test_info_id == test.id }).compact.sort{ |a,b| a.created_at <=> b.created_at }.last.try(:deprecated)
   end
 
   def tags data, cache

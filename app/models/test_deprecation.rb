@@ -22,6 +22,7 @@ class TestDeprecation < ActiveRecord::Base
 
   attr_accessible # none
 
+  validates :user, presence: true
   validates :test_info, presence: true
   validates :test_result, presence: true
   validates :deprecated, inclusion: { in: [ true, false ] }

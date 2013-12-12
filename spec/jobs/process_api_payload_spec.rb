@@ -156,6 +156,23 @@ describe ProcessApiPayload do
       expect(process_payload.cache[:tests]).to match_array(tests)
     end
 
+    it "should fetch all test deprecations since the time the payload was received", rox: { key: '130423f4afaf' } do
+
+      deprecations = []
+
+      test1 = create :test, key: test_keys[0]
+      deprecations << create(:deprecation, test_info: test1, created_at: 5.minutes.from_now)
+
+      test2 = create :test, key: test_keys[1], run_at: 3.days.ago, deprecated_at: 2.days.ago
+      create(:deprecation, deprecated: false, test_info: test2, created_at: 1.hour.ago)
+      deprecations << create(:deprecation, test_info: test2, created_at: 10.minutes.from_now)
+      deprecations << create(:deprecation, deprecated: false, test_info: test2, created_at: 12.minutes.from_now)
+
+      test3 = create :test, key: test_keys[2], run_at: 5.days.ago, deprecated_at: 4.days.ago
+
+      expect(process_payload.cache[:deprecations]).to match_array(deprecations)
+    end
+
     it "should fetch the test run by UID if it already exists", rox: { key: '814f932a3fc7' } do
       run = create :run_with_uid, runner: user
       test = create :test, key: create(:test_key, user: user, project: projects[0]), test_run: run
