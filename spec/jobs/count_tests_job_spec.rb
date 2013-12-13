@@ -386,7 +386,7 @@ describe CountTestsJob do
       expect_cached category: result.previous_category, user: result.test_info.author, written: -1
     end
 
-    it "should cache an existing deprecated test with a changed category", rox: { key: 'f3b474090323' } do
+    it "should cache an existing deprecated test with a changed category", rox: { key: 'df3e915a2ee5' } do
       result = process runner: runner, new_test: false, deprecated: true, previous_category: categories[0], category: categories[1]
       expect(cache).to have(7).items
       expect_cached run: 1
@@ -398,7 +398,7 @@ describe CountTestsJob do
       expect_cached user: result.runner, run: 1
     end
 
-    it "should cache an existing deprecated test with a changed category when it was nil before", rox: { key: 'fc7f9c943024' } do
+    it "should cache an existing deprecated test with a changed category when it was nil before", rox: { key: 'ac9edc9d7511' } do
       result = process runner: runner, new_test: false, deprecated: true, previous_category: nil, category: categories[0]
       expect(cache).to have(7).items
       expect(result.category).not_to be_nil
@@ -412,7 +412,7 @@ describe CountTestsJob do
       expect_cached user: result.runner, run: 1
     end
 
-    it "should cache an existing deprecated test with a changed category when it's nil now", rox: { key: '607fdb0f7b4b' } do
+    it "should cache an existing deprecated test with a changed category when it's nil now", rox: { key: 'fceda76d6d33' } do
       result = process runner: runner, new_test: false, deprecated: true, previous_category: categories[1], category: nil
       expect(cache).to have(7).items
       expect(result.category).to be_nil
