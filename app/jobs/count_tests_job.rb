@@ -55,7 +55,6 @@ class CountTestsJob
       end
     end
 
-    time_cache = {}
     cache.each_value{ |options| TestCounter.measure options }
 
     TestCounter.update_remaining_results -results.length
