@@ -63,7 +63,7 @@ end
 group :development, :test do
   gem 'thin'
   gem 'httparty'
-  gem 'rox-client-rspec', '~> 0.3.0'
+  gem 'rox-client-rspec', '~> 0.3.1'
   gem 'rspec-rails', '~> 2.14'
 end
 
