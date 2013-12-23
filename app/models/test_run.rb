@@ -26,8 +26,6 @@ class TestRun < ActiveRecord::Base
 
   scope :with_report_data, -> { includes([ :runner, { results: [ :project_version, { test_info: [ :project, :author, :category, :key, :tags, :tickets, :custom_values ] } ] } ]) }
 
-  attr_accessible # no mass assignment
-
   strip_attributes
   validates :uid, :length => { :minimum => 1, :maximum => 255 }, :if => Proc.new{ |tr| !tr.uid.nil? }
   validates :uid, :uniqueness => { case_sensitive: false }, :if => Proc.new{ |tr| tr.uid.present? }

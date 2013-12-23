@@ -18,8 +18,6 @@ class TestValue < ActiveRecord::Base
 
   belongs_to :test_info
 
-  attr_accessible # no mass assignment
-
   strip_attributes except: :contents
   validates :test_info, presence: true
   validates :name, presence: true, :uniqueness => { :scope => :test_info_id }, :length => { :maximum => 50 }

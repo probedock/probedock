@@ -24,8 +24,6 @@ class TestCounter < ActiveRecord::Base
   belongs_to :category
   belongs_to :project
 
-  attr_accessible # none
-
   validates :timezone, presence: true
   validates :timestamp, presence: true
   validates :mask, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

@@ -23,8 +23,6 @@ class TestKey < ActiveRecord::Base
   belongs_to :project
   has_one :test_info, foreign_key: :key_id
 
-  attr_accessible # none
-
   strip_attributes
   validates :user, presence: true
   validates :project, presence: true

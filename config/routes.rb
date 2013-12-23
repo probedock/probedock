@@ -18,11 +18,6 @@ require 'resque/server'
 
 ROXCenter::Application.routes.draw do
 
-  # auth
-  authenticated :user do
-    root :to => 'home#root'
-  end
-
   # resque frontend
   resque_constraint = lambda do |req|
     user = req.env['warden'].authenticate!
@@ -81,7 +76,7 @@ ROXCenter::Application.routes.draw do
     namespace 'doc', :module => nil do
 
       %w(overview clients changelog deploy).each do |e|
-        match e => "doc##{e}"
+        match e => "doc##{e}", via: :get
       end
 
       namespace 'api', module: nil do

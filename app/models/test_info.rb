@@ -34,8 +34,6 @@ class TestInfo < ActiveRecord::Base
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
 
-  attr_accessible # no mass assignment
-
   strip_attributes
   validates :key, presence: { unless: :quick_validation }
   validates :key_id, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }
@@ -121,7 +119,7 @@ class TestInfo < ActiveRecord::Base
     where 'deprecation_id IS NOT NULL'
   end
 
-  def self.find_by_key_value key
+  def self.find_by_key_value! key
     TestInfo.joins(:key).includes(:key).where(test_keys: { key: key })
   end
 

@@ -51,9 +51,6 @@ class User < ActiveRecord::Base
   has_many :test_counters, dependent: :restrict
   belongs_to :last_run, class_name: "TestRun"
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :name, :email, :password, :password_confirmation, :remember_me
-
   strip_attributes
   validates :name, presence: true, uniqueness: { case_sensitive: false }
 

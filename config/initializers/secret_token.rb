@@ -53,3 +53,4 @@
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
 ROXCenter::Application.config.secret_token = 'eb217b49cd8dd5188cead59b665bfe6aa6e39d7a64e6b41680dea8db0f1fe42714c61430c77435ee0945514ad89d2e540d6825c3152183041cdea7fbe350a6cc'
+#ROXCenter::Application.config.secret_key_base = '96606704579f6fb7ca8ea698475b18a2d2ebcfc38230ae72958ea4788d426f03937af66809a7ffa7137390ca526d625cafcad1c2e5f3161fe49edb1416275306'

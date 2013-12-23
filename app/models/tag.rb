@@ -22,8 +22,6 @@ class Tag < ActiveRecord::Base
 
   has_and_belongs_to_many :test_infos
 
-  attr_accessible # no mass assignment
-
   strip_attributes
   validates :name, presence: true, uniqueness: { case_sensitive: false, unless: :quick_validation }, length: { maximum: 50 }, format: { with: NAME_REGEXP }
 

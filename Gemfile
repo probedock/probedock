@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '4.0.2'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -26,12 +26,12 @@ gem 'mysql2'
 gem 'haml'
 gem 'foreigner'
 
-gem 'devise', '~> 2.2.0'
-gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_authenticatable.git'
+gem 'devise', '~> 3.2.2'
+gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_authenticatable.git', branch: 'group-lookup-config'
 gem 'cancan'
 gem 'role_model'
 gem 'rake-version'
-gem 'tableling-rails'
+gem 'tableling-rails', git: 'git@github.com:AlphaHydrae/tableling-rails.git', branch: 'rails4'
 gem 'select2-rails'
 
 gem 'redis'
@@ -49,6 +49,23 @@ gem 'oj'
 gem 'strip_attributes'
 
 gem 'paint'
+
+# Assets
+gem 'sass-rails'
+gem 'jquery-rails'
+gem 'anjlab-bootstrap-rails', '~> 2.3', :require => 'bootstrap-rails'
+gem 'compass-rails'
+gem 'backbone-on-rails'
+#gem 'marionette-rails' # currently provided by tableling-rails
+gem 'haml_coffee_assets'
+gem 'therubyracer'
+gem 'execjs'
+gem 'i18n-js'
+gem 'clah-rails'
+gem 'highcharts-rails', '~> 3.0.0'
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+# gem 'therubyracer', :platforms => :ruby
+gem 'uglifier', '>= 1.0.3'
 
 group :production do
   gem 'unicorn', '4.6.2'
@@ -69,7 +86,7 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'selenium-webdriver', '2.33.0'
+  #gem 'selenium-webdriver', '2.33.0'
   gem 'sqlite3'
   gem 'test-unit'
   gem 'factory_girl'
@@ -77,29 +94,6 @@ group :test do
   gem 'resque_spec'
   gem 'database_cleaner'
   gem 'webrat'
-end
-
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-
-  gem 'jquery-rails'
-  gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
-  gem 'compass-rails'
-  gem 'backbone-on-rails'
-  #gem 'marionette-rails' # currently provided by tableling-rails
-  gem 'haml_coffee_assets'
-  gem 'therubyracer'
-  gem 'execjs'
-  gem 'i18n-js'
-  gem 'clah-rails'
-  gem 'highcharts-rails', '~> 3.0.0'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
-
-  gem 'uglifier', '>= 1.0.3'
 end
 
 # To use ActiveModel has_secure_password

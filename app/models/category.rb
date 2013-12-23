@@ -20,8 +20,6 @@ class Category < ActiveRecord::Base
 
   has_many :test_infos
 
-  attr_accessible # none
-
   strip_attributes
   validates :name, presence: true, uniqueness: { case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }
 end

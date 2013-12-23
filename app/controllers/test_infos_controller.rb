@@ -19,7 +19,7 @@ class TestInfosController < ApplicationController
   include ActionView::Helpers::TextHelper
 
   before_filter :authenticate_user!
-  load_resource :find_by => :find_by_key_value
+  load_resource :find_by => :key_value
   skip_load_resource :only => [ :index, :page ]
 
   def index

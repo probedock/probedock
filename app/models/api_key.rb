@@ -28,8 +28,6 @@ class ApiKey < ActiveRecord::Base
   validates :user, presence: true
   validates :active, inclusion: { in: [ true, false ], name: :invalidValue }
 
-  attr_accessible :active
-
   def self.create_for_user user
     ApiKey.new.tap do |k|
       k.user = user

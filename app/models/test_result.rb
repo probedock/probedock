@@ -24,8 +24,6 @@ class TestResult < ActiveRecord::Base
   belongs_to :category
   belongs_to :previous_category, class_name: 'Category'
 
-  attr_accessible # no mass assignment
-
   strip_attributes
   validates :passed, inclusion: [ true, false ]
   validates :duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

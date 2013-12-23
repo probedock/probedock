@@ -19,8 +19,6 @@ class ProjectVersion < ActiveRecord::Base
 
   belongs_to :project
 
-  attr_accessible # none
-
   strip_attributes
   validates :name, presence: true, uniqueness: { scope: :project_id, case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }
   validates :project, presence: { unless: :quick_validation }

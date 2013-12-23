@@ -26,8 +26,6 @@ class Settings::App < ActiveRecord::Base
   validates :tag_cloud_size, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
   validates :test_outdated_days, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
 
-  attr_accessible :ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days
-
   def self.get
     first
   end

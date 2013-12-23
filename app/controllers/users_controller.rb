@@ -17,7 +17,7 @@
 
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  load_resource find_by: :find_by_name, only: [ :new, :show, :edit, :update, :destroy, :tests_page ]
+  load_resource find_by: :name, only: [ :new, :show, :edit, :update, :destroy, :tests_page ]
   authorize_resource only: [ :new, :create, :edit, :update, :destroy ]
 
   def index

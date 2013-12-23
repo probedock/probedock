@@ -22,8 +22,6 @@ class Link < ActiveRecord::Base
   validates :name, presence: true, length: { maximum: 50 }
   validates :url, presence: true, length: { maximum: 255 }
 
-  attr_accessible :name, :url
-
   def to_client_hash options = {}
     { id: id, name: name, url: url }
   end

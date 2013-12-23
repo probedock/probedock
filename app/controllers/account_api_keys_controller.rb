@@ -36,7 +36,7 @@ class AccountApiKeysController < Api::ApiController
   end
 
   def update
-    if @account_api_key.update_attributes params[:account_api_key].pick(:active)
+    if @account_api_key.update_attributes params.require(:account_api_key).permit(:active)
       render_api ApiKeyRepresenter.new(@account_api_key)
     else
       render_api_model_errors @account_api_key

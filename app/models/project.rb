@@ -25,8 +25,6 @@ class Project < ActiveRecord::Base
 
   has_many :tests, class_name: 'TestInfo'
 
-  attr_accessible :name, :url_token
-
   strip_attributes
   validates :name, presence: { name: :blankValue }, length: { maximum: 255, name: :valueTooLong }
   validates :url_token, presence: { name: :blankValue }, length: { maximum: 25, name: :valueTooLong }, format: { with: URL_TOKEN_REGEXP, name: :invalidValue, unless: Proc.new{ |p| p.url_token.blank? } }

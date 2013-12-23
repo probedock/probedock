@@ -20,8 +20,6 @@ class TestDeprecation < ActiveRecord::Base
   belongs_to :test_result
   belongs_to :user
 
-  attr_accessible # none
-
   validates :user, presence: true
   validates :test_info, presence: true
   validates :test_result, presence: true

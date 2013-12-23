@@ -17,7 +17,10 @@
 
 Warden::Manager.after_authentication do |user, auth, opts|
   if defined?(Devise::Strategies::LdapAuthenticatable) && auth.winning_strategy.kind_of?(Devise::Strategies::LdapAuthenticatable)
+
     user.cached_groups = user.ldap_groups
-    user.update_attribute :email, Devise::LdapAdapter.get_ldap_param(user.name, "mail")
+
+    email = Devise::LDAP::Adapter.get_ldap_param(user.name, "mail")
+    user.update_attribute :email, email.kind_of?(Array) ? email[0].to_s : email.to_s
   end
 end
