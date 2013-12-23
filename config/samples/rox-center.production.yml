@@ -1,5 +1,6 @@
 
 # Used by the API to construct URIs.
+protocol: https
 host: 'rox.example.com'
 # port: 443
 

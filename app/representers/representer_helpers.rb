@@ -19,6 +19,7 @@
 module RepresenterHelpers
 
   def uri name, options = {}
+    options[:protocol] = ROX_CONFIG['protocol'] || 'https'
     options[:host] = ROX_CONFIG['host']
     options[:port] = ROX_CONFIG['port'].to_i if ROX_CONFIG['port']
     Rails.application.routes.url_helpers.send "#{name}_url", { locale: I18n.default_locale }.merge(options)

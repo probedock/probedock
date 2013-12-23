@@ -1,5 +1,6 @@
 
 # Used by the API to construct URIs.
+protocol: http
 host: localhost
 port: 3000
 
