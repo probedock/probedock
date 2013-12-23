@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.0.0 - Edge
+## v2.0.0 - December 23, 2013
 
 * **NEW:** Projects must now be created in ROX Center before test results can be submitted
 
