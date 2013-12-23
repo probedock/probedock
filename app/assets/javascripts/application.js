@@ -52,8 +52,8 @@
 //= require_tree ../templates
 //= require tableling.backbone
 //= require ./lib/backbone-relational
-//= require ./init
 //= require ./meta
+//= require ./init
 //= require ./path
 //= require ./errors
 //= require_tree ./utils
