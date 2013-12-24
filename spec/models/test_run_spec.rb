@@ -49,7 +49,7 @@ describe TestRun, rox: { tags: :unit } do
 
   context "#ordered_results" do
 
-    it "should return the results ordered by project, category and test name", rox: { key: '792988d3cadc' } do
+    it "should return the results ordered by project, category and test name", rox: { key: 'bd3e379ee226' } do
 
       projects = [ create(:project, name: 'Project A'), create(:project, name: 'Project B') ]
       cat1, cat2 = create(:category, name: 'foo'), create(:category, name: 'bar')
