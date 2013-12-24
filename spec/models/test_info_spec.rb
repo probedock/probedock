@@ -42,11 +42,11 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context "#find_by_key_value" do
+  context "#find_by_key_value!" do
 
     it "should find a test by the value of its associated key", rox: { key: '2b14c1da77ba' } do
       test = create :test
-      TestInfo.find_by_key_value(test.key.key).first.should == test
+      TestInfo.find_by_key_value!(test.key.key).first.should == test
     end
   end
 
@@ -205,15 +205,6 @@ describe TestInfo, rox: { tags: :unit } do
 
       it "should not validate the uniqueness of key_id", rox: { key: 'cd41378e11ce' } do
         lambda{ create :test, key: test.key, quick_validation: true }.should raise_error(ActiveRecord::RecordNotUnique)
-      end
-    end
-  end
-
-  context "mass assignment" do
-
-    context "protected", rox: { key: 'e5fc61ed4d67', grouped: true } do
-      %w(name passing deprecation_id category_id author_id project_id key_id effective_result_id created_at updated_at last_run_at last_run_duration).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
       end
     end
   end

@@ -45,18 +45,7 @@ class TestRun < ActiveRecord::Base
   end
 
   def self.report id
-    report = TestRun.with_report_data.find id
-
-    nothing = 'z' * 256
-    report.results.sort! do |a,b|
-      [
-        a.test_info.project <=> b.test_info.project,
-        (a.test_info.category.try(:name) || nothing) <=> (b.test_info.category.try(:name) || nothing),
-        a.test_info.name <=> b.test_info.name
-      ].find{ |e| e != 0 } || 0
-    end
-
-    report
+    TestRun.with_report_data.find id
   end
 
   def self.rendered_report id
@@ -102,6 +91,17 @@ class TestRun < ActiveRecord::Base
         term = "%#{term.downcase}%"
         query.joins(:runner).where("LOWER(users.name) LIKE ? OR LOWER(#{TestRun.group_column_name}) LIKE ?", term, term)
       end
+    end
+  end
+
+  def ordered_results
+    nothing = 'z' * 256
+    results.sort! do |a,b|
+      [
+        a.test_info.project <=> b.test_info.project,
+        (a.test_info.category.try(:name) || nothing) <=> (b.test_info.category.try(:name) || nothing),
+        a.test_info.name <=> b.test_info.name
+      ].find{ |e| e != 0 } || 0
     end
   end
 

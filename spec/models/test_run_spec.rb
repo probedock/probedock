@@ -30,7 +30,7 @@ describe TestRun, rox: { tags: :unit } do
 
   context ".report" do
 
-    it "should return a test run with all details included and results in the correct order", rox: { key: '2d3b27d9838c' } do
+    it "should return a test run with all details eager loaded", rox: { key: '2d3b27d9838c' } do
 
       projects = [ create(:project, name: 'Project A'), create(:project, name: 'Project B') ]
       cat1, cat2 = create(:category, name: 'foo'), create(:category, name: 'bar')
@@ -44,7 +44,23 @@ describe TestRun, rox: { tags: :unit } do
       report = TestRun.report run.id
       report.should == run
       report.should_not query_the_database.when_calling(:results)
-      report.results.collect(&:test_info).should == [ tests[3], tests[1], tests[0], tests[4], tests[2] ]
+    end
+  end
+
+  context "#ordered_results" do
+
+    it "should return the results ordered by project, category and test name", rox: { key: '792988d3cadc' } do
+
+      projects = [ create(:project, name: 'Project A'), create(:project, name: 'Project B') ]
+      cat1, cat2 = create(:category, name: 'foo'), create(:category, name: 'bar')
+      categories = [ cat1, cat1, nil, cat2, nil ]
+      names = [ 'Test', 'Test', 'Test B', 'Test', 'Test A' ]
+
+      keys = Array.new(5){ |i| create :key, user: user, project: projects[(i % 2 - 1).abs] }
+      run = create :run, runner: user
+      tests = Array.new(keys.length){ |i| create :test, key: keys[i], name: names.shift, category: categories.shift, test_run: run }
+
+      run.ordered_results.collect(&:test_info).should == [ tests[3], tests[1], tests[0], tests[4], tests[2] ]
     end
   end
 
@@ -146,15 +162,6 @@ describe TestRun, rox: { tags: :unit } do
       end
 
       it(nil, rox: { key: '13ee1c75b781' }){ should validate_uniqueness_of(:uid).case_insensitive }
-    end
-  end
-
-  context "mass assignment" do
-
-    context "protected", rox: { key: '139eca7d45f8', grouped: true } do
-      %w(uid group ended_at duration runner_id created_at updated_at).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
     end
   end
 

@@ -1,4 +1,5 @@
-- index = report_index
+- ordered_results = @test_run.ordered_results
+- index = report_index ordered_results
 .testRunReport{ data: { module: :testRunReport, config: { index: index }.to_json } }
   %h1= t('.title')
   .row
@@ -26,8 +27,8 @@
                 %span.badge.badge-info= @test_run.results_count
               %td.duration= human_duration @test_run.duration, format: :short
           %tbody
-            - @test_run.results.collect{ |r| r.test_info.project }.uniq.each do |project|
-              - results = @test_run.results.select{ |r| r.test_info.project == project }
+            - ordered_results.collect{ |r| r.test_info.project }.uniq.each do |project|
+              - results = ordered_results.select{ |r| r.test_info.project == project }
               %tr
                 %td.project= link_to project.name, "#project-#{project.name}"
                 %td.passed
@@ -81,8 +82,8 @@
   .visualReport
     %h2= I18n.t('test_runs.report.resultsByProject')
     - i = 0
-    - @test_run.results.collect{ |r| r.test_info.project }.uniq.each do |project|
-      - project_results = @test_run.results.select{ |r| r.test_info.project == project }
+    - ordered_results.collect{ |r| r.test_info.project }.uniq.each do |project|
+      - project_results = ordered_results.select{ |r| r.test_info.project == project }
       .projectVisualReport.clearfix{ id: "project-#{project.name}" }
         %hr
         %h3
@@ -102,7 +103,7 @@
     %h2= I18n.t('test_runs.report.details')
     %button.showAll.btn{ :type => 'button' }= I18n.t('test_runs.report.showAll')
     .container.onlyFailed
-      - @test_run.results.each_with_index do |result,i|
+      - ordered_results.each_with_index do |result,i|
         .well{ id: "r#{i.to_s(36)}", class: result_details_class(result, index[:tags]) }
           = result_details_indicator result
           %h3= link_to result.test_info.name, test_info_path(result.test_info)
