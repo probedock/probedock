@@ -44,11 +44,11 @@ class User < ActiveRecord::Base
 
   has_many :api_keys, dependent: :destroy
   has_many :test_keys, dependent: :destroy
-  has_many :free_test_keys, class_name: "TestKey", conditions: { free: true }
-  has_many :test_infos, foreign_key: :author_id, dependent: :restrict
-  has_many :runs, class_name: "TestRun", foreign_key: :runner_id, dependent: :restrict
-  has_many :test_results, foreign_key: :runner_id, dependent: :restrict
-  has_many :test_counters, dependent: :restrict
+  has_many :free_test_keys, -> { where free: true }, class_name: "TestKey"
+  has_many :test_infos, foreign_key: :author_id, dependent: :restrict_with_exception
+  has_many :runs, class_name: "TestRun", foreign_key: :runner_id, dependent: :restrict_with_exception
+  has_many :test_results, foreign_key: :runner_id, dependent: :restrict_with_exception
+  has_many :test_counters, dependent: :restrict_with_exception
   belongs_to :last_run, class_name: "TestRun"
 
   strip_attributes
