@@ -15,15 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 
-class Object
-
-  def self.attr_question *names
-    names.each do |name|
-      define_method("#{name}?"){ instance_variable_get("@#{name}") }
-    end
-  end
-end
-
 class Array
 
   def deep_stringify_keys!
