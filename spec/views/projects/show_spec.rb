@@ -20,18 +20,21 @@ describe 'projects/show', rox: { tags: :unit } do
 
   let(:project){ create :project }
   subject{ render; rendered }
+  let(:page) { Capybara::Node::Simple.new(subject) }
 
   before :each do
     assign :project, project
   end
 
   it "should not inject the projectEditor module for a non-admin user", rox: { key: '327704aec0ac' } do
-    expect(subject).not_to have_selector('div', :'data-module' => 'projectEditor')
+    expect(subject).not_to have_selector('div[data-module="projectEditor"]')
   end
 
   it "should inject the testsTable module", rox: { key: '5e5708265080' } do
     assign :test_search_config, test_search_config = { test: 'search config' }
-    subject.should have_selector('div', :'data-module' => 'testsTable', :'data-config' => { path: tests_page_legacy_api_project_path(project), search: test_search_config }.to_json)
+    sel = 'div[data-module="testsTable"]'
+    expect(subject).to have_selector(sel)
+    expect(find(sel)['data-config']).to eq({ path: tests_page_legacy_api_project_path(project), search: test_search_config }.to_json)
   end
 
   context "with a user who can manage projects" do
@@ -39,7 +42,9 @@ describe 'projects/show', rox: { tags: :unit } do
 
     it "should inject the projectEditor module", rox: { key: '68f6e5519c49' } do
       assign :project_editor_config, project_editor_config = { project: 'editor config' }
-      expect(subject).to have_selector('div', :'data-module' => 'projectEditor', :'data-config' => project_editor_config.to_json)
+      sel = 'div[data-module="projectEditor"]'
+      expect(subject).to have_selector(sel)
+      expect(find(sel)['data-config']).to eq(project_editor_config.to_json)
     end
   end
 end

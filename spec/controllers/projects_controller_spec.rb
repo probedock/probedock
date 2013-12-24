@@ -23,7 +23,7 @@ describe ProjectsController, rox: { tags: :unit } do
   subject{ assigns }
 
   context "#index" do
-    before(:each){ get :index }
+    before(:each){ get :index, locale: I18n.default_locale }
 
     it "should set the window title", rox: { key: '23fcc4f89597' } do
       expect(subject[:window_title]).to eq([ t('.common.title'), Project.model_name.human.pluralize.titleize ])
@@ -32,18 +32,18 @@ describe ProjectsController, rox: { tags: :unit } do
 
   context "#show" do
     let(:project){ create :project }
-    before(:each){ get :show, id: project.url_token }
+    before(:each){ get :show, id: project.url_token, locale: I18n.default_locale }
 
     it "should set the window title", rox: { key: '3443f67737f5' } do
       expect(subject[:window_title]).to eq([ t('.common.title'), Project.model_name.human.pluralize.titleize, project.name ])
     end
 
     it "should set the project editor configuration", rox: { key: '89328cd513be' } do
-      expect(subject[:project_editor_config]).to eq({ 'model' => ProjectRepresenter.new(project).serializable_hash })
+      expect(subject[:project_editor_config]).to eq({ model: ProjectRepresenter.new(project).serializable_hash })
     end
 
     it "should set the test search configuration", rox: { key: 'd068433ab1b7' } do
-      expect(subject[:test_search_config]).to eq(HashWithIndifferentAccess.new(TestSearch.config({}, except: [ :projects, :current ])))
+      expect(subject[:test_search_config]).to eq(TestSearch.config({}, except: [ :projects, :current ]))
     end
   end
 end

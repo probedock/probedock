@@ -56,6 +56,7 @@ RSpec.configure do |config|
   config.include DatabaseMatchers
   config.include SpecApiHelper
   config.include SpecHelpers
+  config.include Capybara::DSL
   config.extend SpecOverrides
 
   config.include CanCanHelpers
@@ -77,6 +78,7 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
+  # Run feature specs with `rake spec:features SPEC_OPTS='--tag type:feature'`.
   unless config.try(:inclusion_filter).try(:[], :type) == 'feature'
 
     config.filter_run_excluding type: :feature
@@ -97,14 +99,15 @@ RSpec.configure do |config|
       puts
       port = config.test_server_port
       wait = config.test_server_wait
-      puts Paint["Starting test server...", :magenta]
+      start_command = "bundle exec thin start -e test -p #{port} -d"
+      puts Paint["Starting test server with `#{start_command}`...", :magenta]
       ENV['ROX_CENTER_CONFIG'] = 'rox.test.yml'
-      raise 'Could not start test server' unless system "bundle exec thin start -e test -p #{port} -d"
+      raise 'Could not start test server' unless system start_command
 
       ping = nil
       ping_url = "http://localhost:#{config.test_server_port}/ping"
       expected_version = "ROX Center v#{ROXCenter::Application::VERSION} test"
-      puts Paint["Waiting #{wait} seconds for test server to start...", :magenta]
+      puts Paint["Waiting #{wait} seconds for test server to start (no response from #{ping_url})...", :magenta]
       wait.times do |i|
 
         sleep 1
@@ -145,7 +148,8 @@ RSpec.configure do |config|
     config.after :suite do
       puts
       puts Paint["Stopping test server...", :magenta]
-      if system "bundle exec thin stop -e test"
+      port = config.test_server_port
+      if system "bundle exec thin stop -e test -p #{port}"
         puts Paint["Successfully stopped test server.", :cyan, :bold]
       else
         puts Paint["Could not stop test server.", :red, :bold]

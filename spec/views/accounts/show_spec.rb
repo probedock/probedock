@@ -21,6 +21,7 @@ describe 'accounts/show', rox: { tags: :unit } do
   let(:user){ create :user }
   before(:each){ view.stub(:current_user){ user } }
   subject{ render; rendered }
+  let(:page) { Capybara::Node::Simple.new(subject) }
 
   it "should show user information", rox: { key: '03821f9cbb97' } do
     subject.should include(user.name)
@@ -30,17 +31,23 @@ describe 'accounts/show', rox: { tags: :unit } do
   it "should inject the keyGenerator module", rox: { key: '58f4d5b208ea' } do
     config = { foo: 'bar' }
     assign(:key_generator_config, config)
-    subject.should have_selector('div', :'data-module' => 'keyGenerator', :'data-config' => config.to_json)
+    sel = 'div[data-module="keyGenerator"]'
+    expect(subject).to have_selector(sel)
+    expect(find(sel)['data-config']).to eq(config.to_json)
   end
 
   it "should inject the apiKeysTable module", rox: { key: '452d45ce102d' } do
-    subject.should have_selector('div', :'data-module' => 'apiKeysTable', :'data-config' => { path: api_keys_path }.to_json)
+    sel = 'div[data-module="apiKeysTable"]'
+    expect(subject).to have_selector(sel)
+    expect(find(sel)['data-config']).to eq({ path: api_keys_path }.to_json)
   end
 
   it "should inject the testsTable module", rox: { key: 'b596c3856bdf' } do
     test_search_config = { foo: 'bar' }
     assign(:test_search_config, test_search_config)
-    subject.should have_selector('div', :'data-module' => 'testsTable', :'data-config' => { path: tests_legacy_api_account_path, search: test_search_config }.to_json)
+    sel = 'div[data-module="testsTable"]'
+    expect(subject).to have_selector(sel)
+    expect(find(sel)['data-config']).to eq({ path: tests_legacy_api_account_path, search: test_search_config }.to_json)
   end
 
   context 'with unknown users' do

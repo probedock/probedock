@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe ProcessApiPayload do
+describe ProcessApiPayloadJob::ProcessApiPayload do
 
   let(:user){ create :user }
   let(:time_received){ Time.now }
@@ -86,12 +86,12 @@ describe ProcessApiPayload do
   end
 
   before :each do
-    ProcessApiTestRun.stub(:new){ |*args| processed_test_run }
+    ProcessApiPayloadJob::ProcessApiTestRun.stub(:new){ |*args| processed_test_run }
     ROXCenter::Application.events.stub :fire
   end
 
   it "should process the test run in the payload", rox: { key: 'f27fdc182dad' } do
-    ProcessApiTestRun.should_receive(:new).exactly(1).times.with(HashWithIndifferentAccess.new(sample_payload), user, time_received, kind_of(Hash))
+    ProcessApiPayloadJob::ProcessApiTestRun.should_receive(:new).exactly(1).times.with(HashWithIndifferentAccess.new(sample_payload), user, time_received, kind_of(Hash))
     expect(process_payload.processed_test_run).to eq(processed_test_run)
   end
 
@@ -116,7 +116,7 @@ describe ProcessApiPayload do
   end
 
   it "should trigger an api:payload event on the application", rox: { key: '9fc739a396b9' } do
-    ROXCenter::Application.events.should_receive(:fire).with 'api:payload', kind_of(ProcessApiPayload)
+    ROXCenter::Application.events.should_receive(:fire).with 'api:payload', kind_of(ProcessApiPayloadJob::ProcessApiPayload)
     process_payload
   end
 
@@ -237,6 +237,6 @@ describe ProcessApiPayload do
   private
 
   def process_payload data = sample_payload, user_id = user.id, time_received = time_received_string
-    ProcessApiPayload.new data, user_id, time_received
+    ProcessApiPayloadJob::ProcessApiPayload.new data, user_id, time_received
   end
 end

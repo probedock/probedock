@@ -17,7 +17,6 @@
 require 'spec_helper'
 
 describe AccountsController, rox: { tags: :unit } do
-
   let(:user){ create :user }
   let(:users){ [ user, create(:other_user), create(:another_user) ]}
   let!(:projects){ Array.new(2){ create :project } }
@@ -26,7 +25,7 @@ describe AccountsController, rox: { tags: :unit } do
 
   context "#show" do
 
-    before(:each){ get :show }
+    before(:each){ get :show, locale: I18n.default_locale }
     subject{ assigns }
 
     it "should set the window title", rox: { key: 'befd7e3ed5de' } do
@@ -34,7 +33,7 @@ describe AccountsController, rox: { tags: :unit } do
     end
 
     it "should set the test search configuration", rox: { key: 'ee865032290f' } do
-      expect(subject[:test_search_config]).to eq(HashWithIndifferentAccess.new(TestSearch.config({}, except: [ :authors, :current ])))
+      expect(subject[:test_search_config]).to eq(TestSearch.config({}, except: [ :authors, :current ]))
     end
 
     context "@key_generator_config" do

@@ -89,14 +89,12 @@ end
 
 group :test do
   gem 'capybara'
-  #gem 'selenium-webdriver', '2.33.0'
+  gem 'selenium-webdriver', '2.39.0'
   gem 'sqlite3'
-  gem 'test-unit'
   gem 'factory_girl'
   gem 'shoulda'
   gem 'resque_spec'
   gem 'database_cleaner'
-  gem 'webrat'
 end
 
 # To use ActiveModel has_secure_password

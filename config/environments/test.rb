@@ -49,4 +49,7 @@ ROXCenter::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  # Required to compile i18n-js translations.
+  config.assets.initialize_on_precompile = true
 end

@@ -43,5 +43,6 @@ ROXCenter::Application.configure do
   # number of complex assets.
   config.assets.debug = true
 
+  # Required to compile i18n-js translations.
   config.assets.initialize_on_precompile = true
 end

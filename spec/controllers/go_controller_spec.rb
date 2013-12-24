@@ -25,17 +25,17 @@ describe GoController, rox: { tags: :unit } do
     let(:project){ create :project }
 
     it "should redirect to the project with the given api id", rox: { key: 'd3484e0ab4f6' } do
-      get :project, apiId: project.api_id
+      get :project, apiId: project.api_id, locale: I18n.default_locale
       expect(subject).to redirect_to(project)
     end
 
     it "should redirect to the projects index for unknown projects", rox: { key: '31f93b345ec1' } do
-      get :project, apiId: 'foo'
+      get :project, apiId: 'foo', locale: I18n.default_locale
       expect(subject).to redirect_to(projects_path)
     end
 
     it "should redirect to the projects index with no arguments", rox: { key: 'd0465e806685' } do
-      get :project
+      get :project, locale: I18n.default_locale
       expect(subject).to redirect_to(projects_path)
     end
   end
@@ -54,37 +54,37 @@ describe GoController, rox: { tags: :unit } do
     end
     
     it "should redirect to the test run with the given uid", rox: { key: 'ba7287b32b4a' } do
-      get :run, uid: runs.first.uid
+      get :run, uid: runs.first.uid, locale: I18n.default_locale
       expect(subject).to redirect_to(runs.first)
     end
 
     it "should redirect to the latest run", rox: { key: '3ba7b50d5f99' } do
-      get :run, latest: ''
+      get :run, latest: '', locale: I18n.default_locale
       expect(subject).to redirect_to(runs.last)
     end
 
     it "should redirect to the latest run in the given group", rox: { key: 'f993cebf7b2f' } do
-      get :run, latest: 'nightly'
+      get :run, latest: 'nightly', locale: I18n.default_locale
       expect(subject).to redirect_to(runs[7])
     end
 
     it "should redirect to the earliest run", rox: { key: 'f21ec8a028a6' } do
-      get :run, earliest: ''
+      get :run, earliest: '', locale: I18n.default_locale
       expect(subject).to redirect_to(runs.first)
     end
 
     it "should redirect to the earliest run in the given group", rox: { key: 'a55d1d023092' } do
-      get :run, earliest: 'daily'
+      get :run, earliest: 'daily', locale: I18n.default_locale
       expect(subject).to redirect_to(runs[2])
     end
 
     it "should redirect to the test runs index for unknown uids", rox: { key: '844a80c87796' } do
-      get :run, uid: 'foo'
+      get :run, uid: 'foo', locale: I18n.default_locale
       expect(subject).to redirect_to(test_runs_path)
     end
 
     it "should redirect to the test runs index with no arguments", rox: { key: '5ecf7a6d493b' } do
-      get :run
+      get :run, locale: I18n.default_locale
       expect(subject).to redirect_to(test_runs_path)
     end
   end
