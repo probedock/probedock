@@ -3,7 +3,7 @@ source $HOME/.screenrc
 screen -t server 0
 stuff "rails server\012"
 screen -t task 1
-stuff "VERBOSE=1 INTERVAL=2 QUEUE=* rake resque:work\012"
+stuff "bundle exec guard start -P Resque\012"
 screen -t redis 2
 stuff "redis-cli\012"
 screen -t db 3

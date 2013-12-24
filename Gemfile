@@ -82,6 +82,9 @@ group :development, :test do
   gem 'httparty'
   gem 'rox-client-rspec', '~> 0.3.1'
   gem 'rspec-rails', '~> 2.14'
+
+  gem 'guard'
+  gem 'guard-resque'
 end
 
 group :test do
