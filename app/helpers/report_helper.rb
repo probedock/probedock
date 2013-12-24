@@ -17,9 +17,9 @@
 
 module ReportHelper
 
-  def report_index
+  def report_index results
     {
-      tags: @test_run.results.collect{ |r| r.test_info.tags }.flatten.uniq.sort{ |a,b| a.name.downcase <=> b.name.downcase }.collect{ |t| t.name }
+      tags: results.collect{ |r| r.test_info.tags }.flatten.uniq.sort{ |a,b| a.name.downcase <=> b.name.downcase }.collect{ |t| t.name }
     }
   end
 

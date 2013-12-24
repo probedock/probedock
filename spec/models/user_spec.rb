@@ -133,26 +133,6 @@ describe User, rox: { tags: :unit } do
     end
   end
 
-  context "mass assignment" do
-
-    context "accessible", rox: { key: 'b45955d07d94', grouped: true } do
-      [ :name, :email, :password, :password_confirmation, :remember_me ].each do |attr|
-        it{ should allow_mass_assignment_of(attr) }
-      end
-    end
-
-    context "protected", rox: { key: 'a97ffa8a41f2', grouped: true } do
-      [
-        :encrypted_password, :reset_password_token, :reset_password_sent_at,
-        :remember_created_at, :sign_in_count, :current_sign_in_at, :last_sign_in_at,
-        :current_sign_in_ip, :last_sign_in_ip, :created_at, :updated_at, :roles_mask,
-        :remember_token, :authentication_token, :metric_key, :active
-      ].each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: '28a9398ebe26' }){ should have_many(:test_keys) }
     it(nil, rox: { key: 'bc98127d768c' }){ should have_many(:free_test_keys).class_name('TestKey') }

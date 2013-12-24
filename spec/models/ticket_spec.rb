@@ -46,15 +46,6 @@ describe Ticket, rox: { tags: :unit } do
     end
   end
 
-  context "mass assignment" do
-
-    context "protected", rox: { key: 'ea78f7979176', grouped: true } do
-      [ :name, :created_at, :updated_at ].each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: '59b817b426d6' }){ should have_and_belong_to_many(:test_infos) }
   end

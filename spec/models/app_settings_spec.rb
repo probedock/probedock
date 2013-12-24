@@ -73,21 +73,6 @@ describe Settings::App, rox: { tags: :unit } do
     it(nil, rox: { key: '87cce3001f23' }){ should ensure_length_of(:ticketing_system_url).is_at_most(255) }
   end
 
-  context "mass assignment" do
-
-    context "accessible", rox: { key: 'a1c1397e407c', grouped: true } do
-      [ :ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days ].each do |attr|
-        it{ should allow_mass_assignment_of(attr) }
-      end
-    end
-
-    context "protected", rox: { key: '10be29e7bda2', grouped: true } do
-      [ :updated_at ].each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "database table" do
 
     it "should be stored in the app_settings table", rox: { key: '1c136c35641e' } do

@@ -18,7 +18,7 @@
 class LinksController < ApplicationController
   before_filter :authenticate_user!
   before_filter{ authorize! :manage, :settings }
-  load_resource
+  load_resource only: [ :update, :destroy ]
 
   def create
     create_and_render_record Link
@@ -30,5 +30,15 @@ class LinksController < ApplicationController
 
   def destroy
     destroy_and_render_record @link
+  end
+
+  private
+
+  def link_params
+    params[:link].permit(:name, :url)
+  end
+
+  def record_params_for_save *args
+    super(*args).permit(:name, :url)
   end
 end

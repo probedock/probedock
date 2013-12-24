@@ -83,15 +83,6 @@ describe TestResult, rox: { tags: :unit } do
     it(nil, rox: { key: 'ead8d81ff4aa' }){ should belong_to(:previous_category).class_name('Category') }
   end
 
-  context "mass assignment" do
-
-    context "protected", rox: { key: 'b6a79a7c6f3d', grouped: true } do
-      %w(passed duration message new_test previous_passed previous_active runner_id test_info_id test_run_id project_version_id category_id previous_category_id).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "database table" do
     it(nil, rox: { key: '8deb8afbca16' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '099c43427c69' }){ should have_db_column(:passed).of_type(:boolean).with_options(null: false) }

@@ -33,7 +33,7 @@ class RecordsController < ApplicationController
   def update
     record_callback :on_update
     record_callback :on_save
-    if get_record_instance.errors.empty? and get_record_instance.update_attributes(get_params_for_update)
+    if get_record_instance.errors.empty? and get_record_instance.update_attributes(record_params_for_update)
       render_record
     else
       render_record_errors
@@ -70,11 +70,19 @@ class RecordsController < ApplicationController
   end
 
   def set_record_instance_for_create params
-    set_record_instance record_model.new(params[singular_model_name.to_sym])
+    set_record_instance record_model.new(record_params_for_create)
   end
 
-  def get_params_for_update
-    params[record_model.name.underscore]
+  def record_params_for_create
+    record_params_for_save
+  end
+
+  def record_params_for_update
+    record_params_for_save
+  end
+
+  def record_params_for_save
+    params.require[singular_model_name.to_sym]
   end
 
   def record_callback name

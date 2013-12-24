@@ -327,15 +327,6 @@ describe TestCounter do
     end
   end
 
-  context "mass assignment" do
-
-    context "protected", rox: { key: '7e5539072728', grouped: true } do
-      %w(timezone timestamp mask unique_token user_id category_id project_id written_counter run_counter total_written total_run).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: '513f054b5416' }){ should belong_to(:user) }
     it(nil, rox: { key: '6930f305d838' }){ should belong_to(:category) }

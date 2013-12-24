@@ -44,7 +44,7 @@ ROXCenter::Application.routes.draw do
 
     match '/' => 'home#index', via: :get, as: :home
 
-    devise_for :users, :path_names => { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }
+    devise_for :users, path_names: { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }
     match 'status' => 'home#status', :via => :get
 
     namespace :go, module: nil, controller: :go do

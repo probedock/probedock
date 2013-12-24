@@ -44,15 +44,6 @@ describe Category do
     end
   end
 
-  context "mass assignment" do
-    
-    context "protected", rox: { key: '33c5d491b8b1', grouped: true } do
-      %w(name metric_key created_at).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: '5a536979f346' }){ should have_many(:test_infos) }
   end

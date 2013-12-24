@@ -90,21 +90,6 @@ describe ApiKey do
     it(nil, rox: { key: '9b4b6b39644a' }){ should allow_value(true, false).for(:active) }
   end
 
-  context "mass assignment" do
-
-    context "accessible", rox: { key: '5b638e488115', grouped: true } do
-      %w(active).each do |attr|
-        it{ should allow_mass_assignment_of(attr) }
-      end
-    end
-
-    context "protected", rox: { key: '0094d7831f1c', grouped: true } do
-      %w(identifier shared_secret user_id usage_count last_used_at created_at updated_at).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: '111fce4a297c' }){ should belong_to(:user) }
   end

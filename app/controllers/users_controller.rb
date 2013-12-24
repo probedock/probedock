@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class UsersController < ApplicationController
   before_filter :authenticate_user!
   load_resource find_by: :name, only: [ :new, :show, :edit, :update, :destroy, :tests_page ]
@@ -26,9 +25,8 @@ class UsersController < ApplicationController
 
   def create
 
-    active = params[:user].try :delete, :active
-    @user = User.new params[:user]
-    @user.active = active
+    @user = User.new user_params
+    @user.active = !!params[:user].try(:delete, :active)
 
     if @user.save
       redirect_to @user
@@ -49,9 +47,15 @@ class UsersController < ApplicationController
   
   def update
 
-    @user.update_attribute :active, !!params[:user].delete(:active).to_s.match(/\A(1|yes|t|true)\Z/i) if params[:user].try :key?, :active
+    p = user_params
+    @user.update_attribute :active, !!p.delete(:active).to_s.match(/\A(1|yes|t|true)\Z/i) if p.try :key?, :active
 
-    if @user.update_attributes params[:user]
+    if p[:password].blank?
+      p.delete :password
+    end
+
+    if @user.update_attributes p
+      return render json: @user.to_client_hash if request.xhr?
       flash[:success] = t('users.edit.updateNotice', user: @user.name)
       redirect_to @user
     else
@@ -78,5 +82,11 @@ class UsersController < ApplicationController
     options[:base] = options[:base].where(author_id: @user)
     options[:base_count] = options[:base_count].where(author_id: @user)
     render json: TestInfo.tableling.process(params.merge(options))
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:name, :email, :active, :password, :password_confirmation, :remember_me)
   end
 end

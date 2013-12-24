@@ -65,15 +65,6 @@ describe TestKey, rox: { tags: :unit } do
     it(nil, rox: { key: '827ddace60ac' }){ should validate_presence_of(:user) }
     it(nil, rox: { key: '2203deb2d4a7' }){ should validate_presence_of(:project) }
   end
-
-  context "mass assignment" do
-
-    context "protected", rox: { key: 'bcd3cd2b4f88', grouped: true } do
-      %w(key free user_id project_id created_at updated_at).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
   
   context "associations" do
     it(nil, rox: { key: '426fc1e0e854' }){ should belong_to(:user) }

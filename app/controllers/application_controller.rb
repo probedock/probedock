@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
   helper_method :window_title, :cached_links
   before_filter :set_locale
   before_filter :load_links
+  before_filter :configure_devise_permitted_parameters, if: :devise_controller?
 
   rescue_from ROXCenter::Errors::XHRRequired do |exception|
     render :text => exception.message, :status => 400
@@ -35,6 +36,10 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+
+  def configure_devise_permitted_parameters
+    devise_parameter_sanitizer.for(:sign_up) << :email
+  end
 
   # Redirects to login after logout to avoid authentication error.
   def after_sign_out_path_for(resource_or_scope)
@@ -77,7 +82,7 @@ class ApplicationController < ActionController::Base
   end
 
   def create_and_render_record model, *args
-    record = model.new params[model.name.underscore]
+    record = model.new record_params_for_create(model)
     if record.save
       render_record record, *args
     else
@@ -86,7 +91,7 @@ class ApplicationController < ActionController::Base
   end
 
   def update_and_render_record record, *args
-    if record.update_attributes params[record.class.name.underscore]
+    if record.update_attributes record_params_for_update(record.class)
       render_record record, *args
     else
       render_record_errors record, *args
@@ -107,5 +112,24 @@ class ApplicationController < ActionController::Base
 
   def render_record_errors record, *args
     render args.extract_options!.merge(json: record.errors.to_hash, status: 400)
+  end
+
+  def record_params_for_create model
+    record_params_for_save model
+  end
+
+  def record_params_for_update model
+    record_params_for_save model
+  end
+
+  def record_params_for_save model
+    params.require(model.name.underscore.to_sym)
+  end
+
+  # FIXME: remove this cancan fix for Rails 4 strong parameters once cancan has implemented it
+  before_filter do
+    resource = controller_name.singularize.to_sym
+    method = "#{resource}_params"
+    params[resource] &&= send(method) if respond_to?(method, true)
   end
 end

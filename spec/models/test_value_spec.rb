@@ -31,15 +31,6 @@ describe TestValue, rox: { tags: :unit } do
     end
   end
 
-  context "mass assignment" do
-
-    context "protected", rox: { key: 'd820e8b0ac1e', grouped: true } do
-      %w(name contents test_info_id).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: 'd43992d77922' }){ should belong_to(:test_info) }
   end

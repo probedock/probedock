@@ -40,15 +40,6 @@ describe ProjectVersion do
     end
   end
 
-  context "mass assignment" do
-
-    context "protected", rox: { key: 'cf3c9bb940bc', grouped: true } do
-      %w(name project_id created_at).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: 'f6581e00e16f' }){ should belong_to(:project) }
   end

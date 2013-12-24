@@ -41,21 +41,6 @@ describe Link, rox: { tags: :unit } do
     it(nil, rox: { key: '7153360f0256' }){ should ensure_length_of(:url).is_at_most(255) }
   end
 
-  context "mass assignment" do
-
-    context "accessible", rox: { key: '941b6faed7bc', grouped: true } do
-      [ :name, :url ].each do |attr|
-        it{ should allow_mass_assignment_of(attr) }
-      end
-    end
-
-    context "protected", rox: { key: 'ecfab70b4961', grouped: true } do
-      [ :created_at, :updated_at ].each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "database table" do
     it(nil, rox: { key: '8035316e51a8' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '7c45c2e176cb' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }

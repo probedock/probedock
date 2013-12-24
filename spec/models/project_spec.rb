@@ -52,21 +52,6 @@ describe Project do
     it("should not allow invalid characters for url_token", rox: { key: 'd48aa04da782' }){ should_not allow_value('%', '   ', '$$').for(:url_token) }
   end
 
-  context "mass assignment" do
-
-    context "accessible", rox: { key: '113e3ed34a4c', grouped: true } do
-      %w(name url_token).each do |attr|
-        it{ should allow_mass_assignment_of(attr) }
-      end
-    end
-
-    context "protected", rox: { key: '776435e98344', grouped: true } do
-      %w(api_id active_tests_count deprecated_tests_count metric_key created_at updated_at).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: '7a1d3aff362b' }){ should have_many(:tests).class_name('TestInfo') }
   end

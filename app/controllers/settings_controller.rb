@@ -34,7 +34,13 @@ class SettingsController < ApplicationController
 
   def update
     settings = Settings::App.get
-    settings.update_attributes params[:setting]
+    settings.update_attributes setting_params
     render :json => settings
+  end
+
+  private
+
+  def setting_params
+    params.require(:setting).permit(:ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days)
   end
 end

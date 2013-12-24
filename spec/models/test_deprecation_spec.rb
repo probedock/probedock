@@ -26,15 +26,6 @@ describe TestDeprecation, rox: { tags: :unit } do
     it(nil, rox: { key: '7a141b56c2fe' }){ should_not allow_value(nil, 'string', 1, 2.0).for(:deprecated) }
   end
 
-  context "mass assignment" do
-
-    context "protected", rox: { key: 'a5a670f562c6', grouped: true } do
-      %w(deprecated test_info_id test_result_id user_id created_at).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "associations" do
     it(nil, rox: { key: '8e29f942cf4a' }){ should belong_to(:test_info) }
     it(nil, rox: { key: 'a2865228be7a' }){ should belong_to(:test_result) }

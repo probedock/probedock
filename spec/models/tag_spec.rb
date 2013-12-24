@@ -27,15 +27,6 @@ describe Tag, rox: { tags: :unit } do
     end
   end
 
-  context "mass assignment" do
-
-    context "protected", rox: { key: '23773a22b708', grouped: true } do
-      %w(name).each do |attr|
-        it{ should_not allow_mass_assignment_of(attr) }
-      end
-    end
-  end
-
   context "validations" do
     it(nil, rox: { key: 'bd99f663c361' }){ should validate_presence_of(:name) }
     it(nil, rox: { key: '48e4e5d511b8' }){ should ensure_length_of(:name).is_at_most(50) }
