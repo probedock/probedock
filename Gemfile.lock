@@ -257,6 +257,8 @@ GEM
     shoulda-context (1.1.6)
     shoulda-matchers (2.4.0)
       activesupport (>= 3.0.0)
+    silencer (0.6.0)
+      railties (>= 3)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -353,6 +355,7 @@ DEPENDENCIES
   select2-rails
   selenium-webdriver (= 2.39.0)
   shoulda
+  silencer
   sqlite3
   strip_attributes
   tableling-rails!

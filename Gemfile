@@ -72,7 +72,8 @@ group :production do
 end
 
 group :development do
-  gem 'quiet_assets'
+  gem 'quiet_assets' # used to silence asset logs
+  gem 'silencer' # used to silence status polling logs
   gem 'hpricot'
   gem 'ruby_parser'
 end

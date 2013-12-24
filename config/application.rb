@@ -29,8 +29,7 @@ require './lib/extensions'
 require './lib/exceptions'
 require './lib/validation'
 require './lib/utils/event_emitter'
-require './lib/utils/api_logger'
-#require './lib/events'
+require 'silencer/logger' if Rails.env == 'development'
 
 timezones = ROX_CONFIG['timezones'] || [ 'UTC' ]
 raise "ROX configuration file error: timezones must be a list of timezone names" if !timezones or timezones.empty?
@@ -62,6 +61,10 @@ module ROXCenter
     # -- all .rb files in that directory are automatically loaded.
     config.cache_store = :file_store, File.join(Rails.root, 'tmp', 'cache', 'store', Rails.env)
 
+    if Rails.env == 'development'
+      config.middleware.swap Rails::Rack::Logger, Silencer::Logger, silence: [%r{^/data/status}, %r{^/data/test_counters}]
+    end
+
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
     config.eager_load_paths += %W(#{config.root}/lib/utils #{config.root}/lib/utils/cache)
@@ -70,9 +73,6 @@ module ROXCenter
 
     # Gzip responses
     config.middleware.use Rack::Deflater
-
-    # Set log level to WARN for API payload processing
-    config.middleware.swap Rails::Rack::Logger, ApiLogger, :silence => [ %r{/data/status}, %w{/data/test_counters} ]
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
