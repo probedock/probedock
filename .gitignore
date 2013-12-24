@@ -2,6 +2,7 @@ config/database.yml
 config/redis.yml
 config/ldap.yml
 config/rox-center.yml
+config/initializers/secret_token.rb
 db/test.*
 doc/app
 local
