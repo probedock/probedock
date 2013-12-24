@@ -54,26 +54,23 @@ class ProcessApiPayload
 
       time = Benchmark.realtime do
 
-        ActiveRecord::Base.silence_auto_explain do
+        projects = Project.where(api_id: data[:r].collect{ |r| r[:j] }).all
+        cache[:projects] = projects
+        cache[:project_versions] = build_project_versions_cache data, projects
 
-          projects = Project.where(api_id: data[:r].collect{ |r| r[:j] }).all
-          cache[:projects] = projects
-          cache[:project_versions] = build_project_versions_cache data, projects
+        keys_by_project = data[:r].inject({}){ |memo,results| memo[results[:j]] = results[:t].collect{ |t| t[:k] }; memo }
+        cache[:keys] = TestKey.for_projects_and_keys(keys_by_project).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).all
+        cache[:tests] = cache[:keys].collect(&:test_info).compact
+        cache[:deprecations] = build_deprecations_cache cache[:tests], time_received
 
-          keys_by_project = data[:r].inject({}){ |memo,results| memo[results[:j]] = results[:t].collect{ |t| t[:k] }; memo }
-          cache[:keys] = TestKey.for_projects_and_keys(keys_by_project).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).all
-          cache[:tests] = cache[:keys].collect(&:test_info).compact
-          cache[:deprecations] = build_deprecations_cache cache[:tests], time_received
+        custom_value_names = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:a].keys if test[:a].present? }; memo }
+        cache[:custom_values] = TestValue.select('id, name, test_info_id').where(name: custom_value_names, test_info_id: cache[:tests].collect(&:id))
 
-          custom_value_names = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:a].keys if test[:a].present? }; memo }
-          cache[:custom_values] = TestValue.select('id, name, test_info_id').where(name: custom_value_names, test_info_id: cache[:tests].collect(&:id))
+        cache[:run] = TestRun.where('LOWER(uid) IN (?)', data[:u].downcase).first if data[:u].present?
 
-          cache[:run] = TestRun.where('LOWER(uid) IN (?)', data[:u].downcase).first if data[:u].present?
-
-          cache[:categories] = build_categories_cache data
-          cache[:tags] = build_tags_cache data
-          cache[:tickets] = build_tickets_cache data
-        end
+        cache[:categories] = build_categories_cache data
+        cache[:tags] = build_tags_cache data
+        cache[:tickets] = build_tickets_cache data
       end
 
       Rails.logger.info "Cached payload data in #{(time * 1000).round 1}ms"

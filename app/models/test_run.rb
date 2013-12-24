@@ -14,8 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require 'renderer'
-
 class TestRun < ActiveRecord::Base
   include Tableling::Model
   after_save :clear_cache
@@ -47,21 +45,18 @@ class TestRun < ActiveRecord::Base
   end
 
   def self.report id
-    ActiveRecord::Base.silence_auto_explain do
+    report = TestRun.with_report_data.find id
 
-      report = TestRun.with_report_data.find id
-
-      nothing = 'z' * 256
-      report.results.sort! do |a,b|
-        [
-          a.test_info.project <=> b.test_info.project,
-          (a.test_info.category.try(:name) || nothing) <=> (b.test_info.category.try(:name) || nothing),
-          a.test_info.name <=> b.test_info.name
-        ].find{ |e| e != 0 } || 0
-      end
-
-      report
+    nothing = 'z' * 256
+    report.results.sort! do |a,b|
+      [
+        a.test_info.project <=> b.test_info.project,
+        (a.test_info.category.try(:name) || nothing) <=> (b.test_info.category.try(:name) || nothing),
+        a.test_info.name <=> b.test_info.name
+      ].find{ |e| e != 0 } || 0
     end
+
+    report
   end
 
   def self.rendered_report id
