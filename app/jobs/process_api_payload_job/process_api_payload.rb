@@ -54,12 +54,12 @@ class ProcessApiPayload
 
       time = Benchmark.realtime do
 
-        projects = Project.where(api_id: data[:r].collect{ |r| r[:j] }).all
+        projects = Project.where(api_id: data[:r].collect{ |r| r[:j] }).to_a
         cache[:projects] = projects
         cache[:project_versions] = build_project_versions_cache data, projects
 
         keys_by_project = data[:r].inject({}){ |memo,results| memo[results[:j]] = results[:t].collect{ |t| t[:k] }; memo }
-        cache[:keys] = TestKey.for_projects_and_keys(keys_by_project).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).all
+        cache[:keys] = TestKey.for_projects_and_keys(keys_by_project).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).to_a
         cache[:tests] = cache[:keys].collect(&:test_info).compact
         cache[:deprecations] = build_deprecations_cache cache[:tests], time_received
 
@@ -79,12 +79,12 @@ class ProcessApiPayload
 
   def self.build_deprecations_cache tests, time_received
     return [] if tests.empty?
-    TestDeprecation.select('id, test_info_id, created_at, deprecated').where('test_info_id IN (?) AND created_at >= ?', tests.collect{ |t| t.id }, time_received).all
+    TestDeprecation.select('id, test_info_id, created_at, deprecated').where('test_info_id IN (?) AND created_at >= ?', tests.collect{ |t| t.id }, time_received).to_a
   end
 
   def self.build_categories_cache data
     category_names = data[:r].inject([]){ |memo,results| memo.concat results[:t].collect{ |test| test[:c] } }.select(&:present?).uniq{ |name| name.downcase }
-    Category.where('LOWER(name) IN (?)', category_names.collect(&:downcase)).all.tap do |categories|
+    Category.where('LOWER(name) IN (?)', category_names.collect(&:downcase)).to_a.tap do |categories|
       category_names.reject{ |name| categories.find{ |cat| cat.name.downcase == name.downcase } }.each do |name|
         categories << Category.new.tap{ |cat| cat.name = name; cat.quick_validation = true; cat.save! }
       end
@@ -113,7 +113,7 @@ class ProcessApiPayload
       values << project_id << version_name.downcase
     end
 
-    ProjectVersion.where(*values.unshift(conditions.join(' OR '))).all.tap do |versions|
+    ProjectVersion.where(*values.unshift(conditions.join(' OR '))).to_a.tap do |versions|
       versions.each{ |v| versions_by_project.delete v.project_id }
       versions_by_project.each do |project_id,version_name|
         versions << ProjectVersion.new.tap{ |v| v.project_id = project_id; v.name = version_name; v.quick_validation = true; v.save! }

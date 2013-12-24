@@ -50,7 +50,7 @@ namespace :cache do
     if max <= 0
       puts Paint["Report cache size is set to 0; no warm-up required.", :green] if max <= 0
     else
-      TestRun.select('id').order('ended_at DESC').limit(max).all.reverse.each{ |run| Resque.enqueue CacheReportJob, run.id, warmup: true }
+      TestRun.select('id').order('ended_at DESC').limit(max).to_a.reverse.each{ |run| Resque.enqueue CacheReportJob, run.id, warmup: true }
       puts Paint["Queued jobs to warm up #{max} elements of the reports cache", :green]
     end
   end

@@ -29,7 +29,7 @@ class LatestTestRunsData
     ended_at_desc = Proc.new{ |a,b| b.ended_at <=> a.ended_at }
 
     latest_for_groups = TestRun.groups.collect{ |name| rel.where(group: name).limit(1).first }.compact.sort(&ended_at_desc).first(GROUP_LIMIT)
-    latest_for_users = rel.joins(:runner_as_last_run).where('users.roles_mask & ? = 0 AND test_runs.id NOT IN (?)', User.mask_for(:technical), latest_for_groups.collect(&:id)).all
+    latest_for_users = rel.joins(:runner_as_last_run).where('users.roles_mask & ? = 0 AND test_runs.id NOT IN (?)', User.mask_for(:technical), latest_for_groups.collect(&:id)).to_a
 
     latest_for_groups.collect{ |r| r.to_client_hash type: :latest_group } + latest_for_users.collect{ |r| r.to_client_hash type: :latest }
   end

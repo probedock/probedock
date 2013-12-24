@@ -83,6 +83,6 @@ class TestInfosController < ApplicationController
   end
 
   def results_chart
-    render :json => @test_info.first.results.where('run_at >= ?', 1.month.ago).order('run_at DESC').limit(100).all.reverse.collect{ |r| r.to_client_hash type: :chart }
+    render :json => @test_info.first.results.where('run_at >= ?', 1.month.ago).order('run_at DESC').limit(100).to_a.reverse.collect{ |r| r.to_client_hash type: :chart }
   end
 end

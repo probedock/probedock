@@ -36,7 +36,7 @@ class SamplesGenerator
     puts Paint["Generating #{n} test results", :bold]
 
     print "Fetching runner... "
-    runner = User.where(name: runner_name).first || User.all.sample
+    runner = User.where(name: runner_name).first || User.all.to_a.sample
     fail "User #{runner} not found in database" if runner_name.present? and runner.blank?
     fail "Samples generator requires at least one existing user" if runner.blank?
     puts Paint[runner.name, :green]
@@ -47,7 +47,7 @@ class SamplesGenerator
     puts Paint[api_key.identifier, :green]
 
     print "Fetching projects... "
-    all_projects = Project.all
+    all_projects = Project.all.to_a
     fail "Samples generator requires at least one existing project" if n == 1 and all_projects.empty?
     fail "Samples generator requires at least two existing projects" if all_projects.length < 2
     projects = all_projects.shuffle[0, 2]
@@ -235,7 +235,7 @@ namespace :samples do
     end
 
     print "Fetching runner... "
-    runner = User.where(name: args.runner_name).first || User.all.sample
+    runner = User.where(name: args.runner_name).first || User.all.to_a.sample
     fail "User #{runner} not found in database" if args.runner_name.present? and runner.blank?
     fail "Samples generator requires at least one existing user" if runner.blank?
     puts Paint[runner.name, :green]

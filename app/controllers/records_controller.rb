@@ -82,7 +82,7 @@ class RecordsController < ApplicationController
   end
 
   def record_model_options search
-    record_model.respond_to?(:search_options) ? record_model.search_options(search) : record_model.all
+    record_model.respond_to?(:search_options) ? record_model.search_options(search) : record_model.all.to_a
   end
 
   def get_record_instance

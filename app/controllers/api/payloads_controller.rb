@@ -89,14 +89,14 @@ class Api::PayloadsController < Api::ApiController
 
     # If the test run has an UID, find all test keys that have already been used.
     used_keys = if run[:u]
-      TestKey.select('test_keys.key, projects.api_id AS project_api_id').joins([ :project, { test_info: { results: :test_run } }]).where('test_runs.uid = ?', run[:u]).all
+      TestKey.select('test_keys.key, projects.api_id AS project_api_id').joins([ :project, { test_info: { results: :test_run } }]).where('test_runs.uid = ?', run[:u]).to_a
     else
       []
     end
 
     # Find all test keys in the payload.
     keys_by_project = run[:r].inject({}){ |memo,r| memo[r[:j]] = r[:t].collect{ |t| t[:k] }; memo }
-    existing_keys = TestKey.for_projects_and_keys(keys_by_project).select('test_keys.key, test_keys.free, projects.api_id AS project_api_id').all
+    existing_keys = TestKey.for_projects_and_keys(keys_by_project).select('test_keys.key, test_keys.free, projects.api_id AS project_api_id').to_a
 
     unfree_keys = existing_keys.reject(&:free?)
 

@@ -31,7 +31,7 @@ class TagsData
   private
 
   def self.cloud_data
-    Tag.select('tags.name, count(test_infos.id) as tests_count').joins(:test_infos).group('tags.name').having('count(test_infos.id) > 0').all.collect do |tag|
+    Tag.select('tags.name, count(test_infos.id) as tests_count').joins(:test_infos).group('tags.name').having('count(test_infos.id) > 0').to_a.collect do |tag|
       { name: tag.name, count: tag.tests_count }
     end
   end

@@ -43,7 +43,7 @@ class TestRunSearch
 
     data = Hash.new.tap do |h|
       h[:groups] = TestRun.groups if !except.include?(:groups)
-      h[:runners] = User.all.collect(&:to_client_hash) if !except.include?(:runners)
+      h[:runners] = User.all.to_a.collect(&:to_client_hash) if !except.include?(:runners)
     end
 
     config = { data: data }

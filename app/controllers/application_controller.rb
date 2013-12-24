@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
   end
 
   def cached_links
-    JsonCache.new(:links, etag: false){ Link.order('name ASC').all.collect(&:to_client_hash).deep_stringify_keys! }
+    JsonCache.new(:links, etag: false){ Link.order('name ASC').to_a.collect(&:to_client_hash).deep_stringify_keys! }
   end
 
   def cache_stale? cache

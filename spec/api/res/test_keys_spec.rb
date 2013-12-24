@@ -29,7 +29,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
       expect{ generate_keys n: 5 }.to change(TestKey, :count).by(5)
       expect(response.success?).to be_true
 
-      keys = TestKey.order('created_at ASC').all
+      keys = TestKey.order('created_at ASC').to_a
       expect(keys.all?{ |k| k.user == user && k.project == project }).to be_true
       expect(Oj.load(response.body)).to eq(TestKeysRepresenter.new(OpenStruct.new(total: 5, data: keys)).serializable_hash)
     end

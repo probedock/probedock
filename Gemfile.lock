@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:AlphaHydrae/tableling-rails.git
-  revision: f1b3f4ca2f87f97d993f4f99295cf0e21328a7c5
+  revision: a367820351dcc91156465039c66db6f9930a2b44
   branch: rails4
   specs:
     tableling-rails (0.0.20)

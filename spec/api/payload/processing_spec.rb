@@ -345,7 +345,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(750)
 
-      results = test.results.order('created_at ASC').all
+      results = test.results.order('created_at ASC').to_a
       expect(results).to have(2).items
 
       result = results.first
@@ -396,7 +396,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(5000)
 
-      results = test.results.all
+      results = test.results.to_a
       expect(results).to have(1).item
 
       result = results.first
@@ -432,7 +432,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(200)
 
-      results = test.results.all
+      results = test.results.to_a
       expect(results).to have(2).items
 
       result = results.first
@@ -483,7 +483,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(75)
 
-      results = test.results.all
+      results = test.results.to_a
       expect(results).to have(2).items
 
       result = results.first # already existed before submitting payloads
@@ -532,7 +532,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(0)
 
-      results = test.results.all
+      results = test.results.to_a
       expect(results).to have(1).item
 
       result = results.first

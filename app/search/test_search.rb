@@ -97,8 +97,8 @@ class TestSearch
       h[:projects] = Project.pluck(:name).sort if !except.include?(:projects)
       h[:tags] = Tag.pluck(:name).sort if !except.include?(:tags)
       h[:categories] = Category.pluck(:name).sort if !except.include?(:categories)
-      h[:authors] = User.all.collect(&:to_client_hash) if !except.include?(:authors)
-      h[:breakers] = h[:authors] || User.all.collect(&:to_client_hash) if !except.include?(:breakers)
+      h[:authors] = User.all.to_a.collect(&:to_client_hash) if !except.include?(:authors)
+      h[:breakers] = h[:authors] || User.all.to_a.collect(&:to_client_hash) if !except.include?(:breakers)
     end
 
     config = { data: data }

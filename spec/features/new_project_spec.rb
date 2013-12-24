@@ -85,7 +85,7 @@ describe "Creating a project and submitting new results", type: :feature, rox: {
         {
           j: project.api_id,
           v: '1.0.0',
-          t: TestKey.all.collect.with_index{ |k,i| { k: k.key, n: "Test #{i + 1}", p: i % 2 == 0, d: rand(26) } }
+          t: TestKey.all.to_a.collect.with_index{ |k,i| { k: k.key, n: "Test #{i + 1}", p: i % 2 == 0, d: rand(26) } }
         }
       ]
     })

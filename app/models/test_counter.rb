@@ -81,7 +81,7 @@ class TestCounter < ActiveRecord::Base
     delete_all
     clean_token_cache true
 
-    TestDeprecation.select('id, deprecated, test_info_id, created_at').all.each do |deprecation|
+    TestDeprecation.select('id, deprecated, test_info_id, created_at').to_a.each do |deprecation|
       CountDeprecationJob.enqueue_deprecation deprecation, timezones: timezones
     end
 
@@ -98,7 +98,7 @@ class TestCounter < ActiveRecord::Base
       bound = start_from + 1.day
       bound = now if bound > now
 
-      runs = TestRun.select('id, results_count').where('ended_at >= ? AND ended_at < ?', start_from, bound).order('ended_at ASC').all
+      runs = TestRun.select('id, results_count').where('ended_at >= ? AND ended_at < ?', start_from, bound).order('ended_at ASC').to_a
       start_from = bound
 
       next if runs.empty?

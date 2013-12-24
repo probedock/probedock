@@ -46,15 +46,15 @@ class TestInfo < ActiveRecord::Base
   validates :active, inclusion: [ true, false ]
 
   def self.count_by_category
-    standard.select('category_id, count(id) AS tests_count').group('category_id').includes(:category).all.collect{ |t| { category: t.category.try(:name), count: t.tests_count } }
+    standard.select('category_id, count(id) AS tests_count').group('category_id').includes(:category).to_a.collect{ |t| { category: t.category.try(:name), count: t.tests_count } }
   end
 
   def self.count_by_project
-    standard.select('project_id, count(id) AS tests_count').group('project_id').includes(:project).all.collect{ |t| { project: t.project.name, count: t.tests_count } }
+    standard.select('project_id, count(id) AS tests_count').group('project_id').includes(:project).to_a.collect{ |t| { project: t.project.name, count: t.tests_count } }
   end
 
   def self.count_by_author
-    standard.select('author_id, count(id) AS tests_count').group('author_id').includes(:author).all.collect{ |t| { author: t.author, count: t.tests_count } }
+    standard.select('author_id, count(id) AS tests_count').group('author_id').includes(:author).to_a.collect{ |t| { author: t.author, count: t.tests_count } }
   end
 
   tableling do

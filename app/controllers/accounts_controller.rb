@@ -25,8 +25,8 @@ class AccountsController < ApplicationController
     window_title << t('accounts.show.title')
     @key_generator_config = {
       path: api_test_keys_path,
-      projects: Project.order(:name).all.collect{ |p| ProjectRepresenter.new(p).serializable_hash },
-      freeKeys: current_user.free_test_keys.order('created_at ASC').all.collect{ |k| TestKeyRepresenter.new(k).serializable_hash }
+      projects: Project.order(:name).to_a.collect{ |p| ProjectRepresenter.new(p).serializable_hash },
+      freeKeys: current_user.free_test_keys.order('created_at ASC').to_a.collect{ |k| TestKeyRepresenter.new(k).serializable_hash }
     }
     @test_search_config = TestSearch.config(params, except: [ :authors, :current ])
   end

@@ -78,7 +78,7 @@ describe TestInfo, rox: { tags: :unit } do
     context ".standard" do
 
       it "should return all tests that are not deprecated", rox: { key: 'f83868e2b6ee' } do
-        expect(described_class.standard.all).to match_array([ 0, 1, 2, 4, 5, 7 ].collect{ |i| tests[i] })
+        expect(described_class.standard.to_a).to match_array([ 0, 1, 2, 4, 5, 7 ].collect{ |i| tests[i] })
       end
     end
 
@@ -86,12 +86,12 @@ describe TestInfo, rox: { tags: :unit } do
 
       it "should return standard tests that have not been run since the outdated delay", rox: { key: 'f72aff790693' } do
         Settings.stub app: double(test_outdated_days: 2)
-        expect(described_class.outdated.all).to match_array([ tests[1], tests[5], tests[7] ])
+        expect(described_class.outdated.to_a).to match_array([ tests[1], tests[5], tests[7] ])
       end
 
       it "should return standard tests that have not been run since the specified outdated delay", rox: { key: 'a0cc9a663a31' } do
         settings = double test_outdated_days: 4
-        expect(described_class.outdated(settings).all).to match_array([ tests[5], tests[7] ])
+        expect(described_class.outdated(settings).to_a).to match_array([ tests[5], tests[7] ])
       end
     end
 

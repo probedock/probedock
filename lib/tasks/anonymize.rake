@@ -20,8 +20,8 @@ if Rails.env != 'production'
   desc "Anonymize a production dump"
   task :anonymize => [ :environment, 'cache:clear' ] do
 
-    User.all.each do |user|
-      user.api_keys.all.each{ |k| k.tap{ |k| k.send :set_shared_secret }.tap(&:save!) }
+    User.all.to_a.each do |user|
+      user.api_keys.to_a.each{ |k| k.tap{ |k| k.send :set_shared_secret }.tap(&:save!) }
       user.encrypted_password = '$2a$12$QPPUK39lqu68/rOZEL2N0Obwee2gI1uEffdnogGncY8tyGL3Umrcy'
       user.save!
     end

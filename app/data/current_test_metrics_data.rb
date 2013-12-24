@@ -32,7 +32,7 @@ class CurrentTestMetricsData
     rel = rel.where mask: TestCounter.mask_for(:user)
     rel = rel.order 'timestamp ASC'
     rel = rel.includes :user
-    counters = rel.all
+    counters = rel.to_a
 
     bounds = { today: today, week: last_week, month: last_month }
     [ :today, :week, :month ].inject({}) do |memo,k|
