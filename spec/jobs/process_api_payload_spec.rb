@@ -196,7 +196,7 @@ describe ProcessApiPayload do
     end
 
     it "should fetch existing tags and create new ones", rox: { key: '63d035a205d7' } do
-      %w(unit automated).each{ |name| Tag.find_or_create_by_name name }
+      %w(unit automated).each{ |name| Tag.find_or_create_by name: name }
       tags = nil
       expect{ tags = process_payload.cache[:tags] }.to change(Tag, :count).by(3)
       expect(tags.collect(&:name)).to match_array(sample_payload[:r].inject([]){ |memo,r| memo + r[:t].inject([]){ |memo,t| memo + (t[:g] || []) } })
@@ -211,7 +211,7 @@ describe ProcessApiPayload do
     end
 
     it "should fetch existing tickets and create new ones", rox: { key: '348da45fdfbc' } do
-      %w(#12 #78).each{ |name| Ticket.find_or_create_by_name name }
+      %w(#12 #78).each{ |name| Ticket.find_or_create_by name: name }
       tickets = nil
       lambda{ tickets = process_payload.cache[:tickets] }.should change(Ticket, :count).by(2)
       expect(tickets.collect(&:name)).to match_array(sample_payload[:r].inject([]){ |memo,r| memo + r[:t].inject([]){ |memo,t| memo + (t[:t] || []) } })

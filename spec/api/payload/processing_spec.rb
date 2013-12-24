@@ -199,7 +199,7 @@ describe "API sample payload", rox: { tags: :integration } do
 
       existing_version = create :project_version, project: test_keys[3].project, name: '0.1.0'
       existing_test = create :test, key: test_keys[3], passing: false, active: false, run_at: 1.month.ago, run_duration: 50, project_version: existing_version
-      existing_test.tags << Tag.find_or_create_by_name('integration')
+      existing_test.tags << Tag.find_or_create_by(name: 'integration')
       test_keys[3].update_attribute :free, false
 
       @before_posting_payloads = Time.now

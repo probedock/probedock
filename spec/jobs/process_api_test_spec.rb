@@ -55,8 +55,8 @@ describe ProcessApiTest do
       custom_values: [],
       deprecations: [],
       categories: [ new_category ],
-      tags: sample_data[:g] ? sample_data[:g].collect{ |name| Tag.find_or_create_by_name name } : [],
-      tickets: sample_data[:t] ? sample_data[:t].collect{ |name| Ticket.find_or_create_by_name name } : []
+      tags: sample_data[:g] ? sample_data[:g].collect{ |name| Tag.find_or_create_by name: name } : [],
+      tickets: sample_data[:t] ? sample_data[:t].collect{ |name| Ticket.find_or_create_by name: name } : []
     }
   end
 
@@ -203,8 +203,8 @@ describe ProcessApiTest do
   context "for an existing test" do
 
     let(:existing_category){ create :category, name: 'JUnit' }
-    let(:existing_tags){ %w(integration).collect{ |name| Tag.find_or_create_by_name name } }
-    let(:existing_tickets){ %w(JIRA-12).collect{ |name| Ticket.find_or_create_by_name name } }
+    let(:existing_tags){ %w(integration).collect{ |name| Tag.find_or_create_by name: name } }
+    let(:existing_tickets){ %w(JIRA-12).collect{ |name| Ticket.find_or_create_by name: name } }
     let(:existing_test_data){ { category: existing_category, passing: false, active: false } }
     let(:existing_test){ create :test, existing_test_data.merge(key: test_key, run_at: 1.month.ago, run_duration: 250, name: 'Old test') }
     let(:existing_values){ [ create(:test_value, test_info: existing_test, name: 'sql_nb_queries') ] }
