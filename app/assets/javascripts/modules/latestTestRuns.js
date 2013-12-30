@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('latestTestRuns', function() {
 
   var models = App.module('models'),
@@ -45,9 +44,9 @@ App.autoModule('latestTestRuns', function() {
     ui: {
       description: '.description',
       bar: '.progress',
-      passedBar: '.bar-success',
-      inactiveBar: '.bar-warning',
-      failedBar: '.bar-danger'
+      passedBar: '.progress-bar-success',
+      inactiveBar: '.progress-bar-warning',
+      failedBar: '.progress-bar-danger'
     },
 
     events: {

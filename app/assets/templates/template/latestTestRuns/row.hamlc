@@ -1,6 +1,6 @@
 %td.description
 %td.results
   .progress
-    .bar.bar-success
-    .bar.bar-warning
-    .bar.bar-danger
+    .progress-bar.progress-bar-success
+    .progress-bar.progress-bar-warning
+    .progress-bar.progress-bar-danger
