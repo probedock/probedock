@@ -1,8 +1,8 @@
 %h2= t('.test_keys.title')
 .row
-  .span8
+  .col-md-8
     .keyGenerator{ data: { module: :keyGenerator, config: @key_generator_config.to_json } }
-  .span4
+  .col-md-4
     .well
       - if respond_to? :edit_user_registration_path
         = link_to t('.edit'), edit_user_registration_path, class: 'btn pull-right'
