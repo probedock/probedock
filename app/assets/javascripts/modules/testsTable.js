@@ -147,7 +147,8 @@ App.autoModule('testsTable', function() {
     },
 
     config : {
-      sort : [ 'created_at desc' ]
+      sort : [ 'created_at desc' ],
+      pageSize : 15
     },
 
     searchFilters : [

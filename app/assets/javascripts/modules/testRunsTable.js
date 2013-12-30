@@ -103,7 +103,8 @@ App.autoModule('testRunsTable', function() {
     },
 
     config : {
-      sort : [ 'ended_at desc' ]
+      sort : [ 'ended_at desc' ],
+      pageSize : 15
     },
 
     tableView : TestRunsTableView,
