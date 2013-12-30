@@ -1,9 +1,9 @@
 .row{ data: { module: :status, config: @status_data.to_json } }
-  .span6{ data: { module: :latestTestRuns, config: @latest_test_runs_data.to_json } }
-  .span6
+  .col-md-6{ data: { module: :latestTestRuns, config: @latest_test_runs_data.to_json } }
+  .col-md-6
     .mainTestsData{ data: { module: :testsData, config: @tests_data.to_json } }
     %div{ data: { module: :currentTestMetrics, config: @current_test_metrics_config.to_json } }
     - if @latest_projects.present?
       = render partial: 'latest_projects', locals: { projects: @latest_projects }
 .row
-  .span12{ data: { module: :tagCloud, config: @tag_cloud.to_json } }
+  .col-md-12{ data: { module: :tagCloud, config: @tag_cloud.to_json } }
