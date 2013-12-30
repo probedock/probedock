@@ -1,2 +1,2 @@
 .row
-  .user.span4
+  .user.col-md-4

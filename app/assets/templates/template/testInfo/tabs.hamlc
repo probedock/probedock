@@ -1,10 +1,10 @@
 %ul.nav.nav-tabs
   %li
-    %a{ :href => '#resultTable' }= I18n.t('jst.testInfo.resultTable')
+    %a{ href: '#resultTable', data: { toggle: 'tab' } }= I18n.t('jst.testInfo.resultTable')
   %li
-    %a{ :href => '#resultChart' }= I18n.t('jst.testInfo.resultChart')
+    %a{ href: '#resultChart', data: { toggle: 'tab' } }= I18n.t('jst.testInfo.resultChart')
   %li
-    %a{ :href => '#customValues' }= I18n.t('jst.testInfo.customValues')
+    %a{ href: '#customValues', data: { toggle: 'tab' } }= I18n.t('jst.testInfo.customValues')
 .tab-content
   #resultTable.tab-pane.fade
   #resultChart.tab-pane.fade

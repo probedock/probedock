@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('testInfo', function() {
 
   var models = App.module('models'),
@@ -112,8 +111,7 @@ App.autoModule('testInfo', function() {
     },
 
     deprecationError : function() {
-      Alerts.error('jst.testInfo.deprecationError').addClass('deprecationError')
-        .appendTo(this.$el).hide().fadeIn('fast', _.bind(function() {
+      Alerts.error('jst.testInfo.deprecationError').addClass('deprecationError').appendTo(this.$el).hide().fadeIn('fast', _.bind(function() {
         this.setDeprecationActionsEnabled(true);
       }, this));
     }
@@ -178,7 +176,7 @@ App.autoModule('testInfo', function() {
     },
 
     renderTag : function(tag) {
-      $('<a class="badge badge-info" />').attr('href', PagePath.build('tests?' + $.param({ tags : [ tag ] }))).text(tag).appendTo(this.ui.tags);
+      $('<a class="label label-info" />').attr('href', PagePath.build('tests?' + $.param({ tags : [ tag ] }))).text(tag).appendTo(this.ui.tags);
     },
 
     updateInactive : function() {
@@ -211,14 +209,13 @@ App.autoModule('testInfo', function() {
       this.$el.find('.tab-content ' + id).addClass('active in');
       this.activateTab(id);
 
-      this.$el.find('.nav-tabs a').click(function() {
-        $(this).tab('show');
-      }).on('shown', _.bind(function(e) {
+      this.$el.find('a[data-toggle="tab"]').on('shown.bs.tab', _.bind(function(e) {
         this.activateTab($(e.target).attr('href'));
       }, this));
     },
 
     activateTab : function(id) {
+      window.location.hash = id;
       this['show' + id.replace('#', '').underscore().capitalize().camelize()].apply(this);
     },
 
@@ -352,6 +349,7 @@ App.autoModule('testInfo', function() {
               point : {
                 events : {
                   click : function() {
+                    // FIXME: this produces a "RangeError: maximum call stack size exceeded" for some reason
                     if (self.selectedResult && self.selectedResult.get('id') == this.result.get('id')) {
                       App.vent.trigger('test:result:unselected');
                     } else {
@@ -431,7 +429,7 @@ App.autoModule('testInfo', function() {
     },
 
     setSelected : function(result) {
-      this.$el.removeClass('warning success error');
+      this.$el.removeClass('warning success danger');
       if (result == this.model) {
         this.$el.addClass('warning');
       } else {
@@ -447,7 +445,7 @@ App.autoModule('testInfo', function() {
     },
 
     updateStyle : function() {
-      this.$el.addClass(this.model.get('passed') ? 'success' : 'error');
+      this.$el.addClass(this.model.get('passed') ? 'success' : 'danger');
     }
   });
 
@@ -513,7 +511,7 @@ App.autoModule('testInfo', function() {
       this.ui.version.text(this.model.get('version') || I18n.t('jst.common.noData'));
       this.ui.runAt.html(this.testRunLink());
       this.ui.duration.text(this.model.get('duration') ? Format.duration(this.model.get('duration')) : I18n.t('jst.common.noData'));
-      this.ui.status.html(this.statusBadge());
+      this.ui.status.html(this.statusLabel());
       this.renderMessage();
     },
 
@@ -522,11 +520,11 @@ App.autoModule('testInfo', function() {
         .tooltip({ title : I18n.t('jst.testInfo.goToTestRun'), placement : 'right' });
     },
 
-    statusBadge : function() {
+    statusLabel : function() {
       if (this.model.get('passed')) {
-        return $('<span class="badge badge-success" />').text(I18n.t('jst.testInfo.resultStatus.passed'));
+        return $('<span class="label label-success" />').text(I18n.t('jst.testInfo.resultStatus.passed'));
       } else {
-        return $('<span class="badge badge-important" />').text(I18n.t('jst.testInfo.resultStatus.failed'));
+        return $('<span class="label label-danger" />').text(I18n.t('jst.testInfo.resultStatus.failed'));
       }
     },
 
@@ -535,9 +533,9 @@ App.autoModule('testInfo', function() {
       this.ui.message[this.model.get('message') ? 'show' : 'hide']();
       this.ui.message.text(this.model.get('message'));
 
-      this.ui.message.removeClass('text-error');
+      this.ui.message.removeClass('text-danger');
       if (!this.model.get('passed')) {
-        this.ui.message.addClass('text-error');
+        this.ui.message.addClass('text-danger');
       }
     }
   });

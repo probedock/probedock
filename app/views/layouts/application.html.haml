@@ -6,10 +6,10 @@
     %a#top{ :name => :top }
     = render :partial => 'layouts/navbar'
     .container.page-container
-      - { warning: nil, success: :success, error: :error }.each_pair do |key,klass|
+      - { warning: :warning, success: :success, error: :danger }.each_pair do |key,klass|
         - if flash[key]
-          .alert.fade.in{ :class => (klass ? "alert-#{klass}" : nil) }
-            %button.close{ type: :button, data: { dismiss: :alert } } &times;
+          .alert.alert-dismissable.fade.in{ :class => (klass ? "alert-#{klass}" : nil) }
+            %button.close{ type: :button, data: { dismiss: :alert }, aria: { hidden: true } } &times;
             %strong= t("flash.#{key}")
             = flash[key]
       = yield

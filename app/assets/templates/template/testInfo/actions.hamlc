@@ -1,5 +1,5 @@
 .btn-group
   %button.btn.btn-inverse{ :type => 'button', :disabled => 'disabled', :style => 'font-weight: bold;' }
     = I18n.t('jst.testInfo.actions')
-  %button.deprecate.btn{ :type => 'button' }= I18n.t('jst.testInfo.deprecate')
-  %button.undeprecate.btn{ :type => 'button' }= I18n.t('jst.testInfo.undeprecate')
+  %button.deprecate.btn.btn-default{ :type => 'button' }= I18n.t('jst.testInfo.deprecate')
+  %button.undeprecate.btn.btn-default{ :type => 'button' }= I18n.t('jst.testInfo.undeprecate')

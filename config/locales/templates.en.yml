@@ -7,7 +7,7 @@ en:
       save: "Save"
       cancel: "Cancel"
       alert:
-        error: "Oops!"
+        danger: "Oops!"
         warning: "Warning."
       "true": "yes"
       "false": "no"

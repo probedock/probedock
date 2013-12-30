@@ -8,6 +8,6 @@
     %dt= I18n.t('activerecord.attributes.user.created_at')
     %dd.createdAt
 .btn-group
-  %a.btn.edit= I18n.t('common.edit')
-  %button.btn.toggleActivated
-  %button.btn.delete= I18n.t('common.delete')
+  %a.btn.btn-default.edit= I18n.t('common.edit')
+  %button.btn.btn-warning.toggleActivated
+  %button.btn.btn-danger.delete= I18n.t('common.delete')

@@ -74,4 +74,6 @@ $(function() {
     var el = $(this);
     new UserAvatar({ el : el, model : new User(el.data('user')) }).render();
   });
+
+  $('.modal:not(.hide)').modal({ backdrop: 'static', keyboard: false });
 });

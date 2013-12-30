@@ -14,11 +14,10 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 var Alerts = {
 
   error : function(translationKey) {
-    return Alerts.buildAlert('error', translationKey);
+    return Alerts.buildAlert('danger', translationKey);
   },
 
   warning : function(translationKey) {
@@ -26,11 +25,11 @@ var Alerts = {
   },
 
   buildAlert : function(type, translationKey) {
-    return $('<div class="alert" />').addClass('alert-' + type).append(Alerts.closeButton()).append(Alerts.buildMessage(type, translationKey));
+    return $('<div class="alert alert-dismissable" />').addClass('alert-' + type).append(Alerts.closeButton()).append(Alerts.buildMessage(type, translationKey));
   },
 
   closeButton : function() {
-    return $('<button type="button" class="close" data-dismiss="alert" />').html('&times;');
+    return $('<button type="button" class="close" data-dismiss="alert" aria-hidden="true" />').html('&times;');
   },
 
   buildMessage : function(type, translationKey) {

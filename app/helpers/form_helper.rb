@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 module FormHelper
 
   def render_record_errors record, options = {}
@@ -31,6 +30,6 @@ module FormHelper
       options[:url] ||= options[:update_url] || send("#{record.class.name.underscore}_path", record)
     end
 
-    form_for record, url: options[:url], html: { method: options[:method], class: 'form-horizontal' }, &block
+    form_for record, url: options[:url], html: { method: options[:method], class: 'form-horizontal', role: 'form' }, &block
   end
 end
