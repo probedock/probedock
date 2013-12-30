@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.module('views', function() {
 
   var FadeRegion = this.FadeRegion = Backbone.Marionette.Region.extend({
@@ -175,6 +174,7 @@ App.module('views', function() {
       this.currentSearch = options && options.search && options.search.current ? options.search.current : {};
 
       this.listenTo(this, 'item:rendered', this.launch);
+      this.listenTo(this.vent, 'table:update', this.updateClearButton);
     },
 
     serializeData : function() {
@@ -219,6 +219,10 @@ App.module('views', function() {
 
     updateSearch : function() {
       this.update({ page : 1 });
+    },
+
+    updateClearButton : function() {
+      this.ui.clearButton.attr('disabled', _.isEmpty(this.requestSearchData()));
     },
 
     fillFilter : function(filter) {

@@ -2,11 +2,11 @@
   .pageSize.pull-left
   .quickSearch.pull-right
   .advancedSearchControls.pull-right
-    %button.btn{ :type => 'button' }= I18n.t('jst.tableWithAdvancedSearch.search.show')
-.advancedSearch.well.well-small
+    %button.btn.btn-default{ type: 'button' }= I18n.t('jst.tableWithAdvancedSearch.search.show')
+.advancedSearch.well.well-sm
   %form.form-inline
-    %button.clear.btn.pull-right{ :type => 'button' }
-      %i.icon-remove-circle
+    %button.clear.btn.btn-default.pull-right{ type: 'button' }
+      %span.glyphicon.glyphicon-remove-circle
     != JST['template/' + @advancedSearchTemplate]()
 .table
 .footer
