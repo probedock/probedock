@@ -1,4 +1,4 @@
-%table.table.table-striped.table-hover
+%table.table.table-hover
   %thead
     %tr
       %th.identifier.sorting{ :'data-field' => 'identifier' }= I18n.t('activerecord.attributes.api_key.identifier')

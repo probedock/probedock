@@ -4,7 +4,7 @@
 %td.usageCount= @usageCount
 %td= @humanLastUsedAt
 %td.actions
-  %button.toggle.btn.btn-small
-    %i
-  %button.delete.btn.btn-small
-    %i.icon-remove-circle
+  %button.toggle.btn.btn-warning.btn-xs
+    %span.glyphicon.glyphicon-stop
+  %button.delete.btn.btn-danger.btn-xs
+    %span.glyphicon.glyphicon-remove

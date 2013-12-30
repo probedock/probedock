@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/AlphaHydrae/tableling-rails.git
-  revision: a95d36011a4da763e9766cdb5668905d2955420e
+  revision: 9ddc4e1aac8c97bccbfa6c39e35d518f04edf4bd
   branch: bootstrap3
   specs:
     tableling-rails (0.0.22)
