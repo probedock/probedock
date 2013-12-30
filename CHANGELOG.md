@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.1 - Edge
+
+* Ugprade to Rails 4.0.2.
+
+* The `secret_token.rb` initializer was replaced by the `app_secrets.rb` initializer. See the [deployment documentation](doc/rox/deploy.md).
+
 ## v2.0.0 - December 23, 2013
 
 * **NEW:** Projects must now be created in ROX Center before test results can be submitted
