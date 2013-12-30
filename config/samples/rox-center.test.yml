@@ -1,3 +1,4 @@
+protocol: http
 host: localhost
 port: 3001
 authentication_module: database
