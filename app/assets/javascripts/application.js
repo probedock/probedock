@@ -31,7 +31,6 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require underscore
-//= require i18n
 //= require i18n/translations
 //= require ./lib/md5
 //= require ./lib/async

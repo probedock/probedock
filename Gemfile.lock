@@ -126,7 +126,7 @@ GEM
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     i18n (0.6.9)
-    i18n-js (2.1.2)
+    i18n-js-pika (3.0.0.rc7)
       i18n
     jquery-rails (3.0.4)
       railties (>= 3.0, < 5.0)
@@ -331,7 +331,7 @@ DEPENDENCIES
   hiredis
   hpricot
   httparty
-  i18n-js
+  i18n-js-pika
   jquery-rails
   markdown-rails
   mysql2
