@@ -29,7 +29,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require twitter/bootstrap
+//= require bootstrap
 //= require underscore
 //= require i18n
 //= require i18n/translations

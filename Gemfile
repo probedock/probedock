@@ -31,7 +31,7 @@ gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_
 gem 'cancan'
 gem 'role_model'
 gem 'rake-version'
-gem 'tableling-rails'
+gem 'tableling-rails', git: 'https://github.com/AlphaHydrae/tableling-rails.git', branch: 'bootstrap3'
 gem 'select2-rails'
 
 gem 'redis'
@@ -51,9 +51,9 @@ gem 'strip_attributes'
 gem 'paint'
 
 # Assets
-gem 'sass-rails'
+gem 'sass-rails', '>= 3.2'
+gem 'bootstrap-sass', '~> 3.0.3.0'
 gem 'jquery-rails'
-gem 'anjlab-bootstrap-rails', '~> 2.3', :require => 'bootstrap-rails'
 gem 'compass-rails'
 gem 'backbone-on-rails'
 #gem 'marionette-rails' # currently provided by tableling-rails

@@ -1,4 +1,12 @@
 GIT
+  remote: https://github.com/AlphaHydrae/tableling-rails.git
+  revision: a95d36011a4da763e9766cdb5668905d2955420e
+  branch: bootstrap3
+  specs:
+    tableling-rails (0.0.22)
+      rails (~> 4.0)
+
+GIT
   remote: https://github.com/Prevole/devise_ldap_authenticatable.git
   revision: 93f207965e84efb2406173ce960dead72c4efe2d
   branch: group-lookup-config
@@ -34,9 +42,6 @@ GEM
       multi_json (~> 1.3)
       thread_safe (~> 0.1)
       tzinfo (~> 0.3.37)
-    anjlab-bootstrap-rails (2.3.1.2)
-      railties (>= 3.0)
-      sass (>= 3.2)
     arel (4.0.1)
     atomic (1.1.14)
     backbone-on-rails (1.1.0.0)
@@ -45,6 +50,8 @@ GEM
       jquery-rails
       rails (>= 3.1)
     bcrypt-ruby (3.1.2)
+    bootstrap-sass (3.0.3.0)
+      sass (~> 3.2)
     builder (3.1.4)
     cancan (1.6.10)
     capybara (2.2.0)
@@ -268,8 +275,6 @@ GEM
     sqlite3 (1.3.8)
     strip_attributes (1.4.4)
       activemodel (>= 3.0, < 5.0)
-    tableling-rails (0.0.22)
-      rails (~> 4.0)
     therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
       ref
@@ -306,8 +311,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  anjlab-bootstrap-rails (~> 2.3)
   backbone-on-rails
+  bootstrap-sass (~> 3.0.3.0)
   cancan
   capybara
   clah-rails
@@ -345,14 +350,14 @@ DEPENDENCIES
   rox-client-rspec (~> 0.3.1)
   rspec-rails (~> 2.14)
   ruby_parser
-  sass-rails
+  sass-rails (>= 3.2)
   select2-rails
   selenium-webdriver (= 2.39.0)
   shoulda
   silencer
   sqlite3
   strip_attributes
-  tableling-rails
+  tableling-rails!
   therubyracer
   thin
   uglifier (>= 1.0.3)
