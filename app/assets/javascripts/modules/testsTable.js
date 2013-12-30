@@ -64,18 +64,18 @@ App.autoModule('testsTable', function() {
 
     renderStatus : function() {
 
-      var badge;
+      var label;
       if (this.model.get('deprecated')) {
-        badge = $('<span class="badge" />').text(I18n.t('jst.testsTable.status.deprecated'));
+        label = $('<span class="label label-default" />').text(I18n.t('jst.testsTable.status.deprecated'));
       } else if (!this.model.get('active')) {
-        badge = $('<span class="badge badge-warning" />').text(I18n.t('jst.testsTable.status.inactive'));
+        label = $('<span class="label label-warning" />').text(I18n.t('jst.testsTable.status.inactive'));
       } else if (this.model.get('passing')) {
-        badge = $('<span class="badge badge-success" />').text(I18n.t('jst.testsTable.status.passing'));
+        label = $('<span class="label label-success" />').text(I18n.t('jst.testsTable.status.passing'));
       } else {
-        badge = $('<span class="badge badge-important" />').text(I18n.t('jst.testsTable.status.failing'));
+        label = $('<span class="label label-danger" />').text(I18n.t('jst.testsTable.status.failing'));
       }
 
-      badge.appendTo(this.ui.status).popover({
+      label.appendTo(this.ui.status).popover({
         html : true,
         trigger : 'click',
         title : this.tooltipTitle(),

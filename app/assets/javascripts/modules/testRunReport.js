@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('testRunReport', function() {
 
   // Do not change order. Search for "STATUSES" to find uses.
@@ -26,7 +25,7 @@ App.autoModule('testRunReport', function() {
 
     ui : {
       details : '.details',
-      detailsContainer : '.details .container',
+      detailsContainer : '.details .details-container',
       visualReport : '.visualReport',
       categoryResults : '.categoryResults',
       searchFilter : '.filters .search',
@@ -347,7 +346,7 @@ App.autoModule('testRunReport', function() {
 
     ui : {
       progress : '.progress',
-      progressBar : '.progress .bar'
+      progressBar : '.progress .progress-bar'
     },
 
     initialize : function(options) {
@@ -390,9 +389,10 @@ App.autoModule('testRunReport', function() {
     },
 
     showError : function(timeout) {
+      timeout = timeout === true;
       this.ui.progress.removeClass('progress-striped active');
-      this.ui.progressBar.addClass('bar-' + (timeout ? 'warning' : 'danger'));
-      $('<p />').addClass('text-' + (timeout ? 'warning' : 'error'))
+      this.ui.progressBar.addClass('progress-bar-' + (timeout ? 'warning' : 'danger'));
+      $('<p />').addClass('text-' + (timeout ? 'warning' : 'danger'))
         .text(I18n.t('jst.testRunReport.loading' + (timeout ? 'Timeout' : 'Error')))
         .insertAfter(this.ui.progress).hide().slideDown();
     },

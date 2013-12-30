@@ -1,6 +1,6 @@
 .loadingTestRunReport{ data: { module: :testRunReport, config: { path: legacy_api_test_run_path(@test_run), loading: true }.to_json } }
   .row
-    .span8.offset2
+    .col-md-8.col-md-offset-2
       .well
         %h2= t('.title')
         %p.endedAt= l @test_run.ended_at.localtime, format: :long
@@ -16,13 +16,13 @@
           %tbody
             %tr
               %td.passed
-                %span.badge.badge-success= @test_run.passed_results_count - @test_run.inactive_passed_results_count
+                %span.label.label-success= @test_run.passed_results_count - @test_run.inactive_passed_results_count
               %td.failed
-                %span.badge.badge-important= @test_run.results_count - @test_run.passed_results_count - @test_run.inactive_results_count + @test_run.inactive_passed_results_count
+                %span.label.label-danger= @test_run.results_count - @test_run.passed_results_count - @test_run.inactive_results_count + @test_run.inactive_passed_results_count
               %td.inactive
-                %span.badge.badge-warning= @test_run.inactive_results_count
+                %span.label.label-warning= @test_run.inactive_results_count
               %td.all
-                %span.badge.badge-info= @test_run.results_count
+                %span.label.label-info= @test_run.results_count
               %td.duration= human_duration @test_run.duration, format: :short
         .progress.progress-striped.active
-          .bar{ style: 'width:100%;' }
+          .progress-bar{ role: 'progressbar', style: 'width:100%;' }
