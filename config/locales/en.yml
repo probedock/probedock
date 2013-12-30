@@ -95,7 +95,7 @@ en:
       filterByTags: "Filter by tag..."
       filterBySearch: "Filter by name or key..."
       resultsByProject: "Results by project"
-      details: "Details"
+      details: "Details (%{n} results)"
       showAll: "Show Passed & Inactive"
       uncategorized: "Uncategorized"
       backToSummary: "Back to summary"

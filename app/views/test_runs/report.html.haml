@@ -102,7 +102,7 @@
         %p.back
           %a{ href: '#top' }= I18n.t('test_runs.report.backToSummary')
   .details
-    %h2= I18n.t('test_runs.report.details')
+    %h2= I18n.t('test_runs.report.details', n: ordered_results.length)
     %button.showAll.btn.btn-default{ type: 'button' }= I18n.t('test_runs.report.showAll')
     .details-container.onlyFailed
       - ordered_results.each_with_index do |result,i|

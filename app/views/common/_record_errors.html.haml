@@ -1,5 +1,5 @@
 - if record.errors.any?
-  .alert.alert-error
+  .alert.alert-danger
     %p The following errors prevented this record from being saved:
     %ul
       - record.errors.each do |attr,errors|
