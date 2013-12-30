@@ -1,9 +1,11 @@
 %form.form-inline
-  %button.generate.btn.btn-primary{ :type => 'button' }= I18n.t('jst.keyGenerator.generate')
-  %input.input-mini{ :type => 'number', :name => 'n', :min => 1, :max => 25, :value => 3 }
+  %button.generate.btn.btn-primary{ type: 'button' }= I18n.t('jst.keyGenerator.generate')
+  .form-group
+    %input.form-control{ type: 'number', name: 'n', min: 1, max: 25, value: 3 }
   = I18n.t('jst.keyGenerator.newKeys')
-  %select.project{ disabled: 'disabled', name: 'project' }
-    %option{ value: '' }= I18n.t('jst.keyGenerator.noProject')
-  %button.release.btn.pull-right{ :type => 'button' }= I18n.t('jst.keyGenerator.release')
+  .form-group
+    %select.project.form-control{ disabled: 'disabled', name: 'project' }
+      %option{ value: '' }= I18n.t('jst.keyGenerator.noProject')
+  %button.release.btn.btn-danger.pull-right{ type: 'button' }= I18n.t('jst.keyGenerator.release')
 .well
 %p.text-error
