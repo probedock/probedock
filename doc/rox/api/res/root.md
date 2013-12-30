@@ -40,7 +40,7 @@ It is the only resource with a documented URI and must always be your starting p
 
 ```json
 {
-  "appVersion": "1.0.4",
+  "appVersion": "2.0.0",
   "_links": {
     "self": {
       "href": "https://rox.example.com/uri",

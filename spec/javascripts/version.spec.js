@@ -19,6 +19,6 @@ describe("Version", function() {
 
   it("should be correct", function() {
     this.meta = { rox : { key : 'e957f5f04986' } };
-    expect(App.version).toBe('1.0.4');
+    expect(App.version).toBe('2.0.0');
   });
 });
