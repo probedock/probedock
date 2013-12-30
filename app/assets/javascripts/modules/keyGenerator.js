@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('keyGenerator', function() {
 
   var models = App.module('models'),
@@ -80,12 +79,13 @@ App.autoModule('keyGenerator', function() {
 
     onRender: function() {
       this.setupProject();
+      this.updateControls(true);
       this.ui.error.hide();
     },
 
     addNewKeys: function(response) {
       this.addKeys(response._embedded['v1:test-keys']);
-      this.setControlsEnabled(true);
+      this.updateControls(true);
     },
 
     addKeys: function(keys) {
@@ -97,7 +97,7 @@ App.autoModule('keyGenerator', function() {
         }, this);
 
         if (!project) {
-          project = new Project(_.findWhere(this.projects, { apiId: key.projectApiId }));
+          project = Project.findOrCreate(_.findWhere(this.projects, { apiId: key.projectApiId }));
           this.collection.add(project);
         }
 
@@ -119,14 +119,20 @@ App.autoModule('keyGenerator', function() {
     },
 
     removeKeys: function() {
-      this.collection.remove(this.collection.models);
-      this.setControlsEnabled(true);
+
+      this.collection.forEach(function(project) {
+        project.get('testKeys').reset();
+      }, this);
+
+      this.collection.reset();
+
+      this.updateControls(true);
     },
 
     generateNewKeys: function() {
 
       this.ui.error.hide();
-      this.setControlsEnabled(false);
+      this.updateControls(false);
 
       $.ajax({
         url: this.path + '?' + $.param({ n: this.ui.numberOfKeys.val() }),
@@ -140,9 +146,12 @@ App.autoModule('keyGenerator', function() {
     },
 
     releaseUnusedKeys: function() {
+      if (!confirm(I18n.t('jst.keyGenerator.releaseConfirmation'))) {
+        return;
+      }
 
       this.ui.error.hide();
-      this.setControlsEnabled(false);
+      this.updateControls(false);
 
       $.ajax({
         url: this.path,
@@ -151,19 +160,19 @@ App.autoModule('keyGenerator', function() {
       }).done(_.bind(this.removeKeys, this)).fail(_.bind(this.showReleaseError, this));;
     },
 
-    setControlsEnabled: function(enabled) {
+    updateControls: function(enabled) {
       this.ui.generate.attr('disabled', !enabled);
-      this.ui.release.attr('disabled', !enabled);
+      this.ui.release.attr('disabled', !enabled || this.collection.isEmpty());
     },
 
     showGenerationError: function() {
       this.ui.error.text(I18n.t('jst.keyGenerator.errors.generate')).show();
-      this.setControlsEnabled(true);
+      this.updateControls(true);
     },
 
     showReleaseError: function() {
       this.ui.error.text(I18n.t('jst.keyGenerator.errors.release')).show();
-      this.setControlsEnabled(true);
+      this.updateControls(true);
     }
   });
 

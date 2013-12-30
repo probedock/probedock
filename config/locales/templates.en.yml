@@ -155,6 +155,7 @@ en:
     keyGenerator:
       generate: "Generate"
       release: "Release unused keys"
+      releaseConfirmation: "Are you sure you want to release all unused keys? This operation cannot be canceled. If you have used these keys for tests whose results have not yet been submitted, you will have to generate and assign new keys to these tests."
       newKeys: "new keys for"
       noProject: "No project available"
       instructions: "Each test must be identified by a unique key. You can request keys for new tests here."
