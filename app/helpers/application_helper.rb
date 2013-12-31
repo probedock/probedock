@@ -19,4 +19,10 @@ module ApplicationHelper
   def human_window_title
     window_title.join t('common.title_separator')
   end
+
+  def meta_session
+    Hash.new.tap do |h|
+      h[:admin] = true if current_user.try(:admin?)
+    end
+  end
 end

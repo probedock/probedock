@@ -22,6 +22,10 @@ class DataController < ApplicationController
     render json: StatusData.compute
   end
 
+  def general
+    render json: GeneralData.compute(params)
+  end
+
   def latest_test_runs
     cache = LatestTestRunsData.compute
     render json: cache.contents.first(params.key?(:n) ? params[:n].to_i : 8) if cache_stale? cache

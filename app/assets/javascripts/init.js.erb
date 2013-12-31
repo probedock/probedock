@@ -23,7 +23,6 @@ var App = new Backbone.Marionette.Application();
 
 App.version = <%= ROXCenter::Application::VERSION.to_json %>;
 App.environment = <%= Rails.env.to_json %>;
-App.pollingFrequency = App.environment == 'development' ? 1000 : (Meta.get('session') ? 3000 : 10000);
 App.secure = App.environment == 'production';
 
 App.debug = function(msg) {
@@ -58,6 +57,10 @@ App.watchStatus = function(source, func, options) {
 };
 
 $(function() {
+
+  var session = Meta.get('session') ? JSON.parse(Meta.get('session')) : null;
+  App.pollingFrequency = App.environment == 'development' ? 1000 : (session ? 3000 : 10000);
+  App.admin = session && !!session.admin;
 
   App.start();
 

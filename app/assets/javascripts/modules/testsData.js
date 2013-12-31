@@ -14,20 +14,16 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('testsData', function() {
 
-  var TestsData = Backbone.Model.extend({
-  
-    url : LegacyApiPath.builder('status', 'tests')
-  });
+  var models = App.module('models'),
+      GeneralStatusData = models.GeneralStatusData;
 
   var TestsDataView = Backbone.Marionette.ItemView.extend({
 
     template : 'testsData',
     ui : {
       tests : '.tests',
-      results : '.results',
       runs : '.runs',
       failing : '.failing',
       inactive : '.inactive',
@@ -35,7 +31,7 @@ App.autoModule('testsData', function() {
     },
 
     initialize : function() {
-      App.watchStatus(this, this.update, { except: 'lastTestCounters' });
+      App.watchStatus(this, this.update, { except: [ 'jobs', 'lastTestCounters' ] });
       this.listenTo(this.model, 'change', this.renderModel);
     },
 
@@ -45,7 +41,6 @@ App.autoModule('testsData', function() {
 
     renderModel : function() {
       this.ui.tests.html(this.testsLink());
-      this.ui.results.text(Format.number(this.model.get('results')));
       this.ui.runs.html(this.runsLink());
       this.renderFailing();
       this.renderInactive();
@@ -54,22 +49,25 @@ App.autoModule('testsData', function() {
 
     update : function() {
       this.model.fetch({
-        ifModified : true
+        data: {
+          tests: 1,
+          count: { tests: 1, runs: 1 }
+        }
       }).done(function() {
         App.debug('Updated tests status after new activity');
       });
     },
 
     testsLink : function() {
-      return $('<a />').attr('href', PagePath.build('tests')).text(Format.number(this.model.get('tests')));
+      return $('<a />').attr('href', PagePath.build('tests')).text(Format.number(this.model.get('count').get('tests') - this.model.get('tests').get('deprecated')));
     },
 
     runsLink : function() {
-      return $('<a />').attr('href', PagePath.build('runs')).text(Format.number(this.model.get('runs')));
+      return $('<a />').attr('href', PagePath.build('runs')).text(Format.number(this.model.get('count').get('runs')));
     },
 
     renderFailing : function() {
-      var n = this.model.get('failing_tests');
+      var n = this.model.get('tests').get('failing');
       var text = Format.number(n);
       if (n >= 1) {
         this.ui.failing.html($('<a />').attr('href', PagePath.build('tests?status=failing')).text(text));
@@ -79,7 +77,7 @@ App.autoModule('testsData', function() {
     },
 
     renderInactive : function() {
-      var n = this.model.get('inactive_tests');
+      var n = this.model.get('tests').get('inactive');
       var text = Format.number(n);
       if (n >= 1) {
         this.ui.inactive.html($('<a />').attr('href', PagePath.build('tests?status=inactive')).text(text));
@@ -89,11 +87,11 @@ App.autoModule('testsData', function() {
     },
 
     renderOutdated : function() {
-      var n = this.model.get('outdated_tests');
+      var n = this.model.get('tests').get('outdated');
       var text = Format.number(n);
       if (n >= 1) {
         this.ui.outdated.html($('<a />').attr('href', PagePath.build('tests?status=outdated')).text(text));
-        this.ui.outdated.tooltip({ title : I18n.t('jst.testsData.outdatedInstructions', { days : this.model.get('outdated_days') }), placement : 'bottom' });
+        this.ui.outdated.tooltip({ title : I18n.t('jst.testsData.outdatedInstructions', { days : this.model.get('tests').get('outdatedDays') }), placement : 'bottom' });
       } else {
         this.ui.outdated.text(text);
       }
@@ -101,6 +99,6 @@ App.autoModule('testsData', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new TestsDataView({ model : new TestsData(options.config) }));
+    options.region.show(new TestsDataView({ model : new GeneralStatusData(options.config) }));
   });
 });

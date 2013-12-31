@@ -78,7 +78,7 @@ en:
       headers:
         general: "General"
         jobs: "Jobs"
-        tests: "Records"
+        count: "Records"
       environment: "Environment"
       users: "Users"
       databaseSize: "Database Size"

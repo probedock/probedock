@@ -36,6 +36,63 @@ App.module('models', function() {
     }
   });
 
+  var JobsStatusData = Backbone.RelationalModel.extend({
+  });
+
+  var CountStatusData = Backbone.RelationalModel.extend({
+  });
+
+  var TestsStatusData = Backbone.RelationalModel.extend({
+  });
+
+  var DbStatusData = Backbone.RelationalModel.extend({
+
+    databaseSize: function() {
+      return this.get('main') ? Math.round(this.get('main') / 10000) / 100 : undefined;
+    },
+
+    humanDatabaseSize: function() {
+      var size = this.databaseSize();
+      return size && size >= 0 ? size + ' MB' : I18n.t('jst.common.noData')
+    },
+
+    cacheSize: function() {
+      return this.get('cache') ? Math.round(this.get('cache') / 10000) / 100 : undefined;
+    },
+
+    humanCacheSize: function() {
+      var size = this.cacheSize();
+      return size && size >= 0 ? size + ' MB' : I18n.t('jst.common.noData');
+    }
+  });
+
+  var GeneralStatusData = this.GeneralStatusData = Backbone.RelationalModel.extend({
+
+    url: Path.builder('data', 'general'),
+    relations: [
+      {
+        type: Backbone.HasOne,
+        key: 'jobs',
+        relatedModel: JobsStatusData
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'count',
+        relatedModel: CountStatusData
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'db',
+        relatedModel: DbStatusData
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'tests',
+        relatedModel: TestsStatusData
+      }
+    ]
+  });
+
   var ApiKey = this.ApiKey = HalModel.extend({
     fallbackUrl: Path.builder('api_keys')
   });

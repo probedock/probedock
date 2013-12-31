@@ -14,12 +14,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+module RoxHook
+  HOOKS = []
 
-class JobsData
+  def self.hooks
+    HOOKS
+  end
 
-  def self.compute
-    Resque.info.select{ |k,v| %w(workers working pending processed).include? k.to_s }.tap do |h|
-      h[:failed] = Resque::Failure.count
+  def self.setup!
+    ROXCenter::Application.events.on do |*args|
+      hooks.each{ |hook| hook.fire *args }
     end
+  end
+
+  extend ActiveSupport::Concern
+
+  module ClassMethods
+    include EventEmitter
   end
 end

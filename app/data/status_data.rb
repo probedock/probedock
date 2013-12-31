@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class StatusData
 
   include RoxHook
@@ -28,10 +27,12 @@ class StatusData
     results = $redis.multi do
       DATES.each{ |d| $redis.hsetnx CACHE_KEY, d, t }
       $redis.hgetall CACHE_KEY
-    end
+    end.last 1
 
-    DATES.inject({}) do |memo,d|
-      memo[d.camelize(:lower).to_sym] = results.last[d].to_i
+    DATES.inject({
+      jobs: Digest::SHA1.hexdigest(resque_status)
+    }) do |memo,d|
+      memo[d.camelize(:lower).to_sym] = results[0][d].to_i
       memo
     end
   end
@@ -51,5 +52,10 @@ class StatusData
 
   def self.to_timestamp time
     (time.to_f * 1000).to_i
+  end
+
+  def self.resque_status
+    info = Resque.info
+    "#{info[:workers]}-#{info[:pending]}-#{info[:working]}-#{info[:processed]}"
   end
 end

@@ -14,15 +14,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 var Meta = {
 
-  get : function(name) {
+  get: function(name) {
     if (!Meta._cache[name] || !Meta._cache[name].length) {
       Meta._cache[name] = $('meta[name="' + name + '"]');
     }
     return Meta._cache[name].attr('content');
   },
 
-  _cache : {}
+  _cache: {}
 };

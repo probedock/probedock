@@ -25,62 +25,37 @@ class HomeController < ApplicationController
   def index
 
     # Load all caches at the same time to avoid separate commands being sent to Redis.
-    caches = Settings.cache, TagsData.cloud, TestsData.compute, LatestTestRunsData.compute, LatestProjectsData.compute
+    caches = Settings.cache, TagsData.cloud, LatestTestRunsData.compute, LatestProjectsData.compute
     caches << cached_links if user_signed_in?
     cached = JsonCache.get *caches
 
-    @tag_cloud = home_tag_cloud cached[1].contents, cached[0]
-    @tests_data = cached[2]
-    @latest_test_runs_data = cached[3].contents.first(8) # TODO: allow to customize default number of latest runs on home page
-    @latest_projects = cached[4].contents
-    @links = cached[5].try :contents
+    settings = Settings.app cached[0]
+
+    @tag_cloud = home_tag_cloud cached[1].contents, settings
+    @latest_test_runs_data = cached[2].contents.first(8) # TODO: allow to customize default number of latest runs on home page
+    @latest_projects = cached[3].contents
+    @links = cached[4].try :contents
     @current_test_metrics_config = CurrentTestMetricsData.compute
+
+    # TODO: find a way to do this in the $redis.multi done by JsonCache.get above
     @status_data = StatusData.compute
+    @general_data = GeneralData.compute settings: settings, count: { tests: true, runs: true }, tests: true
+  end
+
+  def status
+    window_title << t('home.status.title')
+    @status = StatusData.compute
+    @general = GeneralData.compute environment: true, jobs: true, count: true, db: true
   end
 
   def ping
     render text: "ROX Center v#{ROXCenter::Application::VERSION} #{Rails.env}"
   end
 
-  # TODO: move status routes to data controller
-  def status
-    window_title << t('home.status.title')
-    @status = statuses
-  end
-
-  def api_status
-    render :json => statuses(true)
-  end
-
-  def app_status
-    cache = AppData.compute
-    render :json => cache if cache_stale? cache
-  end
-
-  def db_status
-    cache = DbData.compute
-    render :json => cache if cache_stale? cache
-  end
-
-  def jobs_status
-    render :json => JobsData.compute
-  end
-
   private
 
-  def home_tag_cloud contents, cached_settings
-    size = Settings.app(cached_settings).tag_cloud_size
+  def home_tag_cloud contents, settings
+    size = settings.tag_cloud_size
     { size: size, total: contents.length, cloud: TagsData.sized_cloud(contents, size) }
-  end
-
-  def statuses api = false
-    {
-      app: AppData.compute.contents,
-      db: DbData.compute.contents,
-      jobs: JobsData.compute,
-      tests: TestsData.compute.contents
-    }.tap do |h|
-      h[:admin] = true if !api and current_user.admin?
-    end
   end
 end

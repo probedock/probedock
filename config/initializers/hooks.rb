@@ -14,10 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require 'hooks'
 
 RoxHook.hooks << CacheHook
 RoxHook.hooks << StatusData
+RoxHook.hooks << GeneralData
 
 RoxHook.hooks << CacheReportJob
 RoxHook.hooks << CountDeprecationJob

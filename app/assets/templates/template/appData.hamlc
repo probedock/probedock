@@ -9,9 +9,6 @@
             %th= I18n.t('jst.appData.environment')
             %td.environment
           %tr
-            %th= I18n.t('jst.appData.users')
-            %td.users
-          %tr
             %th= I18n.t('jst.appData.databaseSize')
             %td.databaseSize
           %tr
@@ -42,15 +39,18 @@
   .col-md-4
     .panel.panel-info
       .panel-heading
-        %h4= I18n.t('jst.appData.headers.tests')
+        %h4= I18n.t('jst.appData.headers.count')
       %table.table.table-hover
         %tbody
+          %tr
+            %th= I18n.t('jst.appData.users')
+            %td.users
           %tr
             %th= I18n.t('jst.testsData.tests')
             %td.tests
           %tr
-            %th= I18n.t('jst.testsData.testResults')
-            %td.results
-          %tr
             %th= I18n.t('jst.testsData.testRuns')
             %td.runs
+          %tr
+            %th= I18n.t('jst.testsData.testResults')
+            %td.results

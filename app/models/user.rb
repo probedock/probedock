@@ -23,8 +23,8 @@ class User < ActiveRecord::Base
   attr_accessor :cached_groups
 
   after_create :create_api_key
-  after_create :clear_app_cache
-  after_destroy :clear_app_cache
+  after_create{ Rails.application.events.fire 'user:created' }
+  after_destroy{ Rails.application.events.fire 'user:destroyed' }
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
@@ -112,10 +112,6 @@ class User < ActiveRecord::Base
   end
 
   private
-
-  def clear_app_cache
-    JsonCache.clear :app_status
-  end
 
   def create_api_key
     ApiKey.create_for_user self

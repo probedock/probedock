@@ -14,17 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require 'hooks'
-
 class CacheHook
   include RoxHook
 
   on 'api:payload' do |job|
     # FIXME: centralize caches and event clearing (caches should be hooks)
-    JsonCache.clear :tag_cloud, :tests_status, :latest_test_runs, :latest_projects
-  end
-
-  on 'test:deprecated', 'test:undeprecated' do
-    JsonCache.clear :tests_status
+    JsonCache.clear :tag_cloud, :latest_test_runs, :latest_projects
   end
 end

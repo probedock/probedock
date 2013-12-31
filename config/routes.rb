@@ -35,6 +35,7 @@ ROXCenter::Application.routes.draw do
 
   resource :data, only: [] do
     get :status
+    get :general
     get :current_test_metrics
     get :latest_test_runs
     match :test_counters, via: [ :get, :post ]
@@ -151,13 +152,6 @@ ROXCenter::Application.routes.draw do
       end
 
       resource :settings, only: [ :show, :update ]
-
-      match 'status' => 'home#api_status', :via => :get
-      match 'status/app' => 'home#app_status', :via => :get
-      match 'status/db' => 'home#db_status', :via => :get
-      match 'status/jobs' => 'home#jobs_status', :via => :get
-      match 'status/metrics' => 'metrics#status', :via => :get
-      match 'status/tests' => 'test_infos#status', :via => :get
 
       resources :tags, :only => [] do
         collection do

@@ -49,6 +49,10 @@ module ROXCenter
       @events ||= Events.new
     end
 
+    def events
+      self.class.events
+    end
+
     def self.metrics_timezones
       METRICS_TIMEZONES.dup
     end
@@ -62,7 +66,7 @@ module ROXCenter
     config.cache_store = :file_store, File.join(Rails.root, 'tmp', 'cache', 'store', Rails.env)
 
     if Rails.env == 'development'
-      config.middleware.swap Rails::Rack::Logger, Silencer::Logger, silence: [%r{^/data/status}, %r{^/data/test_counters}]
+      config.middleware.swap Rails::Rack::Logger, Silencer::Logger, silence: [%r{^/data/status}]
     end
 
     # Custom directories with classes and modules you want to be autoloadable.

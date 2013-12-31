@@ -1,14 +1,12 @@
 %table.table
   %thead
     %th= I18n.t('jst.testsData.tests')
-    %th= I18n.t('jst.testsData.testResults')
     %th= I18n.t('jst.testsData.testRuns')
     %th= I18n.t('jst.testsData.failingTests')
     %th= I18n.t('jst.testsData.inactiveTests')
     %th= I18n.t('jst.testsData.outdatedTests')
   %tbody
     %td.tests
-    %td.results
     %td.runs
     %td.failing
     %td.inactive
