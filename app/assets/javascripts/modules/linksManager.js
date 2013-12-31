@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('linksManager', function() {
 
   var models = App.module('models');
@@ -35,7 +34,7 @@ App.autoModule('linksManager', function() {
     template : 'linksManager/link',
     ui : {
       edit : '.actions .edit',
-      dropdownToggle : '.actions .dropdown-toggle',
+      delete : '.actions .delete',
       controls : '.actions .btn',
       name : '.name',
       url : '.url'
@@ -80,6 +79,10 @@ App.autoModule('linksManager', function() {
 
     deleteLink : function(e) {
       e.preventDefault();
+      if (!confirm(I18n.t('jst.linksManager.confirmDelete', { name: this.model.get('name') }))) {
+        return;
+      }
+
       this.updateControls(false);
       this.model.destroy({ wait : true });
     },
@@ -87,9 +90,10 @@ App.autoModule('linksManager', function() {
     updateControls : function(enabled) {
 
       this.ui.edit.attr('disabled', false);
-      this.ui.edit.text(I18n.t('common.' + (this.editing ? 'cancel' : 'edit')));
-      this.ui.dropdownToggle.attr('disabled', this.editing);
-      this.ui.controls[this.editing ? 'addClass' : 'removeClass']('btn-warning');
+      this.ui.edit.html($('<span class="glyphicon glyphicon-' + (this.editing ? 'remove-circle' : 'edit') + '" />'));
+      this.ui.edit[this.editing ? 'addClass' : 'removeClass']('btn-warning');
+
+      this.ui.delete.attr('disabled', this.editing);
 
       if (typeof(enabled) != 'undefined' && !enabled) {
         this.ui.controls.attr('disabled', true);
