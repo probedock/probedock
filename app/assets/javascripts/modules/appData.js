@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('appData', function() {
 
   var JobsData = Backbone.RelationalModel.extend({
@@ -87,7 +86,7 @@ App.autoModule('appData', function() {
       tests : 'td.tests',
       testResults : 'td.results',
       testRuns : 'td.runs',
-      jobsHeader : 'caption.jobs'
+      jobControls : '.job-controls'
     },
 
     initialize : function() {
@@ -100,7 +99,7 @@ App.autoModule('appData', function() {
 
       this.renderGeneral();
       this.renderJobs();
-      this.renderJobsHeader();
+      this.renderJobControls();
       this.renderTests();
 
       console.log('Updating data every ' + App.pollingFrequency + 'ms');
@@ -110,12 +109,12 @@ App.autoModule('appData', function() {
       }, this), App.pollingFrequency);
     },
 
-    renderJobsHeader : function() {
-      if (this.model.get('admin')) {
-        var text = this.ui.jobsHeader.text();
-        this.ui.jobsHeader.empty();
-        $('<a />').attr('href', Path.builder('resque')).text(text).appendTo(this.ui.jobsHeader);
+    renderJobControls : function() {
+      if (!this.model.get('admin')) {
+        return this.ui.jobControls.remove();
       }
+
+      $('<a />').attr('href', Path.builder('resque')).text(I18n.t('jst.appData.resqueLink')).appendTo(this.ui.jobControls);
     },
 
     renderTests : function() {

@@ -78,11 +78,12 @@ en:
       headers:
         general: "General"
         jobs: "Jobs"
-        tests: "Tests"
+        tests: "Records"
       environment: "Environment"
       users: "Users"
       databaseSize: "Database Size"
       cacheSize: "Cache RAM Size"
+      resqueLink: "Resque Backend"
       jobs:
         workers: "Workers"
         working: "Working"
