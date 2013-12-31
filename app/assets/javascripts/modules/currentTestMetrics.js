@@ -131,9 +131,9 @@ App.autoModule('currentTestMetrics', function() {
 
           this.ui[selector].text(prefix + Format.number(total));
           this.ui[selector][total ? 'removeClass' : 'addClass']('muted');
-          this.ui[selector].removeClass('text-error text-success');
+          this.ui[selector].removeClass('text-danger text-success');
           if (total && type == 'written') {
-            this.ui[selector].addClass(total >= 1 ? 'text-success' : 'text-error');
+            this.ui[selector].addClass(total >= 1 ? 'text-success' : 'text-danger');
           }
 
           if (measures.hasUsers()) {

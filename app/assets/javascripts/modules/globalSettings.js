@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('globalSettings', function() {
 
   var Settings = Backbone.Model.extend({
@@ -81,14 +80,11 @@ App.autoModule('globalSettings', function() {
     },
 
     setNotice : function(type) {
-      this.ui.formControls.removeClass('error success');
-      this.ui.saveButton.next('.help-inline').remove();
+      this.ui.saveButton.next('.text-success,.text-danger').remove();
       if (type == 'success') {
-        this.ui.formControls.addClass('success');
-        $('<span class="help-inline" />').text(I18n.t('jst.globalSettings.success')).insertAfter(this.ui.saveButton).hide().fadeIn('fast');
+        $('<span class="text-success" />').text(I18n.t('jst.globalSettings.success')).insertAfter(this.ui.saveButton).hide().fadeIn('fast');
       } else if (type == 'error') {
-        this.ui.formControls.addClass('error');
-        $('<span class="help-inline" />').text(I18n.t('jst.globalSettings.error')).insertAfter(this.ui.saveButton).hide().fadeIn('fast');
+        $('<span class="text-danger" />').text(I18n.t('jst.globalSettings.error')).insertAfter(this.ui.saveButton).hide().fadeIn('fast');
       }
     },
 
