@@ -83,8 +83,9 @@ describe CountDeprecationJob do
 
     it "should trigger a test:counters event on the application", rox: { key: 'd311529e3b65' } do
       described_class.stub new: nil
-      ROXCenter::Application.events.should_receive(:fire).with 'test:counters'
-      described_class.perform deprecated_test.deprecation_id, foo: 'bar'
+      test = deprecated_test # create test before so that user:created event is skipped
+      expect(Rails.application.events).to receive(:fire).with('test:counters')
+      described_class.perform test.deprecation_id, foo: 'bar'
     end
   end
 

@@ -17,6 +17,11 @@
 class LatestProjectsData
   LIMIT = 5
 
+  include RoxHook
+  on 'api:payload' do |job|
+    JsonCache.clear :latest_projects
+  end
+
   def self.compute
     JsonCache.new(:latest_projects, etag: false){ compute_data.deep_stringify_keys! }
   end

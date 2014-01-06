@@ -15,9 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 
-RoxHook.hooks << CacheHook
+# TODO: try to auto-discover classes with hooks
+RoxHook.hooks << TagsData
 RoxHook.hooks << StatusData
 RoxHook.hooks << GeneralData
+RoxHook.hooks << LatestTestRunsData
+RoxHook.hooks << LatestProjectsData
 
 RoxHook.hooks << CacheReportJob
 RoxHook.hooks << CountDeprecationJob

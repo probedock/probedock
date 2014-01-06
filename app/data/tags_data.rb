@@ -14,8 +14,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TagsData
+  include RoxHook
+
+  on 'api:payload' do |job|
+    JsonCache.clear :tag_cloud
+  end
 
   def self.cloud
     JsonCache.new(:tag_cloud){ cloud_data.deep_stringify_keys! }

@@ -17,6 +17,11 @@
 class LatestTestRunsData
   GROUP_LIMIT = 3
 
+  include RoxHook
+  on 'api:payload' do |job|
+    JsonCache.clear :latest_test_runs
+  end
+
   def self.compute
     JsonCache.new(:latest_test_runs){ compute_data.deep_stringify_keys! }
   end

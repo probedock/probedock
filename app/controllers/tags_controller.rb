@@ -24,6 +24,6 @@ class TagsController < ApplicationController
 
   def cloud
     cached = TagsData.cloud
-    render :json => TagsData.sized_cloud(cached.contents, params[:size].to_i) if cache_stale? cached
+    render json: TagsData.sized_cloud(cached.contents, params[:size].to_i) if cache_stale? cached
   end
 end

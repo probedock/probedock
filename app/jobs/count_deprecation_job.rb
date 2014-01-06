@@ -32,7 +32,7 @@ class CountDeprecationJob
 
     new deprecation, options
 
-    ROXCenter::Application.events.fire 'test:counters'
+    Rails.application.events.fire 'test:counters'
   end
 
   def initialize deprecation, options = {}

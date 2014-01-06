@@ -17,7 +17,7 @@
 require 'spec_helper'
 
 describe RoxHook do
-  let(:hooks){ [ CacheHook, StatusData, CacheReportJob, CountDeprecationJob, CountTestsJob ] }
+  let(:hooks){ [ TagsData, StatusData, GeneralData, LatestTestRunsData, LatestProjectsData, CacheReportJob, CountDeprecationJob, CountTestsJob ] }
 
   it "should have all hooks registered", rox: { key: 'c0f472250ab4' } do
     expect(described_class.hooks).to match_array(hooks)
@@ -25,6 +25,6 @@ describe RoxHook do
 
   it "should forward application events to all hooks", rox: { key: '5e0afd9d3056' } do
     hooks.each{ |hook| expect(hook).to receive(:fire).with('event', foo: 'bar') }
-    ROXCenter::Application.events.fire 'event', foo: 'bar'
+    Rails.application.events.fire 'event', foo: 'bar'
   end
 end

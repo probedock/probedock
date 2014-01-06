@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe CacheHook do
+describe "CacheHook" do
 
   before :each do
     ResqueSpec.reset!

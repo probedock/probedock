@@ -89,13 +89,13 @@ describe User, rox: { tags: :unit } do
   context "cache" do
 
     it "should clear the app_status JSON cache when created", rox: { key: 'ec0d1dfc5e74' } do
-      JsonCache.should_receive(:clear).with(:app_status)
+      expect(Rails.application.events).to receive(:fire).with('user:created')
       build(:user).save!
     end
 
     it "should clear the app_status JSON cache when destroyed", rox: { key: 'e13685956480' } do
       user = create :user
-      JsonCache.should_receive(:clear).with(:app_status)
+      expect(Rails.application.events).to receive(:fire).with('user:destroyed')
       user.destroy
     end
   end
