@@ -30,7 +30,8 @@ class StatusData
     end.last 1
 
     DATES.inject({
-      jobs: Digest::SHA1.hexdigest(resque_status)
+      jobs: Digest::SHA1.hexdigest(resque_status),
+      counters: Digest::SHA1.hexdigest(TestCountersData.fingerprint)
     }) do |memo,d|
       memo[d.camelize(:lower).to_sym] = results[0][d].to_i
       memo

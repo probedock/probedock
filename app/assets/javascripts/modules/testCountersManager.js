@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('testCountersManager', function() {
 
   var TestCountersData = Backbone.Model.extend({
@@ -28,8 +27,8 @@ App.autoModule('testCountersManager', function() {
 
   var Manager = Backbone.Marionette.ItemView.extend({
 
-    tagName: 'table',
-    className: 'testCountersManager table table-hover table-bordered',
+    tagName: 'div',
+    className: 'panel panel-default testCountersManager',
     template: 'testCountersManager',
     ui: {
       statusBadge: 'tbody .badge',
@@ -47,13 +46,9 @@ App.autoModule('testCountersManager', function() {
       'change': 'renderModel'
     },
 
-    initialize: function(options) {
-      this.refreshInterval = App.pollingFrequency;
-    },
-
     onRender: function() {
       this.renderModel();
-      this.refreshPeriodically();
+      App.watchStatus(this, this.refresh, { only: [ 'counters', 'lastTestCounters' ] });
     },
 
     renderModel: function() {
@@ -83,12 +78,8 @@ App.autoModule('testCountersManager', function() {
       this.ui.recomputeButton.attr('disabled', this.model.status() == 'computing');
     },
 
-    refreshPeriodically: function() {
-      this.timeout = setTimeout(_.bind(this.refresh, this), this.refreshInterval);
-    },
-
     refresh: function() {
-      this.model.fetch().done(_.bind(this.refreshPeriodically, this));
+      this.model.fetch();
     },
 
     recompute: function() {

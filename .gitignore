@@ -1,3 +1,4 @@
+.bundle
 config/database.yml
 config/redis.yml
 config/ldap.yml

@@ -23,6 +23,7 @@ class SettingsController < ApplicationController
 
       format.html do
         window_title << t('settings.show.title')
+        @status = StatusData.compute
         @test_counters_config = { data: TestCountersData.compute }
       end
 

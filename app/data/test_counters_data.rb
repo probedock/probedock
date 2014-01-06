@@ -14,15 +14,28 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TestCountersData
 
   def self.compute
     {
-      jobs: Resque.size('metrics:test_counters'),
+      jobs: queue_size,
       recomputing: TestCounter.recomputing?,
-      remainingResults: $redis.get('metrics:test_counters:remaining_results').to_i,
+      remainingResults: remaining_results,
       totalCounters: TestCounter.count
     }
+  end
+
+  def self.fingerprint
+    "#{queue_size}-#{TestCounter.recomputing?}-#{remaining_results}"
+  end
+
+  private
+
+  def self.queue_size
+    Resque.size('metrics:test_counters')
+  end
+
+  def self.remaining_results
+    $redis.get('metrics:test_counters:remaining_results').to_i
   end
 end
