@@ -4,11 +4,14 @@
       :font-size 1.4em
       &.muted
         :font-size 1em
+  thead, tbody
+    tr
+      td, th
+        :text-align center
+        :vertical-align middle
+        &.title
+          :background-color #dddddd
   th, td
-    :text-align center
-    :vertical-align middle
-    &.title
-      :background-color #dddddd
     &.metric
       :width 9em
     .smallAvatar, .userAvatar
