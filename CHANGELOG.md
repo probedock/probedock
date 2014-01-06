@@ -2,7 +2,7 @@
 
 ## v2.0.1 - Edge
 
-* Ugprade to Rails 4.0.2.
+* Ugprade to Rails 4.0.2 and Bootstrap 3.
 
 * The `secret_token.rb` initializer was replaced by the `app_secrets.rb` initializer. See the [deployment documentation](doc/rox/deploy.md).
 
