@@ -1,6 +1,5 @@
 /*
  *= require_self
- *= require twitter/bootstrap
- *= require twitter/bootstrap-responsive
+ *= require ./bootstrap2
  *= require ./hal-browser
  */

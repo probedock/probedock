@@ -18,7 +18,7 @@
 //= require underscore
 //= require tableling.backbone
 //= require ./lib/uritemplates
-//= require twitter/bootstrap
+//= require ./lib/bootstrap2/bootstrap
 //= require ./lib/hal-browser/hal
 //= require ./lib/hal-browser/hal/browser
 //= require ./lib/hal-browser/hal/http/client
