@@ -29,6 +29,7 @@ class StatusData
       $redis.hgetall CACHE_KEY
     end.last 1
 
+    # TODO: spec jobs and counters hashes
     DATES.inject({
       jobs: Digest::SHA1.hexdigest(resque_status),
       counters: Digest::SHA1.hexdigest(TestCountersData.fingerprint)

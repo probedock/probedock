@@ -18,9 +18,13 @@ require 'spec_helper'
 
 describe Settings::App, rox: { tags: :unit } do
 
-  it "should clear the app settings JSON cache and update memory settings when saved", rox: { key: '97e924c25dab' } do
-    JsonCache.stub :clear
-    JsonCache.should_receive(:clear).with('settings:app', 'tests_status')
+  it "should clear the app settings cache when saved", rox: { key: '887b487e1f79' } do
+    expect(JsonCache).to receive(:clear).with('settings:app')
+    described_class.fire 'settings:app:saved'
+  end
+
+  it "should fire the settings:app:saved event when saved", rox: { key: '97e924c25dab' } do
+    expect(Rails.application.events).to receive(:fire).with('settings:app:saved')
     Settings::App.first.save
   end
   

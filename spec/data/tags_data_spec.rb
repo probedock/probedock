@@ -14,17 +14,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+require 'spec_helper'
 
-# TODO: try to auto-discover classes with hooks
-RoxHook.hooks << TagsData
-RoxHook.hooks << StatusData
-RoxHook.hooks << GeneralData
-RoxHook.hooks << LatestTestRunsData
-RoxHook.hooks << LatestProjectsData
-RoxHook.hooks << Settings::App
+describe TagsData do
 
-RoxHook.hooks << CacheReportJob
-RoxHook.hooks << CountDeprecationJob
-RoxHook.hooks << CountTestsJob
-
-RoxHook.setup!
+  it "should clear the :tag_cloud cache on the api:payload event", rox: { key: '7d1c6e0bacbf' } do
+    expect(JsonCache).to receive(:clear).with(:tag_cloud)
+    described_class.fire 'api:payload', double
+  end
+end

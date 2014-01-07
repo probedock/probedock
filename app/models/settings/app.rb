@@ -14,11 +14,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class Settings::App < ActiveRecord::Base
   self.table_name = 'app_settings'
 
-  after_save :clear_cache
+  after_save{ Rails.application.events.fire 'settings:app:saved' }
+
+  include RoxHook
+  on 'settings:app:saved' do
+    JsonCache.clear 'settings:app'
+  end
 
   strip_attributes
   validates :ticketing_system_url, length: { maximum: 255 }
@@ -37,11 +41,5 @@ class Settings::App < ActiveRecord::Base
       tag_cloud_size: tag_cloud_size,
       test_outdated_days: test_outdated_days
     }.select{ |k,v| v.present? }
-  end
-
-  private
-
-  def clear_cache
-    JsonCache.clear 'settings:app', 'tests_status'
   end
 end

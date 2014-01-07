@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class GeneralData
-  include RoxHook
+  # TODO: spec general data
 
   def self.compute params = {}
     options = {
@@ -29,9 +29,11 @@ class GeneralData
   CACHE_KEY = 'cache:general'
 
   # TODO: expire db size cache every X minutes rather than for every payload
+  include RoxHook
   on('api:payload'){ $redis.hdel CACHE_KEY, [ :db_main, :db_cache, :count_tests, :count_runs, :count_results ] }
   on('user:created', 'user:destroyed'){ $redis.hdel CACHE_KEY, [ :count_users ] }
   on('test:deprecated', 'test:undeprecated'){ $redis.hdel CACHE_KEY, [ :tests_failing, :tests_inactive, :tests_outdated, :tests_deprecated ] }
+  on('settings:app:saved'){ $redis.hdel CACHE_KEY, [ :tests_outdated, :tests_outdatedDays ] }
 
   class GeneralDataBuilder
 
