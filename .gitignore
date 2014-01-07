@@ -1,4 +1,6 @@
 .bundle
+.grunt
+_SpecRunner.html
 config/database.yml
 config/redis.yml
 config/ldap.yml
