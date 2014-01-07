@@ -1,17 +1,21 @@
 %button.open.btn.btn-primary{ type: 'button' }
-%form.form-horizontal.well{ method: 'POST', action: '#' }
-  .controls
-    %h3.title
-  .control-group
-    %label.control-label{ for: 'projectName' }= I18n.t('activerecord.attributes.project.name')
-    .controls
-      %input#projectName.input-xlarge{ type: 'text', name: 'name', maxlength: 255, value: @name }
-  .control-group
-    %label.control-label{ for: 'projectUrlToken' }= I18n.t('activerecord.attributes.project.url_token')
-    .controls
-      %input#projectUrlToken{ type: 'text', name: 'urlToken', maxlength: 25, value: @urlToken }
-      .help-inline= I18n.t('jst.projectEditor.urlTokenInstructions');
-  .form-controls
-    .controls
-      %button.save.btn.btn-primary{ type: 'submit' }= I18n.t('jst.common.save')
-      %button.cancel.btn{ type: 'button' }= I18n.t('jst.common.cancel')
+.row.editor
+  .col-md-6
+    .panel.panel-default
+      .panel-heading
+        %h3.panel-title Title
+      .panel-body
+        %form.form-horizontal{ method: 'POST', action: '#', role: 'form' }
+          .form-group
+            %label.control-label.col-sm-3{ for: 'projectName' }= I18n.t('activerecord.attributes.project.name')
+            .col-sm-9
+              %input#projectName.form-control{ type: 'text', name: 'name', maxlength: 255, value: @name }
+          .form-group
+            %label.control-label.col-sm-3{ for: 'projectUrlToken' }= I18n.t('activerecord.attributes.project.url_token')
+            .col-sm-9
+              %input#projectUrlToken.form-control{ type: 'text', name: 'urlToken', maxlength: 25, value: @urlToken }
+              .help-block= I18n.t('jst.projectEditor.urlTokenInstructions');
+          .form-group.form-controls
+            .col-sm-offset-3.col-sm-9
+              %button.save.btn.btn-primary{ type: 'submit' }= I18n.t('jst.common.save')
+              %button.cancel.btn.btn-default{ type: 'button' }= I18n.t('jst.common.cancel')

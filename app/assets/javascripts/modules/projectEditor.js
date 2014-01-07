@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('projectEditor', function() {
 
   var models = App.module('models'),
@@ -25,10 +24,11 @@ App.autoModule('projectEditor', function() {
     modelClass: Project,
     template: 'projectEditor',
     ui: {
-      title: '.title',
+      title: '.panel-title',
       openButton: 'button.open',
       nameField: 'form input[name="name"]',
-      urlTokenField: 'form input[name="urlToken"]'
+      urlTokenField: 'form input[name="urlToken"]',
+      container: '.row.editor'
     },
 
     events: {
@@ -84,14 +84,14 @@ App.autoModule('projectEditor', function() {
     open: function() {
       this.reset();
       this.ui.openButton.slideUp('normal', _.bind(function() {
-        this.ui.form.slideDown('normal', _.bind(function() {
+        this.ui.container.slideDown('normal', _.bind(function() {
           this.ui.nameField.focus();
         }, this));
       }, this));
     },
 
     close: function() {
-      this.ui.form.slideUp('normal', _.bind(function() {
+      this.ui.container.slideUp('normal', _.bind(function() {
         this.ui.openButton.slideDown('normal', _.bind(function() {
           this.setControlsEnabled(true);
         }, this));
