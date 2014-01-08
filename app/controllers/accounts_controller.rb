@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class AccountsController < ApplicationController
   before_filter :authenticate_user!
   before_filter{ authorize! :manage, :account }
@@ -23,11 +22,14 @@ class AccountsController < ApplicationController
   # Also lists the 5 latest tests authored by the current user.
   def show
     window_title << t('accounts.show.title')
+
     @key_generator_config = {
       path: api_test_keys_path,
       projects: Project.order(:name).to_a.collect{ |p| ProjectRepresenter.new(p).serializable_hash },
-      freeKeys: current_user.free_test_keys.order('created_at ASC').to_a.collect{ |k| TestKeyRepresenter.new(k).serializable_hash }
-    }
+      freeKeys: current_user.free_test_keys.order('created_at ASC').to_a.collect{ |k| TestKeyRepresenter.new(k).serializable_hash },
+      defaultProjectApiId: current_user.settings.default_test_key_project_api_id
+    }.reject{ |k,v| v.blank? }
+
     @test_search_config = TestSearch.config(params, except: [ :authors, :current ])
   end
 
@@ -37,5 +39,19 @@ class AccountsController < ApplicationController
     options[:base] = options[:base].where(author_id: current_user)
     options[:base_count] = options[:base_count].where(author_id: current_user)
     render :json => TestInfo.tableling.process(params.merge(options))
+  end
+
+  def update_settings
+    attrs = {}
+
+    default_test_key_project = params[:settings].try :[], :default_test_key_project
+    attrs[:default_test_key_project] = Project.where(api_id: default_test_key_project.to_s).first if default_test_key_project
+    return head :no_content if attrs.blank?
+
+    if current_user.settings.update_attributes attrs
+      head :no_content
+    else
+      render_record_errors current_user.settings
+    end
   end
 end

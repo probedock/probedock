@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
 
   attr_accessor :cached_groups
 
+  before_create :create_settings
   after_create :create_api_key
   after_create{ Rails.application.events.fire 'user:created' }
   after_destroy{ Rails.application.events.fire 'user:destroyed' }
@@ -50,6 +51,7 @@ class User < ActiveRecord::Base
   has_many :test_results, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_counters, dependent: :restrict_with_exception
   belongs_to :last_run, class_name: "TestRun"
+  belongs_to :settings, class_name: "Settings::User", dependent: :destroy
 
   strip_attributes
   validates :name, presence: true, uniqueness: { case_sensitive: false }
@@ -112,6 +114,10 @@ class User < ActiveRecord::Base
   end
 
   private
+
+  def create_settings
+    self.settings = Settings::User.new.tap(&:save!)
+  end
 
   def create_api_key
     ApiKey.create_for_user self

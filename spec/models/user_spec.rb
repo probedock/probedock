@@ -18,6 +18,12 @@ require 'spec_helper'
 
 describe User, rox: { tags: :unit } do
 
+  it "should create empty settings when created", rox: { key: 'b57d46ce9fc4' } do
+    expect do
+      expect(create(:user).settings).not_to be_nil
+    end.to change(Settings::User, :count).by(1)
+  end
+
   context "default values", rox: { key: 'fee0492b0511', grouped: true } do
     its(:roles_mask){ should == 0 }
   end
@@ -140,6 +146,12 @@ describe User, rox: { tags: :unit } do
     it(nil, rox: { key: '7a371e669906' }){ should have_many(:runs).class_name('TestRun') }
     it(nil, rox: { key: '786e3a4eeefa' }){ should belong_to(:last_run).class_name('TestRun') }
     it(nil, rox: { key: '3161ac222c11' }){ should have_many(:api_keys) }
+    it(nil, rox: { key: 'a52d51d6455d' }){ should belong_to(:settings).class_name('Settings::User') }
+
+    it "should delete a user's settings along with it", rox: { key: 'e2ed746b0d27' } do
+      user = create :user
+      expect{ user.destroy }.to change(Settings::User, :count).by(-1)
+    end
 
     it "should not let a user with tests be deleted", rox: { key: 'f4d6ee32fef5' } do
       user = create :user
@@ -183,9 +195,11 @@ describe User, rox: { tags: :unit } do
     it(nil, rox: { key: '6e6d67322510' }){ should have_db_column(:roles_mask).of_type(:integer).with_options(null: false, default: 0) }
     it(nil, rox: { key: '7f4153e5aa72' }){ should have_db_column(:metric_key).of_type(:string).with_options(null: false, limit: 5) }
     it(nil, rox: { key: 'ab9173bec164' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false, default: true) }
+    it(nil, rox: { key: 'e1f27f0692ad' }){ should have_db_column(:settings_id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '19faaeaea1cf' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, rox: { key: 'd4502778d426' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
     it(nil, rox: { key: '66d37b1e94bd' }){ should have_db_index(:name).unique(true) }
     it(nil, rox: { key: 'eb053d4f184d' }){ should have_db_index(:metric_key).unique(true) }
+    it(nil, rox: { key: '251a37234127' }){ should have_db_index(:settings_id).unique(true) }
   end
 end

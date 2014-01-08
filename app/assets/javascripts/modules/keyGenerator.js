@@ -65,13 +65,15 @@ App.autoModule('keyGenerator', function() {
 
     events: {
       'click form .generate': 'generateNewKeys',
-      'click form .release': 'releaseUnusedKeys'
+      'click form .release': 'releaseUnusedKeys',
+      'change form .project': 'updateSettings'
     },
 
     initialize: function(options) {
 
       this.path = options.path;
       this.projects = options.projects;
+      this.defaultProjectApiId = options.defaultProjectApiId;
 
       this.collection = new ProjectCollection();
       this.addKeys(options.freeKeys);
@@ -116,6 +118,10 @@ App.autoModule('keyGenerator', function() {
         $('<option />').val(project.apiId).text(project.name).appendTo(this.ui.project);
       }, this);
       this.ui.project.attr('disabled', false);
+
+      if (this.defaultProjectApiId) {
+        this.ui.project.val(this.defaultProjectApiId);
+      }
     },
 
     removeKeys: function() {
@@ -173,6 +179,25 @@ App.autoModule('keyGenerator', function() {
     showReleaseError: function() {
       this.ui.error.text(I18n.t('jst.keyGenerator.errors.release')).show();
       this.updateControls(true);
+    },
+
+    updateSettings: function() {
+
+      var defaultTestKeyProject = this.ui.project.val();
+
+      $.ajax({
+        url: PagePath.build('account', 'settings'),
+        type: 'PUT',
+        data: {
+          settings: {
+            default_test_key_project: defaultTestKeyProject
+          }
+        }
+      }).done(function() {
+        App.debug('Successfully updated default test key project setting to ' + defaultTestKeyProject + '.');
+      }).fail(function(xhr) {
+        App.debug("Couldn't update default test key project setting (got status code " + xhr.status + ").");
+      });
     }
   });
 
