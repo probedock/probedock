@@ -14,10 +14,20 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class CurrentTestMetricsData
 
+  include RoxHook
+  on 'test:counters' do
+    JsonCache.clear :current_test_metrics_data
+  end
+
   def self.compute
+    JsonCache.new(:current_test_metrics_data){ compute_data.deep_stringify_keys! }
+  end
+
+  private
+
+  def self.compute_data
 
     tz = TestCounter::DEFAULT_TIMEZONE
     now = Time.now.utc
@@ -44,8 +54,6 @@ class CurrentTestMetricsData
       memo
     end
   end
-
-  private
 
   def self.counter_metric counter_column, counters
     { total: counters.inject(0){ |memo,c| memo + c.send(counter_column) } }.tap do |h|

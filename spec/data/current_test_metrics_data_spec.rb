@@ -14,18 +14,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+require 'spec_helper'
 
-# TODO: try to auto-discover classes with hooks
-RoxHook.hooks << TagsData
-RoxHook.hooks << StatusData
-RoxHook.hooks << GeneralData
-RoxHook.hooks << LatestTestRunsData
-RoxHook.hooks << LatestProjectsData
-RoxHook.hooks << Settings::App
-RoxHook.hooks << CurrentTestMetricsData
+describe CurrentTestMetricsData do
 
-RoxHook.hooks << CacheReportJob
-RoxHook.hooks << CountDeprecationJob
-RoxHook.hooks << CountTestsJob
-
-RoxHook.setup!
+  it "should clear the :current_test_metrics_data cache on the test:counters event", rox: { key: '50c2224187f7' } do
+    expect(JsonCache).to receive(:clear).with(:current_test_metrics_data)
+    described_class.fire 'test:counters'
+  end
+end
