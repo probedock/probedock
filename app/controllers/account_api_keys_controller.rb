@@ -45,6 +45,6 @@ class AccountApiKeysController < Api::ApiController
 
   def destroy
     @account_api_key.destroy
-    render nothing: true, status: :no_content
+    head :no_content
   end
 end

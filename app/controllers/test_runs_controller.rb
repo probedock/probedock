@@ -30,7 +30,7 @@ class TestRunsController < ApplicationController
     if request.xhr?
       cached_report = TestRun.reports_cache.get params[:id].to_i, cache: :job
       return render text: cached_report if cached_report
-      return render nothing: true, status: 204
+      return head :no_content
     end
 
     @test_run = TestRun.find params[:id].to_i

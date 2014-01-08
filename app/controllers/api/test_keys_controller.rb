@@ -47,6 +47,6 @@ class Api::TestKeysController < Api::ApiController
 
   def auto_release
     current_api_user.free_test_keys.each{ |k| k.destroy }
-    render nothing: true, status: :no_content
+    head :no_content
   end
 end

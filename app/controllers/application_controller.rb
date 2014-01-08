@@ -102,7 +102,7 @@ class ApplicationController < ActionController::Base
     if record.destroy
       render_record record, *args
     else
-      render nothing: true, status: 400
+      head :bad_request
     end
   end
 

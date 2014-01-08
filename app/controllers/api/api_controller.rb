@@ -160,7 +160,7 @@ class Api::ApiController < ApplicationController
 
     if key.blank?
       response.headers['WWW-Authenticate'] = 'RoxApiKey'
-      return render nothing: true, status: 401
+      return head :unauthorized
     end
 
     ApiKey.where(id: key.id).update_all [ 'usage_count = usage_count + 1, last_used_at = ?', Time.now ]

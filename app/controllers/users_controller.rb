@@ -67,7 +67,7 @@ class UsersController < ApplicationController
     begin
       @user.destroy
       flash[:success] = t('users.destroy.success', user: @user.name)
-      render nothing: true, status: 204
+      head :no_content
     rescue ActiveRecord::DeleteRestrictionError
       return render text: t('users.destroy.restricted'), status: 409
     end

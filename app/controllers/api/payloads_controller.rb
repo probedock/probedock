@@ -28,7 +28,7 @@ class Api::PayloadsController < Api::ApiController
 
     Resque.enqueue ProcessApiPayloadJob, json, current_api_user.id, time_received.to_r.to_s
     $api_logger.info "Accepted payload for processing in #{((Time.now - time_received) * 1000).round}ms"
-    render :nothing => true, :status => :accepted # HTTP 202 (accepted for processing)
+    head :accepted # HTTP 202 (accepted for processing)
   end
 
   private
