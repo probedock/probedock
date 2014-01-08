@@ -31,7 +31,7 @@ App.autoModule('testCountersManager', function() {
     className: 'panel panel-default testCountersManager',
     template: 'testCountersManager',
     ui: {
-      statusBadge: 'tbody .badge',
+      statusLabel: 'tbody .label',
       recomputeButton: 'tfoot .recompute',
       dataRows: 'tbody tr',
       jobs: 'tbody td.jobs',
@@ -62,16 +62,18 @@ App.autoModule('testCountersManager', function() {
     renderStatus: function() {
 
       this.ui.dataRows.removeClass('warning');
-      this.ui.statusBadge.removeClass('badge-warning');
+      this.ui.statusLabel.removeClass('label-default label-warning');
 
       var status = this.model.status();
 
       if (status == 'computing') {
         this.ui.dataRows.addClass('warning');
-        this.ui.statusBadge.addClass('badge-warning');
+        this.ui.statusLabel.addClass('label-warning');
+      } else {
+        this.ui.statusLabel.addClass('label-default');
       }
 
-      this.ui.statusBadge.text(I18n.t('jst.testCountersManager.statuses.' + status));
+      this.ui.statusLabel.text(I18n.t('jst.testCountersManager.statuses.' + status));
     },
 
     updateControls: function() {

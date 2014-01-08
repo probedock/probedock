@@ -7,7 +7,7 @@
     %tr
       %th= I18n.t('jst.testCountersManager.status')
       %td
-        %span.badge
+        %span.label.label-default
     %tr
       %th= I18n.t('jst.testCountersManager.jobs')
       %td.jobs
