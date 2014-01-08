@@ -31,7 +31,7 @@ gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_
 gem 'cancan'
 gem 'role_model'
 gem 'rake-version'
-gem 'tableling-rails', git: 'https://github.com/AlphaHydrae/tableling-rails.git', branch: 'bootstrap3'
+gem 'tableling-rails'
 gem 'select2-rails'
 
 gem 'redis'
