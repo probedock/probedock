@@ -24,7 +24,7 @@
         %div{ class: control_size }
           = f.password_field :password, autocomplete: 'off', class: 'form-control'
           - unless @user.new_record?
-            %span.help-inline= t('.passwordInstructions')
+            %span.help-block= t('.passwordInstructions')
       - if @user.new_record?
         .form-group
           = f.label :password_confirmation, class: "#{label_size} control-label"
