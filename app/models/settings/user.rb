@@ -17,9 +17,11 @@
 class Settings::User < ActiveRecord::Base
   self.table_name = 'user_settings'
 
-  belongs_to :default_test_key_project, class_name: 'Project'
+  belongs_to :last_test_key_project, class_name: 'Project'
 
-  def default_test_key_project_api_id
-    default_test_key_project.try :api_id
+  validates :last_test_key_number, numericality: { only_integer: true, greater_than: 0, allow_blank: true }
+
+  def last_test_key_project_api_id
+    last_test_key_project.try :api_id
   end
 end

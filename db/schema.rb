@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140107154238) do
+ActiveRecord::Schema.define(version: 20140108121819) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -224,11 +224,12 @@ ActiveRecord::Schema.define(version: 20140107154238) do
   add_index "tickets", ["name"], name: "index_tickets_on_name", unique: true, using: :btree
 
   create_table "user_settings", force: true do |t|
-    t.integer  "default_test_key_project_id"
-    t.datetime "updated_at",                  null: false
+    t.integer  "last_test_key_project_id"
+    t.datetime "updated_at",               null: false
+    t.integer  "last_test_key_number"
   end
 
-  add_index "user_settings", ["default_test_key_project_id"], name: "user_settings_default_test_key_project_id_fk", using: :btree
+  add_index "user_settings", ["last_test_key_project_id"], name: "user_settings_last_test_key_project_id_fk", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "name",                                          null: false
@@ -293,7 +294,7 @@ ActiveRecord::Schema.define(version: 20140107154238) do
 
   add_foreign_key "test_values", "test_infos", name: "test_values_test_info_id_fk"
 
-  add_foreign_key "user_settings", "projects", name: "user_settings_default_test_key_project_id_fk", column: "default_test_key_project_id"
+  add_foreign_key "user_settings", "projects", name: "user_settings_last_test_key_project_id_fk", column: "last_test_key_project_id"
 
   add_foreign_key "users", "test_runs", name: "users_last_run_id_fk", column: "last_run_id"
   add_foreign_key "users", "user_settings", name: "users_settings_id_fk", column: "settings_id"

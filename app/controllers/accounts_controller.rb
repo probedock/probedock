@@ -27,7 +27,8 @@ class AccountsController < ApplicationController
       path: api_test_keys_path,
       projects: Project.order(:name).to_a.collect{ |p| ProjectRepresenter.new(p).serializable_hash },
       freeKeys: current_user.free_test_keys.order('created_at ASC').to_a.collect{ |k| TestKeyRepresenter.new(k).serializable_hash },
-      defaultProjectApiId: current_user.settings.default_test_key_project_api_id
+      lastNumber: current_user.settings.last_test_key_number,
+      lastProjectApiId: current_user.settings.last_test_key_project_api_id
     }.reject{ |k,v| v.blank? }
 
     @test_search_config = TestSearch.config(params, except: [ :authors, :current ])
@@ -43,9 +44,11 @@ class AccountsController < ApplicationController
 
   def update_settings
     attrs = {}
+    settings = params[:settings] || {}
 
-    default_test_key_project = params[:settings].try :[], :default_test_key_project
-    attrs[:default_test_key_project] = Project.where(api_id: default_test_key_project.to_s).first if default_test_key_project
+    attrs[:last_test_key_number] = settings[:last_test_key_number].to_i if settings[:last_test_key_number]
+    attrs[:last_test_key_project] = Project.where(api_id: settings[:last_test_key_project].to_s).first if settings[:last_test_key_project]
+
     return head :no_content if attrs.blank?
 
     if current_user.settings.update_attributes attrs

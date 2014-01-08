@@ -66,6 +66,7 @@ App.autoModule('keyGenerator', function() {
     events: {
       'click form .generate': 'generateNewKeys',
       'click form .release': 'releaseUnusedKeys',
+      'change form [name="n"]': 'updateSettings',
       'change form .project': 'updateSettings'
     },
 
@@ -73,7 +74,9 @@ App.autoModule('keyGenerator', function() {
 
       this.path = options.path;
       this.projects = options.projects;
-      this.defaultProjectApiId = options.defaultProjectApiId;
+
+      this.lastNumber = options.lastNumber;
+      this.lastProjectApiId = options.lastProjectApiId;
 
       this.collection = new ProjectCollection();
       this.addKeys(options.freeKeys);
@@ -119,8 +122,12 @@ App.autoModule('keyGenerator', function() {
       }, this);
       this.ui.project.attr('disabled', false);
 
-      if (this.defaultProjectApiId) {
-        this.ui.project.val(this.defaultProjectApiId);
+      if (this.lastNumber && parseInt(this.lastNumber, 10) >= 1) {
+        this.ui.numberOfKeys.val(this.lastNumber);
+      }
+
+      if (this.lastProjectApiId) {
+        this.ui.project.val(this.lastProjectApiId);
       }
     },
 
@@ -183,20 +190,22 @@ App.autoModule('keyGenerator', function() {
 
     updateSettings: function() {
 
-      var defaultTestKeyProject = this.ui.project.val();
+      var lastNumber = this.ui.numberOfKeys.val(),
+          lastTestKeyProject = this.ui.project.val();
 
       $.ajax({
         url: PagePath.build('account', 'settings'),
         type: 'PUT',
         data: {
           settings: {
-            default_test_key_project: defaultTestKeyProject
+            last_test_key_number: lastNumber,
+            last_test_key_project: lastTestKeyProject
           }
         }
       }).done(function() {
-        App.debug('Successfully updated default test key project setting to ' + defaultTestKeyProject + '.');
+        App.debug('Successfully updated last test key number and project settings (number: ' + lastNumber + ', project: ' + lastTestKeyProject + ').');
       }).fail(function(xhr) {
-        App.debug("Couldn't update default test key project setting (got status code " + xhr.status + ").");
+        App.debug("Couldn't update last test key number and project settings (got status code " + xhr.status + ").");
       });
     }
   });
