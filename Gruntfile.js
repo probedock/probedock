@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -22,19 +21,20 @@ module.exports = function(grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
-    jasmine : {
-      default : {
-        src : 'tmp/jasmine/assets/application.js',
-        options : {
-          specs : 'spec/javascripts/**/*.spec.js',
-          helpers : 'spec/javascripts/helpers/**/*.js'
+    jasmine: {
+      default: {
+        src: 'tmp/jasmine/assets/application-*.js',
+        options: {
+          specs: 'spec/javascripts/**/*.spec.js',
+          helpers: 'spec/javascripts/helpers/**/*.js',
+          vendor: 'spec/javascripts/vendor/**/*.js'
         }
       }
     },
 
-    rox : {
-      default : {
-        category : 'Jasmine'
+    rox: {
+      default: {
+        category: 'Jasmine'
       }
     }
   });
