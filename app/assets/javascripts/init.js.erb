@@ -48,12 +48,14 @@ App.watchStatus = function(source, func, options) {
       except = options && options.except ? (_.isArray(options.except) ? options.except : [ options.except ]) : [],
       context = options ? options.context : null;
 
-  source.listenTo(App.vent, 'statusChanged', function(changed) {
+  source.listenTo(App.vent, 'status:changed', function(changed) {
     only = only || _.keys(changed);
     if (!_.isEmpty(_.difference(_.intersection(_.keys(changed), only), except))) {
       func.call(context || source, changed);
     }
   });
+
+  App.vent.trigger('status:watch');
 };
 
 $(function() {

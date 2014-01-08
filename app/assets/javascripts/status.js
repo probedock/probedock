@@ -14,32 +14,44 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-App.autoModule('status', function() {
+App.module('status', function() {
 
   var Status = Backbone.Model.extend({
 
     url: Path.builder('data', 'status'),
 
     initialize: function() {
+      this.watch = 0;
       this.numberOfErrors = 0;
-      this.on('change', this.notifyChanges, this);
+      this.listenTo(App.vent, 'status:watch', this.startWatching);
+      this.listenToOnce(this, 'change', this.startNotifyingChanges);
+    },
+
+    startNotifyingChanges: function() {
+      App.debug('App status initialized');
+      this.listenTo(this, 'change', this.notifyChanges);
     },
 
     notifyChanges: function() {
       App.debug('App status has changed: ' + _.keys(this.changedAttributes()).join(', ') + ' (' + new Date() + ')');
-      App.vent.trigger('statusChanged', this.changedAttributes());
+      App.vent.trigger('status:changed', this.changedAttributes());
     },
 
-    watch: function() {
+    startWatching: function() {
+      this.watch += 1;
       App.debug('Checking app status every ' + App.pollingFrequency + 'ms');
       this.refreshPeriodically();
     },
 
     refreshPeriodically: function(resetErrors) {
+
       if (resetErrors) {
         this.numberOfErrors = 0;
       }
-      setTimeout(_.bind(this.refresh, this), App.pollingFrequency);
+
+      if (this.watch) {
+        setTimeout(_.bind(this.refresh, this), App.pollingFrequency);
+      }
     },
 
     refresh: function() {
@@ -62,7 +74,13 @@ App.autoModule('status', function() {
     }
   });
   
-  this.addAutoInitializer(function(options) {
-    new Status(options.config).watch();
+  this.addInitializer(function() {
+
+    var status = new Status();
+    
+    var initialData = $('body').data('status');
+    if (initialData) {
+      status.set(initialData);
+    }
   });
 });

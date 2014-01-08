@@ -2,7 +2,7 @@
 #globalSettings{ data: { module: :globalSettings } }
 
 %h2= t('.metrics')
-.row{ data: { module: :status, config: @status.to_json } }
+.row
   .col-md-4{ data: { module: :testCountersManager, config: @test_counters_config.to_json } }
 
 .linksManager{ data: { module: :linksManager, config: @links.to_json } }

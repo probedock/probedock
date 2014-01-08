@@ -68,6 +68,10 @@ class ApplicationController < ActionController::Base
     @links = cached_links.contents if user_signed_in? and !request.xhr?
   end
 
+  def load_status_data
+    @status_data = StatusData.compute
+  end
+
   def cached_links
     JsonCache.new(:links, etag: false){ Link.order('name ASC').to_a.collect(&:to_client_hash).deep_stringify_keys! }
   end

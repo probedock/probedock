@@ -16,6 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class HomeController < ApplicationController
   before_filter :authenticate_user!, except: [ :ping ]
+  before_filter :load_status_data, only: [ :status ]
   skip_before_filter :load_links, only: [ :index, :ping ]
 
   def root
@@ -44,8 +45,7 @@ class HomeController < ApplicationController
 
   def status
     window_title << t('home.status.title')
-    @status = StatusData.compute
-    @general = GeneralData.compute environment: true, jobs: true, count: true, db: true
+    @general_data = GeneralData.compute environment: true, jobs: true, count: true, db: true
   end
 
   def ping

@@ -2,7 +2,7 @@
 %html
   %head
     = render :partial => 'layouts/head'
-  %body{ data: (@page_config ? { config: @page_config.to_json } : nil) }
+  %body{ data: body_data }
     %a#top{ :name => :top }
     = render :partial => 'layouts/navbar'
     .container.page-container
