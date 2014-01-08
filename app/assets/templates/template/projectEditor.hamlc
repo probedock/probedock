@@ -16,6 +16,7 @@
               %input#projectUrlToken.form-control{ type: 'text', name: 'urlToken', maxlength: 25, value: @urlToken }
               .help-block= I18n.t('jst.projectEditor.urlTokenInstructions');
           .form-group.form-controls
-            .col-sm-offset-3.col-sm-9
-              %button.save.btn.btn-primary{ type: 'submit' }= I18n.t('jst.common.save')
-              %button.cancel.btn.btn-default{ type: 'button' }= I18n.t('jst.common.cancel')
+            .col-sm-offset-3.col-sm-9.controls
+              .btn-group
+                %button.save.btn.btn-primary{ type: 'submit' }= I18n.t('jst.common.save')
+                %button.cancel.btn.btn-default{ type: 'button' }= I18n.t('jst.common.cancel')

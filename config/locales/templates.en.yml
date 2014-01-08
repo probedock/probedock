@@ -21,6 +21,8 @@ en:
       deactivate: "Deactivate"
       deactivatedInstructions: "This user cannot log in or use the API."
       confirmDelete: "Are you sure you want to delete this user? This operation cannot be canceled."
+      activationError: "Could not activate or deactivate user."
+      deletionError: "Could not delete user."
     currentTestMetrics:
       title: "Test Count"
       today: "Today"

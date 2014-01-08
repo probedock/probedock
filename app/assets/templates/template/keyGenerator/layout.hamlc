@@ -8,4 +8,4 @@
       %option{ value: '' }= I18n.t('jst.keyGenerator.noProject')
   %button.release.btn.btn-danger.pull-right{ type: 'button' }= I18n.t('jst.keyGenerator.release')
 .well
-%p.text-error
+%p.text-danger

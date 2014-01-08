@@ -74,14 +74,14 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
   },
 
   removeErrors: function() {
-    this.ui.form.find('.control-group.error').removeClass('error');
-    this.ui.form.find('.help-inline.error').remove();
-    this.ui.formControls.find('.text-error').remove();
+    this.ui.form.find('.form-group.has-error').removeClass('has-error');
+    this.ui.form.find('.help-block.error').remove();
+    this.ui.formControls.find('.text-danger').remove();
   },
 
   showErrors: function(response) {
     _.each(response.errors, this.showError, this);
-    this.ui.form.find('.help-inline.error, .form-controls .text-error').hide().fadeIn();
+    this.ui.form.find('.help-block.error, .form-controls .text-danger').hide().fadeIn();
   },
 
   showError: function(error) {
@@ -98,11 +98,11 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
 
   showFieldError: function(error, field) {
 
-    var wrapper = field.parents('.control-group').first();
-    wrapper.addClass('error');
+    var wrapper = field.parents('.form-group').first();
+    wrapper.addClass('has-error');
 
-    if (!wrapper.find('.help-inline').length) {
-      $('<span class="error help-inline" />').text(error.message).appendTo(wrapper.find('.controls'));
+    if (!wrapper.find('.help-block').length) {
+      $('<span class="error help-block" />').text(error.message).appendTo(field.parent());
     }
   },
 
@@ -110,10 +110,10 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
 
     var first = false;
     
-    var errorElement = this.ui.formControls.find('.text-error');
+    var errorElement = this.ui.formControls.find('.text-danger');
     if (!errorElement.length) {
       first = true;
-      errorElement = $('<span class="text-error" />').appendTo(this.ui.formControls);
+      errorElement = $('<p class="text-danger" />').appendTo(this.ui.formControls);
     }
 
     errorElement.append(first ? error.message : ', ' + error.message);

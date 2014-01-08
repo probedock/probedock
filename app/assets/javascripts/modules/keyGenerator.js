@@ -56,7 +56,7 @@ App.autoModule('keyGenerator', function() {
       generate: 'form .generate',
       release: 'form .release',
       numberOfKeys: 'form [name="n"]',
-      error: '.text-error'
+      error: '.text-danger'
     },
 
     itemView: ProjectKeysView,

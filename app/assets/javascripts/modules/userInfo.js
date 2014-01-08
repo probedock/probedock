@@ -106,7 +106,7 @@ App.autoModule('userInfo', function() {
 
     toggleActivated: function() {
 
-      this.$el.find('.text-error').remove();
+      this.$el.find('.text-danger').remove();
       this.ui.toggleActivatedButton.attr('disabled', true);
       
       $.ajax({
@@ -117,7 +117,7 @@ App.autoModule('userInfo', function() {
             active: !this.model.get('active')
           }
         }
-      }).done(_.bind(this.setActivated, this)).fail(_.bind(this.showServerError, this));
+      }).done(_.bind(this.setActivated, this)).fail(_.bind(this.showServerError, this, I18n.t('jst.userInfo.activationError')));
     },
 
     setActivated: function() {
@@ -131,20 +131,20 @@ App.autoModule('userInfo', function() {
         return;
       }
 
-      this.$el.find('.text-error').remove();
+      this.$el.find('.text-danger').remove();
 
       $.ajax({
         url: this.model.path(),
         type: 'DELETE'
-      }).done(_.bind(this.goBackToUsers, this)).fail(_.bind(this.showServerError, this));
+      }).done(_.bind(this.goBackToUsers, this)).fail(_.bind(this.showServerError, this, I18n.t('jst.userInfo.deletionError')));
     },
 
     goBackToUsers: function() {
       window.location = PagePath.build('users');
     },
 
-    showServerError: function(xhr) {
-      $('<p class="text-error" />').text(xhr.responseText).appendTo(this.$el).hide().fadeIn();
+    showServerError: function(errorMessage, xhr) {
+      $('<p class="text-danger" />').text(errorMessage).appendTo(this.$el).hide().fadeIn();
       if (xhr.status == 409) {
         this.ui.deleteButton.attr('disabled', true);
       }
