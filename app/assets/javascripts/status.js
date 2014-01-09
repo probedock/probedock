@@ -21,14 +21,13 @@ App.module('status', function() {
     url: Path.builder('data', 'status'),
 
     initialize: function() {
-      this.watch = 0;
+      this.watch = false;
       this.numberOfErrors = 0;
       this.listenTo(App.vent, 'status:watch', this.startWatching);
       this.listenToOnce(this, 'change', this.startNotifyingChanges);
     },
 
     startNotifyingChanges: function() {
-      App.debug('App status initialized');
       this.listenTo(this, 'change', this.notifyChanges);
     },
 
@@ -38,9 +37,14 @@ App.module('status', function() {
     },
 
     startWatching: function() {
-      this.watch += 1;
-      App.debug('Checking app status every ' + App.pollingFrequency + 'ms');
-      this.refreshPeriodically();
+
+      var wasWatching = this.watch;
+      this.watch = true;
+
+      if (!wasWatching) {
+        App.debug('Checking app status every ' + App.pollingFrequency + 'ms');
+        this.refreshPeriodically();
+      }
     },
 
     refreshPeriodically: function(resetErrors) {
