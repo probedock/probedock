@@ -27,12 +27,14 @@ class StatusData
     results = $redis.multi do
       DATES.each{ |d| $redis.hsetnx CACHE_KEY, d, t }
       $redis.hgetall CACHE_KEY
-    end.last 1
+      $redis.get :maintenance
+    end.last 2
 
     # TODO: spec jobs and counters hashes
     DATES.inject({
       jobs: Digest::SHA1.hexdigest(resque_status),
-      counters: Digest::SHA1.hexdigest(TestCountersData.fingerprint)
+      counters: Digest::SHA1.hexdigest(TestCountersData.fingerprint),
+      maintenance: results[1] ? Time.at(Rational(results[1])).to_i * 1000 : false
     }) do |memo,d|
       memo[d.camelize(:lower).to_sym] = results[0][d].to_i
       memo

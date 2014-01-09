@@ -129,7 +129,6 @@ en:
   settings:
     show:
       title: "Settings"
-      metrics: "Metrics Management"
 
   users:
     index:

@@ -58,11 +58,26 @@ App.watchStatus = function(source, func, options) {
   App.vent.trigger('status:watch');
 };
 
+App.setMaintenance = function(maintenance) {
+  
+  var wasInMaintenance = !!App.maintenance;
+  App.maintenance = maintenance;
+
+  if (!!App.maintenance != wasInMaintenance) {
+    App.debug((App.maintenance ? 'Started' : 'Ended') + ' maintenance mode.');
+    App.vent.trigger('maintenance:changed', App.maintenance);
+    App.vent.trigger('maintenance:' + (App.maintenance ? 'on' : 'off'));
+  }
+};
+
 $(function() {
 
   var session = Meta.get('session') ? JSON.parse(Meta.get('session')) : null;
   App.pollingFrequency = App.environment == 'development' ? 1000 : (session ? 3000 : 10000);
   App.admin = session && !!session.admin;
+
+  var maintenanceData = Meta.get('maintenance');
+  App.maintenance = maintenanceData ? JSON.parse(maintenanceData) : false;
 
   App.start();
 

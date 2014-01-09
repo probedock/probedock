@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
   helper_method :window_title, :cached_links
   before_filter :set_locale
   before_filter :load_links
+  before_filter :load_maintenance
   before_filter :configure_devise_permitted_parameters, if: :devise_controller?
 
   rescue_from ROXCenter::Errors::XHRRequired do |exception|
@@ -66,6 +67,11 @@ class ApplicationController < ActionController::Base
 
   def load_links
     @links = cached_links.contents if user_signed_in? and !request.xhr?
+  end
+
+  def load_maintenance
+    value = $redis.get :maintenance
+    @maintenance = { since: Time.at(Rational(value)) } if value
   end
 
   def load_status_data

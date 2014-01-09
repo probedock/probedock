@@ -1,8 +1,8 @@
 
-#globalSettings{ data: { module: :globalSettings } }
-
-%h2= t('.metrics')
 .row
-  .col-md-4{ data: { module: :testCountersManager, config: @test_counters_config.to_json } }
+  .col-md-6{ data: { module: :maintenanceControls } }
+  .col-md-6{ data: { module: :testCountersManager, config: @test_counters_config.to_json } }
+
+#globalSettings{ data: { module: :globalSettings } }
 
 .linksManager{ data: { module: :linksManager, config: @links.to_json } }

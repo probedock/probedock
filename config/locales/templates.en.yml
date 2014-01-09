@@ -13,6 +13,15 @@ en:
       "false": "no"
     statusModule:
       disconnected: "The connection to the server was lost. Data will not be refreshed anymore until you reload the page."
+    maintenanceControls:
+      title: "Maintenance Mode"
+      instructions: "When in maintenance mode, users will not be able to perform the following actions:"
+      activate: "Start maintenance"
+      deactivate: "End maintenance"
+      status: "Application Status"
+      statusOn: "In maintenance"
+      statusOff: "Online"
+      confirmation: "Are you sure you want to start the maintenance mode?"
     latestTestRuns:
       empty: "No tests results were received yet."
       runDescription: "By {{user}}"
@@ -49,6 +58,8 @@ en:
       totalCounters: "Total Counters"
       recompute: "Recompute all counters"
       recomputeConfirmation: "This will clear and re-compute all test counters. It will take from minutes to hours depending on the amount of data. Are you sure you want to proceed?"
+      maintenanceNotice: "The application must be in maintenance mode to start recomputing counters. The maintenance can be ended as soon as the process has started."
+      recomputingStarted: "The recomputing process has started successfully. You may stop the maintenance mode at your convenience."
     projectEditor:
       defaultName: "My new project"
       create: "Add a project"

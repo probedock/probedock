@@ -14,29 +14,28 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-module ApplicationHelper
+require 'spec_helper'
 
-  def body_data
-    # TODO: spec ApplicationHelper#body_data
-    data = {}
-    data[:config] = @page_config.to_json if @page_config
-    data[:status] = @status_data.to_json if @status_data
-    data.present? ? data : nil
-  end
+describe ApplicationHelper do
 
-  def human_window_title
-    window_title.join t('common.title_separator')
-  end
+  describe "#meta_session" do
 
-  def meta_session
-    Hash.new.tap do |h|
-      h[:admin] = true if current_user.try(:admin?)
+    it "should generate meta data for the current user", rox: { key: '56d9618d23c8' } do
+      helper.stub current_user: create(:user)
+      expect(helper.meta_session).to eq({})
+    end
+
+    it "should generate meta data for an admin user", rox: { key: 'fa2727d792bf' } do
+      helper.stub current_user: create(:admin)
+      expect(helper.meta_session).to eq(admin: true)
     end
   end
 
-  def meta_maintenance
-    {
-      since: @maintenance[:since].to_i * 1000
-    }
+  describe "#meta_maintenance" do
+
+    it "should generate meta data for the maintenance mode", rox: { key: '2c169da2c7e9' } do
+      @maintenance = { since: now = Time.now }
+      expect(helper.meta_maintenance).to eq(since: now.to_i * 1000)
+    end
   end
 end

@@ -7,3 +7,5 @@
 %meta{ name: :homePath, content: home_path }
 - if user_signed_in?
   %meta{ name: :session, content: meta_session.to_json }
+- if @maintenance
+  %meta{ name: :maintenance, content: meta_maintenance.to_json }

@@ -17,6 +17,7 @@
 class HomeController < ApplicationController
   before_filter :authenticate_user!, except: [ :ping ]
   before_filter :load_status_data, only: [ :status ]
+  before_filter(only: [ :maintenance ]){ authorize! :manage, :settings }
   skip_before_filter :load_links, only: [ :index, :ping ]
 
   def root
@@ -39,6 +40,7 @@ class HomeController < ApplicationController
     @current_test_metrics_config = CurrentTestMetricsData.compute
 
     # TODO: find a way to do this in the $redis.multi done by JsonCache.get above
+    # TODO: include load_maintenance in the $redis.multi done by JsonCache.get above
     @status_data = StatusData.compute
     @general_data = GeneralData.compute settings: settings, count: { tests: true, runs: true }, tests: true
   end
@@ -50,6 +52,19 @@ class HomeController < ApplicationController
 
   def ping
     render text: "ROX Center v#{ROXCenter::Application::VERSION} #{Rails.env}"
+  end
+
+  def maintenance
+    if request.post?
+      time = $redis.multi do
+        $redis.setnx :maintenance, Time.now.to_r.to_s
+        $redis.get :maintenance
+      end.last
+      render json: { since: Time.at(Rational(time)).to_i * 1000 }
+    else
+      $redis.del :maintenance
+      head :no_content
+    end
   end
 
   private

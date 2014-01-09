@@ -81,6 +81,7 @@ class TestCounter < ActiveRecord::Base
     delete_all
     clean_token_cache true
 
+    # TODO: optimize CountDeprecationJob by grouping them
     TestDeprecation.select('id, deprecated, test_info_id, created_at').to_a.each do |deprecation|
       CountDeprecationJob.enqueue_deprecation deprecation, timezones: timezones
     end

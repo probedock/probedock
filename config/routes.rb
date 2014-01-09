@@ -31,6 +31,7 @@ ROXCenter::Application.routes.draw do
   root :to => 'home#root'
 
   match '/ping' => 'home#ping', via: :get, as: :ping
+  match :maintenance, to: 'home#maintenance', via: [ :post, :delete ]
   resources :api_keys, controller: :account_api_keys, only: [ :index, :create, :show, :update, :destroy ]
 
   resource :data, only: [] do

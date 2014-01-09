@@ -1,0 +1,25 @@
+.panel-heading
+  %h3.panel-title= I18n.t('jst.maintenanceControls.title')
+.panel-body
+  %p= I18n.t('jst.maintenanceControls.instructions')
+  -# FIXME: i18n
+  %ul
+    %li Send test result payloads
+    %li Generate/release test keys
+    %li Request/disable/delete API keys
+    %li Deprecate/undeprecate tests
+  %p These administrative actions will also be unavailable:
+  %ul
+    %li Create/delete projects
+    %li Edit/deactivate/delete users
+%table.table.table-hover.table-bordered
+  %tbody
+    %tr
+      %th= I18n.t('jst.maintenanceControls.status')
+      %td
+        %span.label
+    %tr
+      %th Maintenance Time
+      %td.time
+.panel-footer
+  %button.btn{ type: 'button' }
