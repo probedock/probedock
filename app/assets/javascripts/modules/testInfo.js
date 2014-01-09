@@ -111,9 +111,8 @@ App.autoModule('testInfo', function() {
     },
 
     deprecationError : function() {
-      Alerts.error('jst.testInfo.deprecationError').addClass('deprecationError').appendTo(this.$el).hide().fadeIn('fast', _.bind(function() {
-        this.setDeprecationActionsEnabled(true);
-      }, this));
+      Alerts.danger({ message: I18n.t('jst.testInfo.deprecationError'), fade: true }).addClass('deprecationError').appendTo(this.$el);
+      this.setDeprecationActionsEnabled(true);
     }
   });
 

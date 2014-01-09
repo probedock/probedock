@@ -6,9 +6,14 @@
     %a#top{ :name => :top }
     = render :partial => 'layouts/navbar'
     .container.page-container
-      - { warning: :warning, success: :success, error: :danger }.each_pair do |key,klass|
+      - if @maintenance
+        .alert.alert-warning.alert-dismissable.fade.in.flash.flash-maintenance
+          %button.close{ type: :button, data: { dismiss: :alert }, aria: { hidden: true } } &times;
+          %strong= t('application.maintenance.title')
+          = t('application.maintenance.notice')
+      - { warning: :warning, success: :success, notice: :info, error: :danger, maintenance: :warning }.each_pair do |key,klass|
         - if flash[key]
-          .alert.alert-dismissable.fade.in{ :class => (klass ? "alert-#{klass}" : nil) }
+          .alert.alert-dismissable.fade.in{ class: (klass ? "alert-#{klass} flash-#{key}" : nil) }
             %button.close{ type: :button, data: { dismiss: :alert }, aria: { hidden: true } } &times;
             %strong= t("flash.#{key}")
             = flash[key]

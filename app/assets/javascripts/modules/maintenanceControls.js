@@ -60,9 +60,12 @@ App.autoModule('maintenanceControls', function() {
       $.ajax({
         url: Path.build('maintenance'),
         type: enabled ? 'POST' : 'DELETE'
-      }).done(function(response) {
-        App.setMaintenance(enabled ? response : undefined);
+      }).done(function(response, textStatus, xhr) {
+        if (enabled ? xhr.getResponseHeader('Content-Type').match(/^application\/json/) : xhr.status == 204) {
+          App.setMaintenance(enabled ? response : undefined);
+        }
       });
+      // TODO: handle maintenance mode errors
     },
 
     setControlsEnabled: function(enabled) {

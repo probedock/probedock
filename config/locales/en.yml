@@ -14,6 +14,11 @@ en:
     cancel: "Cancel"
     no_data: '-'
 
+  application:
+    maintenance:
+      title: "Maintenance Mode."
+      notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
+
   flash:
     warning: "Sorry."
     error: "Oops."

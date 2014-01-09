@@ -14,8 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class Api::TestKeysController < Api::ApiController
+  before_filter :check_maintenance, only: [ :create, :auto_release ]
 
   def index
     options = TestKeySearch.options params

@@ -64,11 +64,42 @@ App.setMaintenance = function(maintenance) {
   App.maintenance = maintenance;
 
   if (!!App.maintenance != wasInMaintenance) {
+
     App.debug((App.maintenance ? 'Started' : 'Ended') + ' maintenance mode.');
     App.vent.trigger('maintenance:changed', App.maintenance);
     App.vent.trigger('maintenance:' + (App.maintenance ? 'on' : 'off'));
+
+    if (App.maintenance) {
+      App.vent.trigger('flash', {
+        type: 'warning',
+        flash: 'maintenance',
+        title: I18n.t('jst.application.maintenance.title'),
+        message: I18n.t('jst.application.maintenance.notice')
+      });
+    } else {
+      $('.alert.flash-maintenance').slideUp('normal', function() {
+        $(this).remove();
+      });
+    }
   }
 };
+
+App.vent.on('flash', function(options) {
+
+  var alert = Alerts.build(options).prependTo($('body .page-container')).addClass('fade in flash').hide()
+  if (options.flash) {
+    alert.addClass('flash-' + options.flash);
+  }
+
+  alert.slideDown();
+});
+
+$(document).ajaxError(function(event, xhr) {
+  if (xhr.status == 503 && xhr.getResponseHeader('Content-Type').match(/^application\/json/)) {
+    App.setMaintenance(JSON.parse(xhr.responseText));
+    App.vent.trigger('ajax:maintenance');
+  }
+});
 
 $(function() {
 

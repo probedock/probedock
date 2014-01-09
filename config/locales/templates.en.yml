@@ -11,6 +11,10 @@ en:
         warning: "Warning."
       "true": "yes"
       "false": "no"
+    application:
+      maintenance:
+        title: "Maintenance Mode."
+        notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
     statusModule:
       disconnected: "The connection to the server was lost. Data will not be refreshed anymore until you reload the page."
     maintenanceControls:

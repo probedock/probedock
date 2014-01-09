@@ -70,8 +70,17 @@ class ApplicationController < ActionController::Base
   end
 
   def load_maintenance
-    value = $redis.get :maintenance
-    @maintenance = { since: Time.at(Rational(value)) } if value
+    if value = $redis.get(:maintenance)
+      @maintenance = { since: Time.at(Rational(value)) }
+    end
+  end
+
+  def render_maintenance
+    render json: { since: @maintenance[:since].to_i * 1000 }, status: :service_unavailable
+  end
+
+  def check_maintenance
+    render_maintenance if @maintenance
   end
 
   def load_status_data

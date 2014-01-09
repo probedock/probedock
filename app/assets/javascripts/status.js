@@ -21,10 +21,26 @@ App.module('status', function() {
     url: Path.builder('data', 'status'),
 
     initialize: function() {
+
       this.watch = false;
+      this.maintenance = false;
+      this.refreshing = false;
       this.numberOfErrors = 0;
-      this.listenTo(App.vent, 'status:watch', this.startWatching);
+
       this.listenToOnce(this, 'change', this.startNotifyingChanges);
+      this.listenTo(this, 'change:maintenance', this.notifyMaintenance);
+
+      this.listenTo(App.vent, 'status:watch', this.startWatching);
+      this.listenTo(App.vent, 'ajax:maintenance', this.startWatchingForMaintenance);
+      this.listenTo(App.vent, 'maintenance:off', this.stopWatchingForMaintenance);
+    },
+
+    getMaintenanceData: function() {
+      return this.get('maintenance') ? { since: this.get('maintenance') } : false;
+    },
+
+    notifyMaintenance: function(changed) {
+      App.setMaintenance(this.getMaintenanceData());
     },
 
     startNotifyingChanges: function() {
@@ -37,11 +53,26 @@ App.module('status', function() {
     },
 
     startWatching: function() {
-
-      var wasWatching = this.watch;
       this.watch = true;
+      this.startRefreshing();
+    },
 
-      if (!wasWatching) {
+    startWatchingForMaintenance: function() {
+      this.maintenance = true;
+      this.startRefreshing();
+    },
+
+    stopWatchingForMaintenance: function() {
+      this.maintenance = false;
+      if (!this.watch && this.timeout) {
+        clearTimeout(this.timeout);
+        App.debug('Stopped checking app status for maintenance');
+      }
+    },
+
+    startRefreshing: function() {
+      if (!this.refreshing) {
+        this.refreshing = true;
         App.debug('Checking app status every ' + App.pollingFrequency + 'ms');
         this.refreshPeriodically();
       }
@@ -53,8 +84,8 @@ App.module('status', function() {
         this.numberOfErrors = 0;
       }
 
-      if (this.watch) {
-        setTimeout(_.bind(this.refresh, this), App.pollingFrequency);
+      if (this.watch || this.maintenance) {
+        this.timeout = setTimeout(_.bind(this.refresh, this), App.pollingFrequency);
       }
     },
 
@@ -72,9 +103,7 @@ App.module('status', function() {
     },
 
     showError: function() {
-      Alerts.warning('jst.statusModule.disconnected').prependTo($('body .page-container')).hide().fadeIn('normal', function() {
-        $(this).addClass('fade in');
-      });
+      App.vent.trigger('flash', { type: 'warning', message: I18n.t('jst.statusModule.disconnected') });
     }
   });
   
