@@ -54,7 +54,7 @@ App.autoModule('testsTable', function() {
       this.renderAuthor();
       this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
       this.ui.lastRunAt.text(Format.datetime.short(new Date(this.model.get('last_run_at'))));
-      this.ui.lastRunDuration.text(Format.duration(this.model.get('last_run_duration'), { format : 'short' }));
+      this.ui.lastRunDuration.text(Format.duration(this.model.get('last_run_duration'), { shorten: 's' }));
       this.renderStatus();
     },
 

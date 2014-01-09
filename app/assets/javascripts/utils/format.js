@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 var Format = {
 
   number : function(n) {
@@ -49,12 +48,23 @@ var Format = {
 
   duration : function(milliseconds, options) {
 
+    if (options && options.min) {
+      var duration = Format._findDuration(options.min);
+      milliseconds = Math.floor(milliseconds / duration.value) * duration.value;
+    }
+
     if (milliseconds <= 0) {
       return '0';
     }
 
-    if (options && options.format == 'short' && milliseconds >= 1000) {
-      milliseconds = Math.round(milliseconds / 1000) * 1000;
+    if (options && options.shorten) {
+      var duration = Format._findDuration(options.shorten);
+      var closestDuration = _.find(Format._durations, function(d) {
+        return d.value <= duration.value && milliseconds >= d.value;
+      });
+      if (closestDuration) {
+        milliseconds = Math.floor(milliseconds / closestDuration.value) * closestDuration.value;
+      }
     }
 
     return _.inject(Format._durations, function(memo, d) {
@@ -65,6 +75,19 @@ var Format = {
       }
       return memo;
     }, []).join(' ');
+  },
+
+  _findDuration : function(unit) {
+
+    var duration = _.find(Format._durations, function(d) {
+      return d.name == unit;
+    });
+
+    if (!duration) {
+      throw new Error("Unknown duration unit '" + unit + "'.");
+    }
+
+    return duration;
   },
 
   _durations : [

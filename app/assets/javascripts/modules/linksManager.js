@@ -16,8 +16,8 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('linksManager', function() {
 
-  var models = App.module('models');
-  var LinkCollection = models.LinkCollection;
+  var models = App.module('models'),
+      LinkCollection = models.LinkCollection;
 
   var EmptyRow = Backbone.Marionette.ItemView.extend({
 
