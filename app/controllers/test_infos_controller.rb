@@ -14,11 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TestInfosController < ApplicationController
   include ActionView::Helpers::TextHelper
 
   before_filter :authenticate_user!
+  before_filter :check_maintenance, only: [ :deprecate, :undeprecate ]
   load_resource :find_by => :key_value
   skip_load_resource :only => [ :index, :page ]
 
@@ -33,7 +33,6 @@ class TestInfosController < ApplicationController
   end
 
   def deprecate
-    # FIXME: block deprecation/undeprecation if test counters are recomputing
 
     @test_info = @test_info.first
     return head :no_content if @test_info.deprecated?
@@ -46,7 +45,7 @@ class TestInfosController < ApplicationController
     deprecation.save!
 
     @test_info.update_attribute :deprecation_id, deprecation.id
-    ROXCenter::Application.events.fire 'test:deprecated', deprecation
+    Rails.application.events.fire 'test:deprecated', deprecation
 
     head :no_content
   end
@@ -64,7 +63,7 @@ class TestInfosController < ApplicationController
     deprecation.save!
 
     @test_info.update_attribute :deprecation_id, nil
-    ROXCenter::Application.events.fire 'test:undeprecated', deprecation
+    Rails.application.events.fire 'test:undeprecated', deprecation
 
     head :no_content
   end

@@ -69,8 +69,12 @@ App.autoModule('testInfo', function() {
       'click .undeprecate' : 'undeprecate'
     },
 
+    modelEvents: {
+      'change': 'updateActions'
+    },
+
     initialize : function() {
-      this.listenTo(this.model, 'change', this.updateActions);
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
     },
 
     onRender : function() {
@@ -82,13 +86,18 @@ App.autoModule('testInfo', function() {
       this.ui.undeprecateButton[this.model.get('deprecated_at') ? 'show' : 'hide']();
     },
 
-    setDeprecationActionsEnabled : function(enabled) {
-      this.ui.deprecateButton.attr('disabled', !enabled);
-      this.ui.undeprecateButton.attr('disabled', !enabled);
+    setBusy: function(busy) {
+      this.busy = busy;
+      this.updateControls();
+    },
+
+    updateControls: function() {
+      this.ui.deprecateButton.attr('disabled', this.busy || App.maintenance);
+      this.ui.undeprecateButton.attr('disabled', this.busy || App.maintenance);
     },
 
     deprecate : function() {
-      this.setDeprecationActionsEnabled(false);
+      this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
         url : LegacyApiPath.build('tests', this.model.get('key'), 'deprecate'),
@@ -97,7 +106,7 @@ App.autoModule('testInfo', function() {
     },
 
     undeprecate : function() {
-      this.setDeprecationActionsEnabled(false);
+      this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
         url : LegacyApiPath.build('tests', this.model.get('key'), 'undeprecate'),
@@ -106,13 +115,15 @@ App.autoModule('testInfo', function() {
     },
 
     setDeprecated : function(deprecated) {
+      this.setBusy(false);
       this.model.set({ deprecated_at: deprecated ? new Date().getTime() : null });
-      this.setDeprecationActionsEnabled(true);
     },
 
-    deprecationError : function() {
-      Alerts.danger({ message: I18n.t('jst.testInfo.deprecationError'), fade: true }).addClass('deprecationError').appendTo(this.$el);
-      this.setDeprecationActionsEnabled(true);
+    deprecationError : function(xhr) {
+      this.setBusy(false);
+      if (xhr.status != 503) {
+        Alerts.danger({ message: I18n.t('jst.testInfo.deprecationError'), fade: true }).addClass('deprecationError').appendTo(this.$el);
+      }
     }
   });
 

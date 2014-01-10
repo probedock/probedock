@@ -68,6 +68,17 @@ describe TestInfosController, rox: { tags: :integration } do
 
       expect(ROXCenter::Application.events).not_to receive(:fire)
     end
+
+    it "should return a 503 response when in maintenance mode", rox: { key: '201bbf1be414' } do
+
+      set_maintenance_mode
+      expect{ post :deprecate, id: test.key.key, locale: nil }.not_to change(TestDeprecation, :count)
+      expect(response.status).to eq(503)
+
+      test.reload
+      expect(test.deprecated?).to be_false
+      expect(test.deprecation_id).to be_nil
+    end
   end
 
   context "#undeprecate" do
@@ -117,6 +128,17 @@ describe TestInfosController, rox: { tags: :integration } do
       expect(test.deprecation).to be_nil
 
       expect(ROXCenter::Application.events).not_to receive(:fire)
+    end
+
+    it "should return a 503 response when in maintenance mode", rox: { key: 'b61b4cf73149' } do
+
+      set_maintenance_mode
+      expect{ post :undeprecate, id: test.key.key, locale: nil }.not_to change(TestDeprecation, :count)
+      expect(response.status).to eq(503)
+
+      test.reload
+      expect(test.deprecated?).to be_true
+      expect(test.deprecation_id).not_to be_nil
     end
   end
 end
