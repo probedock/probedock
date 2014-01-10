@@ -17,7 +17,7 @@
 require 'spec_helper'
 
 describe Api::ProjectsController, rox: { tags: :unit } do
-  
+  include MaintenanceHelpers
   let(:user){ create :user }
 
   context "#create" do
@@ -50,6 +50,12 @@ describe Api::ProjectsController, rox: { tags: :unit } do
       it "should not accept an invalid token", rox: { key: '4fac0cfae817' } do
         expect{ create_project creation_request.merge(urlToken: '/$') }.not_to change(Project, :count)
         check_api_errors [ { message: Regexp.new("invalid"), name: :invalidValue, path: '/urlToken' } ]
+      end
+
+      it "should return a 503 response when in maintenance mode", rox: { key: 'f1e7abbacbda' } do
+        set_maintenance_mode
+        expect{ create_project }.not_to change(Project, :count)
+        expect(response.status).to eq(503)
       end
     end
   end
@@ -86,6 +92,14 @@ describe Api::ProjectsController, rox: { tags: :unit } do
       it "should not accept an invalid token", rox: { key: '18aa3182833b' } do
         update_project update_request.merge(urlToken: '/$')
         check_api_errors [ { message: Regexp.new("invalid"), name: :invalidValue, path: '/urlToken' } ]
+      end
+
+      it "should return a 503 response when in maintenance mode", rox: { key: 'ac25387fee6c' } do
+        old_values = project.to_json
+        set_maintenance_mode
+        update_project
+        expect(project.tap(&:reload).to_json).to eq(old_values)
+        expect(response.status).to eq(503)
       end
     end
   end

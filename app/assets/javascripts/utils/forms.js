@@ -18,8 +18,9 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
 
   formUi: {
     form: 'form',
-    controls: 'button',
-    formControls: 'form .form-controls .controls'
+    formSaveButton: 'form .form-controls .save',
+    formCancelButton: 'form .form-controls .cancel',
+    formControls: 'form .form-controls'
   },
 
   formEvents: {
@@ -34,13 +35,19 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
     if (!this.model && this.modelClass) {
       this.model = new (this.modelClass)();
     }
+
+    this.listenTo(App.vent, 'maintenance:changed', this.updateFormControls);
+
+    if (this.initializeForm) {
+      this.initializeForm.apply(this, Array.prototype.slice.call(arguments));
+    }
   },
 
   save: function(e) {
     e.preventDefault();
-
     this.removeErrors();
-    this.setControlsEnabled(false);
+    this.setBusy(true);
+
     this.wasNew = this.model.isNew();
     this.oldPath = this.model.path();
 
@@ -63,14 +70,23 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
   },
 
   onFailed: function(xhr) {
-
-    this.setControlsEnabled(true);
+    this.setBusy(false);
 
     if (xhr.status == 400) {
       this.showErrors($.parseJSON(xhr.responseText));
-    } else {
+    } else if (xhr.status != 503) {
       this.showGenericError({ message: I18n.t('jst.common.unexpectedModelError') });
     }
+  },
+
+  setBusy: function(busy) {
+    this.busy = busy;
+    this.updateFormControls();
+  },
+
+  updateFormControls: function() {
+    this.ui.formSaveButton.attr('disabled', this.busy || App.maintenance);
+    this.ui.formCancelButton.attr('disabled', this.busy);
   },
 
   removeErrors: function() {
@@ -117,9 +133,5 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
     }
 
     errorElement.append(first ? error.message : ', ' + error.message);
-  },
-
-  setControlsEnabled: function(enabled) {
-    this.ui.controls.attr('disabled', !enabled);
   }
 });

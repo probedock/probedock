@@ -9,14 +9,14 @@
           .form-group
             %label.control-label.col-sm-3{ for: 'projectName' }= I18n.t('activerecord.attributes.project.name')
             .col-sm-9
-              %input#projectName.form-control{ type: 'text', name: 'name', maxlength: 255, value: @name }
+              %input#projectName.form-control{ type: 'text', name: 'name', maxlength: 255, value: @name, placeholder: I18n.t('jst.projectEditor.namePlaceholder') }
           .form-group
             %label.control-label.col-sm-3{ for: 'projectUrlToken' }= I18n.t('activerecord.attributes.project.url_token')
             .col-sm-9
-              %input#projectUrlToken.form-control{ type: 'text', name: 'urlToken', maxlength: 25, value: @urlToken }
+              %input#projectUrlToken.form-control{ type: 'text', name: 'urlToken', maxlength: 25, value: @urlToken, placeholder: I18n.t('jst.projectEditor.tokenPlaceholder') }
               .help-block= I18n.t('jst.projectEditor.urlTokenInstructions');
-          .form-group.form-controls
-            .col-sm-offset-3.col-sm-9.controls
+          .form-group
+            .col-sm-offset-3.col-sm-9.form-controls
               .btn-group
                 %button.save.btn.btn-primary{ type: 'submit' }= I18n.t('jst.common.save')
                 %button.cancel.btn.btn-default{ type: 'button' }= I18n.t('jst.common.cancel')

@@ -38,11 +38,19 @@ App.autoModule('projectEditor', function() {
       'change form input[name="urlToken"]': 'disableAutoFillToken'
     },
 
-    onRender: function() {
+    initializeForm: function() {
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+    },
 
+    onRender: function() {
       var type = this.model.isNew() ? 'create' : 'update';
       this.ui.openButton.text(I18n.t('jst.projectEditor.' + type));
       this.ui.title.text(I18n.t('jst.projectEditor.' + type + 'FormTitle'));
+      this.updateControls();
+    },
+
+    updateControls: function() {
+      this.ui.openButton.attr('disabled', App.maintenance);
     },
 
     renderModel: function() {
@@ -55,7 +63,7 @@ App.autoModule('projectEditor', function() {
     reset: function() {
 
       if (this.model.isNew()) {
-        this.model.set({ name: I18n.t('jst.projectEditor.defaultName') }, { silent: true });
+        this.model.set({ name: null, token: null }, { silent: true });
       }
       this.renderModel();
 
@@ -93,7 +101,7 @@ App.autoModule('projectEditor', function() {
     close: function() {
       this.ui.container.slideUp('normal', _.bind(function() {
         this.ui.openButton.slideDown('normal', _.bind(function() {
-          this.setControlsEnabled(true);
+          this.updateFormControls();
         }, this));
       }, this));
     }

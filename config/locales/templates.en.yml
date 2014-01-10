@@ -66,7 +66,8 @@ en:
       maintenanceNotice: "The application must be in maintenance mode to start recomputing counters. The maintenance can be ended as soon as the process has started."
       recomputingStarted: "The recomputing process has started successfully. You may stop the maintenance mode at your convenience."
     projectEditor:
-      defaultName: "My new project"
+      namePlaceholder: "My project"
+      tokenPlaceholder: "my_project"
       create: "Add a project"
       update: "Edit this project"
       createFormTitle: "New project"

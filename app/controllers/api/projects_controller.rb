@@ -14,8 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class Api::ProjectsController < Api::ApiController
+  before_filter :check_maintenance, only: [ :create, :update ]
   before_filter(except: [ :index ]){ authorize! :manage, Project }
 
   def index
