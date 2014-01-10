@@ -17,6 +17,7 @@
 class SettingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter{ authorize! :manage, :settings }
+  before_filter :check_maintenance, only: [ :update ]
 
   def show
     respond_to do |format|
@@ -28,7 +29,7 @@ class SettingsController < ApplicationController
       end
 
       format.json do
-        render :json => Settings::App.get
+        render json: Settings::App.get
       end
     end
   end
@@ -36,7 +37,7 @@ class SettingsController < ApplicationController
   def update
     settings = Settings::App.get
     settings.update_attributes setting_params
-    render :json => settings
+    render json: settings.tap(&:reload)
   end
 
   private

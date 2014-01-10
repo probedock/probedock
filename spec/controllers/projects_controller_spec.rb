@@ -17,7 +17,6 @@
 require 'spec_helper'
 
 describe ProjectsController, rox: { tags: :unit } do
-
   let(:user){ create :user }
   before(:each){ sign_in user }
   subject{ assigns }

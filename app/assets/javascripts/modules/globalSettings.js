@@ -17,47 +17,61 @@
 App.autoModule('globalSettings', function() {
 
   var Settings = Backbone.Model.extend({
-    url : LegacyApiPath.builder('settings')
+    url: LegacyApiPath.builder('settings')
   });
 
   var SettingsForm = Backbone.Marionette.ItemView.extend({
 
-    template : 'globalSettings',
-    ui : {
-      ticketingSystemUrl : '#settings_ticketing_system_url',
-      reportsCacheSize : '#settings_reports_cache_size',
-      tagCloudSize : '#settings_tag_cloud_size',
-      testOutdatedDays : '#settings_test_outdated_days',
-      saveButton : 'form button',
-      formControls : 'form .form-controls'
+    template: 'globalSettings',
+    ui: {
+      ticketingSystemUrl: '#settings_ticketing_system_url',
+      reportsCacheSize: '#settings_reports_cache_size',
+      tagCloudSize: '#settings_tag_cloud_size',
+      testOutdatedDays: '#settings_test_outdated_days',
+      saveButton: 'form button',
+      formControls: 'form .form-controls'
     },
 
-    events : {
-      'submit form' : 'save'
+    events: {
+      'submit form': 'save'
     },
 
-    model : new Settings(),
-
-    initialize : function() {
-      this.listenTo(this.model, 'change', this.refresh);
+    modelEvents: {
+      'change': 'refresh'
     },
 
-    onRender : function() {
+    model: new Settings(),
+
+    initialize: function() {
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+    },
+
+    onRender: function() {
       this.$el.button();
       this.model.fetch(this.requestOptions());
     },
 
-    refresh : function() {
+    setBusy: function(busy) {
+      this.busy = busy;
+      this.updateControls();
+    },
+
+    updateControls: function() {
+      this.ui.saveButton.attr('disabled', this.busy || !!App.maintenance);
+    },
+
+    refresh: function() {
       this.ui.ticketingSystemUrl.val(this.model.get('ticketing_system_url'));
       this.ui.reportsCacheSize.val(this.model.get('reports_cache_size'));
       this.ui.tagCloudSize.val(this.model.get('tag_cloud_size'));
       this.ui.testOutdatedDays.val(this.model.get('test_outdated_days'));
     },
 
-    save : function() {
+    save: function(e) {
+      e.preventDefault();
 
       this.setNotice(false);
-      this.ui.saveButton.button('loading');
+      this.setBusy(true);
 
       var options = this.requestOptions();
       options.type = 'PUT';
@@ -65,21 +79,21 @@ App.autoModule('globalSettings', function() {
       options.error = _.bind(this.onSaved, this, 'error');
 
       this.model.save({
-        ticketing_system_url : this.ui.ticketingSystemUrl.val(),
-        reports_cache_size : this.ui.reportsCacheSize.val(),
-        tag_cloud_size : this.ui.tagCloudSize.val(),
-        test_outdated_days : this.ui.testOutdatedDays.val()
-      }, options);
-
-      return false;
+        ticketing_system_url: this.ui.ticketingSystemUrl.val(),
+        reports_cache_size: this.ui.reportsCacheSize.val(),
+        tag_cloud_size: this.ui.tagCloudSize.val(),
+        test_outdated_days: this.ui.testOutdatedDays.val()
+      }, options).complete(_.bind(this.setBusy, this, false));
     },
 
-    onSaved : function(result) {
-      this.ui.saveButton.button('reset');
+    onSaved: function(result) {
       this.setNotice(result);
+      if (result == 'success') {
+        this.refresh();
+      }
     },
 
-    setNotice : function(type) {
+    setNotice: function(type) {
       this.ui.saveButton.next('.text-success,.text-danger').remove();
       if (type == 'success') {
         $('<span class="text-success" />').text(I18n.t('jst.globalSettings.success')).insertAfter(this.ui.saveButton).hide().fadeIn('fast');
@@ -88,11 +102,11 @@ App.autoModule('globalSettings', function() {
       }
     },
 
-    requestOptions : function() {
+    requestOptions: function() {
       return {
-        dataType : 'json',
-        accepts : {
-          json : 'application/json'
+        dataType: 'json',
+        accepts: {
+          json: 'application/json'
         }
       };
     }
