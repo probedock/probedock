@@ -21,34 +21,67 @@ App.autoModule('testCountersManager', function() {
     url: Path.builder('data', 'test_counters'),
     
     status: function() {
-      return this.get('recomputing') || this.get('jobs') || this.get('remainingResults') ? 'computing' : 'idle';
+      if (this.get('preparing')) {
+        return 'preparing';
+      } else if (this.get('recomputing') || this.get('jobs') || this.get('remainingResults')) {
+        return 'computing';
+      } else {
+        return 'idle';
+      }
     }
   });
 
   var Manager = Backbone.Marionette.ItemView.extend({
 
-    tagName: 'div',
-    className: 'panel panel-default testCountersManager',
+    className: 'panel testCountersManager',
     template: 'testCountersManager',
+
     ui: {
       statusLabel: 'tbody .label',
-      recomputeButton: 'tfoot .recompute',
+      recomputeButton: '.panel-footer .recompute',
       dataRows: 'tbody tr',
       jobs: 'tbody td.jobs',
       remainingResults: 'tbody td.remainingResults',
-      totalCounters: 'tbody td.totalCounters'
+      totalCounters: 'tbody td.totalCounters',
+      instructions: '.panel-body .instructions',
+      maintenanceNotice: 'p.maintenance',
+      startedNotice: 'p.started',
+      title: '.panel-heading .panel-title'
     },
 
     events: {
       'click .recompute': 'recompute'
     },
     modelEvents: {
-      'change': 'renderModel'
+      'change': 'updateState'
+    },
+
+    initialize: function() {
+      this.listenTo(App.vent, 'maintenance:changed', this.updateState);
     },
 
     onRender: function() {
-      this.renderModel();
+      this.updateState();
       App.watchStatus(this, this.refresh, { only: [ 'counters', 'lastTestCounters' ] });
+    },
+
+    updateState: function() {
+
+      var status = this.model.status();
+
+      this.$el.removeClass('panel-default panel-primary').addClass('panel-' + (App.maintenance || status != 'idle' ? 'primary' : 'default'));
+
+      this.ui.maintenanceNotice[App.maintenance ? 'hide' : 'show']();
+      this.ui.startedNotice[App.maintenance && status == 'computing' ? 'show' : 'hide']();
+
+      this.ui.title.removeClass('disabled');
+      this.ui.instructions.removeClass('text-muted');
+      if (!App.maintenance && status == 'idle') {
+        this.ui.title.addClass('disabled');
+        this.ui.instructions.addClass('text-muted');
+      }
+
+      this.renderModel();
     },
 
     renderModel: function() {
@@ -66,7 +99,7 @@ App.autoModule('testCountersManager', function() {
 
       var status = this.model.status();
 
-      if (status == 'computing') {
+      if (status != 'idle') {
         this.ui.dataRows.addClass('warning');
         this.ui.statusLabel.addClass('label-warning');
       } else {
@@ -77,7 +110,9 @@ App.autoModule('testCountersManager', function() {
     },
 
     updateControls: function() {
-      this.ui.recomputeButton.attr('disabled', this.model.status() == 'computing');
+      var status = this.model.status();
+      this.ui.recomputeButton.removeClass('btn-warning btn-default').addClass('btn-' + (App.maintenance ? 'warning' : 'default'));
+      this.ui.recomputeButton.attr('disabled', !App.maintenance || status != 'idle');
     },
 
     refresh: function() {
@@ -89,7 +124,7 @@ App.autoModule('testCountersManager', function() {
         return;
       }
       this.ui.recomputeButton.attr('disabled', true);
-      this.model.save({ recomputing: true });
+      this.model.save({ recomputing: true, preparing: true });
     }
   });
 

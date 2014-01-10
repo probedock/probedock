@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class DataController < ApplicationController
-  before_filter :authenticate_user!
   skip_before_filter :load_links
+  before_filter :authenticate_user!
+  before_filter(only: [ :test_counters ]){ authorize! :manage, :settings }
 
   def status
     render json: StatusData.compute
@@ -37,8 +38,9 @@ class DataController < ApplicationController
 
   def test_counters
 
-    if request.post? && !TestCounter.recompute!
-      return render text: 'Already recomputing', status: 503
+    if request.post?
+      return render text: 'Must be in maintenance mode', status: 503 unless @maintenance
+      return render text: 'Already recomputing', status: 503 if !TestCounter.recompute!
     end
 
     render json: TestCountersData.compute

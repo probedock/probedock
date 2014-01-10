@@ -76,7 +76,9 @@ class TestCounter < ActiveRecord::Base
   end
 
   def self.recompute! timezones = ROXCenter::Application.metrics_timezones
-    return false if $redis.getset cache_key(:recomputing), true
+    return false unless $redis.setnx cache_key(:recomputing), true
+
+    self.preparing = true
 
     delete_all
     clean_token_cache true
@@ -107,7 +109,13 @@ class TestCounter < ActiveRecord::Base
       CountTestsJob.enqueue_runs runs, max_time: now.to_f, timezones: timezones
     end
 
+    self.preparing = false
+
     true
+  end
+
+  def self.preparing?
+    !!$redis.get(cache_key(:preparing))
   end
 
   def self.recomputing?
@@ -115,6 +123,7 @@ class TestCounter < ActiveRecord::Base
   end
 
   def self.clear_computing
+    self.preparing = false
     $redis.del cache_key(:recomputing), cache_key(:remaining_results)
   end
 
@@ -146,17 +155,25 @@ class TestCounter < ActiveRecord::Base
     end
   end
 
+  def self.cache_key name
+    "metrics:test_counters:#{name}"
+  end
+
   private
+
+  def self.preparing= preparing
+    if preparing
+      $redis.set cache_key(:preparing), true
+    else
+      $redis.del cache_key(:preparing)
+    end
+  end
 
   def self.utc_day time, timezone_name
     Time.use_zone timezone_name do
       local_time = Time.zone.at time.to_time.utc
       Time.zone.local(local_time.year, local_time.month, local_time.day).utc
     end
-  end
-
-  def self.cache_key name
-    "metrics:test_counters:#{name}"
   end
 
   def self.build_unique_token attributes, mask

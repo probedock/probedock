@@ -17,25 +17,41 @@
 class TestCountersData
 
   def self.compute
-    {
-      jobs: queue_size,
-      recomputing: TestCounter.recomputing?,
-      remainingResults: remaining_results,
-      totalCounters: TestCounter.count
-    }
+    redis_data.inject({}){ |memo,(k,v)| memo[k.to_s.camelize(:lower).to_sym] = v; memo }.merge totalCounters: TestCounter.count
   end
 
   def self.fingerprint
-    "#{queue_size}-#{TestCounter.recomputing?}-#{remaining_results}"
+    data = redis_data
+    DataFingerprint.new data.keys.sort.collect{ |k| data[k] }.join('-')
+  end
+
+  def self.queue_size
+    Resque.redis.llen "queue:#{CountTestsJob.queue}"
   end
 
   private
 
-  def self.queue_size
-    Resque.size('metrics:test_counters')
+  def self.redis_data
+
+    results = $redis.multi do
+      queue_size
+      recomputing?
+      remaining_results
+      preparing?
+    end
+
+    { jobs: results[0].to_i, recomputing: !!results[1], remaining_results: results[2].to_i, preparing: !!results[3] }
+  end
+
+  def self.recomputing?
+    $redis.get TestCounter.cache_key(:recomputing)
+  end
+
+  def self.preparing?
+    $redis.get TestCounter.cache_key(:preparing)
   end
 
   def self.remaining_results
-    $redis.get('metrics:test_counters:remaining_results').to_i
+    $redis.get TestCounter.cache_key(:remaining_results)
   end
 end

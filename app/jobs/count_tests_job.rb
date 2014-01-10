@@ -17,6 +17,10 @@
 class CountTestsJob
   @queue = 'metrics:test_counters'
 
+  def self.queue
+    @queue
+  end
+
   include RoxHook
   on('api:payload'){ |job| enqueue_results job.processed_test_run.processed_tests.collect(&:test_result), timezones: ROXCenter::Application.metrics_timezones }
 

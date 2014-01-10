@@ -1,7 +1,7 @@
 .panel-heading
   %h3.panel-title= I18n.t('jst.testCountersManager.title')
 .panel-body
-  %p= I18n.t('jst.testCountersManager.instructions')
+  %p.instructions= I18n.t('jst.testCountersManager.instructions')
 %table.table.table-hover.table-bordered
   %tbody
     %tr
@@ -17,7 +17,7 @@
     %tr
       %th= I18n.t('jst.testCountersManager.totalCounters')
       %td.totalCounters
-  %tfoot
-    %tr
-      %td{ colspan: 2 }
-        %button.recompute.btn.btn-warning{ type: 'button' }= I18n.t('jst.testCountersManager.recompute')
+.panel-footer
+  %p.maintenance.text-info= I18n.t('jst.testCountersManager.maintenanceNotice')
+  %p.started.text-success= I18n.t('jst.testCountersManager.recomputingStarted')
+  %button.recompute.btn{ type: 'button' }= I18n.t('jst.testCountersManager.recompute')

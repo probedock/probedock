@@ -32,8 +32,8 @@ class StatusData
 
     # TODO: spec jobs and counters hashes
     DATES.inject({
-      jobs: Digest::SHA1.hexdigest(resque_status),
-      counters: Digest::SHA1.hexdigest(TestCountersData.fingerprint),
+      jobs: resque_status.to_s,
+      counters: TestCountersData.fingerprint.to_s,
       maintenance: results[1] ? Time.at(Rational(results[1])).to_i * 1000 : false
     }) do |memo,d|
       memo[d.camelize(:lower).to_sym] = results[0][d].to_i
@@ -60,6 +60,6 @@ class StatusData
 
   def self.resque_status
     info = Resque.info
-    "#{info[:workers]}-#{info[:pending]}-#{info[:working]}-#{info[:processed]}"
+    DataFingerprint.new "#{info[:workers]}-#{info[:pending]}-#{info[:working]}-#{info[:processed]}"
   end
 end

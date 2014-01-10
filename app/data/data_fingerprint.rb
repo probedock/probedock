@@ -14,15 +14,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-rails_root = Rails.root || File.dirname(__FILE__) + '/../..'
-rails_env = Rails.env || 'development'
-config = YAML.load_file(rails_root.to_s + '/config/redis.yml')
-config = config[rails_env]
+class DataFingerprint
+  attr_reader :data
 
-host, port, db = config.split /:/
+  def initialize data
+    @data = data
+  end
 
-options = { host: host, port: port, db: db.to_i, driver: :hiredis }
-options[:logger] = Rails.logger unless ENV['QUEUE'] or Rails.env != 'development'
+  def == other
+    to_s == other.to_s
+  end
 
-$redis_db = Redis.new options
-$redis = Redis::Namespace.new 'rox', redis: $redis_db
+  def to_s
+    Digest::SHA1.hexdigest @data.to_s
+  end
+end

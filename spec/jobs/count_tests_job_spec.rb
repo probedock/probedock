@@ -24,6 +24,7 @@ describe CountTestsJob do
   end
 
   it "should go in the #{COUNT_TESTS_JOB_QUEUE} queue", rox: { key: 'c3033e4f9e76' } do
+    expect(described_class.queue).to eq(COUNT_TESTS_JOB_QUEUE)
     expect(described_class.instance_variable_get('@queue')).to eq(COUNT_TESTS_JOB_QUEUE)
   end
 

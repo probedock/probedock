@@ -17,6 +17,16 @@
 require 'spec_helper'
 
 describe TestCounter do
+  TEST_COUNTER_CACHE_BASE = 'metrics:test_counters'
+
+  describe ".cache_key" do
+
+    it "should return a cache key with the correct prefix", rox: { key: '6e4c80af513d' } do
+      %w(foo bar baz).each do |key|
+        expect(described_class.cache_key(key)).to eq("#{TEST_COUNTER_CACHE_BASE}:#{key}")
+      end
+    end
+  end
 
   describe ".measure" do
     let(:cache){ {} }
@@ -175,6 +185,11 @@ describe TestCounter do
       expect(CountDeprecationJob).to have_queue_size_of(0)
     end
 
+    it "should be done preparing when exiting the recompute method", rox: { key: 'b37089337352' } do
+      recompute
+      expect(described_class.preparing?).to be_false
+    end
+
     it "should stop recomputing if there is no data", rox: { key: 'f7a31e1610e0' } do
       recompute
       expect(described_class.recomputing?).to be_false
@@ -220,15 +235,27 @@ describe TestCounter do
         recompute
       end
 
+      it "should be preparing inside the recompute method", rox: { key: 'e2884248b433' } do
+        CountDeprecationJob.stub(:enqueue_deprecation){ expect(described_class.preparing?).to be_true }
+        CountTestsJob.stub(:enqueue_runs){ expect(described_class.preparing?).to be_true }
+        recompute
+      end
+
       it "should not allow recomputing if already in progress", rox: { key: 'a2c73531db3c' } do
         expect(recompute).to be_true
         expect(recompute).to be_false
+      end
+
+      it "should be done preparing when exiting the recompute method", rox: { key: 'c0d1a6c3c691' } do
+        recompute
+        expect(described_class.preparing?).to be_false
       end
 
       it "should stop with clear_computing", rox: { key: '5be8ef7d3d48' } do
         TestCounter.update_remaining_results 1234
         recompute
         described_class.clear_computing
+        expect(described_class.preparing?).to be_false
         expect(described_class.recomputing?).to be_false
         expect(described_class.remaining_results).to eq(0)
       end

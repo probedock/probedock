@@ -14,15 +14,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-rails_root = Rails.root || File.dirname(__FILE__) + '/../..'
-rails_env = Rails.env || 'development'
-config = YAML.load_file(rails_root.to_s + '/config/redis.yml')
-config = config[rails_env]
+module MaintenanceHelpers
 
-host, port, db = config.split /:/
-
-options = { host: host, port: port, db: db.to_i, driver: :hiredis }
-options[:logger] = Rails.logger unless ENV['QUEUE'] or Rails.env != 'development'
-
-$redis_db = Redis.new options
-$redis = Redis::Namespace.new 'rox', redis: $redis_db
+  def set_maintenance_mode enabled = true, time = Time.now
+    if enabled
+      $redis.set :maintenance, time.to_r.to_s
+    else
+      $redis.del :maintenance
+    end
+  end
+end
