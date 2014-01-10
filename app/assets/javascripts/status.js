@@ -65,6 +65,7 @@ App.module('status', function() {
     stopWatchingForMaintenance: function() {
       this.maintenance = false;
       if (!this.watch && this.timeout) {
+        this.refreshing = false;
         clearTimeout(this.timeout);
         App.debug('Stopped checking app status for maintenance');
       }
@@ -114,6 +115,10 @@ App.module('status', function() {
     var initialData = $('body').data('status');
     if (initialData) {
       status.set(initialData);
+    }
+
+    if (App.maintenance) {
+      status.startWatchingForMaintenance();
     }
   });
 });
