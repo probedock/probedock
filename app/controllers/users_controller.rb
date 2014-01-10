@@ -16,6 +16,17 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class UsersController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :check_maintenance, only: [ :destroy ]
+  before_filter(only: [ :create, :update ]) do
+    if @maintenance
+      if request.xhr?
+        render_maintenance
+      else
+        redirect_to action: :index
+      end
+    end
+  end
+
   load_resource find_by: :name, only: [ :new, :show, :edit, :update, :destroy, :tests_page ]
   authorize_resource only: [ :new, :create, :edit, :update, :destroy ]
 

@@ -60,6 +60,7 @@ App.autoModule('userInfo', function() {
 
     initialize: function(options) {
       this.can = options.can;
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
     },
 
     onRender: function() {
@@ -67,7 +68,7 @@ App.autoModule('userInfo', function() {
       this.ui.email.text(this.model.get('email') || I18n.t('jst.common.noData'));
       this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('created_at'))));
       this.renderActive();
-      this.renderActions();
+      this.updateControls();
     },
 
     renderAvatar: function() {
@@ -87,7 +88,12 @@ App.autoModule('userInfo', function() {
       }
     },
 
-    renderActions: function() {
+    setBusy: function(busy) {
+      this.busy = busy;
+      this.updateControls();
+    },
+
+    updateControls: function() {
 
       if (!this.can.manage) {
         return this.ui.actions.hide();
@@ -95,19 +101,18 @@ App.autoModule('userInfo', function() {
       this.ui.actions.show();
 
       this.ui.editButton.attr('href', this.model.editPath());
-      this.ui.deleteButton.attr('disabled', !this.model.get('deletable'));
-      this.updateToggleActivatedButton();
-    },
+      this.ui.editButton.attr('disabled', this.busy || App.maintenance);
 
-    updateToggleActivatedButton: function() {
-      this.ui.toggleActivatedButton.attr('disabled', false);
+      this.ui.toggleActivatedButton.attr('disabled', this.busy || App.maintenance);
       this.ui.toggleActivatedButton.text(I18n.t('jst.userInfo.' + (this.model.get('active') ? 'deactivate' : 'activate')));
+
+      this.ui.deleteButton.attr('disabled', this.busy || !this.model.get('deletable') || this.undeletable || App.maintenance);
     },
 
     toggleActivated: function() {
 
       this.$el.find('.text-danger').remove();
-      this.ui.toggleActivatedButton.attr('disabled', true);
+      this.setBusy(true);
       
       $.ajax({
         url: this.model.path(),
@@ -121,9 +126,10 @@ App.autoModule('userInfo', function() {
     },
 
     setActivated: function() {
+      this.setBusy(false);
       this.model.set({ active: !this.model.get('active') }, { silent: true });
       this.renderActive();
-      this.updateToggleActivatedButton();
+      this.updateControls();
     },
 
     deleteUser: function() {
@@ -144,9 +150,15 @@ App.autoModule('userInfo', function() {
     },
 
     showServerError: function(errorMessage, xhr) {
-      $('<p class="text-danger" />').text(errorMessage).appendTo(this.$el).hide().fadeIn();
-      if (xhr.status == 409) {
-        this.ui.deleteButton.attr('disabled', true);
+      this.setBusy(false);
+
+      if (xhr.status != 503) {
+
+        $('<p class="text-danger" />').text(errorMessage).appendTo(this.$el).hide().fadeIn();
+        if (xhr.status == 409) {
+          this.undeletable = true;
+          this.updateControls();
+        }
       }
     }
   });

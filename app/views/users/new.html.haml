@@ -1,4 +1,6 @@
 .modal
-  .modal-header
-    %h3= t('.title')
-  = render partial: 'form'
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h4.modal-title= t('.title')
+      = render partial: 'form'
