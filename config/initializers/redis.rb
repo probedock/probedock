@@ -21,5 +21,8 @@ config = config[rails_env]
 
 host, port, db = config.split /:/
 
-$redis_db = Redis.new host: host, port: port, db: db.to_i, driver: :hiredis #, logger: Rails.logger
+options = { host: host, port: port, db: db.to_i, driver: :hiredis }
+options[:logger] = Rails.logger unless ENV['QUEUE']
+
+$redis_db = Redis.new options
 $redis = Redis::Namespace.new 'rox', redis: $redis_db
