@@ -50,20 +50,40 @@ App.autoModule('apiKeysTable', function() {
       'click .actions button.delete': 'delete'
     },
     modelEvents: {
+      'request': 'checkBusy',
+      'error sync': 'clearBusy',
       'change:active': 'renderIdentifier renderSharedSecret updateStatus',
       'change:sharedSecret': 'renderSharedSecret'
     },
 
+    initialize: function() {
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+    },
+
     toggleActive: function(e) {
       e.preventDefault();
-      this.ui.toggleActiveButton.attr('disabled', true);
-      this.model.save({ active: !this.model.get('active') }, { wait: true });
+      this.model.save({ active: !this.model.get('active') }, { wait: true, busy: true });
+    },
+
+    checkBusy: function(model, xhr, options) {
+      if (options && options.busy) {
+        this.setBusy(true);
+      }
+    },
+
+    clearBusy: function() {
+      this.setBusy(false);
+    },
+
+    setBusy: function(busy) {
+      this.busy = busy;
+      this.updateControls();
     },
 
     delete: function(e) {
       e.preventDefault();
       if (confirm(I18n.t('jst.apiKeysTable.deleteConfirmation'))) {
-        this.model.destroy({ wait: true });
+        this.model.destroy({ wait: true, busy: true });
       }
     },
 
@@ -99,9 +119,15 @@ App.autoModule('apiKeysTable', function() {
       this.ui.toggleActiveButton.tooltip({
         title: this.model.get('active') ? I18n.t('jst.apiKeysTable.disable') : I18n.t('jst.apiKeysTable.enable')
       });
-      this.ui.toggleActiveButton.attr('disabled', false);
       this.ui.toggleActiveIcon.removeClass('icon-stop icon-play');
       this.ui.toggleActiveIcon.addClass(this.model.get('active') ? 'icon-stop' : 'icon-play');
+
+      this.updateControls();
+    },
+
+    updateControls: function() {
+      this.ui.toggleActiveButton.attr('disabled', this.busy || App.maintenance);
+      this.ui.deleteButton.attr('disabled', this.busy || App.maintenance);
     },
 
     renderIdentifier: function() {
@@ -145,6 +171,11 @@ App.autoModule('apiKeysTable', function() {
       'click .header button.new': 'createKey'
     },
 
+    collectionEvents: {
+      'error': 'showError',
+      'request': 'clearError'
+    },
+
     pageSizeViewOptions : {
       sizes : [ 5, 10, 15 ]
     },
@@ -159,16 +190,58 @@ App.autoModule('apiKeysTable', function() {
 
     tableView: ApiKeysTableView,
 
+    initialize: function() {
+      Table.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+    },
+
+    onRender: function() {
+      this.updateControls();
+    },
+
     createKey: function(e) {
       e.preventDefault();
-      this.ui.newButton.attr('disabled', true);
-      new ApiKey().save({}, {
+      this.clearError();
+
+      var key = new ApiKey();
+      this.listenToOnce(key, 'request', _.bind(this.setBusy, this, true));
+      this.listenToOnce(key, 'sync error', _.bind(this.setBusy, this, false));
+      this.listenToOnce(key, 'error', this.showError);
+
+      key.save({}, {
         wait: true,
         success: _.bind(function() {
-          this.ui.newButton.attr('disabled', false);
           this.update({ sort: [ 'createdAt desc' ] });
         }, this)
       });
+    },
+
+    setBusy: function(busy) {
+      this.busy = busy;
+      this.updateControls();
+    },
+
+    updateControls: function() {
+      this.ui.newButton.attr('disabled', this.busy || App.maintenance);
+    },
+
+    clearError: function(o, xhr, options) {
+      if (typeof(o) == 'undefined' || (o instanceof ApiKey && options && options.busy)) {
+        this.$el.find('.alert').remove();
+      }
+    },
+
+    showError: function(o, xhr) {
+      if (xhr.status != 503) {
+        this.clearError();
+
+        var error = 'generalError';
+        if (o instanceof ApiKey) {
+          error = o.isNew() ? 'creationError' : 'keyError';
+        }
+
+        Alerts.danger({ message: I18n.t('jst.apiKeysTable.' + error), fade: true }).appendTo(this.$el);
+      }
     }
   });
 

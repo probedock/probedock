@@ -16,9 +16,9 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 
 class AccountApiKeysController < Api::ApiController
-
-  before_filter :authenticate_user!
   skip_before_filter :authenticate_api_user!
+  before_filter :authenticate_user!
+  before_filter :check_maintenance, only: [ :create, :update, :destroy ]
 
   authorize_resource class: 'ApiKey', only: [ :index ]
   load_and_authorize_resource class: 'ApiKey', find_by: :identifier, except: [ :index ]

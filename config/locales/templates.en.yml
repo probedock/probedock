@@ -170,6 +170,9 @@ en:
       enable: "Enable this key"
       delete: "Delete this key"
       deleteConfirmation: "Are you sure you want to delete this key?"
+      keyError: "Could not update or delete API key."
+      creationError: "Could not create API key."
+      generalError: "An error occurred while contacting the server."
     projectsTable:
       empty: "No projects found."
     keyGenerator:

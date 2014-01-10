@@ -26,47 +26,84 @@ describe AccountApiKeysController, rox: { tags: :unit } do
     assert_response :redirect
   end
 
-  context "when signed in" do
-
+  describe "when signed in" do
     before(:each){ sign_in user }
 
-    it "should create an api key for the current user", rox: { key: 'e39606279c85' } do
-      existing_key = user.api_keys.first
-      post :create
-      user.api_keys.should have(2).items
-      response.success?.should be_true
-      Oj.load(response.body).should == ApiKeyRepresenter.new((user.api_keys - [ existing_key ]).first).serializable_hash
+    describe "#create" do
+
+      it "should create an api key for the current user", rox: { key: 'e39606279c85' } do
+        existing_key = user.api_keys.first
+        expect{ post :create }.to change(ApiKey, :count).by(1)
+        expect(user.api_keys).to have(2).items
+        expect(response.success?).to be_true
+        expect(Oj.load(response.body)).to eq(ApiKeyRepresenter.new((user.api_keys - [ existing_key ]).first).serializable_hash)
+      end
+
+      it "should return a 503 response when in maintenance mode", rox: { key: '72bb0bf723e4' } do
+        set_maintenance_mode
+        expect{ post :create }.not_to change(ApiKey, :count)
+        expect(response.status).to eq(503)
+      end
     end
 
-    it "should show a detailed api key", rox: { key: '3c157dc6c596' } do
-      key = user.api_keys.first
-      get :show, id: key.identifier
-      response.success?.should be_true
-      Oj.load(response.body).should == ApiKeyRepresenter.new(key, detailed: true).serializable_hash
+    describe "#show" do
+
+      it "should show a detailed api key", rox: { key: '3c157dc6c596' } do
+        key = user.api_keys.first
+        get :show, id: key.identifier
+        expect(response.success?).to be_true
+        expect(Oj.load(response.body)).to eq(ApiKeyRepresenter.new(key, detailed: true).serializable_hash)
+      end
+
+      it "should work in maintenance mode", rox: { key: '7f71dcef0f27' } do
+        set_maintenance_mode
+        get :show, id: user.api_keys.first.identifier
+        expect(response.success?).to be_true
+      end
+
+      it "should not give access to other users' keys", rox: { key: '417d9239cbbe' } do
+        other_key = create(:other_user).api_keys.first
+        get :show, id: other_key.identifier
+        assert_response :not_found
+      end
     end
 
-    it "should not give access to other users' keys", rox: { key: '417d9239cbbe' } do
-      other_key = create(:other_user).api_keys.first
-      get :show, id: other_key.identifier
-      assert_response :not_found
+    describe "#update" do
+
+      it "should update an api key", rox: { key: '6444cd3c2e91' } do
+        key = user.api_keys.first
+        put :update, id: key.identifier, account_api_key: { active: false }
+        expect(response.success?).to be_true
+        expect(key.tap(&:reload).active).to be_false
+        expect(Oj.load(response.body)).to eq(ApiKeyRepresenter.new(key).serializable_hash)
+      end
+
+      it "should return a 503 response when in maintenance mode", rox: { key: '8a7b243b8ddd' } do
+        set_maintenance_mode
+        key = user.api_keys.first
+        put :update, id: key.identifier, account_api_key: { active: false }
+        expect(key.tap(&:reload).active).to be_true
+        expect(response.status).to eq(503)
+      end
     end
 
-    it "should update an api key", rox: { key: '6444cd3c2e91' } do
-      key = user.api_keys.first
-      put :update, id: key.identifier, account_api_key: { active: false }
-      response.success?.should be_true
-      key.tap(&:reload).active.should be_false
-      Oj.load(response.body).should == ApiKeyRepresenter.new(key).serializable_hash
+    describe "#destroy" do
+
+      it "should destroy an api key", rox: { key: '41cc158c1010' } do
+        key = user.api_keys.first
+        expect{ delete :destroy, id: key.identifier }.to change(ApiKey, :count).by(-1)
+        expect(response.status).to eq(204)
+        expect(user.tap(&:reload).api_keys).to be_empty
+      end
+
+      it "should return a 503 response when in maintenance mode", rox: { key: '2f0c7d8849f7' } do
+        set_maintenance_mode
+        expect{ delete :destroy, id: user.api_keys.first.identifier }.not_to change(ApiKey, :count)
+        expect(response.status).to eq(503)
+      end
     end
 
-    it "should destroy an api key", rox: { key: '41cc158c1010' } do
-      key = user.api_keys.first
-      lambda{ delete :destroy, id: key.identifier }.should change(ApiKey, :count).by(-1)
-      response.status.should eq(204)
-      user.tap(&:reload).api_keys.should be_empty
-    end
-
-    context "#index" do
+    describe "#index" do
 
       def parse_response options = {}
         get :index, options
@@ -89,7 +126,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
       let(:embedded_rel){ 'v1:api-keys' }
       let(:embedded_converter){ ->(k){ k[:id] } }
 
-      context "table resource", rox: { key: '4caf4e56251a', grouped: true } do
+      describe "table resource", rox: { key: '4caf4e56251a', grouped: true } do
         it_should_behave_like "a table resource", {
           representation: {
             sort: :id,

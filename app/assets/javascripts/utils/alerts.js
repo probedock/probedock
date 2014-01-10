@@ -45,7 +45,7 @@ var Alerts = {
 
     if (options.fade) {
       el.addClass('fade');
-      setTimeout(_.bind(el.addClass, el, 'in'), 0);
+      async.nextTick(_.bind(el.addClass, el, 'in'));
     }
 
     return el;
