@@ -80,17 +80,20 @@ App.autoModule('keyGenerator', function() {
 
       this.collection = new ProjectCollection();
       this.addKeys(options.freeKeys);
+
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
     },
 
     onRender: function() {
       this.setupProject();
-      this.updateControls(true);
+      this.updateControls();
       this.ui.error.hide();
     },
 
     addNewKeys: function(response) {
       this.addKeys(response._embedded['v1:test-keys']);
-      this.updateControls(true);
+      this.busy = false;
+      this.updateControls();
     },
 
     addKeys: function(keys) {
@@ -139,13 +142,16 @@ App.autoModule('keyGenerator', function() {
 
       this.collection.reset();
 
-      this.updateControls(true);
+      this.busy = false;
+      this.updateControls();
     },
 
     generateNewKeys: function() {
 
       this.ui.error.hide();
-      this.updateControls(false);
+
+      this.busy = true;
+      this.updateControls();
 
       $.ajax({
         url: this.path + '?' + $.param({ n: this.ui.numberOfKeys.val() }),
@@ -155,7 +161,7 @@ App.autoModule('keyGenerator', function() {
         data: JSON.stringify({
           projectApiId: this.ui.project.val()
         })
-      }).done(_.bind(this.addNewKeys, this)).fail(_.bind(this.showGenerationError, this));
+      }).done(_.bind(this.addNewKeys, this)).fail(_.bind(this.showError, this, 'generate'));
     },
 
     releaseUnusedKeys: function() {
@@ -164,28 +170,30 @@ App.autoModule('keyGenerator', function() {
       }
 
       this.ui.error.hide();
-      this.updateControls(false);
+
+      this.busy = true;
+      this.updateControls();
 
       $.ajax({
         url: this.path,
         type: 'DELETE',
         dataType: 'json'
-      }).done(_.bind(this.removeKeys, this)).fail(_.bind(this.showReleaseError, this));;
+      }).done(_.bind(this.removeKeys, this)).fail(_.bind(this.showError, this, 'release'));;
     },
 
-    updateControls: function(enabled) {
-      this.ui.generate.attr('disabled', !enabled);
-      this.ui.release.attr('disabled', !enabled || this.collection.isEmpty());
+    updateControls: function() {
+      this.ui.generate.attr('disabled', this.busy || App.maintenance);
+      this.ui.release.attr('disabled', this.busy || this.collection.isEmpty() || App.maintenance);
     },
 
-    showGenerationError: function() {
-      this.ui.error.text(I18n.t('jst.keyGenerator.errors.generate')).show();
-      this.updateControls(true);
-    },
+    showError: function(type, xhr) {
 
-    showReleaseError: function() {
-      this.ui.error.text(I18n.t('jst.keyGenerator.errors.release')).show();
-      this.updateControls(true);
+      this.busy = false;
+      this.updateControls();
+
+      if (xhr.status != 503) {
+        this.ui.error.text(I18n.t('jst.keyGenerator.errors.' + type)).show();
+      }
     },
 
     updateSettings: function() {

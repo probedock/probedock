@@ -17,11 +17,12 @@
 require 'spec_helper'
 
 describe Api::TestKeysController, rox: { tags: :unit } do
+  include MaintenanceHelpers
   
   let(:user){ create :user }
   let(:project){ create :project }
 
-  context "#create" do
+  describe "#create" do
     let(:generation_request_body){ Oj.dump 'projectApiId' => project.api_id }
 
     it "should create the requested number of keys for a project and user", rox: { key: 'aa411bcb252e' } do
@@ -61,23 +62,44 @@ describe Api::TestKeysController, rox: { tags: :unit } do
       expect{ generate_keys({ n: 1 }, Oj.dump({ 'projectApiId' => '000000000000' })) }.not_to change(TestKey, :count)
       check_api_errors [ { name: 'project_api_id_unknown', path: '/projectApiId', message: Regexp.new('000000000000') } ]
     end
-  end
 
-  context "#destroy" do
-    let(:projects){ [ project, create(:project) ] }
-    let!(:free_keys){ Array.new(3){ |i| create :test_key, user: user, project: projects[i % 2], free: true } }
-    let!(:unfree_keys){ Array.new(3){ |i| create :test_key, user: user, project: projects[(i % 2 - 1).abs], free: false } }
-
-    it "should delete free keys of the current user", rox: { key: '07a7dcc7c3b7' } do
-      expect(user.test_keys).to have(6).items
-      expect(user.free_test_keys).to have(3).items
-      expect{ api_delete user, :api_test_keys }.to change(TestKey, :count).by(-3)
-      expect(response.status).to eq(204)
-      expect(user.tap(&:reload).test_keys).to match_array(unfree_keys)
+    it "should return a 503 response when in maintenance mode", rox: { key: 'e27209fb845a' } do
+      set_maintenance_mode
+      expect{ generate_keys n: 5 }.not_to change(TestKey, :count)
+      expect(response.status).to eq(503)
     end
   end
 
-  context "#index" do
+  describe "#destroy" do
+    let(:projects){ [ project, create(:project) ] }
+    let!(:unfree_keys){ Array.new(3){ |i| create :test_key, user: user, project: projects[(i % 2 - 1).abs], free: false } }
+
+    it "should not do anything when the user has no free keys", rox: { key: 'b244b60361f4' } do
+      expect{ release_keys }.not_to change(TestKey, :count)
+      expect(response.status).to eq(204)
+      expect(user.tap(&:reload).test_keys).to match_array(unfree_keys)
+    end
+
+    describe "with free keys" do
+      let!(:free_keys){ Array.new(3){ |i| create :test_key, user: user, project: projects[i % 2], free: true } }
+
+      it "should delete free keys of the current user", rox: { key: '07a7dcc7c3b7' } do
+        expect(user.test_keys).to have(6).items
+        expect(user.free_test_keys).to have(3).items
+        expect{ release_keys }.to change(TestKey, :count).by(-3)
+        expect(response.status).to eq(204)
+        expect(user.tap(&:reload).test_keys).to match_array(unfree_keys)
+      end
+
+      it "should return a 503 response when in maintenance mode", rox: { key: '4f967c31c27a' } do
+        set_maintenance_mode
+        expect{ release_keys }.not_to change(TestKey, :count)
+        expect(response.status).to eq(503)
+      end
+    end
+  end
+
+  describe "#index" do
 
     def parse_response options = {}
       api_get user, api_test_keys_path(options)
@@ -97,7 +119,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
     let(:embedded_rel){ 'v1:test-keys' }
     let(:embedded_converter){ ->(k){ k[:value] } }
 
-    context "table resource", rox: { key: '691dee34def5', grouped: true } do
+    describe "table resource", rox: { key: '691dee34def5', grouped: true } do
       it_should_behave_like "a table resource", {
         representation: {
           sort: :createdAt,
@@ -122,5 +144,9 @@ describe Api::TestKeysController, rox: { tags: :unit } do
 
   def generate_keys params = {}, body = generation_request_body
     api_post user, :api_test_keys, body, params
+  end
+
+  def release_keys
+    api_delete user, :api_test_keys
   end
 end
