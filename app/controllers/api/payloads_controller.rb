@@ -14,9 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class Api::PayloadsController < Api::ApiController
-
+  before_filter :check_maintenance, only: :create
   before_filter(only: :create){ check_content_type :rox_payload_v1 }
 
   def create
