@@ -28,6 +28,7 @@ App.autoModule('globalSettings', function() {
       reportsCacheSize: '#settings_reports_cache_size',
       tagCloudSize: '#settings_tag_cloud_size',
       testOutdatedDays: '#settings_test_outdated_days',
+      fields: 'form :input',
       saveButton: 'form button',
       formControls: 'form .form-controls'
     },
@@ -58,6 +59,7 @@ App.autoModule('globalSettings', function() {
 
     updateControls: function() {
       this.ui.saveButton.attr('disabled', this.busy || !!App.maintenance);
+      this.ui.fields.attr('disabled', !!App.maintenance);
     },
 
     refresh: function() {
