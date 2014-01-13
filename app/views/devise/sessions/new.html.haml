@@ -20,14 +20,10 @@
                   = f.label :remember_me do
                     = succeed t('.remember_me') do
                       = f.check_box :remember_me
-          - if notice
-            .alert.alert-info.alert-dismissable
-              %button.close{ type: :button, data: { dismiss: :alert }, aria: { hidden: true } } &times;
-              = notice
-          - if alert
-            .alert.alert-warning
-              %button.close{ type: :button, data: { dismiss: :alert }, aria: { hidden: true } } &times;
-              = alert
+          - if flash[:notice].present?
+            = bootstrap_alert type: :info, message: flash[:notice]
+          - if flash[:alert].present?
+            = bootstrap_alert type: :warning, message: flash[:alert]
         .modal-footer
           = render partial: "devise/shared/links"
           = f.submit t('.submit'), class: 'btn btn-primary'

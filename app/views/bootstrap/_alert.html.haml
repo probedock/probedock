@@ -1,0 +1,6 @@
+%div{ class: html_classes.join(' ') }
+  - if dismissable
+    %button.close{ type: :button, data: { dismiss: :alert }, aria: { hidden: true } } &times;
+  - if title
+    %strong= title
+  = message
