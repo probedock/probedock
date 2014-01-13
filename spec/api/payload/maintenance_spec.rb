@@ -21,6 +21,10 @@ describe "API payload controller" do
   let(:user){ create :user }
   let(:sample_payload){ {} }
 
+  before :each do
+    ResqueSpec.reset!
+  end
+
   it "should return a 503 response when in maintenance mode", rox: { key: '1537ac0ebada' } do
     set_maintenance_mode
     post_api_payload sample_payload.to_json, user
