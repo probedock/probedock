@@ -55,9 +55,7 @@ ROXCenter::Application.routes.draw do
     end
 
     # pages
-    resource :account, :only => [ :show ] do
-      put :settings, on: :member, action: :update_settings
-    end
+    resource :account, :only => [ :show ]
     resources :metrics, :only => [ :index ]
     resources :projects, :only => [ :index, :show ]
     resource :settings, :only => [ :show ]

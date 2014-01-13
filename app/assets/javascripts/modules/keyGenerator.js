@@ -65,9 +65,7 @@ App.autoModule('keyGenerator', function() {
 
     events: {
       'click form .generate': 'generateNewKeys',
-      'click form .release': 'releaseUnusedKeys',
-      'change form [name="n"]': 'updateSettings',
-      'change form .project': 'updateSettings'
+      'click form .release': 'releaseUnusedKeys'
     },
 
     initialize: function(options) {
@@ -194,27 +192,6 @@ App.autoModule('keyGenerator', function() {
       if (xhr.status != 503) {
         this.ui.error.text(I18n.t('jst.keyGenerator.errors.' + type)).show();
       }
-    },
-
-    updateSettings: function() {
-
-      var lastNumber = this.ui.numberOfKeys.val(),
-          lastTestKeyProject = this.ui.project.val();
-
-      $.ajax({
-        url: PagePath.build('account', 'settings'),
-        type: 'PUT',
-        data: {
-          settings: {
-            last_test_key_number: lastNumber,
-            last_test_key_project: lastTestKeyProject
-          }
-        }
-      }).done(function() {
-        App.debug('Successfully updated last test key number and project settings (number: ' + lastNumber + ', project: ' + lastTestKeyProject + ').');
-      }).fail(function(xhr) {
-        App.debug("Couldn't update last test key number and project settings (got status code " + xhr.status + ").");
-      });
     }
   });
 

@@ -23,7 +23,6 @@ describe Api::TestKeysController, rox: { tags: :unit } do
   let(:project){ create :project }
 
   describe "#create" do
-    let(:generation_request_body){ Oj.dump 'projectApiId' => project.api_id }
 
     it "should create the requested number of keys for a project and user", rox: { key: 'aa411bcb252e' } do
 
@@ -61,6 +60,27 @@ describe Api::TestKeysController, rox: { tags: :unit } do
     it "should not accept a request with an unknown project API ID", rox: { key: 'c89c530f4cf9' } do
       expect{ generate_keys({ n: 1 }, Oj.dump({ 'projectApiId' => '000000000000' })) }.not_to change(TestKey, :count)
       check_api_errors [ { name: 'project_api_id_unknown', path: '/projectApiId', message: Regexp.new('000000000000') } ]
+    end
+
+    it "should save the last project and requested number of keys", rox: { key: '4f6ae80d86a1' } do
+
+      settings = user.settings
+      expect(settings.last_test_key_project).to be_nil
+      expect(settings.last_test_key_number).to be_nil
+
+      generate_keys n: 5
+      expect(response.success?).to be_true
+
+      settings.reload
+      expect(settings.last_test_key_project).to eq(project)
+      expect(settings.last_test_key_number).to eq(5)
+
+      another_project = create :project
+      generate_keys({ n: 3 }, generation_request_body(another_project))
+
+      settings.reload
+      expect(settings.last_test_key_project).to eq(another_project)
+      expect(settings.last_test_key_number).to eq(3)
     end
 
     it "should return a 503 response when in maintenance mode", rox: { key: 'e27209fb845a' } do
@@ -144,6 +164,10 @@ describe Api::TestKeysController, rox: { tags: :unit } do
 
   def generate_keys params = {}, body = generation_request_body
     api_post user, :api_test_keys, body, params
+  end
+
+  def generation_request_body p = project
+    Oj.dump 'projectApiId' => p.api_id
   end
 
   def release_keys

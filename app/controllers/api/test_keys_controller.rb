@@ -42,6 +42,8 @@ class Api::TestKeysController < Api::ApiController
       end.tap{ |k| k.save! }
     end
 
+    current_api_user.settings.update_attributes last_test_key_project: project, last_test_key_number: n
+
     render_api TestKeysRepresenter.new(OpenStruct.new(total: TestKey.where(user_id: current_api_user).count, data: keys))
   end
 

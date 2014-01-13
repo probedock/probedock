@@ -32,7 +32,6 @@ describe 'App routing' do
 
   it(nil, rox: { key: 'd31909fa2e05' }){ should route(:get, '/en').to(APP_ROUTE_OPTIONS.merge controller: :home, action: :index) }
   it(nil, rox: { key: 'bfe93538488b' }){ should route(:get, '/en/account').to(APP_ROUTE_OPTIONS.merge controller: :accounts, action: :show) }
-  it(nil, rox: { key: '76a45c6250ad' }){ should route(:put, '/en/account/settings').to(APP_ROUTE_OPTIONS.merge controller: :accounts, action: :update_settings) }
   it(nil, rox: { key: '7328eddd1d72' }){ should route(:get, '/en/go/project').to(APP_ROUTE_OPTIONS.merge controller: :go, action: :project) }
   it(nil, rox: { key: '0fdb63d43c36' }){ should route(:get, '/en/go/run').to(APP_ROUTE_OPTIONS.merge controller: :go, action: :run) }
   it(nil, rox: { key: '87bf98a672be' }){ should route(:get, '/en/metrics').to(APP_ROUTE_OPTIONS.merge controller: :metrics, action: :index) }

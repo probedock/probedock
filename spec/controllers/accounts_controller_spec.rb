@@ -20,40 +20,6 @@ describe AccountsController, rox: { tags: :unit } do
   let(:user){ create :user }
   before(:each){ sign_in user }
 
-  describe "#update_settings" do
-    let(:project){ create :project }
-    let(:settings){ user.settings }
-
-    it "should do nothing with no params", rox: { key: 'dc102d02cade' } do
-      settings.update_attributes last_test_key_number: 42, last_test_key_project_id: project.id
-      json = settings.to_json
-      put :update_settings, locale: I18n.default_locale
-      expect(response.status).to eq(204)
-      expect(settings.tap(&:reload).to_json).to eq(json)
-    end
-
-    it "should update the last test key number and project", rox: { key: '4e93d770fb57' } do
-      put :update_settings, locale: I18n.default_locale, settings: { last_test_key_number: 42, last_test_key_project: project.api_id }
-      expect(response.status).to eq(204)
-      settings.reload
-      expect(settings.last_test_key_number).to eq(42)
-      expect(settings.last_test_key_project).to eq(project)
-    end
-
-    it "should fail to set the last test key number to an invalid value", rox: { key: 'e427afa20ec2' } do
-      put :update_settings, locale: I18n.default_locale, settings: { last_test_key_number: 0 }
-      expect(response.status).to eq(400)
-      expect(settings.tap(&:reload).last_test_key_number).to be_nil
-    end
-
-    it "should unset the last test key project for an unknown api id", rox: { key: 'e8856a0b15ec' } do
-      settings.update_attribute :last_test_key_project_id, project.id
-      put :update_settings, locale: I18n.default_locale, settings: { last_test_key_project: '000' }
-      expect(response.status).to eq(204)
-      expect(settings.tap(&:reload).last_test_key_project).to be_nil
-    end
-  end
-
   describe "#show" do
     let(:users){ [ user, create(:other_user), create(:another_user) ]}
     let!(:projects){ Array.new(2){ create :project } }

@@ -41,20 +41,4 @@ class AccountsController < ApplicationController
     options[:base_count] = options[:base_count].where(author_id: current_user)
     render :json => TestInfo.tableling.process(params.merge(options))
   end
-
-  def update_settings
-    attrs = {}
-    settings = params[:settings] || {}
-
-    attrs[:last_test_key_number] = settings[:last_test_key_number].to_i if settings[:last_test_key_number]
-    attrs[:last_test_key_project] = Project.where(api_id: settings[:last_test_key_project].to_s).first if settings[:last_test_key_project]
-
-    return head :no_content if attrs.blank?
-
-    if current_user.settings.update_attributes attrs
-      head :no_content
-    else
-      render_record_errors current_user.settings
-    end
-  end
 end
