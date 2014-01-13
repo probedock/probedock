@@ -117,7 +117,7 @@ App.module('status', function() {
       status.set(initialData);
     }
 
-    if (App.maintenance) {
+    if (App.session && App.maintenance) {
       status.startWatchingForMaintenance();
     }
   });
