@@ -60,8 +60,6 @@ gem 'backbone-on-rails'
 gem 'haml_coffee_assets'
 gem 'therubyracer'
 gem 'execjs'
-#gem 'i18n-js'
-gem 'i18n-js-pika', require: 'i18n-js'
 gem 'clah-rails'
 gem 'highcharts-rails', '~> 3.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes

@@ -1,6 +1,4 @@
 
-I18n.defaultLocale = "<%= I18n.default_locale %>";
-
 Backbone.Marionette.Renderer.render = function(template, data) {
   if (template === false) {
     return;
@@ -99,6 +97,17 @@ $(document).ajaxError(function(event, xhr) {
     App.setMaintenance(JSON.parse(xhr.responseText));
     App.vent.trigger('ajax:maintenance');
   }
+});
+
+var I18n = {};
+
+var translationResources = _.reduce(Translations, function(memo, translations, language) {
+  memo[language] = { translation: { jst: translations } };
+  return memo;
+}, {});
+
+i18n.init({ lng: <%= I18n.default_locale.to_s.to_json %>, resStore: translationResources }, function(t) {
+  I18n.t = t;
 });
 
 $(function() {

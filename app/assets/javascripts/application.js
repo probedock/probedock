@@ -31,7 +31,6 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require underscore
-//= require i18n/translations
 //= require ./lib/md5
 //= require ./lib/async
 //= require ./lib/jquery.gravatar
@@ -43,6 +42,7 @@
 //= require ./lib/globalize/cultures/globalize.culture.en-US
 //= require ./lib/inflection
 //= require ./lib/moment
+//= require ./lib/i18next
 //= require highcharts
 //= require highcharts/highcharts-more
 //= require select2
@@ -52,6 +52,7 @@
 //= require tableling.backbone
 //= require ./lib/backbone-relational
 //= require ./meta
+//= require_tree ./translations
 //= require ./init
 //= require ./path
 //= require ./errors
