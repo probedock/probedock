@@ -2,11 +2,15 @@
 
 ## v2.1.0 - Edge
 
+* Maintenance mode controllable from settings page (administrators only).
+
 * Ugprade to Rails 4.0.2 and Bootstrap 3.
 
 * The `secret_token.rb` initializer was replaced by the `app_secrets.rb` initializer. See the [deployment documentation](doc/rox/deploy.md).
 
 * Fixed sorting bug on all tables.
+
+* Fixed test key generator bug where keys would not be displayed until the page was reloaded
 
 ## v2.0.0 - December 23, 2013
 
