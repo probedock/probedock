@@ -1,5 +1,5 @@
 #!/usr/bin/env rake
-# Copyright (c) 2012-2013 Lotaris SA
+# Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of ROX Center.
 #

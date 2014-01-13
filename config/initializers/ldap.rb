@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2013 Lotaris SA
+# Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of ROX Center.
 #
@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-# Copyright (c) 2012-2013 Lotaris SA
+# Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of ROX Center.
 #
@@ -30,7 +30,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-# Copyright (c) 2012-2013 Lotaris SA
+# Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of ROX Center.
 #
