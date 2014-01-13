@@ -61,7 +61,7 @@ App.watchStatus = function(source, func, options) {
 App.setMaintenance = function(maintenance) {
   
   var wasInMaintenance = !!App.maintenance;
-  App.maintenance = maintenance;
+  App.maintenance = maintenance ? maintenance : false;
 
   if (!!App.maintenance != wasInMaintenance) {
 

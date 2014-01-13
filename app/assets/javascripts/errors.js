@@ -14,20 +14,24 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 var Errors = {
 
   show : function(xhr, form, model) {
 
     if (xhr) {
 
-      return _.reduce(Errors.fromXHR(xhr, model), function(memo, errors, attr) {
+      var err = Errors.fromXHR(xhr, model);
+      if (_.isEmpty(err)) {
+        return false;
+      }
+
+      return _.reduce(err, function(memo, errors, attr) {
         return memo || Errors._showAttributeErrors(form, attr, errors);
-      }, false, this);
+      }, false);
 
     } else {
 
-      form.find('.error').removeClass('error');
+      form.find('.has-error').removeClass('has-error');
       Errors.hideTooltips(form);
       return true;
     }
@@ -57,7 +61,7 @@ var Errors = {
   fromXHR : function(xhr, model) {
     
     if (xhr.status != 400 || !xhr.getResponseHeader('Content-Type').match(/application\/json/)) {
-      return;
+      return {};
     }
 
     var json = $.parseJSON(xhr.responseText);
@@ -144,7 +148,7 @@ var Errors = {
       return false;
     }
 
-    el.parents('.control-group').first().addClass('error');
+    el.parents('.form-group').first().addClass('has-error');
     Errors.showTooltip(el, error.fullMessage, { placement : form.hasClass('form-inline') ? 'bottom' : 'right' });
     return true;
   },
