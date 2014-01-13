@@ -51,6 +51,7 @@ gem 'strip_attributes'
 gem 'paint'
 
 # Assets
+gem 'stylus', '~> 1.0.0'
 gem 'sass-rails', '>= 3.2'
 gem 'bootstrap-sass', '~> 3.0.3.0'
 gem 'jquery-rails'

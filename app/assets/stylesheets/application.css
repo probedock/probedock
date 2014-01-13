@@ -10,6 +10,7 @@
  *
  *= require_self
  *= require select2
+ *= require ./bootstrap-import
  *= require ./main
  *= require ./sort
  *= require ./documentation

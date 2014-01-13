@@ -265,6 +265,10 @@ GEM
     sqlite3 (1.3.8)
     strip_attributes (1.4.4)
       activemodel (>= 3.0, < 5.0)
+    stylus (1.0.0)
+      execjs
+      stylus-source
+    stylus-source (0.38.0)
     tableling-rails (0.0.23)
       rails (~> 4.0)
     therubyracer (0.12.0)
@@ -348,6 +352,7 @@ DEPENDENCIES
   silencer
   sqlite3
   strip_attributes
+  stylus (~> 1.0.0)
   tableling-rails
   therubyracer
   thin
