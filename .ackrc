@@ -4,3 +4,4 @@
 --ignore-dir=tmp
 --ignore-dir=doc/app
 --ignore-dir=app/assets/javascripts/lib
+--ignore-dir=public/javascripts
