@@ -11,4 +11,5 @@ doc/app
 local
 log
 node_modules
+public/assets
 tmp
