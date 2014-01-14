@@ -26,14 +26,14 @@ describe 'App routing' do
   it(nil, rox: { key: '8bcd3f90f524' }){ should route(:get, '/data/latest_test_runs').to(controller: :data, action: :latest_test_runs) }
   it(nil, rox: { key: 'd13ca3b0830b' }){ should route(:get, '/data/test_counters').to(controller: :data, action: :test_counters) }
   it(nil, rox: { key: 'd9a01140cf1c' }){ should route(:post, '/data/test_counters').to(controller: :data, action: :test_counters) }
+  it(nil, rox: { key: '7328eddd1d72' }){ should route(:get, '/go/project').to(controller: :go, action: :project) }
+  it(nil, rox: { key: '0fdb63d43c36' }){ should route(:get, '/go/run').to(controller: :go, action: :run) }
   it(nil, rox: { key: 'e21abf07237b' }){ should route(:post, '/maintenance').to(controller: :home, action: :maintenance) }
   it(nil, rox: { key: 'ffd07068f8a1' }){ should route(:delete, '/maintenance').to(controller: :home, action: :maintenance) }
   it(nil, rox: { key: '07fb3795c62f' }){ should route(:get, '/ping').to(controller: :home, action: :ping) }
 
   it(nil, rox: { key: 'd31909fa2e05' }){ should route(:get, '/en').to(APP_ROUTE_OPTIONS.merge controller: :home, action: :index) }
   it(nil, rox: { key: 'bfe93538488b' }){ should route(:get, '/en/account').to(APP_ROUTE_OPTIONS.merge controller: :accounts, action: :show) }
-  it(nil, rox: { key: '7328eddd1d72' }){ should route(:get, '/en/go/project').to(APP_ROUTE_OPTIONS.merge controller: :go, action: :project) }
-  it(nil, rox: { key: '0fdb63d43c36' }){ should route(:get, '/en/go/run').to(APP_ROUTE_OPTIONS.merge controller: :go, action: :run) }
   it(nil, rox: { key: '87bf98a672be' }){ should route(:get, '/en/metrics').to(APP_ROUTE_OPTIONS.merge controller: :metrics, action: :index) }
   it(nil, rox: { key: '251c38ec02ab' }){ should route(:get, '/en/projects').to(APP_ROUTE_OPTIONS.merge controller: :projects, action: :index) }
   it(nil, rox: { key: '796ada05066d' }){ should route(:get, '/en/projects/42').to(APP_ROUTE_OPTIONS.merge controller: :projects, action: :show, id: '42') }
