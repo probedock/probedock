@@ -50,6 +50,7 @@ App.autoModule('globalSettings', function() {
     onRender: function() {
       this.$el.button();
       this.model.fetch(this.requestOptions());
+      this.updateControls();
     },
 
     setBusy: function(busy) {

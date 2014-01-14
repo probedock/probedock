@@ -79,6 +79,7 @@ App.autoModule('testInfo', function() {
 
     onRender : function() {
       this.updateActions();
+      this.updateControls();
     },
 
     updateActions : function() {
