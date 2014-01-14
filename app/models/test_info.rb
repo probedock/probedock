@@ -24,7 +24,7 @@ class TestInfo < ActiveRecord::Base
 
   belongs_to :author, class_name: "User"
   belongs_to :key, class_name: "TestKey"
-  belongs_to :project
+  belongs_to :project, counter_cache: :tests_count
   belongs_to :category
   belongs_to :deprecation, class_name: "TestDeprecation"
   has_many :results, class_name: "TestResult"

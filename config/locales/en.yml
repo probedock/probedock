@@ -221,7 +221,7 @@ en:
         usage_count: "Uses"
       project:
         name: "Name"
-        active_tests_count: "Number of tests"
+        tests_count: "Number of tests"
         created_at: "First tested at"
         api_id: "API identifier"
         url_token: "URL token"

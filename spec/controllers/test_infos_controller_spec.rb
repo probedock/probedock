@@ -19,10 +19,11 @@ require 'spec_helper'
 describe TestInfosController, rox: { tags: :integration } do
   let(:user){ create :user }
   let(:author){ create :other_user }
+  let(:project){ create :project }
   before(:each){ sign_in user }
 
   context "#deprecate" do
-    let!(:test){ create :test, key: create(:key, user: author), run_at: 3.days.ago }
+    let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
     before(:each){ ROXCenter::Application.events.stub :fire }
 
     it "should create a deprecation and link it to the test", rox: { key: '1a5b6659902c' } do
@@ -34,8 +35,10 @@ describe TestInfosController, rox: { tags: :integration } do
       end
 
       expect do
-        post :deprecate, id: test.key.key, locale: nil
-      end.to change(TestDeprecation, :count).by(1)
+        expect do
+          post :deprecate, id: test.key.key, locale: nil
+        end.to change(TestDeprecation, :count).by(1)
+      end.to change{ project.tap(&:reload).deprecated_tests_count }.by(1)
       expect(response.status).to eq(204)
 
       test.reload
@@ -58,8 +61,10 @@ describe TestInfosController, rox: { tags: :integration } do
       test.save!
 
       expect do
-        post :deprecate, id: test.key.key, locale: nil
-      end.not_to change(TestDeprecation, :count)
+        expect do
+          post :deprecate, id: test.key.key, locale: nil
+        end.not_to change(TestDeprecation, :count)
+      end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(204)
 
       test.reload
@@ -72,7 +77,11 @@ describe TestInfosController, rox: { tags: :integration } do
     it "should return a 503 response when in maintenance mode", rox: { key: '201bbf1be414' } do
 
       set_maintenance_mode
-      expect{ post :deprecate, id: test.key.key, locale: nil }.not_to change(TestDeprecation, :count)
+      expect do
+        expect do
+          post :deprecate, id: test.key.key, locale: nil
+        end.not_to change(TestDeprecation, :count)
+      end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(503)
 
       test.reload
@@ -82,7 +91,7 @@ describe TestInfosController, rox: { tags: :integration } do
   end
 
   context "#undeprecate" do
-    let!(:test){ create :test, key: create(:key, user: author), run_at: 3.days.ago, deprecated_at: 2.days.ago }
+    let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago, deprecated_at: 2.days.ago }
     before(:each){ ROXCenter::Application.events.stub :fire }
 
     it "should create an undeprecation for the test and unlink the previous deprecation", rox: { key: 'abf287432d75' } do
@@ -94,8 +103,10 @@ describe TestInfosController, rox: { tags: :integration } do
       end
 
       expect do
-        post :undeprecate, id: test.key.key, locale: nil
-      end.to change(TestDeprecation, :count).by(1)
+        expect do
+          post :undeprecate, id: test.key.key, locale: nil
+        end.to change(TestDeprecation, :count).by(1)
+      end.to change{ project.tap(&:reload).deprecated_tests_count }.by(-1)
       expect(response.status).to eq(204)
 
       test.reload
@@ -119,8 +130,10 @@ describe TestInfosController, rox: { tags: :integration } do
       test.save!
 
       expect do
-        post :undeprecate, id: test.key.key, locale: nil
-      end.not_to change(TestDeprecation, :count)
+        expect do
+          post :undeprecate, id: test.key.key, locale: nil
+        end.not_to change(TestDeprecation, :count)
+      end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(204)
 
       test.reload
@@ -133,7 +146,11 @@ describe TestInfosController, rox: { tags: :integration } do
     it "should return a 503 response when in maintenance mode", rox: { key: 'b61b4cf73149' } do
 
       set_maintenance_mode
-      expect{ post :undeprecate, id: test.key.key, locale: nil }.not_to change(TestDeprecation, :count)
+      expect do
+        expect do
+          post :undeprecate, id: test.key.key, locale: nil
+        end.not_to change(TestDeprecation, :count)
+      end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(503)
 
       test.reload

@@ -42,9 +42,12 @@ class TestInfosController < ApplicationController
     deprecation.test_info = @test_info
     deprecation.test_result = @test_info.effective_result
     deprecation.user = current_user
-    deprecation.save!
+    TestDeprecation.transaction do
+      deprecation.save!
+      Project.increment_counter :deprecated_tests_count, @test_info.project_id
+      @test_info.update_attribute :deprecation_id, deprecation.id
+    end
 
-    @test_info.update_attribute :deprecation_id, deprecation.id
     Rails.application.events.fire 'test:deprecated', deprecation
 
     head :no_content
@@ -60,9 +63,13 @@ class TestInfosController < ApplicationController
     deprecation.test_info = @test_info
     deprecation.test_result = @test_info.effective_result
     deprecation.user = current_user
-    deprecation.save!
 
-    @test_info.update_attribute :deprecation_id, nil
+    TestDeprecation.transaction do
+      deprecation.save!
+      Project.decrement_counter :deprecated_tests_count, @test_info.project_id
+      @test_info.update_attribute :deprecation_id, nil
+    end
+
     Rails.application.events.fire 'test:undeprecated', deprecation
 
     head :no_content

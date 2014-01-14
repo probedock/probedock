@@ -14,16 +14,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class ProjectRepresenter < BaseRepresenter
 
   representation do |project|
 
     link 'self', api_uri(:project, id: project.api_id)
 
-    %w(name api_id url_token active_tests_count deprecated_tests_count).each do |name|
+    %w(name api_id url_token deprecated_tests_count).each do |name|
       property name.camelize(:lower), project.send(name)
     end
+
+    # TODO: rename activeTestsCount to testsCount or currentTestsCount to avoid confusion with active/inactive tests
+    property :activeTestsCount, project.tests_count - project.deprecated_tests_count
 
     %w(created_at).each do |name|
       property name.camelize(:lower), project.send(name).to_i * 1000

@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe TestInfo, rox: { tags: :unit } do
 
-  context "#breaker" do
+  describe "#breaker" do
 
     it "should return nil for new tests", rox: { key: '1a5aee484d1f' } do
       TestInfo.new.breaker.should be_nil
@@ -34,7 +34,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context "#to_param" do
+  describe "#to_param" do
 
     it "should return the value of the associated key", rox: { key: '27893c41b7af' } do
       test = create :test
@@ -42,7 +42,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context "#find_by_key_value!" do
+  describe "#find_by_key_value!" do
 
     it "should find a test by the value of its associated key", rox: { key: '2b14c1da77ba' } do
       test = create :test
@@ -50,7 +50,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context "#deprecated?" do
+  describe "#deprecated?" do
 
     it "should return true if the test is linked to a deprecation", rox: { key: '28ef7683957f' } do
       user = create :user
@@ -59,7 +59,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context "lookup" do
+  describe "lookup" do
     let(:user){ create :user }
     let! :tests do
       [
@@ -75,14 +75,14 @@ describe TestInfo, rox: { tags: :unit } do
       ]
     end
 
-    context ".standard" do
+    describe ".standard" do
 
       it "should return all tests that are not deprecated", rox: { key: 'f83868e2b6ee' } do
         expect(described_class.standard.to_a).to match_array([ 0, 1, 2, 4, 5, 7 ].collect{ |i| tests[i] })
       end
     end
 
-    context ".outdated" do
+    describe ".outdated" do
 
       it "should return standard tests that have not been run since the outdated delay", rox: { key: 'f72aff790693' } do
         Settings.stub app: double(test_outdated_days: 2)
@@ -95,21 +95,21 @@ describe TestInfo, rox: { tags: :unit } do
       end
     end
 
-    context ".failing" do
+    describe ".failing" do
     
       it "should return standard tests that are failing and active", rox: { key: '0ea768c88ca1' } do
         expect(described_class.failing).to match_array([ tests[2] ])
       end
     end
 
-    context ".inactive" do
+    describe ".inactive" do
     
       it "should return standard tests that are inactive", rox: { key: '839f48a7da82' } do
         expect(described_class.inactive).to match_array([ tests[4] ])
       end
     end
 
-    context ".deprecated" do
+    describe ".deprecated" do
     
       it "should return deprecated tests", rox: { key: '41c26a95578d' } do
         expect(described_class.deprecated).to match_array([ 3, 6, 8 ].collect{ |i| tests[i] })
@@ -117,7 +117,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context ".count_by_category" do
+  describe ".count_by_category" do
     
     it "should return the list of categories with the corresponding number of tests", rox: { key: '1c1962a3d10d' } do
       run = create :run
@@ -138,7 +138,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context ".count_by_project" do
+  describe ".count_by_project" do
 
     it "should return the list of projects with the corresponding number of tests", rox: { key: 'df42256ee180' } do
       run = create :run
@@ -157,7 +157,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context ".count_by_author" do
+  describe ".count_by_author" do
 
     it "should return the list of authors with the corresponding number of tests", rox: { key: 'f7a112fd470f' } do
       users = [ create(:user), create(:other_user), create(:another_user) ]
@@ -176,7 +176,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context "validations" do
+  describe "validations" do
     it(nil, rox: { key: '96b7d80190ba' }){ should validate_presence_of(:key) }
     it(nil, rox: { key: '05e2a5e8712f' }){ should validate_presence_of(:key_id) }
     it(nil, rox: { key: '3426c39eade0' }){ should validate_presence_of(:name) }
@@ -191,12 +191,12 @@ describe TestInfo, rox: { tags: :unit } do
     it(nil, rox: { key: '12137ffcc753' }){ should validate_presence_of(:last_run_duration) }
     it(nil, rox: { key: '9f4ca1970ed2' }){ should validate_numericality_of(:last_run_duration).only_integer }
 
-    context "with an existing test" do
+    describe "with an existing test" do
       let!(:test){ create :test }
       it(nil, rox: { key: 'a98a28339c73' }){ should validate_uniqueness_of(:key_id).scoped_to(:project_id) }
     end
 
-    context "with quick validation" do
+    describe "with quick validation" do
 
       let(:test){ create :test }
       subject{ TestInfo.new.tap{ |t| t.quick_validation = true } }
@@ -209,7 +209,7 @@ describe TestInfo, rox: { tags: :unit } do
     end
   end
 
-  context "associations" do
+  describe "associations" do
     it(nil, rox: { key: '716ea42066e5' }){ should belong_to(:author).class_name('User') }
     it(nil, rox: { key: '0d7222048114' }){ should belong_to(:project) }
     it(nil, rox: { key: '908d9ebd3c15' }){ should belong_to(:key).class_name('TestKey') }
@@ -222,7 +222,7 @@ describe TestInfo, rox: { tags: :unit } do
     it(nil, rox: { key: 'f317cd684dc0' }){ should have_and_belong_to_many(:tickets) }
   end
 
-  context "database table" do
+  describe "database table" do
     it(nil, rox: { key: '41a8ca79612d' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '76ee96170b5c' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
     it(nil, rox: { key: '480d04cafa66' }){ should have_db_column(:passing).of_type(:boolean).with_options(null: false) }

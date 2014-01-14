@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe ProjectRepresenter, rox: { tags: :unit } do
 
-  let(:project){ create :project, active_tests_count: 3, deprecated_tests_count: 1 }
+  let(:project){ create :project, tests_count: 3, deprecated_tests_count: 1 }
   subject{ ProjectRepresenter.new(project).serializable_hash }
 
   it(nil, rox: { key: '927ffaa9b765' }){ should hyperlink_to('self', api_uri(:project, id: project.api_id)) }
@@ -28,7 +28,7 @@ describe ProjectRepresenter, rox: { tags: :unit } do
       name: project.name,
       apiId: project.api_id,
       urlToken: project.url_token,
-      activeTestsCount: project.active_tests_count,
+      activeTestsCount: project.tests_count - project.deprecated_tests_count,
       deprecatedTestsCount: project.deprecated_tests_count,
       createdAt: project.created_at.to_i * 1000
     })

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140108121819) do
+ActiveRecord::Schema.define(version: 20140114095322) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 20140108121819) do
     t.string   "name",                                          null: false
     t.string   "url_token",              limit: 25,             null: false
     t.string   "api_id",                 limit: 12,             null: false
-    t.integer  "active_tests_count",                default: 0, null: false
+    t.integer  "tests_count",                       default: 0, null: false
     t.integer  "deprecated_tests_count",            default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false

@@ -14,12 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class Project < ActiveRecord::Base
   include Metric
   include Tableling::Model
   URL_TOKEN_REGEXP = /\A[a-z0-9\_\-]+\Z/i
-  # TODO: rename active_tests_count to current_tests_count to avoid confusion with active/inactive
 
   before_create :set_api_id
 
@@ -36,8 +34,10 @@ class Project < ActiveRecord::Base
       field :name
       field :url_token, as: :urlToken
       field :api_id, as: :apiId
-      # FIXME: make sure these attributes are updated
-      field :active_tests_count, as: :activeTestsCount
+      field :tests_count, as: :activeTestsCount do
+        order{ |q,d| q.order "tests_count - deprecated_tests_count #{d}" }
+        value{ |o| o.tests_count - o.deprecated_tests_count }
+      end
       field :deprecated_tests_count, as: :deprecatedTestsCount
       field :created_at, as: :createdAt
 
