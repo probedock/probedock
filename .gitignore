@@ -13,3 +13,4 @@ log
 node_modules
 public/assets
 tmp
+vendor
