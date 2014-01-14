@@ -7,11 +7,11 @@
       .panel-body
         %form.form-horizontal{ method: 'POST', action: '#', role: 'form' }
           .form-group
-            %label.control-label.col-sm-3{ for: 'projectName' }= I18n.t('activerecord.attributes.project.name')
+            %label.control-label.col-sm-3{ for: 'projectName' }= I18n.t('jst.models.project.name')
             .col-sm-9
               %input#projectName.form-control{ type: 'text', name: 'name', maxlength: 255, value: @name, placeholder: I18n.t('jst.projectEditor.namePlaceholder') }
           .form-group
-            %label.control-label.col-sm-3{ for: 'projectUrlToken' }= I18n.t('activerecord.attributes.project.url_token')
+            %label.control-label.col-sm-3{ for: 'projectUrlToken' }= I18n.t('jst.models.project.urlToken')
             .col-sm-9
               %input#projectUrlToken.form-control{ type: 'text', name: 'urlToken', maxlength: 25, value: @urlToken, placeholder: I18n.t('jst.projectEditor.tokenPlaceholder') }
               .help-block= I18n.t('jst.projectEditor.urlTokenInstructions');

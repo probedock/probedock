@@ -154,6 +154,6 @@ var Errors = {
   },
 
   _fullMessage : function(model, attr, error) {
-    return I18n.t('activerecord.attributes.' + model + '.' + attr) + ' ' + error;
+    return I18n.t('jst.models.' + model + '.' + attr.camelize(true)) + ' ' + error;
   }
 };

@@ -180,7 +180,7 @@ App.autoModule('linksManager', function() {
       }
 
       this.ui.save.removeClass('btn-default btn-primary');
-      this.ui.save.text(I18n.t('common.' + (this.editingModel ? 'save' : 'create')));
+      this.ui.save.text(I18n.t('jst.common.' + (this.editingModel ? 'save' : 'create')));
 
       var formHasValues = this.ui.name.val().length && this.ui.url.val().length;
       this.ui.save.addClass(formHasValues ? 'btn-primary' : 'btn-default');

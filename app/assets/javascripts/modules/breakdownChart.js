@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('breakdownChart', function() {
 
   var Chart = Backbone.Marionette.ItemView.extend({
@@ -54,7 +53,7 @@ App.autoModule('breakdownChart', function() {
 
         credits : false,
         lang : {
-          loading : I18n.t('common.loading')
+          loading : I18n.t('jst.common.loading')
         },
         plotOptions: {
           pie: {

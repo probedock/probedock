@@ -1,19 +1,19 @@
 %dl.dl-horizontal
-  %dt= I18n.t('activerecord.attributes.test_info.key')
+  %dt= I18n.t('jst.models.test.key')
   %dd.key.monospace
-  %dt= I18n.t('activerecord.attributes.test_info.author')
+  %dt= I18n.t('jst.models.test.author')
   %dd.author
-  %dt= I18n.t('activerecord.attributes.test_info.project')
+  %dt= I18n.t('jst.models.test.project')
   %dd.project
-  %dt= I18n.t('activerecord.attributes.test_info.created_at')
+  %dt= I18n.t('jst.models.test.createdAt')
   %dd.createdAt
-  %dt= I18n.t('activerecord.attributes.test_info.category')
+  %dt= I18n.t('jst.models.test.category')
   %dd.category
-  %dt= I18n.t('activerecord.attributes.test_info.tags')
+  %dt= I18n.t('jst.models.test.tags')
   %dd.tags
-  %dt= I18n.t('activerecord.attributes.test_info.tickets')
+  %dt= I18n.t('jst.models.test.tickets')
   %dd.tickets
-  %dt.inactive= I18n.t('activerecord.attributes.test_info.inactive')
-  %dd.inactive.text-warning= I18n.t('activerecord.attributes.test_info.inactiveInstructions')
-  %dt.deprecated= I18n.t('activerecord.attributes.test_info.deprecated')
-  %dd.deprecated.text-warning= I18n.t('activerecord.attributes.test_info.deprecatedInstructions')
+  %dt.inactive= I18n.t('jst.models.test.inactive')
+  %dd.inactive.text-warning= I18n.t('jst.models.test.inactiveInstructions')
+  %dt.deprecated= I18n.t('jst.models.test.deprecated')
+  %dd.deprecated.text-warning= I18n.t('jst.models.test.deprecatedInstructions')

@@ -331,7 +331,7 @@ App.autoModule('testInfo', function() {
           },
           yAxis: {
             title : {
-              text : I18n.t('activerecord.attributes.test_result.duration')
+              text : I18n.t('jst.models.testResult.duration')
             },
             min : 0,
             labels : {
@@ -344,10 +344,10 @@ App.autoModule('testInfo', function() {
             formatter : function() {
               return Format.datetime.full(new Date(this.x))
                 + '<br />'
-                + _.template('<strong><%- duration %>:</strong> ', { duration : I18n.t('activerecord.attributes.test_result.duration') })
+                + _.template('<strong><%- duration %>:</strong> ', { duration : I18n.t('jst.models.testResult.duration') })
                 + Format.duration(this.y)
                 + '<br />'
-                + _.template('<strong><%- status %>:</strong> ', { status : I18n.t('activerecord.attributes.test_result.status') })
+                + _.template('<strong><%- status %>:</strong> ', { status : I18n.t('jst.models.testResult.status') })
                 + I18n.t('jst.testInfo.resultStatus.' + (this.point.result.get('passed') ? 'passed' : 'failed'))
                 + '<br />'
                 + _.template('<em><%- instructions %></em>', { instructions : I18n.t('jst.testInfo.resultPointInstructions') });

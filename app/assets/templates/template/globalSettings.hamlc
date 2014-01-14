@@ -1,4 +1,4 @@
-%h2= I18n.t('settings.show.title')
+%h2= I18n.t('jst.globalSettings.title')
 %form.form-horizontal{ action: '#', role: 'form' }
   .form-group
     %label.control-label.col-md-2{ for: 'settings_ticketing_system_url' }= I18n.t('jst.globalSettings.ticketingSystemUrl')

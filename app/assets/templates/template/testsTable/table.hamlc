@@ -1,11 +1,11 @@
 %table.table.table-striped.table-hover
   %thead
     %tr
-      %th.name.sorting{ :'data-field' => 'name' }= I18n.t('activerecord.attributes.test_info.name')
-      %th.project.sorting{ :'data-field' => 'project' }= I18n.t('activerecord.attributes.test_info.project')
-      %th.author.sorting{ :'data-field' => 'author' }= I18n.t('activerecord.attributes.test_info.author')
-      %th.createdAt.sorting{ :'data-field' => 'created_at' }= I18n.t('activerecord.attributes.test_info.created_at')
-      %th.lastRunAt.sorting{ :'data-field' => 'last_run_at' }= I18n.t('activerecord.attributes.test_info.last_run_at')
-      %th.lastRunDuration.sorting{ :'data-field' => 'last_run_duration' }= I18n.t('activerecord.attributes.test_info.last_run_duration')
-      %th.status= I18n.t('activerecord.attributes.test_info.status')
+      %th.name.sorting{ :'data-field' => 'name' }= I18n.t('jst.models.test.name')
+      %th.project.sorting{ :'data-field' => 'project' }= I18n.t('jst.models.test.project')
+      %th.author.sorting{ :'data-field' => 'author' }= I18n.t('jst.models.test.author')
+      %th.createdAt.sorting{ :'data-field' => 'created_at' }= I18n.t('jst.models.test.createdAt')
+      %th.lastRunAt.sorting{ :'data-field' => 'last_run_at' }= I18n.t('jst.models.test.lastRunAt')
+      %th.lastRunDuration.sorting{ :'data-field' => 'last_run_duration' }= I18n.t('jst.models.test.lastRunDuration')
+      %th.status= I18n.t('jst.models.test.status')
   %tbody

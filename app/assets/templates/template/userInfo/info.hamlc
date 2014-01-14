@@ -1,13 +1,13 @@
 .title
 .data.well
   %dl
-    %dt= I18n.t('activerecord.attributes.user.email')
+    %dt= I18n.t('jst.models.user.email')
     %dd.email
-    %dt.active= I18n.t('activerecord.attributes.user.active')
+    %dt.active= I18n.t('jst.models.user.active')
     %dd.active
-    %dt= I18n.t('activerecord.attributes.user.created_at')
+    %dt= I18n.t('jst.models.user.createdAt')
     %dd.createdAt
 .btn-group.clearfix
-  %a.btn.btn-default.edit= I18n.t('common.edit')
+  %a.btn.btn-default.edit= I18n.t('jst.common.edit')
   %button.btn.btn-warning.toggleActivated
-  %button.btn.btn-danger.delete= I18n.t('common.delete')
+  %button.btn.btn-danger.delete= I18n.t('jst.common.delete')

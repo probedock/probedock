@@ -1,8 +1,8 @@
 %table.table.table-striped.table-hover
   %thead
     %tr
-      %th.name.sorting{ :'data-field' => 'name' }= I18n.t('activerecord.attributes.project.name')
-      %th.activeTestsCount.sorting{ :'data-field' => 'activeTestsCount' }= I18n.t('activerecord.attributes.project.active_tests_count')
-      %th.apiId.sorting{ :'data-field' => 'apiId' }= I18n.t('activerecord.attributes.project.api_id')
-      %th.createdAt.sorting{ :'data-field' => 'createdAt' }= I18n.t('activerecord.attributes.project.created_at')
+      %th.name.sorting{ :'data-field' => 'name' }= I18n.t('jst.models.project.name')
+      %th.activeTestsCount.sorting{ :'data-field' => 'activeTestsCount' }= I18n.t('jst.models.project.activeTestsCount')
+      %th.apiId.sorting{ :'data-field' => 'apiId' }= I18n.t('jst.models.project.apiId')
+      %th.createdAt.sorting{ :'data-field' => 'createdAt' }= I18n.t('jst.models.project.createdAt')
   %tbody
