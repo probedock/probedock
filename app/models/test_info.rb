@@ -119,8 +119,16 @@ class TestInfo < ActiveRecord::Base
     where 'deprecation_id IS NOT NULL'
   end
 
-  def self.find_by_key_value! key
-    TestInfo.joins(:key).includes(:key).where(test_keys: { key: key })
+  def self.find_by_project_and_key project_and_key
+    parts = project_and_key.split '-'
+    return nil if parts.length != 2
+    TestInfo.joins(:project).joins(:key).includes(:key).where(projects: { api_id: parts[0].to_s }, test_keys: { key: parts[1].to_s })
+  end
+
+  def self.find_by_project_and_key! project_and_key
+    find_by_project_and_key(project_and_key).tap do |rel|
+      raise ActiveRecord::RecordNotFound unless rel
+    end
   end
 
   def breaker
@@ -128,7 +136,7 @@ class TestInfo < ActiveRecord::Base
   end
 
   def to_param options = {}
-    key.try :key
+    "#{project.try(:api_id)}-#{key.try(:key)}"
   end
 
   def deprecated?

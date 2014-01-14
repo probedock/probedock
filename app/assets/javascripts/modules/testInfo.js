@@ -100,7 +100,7 @@ App.autoModule('testInfo', function() {
       this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
-        url : LegacyApiPath.build('tests', this.model.get('key'), 'deprecate'),
+        url : Path.join(this.model.apiPath(), 'deprecate'),
         type : 'POST'
       }).done(_.bind(this.setDeprecated, this, true)).fail(_.bind(this.deprecationError, this));
     },
@@ -109,7 +109,7 @@ App.autoModule('testInfo', function() {
       this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
-        url : LegacyApiPath.build('tests', this.model.get('key'), 'undeprecate'),
+        url : Path.join(this.model.apiPath(), 'undeprecate'),
         type : 'POST'
       }).done(_.bind(this.setDeprecated, this, false)).fail(_.bind(this.deprecationError, this));
     },
@@ -131,7 +131,6 @@ App.autoModule('testInfo', function() {
   
     template : 'testInfo/test',
     ui : {
-      key : 'dd.key',
       author : 'dd.author',
       project : 'dd.project',
       createdAt : 'dd.createdAt',
@@ -141,7 +140,8 @@ App.autoModule('testInfo', function() {
       inactiveTitle : 'dt.inactive',
       inactiveInfo : 'dd.inactive',
       deprecateTitle : 'dt.deprecated',
-      deprecateInfo : 'dd.deprecated'
+      deprecateInfo : 'dd.deprecated',
+      permalink : 'dd.permalink'
     },
 
     initialize : function() {
@@ -150,11 +150,11 @@ App.autoModule('testInfo', function() {
     },
 
     onRender : function() {
-      this.ui.key.text(this.model.get('key'));
       this.ui.author.html(this.model.get('author').link());
       this.ui.project.html(this.model.get('project').link());
       this.ui.createdAt.text(Format.datetime.full(new Date(this.model.get('created_at'))));
       this.ui.category.html(this.model.categoryLink() || I18n.t('jst.common.noData'));
+      this.ui.permalink.html($('<a />').attr('href', this.model.permalink()).text(this.model.permalink()));
       this.renderTags();
       this.renderTickets();
       this.updateInactive();
@@ -241,7 +241,7 @@ App.autoModule('testInfo', function() {
       this.resultTableSetup = true;
 
       var Collection = TestResultTableCollection.extend({
-        url : LegacyApiPath.build('tests', this.model.get('key'), 'results')
+        url : Path.join(this.model.apiPath(), 'results')
       });
 
       var Table = ResultTable.extend({
@@ -377,7 +377,7 @@ App.autoModule('testInfo', function() {
 
     loadResults : function() {
       $.ajax({
-        url : LegacyApiPath.build('tests', this.model.get('key'), 'results', 'chart'),
+        url : Path.join(this.model.apiPath(), 'results', 'chart'),
         dataType : 'json'
       }).done(_.bind(function(response) {
         this.chart.addSeries({

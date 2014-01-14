@@ -153,6 +153,8 @@ en:
       success: "Successfully deleted user \"%{user}\"."
 
   test_infos:
+    go:
+      not_found: "No test was found matching your criteria."
     index:
       title: "Tests"
 

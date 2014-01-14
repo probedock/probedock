@@ -45,6 +45,7 @@ ROXCenter::Application.routes.draw do
   namespace :go, module: nil, controller: :go do
     get :project
     get :run
+    get :test
   end
 
   scope '/:locale', locale: /en/ do

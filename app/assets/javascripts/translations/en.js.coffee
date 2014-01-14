@@ -282,6 +282,7 @@ this.Translations.en =
       category: "Category"
       tags: "Tags"
       tickets: "Tickets"
+      permalink: "Permalink"
       inactive: "Inactive"
       inactiveInstructions: "This test will not be counted as either passed or failed."
       deprecated: "Deprecated"

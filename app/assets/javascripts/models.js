@@ -229,12 +229,24 @@ App.module('models', function() {
       return this.get('name');
     },
 
+    permalink : function() {
+      return Path.build('go', 'test') + '?' + $.param({ project: this.get('project').get('apiId'), key: this.get('key') });
+    },
+
     link : function(options) {
       return $('<a />').attr('href', this.path()).text(this.name(options));
     },
 
+    apiPath : function() {
+      return LegacyApiPath.build('tests', this.pathKey());
+    },
+
     path : function() {
-      return PagePath.build('tests', this.get('key'));
+      return PagePath.build('tests', this.pathKey());
+    },
+
+    pathKey : function() {
+      return this.get('project').get('apiId') + '-' + this.get('key');
     },
 
     categoryPath : function() {

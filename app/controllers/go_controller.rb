@@ -17,6 +17,25 @@
 class GoController < ApplicationController
   before_filter :authenticate_user!
 
+  def test
+
+    project_api_id = params[:project].to_s
+    test_key_value = params[:key].to_s
+
+    test = if project_api_id.present? && test_key_value.present?
+      TestInfo.find_by_project_and_key("#{project_api_id}-#{test_key_value}").try(:first)
+    else
+      nil
+    end
+
+    if test.present?
+      redirect_to test_info_path(test)
+    else
+      flash[:warning] = t('test_infos.go.not_found')
+      redirect_to test_infos_path
+    end
+  end
+
   def project
 
     project = if params[:apiId].present?

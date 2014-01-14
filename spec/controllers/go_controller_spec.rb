@@ -17,20 +17,34 @@
 require 'spec_helper'
 
 describe GoController, rox: { tags: :unit } do
-
   let(:user){ create :user }
   before(:each){ sign_in user }
 
-  context "#project" do
+  describe "#test" do
+    let(:test){ create :test, key: create(:test_key, user: user) }
+
+    it "should redirect to the test with the given project and key", rox: { key: '54490a6b392a' } do
+      get :test, project: test.project.api_id, key: test.key.key
+      expect(subject).to redirect_to(test)
+    end
+
+    it "should redirect an unknown test to the tests page", rox: { key: 'f1afb0d5c8fa' } do
+      get :test, project: 'foo', key: 'bar'
+      expect(subject).to redirect_to(test_infos_path)
+      expect(flash[:warning]).to eq(t('test_infos.go.not_found'))
+    end
+  end
+
+  describe "#project" do
     let(:project){ create :project }
 
     it "should redirect to the project with the given api id", rox: { key: 'd3484e0ab4f6' } do
-      get :project, apiId: project.api_id, locale: I18n.default_locale
+      get :project, apiId: project.api_id
       expect(subject).to redirect_to(project)
     end
 
     it "should redirect to the projects index for unknown projects", rox: { key: '31f93b345ec1' } do
-      get :project, apiId: 'foo', locale: I18n.default_locale
+      get :project, apiId: 'foo'
       expect(subject).to redirect_to(projects_path)
     end
 
@@ -40,7 +54,7 @@ describe GoController, rox: { tags: :unit } do
     end
   end
 
-  context "#run" do
+  describe "#run" do
 
     let(:groups){ [ nil, 'nightly', 'daily' ] }
     let! :runs do
@@ -54,37 +68,37 @@ describe GoController, rox: { tags: :unit } do
     end
     
     it "should redirect to the test run with the given uid", rox: { key: 'ba7287b32b4a' } do
-      get :run, uid: runs.first.uid, locale: I18n.default_locale
+      get :run, uid: runs.first.uid
       expect(subject).to redirect_to(runs.first)
     end
 
     it "should redirect to the latest run", rox: { key: '3ba7b50d5f99' } do
-      get :run, latest: '', locale: I18n.default_locale
+      get :run, latest: ''
       expect(subject).to redirect_to(runs.last)
     end
 
     it "should redirect to the latest run in the given group", rox: { key: 'f993cebf7b2f' } do
-      get :run, latest: 'nightly', locale: I18n.default_locale
+      get :run, latest: 'nightly'
       expect(subject).to redirect_to(runs[7])
     end
 
     it "should redirect to the earliest run", rox: { key: 'f21ec8a028a6' } do
-      get :run, earliest: '', locale: I18n.default_locale
+      get :run, earliest: ''
       expect(subject).to redirect_to(runs.first)
     end
 
     it "should redirect to the earliest run in the given group", rox: { key: 'a55d1d023092' } do
-      get :run, earliest: 'daily', locale: I18n.default_locale
+      get :run, earliest: 'daily'
       expect(subject).to redirect_to(runs[2])
     end
 
     it "should redirect to the test runs index for unknown uids", rox: { key: '844a80c87796' } do
-      get :run, uid: 'foo', locale: I18n.default_locale
+      get :run, uid: 'foo'
       expect(subject).to redirect_to(test_runs_path)
     end
 
     it "should redirect to the test runs index with no arguments", rox: { key: '5ecf7a6d493b' } do
-      get :run, locale: I18n.default_locale
+      get :run
       expect(subject).to redirect_to(test_runs_path)
     end
   end

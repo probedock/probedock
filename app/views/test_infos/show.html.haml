@@ -1,2 +1,4 @@
-%h2= @test_info.name
+%h2
+  = @test_info.name
+  %small.monospace= @test_info.key.key
 #testInfo{ data: { module: :testInfo, config: @test_info.to_client_hash.to_json } }

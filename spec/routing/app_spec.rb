@@ -28,6 +28,7 @@ describe 'App routing' do
   it(nil, rox: { key: 'd9a01140cf1c' }){ should route(:post, '/data/test_counters').to(controller: :data, action: :test_counters) }
   it(nil, rox: { key: '7328eddd1d72' }){ should route(:get, '/go/project').to(controller: :go, action: :project) }
   it(nil, rox: { key: '0fdb63d43c36' }){ should route(:get, '/go/run').to(controller: :go, action: :run) }
+  it(nil, rox: { key: '353038b14333' }){ should route(:get, '/go/test').to(controller: :go, action: :test) }
   it(nil, rox: { key: 'e21abf07237b' }){ should route(:post, '/maintenance').to(controller: :home, action: :maintenance) }
   it(nil, rox: { key: 'ffd07068f8a1' }){ should route(:delete, '/maintenance').to(controller: :home, action: :maintenance) }
   it(nil, rox: { key: '07fb3795c62f' }){ should route(:get, '/ping').to(controller: :home, action: :ping) }

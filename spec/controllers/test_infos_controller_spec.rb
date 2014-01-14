@@ -22,7 +22,16 @@ describe TestInfosController, rox: { tags: :integration } do
   let(:project){ create :project }
   before(:each){ sign_in user }
 
-  context "#deprecate" do
+  describe "#show" do
+    let(:test){ create :test, key: create(:key, user: user) }
+
+    it "should redirect to the correct page when the id is only the test key and one test matches", rox: { key: 'adb58980cefd' } do
+      get :show, id: test.key.key, locale: I18n.default_locale
+      expect(subject).to redirect_to(test)
+    end
+  end
+
+  describe "#deprecate" do
     let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
     before(:each){ ROXCenter::Application.events.stub :fire }
 
@@ -36,7 +45,7 @@ describe TestInfosController, rox: { tags: :integration } do
 
       expect do
         expect do
-          post :deprecate, id: test.key.key, locale: nil
+          post :deprecate, id: test.to_param, locale: nil
         end.to change(TestDeprecation, :count).by(1)
       end.to change{ project.tap(&:reload).deprecated_tests_count }.by(1)
       expect(response.status).to eq(204)
@@ -62,7 +71,7 @@ describe TestInfosController, rox: { tags: :integration } do
 
       expect do
         expect do
-          post :deprecate, id: test.key.key, locale: nil
+          post :deprecate, id: test.to_param, locale: nil
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(204)
@@ -79,7 +88,7 @@ describe TestInfosController, rox: { tags: :integration } do
       set_maintenance_mode
       expect do
         expect do
-          post :deprecate, id: test.key.key, locale: nil
+          post :deprecate, id: test.to_param, locale: nil
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(503)
@@ -90,7 +99,7 @@ describe TestInfosController, rox: { tags: :integration } do
     end
   end
 
-  context "#undeprecate" do
+  describe "#undeprecate" do
     let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago, deprecated_at: 2.days.ago }
     before(:each){ ROXCenter::Application.events.stub :fire }
 
@@ -104,7 +113,7 @@ describe TestInfosController, rox: { tags: :integration } do
 
       expect do
         expect do
-          post :undeprecate, id: test.key.key, locale: nil
+          post :undeprecate, id: test.to_param, locale: nil
         end.to change(TestDeprecation, :count).by(1)
       end.to change{ project.tap(&:reload).deprecated_tests_count }.by(-1)
       expect(response.status).to eq(204)
@@ -131,7 +140,7 @@ describe TestInfosController, rox: { tags: :integration } do
 
       expect do
         expect do
-          post :undeprecate, id: test.key.key, locale: nil
+          post :undeprecate, id: test.to_param, locale: nil
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(204)
@@ -148,7 +157,7 @@ describe TestInfosController, rox: { tags: :integration } do
       set_maintenance_mode
       expect do
         expect do
-          post :undeprecate, id: test.key.key, locale: nil
+          post :undeprecate, id: test.to_param, locale: nil
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(503)

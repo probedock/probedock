@@ -36,17 +36,41 @@ describe TestInfo, rox: { tags: :unit } do
 
   describe "#to_param" do
 
-    it "should return the value of the associated key", rox: { key: '27893c41b7af' } do
+    it "should return the project api id and test key value joined with a hyphen", rox: { key: '27893c41b7af' } do
       test = create :test
-      test.to_param.should == test.key.key
+      test.to_param.should == "#{test.project.api_id}-#{test.key.key}"
     end
   end
 
-  describe "#find_by_key_value!" do
+  describe "#find_by_project_and_key" do
 
-    it "should find a test by the value of its associated key", rox: { key: '2b14c1da77ba' } do
+    it "should find a test by project and key", rox: { key: 'dffde25a0e26' } do
       test = create :test
-      TestInfo.find_by_key_value!(test.key.key).first.should == test
+      expect(TestInfo.find_by_project_and_key("#{test.project.api_id}-#{test.key.key}").first).to eq(test)
+    end
+
+    it "should not find an unknown test", rox: { key: 'f74cad482f9e' } do
+      expect(TestInfo.find_by_project_and_key("123456789012-987654321098").first).to be_nil
+    end
+
+    it "should not find a test with an invalid param", rox: { key: '72269073bf73' } do
+      expect(TestInfo.find_by_project_and_key("foo")).to be_nil
+    end
+  end
+
+  describe "#find_by_project_and_key!" do
+
+    it "should find a test by project and key", rox: { key: '2b14c1da77ba' } do
+      test = create :test
+      expect(TestInfo.find_by_project_and_key!("#{test.project.api_id}-#{test.key.key}").first).to eq(test)
+    end
+
+    it "should not find an unknown test", rox: { key: 'f72ee92b8162' } do
+      expect{ TestInfo.find_by_project_and_key!("123456789012-987654321098").first! }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "should not find a test with an invalid param", rox: { key: '1f39e71a7d15' } do
+      expect{ TestInfo.find_by_project_and_key! "foo" }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 

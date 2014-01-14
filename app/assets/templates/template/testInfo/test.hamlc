@@ -1,6 +1,4 @@
 %dl.dl-horizontal
-  %dt= I18n.t('jst.models.test.key')
-  %dd.key.monospace
   %dt= I18n.t('jst.models.test.author')
   %dd.author
   %dt= I18n.t('jst.models.test.project')
@@ -13,6 +11,8 @@
   %dd.tags
   %dt= I18n.t('jst.models.test.tickets')
   %dd.tickets
+  %dt= I18n.t('jst.models.test.permalink')
+  %dd.permalink.monospace
   %dt.inactive= I18n.t('jst.models.test.inactive')
   %dd.inactive.text-warning= I18n.t('jst.models.test.inactiveInstructions')
   %dt.deprecated= I18n.t('jst.models.test.deprecated')

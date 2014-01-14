@@ -19,22 +19,28 @@ class TestInfosController < ApplicationController
 
   before_filter :authenticate_user!
   before_filter :check_maintenance, only: [ :deprecate, :undeprecate ]
-  load_resource :find_by => :key_value
-  skip_load_resource :only => [ :index, :page ]
+  before_filter :find_test_by_key_only, only: [ :show ]
+  load_resource find_by: :project_and_key
+  skip_load_resource only: [ :index, :page ]
 
   def index
     window_title << TestInfo.model_name.human.pluralize.titleize
     @test_search_config = TestSearch.config(params)
   end
 
+  def page
+    render json: TestInfo.tableling.process(params.merge(TestSearch.options(params[:search])))
+  end
+
   def show
-    @test_info = @test_info.includes(:key, :author, :tags, :tickets, :custom_values).first
-    window_title << TestInfo.model_name.human.pluralize.titleize << @test_info.key.key << truncate(@test_info.name, length: 100)
+    # TODO: if params[:id] is only the test key and multiple tests match, show the list in a special page
+    @test_info = @test_info.includes(*SHOW_INCLUDES).first! unless @test_info.kind_of? TestInfo
+    window_title << TestInfo.model_name.human.pluralize.titleize << @test_info.project.name << truncate(@test_info.name, length: 100)
   end
 
   def deprecate
 
-    @test_info = @test_info.first
+    @test_info = @test_info.first!
     return head :no_content if @test_info.deprecated?
 
     deprecation = TestDeprecation.new
@@ -55,7 +61,7 @@ class TestInfosController < ApplicationController
 
   def undeprecate
 
-    @test_info = @test_info.first
+    @test_info = @test_info.first!
     return head :no_content unless @test_info.deprecated?
 
     deprecation = TestDeprecation.new
@@ -75,15 +81,24 @@ class TestInfosController < ApplicationController
     head :no_content
   end
 
-  def page
-    render :json => TestInfo.tableling.process(params.merge(TestSearch.options(params[:search])))
-  end
-
   def results_page
-    render :json => TestResult.tableling.process(params.merge({ :base => TestResult.where(test_info_id: @test_info.first.id) }))
+    render json: TestResult.tableling.process(params.merge({ base: TestResult.where(test_info_id: @test_info.first!.id) }))
   end
 
   def results_chart
-    render :json => @test_info.first.results.where('run_at >= ?', 1.month.ago).order('run_at DESC').limit(100).to_a.reverse.collect{ |r| r.to_client_hash type: :chart }
+    render json: @test_info.first!.results.where('run_at >= ?', 1.month.ago).order('run_at DESC').limit(100).to_a.reverse.collect{ |r| r.to_client_hash type: :chart }
+  end
+
+  private
+  
+  SHOW_INCLUDES = [ :key, :project, :author, :tags, :tickets, :custom_values ]
+
+  def find_test_by_key_only
+    return unless params[:id]
+    key = params[:id].to_s
+    if key.match TestKey::KEY_REGEXP
+      matching_tests = TestInfo.joins(:key).includes(*SHOW_INCLUDES).where(test_keys: { key: key }).to_a
+      redirect_to test_info_path(matching_tests.first) if matching_tests.length == 1
+    end
   end
 end

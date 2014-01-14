@@ -2,6 +2,10 @@
 
 ## v2.1.0 - Edge
 
+* **NEW:** Test page permalinks accessible from each test page.
+
+* The URL for the page describing a test has changed; it now also contains the project API identifier.
+
 * Maintenance mode controllable from settings page (administrators only).
 
 * Ugprade to Rails 4.0.2 and Bootstrap 3.

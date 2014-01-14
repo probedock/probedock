@@ -16,6 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestKey < ActiveRecord::Base
   include Tableling::Model
+  KEY_REGEXP = /\A[a-z0-9]{12}\Z/
 
   before_create :set_value
 
