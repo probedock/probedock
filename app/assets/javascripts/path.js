@@ -80,10 +80,18 @@ var Path = {
   join : function() {
     var parts = Array.prototype.slice.call(arguments);
     return _.inject(parts, function(memo, part) {
+
       part = '' + part;
-      if (!memo.match(/\/$/) && !part.match(/^\//)) {
+
+      var memoEndsWithMatch = memo.match(/\/$/),
+          partStartsWithMatch = part.match(/^\//);
+
+      if (!memoEndsWithMatch && !partStartsWithMatch) {
         memo += '/';
+      } else if (memoEndsWithMatch && partStartsWithMatch) {
+        part = part.replace(/^\//, '');
       }
+
       return memo + part;
     }, '');
   }
