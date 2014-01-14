@@ -23,13 +23,25 @@ this.Translations.en =
     disconnected: "The connection to the server was lost. Data will not be refreshed anymore until you reload the page."
   maintenanceControls:
     title: "Maintenance Mode"
-    instructions: "When in maintenance mode, users will not be able to perform the following actions:"
+    instructions:
+      userNotice: "When in maintenance mode, users will not be able to perform the following actions:"
+      userActions:
+        payloads: "Send test result payloads"
+        testKeys: "Generate/release test keys"
+        apiKeys: "Request/disable/delete API keys"
+        deprecations: "Deprecate/undeprecate tests"
+      adminNotice: "These administrative actions will also be unavailable:"
+      adminActions:
+        projects: "Create/delete projects"
+        users: "Edit/deactivate/delete users"
     activate: "Start maintenance"
     deactivate: "End maintenance"
     status: "Application Status"
     statusOn: "In maintenance"
     statusOff: "Online"
     confirmation: "Are you sure you want to start the maintenance mode?"
+    time: "Maintenance Time"
+    error: "Could not toggle maintenance mode."
   latestTestRuns:
     title: "Latest Test Runs"
     results: "Results"

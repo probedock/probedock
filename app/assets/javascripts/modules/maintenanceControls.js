@@ -22,13 +22,13 @@ App.autoModule('maintenanceControls', function() {
     template: 'maintenanceControls/view',
 
     ui: {
-      controlButton: 'button',
+      controlButton: '.toggle',
       statusLabel: '.label',
       time: '.time'
     },
 
     events: {
-      'click button': 'toggleMaintenance'
+      'click .toggle': 'toggleMaintenance'
     },
 
     initialize: function() {
@@ -46,42 +46,57 @@ App.autoModule('maintenanceControls', function() {
 
     startMaintenance: function() {
       if (confirm(I18n.t('jst.maintenanceControls.confirmation'))) {
-        this.setControlsEnabled(false);
         this.requestMaintenance(true);
       }
     },
 
     stopMaintenance: function() {
-      this.setControlsEnabled(false);
       this.requestMaintenance(false);
     },
 
     requestMaintenance: function(enabled) {
+      this.setBusy(true);
+      this.showError(false);
+
       $.ajax({
         url: Path.build('maintenance'),
         type: enabled ? 'POST' : 'DELETE'
-      }).done(function(response, textStatus, xhr) {
-        if (enabled ? xhr.getResponseHeader('Content-Type').match(/^application\/json/) : xhr.status == 204) {
-          App.setMaintenance(enabled ? response : undefined);
-        }
-      });
-      // TODO: handle maintenance mode errors
+      }).done(_.bind(this.applyMaintenance, this, enabled)).fail(_.bind(this.showError, this)).complete(_.bind(this.setBusy, this, false));
     },
 
-    setControlsEnabled: function(enabled) {
-      this.ui.controlButton.attr('disabled', !enabled);
+    showError: function(xhr) {
+      if (xhr === false) {
+        this.ui.controlButton.nextAll('.alert').remove();
+      } else if (xhr.status != 503) {
+        Alerts.danger({ message: I18n.t('jst.maintenanceControls.error'), fade: true }).insertAfter(this.ui.controlButton);
+      }
+    },
+
+    applyMaintenance: function(enabled, response, textStatus, xhr) {
+      if (enabled ? xhr.getResponseHeader('Content-Type').match(/^application\/json/) : xhr.status == 204) {
+        App.setMaintenance(enabled ? response : undefined);
+      }
+    },
+
+    setBusy: function(busy) {
+      this.busy = busy;
+      this.updateControls();
+    },
+
+    updateControls: function() {
+      this.ui.controlButton.attr('disabled', !!this.busy);
     },
 
     updateState: function() {
 
       this.updateTime();
+      this.updateControls();
 
       this.$el.removeClass('panel-primary panel-danger').addClass('panel-' + (App.maintenance ? 'danger' : 'primary'));
 
       this.ui.statusLabel.removeClass('label-success label-danger').addClass('label-' + (App.maintenance ? 'danger' : 'success'));
       this.ui.statusLabel.text(I18n.t('jst.maintenanceControls.status' + (App.maintenance ? 'On' : 'Off')));
 
-      this.setControlsEnabled(true);
       this.ui.controlButton.removeClass('btn-warning btn-primary').addClass('btn-' + (App.maintenance ? 'primary' : 'warning'));
       this.ui.controlButton.text(I18n.t('jst.maintenanceControls.' + (App.maintenance ? 'deactivate' : 'activate')));
     },
