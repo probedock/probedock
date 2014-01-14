@@ -21,10 +21,10 @@ var Status = {
   },
 
   _build : function(type) {
-    return $('<img class="status" />').addClass(type).attr('src', Path.build('assets', Status._images[type]));
+    return $('<img class="status" />').addClass(type).attr('src', Path.build(Status._images[type]));
   },
 
   _images : {
-    loading : 'loading.gif'
+    loading : "<%= asset_path("loading.gif") %>"
   }
 };
