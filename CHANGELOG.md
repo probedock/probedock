@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.1.0 - Edge
+## v2.1.0 - January 14, 2014
 
 * **NEW:** Test page permalinks accessible from each test page.
 
