@@ -20,6 +20,10 @@ describe TestCountersData, rox: { tags: :unit } do
   subject{ described_class }
   let(:user){ create :user }
 
+  before :each do
+    ResqueSpec.reset!
+  end
+
   describe ".queue_size" do
 
     it "should return the size of the test counters queue", rox: { key: '1289a59187fc' } do
