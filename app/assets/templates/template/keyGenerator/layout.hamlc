@@ -1,7 +1,7 @@
 %form.form-inline
   %button.generate.btn.btn-primary{ type: 'button' }= I18n.t('jst.keyGenerator.generate')
   .form-group
-    %input.form-control{ type: 'number', name: 'n', min: 1, max: 25, value: 3 }
+    %input.number.form-control{ type: 'number', name: 'n', min: 1, max: 25, value: 3 }
   = I18n.t('jst.keyGenerator.newKeys')
   .form-group
     %select.project.form-control{ disabled: 'disabled', name: 'project' }
