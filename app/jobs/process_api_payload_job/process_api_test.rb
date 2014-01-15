@@ -41,13 +41,16 @@ class ProcessApiPayloadJob
         @test.project = key.project
       end
 
-      @test_result = build_result data, test, test_run, project_version, cache
+      test_deprecated = !@test.new_record? && test_deprecated?(@test, cache)
+
+      @test_result = build_result data, test, test_deprecated, test_run, project_version, cache
 
       @test.name = data[:n].to_s if data[:n].present?
-      @test.category = category if data.key?(:c)
       @test.passing = @test_result.passed
       @test.active = @test_result.active
 
+      # Note: do not keep track of category changes while a test is deprecated; this would lead to counter inconsistencies.
+      @test.category = category if data.key?(:c) && !test_deprecated
       @test_result.category = @test.category
 
       @test.last_run_at = @test_result.run_at
@@ -74,7 +77,7 @@ class ProcessApiPayloadJob
       @test.quick_validation = false
     end
 
-    def build_result data, test, run, project_version, cache
+    def build_result data, test, test_deprecated, run, project_version, cache
 
       TestResult.new.tap do |result|
         result.runner = run.runner
@@ -86,7 +89,7 @@ class ProcessApiPayloadJob
         result.project_version =  project_version
         result.message = data[:m].to_s if data[:m].present?
         result.run_at = run.ended_at
-        result.deprecated = test_deprecated? test, cache
+        result.deprecated = test_deprecated
 
         if test.new_record?
           result.new_test = true

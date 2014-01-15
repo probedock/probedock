@@ -36,7 +36,7 @@ class CurrentTestMetricsData
     last_month = today - 30.days
 
     rel = TestCounter
-    rel = rel.select 'timestamp, user_id, written_counter, run_counter'
+    rel = rel.select 'timestamp, user_id, written_counter, run_counter, deprecated_counter'
     rel = rel.where timezone: tz
     rel = rel.where 'timestamp >= ?', last_month
     rel = rel.where mask: TestCounter.mask_for(:user)
@@ -49,6 +49,7 @@ class CurrentTestMetricsData
       matching = counters.select{ |c| c.timestamp >= bounds[k] }
       memo[k] = {
         written: counter_metric(:written_counter, matching),
+        deprecated: counter_metric(:deprecated_counter, matching),
         run: counter_metric(:run_counter, matching)
       }
       memo

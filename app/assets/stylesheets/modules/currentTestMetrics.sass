@@ -1,9 +1,13 @@
 .currentTestMetrics
   tr.written
     td
-      :font-size 1.4em
-      &.muted
-        :font-size 1em
+      .new
+        :font-size 1.4em
+        &.muted
+          :font-size 1em
+      .deprecated
+        :margin-left 0.4em
+        :font-size 1.2em
   thead, tbody
     tr
       td, th
@@ -13,7 +17,7 @@
           :background-color #dddddd
   th, td
     &.metric
-      :width 9em
+      :width 10em
     .smallAvatar, .userAvatar
       :display inline
       :margin 0 0.1em

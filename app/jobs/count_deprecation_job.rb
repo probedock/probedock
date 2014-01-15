@@ -18,19 +18,18 @@ class CountDeprecationJob
   @queue = 'metrics:test_counters'
 
   include RoxHook
-  on('test:deprecated', 'test:undeprecated'){ |deprecation| enqueue_deprecation deprecation, timezones: ROXCenter::Application.metrics_timezones }
+  on('test:deprecated', 'test:undeprecated'){ |deprecation| enqueue_deprecations([ deprecation ], timezones: ROXCenter::Application.metrics_timezones) }
 
-  def self.enqueue_deprecation deprecation, options = {}
-    Rails.logger.debug "Updating test counters for deprecation (#{deprecation.deprecated}) of test #{deprecation.test_info_id} at #{deprecation.created_at} in background job"
-    Resque.enqueue self, deprecation.id, options
+  def self.enqueue_deprecations deprecations, options = {}
+    Rails.logger.debug "Updating test counters for #{deprecations.length} deprecations in background job"
+    Resque.enqueue self, deprecations.collect(&:id), options
   end
 
-  def self.perform deprecation_id, options = {}
+  def self.perform deprecation_ids, options = {}
     options = HashWithIndifferentAccess.new options
 
-    deprecation = TestDeprecation.includes(test_info: [ :project, :author ], test_result: [ :category ]).find deprecation_id
-
-    new deprecation, options
+    deprecations = TestDeprecation.includes(test_info: [ :project, :author ], test_result: [ :category ]).find deprecation_ids
+    deprecations.each{ |deprecation| new deprecation, options }
 
     Rails.application.events.fire 'test:counters'
   end
@@ -42,23 +41,23 @@ class CountDeprecationJob
     user = deprecation.test_info.author
     category = deprecation.test_result.category
 
-    @counter_base = { cache: {}, time: deprecation.created_at, written: deprecation.deprecated ? -1 : 1 }
+    @counter_base = { cache: {}, time: deprecation.created_at, deprecated: deprecation.deprecated ? 1 : -1 }
     options[:timezones].each do |timezone|
       @counter_base[:timezone] = timezone
 
-      count_write
-      count_write project: project
-      count_write project: project, category: category
-      count_write project: project, user: user
-      count_write category: category
-      count_write category: category, user: user
-      count_write user: user
+      count_deprecation
+      count_deprecation project: project
+      count_deprecation project: project, category: category
+      count_deprecation project: project, user: user
+      count_deprecation category: category
+      count_deprecation category: category, user: user
+      count_deprecation user: user
     end
   end
 
   private
 
-  def count_write options = {}
+  def count_deprecation options = {}
     TestCounter.measure @counter_base.merge(options)
   end
 end

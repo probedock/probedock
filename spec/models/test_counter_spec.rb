@@ -162,7 +162,7 @@ describe TestCounter do
     before :each do
       ResqueSpec.reset!
       CountTestsJob.stub enqueue_runs: nil
-      CountDeprecationJob.stub enqueue_deprecation: nil
+      CountDeprecationJob.stub enqueue_deprecations: nil
     end
 
     it "should delete existing counters", rox: { key: 'c54f3b3fa06c' } do
@@ -214,10 +214,17 @@ describe TestCounter do
         expect(described_class.recomputing?).to be_true
       end
 
-      it "should queue a job for each deprecated test", rox: { key: '73bf31307244' } do
-        expect(CountDeprecationJob).to receive(:enqueue_deprecation).ordered.with(tests[1].deprecation, timezones: timezones)
-        expect(CountDeprecationJob).to receive(:enqueue_deprecation).ordered.with(tests[3].deprecation, timezones: timezones)
-        expect(CountDeprecationJob).not_to receive(:enqueue_deprecation).ordered
+      it "should queue a batch job for deprecated tests", rox: { key: '73bf31307244' } do
+        expect(CountDeprecationJob).to receive(:enqueue_deprecations).ordered.with([ tests[1].deprecation, tests[3].deprecation ], timezones: timezones)
+        expect(CountDeprecationJob).not_to receive(:enqueue_deprecations).ordered
+        recompute
+      end
+
+      it "should queue multiple batch jobs for deprecated tests when there are too many", rox: { key: '00c095e4bad8' } do
+        stub_const "TestCounter::DEPRECATION_BATCH_SIZE", 1
+        expect(CountDeprecationJob).to receive(:enqueue_deprecations).ordered.with([ tests[1].deprecation ], timezones: timezones)
+        expect(CountDeprecationJob).to receive(:enqueue_deprecations).ordered.with([ tests[3].deprecation ], timezones: timezones)
+        expect(CountDeprecationJob).not_to receive(:enqueue_deprecations).ordered
         recompute
       end
 
@@ -236,7 +243,7 @@ describe TestCounter do
       end
 
       it "should be preparing inside the recompute method", rox: { key: 'e2884248b433' } do
-        CountDeprecationJob.stub(:enqueue_deprecation){ expect(described_class.preparing?).to be_true }
+        CountDeprecationJob.stub(:enqueue_deprecations){ expect(described_class.preparing?).to be_true }
         CountTestsJob.stub(:enqueue_runs){ expect(described_class.preparing?).to be_true }
         recompute
       end
@@ -371,8 +378,10 @@ describe TestCounter do
     it(nil, rox: { key: '0b586eebb4ca' }){ should have_db_column(:project_id).of_type(:integer).with_options(null: true) }
     it(nil, rox: { key: 'd5592cc4e155' }){ should have_db_column(:written_counter).of_type(:integer).with_options(null: false, default: 0) }
     it(nil, rox: { key: '9dd151eaf810' }){ should have_db_column(:run_counter).of_type(:integer).with_options(null: false, default: 0) }
+    it(nil, rox: { key: 'db48ccd5571a' }){ should have_db_column(:deprecated_counter).of_type(:integer).with_options(null: false, default: 0) }
     it(nil, rox: { key: '84fb55cce52e' }){ should have_db_column(:total_written).of_type(:integer).with_options(null: true) }
     it(nil, rox: { key: '8f12f7e23b93' }){ should have_db_column(:total_run).of_type(:integer).with_options(null: true) }
+    it(nil, rox: { key: 'cf34c9a567c5' }){ should have_db_column(:total_deprecated).of_type(:integer).with_options(null: true) }
     it(nil, rox: { key: 'de5b43b8d66f' }){ should have_db_index(:unique_token).unique(true) }
     it(nil, rox: { key: '9074d8179af1' }){ should have_db_index([ :timezone, :timestamp, :mask ]) }
   end

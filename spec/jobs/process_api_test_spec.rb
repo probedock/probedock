@@ -279,7 +279,7 @@ describe ProcessApiPayloadJob::ProcessApiTest do
         expect(result.run_at).to eq(test_run.ended_at)
 
         expect(result.new_test).to be_false
-        expect(result.category).to eq(new_category)
+        expect(result.category).to eq(existing_category) # category is not updated for deprecated tests
         expect(result.previous_category).to eq(existing_category)
         expect(result.previous_passed).to be_false
         expect(result.previous_active).to be_false

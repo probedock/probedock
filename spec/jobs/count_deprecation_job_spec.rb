@@ -33,12 +33,12 @@ describe CountDeprecationJob do
     before(:each){ ROXCenter::Application.stub metrics_timezones: timezones }
 
     it "should enqueue a job on the test:deprecated event", rox: { key: '490db0b2e66a' } do
-      expect(described_class).to receive(:enqueue_deprecation).with(deprecation_double, timezones: timezones)
+      expect(described_class).to receive(:enqueue_deprecations).with([ deprecation_double ], timezones: timezones)
       described_class.fire 'test:deprecated', deprecation_double
     end
 
     it "should enqueue a job on the test:undeprecated event", rox: { key: 'fd13a157d54f' } do
-      expect(described_class).to receive(:enqueue_deprecation).with(deprecation_double, timezones: timezones)
+      expect(described_class).to receive(:enqueue_deprecations).with([ deprecation_double ], timezones: timezones)
       described_class.fire 'test:undeprecated', deprecation_double
     end
   end
@@ -48,29 +48,39 @@ describe CountDeprecationJob do
     it "should enqueue a job with a deprecated test", rox: { key: '56f6f6191ca3' } do
       deprecated_at = 2.days.ago
       test = create :test, deprecated_at: deprecated_at
-      described_class.enqueue_deprecation test.deprecation, foo: 'bar'
-      expect(described_class).to have_queued(test.deprecation.id, foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
+      described_class.enqueue_deprecations [ test.deprecation ], foo: 'bar'
+      expect(described_class).to have_queued([ test.deprecation.id ], foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
       expect(described_class).to have_queue_size_of(1)
     end
     
     it "should enqueue a job with an undeprecated test", rox: { key: '73e4f5f519ff' } do
       test = create :test
       deprecation = create :deprecation, deprecated: false, test_info: test
-      described_class.enqueue_deprecation deprecation, foo: 'bar'
-      expect(described_class).to have_queued(deprecation.id, foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
+      described_class.enqueue_deprecations [ deprecation ], foo: 'bar'
+      expect(described_class).to have_queued([ deprecation.id ], foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
+      expect(described_class).to have_queue_size_of(1)
+    end
+
+    it "should enqueue a job with multiple deprecations", rox: { key: '1c163bec9352' } do
+      user = create :user
+      tests = Array.new(3){ |i| create :test, key: create(:test_key, user: user), deprecated_at: i.days.ago }
+      deprecations = tests.collect &:deprecation
+      described_class.enqueue_deprecations deprecations, foo: 'bar'
+      expect(described_class).to have_queued(deprecations.collect(&:id), foo: 'bar').in(COUNT_DEPRECATION_JOB_QUEUE)
       expect(described_class).to have_queue_size_of(1)
     end
 
     it "should log information about the test", rox: { key: 'de215dfad87f' } do
       test = create :test, deprecated_at: 2.days.ago
-      expect(Rails.logger).to receive(:debug).with(/updating test counters.*deprecation.*#{test.id}/i)
-      described_class.enqueue_deprecation test.deprecation, foo: 'bar'
+      expect(Rails.logger).to receive(:debug).with(/updating test counters.*1 deprecation.*/i)
+      described_class.enqueue_deprecations [ test.deprecation ], foo: 'bar'
     end
   end
 
   describe ".perform" do
+    let(:user){ create :user }
     let(:deprecated_at){ 3.days.ago }
-    let(:deprecated_test){ create :test, deprecated_at: deprecated_at }
+    let(:deprecated_test){ create :test, key: create(:test_key, user: user), deprecated_at: deprecated_at }
 
     it "should instantiate a job with loaded data", rox: { key: '45622943f63f' } do
       described_class.stub new: nil
@@ -78,14 +88,26 @@ describe CountDeprecationJob do
         expect(args[0]).to eq(deprecated_test.deprecation)
         expect(args[1]).to eq(HashWithIndifferentAccess.new(foo: 'bar'))
       end
-      described_class.perform deprecated_test.deprecation_id, foo: 'bar'
+      described_class.perform [ deprecated_test.deprecation_id ], foo: 'bar'
+    end
+
+    it "should instantiate multiple jobs with loaded data", rox: { key: '40a201539841' } do
+      deprecated_tests = [ deprecated_test ] + Array.new(2){ |i| create :test, key: create(:test_key, user: user), deprecated_at: i.days.ago }
+      described_class.stub new: nil
+      deprecated_tests.each do |test|
+        expect(described_class).to receive(:new).ordered do |*args|
+          expect(args[0]).to eq(test.deprecation)
+          expect(args[1]).to eq(HashWithIndifferentAccess.new(foo: 'bar'))
+        end
+      end
+      described_class.perform deprecated_tests.collect{ |t| t.deprecation_id }, foo: 'bar'
     end
 
     it "should trigger a test:counters event on the application", rox: { key: 'd311529e3b65' } do
       described_class.stub new: nil
       test = deprecated_test # create test before so that user:created event is skipped
       expect(Rails.application.events).to receive(:fire).with('test:counters')
-      described_class.perform test.deprecation_id, foo: 'bar'
+      described_class.perform [ test.deprecation_id ], foo: 'bar'
     end
   end
 
@@ -122,13 +144,13 @@ describe CountDeprecationJob do
         caches.first(6).each{ |c| expect(c).to be(caches.last) }
 
         expect(measures).to have(7).items
-        expect(measures).to include(time: time, written: -1, timezone: 'Bern')
-        expect(measures).to include(time: time, written: -1, timezone: 'Bern', project: expected_project)
-        expect(measures).to include(time: time, written: -1, timezone: 'Bern', project: expected_project, category: expected_category)
-        expect(measures).to include(time: time, written: -1, timezone: 'Bern', project: expected_project, user: expected_user)
-        expect(measures).to include(time: time, written: -1, timezone: 'Bern', category: expected_category)
-        expect(measures).to include(time: time, written: -1, timezone: 'Bern', category: expected_category, user: expected_user)
-        expect(measures).to include(time: time, written: -1, timezone: 'Bern', user: expected_user)
+        expect(measures).to include(time: time, deprecated: 1, timezone: 'Bern')
+        expect(measures).to include(time: time, deprecated: 1, timezone: 'Bern', project: expected_project)
+        expect(measures).to include(time: time, deprecated: 1, timezone: 'Bern', project: expected_project, category: expected_category)
+        expect(measures).to include(time: time, deprecated: 1, timezone: 'Bern', project: expected_project, user: expected_user)
+        expect(measures).to include(time: time, deprecated: 1, timezone: 'Bern', category: expected_category)
+        expect(measures).to include(time: time, deprecated: 1, timezone: 'Bern', category: expected_category, user: expected_user)
+        expect(measures).to include(time: time, deprecated: 1, timezone: 'Bern', user: expected_user)
       end
 
       it "should increase all matching test counters by one if the test was undeprecated" do
@@ -142,13 +164,13 @@ describe CountDeprecationJob do
         caches.first(6).each{ |c| expect(c).to be(caches.last) }
 
         expect(measures).to have(7).items
-        expect(measures).to include(time: time, written: 1, timezone: 'Bern')
-        expect(measures).to include(time: time, written: 1, timezone: 'Bern', project: expected_project)
-        expect(measures).to include(time: time, written: 1, timezone: 'Bern', project: expected_project, category: expected_category)
-        expect(measures).to include(time: time, written: 1, timezone: 'Bern', project: expected_project, user: expected_user)
-        expect(measures).to include(time: time, written: 1, timezone: 'Bern', category: expected_category)
-        expect(measures).to include(time: time, written: 1, timezone: 'Bern', category: expected_category, user: expected_user)
-        expect(measures).to include(time: time, written: 1, timezone: 'Bern', user: expected_user)
+        expect(measures).to include(time: time, deprecated: -1, timezone: 'Bern')
+        expect(measures).to include(time: time, deprecated: -1, timezone: 'Bern', project: expected_project)
+        expect(measures).to include(time: time, deprecated: -1, timezone: 'Bern', project: expected_project, category: expected_category)
+        expect(measures).to include(time: time, deprecated: -1, timezone: 'Bern', project: expected_project, user: expected_user)
+        expect(measures).to include(time: time, deprecated: -1, timezone: 'Bern', category: expected_category)
+        expect(measures).to include(time: time, deprecated: -1, timezone: 'Bern', category: expected_category, user: expected_user)
+        expect(measures).to include(time: time, deprecated: -1, timezone: 'Bern', user: expected_user)
       end
     end
 

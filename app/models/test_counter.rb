@@ -17,7 +17,8 @@
 class TestCounter < ActiveRecord::Base
   DEFAULT_TIMEZONE = 'Bern'
   BASE_ATTRIBUTES = [ :timezone, :user, :category, :project ]
-  COUNTER_ATTRIBUTES = [ :written, :run ]
+  COUNTER_ATTRIBUTES = [ :written, :run, :deprecated ]
+  DEPRECATION_BATCH_SIZE = 50
   attr_accessor :quick_validation
 
   belongs_to :user
@@ -83,9 +84,8 @@ class TestCounter < ActiveRecord::Base
     delete_all
     clean_token_cache true
 
-    # TODO: optimize CountDeprecationJob by grouping them
-    TestDeprecation.select('id, deprecated, test_info_id, created_at').to_a.each do |deprecation|
-      CountDeprecationJob.enqueue_deprecation deprecation, timezones: timezones
+    TestDeprecation.select('id').find_in_batches(batch_size: DEPRECATION_BATCH_SIZE) do |deprecations|
+      CountDeprecationJob.enqueue_deprecations deprecations, timezones: timezones
     end
 
     start_from = TestRun.order('ended_at ASC').limit(1).first.try(:ended_at)

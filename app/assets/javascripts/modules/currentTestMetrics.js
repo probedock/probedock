@@ -55,6 +55,11 @@ App.autoModule('currentTestMetrics', function() {
       },
       {
         type: Backbone.HasOne,
+        key: 'deprecated',
+        relatedModel: Measures
+      },
+      {
+        type: Backbone.HasOne,
         key: 'run',
         relatedModel: Measures
       }
@@ -118,7 +123,112 @@ App.autoModule('currentTestMetrics', function() {
     },
 
     renderMetrics: function() {
-      _.each(this.metricTypes, function(type) {
+
+      var type = 'run';
+      _.each(this.metricTimes, function(time) {
+
+        var selector = type + time.capitalize(),
+            mostSelector = selector + 'Most',
+            measures = this.model.get(time).get(type);
+
+        // total written/run today/week/month
+        var total = measures.get('total');
+
+        this.ui[selector].text(Format.number(total));
+        this.ui[selector][total ? 'removeClass' : 'addClass']('text-muted');
+
+        if (measures.hasUsers()) {
+          this.ui[mostSelector].removeClass('text-muted').empty();
+          measures.get('most').forEach(function(m) {
+
+            var total = m.get('total'),
+                user = m.get('user');
+
+            new (App.module('views').UserAvatar)({
+              model: user,
+              el: $('<div />').appendTo(this.ui[mostSelector]),
+              size: 'small',
+              label: false,
+              tooltip: {
+                title: I18n.t('jst.currentTestMetrics.tooltip.' + type + 'Text', {
+                  user: user.get('name'),
+                  n: Format.number(total),
+                  time: I18n.t('jst.currentTestMetrics.tooltip.time.' + time)
+                }),
+                placement: 'bottom'
+              }
+            }).render();
+          }, this);
+        } else {
+          this.ui[mostSelector].addClass('text-muted').text('n/a');
+        }
+      }, this);
+
+      _.each(this.metricTimes, function(time) {
+
+        var selector = 'written' + time.capitalize(),
+            mostSelector = selector + 'Most',
+            writtenMeasures = this.model.get(time).get('written'),
+            deprecatedMeasures = this.model.get(time).get('deprecated');
+
+        var writtenTotal = writtenMeasures.get('total'),
+            writtenPrefix = writtenTotal && writtenTotal >= 1 ? '+' : '';
+
+        this.ui[selector].empty();
+        this.ui[mostSelector].empty();
+
+        var newEl = $('<span />');
+        newEl.text(writtenPrefix + Format.number(writtenTotal));
+        newEl[writtenTotal ? 'removeClass' : 'addClass']('text-muted');
+        newEl.removeClass('text-danger text-success');
+        if (writtenTotal) {
+          newEl.addClass('new');
+          newEl.addClass(writtenTotal >= 1 ? 'text-success' : 'text-danger');
+        }
+        this.ui[selector].append(newEl);
+
+        var deprecatedTotal = deprecatedMeasures.get('total');
+        if (deprecatedTotal && deprecatedTotal >= 1) {
+
+          var deprecatedEl = $('<span class="deprecated" />');
+          deprecatedEl.text('-' + Format.number(deprecatedTotal));
+          deprecatedEl.addClass('text-danger');
+          if (!writtenTotal) {
+            this.ui[selector].empty();
+          } else {
+            this.ui[selector].append(' ');
+          }
+          this.ui[selector].append(deprecatedEl);
+        }
+
+        if (writtenMeasures.hasUsers()) {
+          this.ui[mostSelector].removeClass('text-muted').empty();
+          writtenMeasures.get('most').forEach(function(m) {
+
+            var total = m.get('total'),
+                user = m.get('user');
+
+            new (App.module('views').UserAvatar)({
+              model: user,
+              el: $('<div />').appendTo(this.ui[mostSelector]),
+              size: 'small',
+              label: false,
+              tooltip: {
+                title: I18n.t('jst.currentTestMetrics.tooltip.writtenText', {
+                  user: user.get('name'),
+                  n: Format.number(total),
+                  time: I18n.t('jst.currentTestMetrics.tooltip.time.' + time)
+                }),
+                placement: 'bottom'
+              }
+            }).render();
+          }, this);
+        } else {
+          this.ui[mostSelector].addClass('text-muted').text('n/a');
+        }
+      }, this);
+
+      /*_.each(this.metricTypes, function(type) {
         _.each(this.metricTimes, function(time) {
 
           var selector = type + time.capitalize(),
@@ -162,7 +272,7 @@ App.autoModule('currentTestMetrics', function() {
             this.ui[mostSelector].addClass('muted').text('n/a');
           }
         }, this);
-      }, this);
+      }, this);*/
     }
   });
 
