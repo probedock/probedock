@@ -23,7 +23,7 @@ $(function() {
     container.find('a[href^="/"]').each(function() {
       
       var link = $(this);
-      link.attr('href', PagePath.build(link.attr('href').replace(/^\//, '')));
+      link.attr('href', Path.build(link.attr('href').replace(/^\//, '')));
     });
     
     var header = container.find('h2');

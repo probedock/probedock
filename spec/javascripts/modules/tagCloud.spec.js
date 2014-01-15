@@ -65,6 +65,6 @@ describe("Tag cloud with a max size", function() {
     this.meta = { rox : { key : '42fe6791d648' } };
     var allLink = $('#tagCloudFixture .tagCloud a.all');
     expect(allLink).toExist();
-    expect(allLink.attr('href')).toBe('/en/tags');
+    expect(allLink.attr('href')).toBe('/tags');
   });
 });

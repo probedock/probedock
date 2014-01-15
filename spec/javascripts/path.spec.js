@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 describe("Path", function() {
 
   beforeEach(function() {
@@ -54,23 +53,5 @@ describe("ApiPath", function() {
   it("should return a builder", function() {
     this.meta = { rox: { key: '60e3a5a477b5' } };
     expect(ApiPath.builder('a', 'b')()).toBe('/root/api/a/b');
-  });
-});
-
-describe("PagePath", function() {
-
-  beforeEach(function() {
-    loadFixtures('paths.html');
-    Meta._cache = {};
-  });
-
-  it("should build a path from the home path", function() {
-    this.meta = { rox: { key: 'ebd78bcb737a' } };
-    expect(PagePath.build('a', 'b')).toBe('/root/home/a/b');
-  });
-
-  it("should return a builder", function() {
-    this.meta = { rox: { key: '0dd7ef87f0d2' } };
-    expect(PagePath.builder('a', 'b')()).toBe('/root/home/a/b');
   });
 });

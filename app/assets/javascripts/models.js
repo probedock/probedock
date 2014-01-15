@@ -131,7 +131,7 @@ App.module('models', function() {
     },
 
     path: function() {
-      return PagePath.build('projects', this.get('urlToken'));
+      return Path.build('projects', this.get('urlToken'));
     },
 
     link: function() {
@@ -157,15 +157,15 @@ App.module('models', function() {
     },
 
     path : function() {
-      return PagePath.build('user', this.get('name'));
+      return Path.build('user', this.get('name'));
     },
 
     editPath : function() {
-      return PagePath.build('user', this.get('name'), 'edit');
+      return Path.build('user', this.get('name'), 'edit');
     },
 
     testsPath : function() {
-      return PagePath.build('tests?' + $.param({ authors : [ this.get('name') ] }));
+      return Path.build('tests?' + $.param({ authors : [ this.get('name') ] }));
     }
   });
 
@@ -242,7 +242,7 @@ App.module('models', function() {
     },
 
     path : function() {
-      return PagePath.build('tests', this.pathKey());
+      return Path.build('tests', this.pathKey());
     },
 
     pathKey : function() {
@@ -250,7 +250,7 @@ App.module('models', function() {
     },
 
     categoryPath : function() {
-      return this.get('category') ? PagePath.build('tests?' + $.param({ categories : [ this.get('category') ] })) : null;
+      return this.get('category') ? Path.build('tests?' + $.param({ categories : [ this.get('category') ] })) : null;
     },
 
     categoryLink : function() {
@@ -315,7 +315,7 @@ App.module('models', function() {
     ],
 
     path : function() {
-      return PagePath.build('runs', this.get('id'));
+      return Path.build('runs', this.get('id'));
     },
 
     humanSuccessRatio : function() {

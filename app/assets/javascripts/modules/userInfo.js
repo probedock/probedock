@@ -146,7 +146,7 @@ App.autoModule('userInfo', function() {
     },
 
     goBackToUsers: function() {
-      window.location = PagePath.build('users');
+      window.location = Path.build('users');
     },
 
     showServerError: function(errorMessage, xhr) {

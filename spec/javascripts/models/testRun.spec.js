@@ -44,7 +44,7 @@ describe("TestRun", function() {
 
   it("should have path /runs/<id>", function() {
     this.meta = { rox : { key : '9ea1cc49e142' } };
-    expect(testRun.path()).toBe('/en/runs/42');
+    expect(testRun.path()).toBe('/runs/42');
   });
 
   it("should have a total count of 100", function() {

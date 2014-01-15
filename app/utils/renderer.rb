@@ -31,10 +31,6 @@ module Renderer
   def self.view_class
     @view_class ||= Class.new ActionView::Base do
       include Rails.application.routes.url_helpers
-
-      def default_url_options options = {}
-        { locale: I18n.locale }
-      end
     end
   end
 end

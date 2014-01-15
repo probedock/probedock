@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.1 - January 15, 2014
+
+* Page URLs no longer include the locale.
+
 ## v2.1.0 - January 14, 2014
 
 * **NEW:** Test page permalinks accessible from each test page.

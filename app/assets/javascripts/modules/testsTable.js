@@ -104,7 +104,7 @@ App.autoModule('testsTable', function() {
       var runnerEl = $('<div />').appendTo(wrapper);
       new UserAvatar({ model : runner, size : 'small', el : runnerEl }).render();
 
-      var runLink = $('<a />').attr('href', PagePath.build('runs', effectiveResult.get('test_run_id'))).text('Go to test run');
+      var runLink = $('<a />').attr('href', Path.build('runs', effectiveResult.get('test_run_id'))).text('Go to test run');
       $('<p class="runLink" />').append(runLink).appendTo(wrapper);
 
       return wrapper;

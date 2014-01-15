@@ -53,14 +53,6 @@ class ApplicationController < ActionController::Base
     Mime::Type.lookup_by_extension(name).to_s
   end
 
-  def default_url_options options = {}
-    self.class.default_url_options
-  end
-
-  def self.default_url_options options = {}
-    { locale: I18n.locale }
-  end
-
   def set_locale
     I18n.locale = 'en'
   end

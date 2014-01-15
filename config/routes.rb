@@ -27,8 +27,7 @@ ROXCenter::Application.routes.draw do
     mount Resque::Server.new, :at => "/resque"
   end
 
-  # home
-  root :to => 'home#root'
+  root :to => 'home#index'
 
   match '/ping' => 'home#ping', via: :get, as: :ping
   match :maintenance, to: 'home#maintenance', via: [ :post, :delete ]
@@ -48,56 +47,51 @@ ROXCenter::Application.routes.draw do
     get :test
   end
 
-  scope '/:locale', locale: /en/ do
+  devise_for :users, path_names: { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }
+  match 'status' => 'home#status', :via => :get
 
-    match '/' => 'home#index', via: :get, as: :home
-
-    devise_for :users, path_names: { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }
-    match 'status' => 'home#status', :via => :get
-
-    # pages
-    resource :account, :only => [ :show ]
-    resources :metrics, :only => [ :index ]
-    resources :projects, :only => [ :index, :show ]
-    resource :settings, :only => [ :show ]
-    resources :tags, :only => [ :index ]
-    resources :test_infos, :path => :tests, :only => [ :index, :show ]
-    resources :test_runs, :path => :runs, :only => [ :index, :show ] do
-      member do
-        get :previous
-        get :next
-      end
+  # pages
+  resource :account, :only => [ :show ]
+  resources :metrics, :only => [ :index ]
+  resources :projects, :only => [ :index, :show ]
+  resource :settings, :only => [ :show ]
+  resources :tags, :only => [ :index ]
+  resources :test_infos, :path => :tests, :only => [ :index, :show ]
+  resources :test_runs, :path => :runs, :only => [ :index, :show ] do
+    member do
+      get :previous
+      get :next
     end
-    resources :users, :only => [ :index, :new ]
-    resources :users, path: :user, only: [ :show, :edit, :update, :destroy ] do
-      collection do
-        post '/', action: :create, as: :create
-      end
-    end
-
-    # documentation
-    namespace 'doc', :module => nil do
-
-      %w(overview clients changelog deploy).each do |e|
-        match e => "doc##{e}", via: :get
-      end
-
-      namespace 'api', module: nil do
-
-        get '/', to: 'doc#api_overview', as: :overview
-        get '/browser', to: 'doc#api_browser', as: :browser
-        get '/res', to: 'doc#api_resources', as: :resources
-        get '/res/:name', to: 'doc#api_resource', as: :resource
-        get '/rels', to: 'doc#api_relations', as: :relations
-        get '/rels/:name', to: 'doc#api_relation', as: :relation
-        get '/media', to: 'doc#api_media_types', as: :media_types
-        get '/media/:name', to: 'doc#api_media_type', as: :media_type
-        get '/listings', to: 'doc#api_listings', as: :listings
-      end
+  end
+  resources :users, :only => [ :index, :new ]
+  resources :users, path: :user, only: [ :show, :edit, :update, :destroy ] do
+    collection do
+      post '/', action: :create, as: :create
     end
   end
 
-  namespace 'api', :module => :api, :as => :api, defaults: { locale: nil } do
+  # documentation
+  namespace 'doc', :module => nil do
+
+    %w(overview clients changelog deploy).each do |e|
+      match e => "doc##{e}", via: :get
+    end
+
+    namespace 'api', module: nil do
+
+      get '/', to: 'doc#api_overview', as: :overview
+      get '/browser', to: 'doc#api_browser', as: :browser
+      get '/res', to: 'doc#api_resources', as: :resources
+      get '/res/:name', to: 'doc#api_resource', as: :resource
+      get '/rels', to: 'doc#api_relations', as: :relations
+      get '/rels/:name', to: 'doc#api_relation', as: :relation
+      get '/media', to: 'doc#api_media_types', as: :media_types
+      get '/media/:name', to: 'doc#api_media_type', as: :media_type
+      get '/listings', to: 'doc#api_listings', as: :listings
+    end
+  end
+
+  namespace 'api', :module => :api, :as => :api do
 
     match '/' => "api#index", via: :get
 
@@ -114,7 +108,7 @@ ROXCenter::Application.routes.draw do
   end
 
   # api
-  namespace 'api/v1', :module => nil, :as => :legacy_api, defaults: { locale: nil } do
+  namespace 'api/v1', :module => nil, :as => :legacy_api do
 
     resources :links, :only => [ :create, :update, :destroy ]
 

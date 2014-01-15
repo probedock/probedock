@@ -59,18 +59,18 @@ App.autoModule('testsData', function() {
     },
 
     testsLink : function() {
-      return $('<a />').attr('href', PagePath.build('tests')).text(Format.number(this.model.get('count').get('tests') - this.model.get('tests').get('deprecated')));
+      return $('<a />').attr('href', Path.build('tests')).text(Format.number(this.model.get('count').get('tests') - this.model.get('tests').get('deprecated')));
     },
 
     runsLink : function() {
-      return $('<a />').attr('href', PagePath.build('runs')).text(Format.number(this.model.get('count').get('runs')));
+      return $('<a />').attr('href', Path.build('runs')).text(Format.number(this.model.get('count').get('runs')));
     },
 
     renderFailing : function() {
       var n = this.model.get('tests').get('failing');
       var text = Format.number(n);
       if (n >= 1) {
-        this.ui.failing.html($('<a />').attr('href', PagePath.build('tests?status=failing')).text(text));
+        this.ui.failing.html($('<a />').attr('href', Path.build('tests?status=failing')).text(text));
       } else {
         this.ui.failing.text(text);
       }
@@ -80,7 +80,7 @@ App.autoModule('testsData', function() {
       var n = this.model.get('tests').get('inactive');
       var text = Format.number(n);
       if (n >= 1) {
-        this.ui.inactive.html($('<a />').attr('href', PagePath.build('tests?status=inactive')).text(text));
+        this.ui.inactive.html($('<a />').attr('href', Path.build('tests?status=inactive')).text(text));
       } else {
         this.ui.inactive.text(text);
       }
@@ -90,7 +90,7 @@ App.autoModule('testsData', function() {
       var n = this.model.get('tests').get('outdated');
       var text = Format.number(n);
       if (n >= 1) {
-        this.ui.outdated.html($('<a />').attr('href', PagePath.build('tests?status=outdated')).text(text));
+        this.ui.outdated.html($('<a />').attr('href', Path.build('tests?status=outdated')).text(text));
         this.ui.outdated.tooltip({ title : I18n.t('jst.testsData.outdatedInstructions', { days : this.model.get('tests').get('outdatedDays') }), placement : 'bottom' });
       } else {
         this.ui.outdated.text(text);

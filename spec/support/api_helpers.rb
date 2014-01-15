@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 module SpecApiHelper
   MEDIA_TYPES = {
     errors: 'application/vnd.lotaris.rox.errors+json',
@@ -82,7 +81,6 @@ module SpecApiHelper
 
   def api_post user, path, body, params = {}, options = {}
 
-    params[:locale] = nil
     headers = { 'CONTENT_TYPE' => options[:content_type] || 'application/json' }
     headers = options[:headers] || {}
 
@@ -101,7 +99,6 @@ module SpecApiHelper
 
   def api_put user, path, body, params = {}, options = {}
 
-    params[:locale] = nil
     headers = { 'CONTENT_TYPE' => options[:content_type] || 'application/json' }
     headers = options[:headers] || {}
 
@@ -120,7 +117,6 @@ module SpecApiHelper
 
   def api_delete user, path, params = {}, options = {}
 
-    params[:locale] = nil
     headers = options[:headers] || {}
 
     if options[:functional]
@@ -143,11 +139,10 @@ module SpecApiHelper
     options[:protocol] = ROX_CONFIG['protocol'] || 'https'
     options[:host] = ROX_CONFIG['host']
     options[:port] = ROX_CONFIG['port'].to_i if ROX_CONFIG['port']
-    Rails.application.routes.url_helpers.send "#{name}_url", { locale: I18n.default_locale }.merge(options)
+    Rails.application.routes.url_helpers.send "#{name}_url", {}.merge(options)
   end
 
   def api_uri name = nil, options = {}
-    options[:locale] = nil
     uri [ :api, name ].compact.join('_'), options
   end
 

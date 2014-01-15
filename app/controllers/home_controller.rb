@@ -20,10 +20,6 @@ class HomeController < ApplicationController
   before_filter(only: [ :maintenance ]){ authorize! :manage, :settings }
   skip_before_filter :load_links, only: [ :index, :ping ]
 
-  def root
-    redirect_to home_path
-  end
-
   def index
 
     # Load all caches at the same time to avoid separate commands being sent to Redis.

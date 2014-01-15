@@ -53,12 +53,12 @@ describe("Project", function() {
 
   it("should return its path", function() {
     this.meta = { rox: { key: '0b348a2dd438' } };
-    expect(project.path()).toBe('/en/projects/' + projectBase.urlToken);
+    expect(project.path()).toBe('/projects/' + projectBase.urlToken);
   });
 
   it("should return a link to its path", function() {
     this.meta = { rox: { key: '28f0306f5568' } };
-    expect(project.link()).toLinkTo('/en/projects/' + projectBase.urlToken, projectBase.name);
+    expect(project.link()).toLinkTo('/projects/' + projectBase.urlToken, projectBase.name);
   });
 });
 

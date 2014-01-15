@@ -22,11 +22,10 @@ module RepresenterHelpers
     options[:protocol] = ROX_CONFIG['protocol'] || 'https'
     options[:host] = ROX_CONFIG['host']
     options[:port] = ROX_CONFIG['port'].to_i if ROX_CONFIG['port']
-    Rails.application.routes.url_helpers.send "#{name}_url", { locale: I18n.default_locale }.merge(options)
+    Rails.application.routes.url_helpers.send "#{name}_url", {}.merge(options)
   end
 
   def api_uri name = nil, options = {}
-    options[:locale] = nil
     uri [ :api, name ].compact.join('_'), options
   end
 

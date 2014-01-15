@@ -187,7 +187,7 @@ App.autoModule('testInfo', function() {
     },
 
     renderTag : function(tag) {
-      $('<a class="label label-info" />').attr('href', PagePath.build('tests?' + $.param({ tags : [ tag ] }))).text(tag).appendTo(this.ui.tags);
+      $('<a class="label label-info" />').attr('href', Path.build('tests?' + $.param({ tags : [ tag ] }))).text(tag).appendTo(this.ui.tags);
     },
 
     updateInactive : function() {
@@ -527,7 +527,7 @@ App.autoModule('testInfo', function() {
     },
 
     testRunLink : function() {
-      return $('<a />').attr('href', PagePath.build('runs', this.model.get('test_run_id'))).text(this.model.humanRunAt())
+      return $('<a />').attr('href', Path.build('runs', this.model.get('test_run_id'))).text(this.model.humanRunAt())
         .tooltip({ title : I18n.t('jst.testInfo.goToTestRun'), placement : 'right' });
     },
 

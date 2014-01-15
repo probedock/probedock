@@ -63,7 +63,7 @@ App.autoModule('testRunsTable', function() {
 
     renderGroup : function() {
       if (this.model.get('group')) {
-        this.ui.group.html($('<a />').attr('href', PagePath.build('runs?' + $.param({ groups : [ this.model.get('group') ] }))).text(this.model.get('group')));
+        this.ui.group.html($('<a />').attr('href', Path.build('runs?' + $.param({ groups : [ this.model.get('group') ] }))).text(this.model.get('group')));
       } else {
         this.ui.group.text(I18n.t('jst.common.noData'));
       }

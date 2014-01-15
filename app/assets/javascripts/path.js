@@ -46,22 +46,6 @@ var LegacyApiPath = {
   }
 };
 
-var PagePath = {
-
-  builder : function() {
-    var parts = Array.prototype.slice.call(arguments);
-    return function() {
-      return PagePath.build.apply(undefined, parts);
-    };
-  },
-
-  build : function() {
-    var parts = Array.prototype.slice.call(arguments);
-    parts.splice(0, 0, Meta.get('homePath'));
-    return Path.join.apply(undefined, parts);
-  }
-};
-
 var Path = {
 
   builder : function() {

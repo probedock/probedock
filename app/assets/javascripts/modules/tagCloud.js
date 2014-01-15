@@ -20,7 +20,7 @@ App.autoModule('tagCloud', function() {
   var TagInfo = Backbone.Model.extend({
 
     path : function() {
-      return PagePath.build('tests?' + $.param({ tags : [ this.get('name') ] }));
+      return Path.build('tests?' + $.param({ tags : [ this.get('name') ] }));
     }
   });
 
@@ -86,7 +86,7 @@ App.autoModule('tagCloud', function() {
     },
 
     addAllTags : function() {
-      this.$el.prepend(_.template('<a class="all btn btn-info btn-small pull-right" href="<%= path %>">All Tags</a>', { path : PagePath.build('tags') }));
+      this.$el.prepend(_.template('<a class="all btn btn-info btn-small pull-right" href="<%= path %>">All Tags</a>', { path : Path.build('tags') }));
     },
 
     appendHtml: function(collectionView, itemView, index){
