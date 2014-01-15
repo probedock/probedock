@@ -1,8 +1,8 @@
 .testsTable
-  .popover-title
-    strong.breaker
-      :color #8b0000
   .popover-content
+    dl
+      :margin-top 0.6em
+      :margin-bottom 0.4em
     .runLink
       :margin-top 0.6em
       :margin-bottom 0
@@ -35,15 +35,17 @@
         :width 14em
       th.createdAt
         :width 8em
-      th.lastRunAt
-        :width 8em
-      th.lastRunDuration
+      th.key
         :width 6em
       th.status
-        :width 6em
+        :width 5em
         :text-align center
     tbody
-      td.status
-        :text-align center
-        .label
-          :cursor pointer
+      td
+        :vertical-align middle
+        &.name, &.project, &.key
+          :font-size 0.9em
+        &.status
+          :text-align center
+          .label
+            :cursor pointer

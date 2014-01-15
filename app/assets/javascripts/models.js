@@ -134,8 +134,9 @@ App.module('models', function() {
       return Path.build('projects', this.get('urlToken'));
     },
 
-    link: function() {
-      return $('<a />').attr('href', this.path()).text(this.get('name'));
+    link: function(options) {
+      options = _.defaults({}, options, { truncate: false });
+      return $('<a />').attr('href', this.path()).text(Format.truncate(this.get('name'), options.truncate));
     }
   });
 
@@ -218,23 +219,13 @@ App.module('models', function() {
       }
     ],
 
-    name : function(options) {
-      if (!options || !options.truncate) {
-        return this.get('name');
-      }
-      var max = options.truncateLength || 40;
-      if (this.get('name').length > max && !this.get('name').substring(0, max).match(/\s/)) {
-        return this.get('name').substring(0, max) + '...'
-      }
-      return this.get('name');
-    },
-
     permalink : function() {
       return Path.build('go', 'test') + '?' + $.param({ project: this.get('project').get('apiId'), key: this.get('key') });
     },
 
     link : function(options) {
-      return $('<a />').attr('href', this.path()).text(this.name(options));
+      options = _.defaults({}, options, { truncate: false });
+      return $('<a />').attr('href', this.path()).text(Format.truncate(this.get('name'), options.truncate));
     },
 
     apiPath : function() {
@@ -255,6 +246,10 @@ App.module('models', function() {
 
     categoryLink : function() {
       return this.get('category') ? $('<a />').attr('href', this.categoryPath()).text(this.get('category')) : null;
+    },
+
+    isDeprecated : function() {
+      return !!this.get('deprecated_at');
     }
   });
 

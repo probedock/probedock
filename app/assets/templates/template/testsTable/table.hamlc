@@ -5,7 +5,6 @@
       %th.project.sorting{ :'data-field' => 'project' }= I18n.t('jst.models.test.project')
       %th.author.sorting{ :'data-field' => 'author' }= I18n.t('jst.models.test.author')
       %th.createdAt.sorting{ :'data-field' => 'created_at' }= I18n.t('jst.models.test.createdAt')
-      %th.lastRunAt.sorting{ :'data-field' => 'last_run_at' }= I18n.t('jst.models.test.lastRunAt')
-      %th.lastRunDuration.sorting{ :'data-field' => 'last_run_duration' }= I18n.t('jst.models.test.lastRunDuration')
+      %th.key= I18n.t('jst.models.test.key')
       %th.status= I18n.t('jst.models.test.status')
   %tbody

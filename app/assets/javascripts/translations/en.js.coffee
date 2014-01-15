@@ -232,9 +232,11 @@ this.Translations.en =
       hide: "Clear Advanced Search"
   testsTable:
     empty: "No matching tests found."
-    lastRunner: "Last Runner"
-    breaker: "Breaker"
+    lastRun: "Last Run"
+    lastRunDate: "Date"
+    lastRunDuration: "Duration"
     moreInfo: "Click for more info"
+    goToLastRun: "Click to go to test run"
     search:
       status:
         placeholder: "By status"
@@ -253,11 +255,6 @@ this.Translations.en =
         placeholder: "By project"
       breakers:
         placeholder: "By breaker"
-    status:
-      passing: "passing"
-      failing: "failing"
-      deprecated: "deprecated"
-      inactive: "inactive"
   models:
     apiKey:
       identifier: "ID"

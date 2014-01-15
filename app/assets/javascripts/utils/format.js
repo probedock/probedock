@@ -16,6 +16,15 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 var Format = {
 
+  truncate : function(string, options) {
+    if (options === false) {
+      return string;
+    }
+
+    var max = options && options.max ? options.max : 30;
+    return string.length > max ? string.substring(0, max) + '...' : string;
+  },
+
   number : function(n) {
     return Globalize.format(n, 'n0');
   },
