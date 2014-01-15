@@ -4,6 +4,10 @@
 
 * Page URLs no longer include the locale.
 
+* Test tables now include the test key. The last run date and duration have been moved to the status tooltip.
+
+* Fixed test key generator bug where keys would overflow the box.
+
 ## v2.1.0 - January 14, 2014
 
 * **NEW:** Test page permalinks accessible from each test page.
