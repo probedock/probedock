@@ -266,7 +266,7 @@ describe "API payload validations", rox: { tags: :unit } do
     create :test, key: test_keys[0], test_run: run
     test_keys[0].update_attribute :free, false
     sample_payload[:u] = run.uid
-    assert_fail sample_payload, :duplicateTestKey, "/r/0/t/0/k", got(test_keys[0].key), got(test_keys[0].project.api_id)
+    assert_fail sample_payload, :duplicateTestKey, "/r/0/t/0/k", got(test_keys[0].key), got(test_keys[0].project.api_id), /previous payload/i
   end
 
   it "should fail if a test has an unknown key", rox: { key: 'fb21e10441ce' } do

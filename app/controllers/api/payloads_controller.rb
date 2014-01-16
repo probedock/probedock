@@ -108,7 +108,7 @@ class Api::PayloadsController < Api::ApiController
       results[:t].each_with_index do |test,j|
         key = test[:k]
 
-        fail :duplicateTestKey, "Test key #{s key} (project #{s project}) was already used in this run", "/r/#{i}/t/#{j}/k" if find_key used_keys, project, key
+        fail :duplicateTestKey, "Test key #{s key} (project #{s project}) was already used in a previous payload for this run", "/r/#{i}/t/#{j}/k" if find_key used_keys, project, key
         fail :duplicateTestKey, "Test key #{s key} (project #{s project}) was already used in this run", "/r/#{i}/t/#{j}/k" if keys[project].include? key
         fail :unknownTestKey, "Test key #{s key} (project #{s project}) is unknown", "/r/#{i}/t/#{j}/k" if !find_key(existing_keys, project, key)
         keys[project] << key
