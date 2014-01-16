@@ -43,7 +43,7 @@ describe TagsController, rox: { tags: :unit } do
 
     get :cloud, locale: nil
 
-    Oj.load(response.body).should match_array([
+    MultiJson.load(response.body).should match_array([
       { 'name' => tags[0].name, 'count' => 5 },
       { 'name' => tags[1].name, 'count' => 3 },
       { 'name' => tags[2].name, 'count' => 4 },
@@ -55,7 +55,7 @@ describe TagsController, rox: { tags: :unit } do
 
     get :cloud, size: 2, locale: nil
 
-    Oj.load(response.body).should match_array([
+    MultiJson.load(response.body).should match_array([
       { 'name' => tags[0].name, 'count' => 5 },
       { 'name' => tags[2].name, 'count' => 4 }
     ])
@@ -66,7 +66,7 @@ describe TagsController, rox: { tags: :unit } do
     [ 0, -1, -100, 'asd', '' ].each do |n|
       get :cloud, size: n, locale: nil
 
-      Oj.load(response.body).should match_array([
+      MultiJson.load(response.body).should match_array([
         { 'name' => tags[0].name, 'count' => 5 },
         { 'name' => tags[1].name, 'count' => 3 },
         { 'name' => tags[2].name, 'count' => 4 },

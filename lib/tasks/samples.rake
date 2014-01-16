@@ -205,7 +205,7 @@ namespace :samples do
       raise "Could not find #{payload}; run `rake samples` first"
     end
 
-    payload = HashWithIndifferentAccess.new Oj.load(File.open(payload, 'r').read)
+    payload = HashWithIndifferentAccess.new MultiJson.load(File.open(payload, 'r').read)
     n = payload[:r].inject(0){ |memo,r| memo + r[:t].length }
 
     passed = case args.passed

@@ -34,11 +34,11 @@ class JsonCache
     end
 
     def contents
-      @contents ||= (@serialized.nil? ? nil : Oj.load(@serialized, mode: :strict))
+      @contents ||= (@serialized.nil? ? nil : MultiJson.load(@serialized, mode: :strict))
     end
 
     def to_json options = {}
-      @serialized ||= Oj.dump(@contents, mode: :strict)
+      @serialized ||= MultiJson.dump(@contents, mode: :strict)
     end
 
     def to_h

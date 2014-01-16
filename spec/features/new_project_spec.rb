@@ -90,7 +90,7 @@ describe "Creating a project and submitting new results", type: :feature, rox: {
       ]
     })
 
-    response = test_server_post(user, test_server_url(:api, :payloads), Oj.dump(payload), headers: { 'Content-Type' => media_type(:payload_v1) })
+    response = test_server_post(user, test_server_url(:api, :payloads), MultiJson.dump(payload), headers: { 'Content-Type' => media_type(:payload_v1) })
     expect(response.code).to eq(202)
 
     click_link 'Runs'

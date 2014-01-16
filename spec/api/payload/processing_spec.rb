@@ -175,11 +175,11 @@ describe "API sample payload", rox: { tags: :integration } do
 
     # Note: the third payload cannot be posted at this stage.
     # The first payload must have been processed first.
-    payloads = [ first_payload, second_payload ].collect{ |p| Oj.dump p }
+    payloads = [ first_payload, second_payload ].collect{ |p| MultiJson.dump p }
     payloads.each{ |p| post_api_payload p, users[0] }
 
-    ProcessApiPayloadJob.should have_queued(Oj.load(payloads[0]), users[0].id, kind_of(String)).in(:api)
-    ProcessApiPayloadJob.should have_queued(Oj.load(payloads[1]), users[0].id, kind_of(String)).in(:api)
+    ProcessApiPayloadJob.should have_queued(MultiJson.load(payloads[0]), users[0].id, kind_of(String)).in(:api)
+    ProcessApiPayloadJob.should have_queued(MultiJson.load(payloads[1]), users[0].id, kind_of(String)).in(:api)
     ProcessApiPayloadJob.should have_queue_size_of(2).in(:api)
   end
 
@@ -217,7 +217,7 @@ describe "API sample payload", rox: { tags: :integration } do
 
       with_resque do
         [ first_payload, second_payload, third_payload ].each_with_index do |p,i|
-          post_api_payload Oj.dump(p), users[i < 2 ? 0 : 1]
+          post_api_payload MultiJson.dump(p), users[i < 2 ? 0 : 1]
         end
       end
     end

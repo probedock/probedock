@@ -52,7 +52,7 @@ describe SettingsController do
         it "should return the settings as JSON", rox: { key: '358d0dee856e' } do
           get :show, format: :json
           expect(response.success?).to be_true
-          expect(Oj.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
+          expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
         end
       end
     end
@@ -63,14 +63,14 @@ describe SettingsController do
       it "should update the settings", rox: { key: '394fc08c0929' } do
         put :update, setting: new_values
         expect(response.success?).to be_true
-        expect(Oj.load(response.body)).to eq(HashWithIndifferentAccess.new(new_values))
+        expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(new_values))
       end
 
       it "should ignore the update if any value is invalid", rox: { key: '5606b1076e8b' } do
         new_values[:test_outdated_days] = -2
         put :update, setting: new_values
         expect(response.success?).to be_true
-        expect(Oj.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
+        expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
       end
 
       it "should return a 503 response when in maintenance mode", rox: { key: 'dadc01cfce0c' } do

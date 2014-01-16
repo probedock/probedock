@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class Api::ApiController < ApplicationController
 
   class ApiError < StandardError
@@ -76,8 +75,8 @@ class Api::ApiController < ApplicationController
     raise ApiError.new "Request body cannot be empty", name: :emptyRequest if body.length <= 0
 
     json = begin
-      Oj.load body, mode: :strict
-    rescue ArgumentError, Oj::ParseError => e
+      MultiJson.load body
+    rescue ArgumentError, Oj::ParseError, MultiJson::LoadError => e
       raise ApiError.new "Could not parse JSON: #{e.message}", name: :invalidJson
     end
 

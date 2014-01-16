@@ -36,7 +36,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
         expect{ post :create }.to change(ApiKey, :count).by(1)
         expect(user.api_keys).to have(2).items
         expect(response.success?).to be_true
-        expect(Oj.load(response.body)).to eq(ApiKeyRepresenter.new((user.api_keys - [ existing_key ]).first).serializable_hash)
+        expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new((user.api_keys - [ existing_key ]).first).serializable_hash)
       end
 
       it "should return a 503 response when in maintenance mode", rox: { key: '72bb0bf723e4' } do
@@ -52,7 +52,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
         key = user.api_keys.first
         get :show, id: key.identifier
         expect(response.success?).to be_true
-        expect(Oj.load(response.body)).to eq(ApiKeyRepresenter.new(key, detailed: true).serializable_hash)
+        expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new(key, detailed: true).serializable_hash)
       end
 
       it "should work in maintenance mode", rox: { key: '7f71dcef0f27' } do
@@ -75,7 +75,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
         put :update, id: key.identifier, account_api_key: { active: false }
         expect(response.success?).to be_true
         expect(key.tap(&:reload).active).to be_false
-        expect(Oj.load(response.body)).to eq(ApiKeyRepresenter.new(key).serializable_hash)
+        expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new(key).serializable_hash)
       end
 
       it "should return a 503 response when in maintenance mode", rox: { key: '8a7b243b8ddd' } do
@@ -107,7 +107,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
 
       def parse_response options = {}
         get :index, options
-        HashWithIndifferentAccess.new Oj.load(response.body)
+        HashWithIndifferentAccess.new MultiJson.load(response.body)
       end
 
       # data

@@ -22,9 +22,9 @@ describe JsonCache do
   let(:generator){ double fetch: contents }
 
   it "should serialize contents as json", rox: { key: 'a0ebf9eac6c5' } do
-    JsonCache.new(:foo){ 'bar' }.get.to_json.should == Oj.dump('bar', mode: :strict)
-    JsonCache.new(:fooo){ [ 'a', 'b' ] }.get.to_json.should == Oj.dump([ 'a', 'b' ], mode: :strict)
-    JsonCache.new(:foooo){ { 'a' => 'b' } }.get.to_json.should == Oj.dump({ 'a' => 'b' }, mode: :strict)
+    JsonCache.new(:foo){ 'bar' }.get.to_json.should == MultiJson.dump('bar', mode: :strict)
+    JsonCache.new(:fooo){ [ 'a', 'b' ] }.get.to_json.should == MultiJson.dump([ 'a', 'b' ], mode: :strict)
+    JsonCache.new(:foooo){ { 'a' => 'b' } }.get.to_json.should == MultiJson.dump({ 'a' => 'b' }, mode: :strict)
   end
 
   context "for a string" do
@@ -50,7 +50,7 @@ describe JsonCache do
     end
 
     it "should return the contents as json", rox: { key: 'ca756ee7eeb4' } do
-      subject.get.to_json.should == Oj.dump(contents, mode: :strict)
+      subject.get.to_json.should == MultiJson.dump(contents, mode: :strict)
     end
 
     it "should return the original contents", rox: { key: '18dcc69073ca' } do

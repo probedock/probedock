@@ -34,7 +34,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
       it "should create a project", rox: { key: 'a98ac452a495' } do
         expect{ create_project }.to change(Project, :count).by(1)
         expect(response.success?).to be_true
-        expect(Oj.load(response.body)).to eq(ProjectRepresenter.new(Project.first).serializable_hash)
+        expect(MultiJson.load(response.body)).to eq(ProjectRepresenter.new(Project.first).serializable_hash)
       end
 
       it "should not accept a blank name", rox: { key: '60fd9fb3e61d' } do
@@ -76,7 +76,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
         update_project
         check_project_update
         expect(response.success?).to be_true
-        expect(Oj.load(response.body)).to eq(ProjectRepresenter.new(project).serializable_hash)
+        expect(MultiJson.load(response.body)).to eq(ProjectRepresenter.new(project).serializable_hash)
       end
 
       it "should not accept a blank name", rox: { key: '9a575ebf3d5a' } do
@@ -108,7 +108,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
 
     def parse_response options = {}
       api_get user, api_projects_path(options)
-      HashWithIndifferentAccess.new Oj.load(response.body)
+      HashWithIndifferentAccess.new MultiJson.load(response.body)
     end
 
     # data
@@ -145,11 +145,11 @@ describe Api::ProjectsController, rox: { tags: :unit } do
   private
 
   def create_project req = nil
-    api_post user, :api_projects, Oj.dump(HashWithIndifferentAccess.new(req || creation_request), mode: :strict)
+    api_post user, :api_projects, MultiJson.dump(HashWithIndifferentAccess.new(req || creation_request), mode: :strict)
   end
 
   def update_project req = nil
-    api_put user, :api_project, Oj.dump(HashWithIndifferentAccess.new(req || update_request), mode: :strict), id: project.api_id
+    api_put user, :api_project, MultiJson.dump(HashWithIndifferentAccess.new(req || update_request), mode: :strict), id: project.api_id
   end
 
   def check_project_update

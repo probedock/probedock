@@ -39,7 +39,7 @@ describe DataController do
       it "should return the status of the test counters recomputing process", rox: { key: '32cc410f389a' } do
         get :test_counters
         expect(response.status).to eq(200)
-        expect(Oj.load(response.body)).to eq({ 'foo' => 'bar' })
+        expect(MultiJson.load(response.body)).to eq({ 'foo' => 'bar' })
       end
 
       it "should return a 503 response if maintenance mode is not enabled", rox: { key: '00d368f6a4b2' } do
@@ -61,7 +61,7 @@ describe DataController do
         expect(TestCounter).to receive(:recompute!)
         post :test_counters
         expect(response.status).to eq(200)
-        expect(Oj.load(response.body)).to eq({ 'foo' => 'bar' })
+        expect(MultiJson.load(response.body)).to eq({ 'foo' => 'bar' })
       end
     end
   end

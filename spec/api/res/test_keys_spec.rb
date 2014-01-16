@@ -31,14 +31,14 @@ describe Api::TestKeysController, rox: { tags: :unit } do
 
       keys = TestKey.order('created_at ASC').to_a
       expect(keys.all?{ |k| k.user == user && k.project == project }).to be_true
-      expect(Oj.load(response.body)).to eq(TestKeysRepresenter.new(OpenStruct.new(total: 5, data: keys)).serializable_hash)
+      expect(MultiJson.load(response.body)).to eq(TestKeysRepresenter.new(OpenStruct.new(total: 5, data: keys)).serializable_hash)
     end
 
     it "should indicate the total number of keys for the user", rox: { key: '76a35139b094' } do
       other_project = create :project
       3.times{ create :test_key, user: user, project: other_project }
       expect{ generate_keys n: 5 }.to change(TestKey, :count).by(5)
-      expect(Oj.load(response.body)['total']).to eq(8)
+      expect(MultiJson.load(response.body)['total']).to eq(8)
     end
 
     it "should create one key if no number is specified", rox: { key: '2eac146513ce' } do
@@ -53,12 +53,12 @@ describe Api::TestKeysController, rox: { tags: :unit } do
     end
 
     it "should not accept a request without a project API ID", rox: { key: 'f58497f7589d' } do
-      expect{ generate_keys({ n: 1 }, Oj.dump({})) }.not_to change(TestKey, :count)
+      expect{ generate_keys({ n: 1 }, MultiJson.dump({})) }.not_to change(TestKey, :count)
       check_api_errors [ { name: 'project_api_id_missing', path: '/projectApiId', message: Regexp.new("API") } ]
     end
 
     it "should not accept a request with an unknown project API ID", rox: { key: 'c89c530f4cf9' } do
-      expect{ generate_keys({ n: 1 }, Oj.dump({ 'projectApiId' => '000000000000' })) }.not_to change(TestKey, :count)
+      expect{ generate_keys({ n: 1 }, MultiJson.dump({ 'projectApiId' => '000000000000' })) }.not_to change(TestKey, :count)
       check_api_errors [ { name: 'project_api_id_unknown', path: '/projectApiId', message: Regexp.new('000000000000') } ]
     end
 
@@ -123,7 +123,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
 
     def parse_response options = {}
       api_get user, api_test_keys_path(options)
-      HashWithIndifferentAccess.new Oj.load(response.body)
+      HashWithIndifferentAccess.new MultiJson.load(response.body)
     end
 
     # data
@@ -167,7 +167,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
   end
 
   def generation_request_body p = project
-    Oj.dump 'projectApiId' => p.api_id
+    MultiJson.dump 'projectApiId' => p.api_id
   end
 
   def release_keys

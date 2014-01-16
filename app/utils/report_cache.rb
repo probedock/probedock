@@ -80,7 +80,7 @@ class ReportCache
   def load_from_scratch id
     raw = @block.call id
     if @options[:type] == :json
-      Oj.dump raw, mode: :strict
+      MultiJson.dump raw, mode: :strict
     else
       raw
     end

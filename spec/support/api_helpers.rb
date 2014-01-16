@@ -58,7 +58,7 @@ module SpecApiHelper
     expect(response.status).to eq(400)
     expect(response.content_type).to eq(media_type(:errors))
     
-    body = Oj.load response.body, mode: :strict
+    body = MultiJson.load response.body, mode: :strict
     expect(body).to be_a_kind_of(Hash)
 
     HashWithIndifferentAccess.new(body)[:errors].tap do |errors|
@@ -76,7 +76,7 @@ module SpecApiHelper
     expect(response.success?).to be_true
     expect(response.headers['Content-Type']).to match(/\Aapplication\/hal\+json/)
 
-    Oj.load response.body, mode: :strict
+    MultiJson.load response.body, mode: :strict
   end
 
   def api_post user, path, body, params = {}, options = {}
