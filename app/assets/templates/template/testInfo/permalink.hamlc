@@ -1,0 +1,12 @@
+.panel.panel-info
+  .panel-heading
+    %h3.panel-title= I18n.t('jst.models.test.permalink')
+  .panel-body
+    %p= I18n.t('jst.testInfo.permalinkInstructions')
+    %form.form-inline{ role: 'form' }
+      .form-group
+        .input-group
+          %input.monospace.form-control{ type: 'text', readonly: true }
+          .input-group-btn
+            %button.btn.btn-default{ type: 'button' }
+              %span.glyphicon.glyphicon-edit

@@ -17,6 +17,8 @@ $.fn.tagcloud.defaults = {
   color: { start: '#6599e6', end: '#ff5522' }
 };
 
+ZeroClipboard.config({ moviePath: <%= asset_path("ZeroClipboard.swf").to_json %> });
+
 var App = new Backbone.Marionette.Application();
 
 App.version = <%= ROXCenter::Application::VERSION.to_json %>;

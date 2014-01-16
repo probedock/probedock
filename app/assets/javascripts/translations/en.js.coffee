@@ -150,6 +150,9 @@ this.Translations.en =
     resultStatus:
       passed: "passed"
       failed: "failed"
+    permalinkInstructions: "If you need to link to this test from elsewhere, please use this permalink."
+    copyToClipboard: "Copy to clipboard"
+    copiedToClipboard: "Copied!"
   testRunReport:
     loadingError: "Report data could not be loaded"
     loadingTimeout: "Report generation timed out"

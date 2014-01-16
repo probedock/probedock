@@ -27,62 +27,64 @@ App.autoModule('testInfo', function() {
 
   var TestInfo = Backbone.Marionette.Layout.extend({
 
-    template : 'testInfo/info',
-    regions : {
-      info : '.info',
-      actions : '.actions',
-      tabs : '.tabs',
-      result : '.result'
+    template: 'testInfo/info',
+    regions: {
+      info: '.info',
+      permalink: '.permalink',
+      actions: '.actions',
+      tabs: '.tabs',
+      result: '.result'
     },
 
-    initialize : function() {
+    initialize: function() {
       this.listenTo(App.vent, 'test:result:selected', this.showResult);
       this.listenTo(App.vent, 'test:result:unselected', this.hideResult);
     },
 
-    onRender : function() {
-      this.info.show(new TestView({ model : this.model }));
-      this.actions.show(new TestActions({ model : this.model }));
-      this.tabs.show(new TestTabs({ model : this.model }));
+    onRender: function() {
+      this.info.show(new TestView({ model: this.model }));
+      this.permalink.show(new PermalinkView({ model: this.model }));
+      this.actions.show(new TestActions({ model: this.model }));
+      this.tabs.show(new TestTabs({ model: this.model }));
       this.result.show(new NoResultDetails());
     },
 
-    showResult : function(result) {
-      this.result.show(new ResultDetails({ model : result }));
+    showResult: function(result) {
+      this.result.show(new ResultDetails({ model: result }));
     },
 
-    hideResult : function() {
+    hideResult: function() {
       this.result.show(new NoResultDetails());
     }
   });
 
   var TestActions = Backbone.Marionette.ItemView.extend({
     
-    template : 'testInfo/actions',
-    ui : {
-      deprecateButton : 'button.deprecate',
-      undeprecateButton : 'button.undeprecate'
+    template: 'testInfo/actions',
+    ui: {
+      deprecateButton: 'button.deprecate',
+      undeprecateButton: 'button.undeprecate'
     },
 
-    events : {
-      'click .deprecate' : 'deprecate',
-      'click .undeprecate' : 'undeprecate'
+    events: {
+      'click .deprecate': 'deprecate',
+      'click .undeprecate': 'undeprecate'
     },
 
     modelEvents: {
       'change': 'updateActions'
     },
 
-    initialize : function() {
+    initialize: function() {
       this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
     },
 
-    onRender : function() {
+    onRender: function() {
       this.updateActions();
       this.updateControls();
     },
 
-    updateActions : function() {
+    updateActions: function() {
       this.ui.deprecateButton[this.model.get('deprecated_at') ? 'hide' : 'show']();
       this.ui.undeprecateButton[this.model.get('deprecated_at') ? 'show' : 'hide']();
     },
@@ -97,30 +99,30 @@ App.autoModule('testInfo', function() {
       this.ui.undeprecateButton.attr('disabled', this.busy || App.maintenance);
     },
 
-    deprecate : function() {
+    deprecate: function() {
       this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
-        url : Path.join(this.model.apiPath(), 'deprecate'),
-        type : 'POST'
+        url: Path.join(this.model.apiPath(), 'deprecate'),
+        type: 'POST'
       }).done(_.bind(this.setDeprecated, this, true)).fail(_.bind(this.deprecationError, this));
     },
 
-    undeprecate : function() {
+    undeprecate: function() {
       this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
-        url : Path.join(this.model.apiPath(), 'undeprecate'),
-        type : 'POST'
+        url: Path.join(this.model.apiPath(), 'undeprecate'),
+        type: 'POST'
       }).done(_.bind(this.setDeprecated, this, false)).fail(_.bind(this.deprecationError, this));
     },
 
-    setDeprecated : function(deprecated) {
+    setDeprecated: function(deprecated) {
       this.setBusy(false);
       this.model.set({ deprecated_at: deprecated ? new Date().getTime() : null });
     },
 
-    deprecationError : function(xhr) {
+    deprecationError: function(xhr) {
       this.setBusy(false);
       if (xhr.status != 503) {
         Alerts.danger({ message: I18n.t('jst.testInfo.deprecationError'), fade: true }).addClass('deprecationError').appendTo(this.$el);
@@ -128,41 +130,66 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var TestView = Backbone.Marionette.ItemView.extend({
-  
-    template : 'testInfo/test',
-    ui : {
-      author : 'dd.author',
-      project : 'dd.project',
-      createdAt : 'dd.createdAt',
-      category : 'dd.category',
-      tags : 'dd.tags',
-      tickets : 'dd.tickets',
-      inactiveTitle : 'dt.inactive',
-      inactiveInfo : 'dd.inactive',
-      deprecateTitle : 'dt.deprecated',
-      deprecateInfo : 'dd.deprecated',
-      permalink : 'dd.permalink'
+  var PermalinkView = Backbone.Marionette.ItemView.extend({
+
+    template: 'testInfo/permalink',
+    ui: {
+      permalink: 'form input',
+      permalinkButton: 'form button'
     },
 
-    initialize : function() {
+    events: {
+      'click form input': 'selectPermalink'
+    },
+
+    onRender: function() {
+      this.ui.permalink.val(this.completePermalink());
+      Clipboard.setup(this.ui.permalinkButton, this.completePermalink());
+    },
+
+    selectPermalink: function(e) {
+      e.preventDefault();
+      this.ui.permalink.setSelection(0, this.ui.permalink.val().length);
+    },
+
+    completePermalink: function() {
+      return Path.join(window.location.protocol + '//' + window.location.host, this.model.permalink());
+    }
+  });
+
+  var TestView = Backbone.Marionette.ItemView.extend({
+  
+    template: 'testInfo/test',
+    ui: {
+      author: 'dd.author',
+      project: 'dd.project',
+      createdAt: 'dd.createdAt',
+      category: 'dd.category',
+      tags: 'dd.tags',
+      tickets: 'dd.tickets',
+      inactiveTitle: 'dt.inactive',
+      inactiveInfo: 'dd.inactive',
+      deprecateTitle: 'dt.deprecated',
+      deprecateInfo: 'dd.deprecated'
+    },
+
+    initialize: function() {
       this.listenTo(this.model, 'change', this.updateInactive);
       this.listenTo(this.model, 'change', this.updateDeprecated);
     },
 
-    onRender : function() {
+    onRender: function() {
       this.ui.author.html(this.model.get('author').link());
       this.ui.project.html(this.model.get('project').link());
       this.ui.createdAt.text(Format.datetime.full(new Date(this.model.get('created_at'))));
       this.ui.category.html(this.model.categoryLink() || I18n.t('jst.common.noData'));
-      this.ui.permalink.html($('<a />').attr('href', this.model.permalink()).text(this.model.permalink()));
       this.renderTags();
       this.renderTickets();
       this.updateInactive();
       this.updateDeprecated();
     },
 
-    renderTickets : function() {
+    renderTickets: function() {
       if (!this.model.get('tickets') || !this.model.get('tickets').length) {
         return this.ui.tickets.text(I18n.t('jst.common.noData'));
       }
@@ -171,7 +198,7 @@ App.autoModule('testInfo', function() {
       }).forEach(this.renderTicket, this);
     },
 
-    renderTicket : function(ticket) {
+    renderTicket: function(ticket) {
       if (ticket.get('url')) {
         ticket.link().addClass('label label-warning').appendTo(this.ui.tickets);
       } else {
@@ -179,24 +206,24 @@ App.autoModule('testInfo', function() {
       }
     },
 
-    renderTags : function() {
+    renderTags: function() {
       if (!this.model.get('tags') || !this.model.get('tags').length) {
         return this.ui.tags.text(I18n.t('jst.common.noData'));
       }
       _.each(this.model.get('tags').sort(), this.renderTag, this);
     },
 
-    renderTag : function(tag) {
-      $('<a class="label label-info" />').attr('href', Path.build('tests?' + $.param({ tags : [ tag ] }))).text(tag).appendTo(this.ui.tags);
+    renderTag: function(tag) {
+      $('<a class="label label-info" />').attr('href', Path.build('tests?' + $.param({ tags: [ tag ] }))).text(tag).appendTo(this.ui.tags);
     },
 
-    updateInactive : function() {
+    updateInactive: function() {
       _.each([ this.ui.inactiveTitle, this.ui.inactiveInfo ], function(el) {
         el[this.model.get('active') ? 'hide' : 'show']();
       }, this);
     },
 
-    updateDeprecated : function() {
+    updateDeprecated: function() {
       _.each([ this.ui.deprecateTitle, this.ui.deprecateInfo ], function(el) {
         el[this.model.get('deprecated_at') ? 'show' : 'hide']();
       }, this);
@@ -205,14 +232,14 @@ App.autoModule('testInfo', function() {
 
   var TestTabs = Backbone.Marionette.Layout.extend({
 
-    template : 'testInfo/tabs',
-    regions : {
-      resultTable : '#resultTable',
-      resultChart : '#resultChart',
-      customValues : '#customValues'
+    template: 'testInfo/tabs',
+    regions: {
+      resultTable: '#resultTable',
+      resultChart: '#resultChart',
+      customValues: '#customValues'
     },
 
-    onRender : function() {
+    onRender: function() {
 
       var id = window.location.hash;
       id = this.region(id) ? id : '#resultTable';
@@ -225,16 +252,16 @@ App.autoModule('testInfo', function() {
       }, this));
     },
 
-    activateTab : function(id) {
+    activateTab: function(id) {
       window.location.hash = id;
       this['show' + id.replace('#', '').underscore().capitalize().camelize()].apply(this);
     },
 
-    region : function(id) {
+    region: function(id) {
       return this.regions[id.replace('#', '')];
     },
 
-    showResultTable : function() {
+    showResultTable: function() {
 
       if (this.resultTableSetup) {
         return;
@@ -242,51 +269,51 @@ App.autoModule('testInfo', function() {
       this.resultTableSetup = true;
 
       var Collection = TestResultTableCollection.extend({
-        url : Path.join(this.model.apiPath(), 'results')
+        url: Path.join(this.model.apiPath(), 'results')
       });
 
       var Table = ResultTable.extend({
-        tableViewOptions : {
-          collection : new Collection()
+        tableViewOptions: {
+          collection: new Collection()
         }
       });
 
       this.resultTable.show(new Table());
     },
 
-    showResultChart : function() {
+    showResultChart: function() {
 
       if (this.resultChartSetup) {
         return;
       }
       this.resultChartSetup = true;
 
-      this.resultChart.show(new ResultChart({ model : this.model }));
+      this.resultChart.show(new ResultChart({ model: this.model }));
     },
 
-    showCustomValues : function() {
+    showCustomValues: function() {
 
       if (this.customValuesSetup) {
         return;
       }
       this.customValuesSetup = true;
 
-      this.customValues.show(new CustomValues({ model : this.model }));
+      this.customValues.show(new CustomValues({ model: this.model }));
     }
   });
 
   var CustomValues = Backbone.Marionette.ItemView.extend({
 
-    template : 'testInfo/values',
-    ui : {
-      list : 'dl'
+    template: 'testInfo/values',
+    ui: {
+      list: 'dl'
     },
 
-    onRender : function() {
+    onRender: function() {
       this.renderValues();
     },
 
-    renderValues : function() {
+    renderValues: function() {
       if (!this.model.get('values') || _.isEmpty(this.model.get('values'))) {
         return this.$el.empty().append($('<em />').text(I18n.t('jst.testInfo.noCustomValues')));
       }
@@ -299,67 +326,67 @@ App.autoModule('testInfo', function() {
 
   var ResultChart = Backbone.Marionette.ItemView.extend({
 
-    template : false,
+    template: false,
 
-    initialize : function() {
+    initialize: function() {
       this.listenTo(App.vent, 'test:result:selected', this.setSelected);
       this.listenTo(App.vent, 'test:result:unselected', this.setSelected);
     },
 
-    setSelected : function(result) {
+    setSelected: function(result) {
       this.selectedResult = result;
     },
 
-    onRender : function() {
+    onRender: function() {
       var self = this;
       async.nextTick(_.bind(function() {
         this.chart = new Highcharts.Chart({
-          chart : {
-            renderTo : this.$el.get(0),
-            type : 'spline',
-            events : {
-              load : _.bind(this.loadResults, this)
+          chart: {
+            renderTo: this.$el.get(0),
+            type: 'spline',
+            events: {
+              load: _.bind(this.loadResults, this)
             }
           },
-          title : false,
-          xAxis : {
-            type : 'datetime',
-            labels : {
-              formatter : function() {
+          title: false,
+          xAxis: {
+            type: 'datetime',
+            labels: {
+              formatter: function() {
                 return Format.date.short(new Date(this.value));
               }
             }
           },
           yAxis: {
-            title : {
-              text : I18n.t('jst.models.testResult.duration')
+            title: {
+              text: I18n.t('jst.models.testResult.duration')
             },
-            min : 0,
-            labels : {
-              formatter : function() {
+            min: 0,
+            labels: {
+              formatter: function() {
                 return Format.duration(this.value);
               }
             }
           },
-          tooltip : {
-            formatter : function() {
+          tooltip: {
+            formatter: function() {
               return Format.datetime.full(new Date(this.x))
                 + '<br />'
-                + _.template('<strong><%- duration %>:</strong> ', { duration : I18n.t('jst.models.testResult.duration') })
+                + _.template('<strong><%- duration %>:</strong> ', { duration: I18n.t('jst.models.testResult.duration') })
                 + Format.duration(this.y)
                 + '<br />'
-                + _.template('<strong><%- status %>:</strong> ', { status : I18n.t('jst.models.testResult.status') })
+                + _.template('<strong><%- status %>:</strong> ', { status: I18n.t('jst.models.testResult.status') })
                 + I18n.t('jst.testInfo.resultStatus.' + (this.point.result.get('passed') ? 'passed' : 'failed'))
                 + '<br />'
-                + _.template('<em><%- instructions %></em>', { instructions : I18n.t('jst.testInfo.resultPointInstructions') });
+                + _.template('<em><%- instructions %></em>', { instructions: I18n.t('jst.testInfo.resultPointInstructions') });
             }
           },
-          plotOptions : {
-            series : {
-              cursor : 'pointer',
-              point : {
-                events : {
-                  click : function() {
+          plotOptions: {
+            series: {
+              cursor: 'pointer',
+              point: {
+                events: {
+                  click: function() {
                     // FIXME: this produces a "RangeError: maximum call stack size exceeded" for some reason
                     if (self.selectedResult && self.selectedResult.get('id') == this.result.get('id')) {
                       App.vent.trigger('test:result:unselected');
@@ -371,26 +398,26 @@ App.autoModule('testInfo', function() {
               }
             }
           },
-          series : []
+          series: []
         });
       }, this));
     },
 
-    loadResults : function() {
+    loadResults: function() {
       $.ajax({
-        url : Path.join(this.model.apiPath(), 'results', 'chart'),
-        dataType : 'json'
+        url: Path.join(this.model.apiPath(), 'results', 'chart'),
+        dataType: 'json'
       }).done(_.bind(function(response) {
         this.chart.addSeries({
-          name : 'results',
-          showInLegend : false,
-          data : _.map(response, function(result) {
+          name: 'results',
+          showInLegend: false,
+          data: _.map(response, function(result) {
             return {
-              x : result.run_at,
-              y : result.duration,
-              result : TestResult.findOrCreate(result),
-              marker : {
-                fillColor : result.passed ? '#008b00' : '#ff0000'
+              x: result.run_at,
+              y: result.duration,
+              result: TestResult.findOrCreate(result),
+              marker: {
+                fillColor: result.passed ? '#008b00' : '#ff0000'
               }
             };
           })
@@ -401,25 +428,25 @@ App.autoModule('testInfo', function() {
 
   var ResultRow = Backbone.Marionette.ItemView.extend({
 
-    tagName : 'tr',
-    template : 'testInfo/resultRow',
-    ui : {
-      runner : '.runner',
-      version : '.version',
-      duration : '.duration',
-      runAt : '.runAt'
+    tagName: 'tr',
+    template: 'testInfo/resultRow',
+    ui: {
+      runner: '.runner',
+      version: '.version',
+      duration: '.duration',
+      runAt: '.runAt'
     },
 
-    events : {
-      'click' : 'selectResult'
+    events: {
+      'click': 'selectResult'
     },
 
-    initialize : function() {
+    initialize: function() {
       this.listenTo(App.vent, 'test:result:selected', this.setSelected);
       this.listenTo(App.vent, 'test:result:unselected', this.setUnselected);
     },
 
-    onRender : function() {
+    onRender: function() {
       this.renderRunner();
       this.ui.version.text(this.model.get('version') || I18n.t('jst.common.noData'));
       this.ui.duration.text(Format.duration(this.model.get('duration')));
@@ -427,11 +454,11 @@ App.autoModule('testInfo', function() {
       this.updateStyle();
     },
 
-    renderRunner : function() {
-      new UserAvatar({ model : this.model.get('runner'), size : 'small', el : this.ui.runner }).render();
+    renderRunner: function() {
+      new UserAvatar({ model: this.model.get('runner'), size: 'small', el: this.ui.runner }).render();
     },
 
-    selectResult : function() {
+    selectResult: function() {
       if (this.$el.hasClass('warning')) {
         App.vent.trigger('test:result:unselected');
       } else {
@@ -439,7 +466,7 @@ App.autoModule('testInfo', function() {
       }
     },
 
-    setSelected : function(result) {
+    setSelected: function(result) {
       this.$el.removeClass('warning success danger');
       if (result == this.model) {
         this.$el.addClass('warning');
@@ -448,77 +475,77 @@ App.autoModule('testInfo', function() {
       }
     },
 
-    setUnselected : function() {
+    setUnselected: function() {
       if (this.$el.hasClass('warning')) {
         this.$el.removeClass('warning');
         this.updateStyle();
       }
     },
 
-    updateStyle : function() {
+    updateStyle: function() {
       this.$el.addClass(this.model.get('passed') ? 'success' : 'danger');
     }
   });
 
   var ResultTableView = Tableling.Bootstrap.TableView.extend({
 
-    template : 'testInfo/resultTable',
-    itemView : ResultRow,
-    itemViewContainer : 'tbody',
+    template: 'testInfo/resultTable',
+    itemView: ResultRow,
+    itemViewContainer: 'tbody',
 
-    initialize : function(options) {
+    initialize: function(options) {
       Tableling.Bootstrap.TableView.prototype.initialize.call(this, options);
       this.on('render', this.clearLoading, this);
     },
     
-    clearLoading : function() {
+    clearLoading: function() {
       this.$el.find('.loading').remove();
     }
   });
 
   var ResultTable = Table.extend({
 
-    tableView : ResultTableView,
-    pageSizeViewOptions : {
-      sizes : [ 5, 10, 15 ]
+    tableView: ResultTableView,
+    pageSizeViewOptions: {
+      sizes: [ 5, 10, 15 ]
     },
 
-    config : {
-      pageSize : 5,
-      sort : [ 'run_at desc' ]
+    config: {
+      pageSize: 5,
+      sort: [ 'run_at desc' ]
     }
   });
 
   var NoResultDetails = Backbone.Marionette.ItemView.extend({
 
-    className : 'well',
-    template : function() {
-      return _.template('<em><%- instructions %></em>', { instructions : I18n.t('jst.testInfo.resultInstructions') });
+    className: 'well',
+    template: function() {
+      return _.template('<em><%- instructions %></em>', { instructions: I18n.t('jst.testInfo.resultInstructions') });
     }
   });
 
   var ResultDetails = Backbone.Marionette.ItemView.extend({
 
-    className : 'well',
-    template : 'testInfo/result',
-    ui : {
-      version : '.version',
-      runAt : '.runAt',
-      duration : '.duration',
-      status : '.status',
-      message : '.message'
+    className: 'well',
+    template: 'testInfo/result',
+    ui: {
+      version: '.version',
+      runAt: '.runAt',
+      duration: '.duration',
+      status: '.status',
+      message: '.message'
     },
 
-    initialize : function() {
+    initialize: function() {
       this.listenTo(this.model, 'change', this.renderModel);
     },
 
-    onRender : function() {
+    onRender: function() {
       this.renderModel();
       this.model.fetch();
     },
 
-    renderModel : function() {
+    renderModel: function() {
       this.ui.version.text(this.model.get('version') || I18n.t('jst.common.noData'));
       this.ui.runAt.html(this.testRunLink());
       this.ui.duration.text(this.model.get('duration') ? Format.duration(this.model.get('duration')) : I18n.t('jst.common.noData'));
@@ -526,12 +553,12 @@ App.autoModule('testInfo', function() {
       this.renderMessage();
     },
 
-    testRunLink : function() {
+    testRunLink: function() {
       return $('<a />').attr('href', Path.build('runs', this.model.get('test_run_id'))).text(this.model.humanRunAt())
-        .tooltip({ title : I18n.t('jst.testInfo.goToTestRun'), placement : 'right' });
+        .tooltip({ title: I18n.t('jst.testInfo.goToTestRun'), placement: 'right' });
     },
 
-    statusLabel : function() {
+    statusLabel: function() {
       if (this.model.get('passed')) {
         return $('<span class="label label-success" />').text(I18n.t('jst.testInfo.resultStatus.passed'));
       } else {
@@ -539,7 +566,7 @@ App.autoModule('testInfo', function() {
       }
     },
 
-    renderMessage : function() {
+    renderMessage: function() {
 
       this.ui.message[this.model.get('message') ? 'show' : 'hide']();
       this.ui.message.text(this.model.get('message'));
@@ -552,6 +579,6 @@ App.autoModule('testInfo', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new TestInfo({ model : new Test(options.config) }));
+    options.region.show(new TestInfo({ model: new Test(options.config) }));
   });
 });

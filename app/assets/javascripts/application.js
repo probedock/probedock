@@ -38,11 +38,13 @@
 //= require ./lib/jquery.color
 //= require ./lib/jquery.smooth-scroll
 //= require ./lib/jquery.tableofcontents
+//= require ./lib/jquery.rangyinputs
 //= require ./lib/globalize/globalize
 //= require ./lib/globalize/cultures/globalize.culture.en-US
 //= require ./lib/inflection
 //= require ./lib/moment
 //= require ./lib/i18next
+//= require ./lib/ZeroClipboard
 //= require highcharts
 //= require highcharts/highcharts-more
 //= require select2

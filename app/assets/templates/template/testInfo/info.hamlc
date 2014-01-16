@@ -1,4 +1,6 @@
-.info
-.actions
-.tabs
-.result
+.row
+  .info.col-md-7
+  .permalink.col-md-5
+  .actions.col-md-12
+  .tabs.col-md-12
+  .result.col-md-12

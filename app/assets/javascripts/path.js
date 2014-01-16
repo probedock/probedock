@@ -70,7 +70,7 @@ var Path = {
       var memoEndsWithMatch = memo.match(/\/$/),
           partStartsWithMatch = part.match(/^\//);
 
-      if (!memoEndsWithMatch && !partStartsWithMatch) {
+      if (memo.length && !memoEndsWithMatch && !partStartsWithMatch) {
         memo += '/';
       } else if (memoEndsWithMatch && partStartsWithMatch) {
         part = part.replace(/^\//, '');
