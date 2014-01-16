@@ -47,8 +47,8 @@ App.watchStatus = function(source, func, options) {
       context = options ? options.context : null;
 
   source.listenTo(App.vent, 'status:changed', function(changed) {
-    only = only || _.keys(changed);
-    if (!_.isEmpty(_.difference(_.intersection(_.keys(changed), only), except))) {
+    var actualOnly = only || _.keys(changed);
+    if (!_.isEmpty(_.difference(_.intersection(_.keys(changed), actualOnly), except))) {
       func.call(context || source, changed);
     }
   });
