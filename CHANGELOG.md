@@ -1,6 +1,14 @@
 # Changelog
 
+## v2.1.2 - Edge
+
+**Upgrade Notes:** changes in this version require counters to be recomputed from the settings page.
+
+* Deprecations are now counted and displayed separately from new tests.
+
 ## v2.1.1 - January 15, 2014
+
+**Upgrade Notes:** this upgrade can be done as a [hot deploy](doc/rox/deploy.md#hot-deploy) with no downtime.
 
 * Page URLs no longer include the locale.
 
