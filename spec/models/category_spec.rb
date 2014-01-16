@@ -38,7 +38,7 @@ describe Category do
 
         it "should not validate the uniqueness of name", rox: { key: 'dd74d78ce79b' } do
           subject.name = category.name
-          expect{ subject.save! }.to raise_error(ActiveRecord::RecordNotUnique)
+          expect{ subject.save! }.to raise_unique_error
         end
       end
     end

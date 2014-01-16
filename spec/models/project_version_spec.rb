@@ -34,7 +34,7 @@ describe ProjectVersion do
         it "should not validate the uniqueness of name", rox: { key: 'c98c75e7717b' } do
           subject.project = project_version.project
           subject.name = project_version.name
-          expect{ subject.save! }.to raise_error(ActiveRecord::RecordNotUnique)
+          expect{ subject.save! }.to raise_unique_error
         end
       end
     end

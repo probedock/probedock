@@ -61,8 +61,8 @@ class TestCounter < ActiveRecord::Base
         c.unique_token = token
         c.quick_validation = true
         c.save!
-      rescue ActiveRecord::RecordNotUnique
-        # ignore
+      rescue ActiveRecord::StatementInvalid => e
+        raise e unless e.class == ActiveRecord::RecordNotUnique || (e.original_exception.try(:class) == SQLite3::ConstraintException)
       end
 
       cache_token token, attributes[:timestamp]

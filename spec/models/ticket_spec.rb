@@ -41,7 +41,7 @@ describe Ticket, rox: { tags: :unit } do
       it(nil, rox: { key: 'a3aaa98b10f9' }){ should validate_uniqueness_of(:name).case_insensitive }
 
       it "should not validate the uniqueness of name with quick validation", rox: { key: '2ef1cf87a9f8' } do
-        lambda{ Ticket.new.tap{ |t| t.name = ticket.name; t.quick_validation = true }.save! }.should raise_error(ActiveRecord::RecordNotUnique)
+        lambda{ Ticket.new.tap{ |t| t.name = ticket.name; t.quick_validation = true }.save! }.should raise_unique_error
       end
     end
   end

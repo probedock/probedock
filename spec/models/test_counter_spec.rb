@@ -355,7 +355,7 @@ describe TestCounter do
 
         it "should not validate the uniqueness of the unique token", rox: { key: 'c00f69bfebcb' } do
           %w(timezone timestamp mask unique_token).each{ |attr| subject.send "#{attr}=", test_counter.send(attr) }
-          expect{ subject.save! }.to raise_error(ActiveRecord::RecordNotUnique)
+          expect{ subject.save! }.to raise_unique_error
         end
       end
     end

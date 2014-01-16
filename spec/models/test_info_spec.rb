@@ -228,7 +228,7 @@ describe TestInfo, rox: { tags: :unit } do
       it(nil, rox: { key: 'f2b5f79ca573' }){ should_not validate_presence_of(:key) }
 
       it "should not validate the uniqueness of key_id", rox: { key: 'cd41378e11ce' } do
-        lambda{ create :test, key: test.key, quick_validation: true }.should raise_error(ActiveRecord::RecordNotUnique)
+        lambda{ create :test, key: test.key, quick_validation: true }.should raise_unique_error
       end
     end
   end
