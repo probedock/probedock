@@ -1,19 +1,19 @@
 source $HOME/.screenrc
 
 screen -t task 0
-stuff "bundle exec guard start -P Resque\012"
+stuff "bundle exec guard start\012"
 screen -t redis 1
 stuff "redis-cli\012"
 screen -t db 2
 stuff "mysql -uroot ROX_CENTER\012"
 screen -t server 3
-stuff "rails server\012"
+stuff "bundle exec rails server\012"
 screen -t vim 4 $EDITOR -c GG
 screen -t zsh 5
 screen -t spec 6
-stuff "rake"
+stuff "bundle exec rake"
 screen -t console 7
-stuff "rails console\012"
+stuff "bundle exec rails console\012"
 screen -t ssh 8
 stuff "ssh lmetst1"
 select vim

@@ -1,0 +1,4 @@
+development:
+  "api": 1
+  "cache": 1
+  "metrics:test_counters": 4

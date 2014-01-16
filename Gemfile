@@ -84,8 +84,10 @@ group :development, :test do
   gem 'rox-client-rspec', '~> 0.3.1'
   gem 'rspec-rails', '~> 2.14'
 
+  gem 'resque-pool'
+
   gem 'guard'
-  gem 'guard-resque'
+  gem 'guard-process'
 end
 
 group :test do

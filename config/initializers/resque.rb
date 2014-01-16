@@ -17,11 +17,3 @@
 # config/initializers/redis.rb must be loaded first
 Resque.redis = $redis_db
 Resque.redis.namespace = 'rox:resque'
-
-unless Rails.application.config.cache_classes
-  Resque.after_fork do |job|
-    ActionDispatch::Reloader.cleanup!
-    ActionDispatch::Reloader.prepare!
-    Rails.application.eager_load!
-  end
-end
