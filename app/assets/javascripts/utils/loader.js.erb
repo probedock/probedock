@@ -14,14 +14,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-var Status = {
+var Loader = {
 
   loading : function() {
-    return Status._build('loading');
+    return Loader._build('loading');
   },
 
   _build : function(type) {
-    return $('<img class="status" />').addClass(type).attr('src', Path.build(Status._images[type]));
+    return $('<img class="status" />').addClass(type).attr('src', Path.build(Loader._images[type]));
   },
 
   _images : {

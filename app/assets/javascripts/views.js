@@ -137,7 +137,7 @@ App.module('views', function() {
 
     showLoading : function(loading) {
       if (loading) {
-        return Status.loading().appendTo(this.ui.header);
+        return Loader.loading().appendTo(this.ui.header);
       } else {
         return this.ui.header.find('.status').remove();
       }
