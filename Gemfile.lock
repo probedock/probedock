@@ -103,6 +103,8 @@ GEM
     guard-process (1.0.6)
       guard (>= 0.4.2)
       spoon (~> 0.0.1)
+    guard-shell (0.6.1)
+      guard (>= 1.1.0)
     haml (4.0.4)
       tilt
     haml_coffee_assets (1.16.0)
@@ -328,6 +330,7 @@ DEPENDENCIES
   foreigner
   guard
   guard-process
+  guard-shell
   haml
   haml_coffee_assets
   highcharts-rails (~> 3.0.0)

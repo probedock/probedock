@@ -87,6 +87,7 @@ group :development, :test do
   gem 'resque-pool'
 
   gem 'guard'
+  gem 'guard-shell'
   gem 'guard-process'
 end
 

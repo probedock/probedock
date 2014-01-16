@@ -53,6 +53,6 @@ if Rails.env != 'production'
     end
 
     desc "Run the jasmine code examples in spec/javascripts"
-    task :jasmine => [ 'spec:jasmine:full' ]
+    task :jasmine => [ 'spec:jasmine:fast' ]
   end
 end
