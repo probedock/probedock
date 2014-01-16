@@ -106,7 +106,7 @@ RAILS_ENV=production bundle exec rake assets:precompile
 # Clear and warm up the cache.
 RAILS_ENV=production rake cache:deploy
 
-# Start a resque worker.
+# Restart the resque worker.
 RAILS_ENV=production PIDFILE=tmp/pids/resque.pid BACKGROUND=yes QUEUE=* INTERVAL=2 bundle exec rake resque:work
 
 # Start the unicorn server.
@@ -115,7 +115,7 @@ RAILS_ENV=production bundle exec unicorn_rails -c config/unicorn.rb -E productio
 
 ### Hot Deploy
 
-When an upgrade requires no migration and resque workers do not need to be restarted, ROX Center can be upgraded with no downtime.
+When an upgrade requires no migration, ROX Center can be upgraded with no downtime.
 The changelog will indicate to which versions this scenario is applicable.
 
 ```bash
@@ -130,6 +130,15 @@ bundle install --deployment --without test development
 # Pre-compile assets.
 RAILS_ENV=production bundle exec rake assets:precompile
 
+# Gracefully stop the resque worker.
+sudo kill -s QUIT `cat tmp/pids/resque.pid`
+
+# Restart the resque worker.
+RAILS_ENV=production PIDFILE=tmp/pids/resque.pid BACKGROUND=yes QUEUE=* INTERVAL=2 bundle exec rake resque:work
+
 # Restart the unicorn server (worker by worker, with no downtime).
 sudo kill -s USR2 `cat tmp/pids/unicorn.pid`
+
+# Clear and warm up the cache.
+RAILS_ENV=production rake cache:deploy
 ```
