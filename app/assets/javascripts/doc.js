@@ -14,16 +14,15 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 $(function() {
 
   var container = $('#documentation');
   if (container.length) {
 
-    container.find('a[href^="/"]').each(function() {
+    container.find('a[href^="doc/rox"]').each(function() {
       
       var link = $(this);
-      link.attr('href', Path.build(link.attr('href').replace(/^\//, '')));
+      link.attr('href', Path.build(link.attr('href').replace(/^doc\/rox/, '/doc').replace('\.md', '')));
     });
     
     var header = container.find('h2');
