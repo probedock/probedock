@@ -57,6 +57,10 @@ module ROXCenter
       METRICS_TIMEZONES.dup
     end
 
+    def version
+      VERSION
+    end
+
     VERSION = File.open(File.join(root, 'VERSION'), 'r').read
     VERSION_HASH = Digest::SHA512.hexdigest VERSION
 

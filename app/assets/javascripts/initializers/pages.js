@@ -14,6 +14,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-$(function() {
-  App.start();
-});
+App.pageConfig = function() {
+  if (!App._pageConfig) {
+    App._pageConfig = $('body').data('config') || {};
+  }
+  return App._pageConfig;
+};

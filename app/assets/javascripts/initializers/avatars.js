@@ -15,5 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 $(function() {
-  App.start();
+  $('.autoUserAvatar').each(function() {
+    var el = $(this);
+    new App.views.UserAvatar({ el: el, model: new App.models.User(el.data('user')) }).render();
+  });
 });

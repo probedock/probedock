@@ -15,5 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 $(function() {
-  App.start();
+  $('.alert').alert();
+  $('a[rel="tooltip"]').tooltip();
+  $('.dropdown-toggle').dropdown();
+  $('.modal:not(.hide)').modal({ backdrop: 'static', keyboard: false });
 });

@@ -14,6 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-$(function() {
-  App.start();
-});
+$.fn.tagcloud.defaults = {
+  size: { start: 0.9, end: 2, unit: 'em' },
+  color: { start: '#6599e6', end: '#ff5522' }
+};

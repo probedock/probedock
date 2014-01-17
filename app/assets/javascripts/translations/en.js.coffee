@@ -1,4 +1,3 @@
-this.Translations = this.Translations || {}
 this.Translations.en =
   common:
     noData: "-"

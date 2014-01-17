@@ -14,6 +14,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-$(function() {
-  App.start();
-});
+Backbone.Marionette.Renderer.render = function(template, data) {
+
+  if (template === false) {
+    return;
+  } else if (typeof(template) == 'function') {
+    return template(data);
+  }
+
+  template = 'template/' + template;
+  if (!JST[template]) {
+    throw new Error("Unknown template '" + template + "'");
+  }
+
+  return JST[template](data);
+};

@@ -14,6 +14,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-$(function() {
-  App.start();
+var translationResources = _.reduce(Translations, function(memo, translations, language) {
+  memo[language] = { translation: { jst: translations } };
+  return memo;
+}, {});
+
+i18n.init({ lng: I18n.defaultLocale, resStore: translationResources }, function(t) {
+  I18n.t = t;
 });

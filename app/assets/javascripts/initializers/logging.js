@@ -14,6 +14,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-$(function() {
-  App.start();
-});
+App.debug = function() {};
+if (App.environment == 'development') {
+  App.debug = function(msg) {
+    console.log(msg);
+  };
+}

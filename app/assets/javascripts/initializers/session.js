@@ -15,5 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 $(function() {
-  App.start();
+  var session = Meta.get('session') ? JSON.parse(Meta.get('session')) : null;
+  App.pollingFrequency = App.environment == 'development' ? 1000 : (session ? 3000 : 10000);
+  App.admin = session && !!session.admin;
 });
