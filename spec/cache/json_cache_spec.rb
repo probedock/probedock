@@ -17,7 +17,6 @@
 require 'spec_helper'
 
 describe JsonCache do
-
   let(:contents){ 'bar' }
   let(:generator){ double fetch: contents }
 
@@ -27,7 +26,7 @@ describe JsonCache do
     JsonCache.new(:foooo){ { 'a' => 'b' } }.get.to_json.should == MultiJson.dump({ 'a' => 'b' }, mode: :strict)
   end
 
-  context "for a string" do
+  describe "for a string" do
 
     subject{ JsonCache.new(:foo){ generator.fetch } }
 
@@ -58,12 +57,20 @@ describe JsonCache do
     end
   end
 
-  context "with the expire option" do
-
+  describe "with the expire option" do
     subject{ JsonCache.new(:foo, expire: 30.minutes){ generator.fetch } }
 
     it "should expire the contents", rox: { key: 'f419086b27ec' } do
       $redis.should_receive(:expire).with('cache:json:foo', 30.minutes.to_i)
+      subject.get
+    end
+  end
+
+  describe "with the expire option set by the block" do
+    subject{ JsonCache.new(:foo){ |options| options[:expire] = 42; generator.fetch } }
+
+    it "should expire the contents", rox: { key: 'bcdf5bab7b42' } do
+      expect($redis).to receive(:expire).with('cache:json:foo', 42)
       subject.get
     end
   end

@@ -8,6 +8,8 @@
 
 * Deprecations are now counted and displayed separately from new tests.
 
+* Fixed a bug where home page test counts would not expire at the end of the day.
+
 ## v2.1.1 - January 15, 2014
 
 **Upgrade Notes:** this upgrade can be done as a [hot deploy](doc/rox/deploy.md#hot-deploy) with no downtime.

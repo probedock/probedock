@@ -20,12 +20,13 @@ class JsonCache
   KEYS = [ :serialized, :updated_at, :etag ]
 
   class CachedObject
-    attr_accessor :etag, :updated_at
+    attr_accessor :etag, :updated_at, :expire
 
     def initialize options = {}
 
       raise 'Either contents or serialized contents must be present' if !options.key?(:contents) and !options.key?(:serialized)
       @contents, @serialized = options[:contents], options[:serialized]
+      @expire = options[:expire]
 
       if options[:etag]
         @updated_at = Time.at options[:updated_at].to_i
@@ -106,7 +107,8 @@ class JsonCache
   end
 
   def load_from_scratch
-    options = { contents: @block.call }
+    block_options = {}
+    options = block_options.merge contents: @block.call(block_options)
     options.merge! etag: true, updated_at: Time.now if @options[:etag] != false
     CachedObject.new options
   end
@@ -145,7 +147,8 @@ class JsonCache
       $redis.set key, cached.to_json
     end
 
-    $redis.expire key, @options[:expire].to_i if @options[:expire]
+    expire = cached.expire || @options[:expire]
+    $redis.expire key, expire.to_i if expire
   end
 
   def safe operation, &block

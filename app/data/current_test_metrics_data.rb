@@ -22,18 +22,20 @@ class CurrentTestMetricsData
   end
 
   def self.compute
-    JsonCache.new(:current_test_metrics_data){ compute_data.deep_stringify_keys! }
+    JsonCache.new(:current_test_metrics_data){ |cache_options| compute_data(cache_options).deep_stringify_keys! }
   end
 
   private
 
-  def self.compute_data
+  def self.compute_data cache_options
 
     tz = TestCounter::DEFAULT_TIMEZONE
     now = Time.now.utc
     today = Time.use_zone(tz){ Time.zone.local now.year, now.month, now.day }.utc
     last_week = today - 7.days
     last_month = today - 30.days
+
+    cache_options[:expire] = ((today + 1.day) - now).to_i
 
     rel = TestCounter
     rel = rel.select 'timestamp, user_id, written_counter, run_counter, deprecated_counter'
