@@ -4,6 +4,8 @@
 
 **Upgrade Notes:** changes in this version require counters to be recomputed from the settings page.
 
+* A button has been provided to copy test page permalinks directly to the clipboard.
+
 * Deprecations are now counted and displayed separately from new tests.
 
 ## v2.1.1 - January 15, 2014
