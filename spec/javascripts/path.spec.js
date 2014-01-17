@@ -23,7 +23,7 @@ describe("Path", function() {
 
   it("should join path segments", function() {
     this.meta = { rox: { key: '51dea490bfe9' } };
-    expect(Path.join('a', 'b', 'c')).toBe('/a/b/c');
+    expect(Path.join('a', 'b', 'c')).toBe('a/b/c');
     expect(Path.join('/a', '/b/', 'c')).toBe('/a/b/c');
   });
 
