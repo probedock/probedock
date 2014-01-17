@@ -150,7 +150,7 @@ this.Translations.en =
     resultStatus:
       passed: "passed"
       failed: "failed"
-    permalinkInstructions: "If you need to link to this test from elsewhere, please use this permalink."
+    permalinkInstructions: "Use this permalink to link to this test from elsewhere."
     copyToClipboard: "Copy to clipboard"
     copiedToClipboard: "Copied!"
   testRunReport:
