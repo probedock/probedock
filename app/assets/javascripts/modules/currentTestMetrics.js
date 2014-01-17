@@ -137,31 +137,7 @@ App.autoModule('currentTestMetrics', function() {
         this.ui[selector].text(Format.number(total));
         this.ui[selector][total ? 'removeClass' : 'addClass']('text-muted');
 
-        if (measures.hasUsers()) {
-          this.ui[mostSelector].removeClass('text-muted').empty();
-          measures.get('most').forEach(function(m) {
-
-            var total = m.get('total'),
-                user = m.get('user');
-
-            new (App.module('views').UserAvatar)({
-              model: user,
-              el: $('<div />').appendTo(this.ui[mostSelector]),
-              size: 'small',
-              label: false,
-              tooltip: {
-                title: I18n.t('jst.currentTestMetrics.tooltip.' + type + 'Text', {
-                  user: user.get('name'),
-                  n: Format.number(total),
-                  time: I18n.t('jst.currentTestMetrics.tooltip.time.' + time)
-                }),
-                placement: 'bottom'
-              }
-            }).render();
-          }, this);
-        } else {
-          this.ui[mostSelector].addClass('text-muted').text('n/a');
-        }
+        this.renderUsers(measures, this.ui[mostSelector], time, type + 'Text');
       }, this);
 
       _.each(this.metricTimes, function(time) {
@@ -201,78 +177,41 @@ App.autoModule('currentTestMetrics', function() {
           this.ui[selector].append(deprecatedEl);
         }
 
-        if (writtenMeasures.hasUsers()) {
-          this.ui[mostSelector].removeClass('text-muted').empty();
-          writtenMeasures.get('most').forEach(function(m) {
-
-            var total = m.get('total'),
-                user = m.get('user');
-
-            new (App.module('views').UserAvatar)({
-              model: user,
-              el: $('<div />').appendTo(this.ui[mostSelector]),
-              size: 'small',
-              label: false,
-              tooltip: {
-                title: I18n.t('jst.currentTestMetrics.tooltip.writtenText', {
-                  user: user.get('name'),
-                  n: Format.number(total),
-                  time: I18n.t('jst.currentTestMetrics.tooltip.time.' + time)
-                }),
-                placement: 'bottom'
-              }
-            }).render();
-          }, this);
-        } else {
-          this.ui[mostSelector].addClass('text-muted').text('n/a');
-        }
+        this.renderUsers(writtenMeasures, this.ui[mostSelector], time, 'writtenText');
       }, this);
+    },
 
-      /*_.each(this.metricTypes, function(type) {
-        _.each(this.metricTimes, function(time) {
+    renderUsers: function(measures, el, time, tooltipTranslation) {
+      if (measures.hasUsers()) {
+        el.removeClass('text-muted').empty();
+        measures.get('most').forEach(function(m) {
 
-          var selector = type + time.capitalize(),
-              mostSelector = selector + 'Most',
-              measures = this.model.get(time).get(type);
+          var total = m.get('total'),
+              user = m.get('user'),
+              tooltipText = I18n.t('jst.currentTestMetrics.tooltip.' + tooltipTranslation, {
+                user: user.get('name'),
+                n: Format.number(total),
+                time: I18n.t('jst.currentTestMetrics.tooltip.time.' + time)
+              });
 
-          // total written/run today/week/month
-          var total = measures.get('total'),
-              prefix = type == 'written' && total && total >= 1 ? '+' : '';
-
-          this.ui[selector].text(prefix + Format.number(total));
-          this.ui[selector][total ? 'removeClass' : 'addClass']('muted');
-          this.ui[selector].removeClass('text-danger text-success');
-          if (total && type == 'written') {
-            this.ui[selector].addClass(total >= 1 ? 'text-success' : 'text-danger');
-          }
-
-          if (measures.hasUsers()) {
-            this.ui[mostSelector].removeClass('muted').empty();
-            measures.get('most').forEach(function(m) {
-
-              var total = m.get('total'),
-                  user = m.get('user');
-
-              new (App.module('views').UserAvatar)({
-                model: user,
-                el: $('<div />').appendTo(this.ui[mostSelector]),
-                size: 'small',
-                label: false,
-                tooltip: {
-                  title: I18n.t('jst.currentTestMetrics.tooltip.' + type + 'Text', {
-                    user: user.get('name'),
-                    n: Format.number(total),
-                    time: I18n.t('jst.currentTestMetrics.tooltip.time.' + time)
-                  }),
-                  placement: 'bottom'
-                }
-              }).render();
-            }, this);
-          } else {
-            this.ui[mostSelector].addClass('muted').text('n/a');
-          }
+          this.renderUserAvatar(user, el, tooltipText);
         }, this);
-      }, this);*/
+      } else {
+        el.addClass('text-muted').text(I18n.t('jst.common.noData'));
+      }
+    },
+
+    renderUserAvatar: function(user, el, tooltipText) {
+      new (App.module('views').UserAvatar)({
+        model: user,
+        el: $('<div />').appendTo(el),
+        size: 'small',
+        label: false,
+        tooltip: {
+          title: tooltipText,
+          placement: 'bottom'
+        }
+      }).render();
     }
   });
 
