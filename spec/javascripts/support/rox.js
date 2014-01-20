@@ -14,75 +14,126 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 module.exports = function(grunt) {
 
   var _ = require('underscore'),
+      color = require('cli-color'),
       fs = require('fs-extra'),
       http = require('http'),
+      inflection = require('inflection'),
+      merge = require('deepmerge'),
       path = require('path'),
+      temp = require('temp'),
       url = require('url'),
-      zlib = require('zlib');
+      uuid = require('node-uuid'); // TODO: remove if unused
 
-  var config = JSON.parse(fs.readFileSync('./rox.json'));
-  var sharedWorkspace = config.workspace;
-  var workspace = path.join(config.workspace, 'jasmine');
+  temp.track();
+  var configFiles = [ path.join(process.env.HOME, '.rox', 'config.yml'), path.join('.', 'rox.yml') ];
 
-  grunt.registerTask('rox-upload', function() {
+  function loadConfig(data) {
+
+    // TODO: log warning if yaml is invalid
+    var config = _.reduce(configFiles, function(memo, path) {
+      if (fs.existsSync(path)) {
+        memo = merge(memo, grunt.file.readYAML(path));
+      }
+      return memo;
+    }, {});
+
+    if (data.roxConfig) {
+      config = merge(config, data.roxConfig);
+    }
+
+    // TODO: parse environment variables
+
+    return config;
+  };
+
+  function setForce(force) {
+    if (force && !grunt.option('force')) {
+      grunt.config.set('rox:force', true);
+      grunt.option('force', true);
+    } else if (!force && grunt.config.get('rox:force')) {
+      grunt.option('force', false);
+      grunt.config.set('rox:force', false);
+    }
+  };
+
+  //var config = JSON.parse(fs.readFileSync('./rox.json'));
+  //var sharedWorkspace = config.workspace;
+  //var workspace = path.join(config.workspace, 'jasmine');
+
+  /*grunt.registerTask('rox-upload', function() {
 
     var done = this.async();
     var testRun = JSON.parse(fs.readFileSync(path.join(workspace, 'testRun.json')));
 
     processPayload(testRun, done);
-  });
+  });*/
 
-  grunt.registerMultiTask('rox', 'Run jasmine specs and send the results to ROX Center', function() {
+  grunt.registerMultiTask('rox-setup', 'Set up ROX Center client', function() {
 
-    var taskConfig = this.data;
-    if (taskConfig.category) {
-      config.category = taskConfig.category;
-    }
-    if (taskConfig.tags) {
-      config.tags = _.compact(_.union(_.isArray(config.tags) ? config.tags : [ config.tags ], _.isArray(taskConfig.tags) ? taskConfig.tags : [ taskConfig.tags ]));
-    }
-    if (taskConfig.tickets) {
-      config.tickets = _.compact(_.union(_.isArray(config.tickets) ? config.tickets : [ config.tickets ], _.isArray(taskConfig.tickets) ? taskConfig.tickets : [ taskConfig.tickets ]));
+    var config = loadConfig(this.data);
+
+    var tmpDir = process.env.ROX_GRUNT_TMP;
+    if (!process.env.ROX_GRUNT_TMP) {
+      tmpDir = temp.mkdirSync();
+      process.env['ROX_GRUNT_TMP'] = tmpDir;
     }
 
-    var runnerKey = process.env.ROX_RUNNER_KEY;
-    if (!runnerKey) {
-      grunt.log.error('Runner key must be in the ROX_RUNNER_KEY environment variable');
-      return false;
-    }
+    tmpDir = path.join(tmpDir, this.target);
+    fs.mkdirSync(tmpDir);
+
+    setForce(true);
 
     var testRun = {
-      runnerKey : runnerKey,
-      project : config.project,
-      projectVersion : config.projectVersion,
-      tests : []
+      project: config.project.apiId,
+      projectName: config.project.name,
+      projectVersion: config.project.version,
+      tests: []
     };
-
-    loadUid(testRun);
 
     grunt.event.on('jasmine.reportRunnerStarting', function() {
       testRun.startTime = new Date().getTime();
     });
 
     grunt.event.on('jasmine.reportSpecResults', function(specId, result, fullName, duration, metadata) {
-      testRun.tests.push(buildTest(specId, result, fullName, duration, metadata));
+      testRun.tests.push(buildTest(config, result, fullName, duration, metadata));
     });
 
     grunt.event.on('jasmine.reportRunnerResults', function() {
 
       testRun.endTime = new Date().getTime();
       testRun.duration = testRun.endTime - testRun.startTime;
+      
+      var gruntData = {
+        config: config,
+        testRun: testRun
+      };
 
-      var json = JSON.stringify(testRun, null, 2);
-      fs.mkdirsSync(workspace);
-      fs.writeFileSync(path.join(workspace, 'testRun.json'), json, 'UTF-8');
+      fs.writeFileSync(path.join(tmpDir, 'data.json'), JSON.stringify(gruntData), 'UTF-8');
     });
+  });
 
-    grunt.task.run('jasmine', 'rox-upload');
+  grunt.registerMultiTask('rox-publish', 'Publish test results to ROX Center', function() {
+
+    setForce(false);
+
+    if (!process.env.ROX_GRUNT_TMP) {
+      throw new Error('The ROX_GRUNT_TMP environment variable must be set. You might have forgotten to run the rox_setup task.');
+    }
+
+    // TODO: allow to customize target
+    var tmpDir = path.join(process.env.ROX_GRUNT_TMP, this.target);
+    // TODO: check tmp dir exists and data valid
+    var data = grunt.file.readJSON(path.join(tmpDir, 'data.json'));
+
+    var config = data.config,
+        testRun = data.testRun;
+
+    var done = this.async();
+    var payload = buildPayload(testRun);
+    done();
   });
 
   function loadUid(testRun) {
@@ -226,97 +277,71 @@ module.exports = function(grunt) {
   }
 
   function buildPayload(testRun) {
-    switch(config.apiVersion) {
-      case 0 : return versionZeroPayload(testRun);
-      default : return versionOnePayload(testRun);
-    }
-  }
-
-  function versionZeroPayload(testRun) {
-    return {
-      runner : testRun.runnerKey,
-      tests : _.map(testRun.tests, function(test) {
-
-        var t = {
-          key : test.key,
-          name : test.name,
-          project : testRun.project,
-          result : {
-            passed : test.passed,
-            duration : test.duration,
-            version : testRun.projectVersion
-          }
-        };
-
-        if (test.message) {
-          t.result.message = test.message;
-        }
-
-        return t;
-      })
-    };
+    return versionOnePayload(testRun);
   }
 
   function versionOnePayload(testRun) {
 
     var run = {
-      r : testRun.runnerKey,
-      e : testRun.endTime,
       d : testRun.duration,
-      j : testRun.project,
-      v : testRun.projectVersion,
-      t : _.map(testRun.tests, function(test) {
-  
-        var t = {
-          k : test.key,
-          n : test.name,
-          p : test.passed,
-          d : test.duration
-        };
+      r : [
+        {
+          j : testRun.project,
+          v : testRun.projectVersion,
+          t : _.map(testRun.tests, function(test) {
+      
+            var t = {
+              k : test.key,
+              n : test.name,
+              p : test.passed,
+              d : test.duration
+            };
 
-        if (test.message) {
-          t.m = test.message;
+            if (test.message) {
+              t.m = test.message;
+            }
+
+            if (test.category) {
+              t.c = test.category;
+            }
+
+            if (test.tags) {
+              t.g = test.tags;
+            }
+
+            if (test.tickets) {
+              t.t = test.tickets;
+            }
+
+            return t;
+          })
         }
-
-        if (test.category) {
-          t.c = test.category;
-        }
-
-        if (test.tags) {
-          t.g = test.tags;
-        }
-
-        if (test.tickets) {
-          t.t = test.tickets;
-        }
-
-        return t;
-      })
+      ]
     };
 
     if (testRun.uid) {
       run.u = testRun.uid;
     }
 
-    return { r : [ run ] };
+    return run;
   }
 
-  function buildTest(specId, result, fullName, duration, metadata) {
+  function buildTest(config, result, fullName) {
     
     var test = {
-      key : getKey(fullName, metadata),
+      key : getKey(fullName, result.metadata),
       name : fullName,
       passed : result.passed,
-      duration : duration
+      duration : result.duration
     };
 
     if (!result.passed) {
       test.message = buildMessage(result);
     }
 
-    setCategory(test, metadata);
-    setTags(test, metadata);
-    setTickets(test, metadata);
+    setCategory(test, config, result.metadata);
+    setTags(test, config, result.metadata);
+    setTickets(test, config, result.metadata);
 
     return test;
   }
@@ -325,7 +350,7 @@ module.exports = function(grunt) {
     return metadata.length && metadata[0].rox ? metadata[0].rox.key : null;
   }
 
-  function setCategory(test, metadata) {
+  function setCategory(test, config, metadata) {
     var withCategory = _.find(metadata, function(meta) {
       return meta.rox && meta.rox.category;
     });
@@ -334,7 +359,7 @@ module.exports = function(grunt) {
     }
   }
 
-  function setTags(test, metadata) {
+  function setTags(test, config, metadata) {
     var tags = _.union.apply(_, _.map(metadata, function(meta) {
       return meta.rox && meta.rox.tags ? (_.isArray(meta.rox.tags) ? meta.rox.tags : [ meta.rox.tags ]) : [];
     }));
@@ -346,7 +371,7 @@ module.exports = function(grunt) {
     }
   }
 
-  function setTickets(test, metadata) {
+  function setTickets(test, config, metadata) {
     var tickets = _.union.apply(_, _.map(metadata, function(meta) {
       return meta.rox && meta.rox.tickets ? (_.isArray(meta.rox.tickets) ? meta.rox.tickets : [ meta.rox.tickets ]) : [];
     }));

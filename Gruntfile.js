@@ -32,19 +32,25 @@ module.exports = function(grunt) {
       }
     },
 
-    rox: {
+    'rox-setup': {
       default: {
-        category: 'Jasmine'
+        roxConfig: {
+          project: {
+            category: 'Jasmine'
+          }
+        }
+      }
+    },
+
+    'rox-publish': {
+      default: {
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
-  // TODO: extract ROX task into a Grunt task.
-  //require('./spec/javascripts/support/rox')(grunt);
+  require('./spec/javascripts/support/rox')(grunt);
 
-  // Default task(s).
-  //grunt.registerTask('default', [ 'rox' ]);
-  grunt.registerTask('default', [ 'jasmine' ]);
+  grunt.registerTask('default', [ 'rox-setup', 'jasmine', 'rox-publish' ]);
 };
