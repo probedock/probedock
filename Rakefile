@@ -18,7 +18,6 @@
 
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
-
 require File.expand_path('../config/application', __FILE__)
 
 ROXCenter::Application.load_tasks
@@ -31,6 +30,5 @@ end
 if Rails.env != 'production'
   require 'rox-client-rspec'
   RoxClient::RSpec::Tasks.new
-  Rake::Task['spec'].prerequisites.unshift('spec:jasmine:fast').unshift('spec:rox:uid:file')
-  Rake::Task['spec'].enhance{ Rake::Task['spec:rox:uid:clean'].invoke }
+  Rake::Task['spec'].prerequisites.unshift('spec:jasmine:fast').unshift('spec:rox:uid')
 end

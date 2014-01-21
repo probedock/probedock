@@ -19,6 +19,7 @@ describe("Format", function() {
   describe(".duration", function() {
 
     it("should format durations", function() {
+      this.meta = { rox: { key: '64e8f449e8b5' } };
       expect(Format.duration(0)).toBe('0');
       expect(Format.duration(42)).toBe('42ms');
       expect(Format.duration(1000)).toBe('1s');
@@ -38,6 +39,7 @@ describe("Format", function() {
     });
 
     it("should omit time units lower than the specified min option", function() {
+      this.meta = { rox: { key: 'f6ed7a2fb5d2' } };
 
       // only display seconds or higher
       expect(Format.duration(0, { min: 's' })).toBe('0');
@@ -54,6 +56,7 @@ describe("Format", function() {
     });
 
     it("should throw an error if the min option is not a time unit", function() {
+      this.meta = { rox: { key: 'a82c48a4a68c' } };
       try {
         Format.duration(1234, { min: 'foo' });
         this.fail('An error should have been thrown for min option "foo"');
@@ -63,6 +66,7 @@ describe("Format", function() {
     });
 
     it("should shorten to the time unit specified as the shorten option when reached", function() {
+      this.meta = { rox: { key: 'aeb61516a83f' } };
 
       // hide milliseconds once time is at least one second
       expect(Format.duration(0, { shorten: 's' })).toBe('0');
@@ -81,6 +85,7 @@ describe("Format", function() {
     });
 
     it("should throw an error if the shorten option is not a time unit", function() {
+      this.meta = { rox: { key: '1427c0884c9a' } };
       try {
         Format.duration(1234, { shorten: 'foo' });
         this.fail("An error should have been thrown for shorten option 'foo'");
@@ -90,6 +95,7 @@ describe("Format", function() {
     });
 
     it("should combine the min and shorten options", function() {
+      this.meta = { rox: { key: '5ae66dce56e6' } };
       expect(Format.duration(0, { min: 's', shorten: 'm' })).toBe('0');
       expect(Format.duration(345, { min: 's', shorten: 'm' })).toBe('0');
       expect(Format.duration(1234, { min: 's', shorten: 'm' })).toBe('1s');

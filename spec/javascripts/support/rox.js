@@ -20,6 +20,7 @@ module.exports = function(grunt) {
       color = require('cli-color'),
       fs = require('fs-extra'),
       http = require('http'),
+      https = require('https'),
       inflection = require('inflection'),
       merge = require('deepmerge'),
       path = require('path'),
@@ -59,18 +60,6 @@ module.exports = function(grunt) {
     }
   };
 
-  //var config = JSON.parse(fs.readFileSync('./rox.json'));
-  //var sharedWorkspace = config.workspace;
-  //var workspace = path.join(config.workspace, 'jasmine');
-
-  /*grunt.registerTask('rox-upload', function() {
-
-    var done = this.async();
-    var testRun = JSON.parse(fs.readFileSync(path.join(workspace, 'testRun.json')));
-
-    processPayload(testRun, done);
-  });*/
-
   grunt.registerMultiTask('rox-setup', 'Set up ROX Center client', function() {
 
     var config = loadConfig(this.data);
@@ -92,6 +81,11 @@ module.exports = function(grunt) {
       projectVersion: config.project.version,
       tests: []
     };
+
+    var uid = loadUid(config);
+    if (uid) {
+      testRun.uid = uid;
+    }
 
     grunt.event.on('jasmine.reportRunnerStarting', function() {
       testRun.startTime = new Date().getTime();
@@ -132,44 +126,39 @@ module.exports = function(grunt) {
         testRun = data.testRun;
 
     var done = this.async();
-    var payload = buildPayload(testRun);
-    done();
+    processTestRun(testRun, config, done);
   });
 
-  function loadUid(testRun) {
+  function loadUid(config) {
 
-    var sharedUidFile = path.join(sharedWorkspace, 'uid');
-    var sharedUid = fs.existsSync(sharedUidFile) ? fs.readFileSync(sharedUidFile, 'UTF-8') : null;
-
-    var lastUidFile = path.join(workspace, 'lastUid');
-    var lastUid = fs.existsSync(lastUidFile) ? fs.readFileSync(lastUidFile, 'UTF-8') : null;
-
-    if (sharedUid && lastUid && sharedUid == lastUid) {
-      fs.unlinkSync(sharedUidFile);
-    } else if (sharedUid) {
-      fs.mkdirsSync(path.dirname(lastUidFile));
-      fs.writeFileSync(lastUidFile, sharedUid, 'UTF-8');
-      testRun.uid = sharedUid;
+    if (process.env.ROX_TEST_RUN_UID) {
+      return process.env.ROX_TEST_RUN_UID;
     }
+
+    var uidFile = path.join(config.workspace, 'uid');
+    return fs.existsSync(uidFile) ? fs.readFileSync(uidFile, 'utf8').split('\n')[0] : null;
   }
 
-  function processPayload(testRun, done) {
+  function processTestRun(testRun, config, done) {
 
     var payload = buildPayload(testRun);
     var contents = JSON.stringify(payload);
     var pretty = JSON.stringify(payload, null, 2);
     
-    if (config.dumpPayload) {
+    if (config.payload && config.payload.print) {
       grunt.log.writeln();
       grunt.log.writeln(pretty);
       grunt.log.writeln();
     }
 
-    fs.writeFileSync(path.join(workspace, 'payload.json'), pretty, 'UTF-8');
-
     if (!validateTestRun(testRun)) {
       return done(false);
     }
+
+    var sharedWorkspace = config.workspace,
+        workspace = path.join(sharedWorkspace, 'jasmine');
+
+    fs.writeFileSync(path.join(workspace, 'payload.json'), pretty, 'utf8');
 
     var publish = config.publish && (!process.env.ROX_PUBLISH || process.env.ROX_PUBLISH == '1')
     if (!publish) {
@@ -177,58 +166,128 @@ module.exports = function(grunt) {
       return done();
     }
 
-    if (config.compress) {
-      zlib.gzip(contents, function(err, compressed) {
+    publishPayload(contents, config, done);
+  }
 
+  function publishPayload(payload, config, done) {
+
+    var server = config.servers[config.server];
+    
+    getPayloadResourceUrl(server, function(err, payloadResourceUrl) {
+      if (err) {
+        grunt.log.error(err);
+        return done(false);
+      }
+
+      grunt.log.writeln('Connected to ROX Center API at ' + server.apiUrl);
+
+      uploadPayload(payload, payloadResourceUrl, config, function(err) {
         if (err) {
           grunt.log.error(err);
           return done(false);
         }
 
-        uploadPayload(new Buffer(compressed).toString('base64'), done);
+        grunt.log.writeln('Successfully published test payload.');
+        done();
       });
-    } else {
-      uploadPayload(contents, done);
-    }
+    });
   }
 
-  function uploadPayload(contents, done) {
+  function uploadPayload(payload, payloadResourceUrl, config, callback) {
 
-    var payloadUrl = url.parse(config.url);
+    var payloadUrl = url.parse(payloadResourceUrl),
+        server = config.servers[config.server],
+        options = {
+          hostname: payloadUrl.hostname,
+          port: payloadUrl.port,
+          path: payloadUrl.path,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/vnd.lotaris.rox.payload.v1+json',
+            'Content-Length': payload.length,
+            'Authorization': 'RoxApiKey id="' + server.apiKeyId + '" secret="' + server.apiKeySecret + '"'
+          }
+        };
 
-    var options = {
-      hostname : payloadUrl.hostname,
-      port : payloadUrl.port,
-      path : payloadPath(payloadUrl.path),
-      method : 'POST',
-      headers : {
-        'Content-Type' : config.compress ? 'rox/compressed' : 'application/json',
-        'Content-Length' : contents.length
-      }
-    };
+    var req = (payloadUrl.protocol == 'https:' ? https : http).request(options, function(res) {
 
-    var req = http.request(options, function(res) {
+      var body = '';
+      res.on('data', function(chunk) {
+        body += chunk;
+      });
 
-      if (res.statusCode == 202) {
-        grunt.log.writeln("Successfully sent results to ROX Center");
-        done();
-      } else {
-        res.on('data', function(chunk) {
-          grunt.log.error(chunk);
-          done(false);
-        });
-      }
+      res.on('end', function() {
+        if (res.statusCode != 202) {
+          callback(new Error('Server responded with unexpected status code ' + res.statusCode + ' (response: ' + body + ')'));
+        } else {
+          callback();
+        }
+      });
     });
 
-    req.write(contents);
+    req.on('error', callback);
+    req.write(payload);
     req.end();
   }
 
-  function payloadPath(base) {
-    switch(config.apiVersion) {
-      case 0 : return base;
-      default : return path.join(base, 'v1', 'payload');
+  function getPayloadResourceUrl(server, callback) {
+
+    var apiUrl = url.parse(server.apiUrl),
+        options = {
+          hostname: apiUrl.hostname,
+          port: apiUrl.port,
+          path: apiUrl.path,
+          method: 'GET',
+          headers: {
+            'Accept': 'application/hal+json',
+            'Authorization': 'RoxApiKey id="' + server.apiKeyId + '" secret="' + server.apiKeySecret + '"'
+          }
+        };
+
+    var req = (apiUrl.protocol == 'https:' ? https : http).request(options, function(res) {
+
+      var body = '';
+      res.on('data', function(chunk) {
+        body += chunk;
+      });
+
+      res.on('end', function() {
+        if (res.statusCode != 200) {
+          callback(new Error('Server responded with unexpected status code ' + res.statusCode + ' (response: ' + body + ')'));
+        } else {
+          try {
+            callback(undefined, parsePayloadResourceUrl(body));
+          } catch(e) {
+            callback(e);
+          }
+        }
+      });
+    });
+
+    req.on('error', callback);
+    req.end();
+  }
+
+  function parsePayloadResourceUrl(body) {
+
+    var apiRoot = JSON.parse(body);
+
+    var links = apiRoot._links;
+    if (!links) {
+      throw new Error('Expected ROX Center API root to have _links property (response: ' + body + ')');
     }
+    
+    var testPayloadsLink = links['v1:test-payloads'];
+    if (!testPayloadsLink) {
+      throw new Error('Expected ROX Center API root to have link v1:test-payloads (response: ' + body + ')');
+    }
+
+    var href = testPayloadsLink.href;
+    if (!href) {
+      throw new Error('Expected ROX Center API root v1:test-payloads link to have an href property (response: ' + body + ')');
+    }
+
+    return href;
   }
 
   function validateTestRun(testRun) {
@@ -253,12 +312,12 @@ module.exports = function(grunt) {
 
     if (!testRun.project || !testRun.project.length) {
       valid = false;
-      grunt.log.error("Project is not set in rox.json");
+      grunt.log.error("Project is not set");
     }
 
     if (!testRun.projectVersion || !testRun.projectVersion.length) {
       valid = false;
-      grunt.log.error("Project version is not set in rox.json");
+      grunt.log.error("Project version is not set");
     }
 
     if (testsMissingKey.length) {
@@ -354,8 +413,8 @@ module.exports = function(grunt) {
     var withCategory = _.find(metadata, function(meta) {
       return meta.rox && meta.rox.category;
     });
-    if (withCategory || config.category) {
-      test.category = withCategory ? withCategory.rox.category : config.category;
+    if (withCategory || (config.project && config.project.category)) {
+      test.category = withCategory ? withCategory.rox.category : config.project.category;
     }
   }
 
