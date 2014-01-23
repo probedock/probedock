@@ -106,8 +106,8 @@ this.Translations.en =
       inactive: "inactive"
       failed: "failed"
   linksManager:
-    title: "Links Management"
-    instructions: "Links will appear under the menu brand as a dropdown menu."
+    title: "Menu Links"
+    instructions: "Links will appear next to the menu brand as a dropdown menu."
     empty: "No links are defined"
     confirmDelete: "Are you sure you want to delete the __name__ link? This operation cannot be canceled."
   appData:
