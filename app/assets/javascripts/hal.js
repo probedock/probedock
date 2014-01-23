@@ -17,4 +17,4 @@
 //= require jquery
 //= require underscore
 //= require tableling.backbone
-//= require ./lib/hal-browser
+//= require ./vendor/hal-browser
