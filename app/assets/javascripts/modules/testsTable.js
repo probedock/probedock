@@ -49,15 +49,21 @@ App.autoModule('testsTable', function() {
 
     onRender: function() {
       this.renderName();
+      this.renderKey();
       this.renderProject();
       this.renderAuthor();
       this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
-      this.ui.key.text(this.model.get('key'));
       this.renderStatus();
     },
 
     renderName: function() {
       this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
+    },
+
+    renderKey: function() {
+      var el = $('<span />').text(this.model.get('key'));
+      this.ui.key.html(el);
+      Clipboard.setup(el, this.model.permalink(true), { title: I18n.t('jst.testsTable.keyTooltip') });
     },
 
     renderProject: function() {

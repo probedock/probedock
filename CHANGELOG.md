@@ -6,7 +6,7 @@
 
 * **NEW:** Tests can now be searched by ticket.
 
-* **NEW:** Test page permalinks now come with a button to copy the link directly to the clipboard.
+* **NEW:** Test page permalinks now come with a button to copy the link directly to the clipboard. They can also be copied from the tests table.
 
 * **NEW:** Deprecations are now counted and displayed separately from new tests on the home page.
 

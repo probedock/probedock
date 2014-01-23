@@ -219,8 +219,9 @@ App.module('models', function() {
       }
     ],
 
-    permalink : function() {
-      return Path.build('go', 'test') + '?' + $.param({ project: this.get('project').get('apiId'), key: this.get('key') });
+    permalink : function(withHost) {
+      var path = Path.build('go', 'test') + '?' + $.param({ project: this.get('project').get('apiId'), key: this.get('key') });
+      return withHost ? Path.join(window.location.protocol + '//' + window.location.host, path) : path;
     },
 
     link : function(options) {

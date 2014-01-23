@@ -143,17 +143,13 @@ App.autoModule('testInfo', function() {
     },
 
     onRender: function() {
-      this.ui.permalink.val(this.completePermalink());
-      Clipboard.setup(this.ui.permalinkButton, this.completePermalink());
+      this.ui.permalink.val(this.model.permalink(true));
+      Clipboard.setup(this.ui.permalinkButton, this.model.permalink(true));
     },
 
     selectPermalink: function(e) {
       e.preventDefault();
       this.ui.permalink.setSelection(0, this.ui.permalink.val().length);
-    },
-
-    completePermalink: function() {
-      return Path.join(window.location.protocol + '//' + window.location.host, this.model.permalink());
     }
   });
 

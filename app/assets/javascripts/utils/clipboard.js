@@ -16,9 +16,11 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 var Clipboard = {
 
-  setup: function(el, text) {
+  setup: function(el, text, options) {
+    options = options || {};
     
     el.attr('data-clipboard-text', text);
+    el.data('clipboard-options', options);
 
     var clip = new ZeroClipboard(el);
     clip.on('load', _.bind(this.setupTooltip, this, el, clip));
@@ -28,7 +30,7 @@ var Clipboard = {
 
   setupTooltip: function(el, clip, client) {
 
-    el.tooltip(this.tooltipOptions());
+    el.tooltip(this.tooltipOptions(el));
 
     clip.on('mouseover', _.bind(el.tooltip, el, 'show'));
     clip.on('mouseout', _.bind(this.hideTooltip, this, el));
@@ -39,7 +41,7 @@ var Clipboard = {
   setupCopiedTooltip: function(el) {
     el.data('copied', true);
     el.tooltip('destroy');
-    el.tooltip(this.tooltipOptions({ title: I18n.t('jst.testInfo.copiedToClipboard') }));
+    el.tooltip(this.tooltipOptions(el, { title: I18n.t('jst.testInfo.copiedToClipboard') }));
     el.tooltip('show');
   },
 
@@ -47,11 +49,11 @@ var Clipboard = {
     el.tooltip('hide');
     if (el.data('copied')) {
       el.tooltip('destroy');
-      el.tooltip(this.tooltipOptions());
+      el.tooltip(this.tooltipOptions(el));
     }
   },
 
-  tooltipOptions: function(options) {
-    return _.defaults({}, options, { title: I18n.t('jst.testInfo.copyToClipboard'), trigger: 'manual' });
+  tooltipOptions: function(el, options) {
+    return _.defaults({}, options, el.data('clipboard-options'), { title: I18n.t('jst.testInfo.copyToClipboard'), trigger: 'manual' });
   }
 };

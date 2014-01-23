@@ -239,6 +239,7 @@ this.Translations.en =
     lastRunDuration: "Duration"
     moreInfo: "Click for more info"
     goToLastRun: "Click to go to test run"
+    keyTooltip: "Copy permalink to clipboard"
     search:
       status:
         placeholder: "By status"
