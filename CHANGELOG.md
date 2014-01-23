@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.1.2 - Edge
+## v2.2.0 - Edge
 
 **Upgrade Notes:** changes in this version require counters to be recomputed from the settings page.
 
