@@ -50,7 +50,7 @@
 //= require select2
 //= require clah
 //= require hamlcoffee
-//= require_tree ../templates
+//= require_tree ./templates
 //= require tableling.backbone
 //= require ./lib/backbone-relational
 //= require ./meta

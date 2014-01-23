@@ -7,7 +7,7 @@
   %form.form-inline
     %button.clear.btn.btn-default.pull-right{ type: 'button' }
       %span.glyphicon.glyphicon-remove-circle
-    != JST['template/' + @advancedSearchTemplate]()
+    != JST[@advancedSearchTemplate]()
 .table
 .footer
   .info.pull-left

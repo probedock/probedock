@@ -133,14 +133,14 @@ App.autoModule('testRunReport', function() {
     },
 
     tooltipTitle : function(i) {
-      return JST['template/testRunReport/visualReportTooltipTitle']({
+      return JST['testRunReport/visualReportTooltipTitle']({
         klass: this.tooltipStatusClasses[this.testsIndex[i][2]],
         title: this.testsIndex[i][1]
       });
     },
 
     tooltipContents : function(i) {
-      return JST['template/testRunReport/visualReportTooltipContents']({
+      return JST['testRunReport/visualReportTooltipContents']({
         key: this.testsIndex[i][0],
         duration: this.testsIndex[i][3],
         result: this.tooltipStatuses[this.testsIndex[i][2]]

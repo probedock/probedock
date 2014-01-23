@@ -22,7 +22,6 @@ Backbone.Marionette.Renderer.render = function(template, data) {
     return template(data);
   }
 
-  template = 'template/' + template;
   if (!JST[template]) {
     throw new Error("Unknown template '" + template + "'");
   }
