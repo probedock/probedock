@@ -16,40 +16,29 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe CacheReportJob do
-  CACHE_REPORT_JOB_QUEUE = 'cache'
+describe CacheReportJobForWarmup do
+  CACHE_REPORT_JOB_FOR_WARMUP_QUEUE = 'cache:low'
 
   before :each do
     ResqueSpec.reset!
   end
 
-  it "should go in the #{CACHE_REPORT_JOB_QUEUE} queue", rox: { key: 'eae775aaeb15' } do
-    expect(described_class.instance_variable_get('@queue')).to eq(CACHE_REPORT_JOB_QUEUE)
-  end
-
-  it "should enqueue a job on the api:payload event", rox: { key: '05538f390a7e' } do
-    test_run_double = double id: 42
-    expect(described_class).to receive(:enqueue).with(test_run_double)
-    described_class.fire 'api:payload', double(processed_test_run: double(test_run: test_run_double))
+  it "should go in the #{CACHE_REPORT_JOB_FOR_WARMUP_QUEUE} queue", rox: { key: '6ea675178596' } do
+    expect(described_class.instance_variable_get('@queue')).to eq(CACHE_REPORT_JOB_FOR_WARMUP_QUEUE)
   end
 
   describe ".enqueue" do
     
-    it "should enqueue a job for a test run", rox: { key: 'd870c3722fc3' } do
+    it "should enqueue a job for a test run", rox: { key: 'e5bcce4fa4fe' } do
       described_class.enqueue double(id: 42)
-      expect(described_class).to have_queued(42, cache: :force).in(CACHE_REPORT_JOB_QUEUE)
+      expect(described_class).to have_queued(42, cache: :force).in(CACHE_REPORT_JOB_FOR_WARMUP_QUEUE)
       expect(described_class).to have_queue_size_of(1)
-    end
-
-    it "should log the test run id", rox: { key: '784a1af21716' } do
-      expect(Rails.logger).to receive(:debug).with(/caching report.*42/i)
-      described_class.enqueue double(id: 42)
     end
   end
 
   describe ".perform" do
     
-    it "should get the report from the cache with the specified options", rox: { key: '8463e717a4fe' } do
+    it "should get the report from the cache with the specified options", rox: { key: 'fcd92ec7970b' } do
       expect(TestRun.reports_cache).to receive(:get).with(42, HashWithIndifferentAccess.new(foo: 'bar'))
       described_class.perform 42, foo: 'bar'
     end

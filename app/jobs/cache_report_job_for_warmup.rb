@@ -14,18 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+class CacheReportJobForWarmup
+  @queue = 'cache:low'
 
-# TODO: try to auto-discover classes with hooks
-RoxHook.hooks << TagsData
-RoxHook.hooks << StatusData
-RoxHook.hooks << GeneralData
-RoxHook.hooks << LatestTestRunsData
-RoxHook.hooks << LatestProjectsData
-RoxHook.hooks << Settings::App
-RoxHook.hooks << CurrentTestMetricsData
+  def self.enqueue test_run
+    Resque.enqueue self, test_run.id, cache: :force
+  end
 
-RoxHook.hooks << CacheReportJobForUi
-RoxHook.hooks << CountDeprecationJob
-RoxHook.hooks << CountTestsJob
-
-RoxHook.setup!
+  def self.perform test_run_id, options = {}
+    TestRun.reports_cache.get test_run_id, HashWithIndifferentAccess.new(options)
+  end
+end

@@ -73,7 +73,7 @@ class ReportCache
         $redis.set job_key(id), Time.now.to_f.to_s
         $redis.expire job_key(id), 1.minute.to_i
       end
-      Resque.enqueue CacheReportJob, id
+      Resque.enqueue CacheReportJobForUi, id
     end
   end
 

@@ -14,8 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class CacheReportJob
-  @queue = 'cache'
+class CacheReportJobForUi
+  @queue = 'cache:high'
 
   include RoxHook
   on('api:payload'){ |job| enqueue job.processed_test_run.test_run }

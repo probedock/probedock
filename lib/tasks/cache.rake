@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 namespace :cache do
 
   desc %|Clear all memory caches|
@@ -50,7 +49,7 @@ namespace :cache do
     if max <= 0
       puts Paint["Report cache size is set to 0; no warm-up required.", :green] if max <= 0
     else
-      TestRun.select('id').order('ended_at DESC').limit(max).to_a.reverse.each{ |run| Resque.enqueue CacheReportJob, run.id, warmup: true }
+      TestRun.select('id').order('ended_at DESC').limit(max).to_a.reverse.each{ |run| Resque.enqueue CacheReportJobForWarmup, run.id, warmup: true }
       puts Paint["Queued jobs to warm up #{max} elements of the reports cache", :green]
     end
   end
