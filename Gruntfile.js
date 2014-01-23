@@ -49,8 +49,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-jasmine');
-
-  require('./spec/javascripts/support/rox')(grunt);
+  grunt.loadNpmTasks('rox-client-grunt');
 
   grunt.registerTask('default', [ 'rox-setup', 'jasmine', 'rox-publish' ]);
 };
