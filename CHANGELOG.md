@@ -4,9 +4,13 @@
 
 **Upgrade Notes:** changes in this version require counters to be recomputed from the settings page.
 
-* A button has been provided to copy test page permalinks directly to the clipboard.
+* **NEW:** Tests can now be searched by ticket.
 
-* Deprecations are now counted and displayed separately from new tests.
+* **NEW:** Test page permalinks now come with a button to copy the link directly to the clipboard.
+
+* **NEW:** Deprecations are now counted and displayed separately from new tests on the home page.
+
+* Cache warmup after deployment no longer blocks report generation from the UI.
 
 * Fixed a bug where home page test counts would not expire at the end of the day.
 

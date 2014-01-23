@@ -152,6 +152,7 @@ App.autoModule('testsTable', function() {
     ui: {
       projectsFilter: '.advancedSearch form .projects',
       tagsFilter: '.advancedSearch form .tags',
+      ticketsFilter: '.advancedSearch form .tickets',
       categoriesFilter: '.advancedSearch form .categories',
       authorsFilter: '.advancedSearch form .authors',
       breakersFilter: '.advancedSearch form .breakers',
@@ -162,6 +163,7 @@ App.autoModule('testsTable', function() {
       'change .advancedSearch form .status': 'updateSearch',
       'change .advancedSearch form .projects': 'updateSearch',
       'change .advancedSearch form .tags': 'updateSearch',
+      'change .advancedSearch form .tickets': 'updateSearch',
       'change .advancedSearch form .categories': 'updateSearch',
       'change .advancedSearch form .authors': 'updateSearch',
       'change .advancedSearch form .breakers': 'updateSearch'
@@ -180,6 +182,7 @@ App.autoModule('testsTable', function() {
     searchFilters: [
       { name: 'projects' },
       { name: 'tags' },
+      { name: 'tickets' },
       {
         name: 'categories',
         blank: true,

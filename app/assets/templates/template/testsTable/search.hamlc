@@ -11,3 +11,5 @@
   %option
 %select.tags{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testsTable.search.tags.placeholder') }
   %option
+%select.tickets{ :multiple => 'multiple', :'data-placeholder' => I18n.t('jst.testsTable.search.tickets.placeholder') }
+  %option

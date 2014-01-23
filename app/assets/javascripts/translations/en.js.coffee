@@ -248,6 +248,8 @@ this.Translations.en =
         inactive: "Inactive"
       tags:
         placeholder: "By tag"
+      tickets:
+        placeholder: "By ticket"
       authors:
         placeholder: "By author"
       categories:

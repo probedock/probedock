@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TestSearch
 
   def self.options params, options = {}
@@ -73,12 +72,25 @@ class TestSearch
     end
 
     cq = q
+    count_distinct = false
 
     if !except.include?(:tags)
       tags = params[:tags].kind_of?(Array) ? params[:tags].collect(&:to_s).select(&:present?) : nil
       if tags.present?
         q = q.group('test_infos.id').joins(:tags).where('tags.name IN (?)', tags)
-        cq = cq.select('distinct test_infos.id').joins(:tags).where('tags.name IN (?)', tags)
+        cq = cq.select('distinct test_infos.id') unless count_distinct
+        cq = cq.joins(:tags).where('tags.name IN (?)', tags)
+        count_distinct = true
+      end
+    end
+    
+    if !except.include?(:tickets)
+      tickets = params[:tickets].kind_of?(Array) ? params[:tickets].collect(&:to_s).select(&:present?) : nil
+      if tickets.present?
+        q = q.group('test_infos.id').joins(:tickets).where('tickets.name IN (?)', tickets)
+        cq = cq.select('distinct test_infos.id') unless count_distinct
+        cq = cq.joins(:tickets).where('tickets.name IN (?)', tickets)
+        count_distinct = true
       end
     end
 
@@ -96,6 +108,7 @@ class TestSearch
       h[:statuses] = [ :failing, :inactive, :outdated, :deprecated ] if !except.include?(:statuses)
       h[:projects] = Project.pluck(:name).sort if !except.include?(:projects)
       h[:tags] = Tag.pluck(:name).sort if !except.include?(:tags)
+      h[:tickets] = Ticket.pluck(:name).sort if !except.include?(:tickets)
       h[:categories] = Category.pluck(:name).sort if !except.include?(:categories)
       h[:authors] = User.all.to_a.collect(&:to_client_hash) if !except.include?(:authors)
       h[:breakers] = h[:authors] || User.all.to_a.collect(&:to_client_hash) if !except.include?(:breakers)
@@ -106,6 +119,7 @@ class TestSearch
     if !except.include?(:current)
       config[:current] = {
         tags: params[:tags].kind_of?(Array) ? params[:tags].collect(&:to_s).select(&:present?) : nil,
+        tickets: params[:tickets].kind_of?(Array) ? params[:tickets].collect(&:to_s).select(&:present?) : nil,
         projects: params[:projects].kind_of?(Array) ? params[:projects].collect(&:to_s).select(&:present?) : nil,
         authors: params[:authors].kind_of?(Array) ? params[:authors].collect(&:to_s).select(&:present?) : nil,
         breakers: params[:breakers].kind_of?(Array) ? params[:breakers].collect(&:to_s).select(&:present?) : nil,
