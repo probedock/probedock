@@ -222,6 +222,8 @@ describe "API sample payload", rox: { tags: :integration } do
       end
     end
 
+    before(:each){ ResqueSpec.reset! }
+
     after(:all){ DatabaseCleaner.clean }
 
     it "should create the correct number of test runs", rox: { key: '5d78f9cbaaf5' } do
