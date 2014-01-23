@@ -10,7 +10,7 @@
     :margin-bottom 0.6em
     select
       :display none
-    .status
+    .action
       :width 10em
     .authors
       :width 30em
@@ -40,9 +40,11 @@
         :width 8em
       th.key
         :width 6em
-      th.status
+      th.action
         :width 5em
         :text-align center
+        .selectAll
+          :cursor pointer
     tbody
       td
         :vertical-align middle
@@ -51,7 +53,14 @@
         &.key
           span
             :cursor pointer
-        &.status
+        &.action
           :text-align center
           .label
             :cursor pointer
+          .toggleSelected
+            :cursor pointer
+  .selectionMode
+    table
+      tbody
+        tr
+          :cursor pointer

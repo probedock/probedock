@@ -6,5 +6,5 @@
       %th.author.sorting{ :'data-field' => 'author' }= I18n.t('jst.models.test.author')
       %th.createdAt.sorting{ :'data-field' => 'created_at' }= I18n.t('jst.models.test.createdAt')
       %th.key= I18n.t('jst.models.test.key')
-      %th.status= I18n.t('jst.models.test.status')
+      %th.action
   %tbody

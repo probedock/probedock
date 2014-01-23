@@ -1,0 +1,9 @@
+%button.open.btn.btn-primary{ type: 'button' } Open Selector
+.selector
+  .panel.panel-primary
+    .panel-heading
+      %h3.panel-title Test Selector
+    .panel-body
+      .allSelected
+    .panel-footer
+      %button.close-selector.btn.btn-default{ type: 'button' } Close Selector

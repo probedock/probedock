@@ -44,7 +44,21 @@ App.autoModule('testsTable', function() {
       author: '.author',
       createdAt: '.createdAt',
       key: '.key',
-      status: '.status'
+      action: '.action'
+    },
+
+    events: {
+      'click': 'toggleSelected'
+    },
+
+    modelEvents: {
+      'change:selected': 'renderName renderAction'
+    },
+
+    initialize: function() {
+      this.listenTo(App, 'test:selector', this.setSelectionModeEnabled);
+      this.listenTo(App, 'test:selector', this.renderName);
+      this.listenTo(App, 'test:selector', this.renderAction);
     },
 
     onRender: function() {
@@ -53,11 +67,17 @@ App.autoModule('testsTable', function() {
       this.renderProject();
       this.renderAuthor();
       this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
-      this.renderStatus();
+      this.renderAction();
     },
 
     renderName: function() {
-      this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
+      this.ui.name.removeClass('text-success text-muted');
+      if (this.isSelectionModeEnabled()) {
+        this.ui.name.text(Format.truncate(this.model.get('name'), { max: 75 }));
+        this.ui.name.addClass(this.model.get('selected') ? 'text-success' : 'text-muted');
+      } else {
+        this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
+      }
     },
 
     renderKey: function() {
@@ -96,6 +116,33 @@ App.autoModule('testsTable', function() {
       new UserAvatar({ model: this.model.get('author'), size: 'small', el: this.ui.author }).render();
     },
 
+    renderAction: function() {
+      this[this.isSelectionModeEnabled() ? 'renderSelect' : 'renderStatus']();
+    },
+
+    isSelectionModeEnabled: function() {
+      return !!(App.currentTestSelector);
+    },
+
+    toggleSelected: function(e) {
+      if (!this.isSelectionModeEnabled()) {
+        return;
+      } else {
+        // TODO: re-enable links but warn that selector is enabled
+        e.preventDefault();
+      }
+
+      var selected = !this.model.get('selected');
+      this.model.set({ selected: selected });
+      App.trigger('test:' + (selected ? 'selected' : 'unselected'), this.model);
+    },
+
+    renderSelect: function() {
+      var el = $('<span class="toggleSelected glyphicon" />').addClass('glyphicon-' + (this.model.get('selected') ? 'minus' : 'plus'));
+      this.ui.action.html(el);
+      el.tooltip({ title: I18n.t('jst.testSelector.' + (this.model.get('selected') ? 'unselect' : 'select')) });
+    },
+
     renderStatus: function() {
 
       var statusEl = $('<a class="btn btn-xs" />').attr('href', Path.build('runs', this.model.get('effective_result').get('test_run_id')));
@@ -109,7 +156,8 @@ App.autoModule('testsTable', function() {
         statusEl.addClass('btn-' + (this.model.get('passing') ? 'success' : 'danger'));
       }
 
-      statusEl.appendTo(this.ui.status).popover({
+      this.ui.action.empty();
+      statusEl.appendTo(this.ui.action).popover({
         html: true,
         trigger: 'hover',
         title: this.tooltipTitle(),
@@ -138,7 +186,7 @@ App.autoModule('testsTable', function() {
       $('<dd />').text(Format.duration(this.model.get('last_run_duration'), { shorten: 's' })).appendTo(dl);
       dl.appendTo(wrapper);
 
-      $('<p class="text-info runLink" />').text(I18n.t('jst.testsTable.goToLastRun')).appendTo(wrapper);
+      $('<p class="text-warning runLink" />').text(I18n.t('jst.testsTable.goToLastRun')).appendTo(wrapper);
 
       return wrapper;
     }
@@ -149,7 +197,74 @@ App.autoModule('testsTable', function() {
     template: 'testsTable/table',
     itemView: TestRow,
     itemViewContainer: 'tbody',
-    emptyView: NoTestRow
+    emptyView: NoTestRow,
+
+    ui: {
+      actionHeader: 'th.action'
+    },
+
+    events: {
+      'click thead .selectAll': 'selectAll'
+    },
+
+    collectionEvents: {
+      'change:selected': 'renderActionHeader'
+    },
+
+    initialize: function() {
+      Tableling.Bootstrap.TableView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+      this.listenTo(App, 'test:selector', this.setSelectionModeEnabled);
+      this.listenTo(App, 'test:selector', this.renderActionHeader);
+      this.listenTo(this.vent, 'table:refreshed', this.renderActionHeader);
+    },
+
+    onRender: function() {
+      this.renderActionHeader();
+    },
+
+    selectAll: function() {
+
+      var select = !this.allTestsAreSelected();
+
+      this.collection.forEach(function(test) {
+        if (!!test.get('selected') != select) {
+          test.set({ selected: select });
+          App.trigger('test:' + (select ? 'selected' : 'unselected'), test);
+        }
+      }, this);
+    },
+
+    allTestsAreSelected: function() {
+      return this.collection.every(function(test) {
+        return test.get('selected');
+      });
+    },
+
+    setSelectionModeEnabled: function(enabled) {
+      this.$el[enabled ? 'addClass' : 'removeClass']('selectionMode');
+    },
+
+    isSelectionModeEnabled: function() {
+      return !!(App.currentTestSelector);
+    },
+
+    renderActionHeader: function() {
+      if (this.isSelectionModeEnabled()) {
+        this.renderSelectAll();
+      } else {
+        this.ui.actionHeader.text(I18n.t('jst.models.test.status'));
+      }
+    },
+
+    renderSelectAll: function() {
+
+      var selected = this.allTestsAreSelected();
+
+      var el = $('<span class="selectAll glyphicon" />');
+      this.ui.actionHeader.html(el);
+      el.addClass('glyphicon-' + (selected ? 'minus' : 'plus') + '-sign');
+      el.tooltip({ title: I18n.t('jst.testSelector.' + (selected ? 'unselectAll' : 'selectAll')) });
+    }
   });
 
   var TestsTable = TableWithAdvancedSearch.extend({

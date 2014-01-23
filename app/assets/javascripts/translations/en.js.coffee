@@ -20,6 +20,13 @@ this.Translations.en =
       notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
   statusModule:
     disconnected: "The connection to the server was lost. Data will not be refreshed anymore until you reload the page."
+  testSelector:
+    description: "The selector allows you to collect tests for batch operations or to obtain a list of links."
+    instructions: "Select tests in the table below using the buttons in the rightmost column."
+    select: "Select this test"
+    unselect: "Unselect this test"
+    selectAll: "Select all"
+    unselectAll: "Unselect all"
   maintenanceControls:
     title: "Maintenance Mode"
     instructions:

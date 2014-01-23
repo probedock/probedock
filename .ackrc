@@ -3,5 +3,5 @@
 --ignore-dir=node_modules
 --ignore-dir=tmp
 --ignore-dir=doc/app
---ignore-dir=app/assets/javascripts/lib
+--ignore-dir=app/assets/javascripts/vendor
 --ignore-dir=public/javascripts

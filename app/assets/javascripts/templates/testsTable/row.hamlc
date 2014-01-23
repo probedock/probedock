@@ -3,4 +3,4 @@
 %td.author
 %td.createdAt
 %td.key.monospace.text-warning
-%td.status
+%td.action
