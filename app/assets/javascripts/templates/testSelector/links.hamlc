@@ -1,0 +1,4 @@
+%form{ role: 'form' }
+  .form-group
+    %label.sr-only{ for: 'testSelectorLinksText' }
+    %textarea#testSelectorLinksText.form-control{ readonly: true, rows: 5 }

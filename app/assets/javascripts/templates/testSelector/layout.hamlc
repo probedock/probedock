@@ -4,6 +4,12 @@
     .panel-heading
       %h3.panel-title Test Selector
     .panel-body
-      .allSelected
+      .row
+        .allSelected.col-md-4
+        .col-md-8
+          %ul.nav.nav-tabs
+            %li.active
+              %a{ href: '#' } Links
+          .links
     .panel-footer
       %button.close-selector.btn.btn-default{ type: 'button' } Close Selector

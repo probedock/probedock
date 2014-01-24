@@ -230,14 +230,14 @@ App.module('models', function() {
     },
 
     apiPath : function() {
-      return LegacyApiPath.build('tests', this.pathKey());
+      return LegacyApiPath.build('tests', this.toParam());
     },
 
     path : function() {
-      return Path.build('tests', this.pathKey());
+      return Path.build('tests', this.toParam());
     },
 
-    pathKey : function() {
+    toParam : function() {
       return this.get('project').get('apiId') + '-' + this.get('key');
     },
 
@@ -251,6 +251,16 @@ App.module('models', function() {
 
     isDeprecated : function() {
       return !!this.get('deprecated_at');
+    },
+
+    status : function() {
+      if (this.isDeprecated()) {
+        return 'deprecated';
+      } else if (!this.get('active')) {
+        return 'inactive';
+      } else {
+        return this.get('passing') ? 'passed' : 'failed';
+      }
     }
   });
 

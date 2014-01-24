@@ -22,11 +22,13 @@ this.Translations.en =
     disconnected: "The connection to the server was lost. Data will not be refreshed anymore until you reload the page."
   testSelector:
     description: "The selector allows you to collect tests for batch operations or to obtain a list of links."
-    instructions: "Select tests in the table below using the buttons in the rightmost column."
+    instructions: "Select tests by clicking on rows in the table below."
     select: "Select this test"
     unselect: "Unselect this test"
     selectAll: "Select all"
     unselectAll: "Unselect all"
+    numberSelected: "You have selected 1 test."
+    numberSelected_plural: "You have selected __count__ tests."
   maintenanceControls:
     title: "Maintenance Mode"
     instructions:

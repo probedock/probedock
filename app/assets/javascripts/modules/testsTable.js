@@ -51,14 +51,13 @@ App.autoModule('testsTable', function() {
       'click': 'toggleSelected'
     },
 
-    modelEvents: {
-      'change:selected': 'renderName renderAction'
+    appEvents: {
+      'test:selector': 'renderName renderAction',
+      'test:selected': 'updateSelection'
     },
 
     initialize: function() {
-      this.listenTo(App, 'test:selector', this.setSelectionModeEnabled);
-      this.listenTo(App, 'test:selector', this.renderName);
-      this.listenTo(App, 'test:selector', this.renderAction);
+      App.bindEvents(this);
     },
 
     onRender: function() {
@@ -70,11 +69,18 @@ App.autoModule('testsTable', function() {
       this.renderAction();
     },
 
+    updateSelection: function(test) {
+      if (test.toParam() == this.model.toParam()) {
+        this.renderName();
+        this.renderAction();
+      }
+    },
+
     renderName: function() {
       this.ui.name.removeClass('text-success text-muted');
-      if (this.isSelectionModeEnabled()) {
+      if (App.currentTestSelector) {
         this.ui.name.text(Format.truncate(this.model.get('name'), { max: 75 }));
-        this.ui.name.addClass(this.model.get('selected') ? 'text-success' : 'text-muted');
+        this.ui.name.addClass(App.currentTestSelector.isSelected(this.model) ? 'text-success' : 'text-muted');
       } else {
         this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
       }
@@ -132,15 +138,16 @@ App.autoModule('testsTable', function() {
         e.preventDefault();
       }
 
-      var selected = !this.model.get('selected');
+      var selected = !App.currentTestSelector.isSelected(this.model);
       this.model.set({ selected: selected });
-      App.trigger('test:' + (selected ? 'selected' : 'unselected'), this.model);
+      App.trigger('test:selected', this.model, selected);
     },
 
     renderSelect: function() {
-      var el = $('<span class="toggleSelected glyphicon" />').addClass('glyphicon-' + (this.model.get('selected') ? 'minus' : 'plus'));
+      var selected = App.currentTestSelector.isSelected(this.model);
+      var el = $('<span class="toggleSelected glyphicon" />').addClass('glyphicon-' + (selected ? 'minus' : 'plus'));
       this.ui.action.html(el);
-      el.tooltip({ title: I18n.t('jst.testSelector.' + (this.model.get('selected') ? 'unselect' : 'select')) });
+      el.tooltip({ title: I18n.t('jst.testSelector.' + (selected ? 'unselect' : 'select')) });
     },
 
     renderStatus: function() {
@@ -207,14 +214,14 @@ App.autoModule('testsTable', function() {
       'click thead .selectAll': 'selectAll'
     },
 
-    collectionEvents: {
-      'change:selected': 'renderActionHeader'
+    appEvents: {
+      'test:selector': 'setSelectionModeEnabled renderActionHeader',
+      'test:selected': 'renderActionHeader'
     },
 
     initialize: function() {
       Tableling.Bootstrap.TableView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
-      this.listenTo(App, 'test:selector', this.setSelectionModeEnabled);
-      this.listenTo(App, 'test:selector', this.renderActionHeader);
+      App.bindEvents(this);
       this.listenTo(this.vent, 'table:refreshed', this.renderActionHeader);
     },
 
@@ -227,16 +234,16 @@ App.autoModule('testsTable', function() {
       var select = !this.allTestsAreSelected();
 
       this.collection.forEach(function(test) {
-        if (!!test.get('selected') != select) {
+        if (App.currentTestSelector.isSelected(test) != select) {
           test.set({ selected: select });
-          App.trigger('test:' + (select ? 'selected' : 'unselected'), test);
+          App.trigger('test:selected', test, select);
         }
       }, this);
     },
 
     allTestsAreSelected: function() {
       return this.collection.every(function(test) {
-        return test.get('selected');
+        return App.currentTestSelector.isSelected(test);
       });
     },
 

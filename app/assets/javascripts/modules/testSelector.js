@@ -23,9 +23,52 @@ App.autoModule('testSelector', function() {
     model: Test
   });
 
+  var LinksView = Marionette.ItemView.extend({
+
+    template: 'testSelector/links',
+
+    ui: {
+      text: 'textarea'
+    },
+
+    events: {
+      'click textarea': 'selectText',
+      'submit form': $.voidHandler
+    },
+
+    collectionEvents: {
+      'add': 'renderText',
+      'remove': 'renderText'
+    },
+
+    onRender: function() {
+      this.renderText();
+    },
+
+    selectText: function() {
+      this.ui.text.setSelection(0, this.ui.text.val().length);
+    },
+
+    renderText: function() {
+
+      var text = '';
+      
+      this.collection.forEach(function(test, i) {
+        if (i != 0) {
+          text += '\n';
+        }
+
+        text += test.permalink(true);
+      });
+
+      this.ui.text.text(text);
+    }
+  });
+
   var NoSelection = Marionette.ItemView.extend({
 
     tagName: 'p',
+    className: 'instructions',
     template: function() {
       return _.template('<em><%- instructions %></em>', { instructions: I18n.t('jst.testSelector.instructions') });
     }
@@ -33,18 +76,51 @@ App.autoModule('testSelector', function() {
 
   var SelectedTest = Marionette.ItemView.extend({
 
-    template: 'testSelector/selectedTest',
+    tagName: 'span',
+    className: 'card',
+    template: false,
 
     onRender: function() {
-      this.$el.text(this.model.get('name'));
+      this.$el.tooltip({ title: this.tooltipText(), html: true });
+      this.setStatusClass();
+    },
+
+    setStatusClass: function() {
+      this.$el.addClass(this.model.status() + 'Test');
+    },
+
+    tooltipText: function() {
+      return $('<div />')
+        .append($('<span />').text(this.model.get('project').get('name')))
+        .append(' - ')
+        .append($('<span class="monospace" />').text(this.model.get('key')))
+        .append(' - ')
+        .append($('<span />').text(this.model.get('name')));
     }
   });
 
   var AllSelected = Marionette.CompositeView.extend({
 
-    template: false,
+    template: 'testSelector/allSelected',
     itemView: SelectedTest,
-    emptyView: NoSelection
+    emptyView: NoSelection,
+
+    collectionEvents: {
+      'add': 'renderNumberSelected',
+      'remove': 'renderNumberSelected'
+    },
+
+    ui: {
+      numberSelected: '.numberSelected'
+    },
+
+    onRender: function() {
+      this.renderNumberSelected();
+    },
+
+    renderNumberSelected: function() {
+      this.ui.numberSelected.text(I18n.t('jst.testSelector.numberSelected', { count: this.collection.length }));
+    }
   });
 
   var Layout = Marionette.Layout.extend({
@@ -52,7 +128,8 @@ App.autoModule('testSelector', function() {
     template: 'testSelector/layout',
 
     regions: {
-      allSelected: '.allSelected'
+      allSelected: '.allSelected',
+      links: '.links'
     },
 
     ui: {
@@ -65,16 +142,31 @@ App.autoModule('testSelector', function() {
       'click .close-selector': 'toggle'
     },
 
+    appEvents: {
+      'test:selected': 'changeTestSelection'
+    },
+
     initialize: function() {
+      App.bindEvents(this);
       this.collection = new SelectedTests();
-      this.listenTo(App, 'test:selected', this.selectTest);
-      this.listenTo(App, 'test:unselected', this.unselectTest);
     },
 
     onRender: function() {
       this.ui.selector.hide();
       this.ui.openButton.tooltip({ title: I18n.t('jst.testSelector.description'), placement: 'auto right' });
       this.allSelected.show(new AllSelected({ collection: this.collection }));
+      this.links.show(new LinksView({ collection: this.collection }));
+    },
+
+    isSelected: function(test) {
+      var needle = test.toParam();
+      return this.collection.some(function(currentTest) {
+        return needle == currentTest.toParam();
+      });
+    },
+
+    changeTestSelection: function(test, selected) {
+      this[selected ? 'selectTest' : 'unselectTest'](test);
     },
 
     selectTest: function(test) {
@@ -82,7 +174,17 @@ App.autoModule('testSelector', function() {
     },
 
     unselectTest: function(test) {
-      this.collection.remove(test);
+      var testToRemove = this.findSelectedTest(test);
+      if (testToRemove) {
+        this.collection.remove(testToRemove);
+      }
+    },
+
+    findSelectedTest: function(test) {
+      var needle = test.toParam();
+      return this.collection.find(function(currentTest) {
+        return needle == currentTest.toParam();
+      });
     },
 
     toggle: function() {

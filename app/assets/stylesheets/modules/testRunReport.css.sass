@@ -1,14 +1,4 @@
-@mixin gradient($from, $to)
-  /* fallback/image non-cover color */
-  :background-color $from
-  /* Firefox 3.6+ */
-  :background-image -moz-linear-gradient($from, $to)
-  /* Safari 4+, Chrome 1+ */
-  :background-image -webkit-gradient(linear, 0% 0%, 0% 100%, from($from), to($to))
-  /* Safari 5.1+, Chrome 10+ */
-  :background-image -webkit-linear-gradient($from, $to)
-  /* Opera 11.10+ */
-  :background-image -o-linear-gradient($from, $to)
+@import "../mixins"
 
 .loadingTestRunReport
   h2
@@ -42,11 +32,11 @@
         :height 20px
         :margin 0 0 1px 1px
       &.p
-        @include gradient(#62c462, #51a351)
+        @extend .passedTest
       &.f
-        @include gradient(#ee5f5b, #bd362f)
+        @extend .failedTest
       &.i
-        @include gradient(#fbb450, #f89406)
+        @extend .inactiveTest
     hr
       :clear both
     .back
