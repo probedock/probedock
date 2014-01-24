@@ -114,7 +114,7 @@ this.Translations.en =
       passed: "passed"
       inactive: "inactive"
       failed: "failed"
-  linksManager:
+  menuLinksManager:
     title: "Menu Links"
     instructions: "Links will appear next to the menu brand as a dropdown menu."
     empty: "No links are defined"

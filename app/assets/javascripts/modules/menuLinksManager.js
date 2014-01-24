@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-App.autoModule('linksManager', function() {
+App.autoModule('menuLinksManager', function() {
 
   var models = App.module('models'),
       LinkCollection = models.LinkCollection;
@@ -24,14 +24,14 @@ App.autoModule('linksManager', function() {
     tagName: 'tr',
     className: 'empty',
     template: function() {
-      return _.template('<td colspan="3"><%- empty %></td>', { empty: I18n.t('jst.linksManager.empty') });
+      return _.template('<td colspan="3"><%- empty %></td>', { empty: I18n.t('jst.menuLinksManager.empty') });
     }
   });
 
   var LinkRow = Backbone.Marionette.ItemView.extend({
 
     tagName: 'tr',
-    template: 'linksManager/link',
+    template: 'menuLinksManager/link',
     ui: {
       edit: '.actions .edit',
       delete: '.actions .delete',
@@ -76,7 +76,7 @@ App.autoModule('linksManager', function() {
 
     deleteLink: function(e) {
       e.preventDefault();
-      if (!confirm(I18n.t('jst.linksManager.confirmDelete', { name: this.model.get('name') }))) {
+      if (!confirm(I18n.t('jst.menuLinksManager.confirmDelete', { name: this.model.get('name') }))) {
         return;
       }
 
@@ -100,7 +100,7 @@ App.autoModule('linksManager', function() {
 
   var LinksManager = Backbone.Marionette.CompositeView.extend({
 
-    template: 'linksManager/manager',
+    template: 'menuLinksManager/manager',
     ui: {
       form: 'tfoot form',
       name: 'tfoot form .name',

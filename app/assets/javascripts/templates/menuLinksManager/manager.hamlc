@@ -1,5 +1,5 @@
-%h2= I18n.t('jst.linksManager.title')
-%p.instructions= I18n.t('jst.linksManager.instructions')
+%h2= I18n.t('jst.menuLinksManager.title')
+%p.instructions= I18n.t('jst.menuLinksManager.instructions')
 %table.table.table-hover
   %thead
     %tr
