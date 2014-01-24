@@ -1,15 +1,12 @@
-%button.open.btn.btn-primary{ type: 'button' } Open Selector
+%button.open.btn.btn-primary{ type: 'button' }= I18n.t('jst.testSelector.open')
 .selector
   .panel.panel-primary
     .panel-heading
-      %h3.panel-title Test Selector
+      %h3.panel-title= I18n.t('jst.testSelector.title')
     .panel-body
       .row
         .allSelected.col-md-4
-        .col-md-8
-          %ul.nav.nav-tabs
-            %li.active
-              %a{ href: '#' } Links
-          .links
+        .links.col-md-8
     .panel-footer
-      %button.close-selector.btn.btn-default{ type: 'button' } Close Selector
+      %button.clearSelection.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.clearSelection')
+      %button.closeSelector.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.close')

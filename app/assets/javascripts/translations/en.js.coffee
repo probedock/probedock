@@ -20,15 +20,29 @@ this.Translations.en =
       notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
   statusModule:
     disconnected: "The connection to the server was lost. Data will not be refreshed anymore until you reload the page."
+  linkTemplates:
+    title: "Link Templates"
+    instructions: "Link templates allow ROX Center to provide you with correctly formatted links for your documentation tool of choice."
+    empty: "No link templates are defined."
+    confirmDelete: "Are you sure you want to delete the __name__ template?"
+    noTemplate:
+      name: "no template"
+      contents: "%{url}"
   testSelector:
     description: "The selector allows you to collect tests for batch operations or to obtain a list of links."
     instructions: "Select tests by clicking on rows in the table below."
-    select: "Select this test"
-    unselect: "Unselect this test"
     selectAll: "Select all"
     unselectAll: "Unselect all"
     numberSelected: "You have selected 1 test."
     numberSelected_plural: "You have selected __count__ tests."
+    clearSelection: "Clear selection"
+    open: "Open selector"
+    title: "Test Selector"
+    close: "Close selector"
+    linkFormat: "Format links with"
+    linkSeparator: "separated by"
+    linkSeparatorBlank: "no separator"
+    newLines: "new lines"
   maintenanceControls:
     title: "Maintenance Mode"
     instructions:
@@ -270,6 +284,9 @@ this.Translations.en =
       breakers:
         placeholder: "By breaker"
   models:
+    linkTemplate:
+      name: "Name"
+      contents: "Template"
     apiKey:
       identifier: "ID"
       sharedSecret: "Shared secret"

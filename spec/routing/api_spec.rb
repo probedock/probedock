@@ -41,6 +41,9 @@ describe 'API routing' do
   it(nil, rox: { key: 'b30da10c514b' }){ should route(:post, '/api/v1/links').to(controller: :links, action: :create) }
   it(nil, rox: { key: '34a7fbd4b862' }){ should route(:put, '/api/v1/links/42').to(controller: :links, action: :update, id: 42) }
   it(nil, rox: { key: 'ed3a81c02b01' }){ should route(:delete, '/api/v1/links/42').to(controller: :links, action: :destroy, id: 42) }
+  it(nil, rox: { key: 'bcf5d93a4a86' }){ should route(:post, '/api/v1/link_templates').to(controller: :link_templates, action: :create) }
+  it(nil, rox: { key: '93aa6c8a111a' }){ should route(:put, '/api/v1/link_templates/42').to(controller: :link_templates, action: :update, id: 42) }
+  it(nil, rox: { key: '81eb9b5be64a' }){ should route(:delete, '/api/v1/link_templates/42').to(controller: :link_templates, action: :destroy, id: 42) }
   it(nil, rox: { key: 'a37d18f62f9d' }){ should route(:get, '/api/v1/metrics/breakdown/authors').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :metrics, action: :author_breakdown) }
   it(nil, rox: { key: '1569b9a07f48' }){ should route(:get, '/api/v1/metrics/breakdown/categories').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :metrics, action: :category_breakdown) }
   it(nil, rox: { key: '565818ce6faa' }){ should route(:get, '/api/v1/metrics/breakdown/projects').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :metrics, action: :project_breakdown) }

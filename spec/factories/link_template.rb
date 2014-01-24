@@ -14,14 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+FactoryGirl.define do
 
-class CreateLinks < ActiveRecord::Migration
+  sequence :link_template_name do |n|
+    "Link template #{n}"
+  end
 
-  def change
-    create_table :links do |t|
-      t.string :name, null: false, limit: 50
-      t.string :url, null: false
-      t.timestamps null: false
-    end
+  factory :link_template do
+    name{ generate(:link_template_name) }
+    contents '[%{label}](%{url})'
   end
 end

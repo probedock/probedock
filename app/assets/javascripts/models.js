@@ -417,4 +417,17 @@ App.module('models', function() {
       return a.get('name').localeCompare(b.get('name'));
     }
   });
+
+  var LinkTemplate = this.LinkTemplate = Backbone.Model.extend({
+
+    url: function() {
+      return LegacyApiPath.build('link_templates', this.get('id'));
+    }
+  });
+
+  var LinkTemplateCollection = this.LinkTemplateCollection = Backbone.Collection.extend({
+
+    model: LinkTemplate,
+    url: LegacyApiPath.builder('link_templates')
+  });
 });

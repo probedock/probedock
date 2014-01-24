@@ -14,14 +14,30 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+class LinkTemplatesController < ApplicationController
+  before_filter :authenticate_user!
+  before_filter{ authorize! :manage, :settings }
+  load_resource only: [ :update, :destroy ]
 
-class CreateLinks < ActiveRecord::Migration
+  def create
+    create_and_render_record LinkTemplate
+  end
 
-  def change
-    create_table :links do |t|
-      t.string :name, null: false, limit: 50
-      t.string :url, null: false
-      t.timestamps null: false
-    end
+  def update
+    update_and_render_record @link_template
+  end
+
+  def destroy
+    destroy_and_render_record @link_template
+  end
+
+  private
+
+  def link_params
+    params[:link_template].permit(:name, :contents)
+  end
+
+  def record_params_for_save *args
+    super(*args).permit(:name, :contents)
   end
 end

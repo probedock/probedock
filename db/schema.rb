@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140115122236) do
+ActiveRecord::Schema.define(version: 20140124124144) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -43,6 +43,15 @@ ActiveRecord::Schema.define(version: 20140115122236) do
 
   add_index "categories", ["metric_key"], name: "index_categories_on_metric_key", unique: true, using: :btree
   add_index "categories", ["name"], name: "index_categories_on_name", unique: true, using: :btree
+
+  create_table "link_templates", force: true do |t|
+    t.string   "name",       limit: 50, null: false
+    t.string   "contents",              null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
+  add_index "link_templates", ["name"], name: "index_link_templates_on_name", unique: true, using: :btree
 
   create_table "links", force: true do |t|
     t.string   "name",       limit: 50, null: false

@@ -26,6 +26,7 @@ class TestInfosController < ApplicationController
   def index
     window_title << TestInfo.model_name.human.pluralize.titleize
     @test_search_config = TestSearch.config(params)
+    @test_selector_config = { linkTemplates: LinkTemplate.order('name ASC').to_a }
   end
 
   def page

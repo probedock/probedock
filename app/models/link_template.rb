@@ -14,14 +14,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+class LinkTemplate < ActiveRecord::Base
+  
+  strip_attributes
+  validates :name, presence: true, length: { maximum: 50 }, uniqueness: { case_sensitive: false }
+  validates :contents, presence: true, length: { maximum: 255 }
 
-class CreateLinks < ActiveRecord::Migration
-
-  def change
-    create_table :links do |t|
-      t.string :name, null: false, limit: 50
-      t.string :url, null: false
-      t.timestamps null: false
-    end
+  def to_client_hash options = {}
+    { id: id, name: name, contents: contents }
   end
 end

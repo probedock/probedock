@@ -14,14 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
-class CreateLinks < ActiveRecord::Migration
+class CreateLinkTemplates < ActiveRecord::Migration
 
   def change
-    create_table :links do |t|
+    create_table :link_templates do |t|
       t.string :name, null: false, limit: 50
-      t.string :url, null: false
+      t.string :contents, null: false
       t.timestamps null: false
+      t.index :name, unique: true
     end
   end
 end

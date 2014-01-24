@@ -26,6 +26,7 @@ class SettingsController < ApplicationController
         window_title << t('settings.show.title')
         @status_data = StatusData.compute
         @test_counters_config = { data: TestCountersData.compute }
+        @link_templates_config = LinkTemplate.order('created_at ASC').to_a
       end
 
       format.json do

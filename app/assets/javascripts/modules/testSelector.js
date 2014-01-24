@@ -17,23 +17,63 @@
 App.autoModule('testSelector', function() {
 
   var models = App.module('models'),
-      Test = models.Test;
+      Test = models.Test,
+      LinkTemplateCollection = models.LinkTemplateCollection;
 
   var SelectedTests = Backbone.Collection.extend({
     model: Test
   });
 
-  var LinksView = Marionette.ItemView.extend({
+  var LinkTemplateOption = Marionette.ItemView.extend({
+
+    tagName: 'option',
+    template: false,
+
+    onRender: function() {
+      this.$el.text(this.model.get('name'));
+      this.$el.attr('value', this.model.get('contents'));
+    }
+  });
+
+  var LinkTemplateSelector = this.LinkTemplateSelector = Marionette.CompositeView.extend({
+
+    template: 'testSelector/templateSelector',
+    itemView: LinkTemplateOption,
+    itemViewContainer: 'select',
+
+    ui: {
+      select: 'select'
+    },
+
+    events: {
+      'change': 'notifyChange'
+    },
+
+    notifyChange: function() {
+      this.trigger('template:changed', this.ui.select.val());
+    }
+  });
+
+  var LinksView = Marionette.Layout.extend({
 
     template: 'testSelector/links',
 
+    regions: {
+      templateSelectorRegion: '.templateSelector'
+    },
+
     ui: {
-      text: 'textarea'
+      text: 'textarea',
+      templateSelector: '.linkTemplateSelector',
+      newLinesCheckbox: '.newLines',
+      separator: '.linkSeparator'
     },
 
     events: {
       'click textarea': 'selectText',
-      'submit form': $.voidHandler
+      'submit form': $.voidHandler,
+      'change .newLines': 'renderText',
+      'keyup .linkSeparator': 'renderText'
     },
 
     collectionEvents: {
@@ -41,7 +81,24 @@ App.autoModule('testSelector', function() {
       'remove': 'renderText'
     },
 
+    initialize: function(options) {
+      // TODO: store last selection in local storage
+
+      this.linkTemplates = options.linkTemplates;
+      this.linkTemplates.unshift({ name: I18n.t('jst.linkTemplates.noTemplate.name'), contents: I18n.t('jst.linkTemplates.noTemplate.contents') });
+      this.currentTemplate = this.linkTemplates.at(0).get('contents');
+
+      this.templateSelector = new LinkTemplateSelector({ collection: this.linkTemplates });
+      this.listenTo(this.templateSelector, 'template:changed', this.changeTemplate);
+    },
+
     onRender: function() {
+      this.renderText();
+      this.templateSelectorRegion.show(this.templateSelector);
+    },
+
+    changeTemplate: function(template) {
+      this.currentTemplate = template;
       this.renderText();
     },
 
@@ -51,17 +108,23 @@ App.autoModule('testSelector', function() {
 
     renderText: function() {
 
-      var text = '';
+      var text = '',
+          newLine = this.ui.newLinesCheckbox.is(':checked') ? '\n' : '',
+          separator = this.ui.separator.val();
       
       this.collection.forEach(function(test, i) {
         if (i != 0) {
-          text += '\n';
+          text += newLine + separator;
         }
 
-        text += test.permalink(true);
-      });
+        text += this.buildLink(test);
+      }, this);
 
       this.ui.text.text(text);
+    },
+
+    buildLink: function(test) {
+      return this.currentTemplate.replace(/\%\{label\}/g, test.get('key')).replace(/\%\{url\}/g, test.permalink(true));
     }
   });
 
@@ -134,28 +197,32 @@ App.autoModule('testSelector', function() {
 
     ui: {
       openButton: '.open',
-      selector: '.selector'
+      selector: '.selector',
+      clearSelectionButton: '.clearSelection'
     },
 
     events: {
       'click .open': 'toggle',
-      'click .close-selector': 'toggle'
+      'click .closeSelector': 'toggle',
+      'click .clearSelection': 'clearSelection'
     },
 
     appEvents: {
       'test:selected': 'changeTestSelection'
     },
 
-    initialize: function() {
+    initialize: function(options) {
       App.bindEvents(this);
       this.collection = new SelectedTests();
+      this.linkTemplates = new LinkTemplateCollection(options.linkTemplates);
     },
 
     onRender: function() {
       this.ui.selector.hide();
       this.ui.openButton.tooltip({ title: I18n.t('jst.testSelector.description'), placement: 'auto right' });
       this.allSelected.show(new AllSelected({ collection: this.collection }));
-      this.links.show(new LinksView({ collection: this.collection }));
+      this.links.show(new LinksView({ collection: this.collection, linkTemplates: this.linkTemplates }));
+      this.updateControls();
     },
 
     isSelected: function(test) {
@@ -165,8 +232,19 @@ App.autoModule('testSelector', function() {
       });
     },
 
+    clearSelection: function() {
+      while (this.collection.length) {
+        App.trigger('test:selected', this.collection.at(0), false);
+      }
+    },
+
     changeTestSelection: function(test, selected) {
       this[selected ? 'selectTest' : 'unselectTest'](test);
+      this.updateControls();
+    },
+
+    updateControls: function() {
+      this.ui.clearSelectionButton.attr('disabled', !this.collection.length);
     },
 
     selectTest: function(test) {
@@ -221,6 +299,6 @@ App.autoModule('testSelector', function() {
   });
   
   this.addAutoInitializer(function(options) {
-    options.region.show(new Layout());
+    options.region.show(new Layout(options.config));
   });
 });

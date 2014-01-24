@@ -52,7 +52,7 @@ App.autoModule('testsTable', function() {
     },
 
     appEvents: {
-      'test:selector': 'renderName renderAction',
+      'test:selector': 'updateSelection',
       'test:selected': 'updateSelection'
     },
 
@@ -66,24 +66,18 @@ App.autoModule('testsTable', function() {
       this.renderProject();
       this.renderAuthor();
       this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
-      this.renderAction();
+      this.renderStatus();
     },
 
-    updateSelection: function(test) {
-      if (test.toParam() == this.model.toParam()) {
-        this.renderName();
-        this.renderAction();
+    updateSelection: function() {
+      this.$el.removeClass('success warning');
+      if (App.currentTestSelector) {
+        this.$el.addClass(App.currentTestSelector.isSelected(this.model) ? 'success' : 'warning');
       }
     },
 
     renderName: function() {
-      this.ui.name.removeClass('text-success text-muted');
-      if (App.currentTestSelector) {
-        this.ui.name.text(Format.truncate(this.model.get('name'), { max: 75 }));
-        this.ui.name.addClass(App.currentTestSelector.isSelected(this.model) ? 'text-success' : 'text-muted');
-      } else {
-        this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
-      }
+      this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
     },
 
     renderKey: function() {
@@ -122,10 +116,6 @@ App.autoModule('testsTable', function() {
       new UserAvatar({ model: this.model.get('author'), size: 'small', el: this.ui.author }).render();
     },
 
-    renderAction: function() {
-      this[this.isSelectionModeEnabled() ? 'renderSelect' : 'renderStatus']();
-    },
-
     isSelectionModeEnabled: function() {
       return !!(App.currentTestSelector);
     },
@@ -134,20 +124,12 @@ App.autoModule('testsTable', function() {
       if (!this.isSelectionModeEnabled()) {
         return;
       } else {
-        // TODO: re-enable links but warn that selector is enabled
         e.preventDefault();
       }
 
       var selected = !App.currentTestSelector.isSelected(this.model);
       this.model.set({ selected: selected });
       App.trigger('test:selected', this.model, selected);
-    },
-
-    renderSelect: function() {
-      var selected = App.currentTestSelector.isSelected(this.model);
-      var el = $('<span class="toggleSelected glyphicon" />').addClass('glyphicon-' + (selected ? 'minus' : 'plus'));
-      this.ui.action.html(el);
-      el.tooltip({ title: I18n.t('jst.testSelector.' + (selected ? 'unselect' : 'select')) });
     },
 
     renderStatus: function() {
@@ -207,7 +189,8 @@ App.autoModule('testsTable', function() {
     emptyView: NoTestRow,
 
     ui: {
-      actionHeader: 'th.action'
+      actionHeader: 'th.action',
+      table: 'table'
     },
 
     events: {
@@ -249,6 +232,7 @@ App.autoModule('testsTable', function() {
 
     setSelectionModeEnabled: function(enabled) {
       this.$el[enabled ? 'addClass' : 'removeClass']('selectionMode');
+      this.ui.table[enabled ? 'removeClass' : 'addClass']('table-striped');
     },
 
     isSelectionModeEnabled: function() {

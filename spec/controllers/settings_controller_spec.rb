@@ -31,6 +31,7 @@ describe SettingsController do
     describe "#show" do
 
       describe "HTML" do
+        let!(:link_templates){ Array.new(3){ |i| create :link_template, created_at: i.days.ago } }
         subject{ assigns }
         before(:each){ get :show, locale: I18n.default_locale }
 
@@ -44,6 +45,10 @@ describe SettingsController do
 
         it "should set the test counters configuration", rox: { key: '58b561514050' } do
           expect(subject[:test_counters_config]).to eq(data: TestCountersData.compute)
+        end
+
+        it "should set the link templates configuration", rox: { key: '7c645e599730' } do
+          expect(subject[:link_templates_config]).to eq(link_templates.sort_by(&:created_at))
         end
       end
 

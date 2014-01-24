@@ -1,0 +1,8 @@
+%td.actions
+  .btn-group
+    %button.edit.btn.btn-default.btn-sm{ type: 'button' }
+      %span.glyphicon
+    %button.delete.btn.btn-danger.btn-sm{ type: 'button' }
+      %span.glyphicon.glyphicon-trash
+%td.name
+%td.contents

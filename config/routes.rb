@@ -111,6 +111,7 @@ ROXCenter::Application.routes.draw do
   namespace 'api/v1', :module => nil, :as => :legacy_api do
 
     resources :links, :only => [ :create, :update, :destroy ]
+    resources :link_templates, :only => [ :create, :update, :destroy ]
 
     resources :metrics, :only => [] do
       collection do
