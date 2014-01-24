@@ -52,9 +52,8 @@ describe 'accounts/show', rox: { tags: :unit } do
 
   context 'with unknown users' do
 
-    let(:user){ create :unknown_user }
-
     it "should not show the e-mail", rox: { key: '3a1ab173bc4a' } do
+      user.update_columns email: nil
       subject.should_not include(User.human_attribute_name(:email))
     end
   end

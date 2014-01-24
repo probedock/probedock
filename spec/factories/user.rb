@@ -20,6 +20,7 @@ FactoryGirl.define do
   factory :user, aliases: [ :author, :runner ] do
     name 'jdoe'
     email 'john.doe@lotaris.com'
+    password 'testtest'
 
     factory :other_user do
       name 'jsmith'
@@ -29,11 +30,6 @@ FactoryGirl.define do
     factory :another_user do
       name 'jsparrow'
       email 'jack.sparrow@lotaris.com'
-    end
-
-    factory :unknown_user do
-      name 'ebloom'
-      email nil
     end
 
     factory :technical_user do

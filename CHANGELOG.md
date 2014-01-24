@@ -2,13 +2,15 @@
 
 ## v2.2.0 - Edge
 
-**Upgrade Notes:** changes in this version require counters to be recomputed from the settings page.
+**Upgrade Notes:** changes in this version require counters to be recomputed from the settings page. The `database_gem` key must be added to the `config/rox-center.yml` file (see example in [`config/samples/rox-center.production.yml`](config/samples/rox-center.production.yml)).
 
 * **NEW:** Tests can now be searched by ticket.
 
 * **NEW:** Test page permalinks now come with a button to copy the link directly to the clipboard. They can also be copied from the tests table.
 
 * **NEW:** Deprecations are now counted and displayed separately from new tests on the home page.
+
+* **NEW:** ROX Center is now compatible with PostgreSQL. The database gem (pg or mysql2) must be selected in the ROX Center configuration file. See the [deployment documentation](doc/rox/deploy.md).
 
 * Cache warmup after deployment no longer blocks report generation from the UI.
 

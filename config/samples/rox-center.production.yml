@@ -4,6 +4,9 @@ protocol: https
 host: 'rox.example.com'
 # port: 443
 
+# Supported databases gems: pg, mysql2
+database_gem: mysql2
+
 # Supported authentication modules: database, ldap
 #
 # With `database` authentication, the following devise modules
