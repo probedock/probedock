@@ -198,12 +198,13 @@ App.autoModule('testSelector', function() {
     ui: {
       openButton: '.open',
       selector: '.selector',
-      clearSelectionButton: '.clearSelection'
+      clearSelectionButton: '.clearSelection',
+      batchActions: '.batch'
     },
 
     events: {
-      'click .open': 'toggle',
-      'click .closeSelector': 'toggle',
+      'click button.open': 'toggle',
+      'click button.closeSelector': 'toggle',
       'click .clearSelection': 'clearSelection'
     },
 
@@ -244,6 +245,7 @@ App.autoModule('testSelector', function() {
     },
 
     updateControls: function() {
+      this.ui.batchActions.attr('disabled', !this.collection.length);
       this.ui.clearSelectionButton.attr('disabled', !this.collection.length);
     },
 

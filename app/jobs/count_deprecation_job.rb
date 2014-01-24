@@ -18,7 +18,7 @@ class CountDeprecationJob
   @queue = 'metrics:test_counters'
 
   include RoxHook
-  on('test:deprecated', 'test:undeprecated'){ |deprecation| enqueue_deprecations([ deprecation ], timezones: ROXCenter::Application.metrics_timezones) }
+  on('test:deprecated', 'test:undeprecated'){ |deprecation| enqueue_deprecations(Array.wrap(deprecation), timezones: ROXCenter::Application.metrics_timezones) }
 
   def self.enqueue_deprecations deprecations, options = {}
     Rails.logger.debug "Updating test counters for #{deprecations.length} deprecations in background job"

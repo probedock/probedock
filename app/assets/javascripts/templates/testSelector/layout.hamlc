@@ -7,6 +7,16 @@
       .row
         .allSelected.col-md-4
         .links.col-md-8
-    .panel-footer
-      %button.clearSelection.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.clearSelection')
-      %button.closeSelector.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.close')
+    .panel-footer.clearfix
+      .btn-group
+        %button.batch.btn.btn-warning.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' } }
+          Batch actions
+          %span.caret
+        %ul.dropdown-menu{ role: 'menu' }
+          %li
+            %a{ href: '#' } Deprecate
+          %li
+            %a{ href: '#' } Undeprecate
+      .pull-right
+        %button.clearSelection.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.clearSelection')
+        %button.closeSelector.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.close')
