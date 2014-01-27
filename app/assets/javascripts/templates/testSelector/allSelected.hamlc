@@ -1,2 +1,3 @@
-%p.numberSelected
+%p
+  %strong.numberSelected
 .selected

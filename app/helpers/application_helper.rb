@@ -29,7 +29,7 @@ module ApplicationHelper
   end
 
   def meta_session
-    Hash.new.tap do |h|
+    { cache: current_user.client_cache_key }.tap do |h|
       h[:admin] = true if current_user.try(:admin?)
     end
   end

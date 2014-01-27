@@ -12,3 +12,4 @@
 //= require ./moment
 //= require ./i18next
 //= require ./ZeroClipboard
+//= require ./jstorage

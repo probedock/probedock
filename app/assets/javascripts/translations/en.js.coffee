@@ -147,6 +147,7 @@ this.Translations.en =
     databaseSize: "Database Size"
     cacheSize: "Cache RAM Size"
     resqueLink: "Resque Backend"
+    localStorageSize: "Local Storage Size"
     jobs:
       workers: "Workers"
       working: "Working"

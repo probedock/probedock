@@ -26,6 +26,7 @@ App.autoModule('appData', function() {
       environment: 'td.environment',
       databaseSize: 'td.databaseSize',
       cacheSize: 'td.cacheSize',
+      localStorageSize: 'td.localStorageSize',
       jobsWorkersRow: 'tr.workers',
       jobsWorkers: 'td.workers',
       jobsWorkingRow: 'tr.working',
@@ -74,6 +75,12 @@ App.autoModule('appData', function() {
       this.ui.environment.text(this.model.get('environment'));
       this.ui.databaseSize.text(this.model.get('db').humanDatabaseSize());
       this.ui.cacheSize.text(this.model.get('db').humanCacheSize());
+      this.ui.localStorageSize.text(this.localStorageSize());
+    },
+
+    localStorageSize: function() {
+      var size = App.storage.size() / 1024;
+      return size >= 0 ? (Math.round(size * 100) / 100) + ' KB' : size
     },
 
     renderJobControls: function() {

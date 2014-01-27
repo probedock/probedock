@@ -88,6 +88,10 @@ class User < ActiveRecord::Base
     name
   end
 
+  def client_cache_key
+    Digest::SHA1.hexdigest "#{created_at.to_r}-#{id}"
+  end
+
   def to_client_hash options = {}
     { id: id, name: name }.tap do |h|
 

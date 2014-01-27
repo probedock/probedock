@@ -51,6 +51,16 @@ App.autoModule('testSelector', function() {
 
     notifyChange: function() {
       this.trigger('template:changed', this.ui.select.val());
+    },
+
+    getValue: function() {
+      return this.ui.select.val();
+    },
+
+    setValue: function(value) {
+      if (value) {
+        this.ui.select.val(value);
+      }
     }
   });
 
@@ -72,8 +82,8 @@ App.autoModule('testSelector', function() {
     events: {
       'click textarea': 'selectText',
       'submit form': $.voidHandler,
-      'change .newLines': 'renderText',
-      'keyup .linkSeparator': 'renderText'
+      'change .newLines': 'updateSetting',
+      'keyup .linkSeparator': 'updateLinkSeparator'
     },
 
     collectionEvents: {
@@ -82,28 +92,66 @@ App.autoModule('testSelector', function() {
     },
 
     initialize: function(options) {
-      // TODO: store last selection in local storage
 
       this.linkTemplates = options.linkTemplates;
       this.linkTemplates.unshift({ name: I18n.t('jst.linkTemplates.noTemplate.name'), contents: I18n.t('jst.linkTemplates.noTemplate.contents') });
-      this.currentTemplate = this.linkTemplates.at(0).get('contents');
 
       this.templateSelector = new LinkTemplateSelector({ collection: this.linkTemplates });
       this.listenTo(this.templateSelector, 'template:changed', this.changeTemplate);
     },
 
     onRender: function() {
-      this.renderText();
+
+      var settings = this.loadSettings();
+
       this.templateSelectorRegion.show(this.templateSelector);
+      this.templateSelectorRegion.currentView.setValue(settings.template);
+      this.currentTemplate = this.templateSelectorRegion.currentView.getValue();
+
+      this.ui.separator.val(settings.separator);
+      this.ui.newLinesCheckbox.attr('checked', !!settings.newLines);
+
+      this.currentSeparator = this.ui.separator.val();
+
+      this.renderText();
+    },
+
+    updateLinkSeparator: function() {
+
+      var value = this.ui.separator.val();
+      if (value != this.currentSeparator) {
+        this.currentSeparator = value;
+        this.updateSetting();
+      }
+    },
+
+    updateSetting: function() {
+      this.saveSettings();
+      this.renderText();
     },
 
     changeTemplate: function(template) {
       this.currentTemplate = template;
-      this.renderText();
+      this.updateSetting();
     },
 
     selectText: function() {
       this.ui.text.setSelection(0, this.ui.text.val().length);
+    },
+
+    loadSettings: function() {
+      return _.defaults(App.storage.currentUser.get('testSelector.settings') || {}, {
+        separator: '',
+        newLines: true
+      });
+    },
+
+    saveSettings: function() {
+      App.storage.currentUser.set('testSelector.settings', {
+        template: this.currentTemplate,
+        separator: this.ui.separator.val(),
+        newLines: this.ui.newLinesCheckbox.is(':checked')
+      });
     },
 
     renderText: function() {
