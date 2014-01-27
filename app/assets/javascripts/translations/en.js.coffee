@@ -43,6 +43,10 @@ this.Translations.en =
     linkSeparator: "separated by"
     linkSeparatorBlank: "no separator"
     newLines: "new lines"
+    batchActions: "Batch actions"
+    deprecate: "Deprecate selected tests"
+    undeprecate: "Undeprecate selected tests"
+    deprecationError: "Could not deprecate or undeprecate tests."
   maintenanceControls:
     title: "Maintenance Mode"
     instructions:

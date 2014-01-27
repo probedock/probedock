@@ -143,12 +143,17 @@ App.autoModule('testSelector', function() {
     className: 'card',
     template: false,
 
+    modelEvents: {
+      'change:deprecated_at': 'setStatusClass'
+    },
+
     onRender: function() {
       this.$el.tooltip({ title: this.tooltipText(), html: true });
       this.setStatusClass();
     },
 
     setStatusClass: function() {
+      this.$el.removeClass('deprecatedTest', 'inactiveTest', 'passedTest', 'failedTest');
       this.$el.addClass(this.model.status() + 'Test');
     },
 
@@ -199,13 +204,18 @@ App.autoModule('testSelector', function() {
       openButton: '.open',
       selector: '.selector',
       clearSelectionButton: '.clearSelection',
-      batchActions: '.batch'
+      batchActions: '.batch',
+      deprecateButton: '.deprecate',
+      undeprecateButton: '.undeprecate',
+      controls: '.panel-footer'
     },
 
     events: {
       'click button.open': 'toggle',
       'click button.closeSelector': 'toggle',
-      'click .clearSelection': 'clearSelection'
+      'click .clearSelection': 'clearSelection',
+      'click .deprecate': 'deprecate',
+      'click .undeprecate': 'undeprecate'
     },
 
     appEvents: {
@@ -213,7 +223,10 @@ App.autoModule('testSelector', function() {
     },
 
     initialize: function(options) {
+
       App.bindEvents(this);
+      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+
       this.collection = new SelectedTests();
       this.linkTemplates = new LinkTemplateCollection(options.linkTemplates);
     },
@@ -244,9 +257,30 @@ App.autoModule('testSelector', function() {
       this.updateControls();
     },
 
+    setBusy: function(busy) {
+      this.busy = busy;
+      if (busy) {
+        Loader.loading().appendTo(this.ui.controls);
+      } else {
+        Loader.clear(this.ui.controls);
+      }
+      this.updateControls();
+    },
+
     updateControls: function() {
-      this.ui.batchActions.attr('disabled', !this.collection.length);
-      this.ui.clearSelectionButton.attr('disabled', !this.collection.length);
+
+      this.ui.batchActions.attr('disabled', !!App.maintenance || this.busy || !this.collection.length);
+      this.ui.clearSelectionButton.attr('disabled', this.busy || !this.collection.length);
+
+      this.ui.deprecateButton.hide();
+      if (this.collection.some(function(test) { return !test.isDeprecated(); })) {
+        this.ui.deprecateButton.show();
+      }
+
+      this.ui.undeprecateButton.hide();
+      if (this.collection.some(function(test) { return test.isDeprecated(); })) {
+        this.ui.undeprecateButton.show();
+      }
     },
 
     selectTest: function(test) {
@@ -265,6 +299,48 @@ App.autoModule('testSelector', function() {
       return this.collection.find(function(currentTest) {
         return needle == currentTest.toParam();
       });
+    },
+
+    deprecate: function() {
+      this.requestDeprecation(true);
+    },
+
+    undeprecate: function() {
+      this.requestDeprecation(false);
+    },
+
+    requestDeprecation: function(deprecate) {
+      this.setBusy(true);
+      Alerts.clear(this.ui.controls);
+
+      var tests = this.collection.filter(function(test) {
+        return test.isDeprecated() != deprecate;
+      }), params = _.map(tests, function(test) {
+        return test.toParam();
+      });
+
+      $.ajax({
+        url: Path.build('tests', deprecate ? 'deprecate' : 'undeprecate'),
+        type: 'POST',
+        data: {
+          tests: params
+        }
+      }).done(_.bind(this.setTestsDeprecated, this, tests, deprecate)).fail(_.bind(this.showDeprecationError, this));
+    },
+
+    setTestsDeprecated: function(tests, deprecated) {
+      _.each(tests, function(test) {
+        test.setDeprecated(deprecated);
+        App.trigger('test:deprecated', test, deprecated);
+      });
+      this.setBusy(false);
+    },
+
+    showDeprecationError: function(xhr) {
+      this.setBusy(false);
+      if (xhr.status != 503) {
+        Alerts.warning({ message: I18n.t('jst.testSelector.deprecationError'), fade: true }).appendTo(this.ui.controls);
+      }
     },
 
     toggle: function() {

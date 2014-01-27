@@ -253,6 +253,10 @@ App.module('models', function() {
       return !!this.get('deprecated_at');
     },
 
+    setDeprecated : function(deprecated) {
+      this.set({ deprecated_at: deprecated ? new Date().getTime() : null });
+    },
+
     status : function() {
       if (this.isDeprecated()) {
         return 'deprecated';

@@ -16,15 +16,19 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 var Loader = {
 
-  loading : function() {
+  clear: function(el) {
+    el.find('.status').remove();
+  },
+
+  loading: function() {
     return Loader._build('loading');
   },
 
-  _build : function(type) {
+  _build: function(type) {
     return $('<img class="status" />').addClass(type).attr('src', Path.build(Loader._images[type]));
   },
 
-  _images : {
-    loading : "<%= asset_path("loading.gif") %>"
+  _images: {
+    loading: "<%= asset_path("loading.gif") %>"
   }
 };

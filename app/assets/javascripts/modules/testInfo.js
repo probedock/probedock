@@ -125,7 +125,7 @@ App.autoModule('testInfo', function() {
 
     setDeprecated: function(deprecated) {
       this.setBusy(false);
-      this.model.set({ deprecated_at: deprecated ? new Date().getTime() : null });
+      this.model.setDeprecated(deprecated);
     },
 
     deprecationError: function(xhr) {

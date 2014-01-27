@@ -10,13 +10,13 @@
     .panel-footer.clearfix
       .btn-group
         %button.batch.btn.btn-warning.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' } }
-          Batch actions
+          = I18n.t('jst.testSelector.batchActions')
           %span.caret
         %ul.dropdown-menu{ role: 'menu' }
           %li
-            %a{ href: '#' } Deprecate
+            %a.deprecate{ href: '#' }= I18n.t('jst.testSelector.deprecate')
           %li
-            %a{ href: '#' } Undeprecate
+            %a.undeprecate{ href: '#' }= I18n.t('jst.testSelector.undeprecate')
       .pull-right
         %button.clearSelection.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.clearSelection')
         %button.closeSelector.btn.btn-default{ type: 'button' }= I18n.t('jst.testSelector.close')

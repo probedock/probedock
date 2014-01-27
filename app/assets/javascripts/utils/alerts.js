@@ -16,6 +16,10 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 var Alerts = {
 
+  clear: function(el) {
+    el.find('.alert').remove();
+  },
+
   build: function(options) {
     if (!options) {
       throw new Error("Alerts.build must be passed an options object.");

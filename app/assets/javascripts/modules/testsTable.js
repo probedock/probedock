@@ -53,7 +53,8 @@ App.autoModule('testsTable', function() {
 
     appEvents: {
       'test:selector': 'updateSelection',
-      'test:selected': 'updateSelection'
+      'test:selected': 'updateSelection',
+      'test:deprecated': 'updateDeprecation'
     },
 
     initialize: function() {
@@ -67,12 +68,20 @@ App.autoModule('testsTable', function() {
       this.renderAuthor();
       this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
       this.renderStatus();
+      this.updateSelection();
     },
 
     updateSelection: function() {
       this.$el.removeClass('success warning');
       if (App.currentTestSelector) {
         this.$el.addClass(App.currentTestSelector.isSelected(this.model) ? 'success' : 'warning');
+      }
+    },
+
+    updateDeprecation: function(test, deprecated) {
+      if (this.model.toParam() == test.toParam()) {
+        this.model.setDeprecated(deprecated);
+        this.renderStatus();
       }
     },
 
