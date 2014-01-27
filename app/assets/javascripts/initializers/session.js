@@ -18,4 +18,5 @@ $(function() {
   var session = Meta.get('session') ? JSON.parse(Meta.get('session')) : null;
   App.pollingFrequency = App.environment == 'development' ? 1000 : (session ? 3000 : 10000);
   App.admin = session && !!session.admin;
+  App.session = session;
 });
