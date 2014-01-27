@@ -81,6 +81,7 @@ App.autoModule('testsTable', function() {
     updateDeprecation: function(test, deprecated) {
       if (this.model.toParam() == test.toParam()) {
         this.model.setDeprecated(deprecated);
+        this.renderKey();
         this.renderStatus();
       }
     },
@@ -90,7 +91,14 @@ App.autoModule('testsTable', function() {
     },
 
     renderKey: function() {
-      var el = $('<span />').text(this.model.get('key'));
+
+      var el = $('<span />');
+      if (this.model.isDeprecated()) {
+        $('<del />').text(this.model.get('key')).appendTo(el);
+      } else {
+        el.text(this.model.get('key'));
+      }
+
       this.ui.key.html(el);
       Clipboard.setup(el, this.model.permalink(true), { title: I18n.t('jst.testsTable.keyTooltip') });
     },
@@ -101,22 +109,16 @@ App.autoModule('testsTable', function() {
 
     truncateLink: function(href, text, max, el) {
 
-      var link = $('<a />').attr('href', href);
+      var link = $('<a />').attr('href', href),
+          truncatedText = Format.truncate(text, { max: max });
 
-      var originalText = text,
-          truncated = false;
-      if (text.length > max) {
-        truncated = true;
-        text = text.substring(0, max) + '...';
-      }
-
-      link.text(text);
+      link.text(truncatedText);
 
       el.html(link);
 
-      if (truncated) {
+      if (truncatedText != text) {
         link.tooltip({
-          title: originalText
+          title: text
         });
       }
     },
