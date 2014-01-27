@@ -212,9 +212,13 @@ App.autoModule('testsTable', function() {
     },
 
     initialize: function() {
+
       Tableling.Bootstrap.TableView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
       App.bindEvents(this);
       this.listenTo(this.vent, 'table:refreshed', this.renderActionHeader);
+
+      // TODO: remove this once tableling has been fixed to avoid its events being overwritten
+      this.events = _.extend(Tableling.Bootstrap.TableView.prototype.events, this.events);
     },
 
     onRender: function() {
