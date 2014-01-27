@@ -31,21 +31,46 @@ describe TestInfosController, rox: { tags: :integration } do
     end
   end
 
+  shared_examples_for "a deprecation operation" do |action|
+    let(:existing_test){ create :test, key: create(:key, user: user) }
+
+    it "should not accept a request without test params" do
+      expect do
+        post action
+        expect(response.status).to eq(400)
+      end.not_to change(TestDeprecation, :count)
+    end
+
+    it "should not accept invalid test params" do
+      expect do
+        post action, tests: [ existing_test.to_param, 'foo', 'bar-baz-qux' ]
+        expect(response.status).to eq(400)
+      end.not_to change(TestDeprecation, :count)
+    end
+
+    it "should not accept unknown tests" do
+      expect do
+        post action, tests: [ existing_test.to_param, 'unknown-test' ]
+        expect(response.status).to eq(400)
+      end.not_to change(TestDeprecation, :count)
+    end
+  end
+
   describe "#deprecate" do
     let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
     before(:each){ ROXCenter::Application.events.stub :fire }
 
     it "should create a deprecation and link it to the test", rox: { key: '1a5b6659902c' } do
 
-      event_deprecation = nil
-      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecation|
+      event_deprecations = nil
+      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
         expect(event).to eq('test:deprecated')
-        event_deprecation = deprecation
+        event_deprecations = deprecations
       end
 
       expect do
         expect do
-          post :deprecate, id: test.to_param, locale: nil
+          post :deprecate, tests: [ test.to_param ]
         end.to change(TestDeprecation, :count).by(1)
       end.to change{ project.tap(&:reload).deprecated_tests_count }.by(1)
       expect(response.status).to eq(204)
@@ -54,7 +79,7 @@ describe TestInfosController, rox: { tags: :integration } do
       expect(test.deprecated?).to be_true
       expect(test.deprecation).not_to be_nil
 
-      expect(event_deprecation).to eq(test.deprecation)
+      expect(event_deprecations).to eq([ test.deprecation ])
       test.deprecation.tap do |deprecation|
         expect(deprecation.deprecated).to be_true
         expect(deprecation.test_info).to eq(test)
@@ -71,7 +96,7 @@ describe TestInfosController, rox: { tags: :integration } do
 
       expect do
         expect do
-          post :deprecate, id: test.to_param, locale: nil
+          post :deprecate, tests: [ test.to_param ]
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(204)
@@ -88,7 +113,7 @@ describe TestInfosController, rox: { tags: :integration } do
       set_maintenance_mode
       expect do
         expect do
-          post :deprecate, id: test.to_param, locale: nil
+          post :deprecate, tests: [ test.to_param ]
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(503)
@@ -96,6 +121,10 @@ describe TestInfosController, rox: { tags: :integration } do
       test.reload
       expect(test.deprecated?).to be_false
       expect(test.deprecation_id).to be_nil
+    end
+
+    describe "validations", rox: { key: 'dcc9752e7c73', grouped: true } do
+      it_should_behave_like "a deprecation operation", :deprecate
     end
   end
 
@@ -105,15 +134,15 @@ describe TestInfosController, rox: { tags: :integration } do
 
     it "should create an undeprecation for the test and unlink the previous deprecation", rox: { key: 'abf287432d75' } do
 
-      event_deprecation = nil
-      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecation|
+      event_deprecations = nil
+      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
         expect(event).to eq('test:undeprecated')
-        event_deprecation = deprecation
+        event_deprecations = deprecations
       end
 
       expect do
         expect do
-          post :undeprecate, id: test.to_param, locale: nil
+          post :undeprecate, tests: [ test.to_param ]
         end.to change(TestDeprecation, :count).by(1)
       end.to change{ project.tap(&:reload).deprecated_tests_count }.by(-1)
       expect(response.status).to eq(204)
@@ -123,7 +152,7 @@ describe TestInfosController, rox: { tags: :integration } do
       expect(test.deprecation).to be_nil
 
       deprecation = test.deprecations.sort{ |a,b| a.created_at <=> b.created_at }.last
-      expect(event_deprecation).to eq(deprecation)
+      expect(event_deprecations).to eq([ deprecation ])
       deprecation.tap do |deprecation|
         expect(deprecation.deprecated).to be_false
         expect(deprecation.test_info).to eq(test)
@@ -140,7 +169,7 @@ describe TestInfosController, rox: { tags: :integration } do
 
       expect do
         expect do
-          post :undeprecate, id: test.to_param, locale: nil
+          post :undeprecate, tests: [ test.to_param ]
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(204)
@@ -157,7 +186,7 @@ describe TestInfosController, rox: { tags: :integration } do
       set_maintenance_mode
       expect do
         expect do
-          post :undeprecate, id: test.to_param, locale: nil
+          post :undeprecate, tests: [ test.to_param ]
         end.not_to change(TestDeprecation, :count)
       end.not_to change{ project.tap(&:reload).deprecated_tests_count }
       expect(response.status).to eq(503)
@@ -165,6 +194,10 @@ describe TestInfosController, rox: { tags: :integration } do
       test.reload
       expect(test.deprecated?).to be_true
       expect(test.deprecation_id).not_to be_nil
+    end
+
+    describe "validations", rox: { key: 'ba637fb01a31', grouped: true } do
+      it_should_behave_like "a deprecation operation", :undeprecate
     end
   end
 end

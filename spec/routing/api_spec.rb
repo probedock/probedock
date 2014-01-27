@@ -54,8 +54,6 @@ describe 'API routing' do
   it(nil, rox: { key: 'a3ee1bd68466' }){ should route(:put, '/api/v1/settings').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :settings, action: :update) }
   it(nil, rox: { key: 'bdd8ec3cbd3e' }){ should route(:get, '/api/v1/tags/cloud').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :tags, action: :cloud) }
   it(nil, rox: { key: '33adcc1d02dc' }){ should route(:get, '/api/v1/tests').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :test_infos, action: :page) }
-  it(nil, rox: { key: '9c5b9e041869' }){ should route(:post, '/api/v1/tests/42/deprecate').to(controller: :test_infos, action: :deprecate, id: '42') }
-  it(nil, rox: { key: '8bd0ce3f3e61' }){ should route(:post, '/api/v1/tests/42/undeprecate').to(controller: :test_infos, action: :undeprecate, id: '42') }
   it(nil, rox: { key: '2e12d8ee3818' }){ should route(:get, '/api/v1/tests/42/results').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :test_infos, action: :results_page, id: '42') }
   it(nil, rox: { key: '82bfebcf0d7e' }){ should route(:get, '/api/v1/tests/42/results/chart').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :test_infos, action: :results_chart, id: '42') }
   it(nil, rox: { key: '4d9d38d044c3' }){ should route(:get, '/api/v1/results/42').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :test_results, action: :show, id: 42) }

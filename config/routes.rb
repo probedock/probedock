@@ -56,7 +56,12 @@ ROXCenter::Application.routes.draw do
   resources :projects, :only => [ :index, :show ]
   resource :settings, :only => [ :show ]
   resources :tags, :only => [ :index ]
-  resources :test_infos, :path => :tests, :only => [ :index, :show ]
+  resources :test_infos, :path => :tests, :only => [ :index, :show ] do
+    collection do
+      post :deprecate
+      post :undeprecate
+    end
+  end
   resources :test_runs, :path => :runs, :only => [ :index, :show ] do
     member do
       get :previous
@@ -116,13 +121,6 @@ ROXCenter::Application.routes.draw do
     resources :metrics, :only => [] do
       collection do
         post :compute
-      end
-    end
-
-    resources :test_infos, :path => :tests, :only => [] do
-      member do
-        post :deprecate
-        post :undeprecate
       end
     end
 

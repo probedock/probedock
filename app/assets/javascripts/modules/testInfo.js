@@ -103,8 +103,11 @@ App.autoModule('testInfo', function() {
       this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
-        url: Path.join(this.model.apiPath(), 'deprecate'),
-        type: 'POST'
+        url: Path.build('tests', 'deprecate'),
+        type: 'POST',
+        data: {
+          tests: [ this.model.toParam() ]
+        }
       }).done(_.bind(this.setDeprecated, this, true)).fail(_.bind(this.deprecationError, this));
     },
 
@@ -112,8 +115,11 @@ App.autoModule('testInfo', function() {
       this.setBusy(true);
       this.$el.find('.deprecationError').remove();
       $.ajax({
-        url: Path.join(this.model.apiPath(), 'undeprecate'),
-        type: 'POST'
+        url: Path.build('tests', 'undeprecate'),
+        type: 'POST',
+        data: {
+          tests: [ this.model.toParam() ]
+        }
       }).done(_.bind(this.setDeprecated, this, false)).fail(_.bind(this.deprecationError, this));
     },
 
