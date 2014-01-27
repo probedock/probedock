@@ -108,6 +108,37 @@ describe TestInfosController, rox: { tags: :integration } do
       expect(ROXCenter::Application.events).not_to receive(:fire)
     end
 
+    it "should deprecate multiple tests", rox: { key: '4e1179154e31' } do
+
+      tests = [
+        create(:test, key: create(:test_key, project: project, user: user)),
+        create(:test, key: create(:test_key, project: project, user: user), deprecated_at: 3.days.ago),
+        create(:test, key: create(:test_key, project: project, user: user), deprecated_at: 5.days.ago),
+        create(:test, key: create(:test_key, project: project, user: user))
+      ]
+
+      create :deprecation, test_info: tests[2], deprecated: false, created_at: 2.days.ago
+      tests[2].update_attribute :deprecation_id, nil
+
+      event_deprecations = nil
+      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+        expect(event).to eq('test:deprecated')
+        event_deprecations = deprecations
+      end
+
+      expect do
+        expect do
+          post :deprecate, tests: tests.collect(&:to_param)
+        end.to change(TestDeprecation, :count).by(3)
+      end.to change{ project.tap(&:reload).deprecated_tests_count }.by(3)
+      expect(response.status).to eq(204)
+
+      tests.each &:reload
+      expect(tests.all?(&:deprecated?)).to be_true
+
+      expect(event_deprecations).to eq([ tests[0].deprecation, tests[2].deprecation, tests[3].deprecation ])
+    end
+
     it "should return a 503 response when in maintenance mode", rox: { key: '201bbf1be414' } do
 
       set_maintenance_mode
@@ -179,6 +210,38 @@ describe TestInfosController, rox: { tags: :integration } do
       expect(test.deprecation).to be_nil
 
       expect(ROXCenter::Application.events).not_to receive(:fire)
+    end
+
+    it "should undeprecate multiple tests", rox: { key: 'c431bdf629b6' } do
+
+      tests = [
+        create(:test, key: create(:test_key, project: project, user: user), deprecated_at: 1.day.ago),
+        create(:test, key: create(:test_key, project: project, user: user), deprecated_at: 3.days.ago),
+        create(:test, key: create(:test_key, project: project, user: user), deprecated_at: 5.days.ago),
+        create(:test, key: create(:test_key, project: project, user: user))
+      ]
+
+      create :deprecation, test_info: tests[1], deprecated: false, created_at: 2.days.ago
+      tests[1].update_attribute :deprecation_id, nil
+
+      event_deprecations = nil
+      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+        expect(event).to eq('test:undeprecated')
+        event_deprecations = deprecations
+      end
+
+      expect do
+        expect do
+          post :undeprecate, tests: tests.collect(&:to_param)
+        end.to change(TestDeprecation, :count).by(2)
+      end.to change{ project.tap(&:reload).deprecated_tests_count }.by(-2)
+      expect(response.status).to eq(204)
+
+      tests.each &:reload
+      expect(tests.any?(&:deprecated?)).to be_false
+
+      expect(event_deprecations).to have(2).items
+      expect(event_deprecations.collect(&:test_info)).to match_array([ tests[0], tests[2] ])
     end
 
     it "should return a 503 response when in maintenance mode", rox: { key: 'b61b4cf73149' } do
