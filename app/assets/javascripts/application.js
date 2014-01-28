@@ -51,6 +51,6 @@
 //= require_tree ./utils
 //= require ./models
 //= require_tree ./models
-//= require ./views
+//= require_tree ./views
 //= require_tree ./modules
 //= require ./doc

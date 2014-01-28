@@ -16,89 +16,13 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('views', function() {
 
-  var FadeRegion = this.FadeRegion = Backbone.Marionette.Region.extend({
-
-    open : function(view) {
-      this.$el.hide();
-      this.$el.html(view.el);
-      this.$el.hide();
-      async.nextTick(_.bind(function() {
-        this.$el.fadeIn('normal', _.bind(function() {
-          this.trigger('faded:in');
-        }, this));
-      }, this));
-    }
-  });
-
-  var UserAvatar = this.UserAvatar = Backbone.Marionette.ItemView.extend({
-
-    template : 'userAvatar',
-    ui : {
-      avatar : '.avatar',
-      name : '.name'
-    },
-
-    initialize : function(options) {
-      this.avatarSize = options.size;
-      this.link = typeof(options.link) == 'undefined' || options.link;
-      this.label = options.label !== false ? this.model.get('name') : undefined;
-      this.tooltip = options.tooltip;
-    },
-
-    onRender : function() {
-
-      this.$el.addClass(this.avatarSizeClass());
-      this.renderAvatar();
-
-      if (this.label) {
-        this.renderLabel();
-      } else {
-        this.ui.name.remove();
-      }
-
-      if (this.tooltip) {
-        this.ui.avatar.tooltip(_.isObject(this.tooltip) ? this.tooltip : { title: this.tooltip });
-      }
-    },
-
-    renderLabel : function() {
-      this.link ? this.ui.name.html($('<a />').attr('href', this.model.path()).text(this.label)) : this.ui.name.text(this.label);
-    },
-
-    renderAvatar : function() {
-      var email = this.model.get('email') || 'example@lotaris.com';
-      var img = $.gravatar(email, { size: this.avatarSizeValue(), secure: App.secure }).attr('alt', this.model.get('name'))
-      this.ui.avatar.html(this.link ? $('<a />').attr('href', this.model.path()).append(img) : img);
-    },
-
-    avatarSizeValue : function() {
-      if (this.avatarSize == 'small') {
-        return 25;
-      } else if (this.avatarSize == 'large') {
-        return 40;
-      } else {
-        return 50;
-      }
-    },
-
-    avatarSizeClass : function() {
-      if (this.avatarSize == 'small') {
-        return 'smallAvatar';
-      } else if (this.avatarSize == 'large') {
-        return 'mediumAvatar';
-      } else {
-        return 'largeAvatar';
-      }
-    }
-  });
-
   var Table = this.Table = Tableling.Bootstrap.Table.extend({
 
-    tableUi : {
-      header : '.header'
+    tableUi: {
+      header: '.header'
     },
 
-    initialize : function(options) {
+    initialize: function(options) {
 
       Tableling.Bootstrap.Table.prototype.initialize.call(this, options);
 
@@ -110,14 +34,14 @@ App.module('views', function() {
       }
     },
 
-    refresh : function() {
+    refresh: function() {
       var args = Array.prototype.slice.call(arguments);
       this.showLoading(true).load(_.bind(function() {
         Tableling.Bootstrap.Table.prototype.refresh.apply(this, args);
       }, this));
     },
 
-    completeConfig : function(config, source) {
+    completeConfig: function(config, source) {
 
       if (!this[config]) {
         this[config] = {};
@@ -135,7 +59,7 @@ App.module('views', function() {
       }, this);
     },
 
-    showLoading : function(loading) {
+    showLoading: function(loading) {
       if (loading) {
         return Loader.loading().appendTo(this.ui.header);
       } else {
@@ -146,23 +70,23 @@ App.module('views', function() {
 
   var TableWithAdvancedSearch = this.TableWithAdvancedSearch = Table.extend({
 
-    template : 'tableWithAdvancedSearch',
+    template: 'tableWithAdvancedSearch',
 
-    advancedSearchUi : {
-      advancedSearch : '.advancedSearch',
-      advancedSearchButton : '.advancedSearchControls button',
-      clearButton : '.advancedSearch .clear'
+    advancedSearchUi: {
+      advancedSearch: '.advancedSearch',
+      advancedSearchButton: '.advancedSearchControls button',
+      clearButton: '.advancedSearch .clear'
     },
 
-    advancedSearchEvents : {
-      'submit .advancedSearch form' : 'refresh',
-      'click .advancedSearch .clear' : 'clearAdvancedSearch',
-      'click .advancedSearchControls button' : 'toggleAdvancedSearch'
+    advancedSearchEvents: {
+      'submit .advancedSearch form': 'refresh',
+      'click .advancedSearch .clear': 'clearAdvancedSearch',
+      'click .advancedSearchControls button': 'toggleAdvancedSearch'
     },
 
-    searchFilters : [],
+    searchFilters: [],
 
-    initialize : function(options) {
+    initialize: function(options) {
 
       options.autoUpdate = false;
       Table.prototype.initialize.call(this, options);
@@ -177,13 +101,13 @@ App.module('views', function() {
       this.listenTo(this.vent, 'table:update', this.updateClearButton);
     },
 
-    serializeData : function() {
+    serializeData: function() {
       var data = Tableling.Bootstrap.Table.prototype.serializeData.apply(this, Array.prototype.slice.call(arguments))
       data.advancedSearchTemplate = this.advancedSearchTemplate;
       return data;
     },
 
-    onRender : function() {
+    onRender: function() {
 
       _.each(this.searchFilters, this.fillFilter, this);
 
@@ -197,13 +121,13 @@ App.module('views', function() {
       }
     },
 
-    launch : function() {
+    launch: function() {
       if (!this.delayLaunch) {
         this.update();
       }
     },
 
-    clearAdvancedSearch : function() {
+    clearAdvancedSearch: function() {
 
       // Do not do anything if no search filter is set.
       if (_.isEmpty(this.requestSearchData())) {
@@ -217,15 +141,15 @@ App.module('views', function() {
       this.updateSearch();
     },
 
-    updateSearch : function() {
-      this.update({ page : 1 });
+    updateSearch: function() {
+      this.update({ page: 1 });
     },
 
-    updateClearButton : function() {
+    updateClearButton: function() {
       this.ui.clearButton.attr('disabled', _.isEmpty(this.requestSearchData()));
     },
 
-    fillFilter : function(filter) {
+    fillFilter: function(filter) {
 
       var el = this.getFilterElement(filter);
 
@@ -247,7 +171,7 @@ App.module('views', function() {
       });
     },
 
-    toggleAdvancedSearch : function() {
+    toggleAdvancedSearch: function() {
       var visible = this.ui.advancedSearch.is(':visible');
       this.ui.advancedSearch[visible ? 'hide' : 'show']();
       this.udpateAdvancedSearchButton(!visible);
@@ -257,11 +181,11 @@ App.module('views', function() {
       }
     },
 
-    udpateAdvancedSearchButton : function(visible) {
+    udpateAdvancedSearchButton: function(visible) {
       this.ui.advancedSearchButton.text(I18n.t('jst.tableWithAdvancedSearch.search.' + (visible ? 'hide' : 'show')));
     },
 
-    setupSelect2 : function() {
+    setupSelect2: function() {
       if (this.select2) {
         return;
       }
@@ -279,7 +203,7 @@ App.module('views', function() {
       }, this));
     },
 
-    setupFilter : function(filter, callback) {
+    setupFilter: function(filter, callback) {
 
       var el = this.getFilterElement(filter);
       if (!this.searchData[filter.data || filter.name]) {
@@ -287,7 +211,7 @@ App.module('views', function() {
       }
 
       async.nextTick(_.bind(function() {
-        el.select2({ allowClear : true });
+        el.select2({ allowClear: true });
         if (this.currentSearch[filter.name]) {
           el.select2('val', this.currentSearch[filter.name]);
         }
@@ -295,7 +219,7 @@ App.module('views', function() {
       }, this));
     },
 
-    requestData : function() {
+    requestData: function() {
 
       var data = Tableling.Bootstrap.Table.prototype.requestData.apply(this);
 
@@ -307,7 +231,7 @@ App.module('views', function() {
       return data;
     },
 
-    requestSearchData : function() {
+    requestSearchData: function() {
       return _.inject(this.searchFilters, function(memo, filter) {
         var el = this.getFilterElement(filter);
         if (el.val()) {
@@ -317,7 +241,7 @@ App.module('views', function() {
       }, {}, this);
     },
 
-    getFilterElement : function(filter) {
+    getFilterElement: function(filter) {
       return this.ui[filter.name + 'Filter'];
     }
   });
