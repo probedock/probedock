@@ -267,13 +267,13 @@ App.autoModule('testSelector', function() {
     },
 
     appEvents: {
-      'test:selected': 'changeTestSelection'
+      'test:selected': 'changeTestSelection',
+      'maintenance:changed': 'updateControls'
     },
 
     initialize: function(options) {
 
       App.bindEvents(this);
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
 
       this.collection = new SelectedTests();
       this.linkTemplates = new LinkTemplateCollection(options.linkTemplates);

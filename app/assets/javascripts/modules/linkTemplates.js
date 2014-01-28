@@ -52,13 +52,17 @@ App.autoModule('linkTemplates', function() {
       'change': 'renderModel'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initialize: function() {
       this.listenTo(this.model, 'request', _.bind(this.setBusy, this, true));
       this.listenTo(this.model, 'sync error', _.bind(this.setBusy, this, false));
       this.listenTo(this.model, 'sync', _.bind(this.setEditing, this, false));
       this.listenTo(this, 'edit:start', _.bind(this.setEditing, this, true));
       this.listenTo(this, 'edit:stop', _.bind(this.setEditing, this, false));
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {
@@ -127,10 +131,14 @@ App.autoModule('linkTemplates', function() {
       'submit tfoot form': 'saveTemplate'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initialize: function() {
       this.listenTo(this, 'itemview:edit:start', this.editTemplate);
       this.listenTo(this, 'itemview:edit:stop', this.clearTemplate);
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {

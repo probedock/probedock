@@ -20,6 +20,12 @@ App.module('status', function() {
 
     url: Path.builder('data', 'status'),
 
+    appEvents: {
+      'status:watch': 'startWatching',
+      'ajax:maintenance': 'startWatchingForMaintenance',
+      'maintenance:off': 'stopWatchingForMaintenance'
+    },
+
     initialize: function() {
 
       this.watch = false;
@@ -30,9 +36,7 @@ App.module('status', function() {
       this.listenToOnce(this, 'change', this.startNotifyingChanges);
       this.listenTo(this, 'change:maintenance', this.notifyMaintenance);
 
-      this.listenTo(App.vent, 'status:watch', this.startWatching);
-      this.listenTo(App.vent, 'ajax:maintenance', this.startWatchingForMaintenance);
-      this.listenTo(App.vent, 'maintenance:off', this.stopWatchingForMaintenance);
+      App.bindEvents(this);
     },
 
     getMaintenanceData: function() {
@@ -49,7 +53,7 @@ App.module('status', function() {
 
     notifyChanges: function() {
       App.debug('App status has changed: ' + _.keys(this.changedAttributes()).join(', ') + ' (' + new Date() + ')');
-      App.vent.trigger('status:changed', this.changedAttributes());
+      App.trigger('status:changed', this.changedAttributes());
     },
 
     startWatching: function() {

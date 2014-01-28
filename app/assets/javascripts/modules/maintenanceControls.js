@@ -31,8 +31,12 @@ App.autoModule('maintenanceControls', function() {
       'click .toggle': 'toggleMaintenance'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateState'
+    },
+
     initialize: function() {
-      this.listenTo(App.vent, 'maintenance:changed', this.updateState);
+      App.bindEvents(this);
       setInterval(_.bind(this.updateTime, this), 1000);
     },
 

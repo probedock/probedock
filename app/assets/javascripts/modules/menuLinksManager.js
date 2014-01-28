@@ -44,6 +44,10 @@ App.autoModule('menuLinksManager', function() {
       'click .actions .delete': 'deleteLink'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initialize: function() {
       this.listenTo(this.model, 'change', this.renderModel);
       this.listenTo(this.model, 'request', _.bind(this.setBusy, this, true));
@@ -51,7 +55,7 @@ App.autoModule('menuLinksManager', function() {
       this.listenTo(this.model, 'sync', _.bind(this.setEditing, this, false));
       this.listenTo(this, 'edit', _.bind(this.setEditing, this, true));
       this.listenTo(this, 'edit:stop', _.bind(this.setEditing, this, false));
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {
@@ -108,19 +112,23 @@ App.autoModule('menuLinksManager', function() {
       save: 'tfoot form button'
     },
 
+    itemView: LinkRow,
+    itemViewContainer: 'tbody',
+    emptyView: EmptyRow,
+
     events: {
       'keyup tfoot form input': 'updateControls',
       'submit tfoot form': 'saveLink'
     },
 
-    itemView: LinkRow,
-    itemViewContainer: 'tbody',
-    emptyView: EmptyRow,
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
 
     initialize: function() {
       this.listenTo(this, 'itemview:edit', this.editLink);
       this.listenTo(this, 'itemview:edit:stop', this.clear);
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {

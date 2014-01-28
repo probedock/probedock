@@ -29,14 +29,15 @@ var ApiForm = Backbone.Marionette.ItemView.extend({
 
   initialize: function() {
 
-    _.defaults(this.ui || {}, this.formUi);
-    _.defaults(this.events || {}, this.formEvents);
+    this.ui = _.extend({}, this.formUi, this.ui);
+    this.events = _.extend({}, this.formEvents, this.events);
 
     if (!this.model && this.modelClass) {
       this.model = new (this.modelClass)();
     }
 
-    this.listenTo(App.vent, 'maintenance:changed', this.updateFormControls);
+    // do not use appEvents and App.bindEvents because appEvents might be overriden
+    this.listenTo(App, 'maintenance:changed', this.updateFormControls);
 
     if (this.initializeForm) {
       this.initializeForm.apply(this, Array.prototype.slice.call(arguments));

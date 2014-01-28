@@ -22,8 +22,8 @@ App.setMaintenance = function(maintenance) {
   if (!!App.maintenance != wasInMaintenance) {
 
     App.debug((App.maintenance ? 'Started' : 'Ended') + ' maintenance mode.');
-    App.vent.trigger('maintenance:changed', App.maintenance);
-    App.vent.trigger('maintenance:' + (App.maintenance ? 'on' : 'off'));
+    App.trigger('maintenance:changed', App.maintenance);
+    App.trigger('maintenance:' + (App.maintenance ? 'on' : 'off'));
 
     if (App.maintenance) {
       App.trigger('alert', {
@@ -43,7 +43,7 @@ App.setMaintenance = function(maintenance) {
 $(document).ajaxError(function(event, xhr) {
   if (xhr.status == 503 && xhr.getResponseHeader('Content-Type').match(/^application\/json/)) {
     App.setMaintenance(JSON.parse(xhr.responseText));
-    App.vent.trigger('ajax:maintenance');
+    App.trigger('ajax:maintenance');
   }
 });
 

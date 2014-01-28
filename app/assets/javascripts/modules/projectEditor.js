@@ -38,8 +38,12 @@ App.autoModule('projectEditor', function() {
       'change form input[name="urlToken"]': 'disableAutoFillToken'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initializeForm: function() {
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {
@@ -50,7 +54,7 @@ App.autoModule('projectEditor', function() {
     },
 
     updateControls: function() {
-      this.ui.openButton.attr('disabled', App.maintenance);
+      this.ui.openButton.attr('disabled', !!App.maintenance);
     },
 
     renderModel: function() {

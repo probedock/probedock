@@ -82,8 +82,12 @@ App.autoModule('testInfo', function() {
       'change': 'updateActions'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initialize: function() {
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {

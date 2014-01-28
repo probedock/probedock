@@ -41,10 +41,14 @@ App.autoModule('globalSettings', function() {
       'change': 'refresh'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     model: new Settings(),
 
     initialize: function() {
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {

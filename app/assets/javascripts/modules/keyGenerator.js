@@ -68,6 +68,10 @@ App.autoModule('keyGenerator', function() {
       'click form .release': 'releaseUnusedKeys'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initialize: function(options) {
 
       this.path = options.path;
@@ -79,7 +83,7 @@ App.autoModule('keyGenerator', function() {
       this.collection = new ProjectCollection();
       this.addKeys(options.freeKeys);
 
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {

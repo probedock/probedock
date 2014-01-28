@@ -52,12 +52,17 @@ App.autoModule('testCountersManager', function() {
     events: {
       'click .recompute': 'recompute'
     },
+
     modelEvents: {
       'change': 'updateState'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateState'
+    },
+
     initialize: function() {
-      this.listenTo(App.vent, 'maintenance:changed', this.updateState);
+      App.bindEvents(this);
     },
 
     onRender: function() {

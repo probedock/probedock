@@ -20,12 +20,12 @@ App.watchStatus = function(source, func, options) {
       except = options && options.except ? (_.isArray(options.except) ? options.except : [ options.except ]) : [],
       context = options ? options.context : null;
 
-  source.listenTo(App.vent, 'status:changed', function(changed) {
+  source.listenTo(App, 'status:changed', function(changed) {
     var actualOnly = only || _.keys(changed);
     if (!_.isEmpty(_.difference(_.intersection(_.keys(changed), actualOnly), except))) {
       func.call(context || source, changed);
     }
   });
 
-  App.vent.trigger('status:watch');
+  App.trigger('status:watch');
 };

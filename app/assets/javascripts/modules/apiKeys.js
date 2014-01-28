@@ -49,6 +49,7 @@ App.autoModule('apiKeysTable', function() {
       'click .actions button.toggle': 'toggleActive',
       'click .actions button.delete': 'delete'
     },
+
     modelEvents: {
       'request': 'checkBusy',
       'error sync': 'clearBusy',
@@ -56,8 +57,12 @@ App.autoModule('apiKeysTable', function() {
       'change:sharedSecret': 'renderSharedSecret'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initialize: function() {
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     toggleActive: function(e) {
@@ -176,6 +181,10 @@ App.autoModule('apiKeysTable', function() {
       'request': 'clearError'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     pageSizeViewOptions : {
       sizes : [ 5, 10, 15 ]
     },
@@ -191,8 +200,9 @@ App.autoModule('apiKeysTable', function() {
     tableView: ApiKeysTableView,
 
     initialize: function() {
+      // TODO: replace by initializeTable once tableling provides it
       Table.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {

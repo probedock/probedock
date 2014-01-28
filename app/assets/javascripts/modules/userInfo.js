@@ -58,9 +58,13 @@ App.autoModule('userInfo', function() {
       'click .toggleActivated': 'toggleActivated'
     },
 
+    appEvents: {
+      'maintenance:changed': 'updateControls'
+    },
+
     initialize: function(options) {
       this.can = options.can;
-      this.listenTo(App.vent, 'maintenance:changed', this.updateControls);
+      App.bindEvents(this);
     },
 
     onRender: function() {
