@@ -21,9 +21,11 @@ App.autoModule('testInfo', function() {
       TestResult = models.TestResult,
       TestResultTableCollection = models.TestResultTableCollection;
 
-  var views = App.module('views'),
-      Table = views.Table,
-      UserAvatar = views.UserAvatar;
+  var views = App.module('views');
+
+  var bindTestEvents = function(target, vent) {
+    Marionette.bindEntityEvents(target, vent || target.vent, target.testEvents);
+  };
 
   var TestInfo = Backbone.Marionette.Layout.extend({
 
@@ -36,16 +38,21 @@ App.autoModule('testInfo', function() {
       result: '.result'
     },
 
+    testEvents: {
+      'result:selected': 'showResult',
+      'result:unselected': 'hideResult'
+    },
+
     initialize: function() {
-      this.listenTo(App.vent, 'test:result:selected', this.showResult);
-      this.listenTo(App.vent, 'test:result:unselected', this.hideResult);
+      this.vent = new Backbone.Wreqr.EventAggregator();
+      bindTestEvents(this);
     },
 
     onRender: function() {
       this.info.show(new TestView({ model: this.model }));
       this.permalink.show(new PermalinkView({ model: this.model }));
       this.actions.show(new TestActions({ model: this.model }));
-      this.tabs.show(new TestTabs({ model: this.model }));
+      this.tabs.show(new TestTabs({ model: this.model, vent: this.vent }));
       this.result.show(new NoResultDetails());
     },
 
@@ -241,6 +248,10 @@ App.autoModule('testInfo', function() {
       customValues: '#customValues'
     },
 
+    initialize: function(options) {
+      this.vent = options.vent;
+    },
+
     onRender: function() {
 
       var id = window.location.hash;
@@ -275,12 +286,10 @@ App.autoModule('testInfo', function() {
       });
 
       var Table = ResultTable.extend({
-        tableViewOptions: {
-          collection: new Collection()
-        }
+        tableViewCollection: Collection
       });
 
-      this.resultTable.show(new Table());
+      this.resultTable.show(new Table({ testVent: this.vent }));
     },
 
     showResultChart: function() {
@@ -290,7 +299,7 @@ App.autoModule('testInfo', function() {
       }
       this.resultChartSetup = true;
 
-      this.resultChart.show(new ResultChart({ model: this.model }));
+      this.resultChart.show(new ResultChart({ model: this.model, vent: this.vent }));
     },
 
     showCustomValues: function() {
@@ -330,9 +339,14 @@ App.autoModule('testInfo', function() {
 
     template: false,
 
-    initialize: function() {
-      this.listenTo(App.vent, 'test:result:selected', this.setSelected);
-      this.listenTo(App.vent, 'test:result:unselected', this.setSelected);
+    testEvents: {
+      'result:selected': 'setSelected',
+      'result:unselected': 'setSelected'
+    },
+
+    initialize: function(options) {
+      this.vent = options.vent;
+      bindTestEvents(this);
     },
 
     setSelected: function(result) {
@@ -391,9 +405,9 @@ App.autoModule('testInfo', function() {
                   click: function() {
                     // FIXME: this produces a "RangeError: maximum call stack size exceeded" for some reason
                     if (self.selectedResult && self.selectedResult.get('id') == this.result.get('id')) {
-                      App.vent.trigger('test:result:unselected');
+                      self.vent.trigger('result:unselected');
                     } else {
-                      App.vent.trigger('test:result:selected', this.result)
+                      self.vent.trigger('result:selected', this.result)
                     }
                   }
                 }
@@ -443,9 +457,14 @@ App.autoModule('testInfo', function() {
       'click': 'selectResult'
     },
 
-    initialize: function() {
-      this.listenTo(App.vent, 'test:result:selected', this.setSelected);
-      this.listenTo(App.vent, 'test:result:unselected', this.setUnselected);
+    testEvents: {
+      'result:selected': 'setSelected',
+      'result:unselected': 'setUnselected'
+    },
+
+    initialize: function(options) {
+      this.testVent = options.testVent;
+      bindTestEvents(this, this.testVent);
     },
 
     onRender: function() {
@@ -457,14 +476,14 @@ App.autoModule('testInfo', function() {
     },
 
     renderRunner: function() {
-      new UserAvatar({ model: this.model.get('runner'), size: 'small', el: this.ui.runner }).render();
+      new views.UserAvatar({ model: this.model.get('runner'), size: 'small', el: this.ui.runner }).render();
     },
 
     selectResult: function() {
       if (this.$el.hasClass('warning')) {
-        App.vent.trigger('test:result:unselected');
+        this.testVent.trigger('result:unselected');
       } else {
-        App.vent.trigger('test:result:selected', this.model);
+        this.testVent.trigger('result:selected', this.model);
       }
     },
 
@@ -495,8 +514,15 @@ App.autoModule('testInfo', function() {
     itemView: ResultRow,
     itemViewContainer: 'tbody',
 
+    itemViewOptions: function() {
+      return {
+        testVent: this.testVent
+      };
+    },
+
     initialize: function(options) {
       Tableling.Bootstrap.TableView.prototype.initialize.call(this, options);
+      this.testVent = options.testVent;
       this.on('render', this.clearLoading, this);
     },
     
@@ -505,9 +531,16 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var ResultTable = Table.extend({
+  var ResultTable = views.Table.extend({
 
     tableView: ResultTableView,
+    tableViewOptions: function() {
+      return {
+        collection: new (this.tableViewCollection)(),
+        testVent: this.testVent
+      };
+    },
+
     pageSizeViewOptions: {
       sizes: [ 5, 10, 15 ]
     },
@@ -515,6 +548,11 @@ App.autoModule('testInfo', function() {
     config: {
       pageSize: 5,
       sort: [ 'run_at desc' ]
+    },
+
+    initialize: function(options) {
+      views.Table.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+      this.testVent = options.testVent;
     }
   });
 
