@@ -20,7 +20,7 @@ App.autoModule('globalSettings', function() {
     url: LegacyApiPath.builder('settings')
   });
 
-  var SettingsForm = Backbone.Marionette.ItemView.extend({
+  var SettingsForm = Marionette.ItemView.extend({
 
     template: 'globalSettings',
     ui: {

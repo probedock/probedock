@@ -19,7 +19,7 @@ App.autoModule('appData', function() {
   var models = App.module('models'),
       GeneralStatusData = models.GeneralStatusData;
 
-  var AppDataView = Backbone.Marionette.ItemView.extend({
+  var AppDataView = Marionette.ItemView.extend({
 
     template: 'appData',
     ui: {

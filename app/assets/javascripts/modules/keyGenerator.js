@@ -20,12 +20,12 @@ App.autoModule('keyGenerator', function() {
       Project = models.Project,
       ProjectCollection = models.ProjectCollection;
 
-  var KeyView = Backbone.Marionette.ItemView.extend({
+  var KeyView = Marionette.ItemView.extend({
     tagName: 'span',
     template: _.template('<span class="label label-success"><%- value %></span><span>&nbsp; </span>')
   });
 
-  var NoKeyView = Backbone.Marionette.ItemView.extend({
+  var NoKeyView = Marionette.ItemView.extend({
 
     tagName: 'em',
     className: 'instructions',
@@ -36,7 +36,7 @@ App.autoModule('keyGenerator', function() {
     }
   });
 
-  var ProjectKeysView = Backbone.Marionette.CompositeView.extend({
+  var ProjectKeysView = Marionette.CompositeView.extend({
 
     template: _.template('<p><strong><%- name %></strong></p>'),
     className: 'projectKeys',
@@ -47,7 +47,7 @@ App.autoModule('keyGenerator', function() {
     }
   });
 
-  var MainView = Backbone.Marionette.CompositeView.extend({
+  var MainView = Marionette.CompositeView.extend({
 
     template: 'keyGenerator/layout',
     ui: {

@@ -28,7 +28,7 @@ App.autoModule('latestTestRuns', function() {
     model: TestRun
   });
 
-  var EmptyRow = Backbone.Marionette.ItemView.extend({
+  var EmptyRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     className: 'empty',
@@ -37,7 +37,7 @@ App.autoModule('latestTestRuns', function() {
     }
   });
 
-  var Row = Backbone.Marionette.ItemView.extend({
+  var Row = Marionette.ItemView.extend({
   
     tagName: 'tr',
     template: 'latestTestRuns/row',
@@ -124,7 +124,7 @@ App.autoModule('latestTestRuns', function() {
     }
   });
 
-  var Table = Backbone.Marionette.CompositeView.extend({
+  var Table = Marionette.CompositeView.extend({
 
     template: 'latestTestRuns/table',
     tagName: 'table',

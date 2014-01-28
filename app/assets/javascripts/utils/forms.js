@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-var ApiForm = Backbone.Marionette.ItemView.extend({
+var ApiForm = Marionette.ItemView.extend({
 
   formUi: {
     form: 'form',

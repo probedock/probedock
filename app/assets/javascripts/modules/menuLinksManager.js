@@ -19,7 +19,7 @@ App.autoModule('menuLinksManager', function() {
   var models = App.module('models'),
       LinkCollection = models.LinkCollection;
 
-  var EmptyRow = Backbone.Marionette.ItemView.extend({
+  var EmptyRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     className: 'empty',
@@ -28,7 +28,7 @@ App.autoModule('menuLinksManager', function() {
     }
   });
 
-  var LinkRow = Backbone.Marionette.ItemView.extend({
+  var LinkRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     template: 'menuLinksManager/link',
@@ -102,7 +102,7 @@ App.autoModule('menuLinksManager', function() {
     }
   });
 
-  var LinksManager = Backbone.Marionette.CompositeView.extend({
+  var LinksManager = Marionette.CompositeView.extend({
 
     template: 'menuLinksManager/manager',
     ui: {

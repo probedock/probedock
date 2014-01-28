@@ -24,7 +24,7 @@ App.autoModule('projectsTable', function() {
   var views = App.module('views'),
       Table = views.Table;
 
-  var NoProjectRow = Backbone.Marionette.ItemView.extend({
+  var NoProjectRow = Marionette.ItemView.extend({
 
     tagName : 'tr',
     className : 'empty',
@@ -33,7 +33,7 @@ App.autoModule('projectsTable', function() {
     }
   });
 
-  var ProjectRow = Backbone.Marionette.ItemView.extend({
+  var ProjectRow = Marionette.ItemView.extend({
     
     tagName : 'tr',
     template : 'projectsTable/row',

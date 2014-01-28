@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('views', function() {
 
-  var UserAvatar = this.UserAvatar = Backbone.Marionette.ItemView.extend({
+  var UserAvatar = this.UserAvatar = Marionette.ItemView.extend({
 
     template: 'userAvatar',
     ui: {

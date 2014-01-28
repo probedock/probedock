@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 
-// ROX Center javascript code is divided into custom Backbone Marionette modules called "auto modules".
+// ROX Center javascript code is divided into custom Marionette modules called "auto modules".
 // Auto modules are not started with the Marionette application by default. Instead they have a name and
 // are only started if the page contains one or multiple elements with a data-module attribute containing
 // that name.
@@ -31,7 +31,7 @@
 // Auto modules should call `addAutoInitializer` in their definition. The passed function will be called
 // with an options object containing the following properties:
 //
-// * `region` - The Backbone Marionette Region where the module should be shown.
+// * `region` - The Marionette Region where the module should be shown.
 // * `config` - The value of the data-config attribute of the DOM element.
 //
 // The function may be called multiple times if multiple DOM elements have the same name in their
@@ -64,7 +64,7 @@ Marionette.Module.prototype.addAutoInitializer = function(func) {
   });
 };
 
-Backbone.Marionette.FadeInRegion = Backbone.Marionette.Region.extend({
+Marionette.FadeInRegion = Marionette.Region.extend({
 
   open: function(view) {
     this.$el.hide();
@@ -90,9 +90,9 @@ App.startAutoModules = function() {
 
       var injections = el.map(function() {
 
-        var regionClass = Backbone.Marionette.Region;
+        var regionClass = Marionette.Region;
         if (options && options.fade) {
-          regionClass = Backbone.Marionette.FadeInRegion;
+          regionClass = Marionette.FadeInRegion;
         }
 
         return { region: new regionClass({ el: $(this) }), config: $(this).data('config') };

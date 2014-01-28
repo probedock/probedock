@@ -19,7 +19,7 @@ App.autoModule('testRunReport', function() {
   // Do not change order. Search for "STATUSES" to find uses.
   var STATUSES = [ 'passed', 'failed', 'inactive' ];
 
-  var Report = Backbone.Marionette.ItemView.extend({
+  var Report = Marionette.ItemView.extend({
 
     template : false,
 
@@ -340,7 +340,7 @@ App.autoModule('testRunReport', function() {
     }
   });
 
-  var ReportLoader = Backbone.Marionette.ItemView.extend({
+  var ReportLoader = Marionette.ItemView.extend({
 
     template : false,
 

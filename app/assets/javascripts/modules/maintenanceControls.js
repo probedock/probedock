@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('maintenanceControls', function() {
 
-  var MaintenanceControls = Backbone.Marionette.ItemView.extend({
+  var MaintenanceControls = Marionette.ItemView.extend({
 
     className: 'panel panel-primary maintenanceControls',
     template: 'maintenanceControls/view',

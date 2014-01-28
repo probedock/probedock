@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('breakdownChart', function() {
 
-  var Chart = Backbone.Marionette.ItemView.extend({
+  var Chart = Marionette.ItemView.extend({
 
     template : false,
 

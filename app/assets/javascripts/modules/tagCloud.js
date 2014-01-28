@@ -41,7 +41,7 @@ App.autoModule('tagCloud', function() {
     }
   });
 
-  var TagInfoView = Backbone.Marionette.ItemView.extend({
+  var TagInfoView = Marionette.ItemView.extend({
     
     tagName : 'a',
     template : false,
@@ -53,7 +53,7 @@ App.autoModule('tagCloud', function() {
     }
   });
 
-  var TagCloudView = Backbone.Marionette.CompositeView.extend({
+  var TagCloudView = Marionette.CompositeView.extend({
 
     tagName : 'div',
     className : 'tagCloud well',

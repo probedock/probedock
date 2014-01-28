@@ -27,7 +27,7 @@ App.autoModule('testInfo', function() {
     Marionette.bindEntityEvents(target, vent || target.vent, target.testEvents);
   };
 
-  var TestInfo = Backbone.Marionette.Layout.extend({
+  var TestInfo = Marionette.Layout.extend({
 
     template: 'testInfo/info',
     regions: {
@@ -65,7 +65,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var TestActions = Backbone.Marionette.ItemView.extend({
+  var TestActions = Marionette.ItemView.extend({
     
     template: 'testInfo/actions',
     ui: {
@@ -147,7 +147,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var PermalinkView = Backbone.Marionette.ItemView.extend({
+  var PermalinkView = Marionette.ItemView.extend({
 
     template: 'testInfo/permalink',
     ui: {
@@ -170,7 +170,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var TestView = Backbone.Marionette.ItemView.extend({
+  var TestView = Marionette.ItemView.extend({
   
     template: 'testInfo/test',
     ui: {
@@ -243,7 +243,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var TestTabs = Backbone.Marionette.Layout.extend({
+  var TestTabs = Marionette.Layout.extend({
 
     template: 'testInfo/tabs',
     regions: {
@@ -317,7 +317,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var CustomValues = Backbone.Marionette.ItemView.extend({
+  var CustomValues = Marionette.ItemView.extend({
 
     template: 'testInfo/values',
     ui: {
@@ -339,7 +339,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var ResultChart = Backbone.Marionette.ItemView.extend({
+  var ResultChart = Marionette.ItemView.extend({
 
     template: false,
 
@@ -446,7 +446,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var ResultRow = Backbone.Marionette.ItemView.extend({
+  var ResultRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     template: 'testInfo/resultRow',
@@ -560,7 +560,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var NoResultDetails = Backbone.Marionette.ItemView.extend({
+  var NoResultDetails = Marionette.ItemView.extend({
 
     className: 'well',
     template: function() {
@@ -568,7 +568,7 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var ResultDetails = Backbone.Marionette.ItemView.extend({
+  var ResultDetails = Marionette.ItemView.extend({
 
     className: 'well',
     template: 'testInfo/result',

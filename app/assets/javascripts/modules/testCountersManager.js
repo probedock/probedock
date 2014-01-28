@@ -31,7 +31,7 @@ App.autoModule('testCountersManager', function() {
     }
   });
 
-  var Manager = Backbone.Marionette.ItemView.extend({
+  var Manager = Marionette.ItemView.extend({
 
     className: 'panel testCountersManager',
     template: 'testCountersManager',

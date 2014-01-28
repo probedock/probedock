@@ -22,7 +22,7 @@ App.autoModule('userInfo', function() {
   var views = App.module('views'),
       UserAvatar = views.UserAvatar;
 
-  var UserInfoView = Backbone.Marionette.Layout.extend({
+  var UserInfoView = Marionette.Layout.extend({
 
     template: 'userInfo/layout',
     regions: {
@@ -38,7 +38,7 @@ App.autoModule('userInfo', function() {
     }
   });
 
-  var InfoView = Backbone.Marionette.ItemView.extend({
+  var InfoView = Marionette.ItemView.extend({
 
     template: 'userInfo/info',
     ui: {

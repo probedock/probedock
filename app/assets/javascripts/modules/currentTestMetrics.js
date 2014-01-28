@@ -89,7 +89,7 @@ App.autoModule('currentTestMetrics', function() {
     ]
   });
 
-  var View = Backbone.Marionette.ItemView.extend({
+  var View = Marionette.ItemView.extend({
     
     tagName: 'table',
     className: 'currentTestMetrics table table-bordered',

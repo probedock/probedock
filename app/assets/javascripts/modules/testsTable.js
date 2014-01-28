@@ -24,7 +24,7 @@ App.autoModule('testsTable', function() {
   var TableWithAdvancedSearch = views.TableWithAdvancedSearch,
       UserAvatar = views.UserAvatar;
 
-  var NoTestRow = Backbone.Marionette.ItemView.extend({
+  var NoTestRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     className: 'empty',
@@ -33,7 +33,7 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestRow = Backbone.Marionette.ItemView.extend({
+  var TestRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     template: 'testsTable/row',

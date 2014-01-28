@@ -25,7 +25,7 @@ App.autoModule('usersTable', function() {
       Table = views.Table,
       UserAvatar = views.UserAvatar;
 
-  var NoUserRow = Backbone.Marionette.ItemView.extend({
+  var NoUserRow = Marionette.ItemView.extend({
 
     tagName : 'tr',
     className : 'empty',
@@ -34,7 +34,7 @@ App.autoModule('usersTable', function() {
     }
   });
 
-  var UserRow = Backbone.Marionette.ItemView.extend({
+  var UserRow = Marionette.ItemView.extend({
 
     tagName : 'tr',
     template : 'usersTable/row',

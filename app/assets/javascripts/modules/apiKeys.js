@@ -23,7 +23,7 @@ App.autoModule('apiKeysTable', function() {
   var views = App.module('views'),
       Table = views.Table;
 
-  var NoApiKeyRow = Backbone.Marionette.ItemView.extend({
+  var NoApiKeyRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     className: 'empty',
@@ -32,7 +32,7 @@ App.autoModule('apiKeysTable', function() {
     }
   });
 
-  var ApiKeyRow = Backbone.Marionette.ItemView.extend({
+  var ApiKeyRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
     template: 'apiKeysTable/row',

@@ -52,7 +52,7 @@ describe("Auto module", function() {
 
     it("should be started with a region", function() {
       this.meta = { rox: { key: '523eaca2ed26' } };
-      expect(initializerCalls[0].region instanceof Backbone.Marionette.Region).toBe(true);
+      expect(initializerCalls[0].region instanceof Marionette.Region).toBe(true);
     });
 
     it("should be started with the configuration of the matching element", function() {
@@ -70,7 +70,7 @@ describe("Auto module", function() {
 
     it("should be injected with a fade in region", function() {
       this.meta = { rox: { key: '1d01a16aa294' } };
-      expect(initializerCalls[0].region instanceof Backbone.Marionette.FadeInRegion).toBe(true);
+      expect(initializerCalls[0].region instanceof Marionette.FadeInRegion).toBe(true);
     });
   });
 
