@@ -8,6 +8,8 @@
 
 * **NEW:** Test page permalinks now come with a button to copy the link directly to the clipboard. They can also be copied from the tests table.
 
+* **NEW:** The test selector in the Tests page allows you to collect tests for batch actions (deprecation) or to generate links.
+
 * **NEW:** Deprecations are now counted and displayed separately from new tests on the home page.
 
 * **NEW:** ROX Center is now compatible with PostgreSQL. The database gem (pg or mysql2) must be selected in the ROX Center configuration file. See the [deployment documentation](doc/rox/deploy.md).
