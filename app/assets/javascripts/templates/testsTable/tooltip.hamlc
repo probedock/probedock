@@ -1,0 +1,7 @@
+.runnerAvatar
+%dl
+  %dt= I18n.t('jst.testsTable.lastRunDate')
+  %dd= @lastRunAt
+  %dt= I18n.t('jst.testsTable.lastRunDuration')
+  %dd= @lastRunDuration
+%p.text-warning.runLink= I18n.t('jst.testsTable.goToLastRun')

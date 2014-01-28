@@ -446,12 +446,16 @@ App.autoModule('testInfo', function() {
     }
   });
 
-  var ResultRow = Marionette.ItemView.extend({
+  var ResultRow = Marionette.Layout.extend({
 
     tagName: 'tr',
     template: 'testInfo/resultRow',
+
+    regions: {
+      runner: '.runner'
+    },
+
     ui: {
-      runner: '.runner',
       version: '.version',
       duration: '.duration',
       runAt: '.runAt'
@@ -472,15 +476,11 @@ App.autoModule('testInfo', function() {
     },
 
     onRender: function() {
-      this.renderRunner();
+      this.runner.show(new views.UserAvatar({ model: this.model.get('runner'), size: 'small' }));
       this.ui.version.text(this.model.get('version') || I18n.t('jst.common.noData'));
       this.ui.duration.text(Format.duration(this.model.get('duration')));
       this.ui.runAt.text(Format.datetime.long(new Date(this.model.get('run_at'))));
       this.updateStyle();
-    },
-
-    renderRunner: function() {
-      new views.UserAvatar({ model: this.model.get('runner'), size: 'small', el: this.ui.runner }).render();
     },
 
     selectResult: function() {

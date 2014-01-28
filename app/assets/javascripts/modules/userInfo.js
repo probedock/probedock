@@ -17,10 +17,7 @@
 App.autoModule('userInfo', function() {
 
   var models = App.module('models'),
-      User = models.User;
-
-  var views = App.module('views'),
-      UserAvatar = views.UserAvatar;
+      views = App.module('views');
 
   var UserInfoView = Marionette.Layout.extend({
 
@@ -76,7 +73,7 @@ App.autoModule('userInfo', function() {
     },
 
     renderAvatar: function() {
-      new UserAvatar({ model: this.model, link: false, el: this.ui.avatar }).render();
+      new views.UserAvatar({ model: this.model, link: false, el: this.ui.avatar }).render();
     },
 
     renderActive: function() {
@@ -168,6 +165,6 @@ App.autoModule('userInfo', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new UserInfoView({ model: new User(options.config.user), can: options.config.can }));
+    options.region.show(new UserInfoView({ model: new models.User(options.config.user), can: options.config.can }));
   });
 });

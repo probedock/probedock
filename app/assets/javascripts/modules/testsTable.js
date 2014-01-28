@@ -16,13 +16,8 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testsTable', function() {
 
-  var models = App.module('models');
-  var Test = models.Test,
-      TestTableCollection = models.TestTableCollection;
-
-  var views = App.module('views');
-  var TableWithAdvancedSearch = views.TableWithAdvancedSearch,
-      UserAvatar = views.UserAvatar;
+  var models = App.module('models'),
+      views = App.module('views');
 
   var NoTestRow = Marionette.ItemView.extend({
 
@@ -33,18 +28,43 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestRow = Marionette.ItemView.extend({
+  var TestTooltip = Marionette.Layout.extend({
+
+    template: 'testsTable/tooltip',
+
+    regions: {
+      avatar: '.runnerAvatar'
+    },
+
+    serializeData: function() {
+      return {
+        lastRunAt: Format.datetime.short(new Date(this.model.get('last_run_at'))),
+        lastRunDuration: Format.duration(this.model.get('last_run_duration'), { shorten: 's' })
+      };
+    },
+
+    onRender: function() {
+      this.avatar.show(new views.UserAvatar({ model: this.model.get('effective_result').get('runner'), size: 'small', link: false }));
+    }
+  });
+
+  var TestRow = Marionette.Layout.extend({
 
     tagName: 'tr',
     template: 'testsTable/row',
 
+    regions: {
+      author: '.author'
+    },
+
     ui: {
       name: '.name',
       project: '.project',
-      author: '.author',
       createdAt: '.createdAt',
       key: '.key',
-      action: '.action'
+      action: '.action',
+      statusLink: '.action a',
+      statusIcon: '.action .glyphicon'
     },
 
     events: {
@@ -65,7 +85,7 @@ App.autoModule('testsTable', function() {
       this.renderName();
       this.renderKey();
       this.renderProject();
-      this.renderAuthor();
+      this.author.show(new views.UserAvatar({ model: this.model.get('author'), size: 'small' }));
       this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
       this.renderStatus();
       this.updateSelection();
@@ -123,10 +143,6 @@ App.autoModule('testsTable', function() {
       }
     },
 
-    renderAuthor: function() {
-      new UserAvatar({ model: this.model.get('author'), size: 'small', el: this.ui.author }).render();
-    },
-
     isSelectionModeEnabled: function() {
       return !!(App.currentTestSelector);
     },
@@ -145,19 +161,21 @@ App.autoModule('testsTable', function() {
 
     renderStatus: function() {
 
-      var statusEl = $('<a class="btn btn-xs" />').attr('href', Path.build('runs', this.model.get('effective_result').get('test_run_id')));
-      $('<span class="glyphicon glyphicon-' + (this.model.get('passing') ? 'thumbs-up' : 'thumbs-down') + '" />').appendTo(statusEl);
+      this.ui.statusLink.attr('href', Path.build('runs', this.model.get('effective_result').get('test_run_id')));
+      this.ui.statusIcon.removeClass('glyphicon-thumbs-up glyphicon-thumbs-down');
+      this.ui.statusIcon.addClass('glyphicon-' + (this.model.get('passing') ? 'thumbs-up' : 'thumbs-down'));
 
+      this.ui.statusLink.removeClass('btn-default btn-warning btn-success btn-danger');
       if (this.model.isDeprecated()) {
-        statusEl.addClass('btn-default');
+        this.ui.statusLink.addClass('btn-default');
       } else if (!this.model.get('active')) {
-        statusEl.addClass('btn-warning');
+        this.ui.statusLink.addClass('btn-warning');
       } else {
-        statusEl.addClass('btn-' + (this.model.get('passing') ? 'success' : 'danger'));
+        this.ui.statusLink.addClass('btn-' + (this.model.get('passing') ? 'success' : 'danger'));
       }
 
-      this.ui.action.empty();
-      statusEl.appendTo(this.ui.action).popover({
+      this.ui.statusLink.popover('destroy');
+      this.ui.statusLink.popover({
         html: true,
         trigger: 'hover',
         title: this.tooltipTitle(),
@@ -171,24 +189,7 @@ App.autoModule('testsTable', function() {
     },
 
     tooltipContents: function() {
-      
-      var wrapper = $('<div />');
-      var effectiveResult = this.model.get('effective_result');
-      var runner = effectiveResult.get('runner');
-
-      var runnerEl = $('<div />').appendTo(wrapper);
-      new UserAvatar({ model: runner, size: 'small', link: false, el: runnerEl }).render();
-
-      var dl = $('<dl />');
-      $('<dt />').text(I18n.t('jst.testsTable.lastRunDate')).appendTo(dl);
-      $('<dd />').text(Format.datetime.short(new Date(this.model.get('last_run_at')))).appendTo(dl);
-      $('<dt />').text(I18n.t('jst.testsTable.lastRunDuration')).appendTo(dl);
-      $('<dd />').text(Format.duration(this.model.get('last_run_duration'), { shorten: 's' })).appendTo(dl);
-      dl.appendTo(wrapper);
-
-      $('<p class="text-warning runLink" />').text(I18n.t('jst.testsTable.goToLastRun')).appendTo(wrapper);
-
-      return wrapper;
+      return new TestTooltip({ model: this.model, el: $('<div />') }).render().$el;
     }
   });
 
@@ -268,7 +269,7 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestsTable = TableWithAdvancedSearch.extend({
+  var TestsTable = views.TableWithAdvancedSearch.extend({
 
     advancedSearchTemplate: 'testsTable/search',
     ui: {
@@ -293,7 +294,7 @@ App.autoModule('testsTable', function() {
 
     tableView: TestsTableView,
     tableViewOptions: {
-      collection: new TestTableCollection()
+      collection: new models.TestTableCollection()
     },
 
     config: {
@@ -333,7 +334,7 @@ App.autoModule('testsTable', function() {
 
   this.addAutoInitializer(function(options) {
 
-    var Tests = TestTableCollection.extend({
+    var Tests = models.TestTableCollection.extend({
       url: options.config.path
     });
 
