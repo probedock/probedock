@@ -18,60 +18,54 @@
 App.autoModule('usersTable', function() {
 
   var models = App.module('models'),
-      User = models.User,
-      UserTableCollection = models.UserTableCollection;
-
-  var views = App.module('views'),
-      Table = views.Table,
-      UserAvatar = views.UserAvatar;
+      views = App.module('views');
 
   var NoUserRow = Marionette.ItemView.extend({
 
-    tagName : 'tr',
-    className : 'empty',
-    template : function() {
-      return _.template('<td colspan="2"><%- empty %></td>', { empty : I18n.t('jst.usersTable.empty') });
+    tagName: 'tr',
+    className: 'empty',
+    template: function() {
+      return _.template('<td colspan="2"><%- empty %></td>', { empty: I18n.t('jst.usersTable.empty') });
     }
   });
 
-  var UserRow = Marionette.ItemView.extend({
+  var UserRow = Marionette.Layout.extend({
 
-    tagName : 'tr',
-    template : 'usersTable/row',
+    tagName: 'tr',
+    template: 'usersTable/row',
 
-    ui : {
-      name : '.name',
-      createdAt : '.createdAt'
+    regions: {
+      avatar: '.name'
     },
 
-    onRender : function() {
-      this.renderUser();
+    ui: {
+      createdAt: '.createdAt'
+    },
+
+    onRender: function() {
+      this.avatar.show(new views.UserAvatar({ model: this.model, size: 'small' }));
       this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('created_at'))));
-    },
-
-    renderUser : function() {
-      new UserAvatar({ model : this.model, size : 'small', el : this.ui.name }).render();
     }
   });
 
   var UsersTableView = Tableling.Bootstrap.TableView.extend({
 
-    template : 'usersTable/table',
-    itemView : UserRow,
-    itemViewContainer : 'tbody',
-    emptyView : NoUserRow
+    template: 'usersTable/table',
+    itemView: UserRow,
+    itemViewContainer: 'tbody',
+    emptyView: NoUserRow
   });
 
-  var UsersTable = Table.extend({
+  var UsersTable = views.Table.extend({
 
-    config : {
-      pageSize : 25,
-      sort : [ 'name asc' ]
+    config: {
+      pageSize: 25,
+      sort: [ 'name asc' ]
     },
     
-    tableView : UsersTableView,
-    tableViewOptions : {
-      collection : new UserTableCollection()
+    tableView: UsersTableView,
+    tableViewOptions: {
+      collection: new models.UserTableCollection()
     }
   });
 

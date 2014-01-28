@@ -35,11 +35,15 @@ App.autoModule('userInfo', function() {
     }
   });
 
-  var InfoView = Marionette.ItemView.extend({
+  var InfoView = Marionette.Layout.extend({
 
     template: 'userInfo/info',
+
+    regions: {
+      avatar: '.title'
+    },
+
     ui: {
-      avatar: '.title',
       email: '.email',
       active: 'dd.active',
       activeHeader: 'dt.active',
@@ -65,15 +69,11 @@ App.autoModule('userInfo', function() {
     },
 
     onRender: function() {
-      this.renderAvatar();
+      this.avatar.show(new views.UserAvatar({ model: this.model, link: false }));
       this.ui.email.text(this.model.get('email') || I18n.t('jst.common.noData'));
       this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('created_at'))));
       this.renderActive();
       this.updateControls();
-    },
-
-    renderAvatar: function() {
-      new views.UserAvatar({ model: this.model, link: false, el: this.ui.avatar }).render();
     },
 
     renderActive: function() {
