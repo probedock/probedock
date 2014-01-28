@@ -48,7 +48,7 @@ describe("Project", function() {
 
   it("should have many test keys", function() {
     this.meta = { rox: { key: 'b40c06fb3d4a' } };
-    expect(Project).toHaveBackboneRelation({ type: Backbone.HasMany, key: 'testKeys', relatedModel: TestKey, collectionType: TestKeyCollection });
+    expect(Project).toHaveBackboneRelation({ type: Backbone.HasMany, key: 'testKeys', relatedModel: 'TestKey', collectionType: 'TestKeyCollection' });
   });
 
   it("should return its path", function() {
