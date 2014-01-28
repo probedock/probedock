@@ -26,14 +26,14 @@ App.setMaintenance = function(maintenance) {
     App.vent.trigger('maintenance:' + (App.maintenance ? 'on' : 'off'));
 
     if (App.maintenance) {
-      App.vent.trigger('flash', {
+      App.trigger('alert', {
         type: 'warning',
-        flash: 'maintenance',
+        class: 'alert-maintenance',
         title: I18n.t('jst.application.maintenance.title'),
         message: I18n.t('jst.application.maintenance.notice')
       });
     } else {
-      $('.alert.flash-maintenance').slideUp('normal', function() {
+      $('.alert-maintenance').slideUp('normal', function() {
         $(this).remove();
       });
     }

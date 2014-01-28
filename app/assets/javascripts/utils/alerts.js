@@ -31,6 +31,9 @@ var Alerts = {
 
     var el = $('<div class="alert" />');
     el.addClass('alert-' + options.type);
+    if (options.class) {
+      el.addClass(options.class);
+    }
 
     if (!options.permanent) {
       el.addClass('alert-dismissable');

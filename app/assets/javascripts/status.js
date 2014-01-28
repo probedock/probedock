@@ -104,7 +104,7 @@ App.module('status', function() {
     },
 
     showError: function() {
-      App.vent.trigger('flash', { type: 'warning', message: I18n.t('jst.statusModule.disconnected') });
+      App.trigger('alert', { type: 'warning', message: I18n.t('jst.statusModule.disconnected') });
     }
   });
   

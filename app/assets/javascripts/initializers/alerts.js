@@ -14,12 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-App.vent.on('flash', function(options) {
-
-  var alert = Alerts.build(options).prependTo($('body .page-container')).addClass('fade in flash').hide()
-  if (options.flash) {
-    alert.addClass('flash-' + options.flash);
-  }
-
-  alert.slideDown();
+App.on('alert', function(options) {
+  Alerts.build(options).prependTo($('body .page-container')).addClass('fade in').hide().slideDown();
 });

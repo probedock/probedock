@@ -8,7 +8,7 @@
     .container.page-container
       - if user_signed_in?
         - if @maintenance
-          = bootstrap_alert type: :warning, title: t('application.maintenance.title'), message: t('application.maintenance.notice'), class: %w(flash flash-maintenance)
+          = bootstrap_alert type: :warning, title: t('application.maintenance.title'), message: t('application.maintenance.notice'), class: %w(alert-maintenance)
         - { warning: :warning, success: :success, notice: :info, error: :danger }.each_pair do |key,klass|
           - if flash[key].present?
             = bootstrap_alert type: klass, title: t("flash.#{key}"), message: flash[key]
