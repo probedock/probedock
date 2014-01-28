@@ -17,15 +17,12 @@
 App.autoModule('latestTestRuns', function() {
 
   var models = App.module('models'),
-      TestRun = models.TestRun;
+      views = App.module('views');
 
-  var views = App.module('views'),
-      UserAvatar = views.UserAvatar;
-
-  var TestRunCollection = Backbone.Collection.extend({
+  var LatestTestRunsCollection = Backbone.Collection.extend({
 
     url: Path.builder('data', 'latest_test_runs'),
-    model: TestRun
+    model: models.TestRun
   });
 
   var EmptyRow = Marionette.ItemView.extend({
@@ -37,90 +34,71 @@ App.autoModule('latestTestRuns', function() {
     }
   });
 
-  var Row = Marionette.ItemView.extend({
-  
-    tagName: 'tr',
-    template: 'latestTestRuns/row',
-    ui: {
-      description: '.description',
-      bar: '.progress',
-      passedBar: '.progress-bar-success',
-      inactiveBar: '.progress-bar-warning',
-      failedBar: '.progress-bar-danger'
+  var TestRunDescription = Marionette.Layout.extend({
+
+    template: _.template('<span class="runAvatar" /> <a href="<%- href %>"><%- label %> <span class="time"><%- time %></span></a>'),
+
+    regions: {
+      avatar: '.runAvatar'
     },
 
-    events: {
-      'click .progress': 'goToTestRun'
+    ui: {
+      link: 'a',
+      avatar: '.runAvatar',
+      time: '.time'
     },
 
     initialize: function() {
-      this.listenTo(this.model.collection, 'refreshTime', this.renderTime);
+      this.listenTo(this, 'refreshTime', this.renderTime);
     },
 
-    onRender: function() {
-      this.renderModel();
+    serializeData: function() {
+      return {
+        time: this.humanTime(),
+        href: this.model.path(),
+        label: this.model.get('runner') ? this.model.get('runner').get('name') : this.model.get('group')
+      };
     },
 
-    goToTestRun: function() {
-      window.location = this.model.path();
+    renderTime: function() {
+      this.ui.time.text(this.humanTime());
     },
 
     humanTime: function() {
       return moment(this.model.get('ended_at')).fromNow();
     },
 
-    renderModel: function() {
-      this.renderDescription();
-      this.renderResults();
+    onRender: function() {
+      if (this.model.get('runner')) {
+        this.avatar.show(new views.UserAvatar({ model: this.model.get('runner'), size: 'small', label: false }));
+      } else {
+        this.ui.avatar.remove();
+        this.ui.link.addClass('group');
+      }
+    }
+  });
+
+  var Row = Marionette.Layout.extend({
+  
+    tagName: 'tr',
+    template: 'latestTestRuns/row',
+
+    regions: {
+      description: '.description',
+      results: '.results'
+    },
+
+    initialize: function() {
+      this.listenTo(this, 'refreshTime', this.renderTime);
+    },
+
+    onRender: function() {
+      this.description.show(new TestRunDescription({ model: this.model }));
+      this.results.show(new views.TestRunHealthBar({ model: this.model }));
     },
 
     renderTime: function() {
-      if (!this.ui.time) {
-        this.ui.time = this.$el.find('.description .time');
-      }
-      this.ui.time.text(this.humanTime());
-    },
-
-    renderResults: function() {
-
-      var counts = this.model.counts(),
-          percentages = this.model.percentages();
-
-      _.each([ 'passed', 'inactive', 'failed' ], function(type) {
-
-        var percentage = percentages[type];
-
-        var bar = this.ui[type + 'Bar'];
-        bar[percentage ? 'show' : 'hide']();
-
-        if (percentage) {
-          bar.css('width', percentage + '%');
-          if (percentage >= 15) {
-            bar.text(Format.number(counts[type]));
-          } else {
-            bar.empty();
-          }
-        }
-      }, this);
-
-      this.ui.bar.tooltip({
-        title: this.model.successDescription()
-      });
-    },
-
-    renderDescription: function() {
-
-      this.ui.description.empty();
-      var when = $('<span class="time" />').text(this.humanTime());
-      var link = $('<a />').attr('href', this.model.path());
-
-      if (!this.model.get('runner')) {
-        var text = $('<strong />').text(this.model.get('group') + ' ');
-        this.ui.description.html(link.html(text.append(when)));
-      } else {
-        new UserAvatar({ model: this.model.get('runner'), size: 'small', label: false, el: $('<div />').appendTo(this.ui.description) }).render();
-        this.ui.description.append(link.text(this.model.get('runner').get('name') + ' ').append(when));
-      }
+      this.description.currentView.trigger('refreshTime');
     }
   });
 
@@ -140,7 +118,9 @@ App.autoModule('latestTestRuns', function() {
     },
 
     refreshTime: function() {
-      this.collection.trigger('refreshTime');
+      this.children.forEach(function(view) {
+        view.trigger('refreshTime');
+      });
     },
 
     refresh: function() {
@@ -151,6 +131,6 @@ App.autoModule('latestTestRuns', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new Table({ collection: new TestRunCollection(options.config) }));
+    options.region.show(new Table({ collection: new LatestTestRunsCollection(options.config) }));
   });
 });
