@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 var testRunBase = {
   id : 42,
   results_count : 100,
@@ -65,48 +64,5 @@ describe("TestRun", function() {
   it("should have an inactive count of 8", function() {
     this.meta = { rox : { key : '5f5f977e7c54' } };
     expect(testRun.inactiveCount()).toBe(8);
-  });
-
-  it("should have a success ratio of 0.72", function() {
-    this.meta = { rox : { key : '773d2a143e5e' } };
-    expect(testRun.successRatio()).toBe(0.72);
-  });
-
-  it("should have a human success ratio of 72%", function() {
-    this.meta = { rox : { key : '70ab251a974b' } };
-    expect(testRun.humanSuccessRatio()).toBe('72%');
-  });
-
-  it("should round human success ratio downward", function() {
-    this.meta = { rox : { key : '39945990fc06' } };
-    testRun.set({
-      results_count : 1000,
-      passed_results_count : 654,
-      inactive_results_count : 0,
-      inactive_passed_results_count : 0
-    }, { silent : true });
-    expect(testRun.humanSuccessRatio()).toBe('65%');
-  });
-
-  it("should round human success ratio upward", function() {
-    this.meta = { rox : { key : '60d1cd9be318' } };
-    testRun.set({
-      results_count : 1000,
-      passed_results_count : 435,
-      inactive_results_count : 0,
-      inactive_passed_results_count : 0
-    }, { silent : true });
-    expect(testRun.humanSuccessRatio()).toBe('44%');
-  });
-
-  it("should have a human success ratio of 99% when over 99.5", function() {
-    this.meta = { rox : { key : '021866401494' } };
-    testRun.set({
-      results_count : 1000,
-      passed_results_count : 996,
-      inactive_results_count : 495,
-      inactive_passed_results_count : 493
-    }, { silent : true });
-    expect(testRun.humanSuccessRatio()).toBe('99%');
   });
 });

@@ -14,111 +14,97 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('testRunsTable', function() {
 
-  var models = App.module('models');
-  var TestRun = models.TestRun,
-      TestRunCollection = models.TestRunCollection;
-
-  var views = App.module('views');
-  var TableWithAdvancedSearch = views.TableWithAdvancedSearch,
-      UserAvatar = views.UserAvatar;
+  var models = App.module('models'),
+      views = App.module('views');
 
   var NoTestRunRow = Marionette.ItemView.extend({
 
-    tagName : 'tr',
-    className : 'empty',
-    template : function() {
-      return _.template('<td colspan="5"><%- empty %></td>', { empty : I18n.t('jst.testRunsTable.empty') })
+    tagName: 'tr',
+    className: 'empty',
+    template: function() {
+      return _.template('<td colspan="5"><%- empty %></td>', { empty: I18n.t('jst.testRunsTable.empty') })
     }
   });
 
-  var TestRunRow = Marionette.ItemView.extend({
+  var TestRunRow = Marionette.Layout.extend({
     
-    tagName : 'tr',
-    template : 'testRunsTable/row',
+    tagName: 'tr',
+    template: 'testRunsTable/row',
 
-    ui : {
-      runner : '.runner',
-      status : '.status',
-      numberOfResults : '.numberOfResults',
-      endedAt : '.endedAt',
-      duration : '.duration',
-      group : '.group'
+    regions: {
+      runner: '.runner',
+      status: '.status'
     },
 
-    onRender : function() {
+    ui: {
+      numberOfResults: '.numberOfResults',
+      endedAt: '.endedAt',
+      duration: '.duration',
+      group: '.group'
+    },
+
+    onRender: function() {
       this.ui.endedAt.html(this.endedAtCell());
-      this.ui.status.html(this.statusCell());
-      this.ui.numberOfResults.text(this.model.get('results_count'));
       this.ui.duration.text(Format.duration(this.model.get('duration')));
       this.renderGroup();
-      this.renderRunner();
+      this.runner.show(new views.UserAvatar({ model: this.model.get('runner'), size: 'small' }));
+      this.status.show(new views.TestRunHealthBar({ model: this.model }));
     },
 
-    renderRunner : function() {
-      new UserAvatar({ model : this.model.get('runner'), el : this.ui.runner, size : 'small' }).render();
-    },
-
-    renderGroup : function() {
+    renderGroup: function() {
       if (this.model.get('group')) {
-        this.ui.group.html($('<a />').attr('href', Path.build('runs?' + $.param({ groups : [ this.model.get('group') ] }))).text(this.model.get('group')));
+        this.ui.group.html($('<a />').attr('href', Path.build('runs?' + $.param({ groups: [ this.model.get('group') ] }))).text(this.model.get('group')));
       } else {
         this.ui.group.text(I18n.t('jst.common.noData'));
       }
     },
 
-    endedAtCell : function() {
+    endedAtCell: function() {
       var endedAt = Format.datetime.long(new Date(this.model.get('ended_at')));
       return $('<a />').attr('href', this.model.path()).text(endedAt);
-    },
-
-    statusCell : function() {
-      var el = $('<a />').attr('href', this.model.path()).text(this.model.humanSuccessRatio());
-      el.css('color', this.model.successColor().toHexString());
-      return el.tooltip({ title : this.model.successDescription() });
     }
   });
 
   var TestRunsTableView = Tableling.Bootstrap.TableView.extend({
 
-    template : 'testRunsTable/table',
-    itemView : TestRunRow,
-    itemViewContainer : 'tbody',
-    emptyView : NoTestRunRow,
+    template: 'testRunsTable/table',
+    itemView: TestRunRow,
+    itemViewContainer: 'tbody',
+    emptyView: NoTestRunRow,
   });
 
-  var TestRunsTable = TableWithAdvancedSearch.extend({
+  var TestRunsTable = views.TableWithAdvancedSearch.extend({
 
-    advancedSearchTemplate : 'testRunsTable/search',
-    ui : {
-      groupsFilter : '.advancedSearch form .groups',
-      runnersFilter : '.advancedSearch form .runners'
+    advancedSearchTemplate: 'testRunsTable/search',
+    ui: {
+      groupsFilter: '.advancedSearch form .groups',
+      runnersFilter: '.advancedSearch form .runners'
     },
 
-    events : {
-      'change .advancedSearch form .groups' : 'updateSearch',
-      'change .advancedSearch form .runners' : 'updateSearch'
+    events: {
+      'change .advancedSearch form .groups': 'updateSearch',
+      'change .advancedSearch form .runners': 'updateSearch'
     },
 
-    config : {
-      sort : [ 'ended_at desc' ],
-      pageSize : 15
+    config: {
+      sort: [ 'ended_at desc' ],
+      pageSize: 15
     },
 
-    tableView : TestRunsTableView,
-    tableViewOptions : {
-      collection : new TestRunCollection()
+    tableView: TestRunsTableView,
+    tableViewOptions: {
+      collection: new models.TestRunCollection()
     },
 
-    searchFilters : [
-      { name : 'groups' },
+    searchFilters: [
+      { name: 'groups' },
       {
-        name : 'runners',
-        optionText : function(runner) { return runner.name; },
-        optionValue : function(runner) { return runner.name; },
-        sort : function(a, b) { return a.name.localeCompare(b.name); }
+        name: 'runners',
+        optionText: function(runner) { return runner.name; },
+        optionValue: function(runner) { return runner.name; },
+        sort: function(a, b) { return a.name.localeCompare(b.name); }
       }
     ]
   });

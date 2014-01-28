@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var failureColor = $.Color('#ff0000');
-  var successColor = $.Color('#008b00');
-
   var TestRun = this.TestRun = Backbone.RelationalModel.extend({
 
     relations: [
@@ -35,20 +32,6 @@ App.module('models', function() {
 
     path: function() {
       return Path.build('runs', this.get('id'));
-    },
-
-    humanSuccessRatio: function() {
-
-      var ratio = this.successRatio();
-      if (ratio >= 0.995 && ratio < 1) {
-        ratio = 0.99;
-      }
-
-      return Math.round(ratio * 100) + '%';
-    },
-
-    successRatio: function() {
-      return this.passedAndInactiveCount() / this.get('results_count');
     },
 
     counts: function() {
@@ -97,10 +80,6 @@ App.module('models', function() {
 
     totalCount: function() {
       return this.get('results_count');
-    },
-
-    successColor: function() {
-      return failureColor.transition(successColor, this.successRatio());
     },
 
     successDescription: function() {

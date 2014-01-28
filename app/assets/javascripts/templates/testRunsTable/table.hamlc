@@ -2,8 +2,7 @@
   %thead
     %tr
       %th.endedAt.sorting{ :'data-field' => 'ended_at' }= I18n.t('jst.models.testRun.endedAt')
-      %th.status.sorting{ :'data-field' => 'status' }= I18n.t('jst.models.testRun.status')
-      %th.numberOfResults{ :'data-field' => 'results_count' }= I18n.t('jst.models.testRun.numberOfResults')
+      %th.status= I18n.t('jst.models.testRun.status')
       %th.duration.sorting{ :'data-field' => 'duration' }= I18n.t('jst.models.testRun.duration')
       %th.runner.sorting{ :'data-field' => 'runner' }= I18n.t('jst.models.testRun.runner')
       %th.group.sorting{ :'data-field' => 'group' }= I18n.t('jst.models.testRun.group')

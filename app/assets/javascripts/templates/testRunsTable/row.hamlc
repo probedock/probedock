@@ -1,6 +1,5 @@
 %td.endedAt
 %td.status
-%td.numberOfResults
 %td.duration
 %td.runner
 %td.group
