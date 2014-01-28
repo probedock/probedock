@@ -199,9 +199,8 @@ App.autoModule('apiKeysTable', function() {
 
     tableView: ApiKeysTableView,
 
-    initialize: function() {
-      // TODO: replace by initializeTable once tableling provides it
-      Table.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+    initializeTable: function() {
+      Table.prototype.initializeTable.apply(this, Array.prototype.slice.call(arguments));
       App.bindEvents(this);
     },
 

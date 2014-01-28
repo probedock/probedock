@@ -22,9 +22,7 @@ App.module('views', function() {
       header: '.header'
     },
 
-    initialize: function(options) {
-
-      Tableling.Bootstrap.Table.prototype.initialize.call(this, options);
+    initializeTable: function(options) {
 
       this.completeConfig('ui', 'table');
       this.listenTo(this.vent, 'table:refreshed', _.bind(this.showLoading, this, false));
@@ -86,10 +84,10 @@ App.module('views', function() {
 
     searchFilters: [],
 
-    initialize: function(options) {
+    autoUpdate: false,
 
-      options.autoUpdate = false;
-      Table.prototype.initialize.call(this, options);
+    initializeTable: function(options) {
+      Table.prototype.initializeTable.call(this, options);
 
       this.completeConfig('ui', 'advancedSearch');
       this.completeConfig('events', 'advancedSearch');

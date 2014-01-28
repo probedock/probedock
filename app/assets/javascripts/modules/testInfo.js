@@ -524,8 +524,7 @@ App.autoModule('testInfo', function() {
       };
     },
 
-    initialize: function(options) {
-      Tableling.Bootstrap.TableView.prototype.initialize.call(this, options);
+    initializeModule: function(options) {
       this.testVent = options.testVent;
       this.on('render', this.clearLoading, this);
     },
@@ -554,8 +553,8 @@ App.autoModule('testInfo', function() {
       sort: [ 'run_at desc' ]
     },
 
-    initialize: function(options) {
-      views.Table.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+    initializeTable: function(options) {
+      views.Table.prototype.initializeTable.apply(this, Array.prototype.slice.call(arguments));
       this.testVent = options.testVent;
     }
   });

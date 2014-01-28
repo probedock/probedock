@@ -142,7 +142,7 @@ GEM
     mini_portile (0.5.2)
     minitest (4.7.5)
     mono_logger (1.1.0)
-    multi_json (1.8.2)
+    multi_json (1.8.4)
     multi_xml (0.5.5)
     mysql2 (0.3.14)
     net-ldap (0.3.1)
@@ -277,7 +277,7 @@ GEM
       execjs
       stylus-source
     stylus-source (0.38.0)
-    tableling-rails (0.0.23)
+    tableling-rails (0.0.24)
       rails (~> 4.0)
     therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
