@@ -16,20 +16,35 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var HalModel = this.HalModel = Backbone.RelationalModel.extend({
+  var TestResult = this.TestResult = Backbone.RelationalModel.extend({
+
+    relations: [
+      {
+        type: Backbone.HasOne,
+        key: 'runner',
+        relatedModel: 'User'
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'test',
+        relatedModel: 'Test'
+      }
+    ],
 
     url: function() {
-      var links = this.get('_links');
-      return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
+      return LegacyApiPath.build('results', this.get('id'));
+    },
+
+    dataPath: function() {
+      return LegacyApiPath.build('results', this.get('id'));
+    },
+
+    humanRunAt: function() {
+      return Format.datetime.full(new Date(this.get('run_at')));
     }
   });
 
-  var HalCollection = this.HalCollection = Backbone.Collection.extend({
-
-    // TODO: HalCollection should get its URL from API root through relations
-
-    parse: function(response, options) {
-      return response['_embedded'] ? response['_embedded'][this.embeddedModels] || [] : [];
-    }
+  var TestResultTableCollection = this.TestResultTableCollection = Tableling.Collection.extend({
+    model: TestResult
   });
 });

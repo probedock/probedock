@@ -16,20 +16,14 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var HalModel = this.HalModel = Backbone.RelationalModel.extend({
-
-    url: function() {
-      var links = this.get('_links');
-      return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
-    }
+  var ApiKey = this.ApiKey = this.HalModel.extend({
+    fallbackUrl: Path.builder('api_keys')
   });
 
-  var HalCollection = this.HalCollection = Backbone.Collection.extend({
+  var ApiKeyCollection = this.ApiKeyCollection = this.HalCollection.extend({
 
-    // TODO: HalCollection should get its URL from API root through relations
-
-    parse: function(response, options) {
-      return response['_embedded'] ? response['_embedded'][this.embeddedModels] || [] : [];
-    }
+    url: Path.builder('api_keys'),
+    model: ApiKey,
+    embeddedModels: 'v1:api-keys'
   });
 });

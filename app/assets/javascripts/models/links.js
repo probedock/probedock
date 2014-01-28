@@ -16,20 +16,18 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var HalModel = this.HalModel = Backbone.RelationalModel.extend({
+  var Link = this.Link = Backbone.RelationalModel.extend({
 
     url: function() {
-      var links = this.get('_links');
-      return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
+      return this.get('id') ? LegacyApiPath.build('links', this.get('id')) : LegacyApiPath.build('links');
     }
   });
 
-  var HalCollection = this.HalCollection = Backbone.Collection.extend({
+  var LinkCollection = this.LinkCollection = Backbone.Collection.extend({
 
-    // TODO: HalCollection should get its URL from API root through relations
-
-    parse: function(response, options) {
-      return response['_embedded'] ? response['_embedded'][this.embeddedModels] || [] : [];
+    model: Link,
+    comparator: function(a, b) {
+      return a.get('name').localeCompare(b.get('name'));
     }
   });
 });

@@ -14,22 +14,4 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-App.module('models', function() {
-
-  var HalModel = this.HalModel = Backbone.RelationalModel.extend({
-
-    url: function() {
-      var links = this.get('_links');
-      return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
-    }
-  });
-
-  var HalCollection = this.HalCollection = Backbone.Collection.extend({
-
-    // TODO: HalCollection should get its URL from API root through relations
-
-    parse: function(response, options) {
-      return response['_embedded'] ? response['_embedded'][this.embeddedModels] || [] : [];
-    }
-  });
-});
+Backbone.Relational.store.addModelScope(App.module('models'));

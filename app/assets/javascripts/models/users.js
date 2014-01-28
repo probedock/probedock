@@ -16,20 +16,36 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var HalModel = this.HalModel = Backbone.RelationalModel.extend({
+  var User = this.User = Backbone.RelationalModel.extend({
 
-    url: function() {
-      var links = this.get('_links');
-      return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
+    link: function() {
+      return $('<a />').attr('href', this.path()).text(this.get('name'));
+    },
+
+    path: function() {
+      return Path.build('user', this.get('name'));
+    },
+
+    editPath: function() {
+      return Path.build('user', this.get('name'), 'edit');
+    },
+
+    testsPath: function() {
+      return Path.build('tests?' + $.param({ authors: [ this.get('name') ] }));
     }
   });
 
-  var HalCollection = this.HalCollection = Backbone.Collection.extend({
+  var UserCollection = this.UserCollection = Backbone.Collection.extend({
 
-    // TODO: HalCollection should get its URL from API root through relations
-
-    parse: function(response, options) {
-      return response['_embedded'] ? response['_embedded'][this.embeddedModels] || [] : [];
+    model: User,
+    comparator: function(a, b) {
+      return a.get('name').localeCompare(b.get('name'));
     }
+  });
+
+  var UserTableCollection = this.UserTableCollection = Tableling.Collection.extend({
+
+    url: LegacyApiPath.builder('users'),
+    model: User
   });
 });
