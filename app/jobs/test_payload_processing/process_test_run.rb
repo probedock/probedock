@@ -14,9 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class ProcessApiPayloadJob
+module TestPayloadProcessing
 
-  class ProcessApiTestRun
+  class ProcessTestRun
     attr_reader :test_run, :processed_tests
 
     def initialize data, runner, time_received, cache
@@ -41,7 +41,7 @@ class ProcessApiPayloadJob
       @processed_tests = []
       data[:r].each do |results|
         additional_test_data = results.pick :j, :v # enrich tests with project and version
-        @processed_tests += results[:t].collect{ |test| ProcessApiTest.new test.merge(additional_test_data), @test_run, cache }
+        @processed_tests += results[:t].collect{ |test| ProcessTest.new test.merge(additional_test_data), @test_run, cache }
       end
 
       # Update cached counters.

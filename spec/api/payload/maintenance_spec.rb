@@ -29,6 +29,6 @@ describe "API payload controller" do
     set_maintenance_mode
     post_api_payload sample_payload.to_json, user
     expect(response.status).to eq(503)
-    expect(ProcessApiPayloadJob).to have_queue_size_of(0)
+    expect(ProcessNextTextPayloadJob).to have_queue_size_of(0)
   end
 end

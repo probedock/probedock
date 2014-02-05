@@ -15,10 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 
-class ProcessApiPayloadJob
+class ProcessNextTestPayloadJob
   @queue = :api
 
-  def self.perform data, user_id, time_received
-    ProcessApiPayload.new data, user_id, time_received
+  def self.perform
+    payload = TestPayload.waiting_for_processing.includes(:user).first!
+    payload.start_processing!
+    TestPayloadProcessing::ProcessPayload.new payload
   end
 end

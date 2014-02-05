@@ -14,9 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class ProcessApiPayloadJob
+module TestPayloadProcessing
 
-  class ProcessApiTest
+  class ProcessTest
     attr_reader :test, :test_result
 
     def initialize data, test_run, cache

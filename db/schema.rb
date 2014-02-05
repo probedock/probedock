@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140124124144) do
+ActiveRecord::Schema.define(version: 20140205152415) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -174,6 +177,19 @@ ActiveRecord::Schema.define(version: 20140124124144) do
   add_index "test_keys", ["project_id"], name: "test_keys_project_id_fk", using: :btree
   add_index "test_keys", ["user_id"], name: "test_keys_user_id_fk", using: :btree
 
+  create_table "test_payloads", force: true do |t|
+    t.text     "contents",                 null: false
+    t.string   "state",         limit: 12, null: false
+    t.datetime "received_at",              null: false
+    t.datetime "processing_at"
+    t.datetime "processed_at"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.integer  "user_id",                  null: false
+  end
+
+  add_index "test_payloads", ["state"], name: "index_test_payloads_on_state", using: :btree
+
   create_table "test_results", force: true do |t|
     t.boolean  "passed",                               null: false
     t.integer  "runner_id",                            null: false
@@ -293,6 +309,8 @@ ActiveRecord::Schema.define(version: 20140124124144) do
 
   add_foreign_key "test_keys", "projects", name: "test_keys_project_id_fk"
   add_foreign_key "test_keys", "users", name: "test_keys_user_id_fk"
+
+  add_foreign_key "test_payloads", "users", name: "test_payloads_user_id_fk"
 
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"
   add_foreign_key "test_results", "categories", name: "test_results_previous_category_id_fk", column: "previous_category_id"

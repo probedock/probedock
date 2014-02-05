@@ -22,11 +22,15 @@ class Api::PayloadsController < Api::ApiController
 
     time_received = Time.now
 
-    json = parse_payload(request.body.read, time_received)
+    body = parse_payload request.body.read, time_received
+    json = parse_json_request_body body
     validate_payload json
 
-    Resque.enqueue ProcessApiPayloadJob, json, current_api_user.id, time_received.to_r.to_s
+    payload = TestPayload.new(contents: body, user: current_api_user, received_at: time_received).tap(&:save!)
+
+    Resque.enqueue ProcessNextTestPayloadJob
     $api_logger.info "Accepted payload for processing in #{((Time.now - time_received) * 1000).round}ms"
+
     head :accepted # HTTP 202 (accepted for processing)
   end
 
@@ -42,7 +46,7 @@ class Api::PayloadsController < Api::ApiController
     $payload_logger.info "\nPayload received at #{time_received}"
     $payload_logger.info body
 
-    parse_json_request_body body
+    body
   end
 
   def validate_payload json

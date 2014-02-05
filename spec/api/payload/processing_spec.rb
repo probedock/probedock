@@ -175,12 +175,19 @@ describe "API sample payload", rox: { tags: :integration } do
 
     # Note: the third payload cannot be posted at this stage.
     # The first payload must have been processed first.
-    payloads = [ first_payload, second_payload ].collect{ |p| MultiJson.dump p }
-    payloads.each{ |p| post_api_payload p, users[0] }
+    payloads = [ first_payload, second_payload ]
+    payloads.each do |p|
 
-    ProcessApiPayloadJob.should have_queued(MultiJson.load(payloads[0]), users[0].id, kind_of(String)).in(:api)
-    ProcessApiPayloadJob.should have_queued(MultiJson.load(payloads[1]), users[0].id, kind_of(String)).in(:api)
-    ProcessApiPayloadJob.should have_queue_size_of(2).in(:api)
+      expect do
+        post_api_payload MultiJson.dump(p), users[0]
+      end.to change(TestPayload, :count).by(1)
+
+      test_payload = TestPayload.order('created_at DESC').first!
+      expect(test_payload).not_to be_nil
+      expect(MultiJson.load(test_payload.contents)).to eq(p)
+    end
+
+    ProcessNextTestPayloadJob.should have_queue_size_of(payloads.length).in(:api)
   end
 
   context "when processed" do

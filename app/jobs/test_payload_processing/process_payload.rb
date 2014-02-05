@@ -16,15 +16,16 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'benchmark'
 
-class ProcessApiPayloadJob
+module TestPayloadProcessing
 
-  class ProcessApiPayload
+  class ProcessPayload
     attr_reader :processed_test_run, :user, :time_received, :cache
 
-    def initialize data, user_id, time_received
+    def initialize test_payload
 
-      @user = User.find user_id
-      @time_received = Time.at Rational(time_received)
+      data = MultiJson.load test_payload.contents
+      @user = test_payload.user
+      @time_received = test_payload.received_at
       Rails.logger.info "Starting to process payload received at #{@time_received}"
 
       time = Benchmark.realtime do
@@ -34,11 +35,13 @@ class ProcessApiPayloadJob
         TestRun.transaction do
 
           @cache = self.class.build_cache data, @time_received
-          @processed_test_run = ProcessApiTestRun.new data, @user, @time_received, @cache
+          @processed_test_run = ProcessTestRun.new data, @user, @time_received, @cache
 
           # Mark test keys as used.
           free_keys = @cache[:keys].select &:free?
           TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
+
+          test_payload.finish_processing!
         end
       end
 
@@ -46,7 +49,7 @@ class ProcessApiPayloadJob
       number_of_test_results = data[:r].inject(0){ |memo,results| memo + results[:t].length }
       Rails.logger.info "Processed API payload with #{number_of_test_results} test results in #{duration}ms"
 
-      ROXCenter::Application.events.fire 'api:payload', self
+      Rails.application.events.fire 'api:payload', self
     end
 
     private

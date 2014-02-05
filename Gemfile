@@ -56,6 +56,9 @@ gem 'markdown-rails'
 gem 'redcarpet'
 gem 'pygments.rb'
 
+# State Machine
+gem 'simple_states'
+
 # Fast JSON
 gem 'oj'
 
