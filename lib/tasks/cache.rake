@@ -16,30 +16,33 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 namespace :cache do
 
-  desc %|Clear all memory caches|
-  task :clear => [ 'cache:json:clear', 'cache:reports:clear' ]
-
-  namespace :json do
+  namespace :clear do
 
     desc %|Clear the JSON memory cache|
-    task :clear => :environment do
+    task json: :environment do
       cleared = JsonCache.clear
       print Paint["Cleared #{cleared.length} keys from the JSON cache", :yellow]
       print Paint[" (#{cleared.collect(&:to_s).sort.to_sentence})", :yellow] if cleared.any?
       puts
     end
-  end
-
-  namespace :reports do
 
     desc %|Clear the reports memory cache|
-    task :clear => :environment do
+    task reports: :environment do
       cleared = ReportCache.clear
       print Paint["Cleared #{cleared.length} elements from the reports cache", :yellow]
       print Paint[" (#{cleared.collect(&:to_s).sort.to_sentence})", :yellow] if cleared.any?
       puts
     end
+
+    desc %|Clear the general data cache|
+    task general: :environment do
+      GeneralData.clear
+      puts Paint["Cleared general data cache", :yellow]
+    end
   end
+
+  desc %|Clear all memory caches|
+  task :clear => [ 'cache:clear:json', 'cache:clear:reports', 'cache:clear:general' ]
 
   desc %|Warm up the reports cache|
   task :warmup => :environment do

@@ -24,6 +24,10 @@ class GeneralData
     GeneralDataBuilder.new(params, options).build
   end
 
+  def self.clear
+    $redis.del CACHE_KEY
+  end
+
   private
 
   CACHE_KEY = 'cache:general'
