@@ -204,6 +204,8 @@ GEM
       rake
       resque (~> 1.20)
       trollop (~> 1.16)
+    resque-workers-lock (1.9)
+      resque
     resque_spec (0.14.4)
       resque (>= 1.19.0)
       rspec-core (>= 2.5.0)
@@ -356,6 +358,7 @@ DEPENDENCIES
   redis-namespace
   resque
   resque-pool
+  resque-workers-lock
   resque_spec
   role_model
   rox-client-rspec (~> 0.3.1)

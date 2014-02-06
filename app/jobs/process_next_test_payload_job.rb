@@ -14,8 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+require 'resque/plugins/workers/lock'
 
 class ProcessNextTestPayloadJob
+  extend Resque::Plugins::Workers::Lock
+
   @queue = :api
 
   def self.perform
@@ -24,5 +27,10 @@ class ProcessNextTestPayloadJob
     payload.start_processing!
 
     TestPayloadProcessing::ProcessPayload.new payload
+  end
+
+  # resque-workers-lock: lock workers to prevent concurrency
+  def self.lock_workers *args
+    name # the same lock (class name) is used for all workers
   end
 end

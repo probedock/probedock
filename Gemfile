@@ -51,6 +51,7 @@ gem 'redis'
 gem 'hiredis'
 gem 'redis-namespace'
 gem 'resque'
+gem 'resque-workers-lock'
 
 gem 'markdown-rails'
 gem 'redcarpet'

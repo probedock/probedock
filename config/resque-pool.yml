@@ -1,4 +1,2 @@
 development:
-  "api": 1
-  "cache:high,cache:low": 1
-  "metrics:test_counters": 4
+  "*": 5

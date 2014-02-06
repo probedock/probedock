@@ -184,6 +184,8 @@ describe "API sample payload", rox: { tags: :integration } do
 
       test_payload = TestPayload.order('created_at DESC').first!
       expect(test_payload).not_to be_nil
+      expect(test_payload.user).to eq(users[0])
+      expect(test_payload.state.to_sym).to eq(:created)
       expect(MultiJson.load(test_payload.contents)).to eq(p)
     end
 
