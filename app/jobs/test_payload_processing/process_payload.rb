@@ -19,14 +19,15 @@ require 'benchmark'
 module TestPayloadProcessing
 
   class ProcessPayload
-    attr_reader :processed_test_run, :user, :time_received, :cache
+    attr_reader :processed_test_run, :test_payload, :cache
 
     def initialize test_payload
 
+      raise "Test payload must be in :processing state" unless test_payload.processing?
+
       data = MultiJson.load test_payload.contents
-      @user = test_payload.user
-      @time_received = test_payload.received_at
-      Rails.logger.info "Starting to process payload received at #{@time_received}"
+      @test_payload = test_payload
+      Rails.logger.info "Starting to process payload received at #{@test_payload.received_at}"
 
       time = Benchmark.realtime do
 
@@ -34,13 +35,14 @@ module TestPayloadProcessing
 
         TestRun.transaction do
 
-          @cache = self.class.build_cache data, @time_received
-          @processed_test_run = ProcessTestRun.new data, @user, @time_received, @cache
+          @cache = self.class.build_cache data, @test_payload.received_at
+          @processed_test_run = ProcessTestRun.new data, @test_payload, @cache
 
           # Mark test keys as used.
           free_keys = @cache[:keys].select &:free?
           TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
 
+          test_payload.test_run = @processed_test_run.test_run
           test_payload.finish_processing!
         end
       end

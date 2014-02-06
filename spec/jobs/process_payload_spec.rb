@@ -20,9 +20,11 @@ describe TestPayloadProcessing::ProcessPayload do
 
   let(:user){ create :user }
   let(:received_at){ Time.now }
-  let(:processed_test_run){ double }
+  let(:test_run){ create :test_run, runner: user }
+  let(:processed_test_run){ double test_run: test_run }
   let(:projects){ Array.new(2){ |i| create :project } }
   let(:test_keys){ Array.new(3){ |i| create :test_key, user: user, project: i < 2 ? projects[0] : projects[1] } }
+  let(:test_payload){ create_test_payload }
   let(:sample_payload) do
     HashWithIndifferentAccess.new({
       u: "f47ac10b-58cc",
@@ -89,33 +91,38 @@ describe TestPayloadProcessing::ProcessPayload do
     Rails.application.events.stub :fire
   end
 
+  it "should refuse a test payload not in processing state", rox: { key: '38b92d17f22b' } do
+    expect{ process_payload create_test_payload(state: :created, processing_at: nil) }.to raise_error
+    expect{ process_payload create_test_payload(state: :processed, processed_at: received_at) }.to raise_error
+  end
+
   it "should process the test run in the payload", rox: { key: 'f27fdc182dad' } do
-    TestPayloadProcessing::ProcessTestRun.should_receive(:new).exactly(1).times.with(HashWithIndifferentAccess.new(sample_payload), user, received_at, kind_of(Hash))
+    expect(TestPayloadProcessing::ProcessTestRun).to receive(:new).exactly(1).times.with(HashWithIndifferentAccess.new(sample_payload), kind_of(TestPayload), kind_of(Hash))
     expect(process_payload.processed_test_run).to eq(processed_test_run)
   end
 
   it "should log the number of processed tests", rox: { key: '04e14ea5cd27' } do
-    Rails.logger.should_receive(:info).ordered.twice
-    Rails.logger.should_receive(:info).ordered.with do |*args|
+    expect(Rails.logger).to receive(:info).ordered.twice
+    expect(Rails.logger).to receive(:info).ordered.once.with{ |*args|
       args.first.should match(/#{sample_payload[:r].inject(0){ |memo,r| memo + r[:t].length }} test results/)
-    end
+    }
     process_payload
   end
 
-  it "should accept a payload with string keys", rox: { key: '4e162def25ce' } do
-    expect(process_payload(sample_payload.stringify_keys).processed_test_run).to eq(processed_test_run)
+  it "should return the test payload", rox: { key: '89525ea86b66' } do
+    expect(process_payload.test_payload).to eq(test_payload)
   end
 
-  it "should load the user who submitted the payload", rox: { key: '5ffde54ccbbf' } do
-    expect(process_payload.user).to eq(user)
+  it "should return the user who submitted the payload", rox: { key: '5ffde54ccbbf' } do
+    expect(process_payload.test_payload.user).to eq(user)
   end
 
-  it "should parse the time at which the payload was received", rox: { key: 'a56bd35cd793' } do
-    expect(process_payload.time_received).to eq(received_at)
+  it "should return the time at which the payload was received", rox: { key: 'a56bd35cd793' } do
+    expect(process_payload.test_payload.received_at).to eq(received_at)
   end
 
   it "should trigger an api:payload event on the application", rox: { key: '9fc739a396b9' } do
-    Rails.application.events.should_receive(:fire).with 'api:payload', kind_of(TestPayloadProcessing::ProcessPayload)
+    expect(Rails.application.events).to receive(:fire).with('api:payload', kind_of(TestPayloadProcessing::ProcessPayload))
     process_payload
   end
 
@@ -123,6 +130,14 @@ describe TestPayloadProcessing::ProcessPayload do
     expect(test_keys.any?(&:free?)).to be_true
     process_payload
     expect(test_keys.each(&:reload).none?(&:free)).to be_true
+  end
+
+  it "should put the test payload in processed state", rox: { key: '0e6487f46a6e' } do
+    expect(process_payload.test_payload.processed?).to be_true
+  end
+
+  it "should link the test payload to the test run", rox: { key: '38c69405f0d4' } do
+    expect(process_payload.test_payload.test_run).to eq(test_run)
   end
 
   context "cache" do
@@ -235,9 +250,11 @@ describe TestPayloadProcessing::ProcessPayload do
 
   private
 
-  def process_payload data = sample_payload, user = user, received_at_time = received_at
-    test_payload = create :test_payload, contents: MultiJson.dump(data), user: user, received_at: received_at_time
-    test_payload.start_processing!
+  def process_payload test_payload = test_payload
     TestPayloadProcessing::ProcessPayload.new test_payload
+  end
+
+  def create_test_payload options = {}
+    create :test_payload, { contents: MultiJson.dump(sample_payload), user: user, received_at: received_at, state: :processing, processing_at: received_at }.merge(options)
   end
 end

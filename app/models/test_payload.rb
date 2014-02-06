@@ -17,6 +17,7 @@
 class TestPayload < ActiveRecord::Base
 
   belongs_to :user
+  belongs_to :test_run
   scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
 
   include SimpleStates

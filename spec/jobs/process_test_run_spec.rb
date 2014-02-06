@@ -19,7 +19,7 @@ require 'spec_helper'
 describe TestPayloadProcessing::ProcessTestRun do
 
   let(:user){ create :user }
-  let(:time_received){ Time.now }
+  let(:received_at){ Time.now }
   let(:processed_tests){ [ test_stub, test_stub, test_stub ] }
   let(:processed_tests_args){ processed_tests.dup }
   let :sample_payload do
@@ -52,11 +52,12 @@ describe TestPayloadProcessing::ProcessTestRun do
       ]
     })
   end
+  let(:test_payload){ create :test_payload, contents: MultiJson.dump(sample_payload), user: user, received_at: received_at, state: :processing, processing_at: received_at }
   let(:cache){ {} }
 
   before :each do
     TestPayloadProcessing::ProcessTest.stub(:new){ |*args| processed_tests_args.shift }
-    ROXCenter::Application.events.stub :fire
+    Rails.application.events.stub :fire
   end
 
   it "should process all tests in the test run", rox: { key: 'b6e8e058ea28' } do
@@ -82,7 +83,7 @@ describe TestPayloadProcessing::ProcessTestRun do
     expect(run.runner).to eq(user)
     expect(run.uid).to eq(sample_payload[:u])
     expect(run.group).to eq(sample_payload[:g])
-    expect(run.ended_at).to eq(time_received)
+    expect(run.ended_at).to eq(received_at)
     expect(run.duration).to eq(sample_payload[:d].to_i)
   end
 
@@ -93,12 +94,12 @@ describe TestPayloadProcessing::ProcessTestRun do
     expect(run.runner).to eq(user)
     expect(run.uid).to be_nil
     expect(run.group).to be_nil
-    expect(run.ended_at).to eq(time_received)
+    expect(run.ended_at).to eq(received_at)
     expect(run.duration).to eq(sample_payload[:d].to_i)
   end
 
   it "should trigger an api:test_run event on the application", rox: { key: '06493acd8c6a' } do
-    ROXCenter::Application.events.should_receive(:fire).with 'api:test_run', kind_of(TestPayloadProcessing::ProcessTestRun)
+    Rails.application.events.should_receive(:fire).with 'api:test_run', kind_of(TestPayloadProcessing::ProcessTestRun)
     process_test_run
   end
 
@@ -149,7 +150,7 @@ describe TestPayloadProcessing::ProcessTestRun do
       expect(run.runner).to eq(user)
       expect(run.uid).to eq(existing_run.uid)
       expect(run.group).to eq(existing_run.group)
-      expect(run.ended_at).to eq(time_received)
+      expect(run.ended_at).to eq(received_at)
       expect(run.duration).to eq(sample_payload[:d].to_i)
     end
 
@@ -158,7 +159,7 @@ describe TestPayloadProcessing::ProcessTestRun do
       sample_payload[:d] = sample_payload[:d] * 2
       process_test_run.test_run.tap do |run|
         expect(run.group).to eq(sample_payload[:g])
-        expect(run.ended_at).to eq(time_received)
+        expect(run.ended_at).to eq(received_at)
         expect(run.duration).to eq(sample_payload[:d].to_i)
       end
     end
@@ -208,7 +209,7 @@ describe TestPayloadProcessing::ProcessTestRun do
     double test_result: double(passed: passed, active: active)
   end
 
-  def process_test_run data = sample_payload, runner = user, time_received = time_received, cache = cache
-    TestPayloadProcessing::ProcessTestRun.new data, runner, time_received, cache
+  def process_test_run data = sample_payload, test_payload = test_payload, cache = cache
+    TestPayloadProcessing::ProcessTestRun.new data, test_payload, cache
   end
 end

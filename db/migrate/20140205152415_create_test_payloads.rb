@@ -13,6 +13,9 @@ class CreateTestPayloads < ActiveRecord::Migration
       t.integer :user_id, null: false
       t.foreign_key :users
 
+      t.integer :test_run_id
+      t.foreign_key :test_runs
+
       t.index :state
     end
   end

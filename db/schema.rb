@@ -183,9 +183,11 @@ ActiveRecord::Schema.define(version: 20140205152415) do
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.integer  "user_id",                  null: false
+    t.integer  "test_run_id"
   end
 
   add_index "test_payloads", ["state"], name: "index_test_payloads_on_state", using: :btree
+  add_index "test_payloads", ["test_run_id"], name: "test_payloads_test_run_id_fk", using: :btree
   add_index "test_payloads", ["user_id"], name: "test_payloads_user_id_fk", using: :btree
 
   create_table "test_results", force: true do |t|
@@ -308,6 +310,7 @@ ActiveRecord::Schema.define(version: 20140205152415) do
   add_foreign_key "test_keys", "projects", name: "test_keys_project_id_fk"
   add_foreign_key "test_keys", "users", name: "test_keys_user_id_fk"
 
+  add_foreign_key "test_payloads", "test_runs", name: "test_payloads_test_run_id_fk"
   add_foreign_key "test_payloads", "users", name: "test_payloads_user_id_fk"
 
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"

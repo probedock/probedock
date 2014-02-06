@@ -19,16 +19,16 @@ module TestPayloadProcessing
   class ProcessTestRun
     attr_reader :test_run, :processed_tests
 
-    def initialize data, runner, time_received, cache
+    def initialize data, test_payload, cache
 
       @test_run = cache[:run] || TestRun.new
       new_record = @test_run.new_record?
 
-      @test_run.runner = runner
+      @test_run.runner = test_payload.user
 
       @test_run.uid = data[:u].to_s if data[:u].present?
       @test_run.group = data[:g].to_s if data[:g].present?
-      @test_run.ended_at = time_received
+      @test_run.ended_at = test_payload.received_at
       @test_run.duration = data[:d].to_i
       @test_run.results_count ||= 0
       @test_run.passed_results_count ||= 0
