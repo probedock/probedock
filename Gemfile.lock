@@ -151,6 +151,7 @@ GEM
     oj (2.5.4)
     orm_adapter (0.5.0)
     paint (0.8.7)
+    pg (0.17.1)
     polyglot (0.3.3)
     posix-spawn (0.3.8)
     pry (0.9.12.5)
@@ -343,6 +344,7 @@ DEPENDENCIES
   mysql2
   oj
   paint
+  pg
   pygments.rb
   quiet_assets
   rails (= 4.0.2)

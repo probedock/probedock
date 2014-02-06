@@ -41,6 +41,8 @@ apt-get install build-essential
 cd /path/to/rox-center
 
 # Install gems.
+# If you use MySQL, you may add the "--without postgresql" option.
+# If you use PostgreSQL, you may add the "--without mysql" option.
 bundle install
 
 # Create the database, load the schema and initialize seed data.
@@ -61,6 +63,8 @@ ROX Center comes with a sample configuration file for the [Unicorn](http://unico
 cd /path/to/rox-center
 
 # Install gems.
+# If you use MySQL, you may add "postgresql" to the without option.
+# If you use PostgreSQL, you may add "mysql" to the without option.
 bundle install --deployment --without test development
 
 # Create the database, load the schema and initialize seed data.
@@ -95,6 +99,8 @@ sudo kill -s QUIT `cat tmp/pids/resque.pid`
 git pull
 
 # Upgrade gems.
+# If you use MySQL, you may add "postgresql" to the without option.
+# If you use PostgreSQL, you may add "mysql" to the without option.
 bundle install --deployment --without test development
 
 # Migrate the database.

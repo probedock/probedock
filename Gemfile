@@ -21,20 +21,13 @@ gem 'rails', '4.0.2'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-begin
-  require 'yaml'
-rescue LoadError
-  raise "Install yaml with `gem install yaml` before using this Gemfile."
+group :mysql do
+  gem 'mysql2'
 end
 
-rox_config_file = File.join File.dirname(__FILE__), 'config', 'rox-center.yml'
-raise "Could not find the ROX Center configuration file (config/rox-center.yml); follow the deployment procedure (doc/rox/deploy.md)." unless File.file? rox_config_file
-
-rox_config = YAML.load_file rox_config_file
-database_gem = rox_config['database_gem'] || 'mysql2'
-raise "Unsupported database gem #{database_gem.inspect}; must be either pg or mysql2." unless %w(pg mysql2).include? database_gem
-
-gem database_gem
+group :postgresql do
+  gem 'pg'
+end
 
 gem 'haml'
 gem 'foreigner'
