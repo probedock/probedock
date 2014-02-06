@@ -19,8 +19,10 @@ class ProcessNextTestPayloadJob
   @queue = :api
 
   def self.perform
+
     payload = TestPayload.waiting_for_processing.includes(:user).first!
     payload.start_processing!
+
     TestPayloadProcessing::ProcessPayload.new payload
   end
 end

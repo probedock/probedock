@@ -19,8 +19,7 @@ require 'spec_helper'
 describe TestPayloadProcessing::ProcessPayload do
 
   let(:user){ create :user }
-  let(:time_received){ Time.now }
-  let(:time_received_string){ time_received.to_r.to_s }
+  let(:received_at){ Time.now }
   let(:processed_test_run){ double }
   let(:projects){ Array.new(2){ |i| create :project } }
   let(:test_keys){ Array.new(3){ |i| create :test_key, user: user, project: i < 2 ? projects[0] : projects[1] } }
@@ -91,7 +90,7 @@ describe TestPayloadProcessing::ProcessPayload do
   end
 
   it "should process the test run in the payload", rox: { key: 'f27fdc182dad' } do
-    TestPayloadProcessing::ProcessTestRun.should_receive(:new).exactly(1).times.with(HashWithIndifferentAccess.new(sample_payload), user, time_received, kind_of(Hash))
+    TestPayloadProcessing::ProcessTestRun.should_receive(:new).exactly(1).times.with(HashWithIndifferentAccess.new(sample_payload), user, received_at, kind_of(Hash))
     expect(process_payload.processed_test_run).to eq(processed_test_run)
   end
 
@@ -112,7 +111,7 @@ describe TestPayloadProcessing::ProcessPayload do
   end
 
   it "should parse the time at which the payload was received", rox: { key: 'a56bd35cd793' } do
-    expect(process_payload.time_received).to eq(time_received)
+    expect(process_payload.time_received).to eq(received_at)
   end
 
   it "should trigger an api:payload event on the application", rox: { key: '9fc739a396b9' } do
@@ -236,7 +235,9 @@ describe TestPayloadProcessing::ProcessPayload do
 
   private
 
-  def process_payload data = sample_payload, user_id = user.id, time_received = time_received_string
-    TestPayloadProcessing::ProcessPayload.new data, user_id, time_received
+  def process_payload data = sample_payload, user = user, received_at_time = received_at
+    test_payload = create :test_payload, contents: MultiJson.dump(data), user: user, received_at: received_at_time
+    test_payload.start_processing!
+    TestPayloadProcessing::ProcessPayload.new test_payload
   end
 end

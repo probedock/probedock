@@ -13,9 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20140205152415) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
     t.string   "shared_secret", limit: 50,                null: false
@@ -189,6 +186,7 @@ ActiveRecord::Schema.define(version: 20140205152415) do
   end
 
   add_index "test_payloads", ["state"], name: "index_test_payloads_on_state", using: :btree
+  add_index "test_payloads", ["user_id"], name: "test_payloads_user_id_fk", using: :btree
 
   create_table "test_results", force: true do |t|
     t.boolean  "passed",                               null: false

@@ -111,6 +111,7 @@ GEM
       coffee-script (~> 2.0)
       sprockets (~> 2.0)
       tilt (~> 1.1)
+    hashr (0.0.22)
     highcharts-rails (3.0.9)
       railties (>= 3.1)
     hike (1.2.3)
@@ -255,6 +256,9 @@ GEM
       activesupport (>= 3.0.0)
     silencer (0.6.0)
       railties (>= 3)
+    simple_states (1.0.1)
+      activesupport
+      hashr (~> 0.0.10)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -362,6 +366,7 @@ DEPENDENCIES
   selenium-webdriver (= 2.39.0)
   shoulda
   silencer
+  simple_states
   sqlite3
   strip_attributes
   stylus (~> 1.0.0)

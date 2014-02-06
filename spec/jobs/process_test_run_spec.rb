@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe ProcessApiPayloadJob::ProcessApiTestRun do
+describe TestPayloadProcessing::ProcessTestRun do
 
   let(:user){ create :user }
   let(:time_received){ Time.now }
@@ -55,23 +55,23 @@ describe ProcessApiPayloadJob::ProcessApiTestRun do
   let(:cache){ {} }
 
   before :each do
-    ProcessApiPayloadJob::ProcessApiTest.stub(:new){ |*args| processed_tests_args.shift }
+    TestPayloadProcessing::ProcessTest.stub(:new){ |*args| processed_tests_args.shift }
     ROXCenter::Application.events.stub :fire
   end
 
   it "should process all tests in the test run", rox: { key: 'b6e8e058ea28' } do
-    ProcessApiPayloadJob::ProcessApiTest.should_receive(:new).exactly(3).times
+    TestPayloadProcessing::ProcessTest.should_receive(:new).exactly(3).times
     expect(process_test_run.processed_tests).to match_array(processed_tests)
   end
 
   it "should enrich test data with project and version", rox: { key: '0c55f491f8e5' } do
 
     additional_test_data = sample_payload[:r][0].pick :j, :v
-    ProcessApiPayloadJob::ProcessApiTest.should_receive(:new).ordered.with sample_payload[:r][0][:t][0].merge(additional_test_data), kind_of(TestRun), cache
-    ProcessApiPayloadJob::ProcessApiTest.should_receive(:new).ordered.with sample_payload[:r][0][:t][1].merge(additional_test_data), kind_of(TestRun), cache
+    TestPayloadProcessing::ProcessTest.should_receive(:new).ordered.with sample_payload[:r][0][:t][0].merge(additional_test_data), kind_of(TestRun), cache
+    TestPayloadProcessing::ProcessTest.should_receive(:new).ordered.with sample_payload[:r][0][:t][1].merge(additional_test_data), kind_of(TestRun), cache
 
     additional_test_data = sample_payload[:r][1].pick :j, :v
-    ProcessApiPayloadJob::ProcessApiTest.should_receive(:new).ordered.with sample_payload[:r][1][:t][0].merge(additional_test_data), kind_of(TestRun), cache
+    TestPayloadProcessing::ProcessTest.should_receive(:new).ordered.with sample_payload[:r][1][:t][0].merge(additional_test_data), kind_of(TestRun), cache
 
     process_test_run
   end
@@ -98,7 +98,7 @@ describe ProcessApiPayloadJob::ProcessApiTestRun do
   end
 
   it "should trigger an api:test_run event on the application", rox: { key: '06493acd8c6a' } do
-    ROXCenter::Application.events.should_receive(:fire).with 'api:test_run', kind_of(ProcessApiPayloadJob::ProcessApiTestRun)
+    ROXCenter::Application.events.should_receive(:fire).with 'api:test_run', kind_of(TestPayloadProcessing::ProcessTestRun)
     process_test_run
   end
 
@@ -123,7 +123,7 @@ describe ProcessApiPayloadJob::ProcessApiTestRun do
       { passed: true, active: false }
     ]
 
-    ProcessApiPayloadJob::ProcessApiTest.stub(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
+    TestPayloadProcessing::ProcessTest.stub(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
 
     process_test_run.test_run.tap do |run|
       expect(run.results_count).to eq(6)
@@ -183,7 +183,7 @@ describe ProcessApiPayloadJob::ProcessApiTestRun do
         { passed: true, active: false }
       ]
 
-      ProcessApiPayloadJob::ProcessApiTest.stub(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
+      TestPayloadProcessing::ProcessTest.stub(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
 
       process_test_run.test_run.tap do |run|
         expect(run.results_count).to eq(10)
@@ -209,6 +209,6 @@ describe ProcessApiPayloadJob::ProcessApiTestRun do
   end
 
   def process_test_run data = sample_payload, runner = user, time_received = time_received, cache = cache
-    ProcessApiPayloadJob::ProcessApiTestRun.new data, runner, time_received, cache
+    TestPayloadProcessing::ProcessTestRun.new data, runner, time_received, cache
   end
 end
