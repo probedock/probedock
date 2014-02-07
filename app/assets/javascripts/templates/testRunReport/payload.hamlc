@@ -1,0 +1,19 @@
+.panel-heading
+  %h4.panel-title
+    %a{ data: { toggle: 'collapse', parent: '#testPayloads' } }
+      = @humanNumber
+      = @humanReceivedAt
+      %small= @humanSize
+.panel-collapse.collapse
+  .panel-body
+    .clearfix
+      .copy.btn.btn-default.pull-right= I18n.t('jst.testRunReport.payloads.copyToClipboard')
+      .btn-group.pull-right{ data: { toggle: 'buttons' } }
+        %label.btn.btn-default.active
+          %input{ type: 'radio', name: 'payloadContentsDisplay', value: 'pretty', checked: true }
+            = I18n.t('jst.testRunReport.payloads.prettyPrint')
+        %label.btn.btn-default
+          %input{ type: 'radio', name: 'payloadContentsDisplay', value: 'raw' }
+            = I18n.t('jst.testRunReport.payloads.rawPrint')
+      %p.stats
+    %pre.pre-scrollable

@@ -19,6 +19,7 @@ class TestPayload < ActiveRecord::Base
   belongs_to :user
   belongs_to :test_run
   scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
+  scope :for_listing, ->{ select('id, state, received_at, bit_length(contents) AS contents_bit_length').where(state: :processed).order('received_at ASC') }
 
   include SimpleStates
   states :created, :processing, :processed
@@ -29,4 +30,21 @@ class TestPayload < ActiveRecord::Base
   validates :contents, presence: true
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
+
+  def serializable_hash options = {}
+    {
+      id: id,
+      receivedAt: (received_at.to_f * 1000).round
+    }.tap do |h|
+
+      if options[:type] == :listing
+        h[:bytes] = contents_bit_length / 8
+      else
+        h[:state] = state
+        h[:processingAt] = (processing_at.to_f * 1000).round if processing_at
+        h[:processedAt] = (processed_at.to_f * 1000).round if processed_at
+        h[:contents] = contents
+      end
+    end
+  end
 end

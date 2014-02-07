@@ -61,6 +61,9 @@
           %dd.endedAt= l @test_run.ended_at.localtime, format: :long
           %dt.duration= I18n.t('activerecord.attributes.test_run.duration')
           %dd.duration= human_duration @test_run.duration
+          %dt.payloads= I18n.t('activerecord.attributes.test_run.test_payloads')
+          %dd.payloads
+            %em= I18n.t('common.loading')
   .filters
     %form.form-inline.pull-right{ role: 'form' }
       .form-group
@@ -79,7 +82,7 @@
         %option
         - index[:tags].each do |tag|
           %option{ value: tag }= tag
-      %button.clear.btn{ type: 'button', disabled: 'disabled' }
+      %button.clear.btn.btn-default{ type: 'button', disabled: 'disabled' }
         %i.glyphicon.glyphicon-remove-circle
   .visualReport
     %h2= I18n.t('test_runs.report.resultsByProject')
@@ -143,3 +146,4 @@
             %pre= result.message
           %p.b
             = link_to I18n.t('test_runs.report.backToProject'), "#project-#{result.test_info.project.name}"
+  .testPayloads

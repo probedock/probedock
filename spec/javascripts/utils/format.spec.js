@@ -16,6 +16,23 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 describe("Format", function() {
 
+  describe(".bytes", function() {
+
+    it("should format byte sizes", function() {
+      this.meta = { rox: { key: '58624385cdcf' } };
+      expect(Format.bytes(0)).toBe('0');
+      expect(Format.bytes(12)).toBe('12 B');
+      expect(Format.bytes(1000)).toBe('1 KB');
+      expect(Format.bytes(1234)).toBe('1.23 KB');
+      expect(Format.bytes(1765)).toBe('1.77 KB');
+      expect(Format.bytes(1000000)).toBe('1 MB');
+      expect(Format.bytes(1234567)).toBe('1.23 MB');
+      expect(Format.bytes(234987654)).toBe('234.99 MB');
+      expect(Format.bytes(1000000000)).toBe('1 GB');
+      expect(Format.bytes(1020000000)).toBe('1.02 GB');
+    });
+  });
+
   describe(".duration", function() {
 
     it("should format durations", function() {
