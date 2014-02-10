@@ -1,18 +1,22 @@
 # Changelog
 
-## v2.2.0 - Edge
+## v2.2.0 - February 10, 2014
 
-**Upgrade Notes:** changes in this version require counters to be recomputed from the settings page. The `database_gem` key must be added to the `config/rox-center.yml` file (see example in [`config/samples/rox-center.production.yml`](config/samples/rox-center.production.yml)).
+**Upgrade Notes:** changes in this version require counters to be recomputed from the settings page. Now that PostgreSQL is supported, administrators must omit the unwanted database when installing gems with the `--without` option (e.g. `--without mysql`), see the [deployment documentation](doc/rox/deploy.md).
 
-* **NEW:** Tests can now be searched by ticket.
+* **NEW:** Tests can be searched by ticket.
 
-* **NEW:** Test page permalinks now come with a button to copy the link directly to the clipboard. They can also be copied from the tests table.
+* **NEW:** Test page permalinks come with a button to copy the link directly to the clipboard. They can also be copied from the tests table.
 
 * **NEW:** The test selector in the Tests page allows you to collect tests for batch actions (deprecation) or to generate links.
 
-* **NEW:** Deprecations are now counted and displayed separately from new tests on the home page.
+* **NEW:** Deprecations are counted and displayed separately from new tests on the home page.
 
-* **NEW:** ROX Center is now compatible with PostgreSQL. The database gem (pg or mysql2) must be selected in the ROX Center configuration file. See the [deployment documentation](doc/rox/deploy.md).
+* ROX Center is now compatible with PostgreSQL. See the [deployment documentation](doc/rox/deploy.md).
+
+* Test payloads can be displayed at the bottom of test run reports.
+
+* Multiple resque workers can now run in parallel without corrupting the processing of test payloads.
 
 * Cache warmup after deployment no longer blocks report generation from the UI.
 
