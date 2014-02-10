@@ -32,7 +32,7 @@ App.autoModule('testRunReport', function() {
       collapse: '.panel-collapse',
       stats: '.stats',
       contents: 'pre',
-      contentsDisplay: '.btn-group',
+      prettyDisplayButton: '.contentsDisplay :radio[value="pretty"]',
       copy: '.copy'
     },
 
@@ -49,13 +49,9 @@ App.autoModule('testRunReport', function() {
       this.index = options.index;
     },
 
-    onRender: function() {
-      this.ui.titleLink.attr('href', '#testPayload-' + this.index);
-      this.ui.collapse.attr('id', 'testPayload-' + this.index);
-    },
-
     serializeData: function() {
       return _.extend(this.model.toJSON(), {
+        index: this.index,
         humanNumber: '#' + (this.index + 1),
         humanReceivedAt: Format.datetime.full(new Date(this.model.get('receivedAt'))),
         humanSize: Format.bytes(this.model.get('bytes'))
@@ -80,7 +76,7 @@ App.autoModule('testRunReport', function() {
 
     renderJson: function() {
       var json = this.model.get('contents');
-      if (this.ui.contentsDisplay.find('[name="payloadContentsDisplay"]:checked').val() == 'pretty') {
+      if (this.ui.prettyDisplayButton.is(':checked') || !this.ui.contents.text().length) {
         json = JSON.stringify(JSON.parse(json), undefined, 2);
       }
       Clipboard.update(this.ui.copy, json);
