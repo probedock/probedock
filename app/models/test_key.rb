@@ -19,10 +19,12 @@ class TestKey < ActiveRecord::Base
   KEY_REGEXP = /\A[a-z0-9]{12}\Z/
 
   before_create :set_value
+  before_destroy :ensure_no_test_payloads
 
   belongs_to :user
   belongs_to :project
   has_one :test_info, foreign_key: :key_id
+  has_and_belongs_to_many :test_payloads
 
   strip_attributes
   validates :user, presence: true
@@ -67,6 +69,10 @@ class TestKey < ActiveRecord::Base
   end
 
   private
+
+  def ensure_no_test_payloads
+    raise ActiveRecord::DeleteRestrictionError, "Cannot delete record because of dependent test_keys" if test_payloads.any?
+  end
 
   def set_value
     self.key = self.class.new_random_key project_id

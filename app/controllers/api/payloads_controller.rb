@@ -23,10 +23,13 @@ class Api::PayloadsController < Api::ApiController
     time_received = Time.now
 
     body = parse_payload request.body.read, time_received
-    json = parse_json_request_body body
-    validate_payload json
 
-    payload = TestPayload.new(contents: body, user: current_api_user, received_at: time_received).tap(&:save!)
+    fail :payloadTooBig, "Test payload cannot be bigger than 16777215 bytes" if body.bytesize > 16777215
+
+    json = parse_json_request_body body
+    result = validate_payload json
+
+    payload = TestPayload.new(contents: body, user: current_api_user, received_at: time_received, test_keys: result[:free_keys]).tap(&:save!)
 
     Resque.enqueue ProcessNextTestPayloadJob
     $api_logger.info "Accepted payload for processing in #{((Time.now - time_received) * 1000).round}ms"
@@ -99,7 +102,7 @@ class Api::PayloadsController < Api::ApiController
 
     # Find all test keys in the payload.
     keys_by_project = run[:r].inject({}){ |memo,r| memo[r[:j]] = r[:t].collect{ |t| t[:k] }; memo }
-    existing_keys = TestKey.for_projects_and_keys(keys_by_project).select('test_keys.key, test_keys.free, projects.api_id AS project_api_id').to_a
+    existing_keys = TestKey.for_projects_and_keys(keys_by_project).select('test_keys.id, test_keys.key, test_keys.free, projects.api_id AS project_api_id').to_a
 
     unfree_keys = existing_keys.reject(&:free?)
 
@@ -174,6 +177,8 @@ class Api::PayloadsController < Api::ApiController
         end
       end
     end
+
+    { free_keys: existing_keys.select(&:free?) }
   end
 
   def find_key keys, project_api_id, value

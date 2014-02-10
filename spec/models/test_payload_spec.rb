@@ -61,6 +61,17 @@ describe TestPayload, rox: { tags: :unit } do
     end
   end
 
+  describe "#finish_processing" do
+    let(:user){ create :user }
+    let(:test_keys){ Array.new(3){ create :test_key, user: user } }
+    subject{ create :processing_test_payload, user: user, test_keys: test_keys }
+
+    it "should clear linked test keys", rox: { key: '440734fbe5f8' } do
+      subject.finish_processing!
+      expect(subject.test_keys).to be_empty
+    end
+  end
+
   describe "#contents=" do
 
     it "should set the contents bytesize", rox: { key: 'e0614d271d0d' } do
@@ -167,15 +178,24 @@ describe TestPayload, rox: { tags: :unit } do
     it(nil, rox: { key: '885d0470ed8d' }){ should validate_presence_of(:received_at) }
     it(nil, rox: { key: 'e31bb153e65e' }){ should validate_presence_of(:contents) }
     it(nil, rox: { key: 'fd75001324d1' }){ should validate_presence_of(:contents_bytesize) }
+
+    it "should ensure that the contents are not longer than 16777215 bytes", rox: { key: '8058cadefbaf' } do
+      contents = "x" * 16777214
+      payload = build :test_payload, contents: contents
+      expect(payload.valid?).to be_true
+      payload.contents << "\u3042"
+      expect(payload.valid?).to be_false
+    end
   end
 
   context "associations" do
     it(nil, rox: { key: 'ce9d6c2604ef' }){ should belong_to(:user) }
+    it(nil, rox: { key: 'dd735c4e26be' }){ should have_and_belong_to_many(:test_keys) }
   end
 
   context "database table" do
     it(nil, rox: { key: '38b8aaf117c3' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, rox: { key: '01022e014d7f' }){ should have_db_column(:contents).of_type(:text).with_options(null: false) }
+    it(nil, rox: { key: '01022e014d7f' }){ should have_db_column(:contents).of_type(:text).with_options(null: false, limit: 16777215) }
     it(nil, rox: { key: '83cbe7a2b2fe' }){ should have_db_column(:contents_bytesize).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '816a4253b966' }){ should have_db_column(:state).of_type(:string).with_options(null: false, limit: 12) }
     it(nil, rox: { key: '793c1d58bc15' }){ should have_db_column(:user_id).of_type(:integer).with_options(null: false) }

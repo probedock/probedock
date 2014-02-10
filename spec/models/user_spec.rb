@@ -90,6 +90,14 @@ describe User, rox: { tags: :unit } do
       unfree_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: false }
       expect(user.free_test_keys).to match_array(free_keys)
     end
+
+    it "should not return test keys linked to a test payload", rox: { key: 'dcb5313b6072' } do
+      user, project = create(:user), create(:project)
+      free_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: true }
+      unfree_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: false }
+      payload = create :test_payload, user: user, test_keys: free_keys[0, 2]
+      expect(user.free_test_keys).to match_array(free_keys[2, 1])
+    end
   end
 
   context "cache" do

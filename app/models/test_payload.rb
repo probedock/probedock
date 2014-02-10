@@ -18,6 +18,8 @@ class TestPayload < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :test_run
+  has_and_belongs_to_many :test_keys
+
   scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
   scope :for_listing, ->{ select('id, state, received_at, contents_bytesize').where(state: :processed).order('received_at ASC') }
 
@@ -27,10 +29,14 @@ class TestPayload < ActiveRecord::Base
   event :finish_processing, from: :processing, to: :processed
 
   validates :user, presence: true
-  validates :contents, presence: true
+  validates :contents, presence: true, length: { maximum: 16777215, tokenizer: lambda{ |s| OpenStruct.new length: s.bytesize } }
   validates :contents_bytesize, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
+
+  def finish_processing
+    test_keys.clear
+  end
 
   def serializable_hash options = {}
     {

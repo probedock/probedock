@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140205152415) do
+ActiveRecord::Schema.define(version: 20140210121501) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -174,16 +174,24 @@ ActiveRecord::Schema.define(version: 20140205152415) do
   add_index "test_keys", ["project_id"], name: "test_keys_project_id_fk", using: :btree
   add_index "test_keys", ["user_id"], name: "test_keys_user_id_fk", using: :btree
 
+  create_table "test_keys_payloads", id: false, force: true do |t|
+    t.integer "test_key_id",     null: false
+    t.integer "test_payload_id", null: false
+  end
+
+  add_index "test_keys_payloads", ["test_key_id", "test_payload_id"], name: "index_test_keys_payloads_on_test_key_id_and_test_payload_id", unique: true, using: :btree
+  add_index "test_keys_payloads", ["test_payload_id"], name: "test_keys_payloads_test_payload_id_fk", using: :btree
+
   create_table "test_payloads", force: true do |t|
-    t.text     "contents",                     null: false
-    t.integer  "contents_bytesize",            null: false
-    t.string   "state",             limit: 12, null: false
-    t.datetime "received_at",                  null: false
+    t.text     "contents",          limit: 16777215, null: false
+    t.integer  "contents_bytesize",                  null: false
+    t.string   "state",             limit: 12,       null: false
+    t.datetime "received_at",                        null: false
     t.datetime "processing_at"
     t.datetime "processed_at"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
-    t.integer  "user_id",                      null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.integer  "user_id",                            null: false
     t.integer  "test_run_id"
   end
 
@@ -310,6 +318,9 @@ ActiveRecord::Schema.define(version: 20140205152415) do
 
   add_foreign_key "test_keys", "projects", name: "test_keys_project_id_fk"
   add_foreign_key "test_keys", "users", name: "test_keys_user_id_fk"
+
+  add_foreign_key "test_keys_payloads", "test_keys", name: "test_keys_payloads_test_key_id_fk"
+  add_foreign_key "test_keys_payloads", "test_payloads", name: "test_keys_payloads_test_payload_id_fk"
 
   add_foreign_key "test_payloads", "test_runs", name: "test_payloads_test_run_id_fk"
   add_foreign_key "test_payloads", "users", name: "test_payloads_user_id_fk"

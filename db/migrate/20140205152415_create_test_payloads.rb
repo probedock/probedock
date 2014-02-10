@@ -3,7 +3,7 @@ class CreateTestPayloads < ActiveRecord::Migration
   def change
     create_table :test_payloads do |t|
 
-      t.text :contents, null: false
+      t.text :contents, null: false, limit: 16777215
       t.integer :contents_bytesize, null: false
       t.string :state, null: false, limit: 12
       t.datetime :received_at, null: false

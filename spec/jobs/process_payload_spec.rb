@@ -140,6 +140,10 @@ describe TestPayloadProcessing::ProcessPayload do
     expect(process_payload.test_payload.test_run).to eq(test_run)
   end
 
+  it "should unlink test keys from the payload", rox: { key: '98b8dc9b59e3' } do
+    expect(process_payload.test_payload.test_keys).to be_empty
+  end
+
   context "cache" do
 
     it "should fetch all test keys", rox: { key: '22b307f18606' } do
@@ -255,6 +259,6 @@ describe TestPayloadProcessing::ProcessPayload do
   end
 
   def create_test_payload options = {}
-    create :test_payload, { contents: MultiJson.dump(sample_payload), user: user, received_at: received_at, state: :processing, processing_at: received_at }.merge(options)
+    create :test_payload, { contents: MultiJson.dump(sample_payload), user: user, received_at: received_at, state: :processing, processing_at: received_at, test_keys: test_keys }.merge(options)
   end
 end
