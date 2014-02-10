@@ -23,3 +23,9 @@ var fakeAjaxResponse = function(op, response, options) {
     return reqDone;
   }, "the request to finish", 250);
 };
+
+var cleanRelational = function(models) {
+  _.each(_.isArray(models) ? models : [ models ], function(model) {
+    Backbone.Relational.store.unregister(model);
+  });
+};

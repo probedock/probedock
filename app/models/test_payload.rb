@@ -19,7 +19,7 @@ class TestPayload < ActiveRecord::Base
   belongs_to :user
   belongs_to :test_run
   scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
-  scope :for_listing, ->{ select('id, state, received_at, bit_length(contents) AS contents_bit_length').where(state: :processed).order('received_at ASC') }
+  scope :for_listing, ->{ select('id, state, received_at, contents_bytesize').where(state: :processed).order('received_at ASC') }
 
   include SimpleStates
   states :created, :processing, :processed
@@ -28,6 +28,7 @@ class TestPayload < ActiveRecord::Base
 
   validates :user, presence: true
   validates :contents, presence: true
+  validates :contents_bytesize, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
 
@@ -38,7 +39,7 @@ class TestPayload < ActiveRecord::Base
     }.tap do |h|
 
       if options[:type] == :listing
-        h[:bytes] = contents_bit_length / 8
+        h[:bytes] = contents_bytesize
       else
         h[:state] = state
         h[:processingAt] = (processing_at.to_f * 1000).round if processing_at
@@ -46,5 +47,10 @@ class TestPayload < ActiveRecord::Base
         h[:contents] = contents
       end
     end
+  end
+
+  def contents= contents
+    write_attribute :contents, contents
+    write_attribute :contents_bytesize, contents.bytesize if contents
   end
 end

@@ -175,14 +175,15 @@ ActiveRecord::Schema.define(version: 20140205152415) do
   add_index "test_keys", ["user_id"], name: "test_keys_user_id_fk", using: :btree
 
   create_table "test_payloads", force: true do |t|
-    t.text     "contents",                 null: false
-    t.string   "state",         limit: 12, null: false
-    t.datetime "received_at",              null: false
+    t.text     "contents",                     null: false
+    t.integer  "contents_bytesize",            null: false
+    t.string   "state",             limit: 12, null: false
+    t.datetime "received_at",                  null: false
     t.datetime "processing_at"
     t.datetime "processed_at"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "user_id",                  null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.integer  "user_id",                      null: false
     t.integer  "test_run_id"
   end
 

@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestPayloadsController < ApplicationController
   before_filter :authenticate_user!
-  load_and_authorize_resource
+  load_resource
 
   def show
     render json: TestPayload.find(params[:id].to_i).serializable_hash

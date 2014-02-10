@@ -50,6 +50,7 @@ class User < ActiveRecord::Base
   has_many :runs, class_name: "TestRun", foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_results, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_counters, dependent: :restrict_with_exception
+  has_many :test_payloads, dependent: :restrict_with_exception
   belongs_to :last_run, class_name: "TestRun"
   belongs_to :settings, class_name: "Settings::User", dependent: :destroy
 

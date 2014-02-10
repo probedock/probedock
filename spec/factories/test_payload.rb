@@ -17,7 +17,19 @@
 FactoryGirl.define do
 
   factory :test_payload do
-    received_at{ Time.now }
+    contents{ MultiJson.dump foo: 'bar' }
+    received_at{ 3.minutes.ago }
     user
+
+    factory :processing_test_payload do
+      state :processing
+      processing_at{ received_at + 1.minute }
+    end
+
+    factory :processed_test_payload do
+      state :processed
+      processing_at{ received_at + 1.minute }
+      processed_at{ processing_at + 1.minute }
+    end
   end
 end
