@@ -62,6 +62,7 @@ ROXCenter::Application.routes.draw do
       post :undeprecate
     end
   end
+  resources :test_payloads, path: :payloads, only: [ :show ]
   resources :test_runs, :path => :runs, :only => [ :index, :show ] do
     member do
       get :previous

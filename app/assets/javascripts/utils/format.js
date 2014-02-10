@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 var Format = {
 
-  truncate : function(string, options) {
+  truncate: function(string, options) {
     if (options === false) {
       return string;
     }
@@ -25,37 +25,53 @@ var Format = {
     return string.length > max ? string.substring(0, max) + '...' : string;
   },
 
-  number : function(n) {
+  number: function(n) {
     return Globalize.format(n, 'n0');
   },
 
-  date : {
+  bytes: function(n, options) {
+    if (n == 0) {
+      return '0';
+    }
 
-    short : function(date) {
+    options = options || {};
+
+    var size = _.find(Format._bytesizes, function(bytesize) {
+      return n >= bytesize.value;
+    });
+
+    var precision = options.precision || 2;
+
+    return Math.round(n * Math.pow(10, precision) / size.value) / Math.pow(10, precision) + ' ' + size.name;
+  },
+
+  date: {
+
+    short: function(date) {
       return Globalize.format(date, 'MMM d');
     },
 
-    long : function(date) {
+    long: function(date) {
       return Globalize.format(date, 'dddd, MMMM dd, yyyy');
     }
   },
 
-  datetime : {
+  datetime: {
 
-    short : function(date) {
+    short: function(date) {
       return Globalize.format(date, 'MMM dd, HH:mm');
     },
 
-    long : function(date) {
+    long: function(date) {
       return Globalize.format(date, 'MMMM dd, yyyy HH:mm');
     },
 
-    full : function(date) {
+    full: function(date) {
       return Globalize.format(date, 'dddd, MMMM dd, yyyy HH:mm');
     }
   },
 
-  duration : function(milliseconds, options) {
+  duration: function(milliseconds, options) {
 
     if (options && options.min) {
       var duration = Format._findDuration(options.min);
@@ -86,7 +102,7 @@ var Format = {
     }, []).join(' ');
   },
 
-  _findDuration : function(unit) {
+  _findDuration: function(unit) {
 
     var duration = _.find(Format._durations, function(d) {
       return d.name == unit;
@@ -99,11 +115,18 @@ var Format = {
     return duration;
   },
 
-  _durations : [
-    { name : 'd', value : 86400000 },
-    { name : 'h', value : 3600000 },
-    { name : 'm', value : 60000 },
-    { name : 's', value : 1000 },
-    { name : 'ms', value : 1 }
+  _durations: [
+    { name: 'd', value: 86400000 },
+    { name: 'h', value: 3600000 },
+    { name: 'm', value: 60000 },
+    { name: 's', value: 1000 },
+    { name: 'ms', value: 1 }
+  ],
+
+  _bytesizes: [
+    { name: 'GB', value: 1000000000 },
+    { name: 'MB', value: 1000000 },
+    { name: 'KB', value: 1000 },
+    { name: 'B', value: 1 }
   ]
 };

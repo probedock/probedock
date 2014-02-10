@@ -21,6 +21,7 @@ class TestRun < ActiveRecord::Base
   belongs_to :runner, :class_name => 'User'
   has_one :runner_as_last_run, class_name: 'User', foreign_key: :last_run_id
   has_many :results, :class_name => 'TestResult'
+  has_many :test_payloads
 
   scope :with_report_data, -> { includes([ :runner, { results: [ :project_version, { test_info: [ :project, :author, :category, :key, :tags, :tickets, :custom_values ] } ] } ]) }
 

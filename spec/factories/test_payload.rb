@@ -14,21 +14,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require 'spec_helper'
+FactoryGirl.define do
 
-describe "API payload controller" do
-  include MaintenanceHelpers
-  let(:user){ create :user }
-  let(:sample_payload){ {} }
+  factory :test_payload do
+    contents{ MultiJson.dump foo: 'bar' }
+    received_at{ 3.minutes.ago }
+    user
 
-  before :each do
-    ResqueSpec.reset!
-  end
+    factory :processing_test_payload do
+      state :processing
+      processing_at{ received_at + 1.minute }
+    end
 
-  it "should return a 503 response when in maintenance mode", rox: { key: '1537ac0ebada' } do
-    set_maintenance_mode
-    post_api_payload sample_payload.to_json, user
-    expect(response.status).to eq(503)
-    expect(ProcessNextTestPayloadJob).to have_queue_size_of(0)
+    factory :processed_test_payload do
+      state :processed
+      processing_at{ received_at + 1.minute }
+      processed_at{ processing_at + 1.minute }
+    end
   end
 end

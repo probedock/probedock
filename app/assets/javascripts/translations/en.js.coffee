@@ -14,6 +14,8 @@ this.Translations.en =
       warning: "Warning."
     "true": "yes"
     "false": "no"
+    copyToClipboard: "Copy to clipboard"
+    copiedToClipboard: "Copied!"
   application:
     maintenance:
       title: "Maintenance Mode."
@@ -198,6 +200,16 @@ this.Translations.en =
       passed: "Passed"
       failed: "Failed"
       inactive: "Inactive"
+    payloads:
+      title: "API Payloads"
+      purged: "No longer available."
+      info: "__count__ payload"
+      info_plural: "__count__ payloads"
+      prettyPrint: "Pretty"
+      rawPrint: "Raw"
+      stats: "Queued for __queueTime__, processed in __processingTime__."
+      copyToClipboard: "Copy"
+      error: "Could not download test payload. It might have been purged."
   globalSettings:
     title: "Settings"
     reportsCacheSize: "Reports Cache Size"

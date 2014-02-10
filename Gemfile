@@ -44,10 +44,14 @@ gem 'redis'
 gem 'hiredis'
 gem 'redis-namespace'
 gem 'resque'
+gem 'resque-workers-lock'
 
 gem 'markdown-rails'
 gem 'redcarpet'
 gem 'pygments.rb'
+
+# State Machine
+gem 'simple_states'
 
 # Fast JSON
 gem 'oj'

@@ -34,7 +34,9 @@ class TestRunsController < ApplicationController
     end
 
     @test_run = TestRun.find params[:id].to_i
-    @page_config = { testRun: { previous: @test_run.previous_in_group?, next: @test_run.next_in_group? } }
+    test_run_data = { previous: @test_run.previous_in_group?, next: @test_run.next_in_group? }
+    test_run_data[:payloads] = @test_run.test_payloads.for_listing.to_a.collect{ |p| p.serializable_hash type: :listing }
+    @page_config = { testRun: test_run_data }
 
     window_title << t('test_runs.show.window_title')
     window_title << @test_run.group if @test_run.group.present?

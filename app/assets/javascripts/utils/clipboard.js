@@ -19,13 +19,17 @@ var Clipboard = {
   setup: function(el, text, options) {
     options = options || {};
     
-    el.attr('data-clipboard-text', text);
+    el.data('clipboard-text', text);
     el.data('clipboard-options', options);
 
     var clip = new ZeroClipboard(el);
     clip.on('load', _.bind(this.setupTooltip, this, el, clip));
 
     return el;
+  },
+
+  update: function(el, text) {
+    el.data('clipboard-text', text);
   },
 
   setupTooltip: function(el, clip, client) {
@@ -36,12 +40,15 @@ var Clipboard = {
     clip.on('mouseout', _.bind(this.hideTooltip, this, el));
 
     client.on('complete', _.bind(this.setupCopiedTooltip, this, el));
+    client.on('dataRequested', function(client) {
+      client.setText(el.data('clipboard-text'));
+    });
   },
 
   setupCopiedTooltip: function(el) {
     el.data('copied', true);
     el.tooltip('destroy');
-    el.tooltip(this.tooltipOptions(el, { title: I18n.t('jst.testInfo.copiedToClipboard') }));
+    el.tooltip(this.tooltipOptions(el, { title: I18n.t('jst.common.copiedToClipboard') }));
     el.tooltip('show');
   },
 
@@ -54,6 +61,6 @@ var Clipboard = {
   },
 
   tooltipOptions: function(el, options) {
-    return _.defaults({}, options, el.data('clipboard-options'), { title: I18n.t('jst.testInfo.copyToClipboard'), trigger: 'manual' });
+    return _.defaults({}, options, el.data('clipboard-options'), { title: I18n.t('jst.common.copyToClipboard'), trigger: 'manual' });
   }
 };

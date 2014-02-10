@@ -119,6 +119,10 @@ describe "API payload validations", rox: { tags: :unit } do
     end
   end
 
+  it "should fail if the body is bigger than 16777215 bytes", rox: { key: '4576a2aae76d' } do
+    assert_fail '{"foo":"' + ("x" * 16777215) + '"}', :payloadTooBig, false
+  end
+
   it "should fail if the JSON is invalid", rox: { key: '58338a3e18b7' } do
     assert_fail 'fubar', :invalidJson, false
   end

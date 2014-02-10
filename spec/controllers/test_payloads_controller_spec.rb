@@ -16,19 +16,22 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe "API payload controller" do
-  include MaintenanceHelpers
+describe TestPayloadsController do
   let(:user){ create :user }
-  let(:sample_payload){ {} }
 
-  before :each do
-    ResqueSpec.reset!
+  it "should not authorize unauthenticated users", rox: { key: '752a7db0dc8b' } do
+    get :show, id: 42
+    expect(response).to redirect_to(new_user_session_path)
   end
 
-  it "should return a 503 response when in maintenance mode", rox: { key: '1537ac0ebada' } do
-    set_maintenance_mode
-    post_api_payload sample_payload.to_json, user
-    expect(response.status).to eq(503)
-    expect(ProcessNextTestPayloadJob).to have_queue_size_of(0)
+  describe "#show" do
+    let(:test_payload){ create :test_payload, user: user, contents: MultiJson.dump(foo: 'bar') }
+    before(:each){ sign_in user }
+
+    it "should serialize a test payload", rox: { key: 'bce644d4907e' } do
+      get :show, id: test_payload.id
+      expect(response.status).to eq(200)
+      expect(MultiJson.load(response.body)).to eq(MultiJson.load(MultiJson.dump(test_payload.serializable_hash)))
+    end
   end
 end

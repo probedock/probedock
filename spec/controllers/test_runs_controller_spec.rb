@@ -17,7 +17,7 @@
 require 'spec_helper'
 
 describe TestRunsController, rox: { tags: :integration } do
-
+  # TODO: spec #show
   let(:user){ create :user }
   before(:each){ sign_in user }
 

@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe ProcessApiPayloadJob::ProcessApiTest do
+describe TestPayloadProcessing::ProcessTest do
 
   let(:user){ create :user }
   let(:project){ create :project }
@@ -454,7 +454,7 @@ describe ProcessApiPayloadJob::ProcessApiTest do
   end
 
   def process_test data = sample_data, run = test_run, cache = cache
-    ProcessApiPayloadJob::ProcessApiTest.new data, run, cache
+    TestPayloadProcessing::ProcessTest.new data, run, cache
   end
 
   def category name

@@ -172,15 +172,34 @@ describe "API sample payload", rox: { tags: :integration } do
 
   it "should be queued for processing", rox: { key: '8768a7792cf0' } do
     ResqueSpec.reset!
+    existing_version = create :project_version, project: test_keys[3].project, name: '0.1.0'
+    existing_test = create :test, key: test_keys[3], passing: false, active: false, run_at: 1.month.ago, run_duration: 50, project_version: existing_version
+    existing_test.tags << Tag.find_or_create_by(name: 'integration')
+    test_keys[3].update_attribute :free, false
 
     # Note: the third payload cannot be posted at this stage.
     # The first payload must have been processed first.
-    payloads = [ first_payload, second_payload ].collect{ |p| MultiJson.dump p }
-    payloads.each{ |p| post_api_payload p, users[0] }
+    payloads = [ first_payload, second_payload ]
+    saved_payloads = []
+    payloads.each do |p|
 
-    ProcessApiPayloadJob.should have_queued(MultiJson.load(payloads[0]), users[0].id, kind_of(String)).in(:api)
-    ProcessApiPayloadJob.should have_queued(MultiJson.load(payloads[1]), users[0].id, kind_of(String)).in(:api)
-    ProcessApiPayloadJob.should have_queue_size_of(2).in(:api)
+      expect do
+        post_api_payload MultiJson.dump(p), users[0]
+      end.to change(TestPayload, :count).by(1)
+
+      test_payload = TestPayload.order('created_at DESC').first!
+      saved_payloads << test_payload
+
+      expect(test_payload).not_to be_nil
+      expect(test_payload.user).to eq(users[0])
+      expect(test_payload.state.to_sym).to eq(:created)
+      expect(MultiJson.load(test_payload.contents)).to eq(p)
+    end
+
+    expect(saved_payloads[0].test_keys).to eq([ test_keys[0], test_keys[1], test_keys[2] ])
+    expect(saved_payloads[1].test_keys).to be_empty
+
+    ProcessNextTestPayloadJob.should have_queue_size_of(payloads.length).in(:api)
   end
 
   context "when processed" do
@@ -213,6 +232,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(Ticket.count).to eq(0)
       expect(TestValue.count).to eq(0)
       expect(TestCounter.count).to eq(0)
+      expect(TestPayload.count).to eq(0)
       expect(test_keys.each(&:reload).collect(&:free?)).to eq([ true, true, true, false, true ])
 
       with_resque do
@@ -225,6 +245,10 @@ describe "API sample payload", rox: { tags: :integration } do
     before(:each){ ResqueSpec.reset! }
 
     after(:all){ DatabaseCleaner.clean }
+
+    it "should create the correct number of test payloads", rox: { key: 'cdc9d1e1b484' } do
+      expect(TestPayload.count).to eq(3)
+    end
 
     it "should create the correct number of test runs", rox: { key: '5d78f9cbaaf5' } do
       expect(TestRun.count).to eq(3)
@@ -288,6 +312,20 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(users[1].test_infos.collect(&:key)).to match_array([ test_keys[1], test_keys[3] ])
     end
 
+    it "should correctly link test payloads to test runs", rox: { key: '67c4391342c3' } do
+      ordered_payloads = TestPayload.order('received_at ASC').to_a
+      ordered_runs = TestRun.order('ended_at ASC').offset(1).to_a
+      expect(ordered_payloads[0].test_run).to eq(ordered_runs[0])
+      expect(ordered_payloads[1].test_run).to eq(ordered_runs[0])
+      expect(ordered_payloads[2].test_run).to eq(ordered_runs[1])
+    end
+
+    it "should correctly unlink test keys from test payloads", rox: { key: '4b662210c94c' } do
+      TestPayload.all.to_a.each do |payload|
+        expect(payload.test_keys).to be_empty
+      end
+    end
+
     it "should correctly mark all keys as used", rox: { key: '04b81846c673' } do
       expect(test_keys.each(&:reload).any?(&:free?)).to be_false
     end
@@ -309,6 +347,11 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(run.passed_results_count).to eq(3)
       expect(run.inactive_results_count).to eq(1)
       expect(run.inactive_passed_results_count).to eq(1)
+      expect(run.test_payloads).to have(2).items
+
+      ordered_payloads = run.test_payloads.order('created_at ASC').to_a
+      expect(MultiJson.load(ordered_payloads[0].contents)).to eq(first_payload)
+      expect(MultiJson.load(ordered_payloads[1].contents)).to eq(second_payload)
     end
 
     it "should correctly create test run 2", rox: { key: 'b616d73d26d0' } do
@@ -328,6 +371,9 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(run.passed_results_count).to eq(2)
       expect(run.inactive_results_count).to eq(0)
       expect(run.inactive_passed_results_count).to eq(0)
+      expect(run.test_payloads).to have(1).item
+
+      expect(MultiJson.load(run.test_payloads.first.contents)).to eq(third_payload)
     end
 
     it "should correctly update test 1", rox: { key: 'f0648503ac56' } do

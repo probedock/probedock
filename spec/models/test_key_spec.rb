@@ -64,6 +64,14 @@ describe TestKey, rox: { tags: :unit } do
   context "validations" do
     it(nil, rox: { key: '827ddace60ac' }){ should validate_presence_of(:user) }
     it(nil, rox: { key: '2203deb2d4a7' }){ should validate_presence_of(:project) }
+    it(nil, rox: { key: '91bdf868399c' }){ should have_and_belong_to_many(:test_payloads) }
+
+    it "should not let a key linked to a test payload be deleted", rox: { key: '1becf1174f92' } do
+      user = create :user
+      key = create :test_key, user: user
+      payload = create :test_payload, user: user, test_keys: [ key ]
+      expect{ key.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
+    end
   end
   
   context "associations" do

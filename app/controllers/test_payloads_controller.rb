@@ -14,21 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require 'spec_helper'
+class TestPayloadsController < ApplicationController
+  before_filter :authenticate_user!
+  load_resource
 
-describe "API payload controller" do
-  include MaintenanceHelpers
-  let(:user){ create :user }
-  let(:sample_payload){ {} }
-
-  before :each do
-    ResqueSpec.reset!
-  end
-
-  it "should return a 503 response when in maintenance mode", rox: { key: '1537ac0ebada' } do
-    set_maintenance_mode
-    post_api_payload sample_payload.to_json, user
-    expect(response.status).to eq(503)
-    expect(ProcessNextTestPayloadJob).to have_queue_size_of(0)
+  def show
+    render json: TestPayload.find(params[:id].to_i).serializable_hash
   end
 end

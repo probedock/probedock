@@ -19,42 +19,166 @@ App.autoModule('testRunReport', function() {
   // Do not change order. Search for "STATUSES" to find uses.
   var STATUSES = [ 'passed', 'failed', 'inactive' ];
 
-  var Report = Marionette.ItemView.extend({
+  var models = App.module('models');
 
-    template : false,
+  var PayloadView = Marionette.ItemView.extend({
 
-    ui : {
-      details : '.details',
-      detailsContainer : '.details .details-container',
-      visualReport : '.visualReport',
-      categoryResults : '.categoryResults',
-      searchFilter : '.filters .search',
-      tagsFilter : '.filters .tags',
-      statusFilters : '.filters .status button',
-      passedStatusFilter : '.filters .status .passed',
-      failedStatusFilter : '.filters .status .failed',
-      inactiveStatusFilter : '.filters .status .inactive',
-      clearFilters : '.filters .clear',
-      previousInGroup : '.group .previousInGroup',
-      nextInGroup : '.group .nextInGroup'
+    template: 'testRunReport/payload',
+    className: 'panel panel-default',
+
+    ui: {
+      heading: '.panel-heading',
+      titleLink: '.panel-title a',
+      collapse: '.panel-collapse',
+      stats: '.stats',
+      contents: 'pre',
+      contentsDisplay: '.btn-group',
+      copy: '.copy'
     },
 
-    events : {
-      'change .filters .search' : 'filterBySearch',
-      'change .filters .tags' : 'filterByTags',
-      'click .visualReport a' : 'showResult',
-      'click .details .showAll' : 'showAll',
-      'click .filters .status button' : 'filterByStatus',
-      'click .filters .clear' : 'clearFilters'
+    events: {
+      'click a[data-toggle="collapse"]': 'loadContents',
+      'change input:radio': 'renderJson'
     },
 
-    statuses : [ 'passed', 'failed', 'inactive' ],
+    modelEvents: {
+      'change:contents': 'showContents'
+    },
+
+    initialize: function(options) {
+      this.index = options.index;
+    },
+
+    onRender: function() {
+      this.ui.titleLink.attr('href', '#testPayload-' + this.index);
+      this.ui.collapse.attr('id', 'testPayload-' + this.index);
+    },
+
+    serializeData: function() {
+      return _.extend(this.model.toJSON(), {
+        humanNumber: '#' + (this.index + 1),
+        humanReceivedAt: Format.datetime.full(new Date(this.model.get('receivedAt'))),
+        humanSize: Format.bytes(this.model.get('bytes'))
+      });
+    },
+
+    selectContents: function() {
+      this.ui.contents.setSelection(0, this.ui.contents.text().length);
+    },
+
+    renderContents: function() {
+
+      this.ui.stats.text(I18n.t('jst.testRunReport.payloads.stats', {
+        queueTime: Format.duration(this.model.queueTime(), { shorten: 's' }),
+        processingTime: Format.duration(this.model.processingTime(), { shorten: 's' })
+      }));
+
+      Clipboard.setup(this.ui.copy, 'Could not copy payload');
+
+      this.renderJson();
+    },
+
+    renderJson: function() {
+      var json = this.model.get('contents');
+      if (this.ui.contentsDisplay.find('[name="payloadContentsDisplay"]:checked').val() == 'pretty') {
+        json = JSON.stringify(JSON.parse(json), undefined, 2);
+      }
+      Clipboard.update(this.ui.copy, json);
+      this.ui.contents.text(json);
+    },
+
+    showContents: function() {
+      this.renderContents();
+      this.ui.collapse.collapse('show');
+      this.contentsLoaded = true;
+    },
+
+    loadContents: function(e) {
+      if (this.contentsLoaded) {
+        return;
+      }
+
+      this.ui.heading.find('.text-warning').remove();
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (this.busy) {
+        return;
+      }
+      this.setBusy(true);
+
+      this.model.fetch().complete(_.bind(this.setBusy, this, false)).fail(_.bind(this.showError, this));
+    },
+
+    showError: function() {
+      $('<p class="text-warning pull-right" />').text(I18n.t('jst.testRunReport.payloads.error')).prependTo(this.ui.heading);
+    },
+
+    setBusy: function(busy) {
+      this.busy = !!busy;
+      if (this.busy) {
+        Loader.loading().addClass('pull-right').prependTo(this.ui.heading);
+      } else {
+        Loader.clear(this.ui.heading);
+      }
+    }
+  });
+
+  var PayloadsView = Marionette.CompositeView.extend({
+
+    template: 'testRunReport/payloads',
+    itemView: PayloadView,
+    itemViewContainer: '.panel-group',
+
+    itemViewOptions: function(model) {
+      return {
+        index: this.collection.indexOf(model)
+      };
+    }
+  });
+
+  var Report = Marionette.Layout.extend({
+
+    template: false,
+
+    regions: {
+      testPayloads: '.testPayloads'
+    },
+
+    ui: {
+      details: '.details',
+      detailsContainer: '.details .details-container',
+      visualReport: '.visualReport',
+      categoryResults: '.categoryResults',
+      searchFilter: '.filters .search',
+      tagsFilter: '.filters .tags',
+      statusFilters: '.filters .status button',
+      passedStatusFilter: '.filters .status .passed',
+      failedStatusFilter: '.filters .status .failed',
+      inactiveStatusFilter: '.filters .status .inactive',
+      clearFilters: '.filters .clear',
+      previousInGroup: '.group .previousInGroup',
+      nextInGroup: '.group .nextInGroup',
+      payloadsInfo: '.runInfo dd.payloads'
+    },
+
+    events: {
+      'change .filters .search': 'filterBySearch',
+      'change .filters .tags': 'filterByTags',
+      'click .visualReport a': 'showResult',
+      'click .details .showAll': 'showAll',
+      'click .filters .status button': 'filterByStatus',
+      'click .filters .clear': 'clearFilters'
+    },
+
+    statuses: [ 'passed', 'failed', 'inactive' ],
 
     initialize: function(options) {
       this.config = options.config;
     },
 
-    onRender : function() {
+    onRender: function() {
 
       this.setupGroupLinks();
       this.ui.tagsFilter.select2({ allowClear: true });
@@ -68,11 +192,38 @@ App.autoModule('testRunReport', function() {
         return I18n.t('jst.testRunReport.tooltipMessage.' + status);
       });
 
-      async.nextTick(_.bind(this.setupStatusFilterTooltips, this));
-      setTimeout(_.bind(this.buildIndex, this), 300);
+      //async.nextTick(_.bind(this.setupStatusFilterTooltips, this));
+      setTimeout(_.bind(this.setup, this), 300);
     },
 
-    setupStatusFilterTooltips : function(e) {
+    setup: function() {
+      async.series([
+        _.bind(this.setupStatusFilterTooltips, this),
+        _.bind(this.buildIndex, this),
+        _.bind(this.setupTooltips, this),
+        _.bind(this.setupPayloads, this)
+      ])
+    },
+
+    setupPayloads: function(callback) {
+      
+      var config = this.getPageConfig();
+
+      if (config.payloads && config.payloads.length) {
+
+        var payloads = new models.TestPayloadCollection(config.payloads);
+        this.testPayloads.show(new PayloadsView({ collection: payloads }));
+
+        var link = $('<a href="#testPayloads" />').text(I18n.t('jst.testRunReport.payloads.info', { count: payloads.length }));
+        this.ui.payloadsInfo.html(link);
+      } else {
+        this.ui.payloadsInfo.html($('<em />').text(I18n.t('jst.testRunReport.payloads.purged')));
+      }
+
+      callback();
+    },
+
+    setupStatusFilterTooltips: function(e) {
       
       if (this.statusFilterTooltips) {
         _.each(this.statuses, function(status) {
@@ -91,19 +242,30 @@ App.autoModule('testRunReport', function() {
           action = action == 'hide' ? 'show' : 'hide';
         }
 
-        el.tooltip({ title : I18n.t('jst.testRunReport.statusFilter.' + status + '.' + action) });
+        el.tooltip({ title: I18n.t('jst.testRunReport.statusFilter.' + status + '.' + action) });
         if (current) {
           el.tooltip('show');
         }
       }, this);
+
+      if (typeof(e) == 'function') {
+        e();
+      }
     },
 
-    setupGroupLinks : function() {
+    getPageConfig: function() {
 
       var config = App.pageConfig().testRun;
       if (!config) {
         throw new Error('Expected body data-config to contain testRun configuration');
       }
+
+      return config;
+    },
+
+    setupGroupLinks: function() {
+
+      var config = this.getPageConfig();
 
       if (!config.previous) {
         this.ui.previousInGroup.addClass('disabled');
@@ -116,30 +278,31 @@ App.autoModule('testRunReport', function() {
       }
     },
 
-    setupTooltips : function() {
+    setupTooltips: function(callback) {
       var start = new Date().getTime();
       this.cards().each(_.bind(this.setupTooltip, this));
       App.debug('Set up tooltips in ' + (new Date().getTime() - start) + 'ms');
+      callback();
     },
 
-    setupTooltip : function(i, el) {
+    setupTooltip: function(i, el) {
       $(el).popover({
-        trigger : 'hover',
-        placement : 'top',
-        title : this.tooltipTitle(i),
-        content : this.tooltipContents(i),
-        html : true
+        trigger: 'hover',
+        placement: 'top',
+        title: this.tooltipTitle(i),
+        content: this.tooltipContents(i),
+        html: true
       });
     },
 
-    tooltipTitle : function(i) {
+    tooltipTitle: function(i) {
       return JST['testRunReport/visualReportTooltipTitle']({
         klass: this.tooltipStatusClasses[this.testsIndex[i][2]],
         title: this.testsIndex[i][1]
       });
     },
 
-    tooltipContents : function(i) {
+    tooltipContents: function(i) {
       return JST['testRunReport/visualReportTooltipContents']({
         key: this.testsIndex[i][0],
         duration: this.testsIndex[i][3],
@@ -147,15 +310,15 @@ App.autoModule('testRunReport', function() {
       });
     },
 
-    cards : function() {
+    cards: function() {
       return this._cards || (this._cards = this.ui.visualReport.find('.categoryResults a'));
     },
 
-    details : function() {
+    details: function() {
       return this._details || (this._details = this.ui.details.find('.well'));
     },
 
-    updateControls : function(sync) {
+    updateControls: function(sync) {
 
       if (typeof(sync) == 'undefined') {
         return async.nextTick(_.bind(this.updateControls, this, true));
@@ -171,7 +334,7 @@ App.autoModule('testRunReport', function() {
       this.updateNotices();
     },
 
-    updateNotices : function() {
+    updateNotices: function() {
       
       this.ui.categoryResults.each(_.bind(function(i, el) {
         var container = $(el);
@@ -181,12 +344,12 @@ App.autoModule('testRunReport', function() {
       this.updateDetailsNotice();
     },
 
-    updateDetailsNotice : function() {
+    updateDetailsNotice: function() {
       var c = this.ui.detailsContainer;
       this.noMatch(c.hasClass('onlyFailed') ? c.find('.f:first').length && !c.find('.f:visible').length : !c.find('.well:visible').length, c);
     },
 
-    noMatch : function(enabled, container) {
+    noMatch: function(enabled, container) {
       if (!enabled) {
         container.find('.noMatch').remove();
       } else if (!container.find('.noMatch').length) {
@@ -194,7 +357,7 @@ App.autoModule('testRunReport', function() {
       }
     },
 
-    clearFilters : function() {
+    clearFilters: function() {
 
       this.ui.searchFilter.val('');
       this.filterBySearch(false);
@@ -209,7 +372,7 @@ App.autoModule('testRunReport', function() {
       this.updateControls();
     },
 
-    filterByStatus : function(e) {
+    filterByStatus: function(e) {
 
       this.setupStatusFilterTooltips(e);
 
@@ -235,7 +398,7 @@ App.autoModule('testRunReport', function() {
       this.updateControls();
     },
 
-    filterBySearch : function(update) {
+    filterBySearch: function(update) {
       
       var search = this.ui.searchFilter.val(),
           cards = this.cards().removeClass('excludedBySearch'),
@@ -251,12 +414,12 @@ App.autoModule('testRunReport', function() {
       this.updateControls();
     },
 
-    testMatches : function(search, i) {
+    testMatches: function(search, i) {
       var test = this.testsIndex[i];
       return !(test[0].indexOf(search) != -1 || test[1].indexOf(search) != -1);
     },
 
-    filterByTags : function(update) {
+    filterByTags: function(update) {
 
       var tags = this.ui.tagsFilter.select2('val'),
           cards = this.cards().removeClass('excludedByTags'),
@@ -272,16 +435,16 @@ App.autoModule('testRunReport', function() {
       this.updateControls();
     },
 
-    tagSelector : function(tag) {
+    tagSelector: function(tag) {
       return '.t' + this.tagsIndex.indexOf(tag).toString(36);
     },
 
-    finalize : function() {
+    finalize: function() {
       this.ui.searchFilter.attr('disabled', false);
       this.ui.tagsFilter.select2('enable');
     },
 
-    buildIndex : function() {
+    buildIndex: function(callback) {
 
       var index = this.config.index;
       index.tests = [];
@@ -307,11 +470,10 @@ App.autoModule('testRunReport', function() {
       App.debug('Built index of ' + this.testsIndex.length + ' tests in ' + (new Date().getTime() - start) + 'ms');
 
       this.finalize();
-
-      async.nextTick(_.bind(this.setupTooltips, this));
+      callback();
     },
 
-    showResult : function(e) {
+    showResult: function(e) {
       e.preventDefault();
 
       var link = $(e.target);
@@ -320,7 +482,7 @@ App.autoModule('testRunReport', function() {
       details.addClass('ignoreOnlyFailed');
       window.location.hash = link.attr('href');
       $.smoothScroll({
-        scrollTarget : details,
+        scrollTarget: details,
         offset: -50,
         speed: 0
       });
@@ -328,7 +490,7 @@ App.autoModule('testRunReport', function() {
       this.updateDetailsNotice();
     },
 
-    showAll : function(e) {
+    showAll: function(e) {
 
       var button = $(e.target);
       button.attr('disabled', true);
@@ -342,34 +504,34 @@ App.autoModule('testRunReport', function() {
 
   var ReportLoader = Marionette.ItemView.extend({
 
-    template : false,
+    template: false,
 
-    ui : {
-      progress : '.progress',
-      progressBar : '.progress .progress-bar'
+    ui: {
+      progress: '.progress',
+      progressBar: '.progress .progress-bar'
     },
 
-    initialize : function(options) {
+    initialize: function(options) {
       this.path = options.config.path;
       this.interval = 1500;
     },
 
-    onRender : function() {
+    onRender: function() {
       this.start = new Date().getTime();
       this.pollReport(10);
     },
 
-    pollReport : function(n) {
+    pollReport: function(n) {
 
       App.debug('Polling for report data...');
 
       $.ajax({
-        url : this.path,
-        dataType : 'html'
+        url: this.path,
+        dataType: 'html'
       }).done(_.bind(this.loadReport, this, n)).fail(_.bind(this.showError, this));
     },
 
-    loadReport : function(n, response, statusText, xhr) {
+    loadReport: function(n, response, statusText, xhr) {
 
       if (n <= 0) {
         this.showError(true);
@@ -388,7 +550,7 @@ App.autoModule('testRunReport', function() {
       }
     },
 
-    showError : function(timeout) {
+    showError: function(timeout) {
       timeout = timeout === true;
       this.ui.progress.removeClass('progress-striped active');
       this.ui.progressBar.addClass('progress-bar-' + (timeout ? 'warning' : 'danger'));
@@ -397,7 +559,7 @@ App.autoModule('testRunReport', function() {
         .insertAfter(this.ui.progress).hide().slideDown();
     },
 
-    showReport : function(html) {
+    showReport: function(html) {
       this.$el.fadeOut('normal', _.bind(function() {
 
         var parent = this.$el.parent();

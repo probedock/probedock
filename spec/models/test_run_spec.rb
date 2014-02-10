@@ -169,6 +169,7 @@ describe TestRun, rox: { tags: :unit } do
     it(nil, rox: { key: '460cb9f79488' }){ should belong_to(:runner).class_name('User') }
     it(nil, rox: { key: 'f073cd8556c9' }){ should have_many(:results).class_name('TestResult') }
     it(nil, rox: { key: 'c61e3babd098' }){ should have_one(:runner_as_last_run).class_name('User').with_foreign_key(:last_run_id) }
+    it(nil, rox: { key: '05e553d73a4d' }){ should have_many(:test_payloads) }
   end
 
   context "database table" do

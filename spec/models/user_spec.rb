@@ -90,6 +90,14 @@ describe User, rox: { tags: :unit } do
       unfree_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: false }
       expect(user.free_test_keys).to match_array(free_keys)
     end
+
+    it "should not return test keys linked to a test payload", rox: { key: 'dcb5313b6072' } do
+      user, project = create(:user), create(:project)
+      free_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: true }
+      unfree_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: false }
+      payload = create :test_payload, user: user, test_keys: free_keys[0, 2]
+      expect(user.free_test_keys).to match_array(free_keys[2, 1])
+    end
   end
 
   context "cache" do
@@ -147,6 +155,7 @@ describe User, rox: { tags: :unit } do
     it(nil, rox: { key: '786e3a4eeefa' }){ should belong_to(:last_run).class_name('TestRun') }
     it(nil, rox: { key: '3161ac222c11' }){ should have_many(:api_keys) }
     it(nil, rox: { key: 'a52d51d6455d' }){ should belong_to(:settings).class_name('Settings::User') }
+    it(nil, rox: { key: 'a5dca889075c' }){ should have_many(:test_payloads) }
 
     it "should delete a user's settings along with it", rox: { key: 'e2ed746b0d27' } do
       user = create :user
@@ -170,6 +179,12 @@ describe User, rox: { tags: :unit } do
     it "should not let a user with test counters be deleted", rox: { key: '30870e4e3d0f' } do
       user = create :user
       create :test_counter, user: user
+      expect{ user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
+    end
+
+    it "should not let a user with test payloads be deleted", rox: { key: '1d0517177497' } do
+      user = create :user
+      create :test_payload, user: user
       expect{ user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
     end
 

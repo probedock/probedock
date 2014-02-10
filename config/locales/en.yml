@@ -234,6 +234,7 @@ en:
         duration: "Duration"
         number_of_results: "Tests"
         group: "Group"
+        test_payloads: "API Payloads"
       link:
         name: "Name"
         url: "URL"
