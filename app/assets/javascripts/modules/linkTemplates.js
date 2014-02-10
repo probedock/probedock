@@ -201,7 +201,7 @@ App.autoModule('linkTemplates', function() {
       this.updateControls();
     },
 
-    updateControls: function() {
+    updateControls: function(event) {
 
       // escape key
       if (event && event.keyCode && event.keyCode == 27) {
