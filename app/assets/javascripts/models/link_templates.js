@@ -17,10 +17,7 @@
 App.module('models', function() {
 
   var LinkTemplate = this.LinkTemplate = Backbone.Model.extend({
-
-    url: function() {
-      return LegacyApiPath.build('link_templates', this.get('id'));
-    }
+    urlRoot: LegacyApiPath.builder('link_templates')
   });
 
   var LinkTemplateCollection = this.LinkTemplateCollection = Backbone.Collection.extend({
