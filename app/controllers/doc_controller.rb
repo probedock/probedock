@@ -79,7 +79,7 @@ class DocController < ApplicationController
   # TODO: spec markdown/html docs
   def render_markdown path, options = {}
 
-    path = options[:base] == false ? File.join(Rails.root, path) : File.join(Rails.root, 'doc/rox', path)
+    path = options[:base] == false ? File.join(Rails.root, path) : File.join(Rails.root, 'doc', path)
 
     respond_to do |format|
 

@@ -19,10 +19,10 @@ $(function() {
   var container = $('#documentation');
   if (container.length) {
 
-    container.find('a[href^="doc/rox"]').each(function() {
+    container.find('a[href^="doc/"][href$=".md"]').each(function() {
       
       var link = $(this);
-      link.attr('href', Path.build(link.attr('href').replace(/^doc\/rox/, '/doc').replace('\.md', '')));
+      link.attr('href', Path.build(link.attr('href').replace('\.md', '')));
     });
     
     var header = container.find('h2');

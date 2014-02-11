@@ -2,7 +2,7 @@
 
 ## v2.2.0 - February 10, 2014
 
-**Upgrade Notes:** changes in this version require counters to be recomputed from the settings page. Now that PostgreSQL is supported, administrators must omit the unwanted database when installing gems with the `--without` option (e.g. `--without mysql`), see the [deployment documentation](doc/rox/deploy.md).
+**Upgrade Notes:** changes in this version require counters to be recomputed from the settings page. Now that PostgreSQL is supported, administrators must omit the unwanted database when installing gems with the `--without` option (e.g. `--without mysql`), see the [deployment documentation](doc/deploy.md).
 
 * **NEW:** Tests can be searched by ticket.
 
@@ -12,7 +12,7 @@
 
 * **NEW:** Deprecations are counted and displayed separately from new tests on the home page.
 
-* ROX Center is now compatible with PostgreSQL. See the [deployment documentation](doc/rox/deploy.md).
+* ROX Center is now compatible with PostgreSQL. See the [deployment documentation](doc/deploy.md).
 
 * Test payloads can be displayed at the bottom of test run reports.
 
@@ -24,7 +24,7 @@
 
 ## v2.1.1 - January 15, 2014
 
-**Upgrade Notes:** this upgrade can be done as a [hot deploy](doc/rox/deploy.md#hot-deploy) with no downtime.
+**Upgrade Notes:** this upgrade can be done as a [hot deploy](doc/deploy.md#hot-deploy) with no downtime.
 
 * Page URLs no longer include the locale.
 
@@ -42,7 +42,7 @@
 
 * Ugprade to Rails 4.0.2 and Bootstrap 3.
 
-* The `secret_token.rb` initializer was replaced by the `app_secrets.rb` initializer. See the [deployment documentation](doc/rox/deploy.md).
+* The `secret_token.rb` initializer was replaced by the `app_secrets.rb` initializer. See the [deployment documentation](doc/deploy.md).
 
 * Fixed sorting bug on all tables.
 
