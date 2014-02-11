@@ -24,6 +24,7 @@ App.autoModule('appData', function() {
     template: 'appData',
     ui: {
       environment: 'td.environment',
+      uptime: 'td.uptime',
       databaseSize: 'td.databaseSize',
       cacheSize: 'td.cacheSize',
       localStorageSize: 'td.localStorageSize',
@@ -47,6 +48,7 @@ App.autoModule('appData', function() {
       this.listenTo(this.model, 'change:db', this.renderGeneral);
       this.listenTo(this.model, 'change:count', this.renderCount);
       this.listenTo(this.model, 'change:jobs', this.renderJobs);
+      this.listenTo(this, 'refreshUptime', this.renderUptime);
     },
 
     onRender: function() {
@@ -57,6 +59,12 @@ App.autoModule('appData', function() {
       this.renderJobControls();
 
       App.watchStatus(this, this.updateData, { only: [ 'jobs', 'lastApiPayload', 'lastTestDeprecation' ] });
+
+      this.uptimeInterval = setInterval(_.bind(this.trigger, this, 'refreshUptime'), 1000);
+    },
+
+    onClose: function() {
+      clearInterval(this.uptimeInterval);
     },
 
     updateData: function() {
@@ -72,10 +80,15 @@ App.autoModule('appData', function() {
     },
 
     renderGeneral: function() {
-      this.ui.environment.text(this.model.get('environment'));
+      this.renderUptime();
+      this.ui.environment.text(this.model.get('app').get('environment'));
       this.ui.databaseSize.text(this.model.get('db').humanDatabaseSize());
       this.ui.cacheSize.text(this.model.get('db').humanCacheSize());
       this.ui.localStorageSize.text(this.localStorageSize());
+    },
+
+    renderUptime: function() {
+      this.ui.uptime.text(Format.duration(this.model.get('app').uptime(), { min: 's', shorten: 'd' }));
     },
 
     localStorageSize: function() {

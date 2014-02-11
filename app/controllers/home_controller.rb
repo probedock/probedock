@@ -43,7 +43,7 @@ class HomeController < ApplicationController
 
   def status
     window_title << t('home.status.title')
-    @general_data = GeneralData.compute environment: true, jobs: true, count: true, db: true
+    @general_data = GeneralData.compute app: true, jobs: true, count: true, db: true
   end
 
   def ping

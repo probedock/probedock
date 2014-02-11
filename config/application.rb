@@ -43,6 +43,15 @@ Bundler.require(:default, Rails.env)
 
 module ROXCenter
   class Application < Rails::Application
+
+    class << self
+      attr_accessor :started_at
+    end
+
+    def started_at
+      self.class.started_at
+    end
+
     class Events; include EventEmitter; end
 
     def self.events
@@ -63,6 +72,10 @@ module ROXCenter
 
     VERSION = File.open(File.join(root, 'VERSION'), 'r').read
     VERSION_HASH = Digest::SHA512.hexdigest VERSION
+
+    config.after_initialize do
+      self.started_at = Time.now
+    end
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

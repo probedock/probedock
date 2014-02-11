@@ -9,6 +9,9 @@
             %th= I18n.t('jst.appData.environment')
             %td.environment
           %tr
+            %th= I18n.t('jst.appData.uptime')
+            %td.uptime
+          %tr
             %th= I18n.t('jst.appData.databaseSize')
             %td.databaseSize
           %tr

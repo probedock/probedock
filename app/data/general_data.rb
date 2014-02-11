@@ -51,23 +51,24 @@ class GeneralData
       @added = []
       @settings ||= Settings.app
       @cache = $redis.hgetall CACHE_KEY
-      @data = { db: {}, count: {}, tests: {}, jobs: {} }
+      @data = { app: {}, db: {}, count: {}, tests: {}, jobs: {} }
 
-      @data[:environment] = Rails.env if @params[:environment]
+      add(:app, :environment, cache: false){ Rails.env }
+      add(:app, :startedAt, transform: :to_i, cache: false){ Rails.application.started_at.to_ms }
 
-      add(:db, :main, :to_i){ main_database_size }
-      add(:db, :cache, :to_i){ cache_database_size }
+      add(:db, :main, transform: :to_i){ main_database_size }
+      add(:db, :cache, transform: :to_i){ cache_database_size }
 
-      add(:count, :users, :to_i){ User.count }
-      add(:count, :tests, :to_i){ TestInfo.count }
-      add(:count, :runs, :to_i){ TestRun.count }
-      add(:count, :results, :to_i){ TestResult.count }
+      add(:count, :users, transform: :to_i){ User.count }
+      add(:count, :tests, transform: :to_i){ TestInfo.count }
+      add(:count, :runs, transform: :to_i){ TestRun.count }
+      add(:count, :results, transform: :to_i){ TestResult.count }
 
-      add(:tests, :failing, :to_i){ TestInfo.failing.count }
-      add(:tests, :inactive, :to_i){ TestInfo.inactive.count }
-      add(:tests, :outdated, :to_i){ TestInfo.outdated(@settings).count }
-      add(:tests, :outdatedDays, :to_i){ @settings.test_outdated_days }
-      add(:tests, :deprecated, :to_i){ TestInfo.deprecated.count }
+      add(:tests, :failing, transform: :to_i){ TestInfo.failing.count }
+      add(:tests, :inactive, transform: :to_i){ TestInfo.inactive.count }
+      add(:tests, :outdated, transform: :to_i){ TestInfo.outdated(@settings).count }
+      add(:tests, :outdatedDays, transform: :to_i){ @settings.test_outdated_days }
+      add(:tests, :deprecated, transform: :to_i){ TestInfo.deprecated.count }
 
       resque = Resque.info if @params[:jobs]
       [ :workers, :working, :pending, :processed ].each do |name|
@@ -92,14 +93,17 @@ class GeneralData
       end
     end
 
-    def add category, name, transformation = nil, &block
+    def add category, name, options = {}, &block
+
+      transformation = options[:transform]
+
       if true?(@params[category]) or true?(@params[category].try(:[], name))
         key = "#{category}_#{name}"
         @data[category][name] = if cached = @cache[key]
           transformation ? cached.send(transformation) : cached
         else
           block.call.tap do |value|
-            @added << key << value
+            @added << key << value if options.fetch :cache, true
           end
         end
       end

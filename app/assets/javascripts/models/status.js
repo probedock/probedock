@@ -16,6 +16,13 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
+  var AppStatusData = Backbone.RelationalModel.extend({
+
+    uptime: function() {
+      return new Date().getTime() - this.get('startedAt');
+    }
+  });
+
   var JobsStatusData = Backbone.RelationalModel.extend({
   });
 
@@ -50,6 +57,11 @@ App.module('models', function() {
 
     url: Path.builder('data', 'general'),
     relations: [
+      {
+        type: Backbone.HasOne,
+        key: 'app',
+        relatedModel: AppStatusData
+      },
       {
         type: Backbone.HasOne,
         key: 'jobs',

@@ -145,6 +145,7 @@ this.Translations.en =
       jobs: "Jobs"
       count: "Records"
     environment: "Environment"
+    uptime: "Uptime"
     users: "Users"
     databaseSize: "Database Size"
     cacheSize: "Cache RAM Size"
