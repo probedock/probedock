@@ -21,6 +21,7 @@ gem 'rails', '4.0.2'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
+# Database
 group :mysql do
   gem 'mysql2'
 end
@@ -29,36 +30,36 @@ group :postgresql do
   gem 'pg'
 end
 
-gem 'haml'
 gem 'foreigner'
 
-gem 'devise', '~> 3.2.2'
-gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_authenticatable.git', branch: 'group-lookup-config'
-gem 'cancan'
-gem 'role_model'
-gem 'rake-version'
-gem 'tableling-rails'
-gem 'select2-rails'
-
-gem 'redis'
-gem 'hiredis'
-gem 'redis-namespace'
-gem 'resque'
-gem 'resque-workers-lock'
-
+# Templating
+gem 'haml'
+gem 'haml-rails'
 gem 'markdown-rails'
 gem 'redcarpet'
 gem 'pygments.rb'
 
-# State Machine
-gem 'simple_states'
+# Authentication & Authorization
+gem 'devise', '~> 3.2.2'
+gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_authenticatable.git', branch: 'group-lookup-config'
+gem 'cancan'
+gem 'role_model'
+
+# Memory Database
+gem 'redis'
+gem 'hiredis'
+gem 'redis-namespace'
+
+# Background Processing
+gem 'resque'
+gem 'resque-workers-lock'
+
+# Model Extensions
+gem 'simple_states' # state machines
+gem 'strip_attributes' # trimming
 
 # Fast JSON
 gem 'oj'
-
-gem 'strip_attributes'
-
-gem 'paint'
 
 # Assets
 gem 'stylus', '~> 1.0.0'
@@ -68,6 +69,7 @@ gem 'jquery-rails'
 gem 'compass-rails'
 gem 'backbone-on-rails'
 #gem 'marionette-rails' # currently provided by tableling-rails
+gem 'tableling-rails'
 gem 'haml_coffee_assets'
 gem 'therubyracer'
 gem 'execjs'
@@ -76,6 +78,11 @@ gem 'highcharts-rails', '~> 3.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', :platforms => :ruby
 gem 'uglifier', '>= 1.0.3'
+gem 'select2-rails'
+
+# Tools
+gem 'rake-version'
+gem 'paint'
 
 group :production do
   gem 'unicorn', '4.6.2'

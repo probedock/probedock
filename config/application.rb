@@ -116,5 +116,8 @@ module ROXCenter
 
     config.assets.precompile += %w(hal.js hal.css)
     config.assets.paths << Rails.root.join('app', 'assets', 'flash')
+
+    config.generators.assets = false
+    config.generators.helper = false
   end
 end

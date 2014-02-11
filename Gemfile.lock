@@ -107,6 +107,11 @@ GEM
       guard (>= 1.1.0)
     haml (4.0.5)
       tilt
+    haml-rails (0.5.3)
+      actionpack (>= 4.0.1)
+      activesupport (>= 4.0.1)
+      haml (>= 3.1, < 5.0)
+      railties (>= 4.0.1)
     haml_coffee_assets (1.16.0)
       coffee-script (~> 2.0)
       sprockets (~> 2.0)
@@ -340,6 +345,7 @@ DEPENDENCIES
   guard-process
   guard-shell
   haml
+  haml-rails
   haml_coffee_assets
   highcharts-rails (~> 3.0.0)
   hiredis
