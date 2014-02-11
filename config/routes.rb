@@ -24,12 +24,12 @@ ROXCenter::Application.routes.draw do
     user and user.has_role?(:admin) # restrict to admins
   end
   constraints resque_constraint do
-    mount Resque::Server.new, :at => "/resque"
+    mount Resque::Server.new, at: "/resque"
   end
 
-  root :to => 'home#index'
+  root to: 'home#index'
 
-  match '/ping' => 'home#ping', via: :get, as: :ping
+  get :ping, to: 'home#ping'
   match :maintenance, to: 'home#maintenance', via: [ :post, :delete ]
   resources :api_keys, controller: :account_api_keys, only: [ :index, :create, :show, :update, :destroy ]
 
@@ -48,28 +48,28 @@ ROXCenter::Application.routes.draw do
   end
 
   devise_for :users, path_names: { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }
-  match 'status' => 'home#status', :via => :get
+  get :status, to: 'home#status'
 
   # pages
-  resource :account, :only => [ :show ]
-  resources :metrics, :only => [ :index ]
-  resources :projects, :only => [ :index, :show ]
-  resource :settings, :only => [ :show ]
-  resources :tags, :only => [ :index ]
-  resources :test_infos, :path => :tests, :only => [ :index, :show ] do
+  resource :account, only: [ :show ]
+  resources :metrics, only: [ :index ]
+  resources :projects, only: [ :index, :show ]
+  resource :settings, only: [ :show ]
+  resources :tags, only: [ :index ]
+  resources :test_infos, path: :tests, only: [ :index, :show ] do
     collection do
       post :deprecate
       post :undeprecate
     end
   end
   resources :test_payloads, path: :payloads, only: [ :show ]
-  resources :test_runs, :path => :runs, :only => [ :index, :show ] do
+  resources :test_runs, path: :runs, only: [ :index, :show ] do
     member do
       get :previous
       get :next
     end
   end
-  resources :users, :only => [ :index, :new ]
+  resources :users, only: [ :index, :new ]
   resources :users, path: :user, only: [ :show, :edit, :update, :destroy ] do
     collection do
       post '/', action: :create, as: :create
@@ -77,7 +77,7 @@ ROXCenter::Application.routes.draw do
   end
 
   # documentation
-  namespace 'doc', :module => nil do
+  namespace 'doc', module: nil do
 
     %w(overview clients changelog deploy).each do |e|
       match e => "doc##{e}", via: :get
@@ -97,7 +97,7 @@ ROXCenter::Application.routes.draw do
     end
   end
 
-  namespace 'api', :module => :api, :as => :api do
+  namespace 'api', module: :api, as: :api do
 
     match '/' => "api#index", via: :get
 
@@ -114,12 +114,12 @@ ROXCenter::Application.routes.draw do
   end
 
   # api
-  namespace 'api/v1', :module => nil, :as => :legacy_api do
+  namespace 'api/v1', module: nil, as: :legacy_api do
 
-    resources :links, :only => [ :create, :update, :destroy ]
-    resources :link_templates, :only => [ :create, :update, :destroy ]
+    resources :links, only: [ :create, :update, :destroy ]
+    resources :link_templates, only: [ :create, :update, :destroy ]
 
-    resources :metrics, :only => [] do
+    resources :metrics, only: [] do
       collection do
         post :compute
       end
@@ -127,11 +127,11 @@ ROXCenter::Application.routes.draw do
 
     scope constraints: { format: 'json' }, defaults: { format: 'json' } do
 
-      resource :account, :only => [] do
-        get :tests, :action => :tests_page
+      resource :account, only: [] do
+        get :tests, action: :tests_page
       end
 
-      resources :metrics, :only => [] do
+      resources :metrics, only: [] do
         collection do
           get 'measures/chart', action: :measures_chart
           get 'breakdown/authors', as: :author_breakdown, action: :author_breakdown
@@ -140,7 +140,7 @@ ROXCenter::Application.routes.draw do
         end
       end
 
-      resources :projects, :only => [] do
+      resources :projects, only: [] do
 
         member do
           get :tests_page
@@ -149,40 +149,40 @@ ROXCenter::Application.routes.draw do
 
       resource :settings, only: [ :show, :update ]
 
-      resources :tags, :only => [] do
+      resources :tags, only: [] do
         collection do
           get :cloud
         end
       end
 
-      resources :test_infos, :path => :tests, :only => [] do
+      resources :test_infos, path: :tests, only: [] do
         collection do
-          get '/', :action => :page
+          get '/', action: :page
         end
         member do
-          get :results, :action => :results_page
-          get 'results/chart', :action => :results_chart
+          get :results, action: :results_page
+          get 'results/chart', action: :results_chart
         end
       end
 
-      resources :test_results, :path => :results, :only => [ :show ]
+      resources :test_results, path: :results, only: [ :show ]
 
-      resources :test_runs, :path => :runs, :only => [ :show ] do
+      resources :test_runs, path: :runs, only: [ :show ] do
 
         collection do
-          get '/', :action => :page
+          get '/', action: :page
         end
       end
 
-      resources :users, :only => [] do
+      resources :users, only: [] do
 
         collection do
-          get '/', :action => :page
+          get '/', action: :page
         end
 
         member do
-          get :tests, :action => :tests_page
-          get 'measures/chart', :action => :measures_chart
+          get :tests, action: :tests_page
+          get 'measures/chart', action: :measures_chart
         end
       end
     end
