@@ -1,10 +1,4 @@
-
-.row
-  .col-md-6{ data: { module: :maintenanceControls } }
-  .col-md-6{ data: { module: :testCountersManager, config: @test_counters_config.to_json } }
-
+%h1= t('.title')
 #globalSettings{ data: { module: :globalSettings } }
-
 .menuLinksManager{ data: { module: :menuLinksManager, config: @links.to_json } }
-
 .linkTemplates{ data: { module: :linkTemplates, config: @link_templates_config.to_json } }

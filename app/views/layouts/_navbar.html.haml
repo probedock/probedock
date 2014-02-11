@@ -17,7 +17,15 @@
             %b.caret
           %ul.dropdown-menu
             = render partial: 'layouts/docs'
-        - if can? :manage, :settings
-          %li= link_to t('.settings'), settings_path
+        - if [ :app, :settings ].any?{ |e| can? :manage, e }
+          %li.dropdown
+            %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+              = t('.admin')
+              %b.caret
+            %ul.dropdown-menu
+              - if can?(:manage, :app)
+                %li= link_to t('.controls'), admin_path
+              - if can?(:manage, :settings)
+                %li= link_to t('.settings'), admin_settings_path
         %li= link_to t('.status'), status_path
         %li= link_to t('.logout'), destroy_user_session_path

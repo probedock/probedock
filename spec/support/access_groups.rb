@@ -14,24 +14,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class SettingsController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter{ authorize! :manage, :settings }
-  before_filter :check_maintenance, only: [ :update ]
+shared_examples_for "an admin resource" do |op|
 
-  def show
-    render json: Settings::App.get
+  it "should not authorize unauthenticated users" do
+    instance_eval &op
+    expect(response).to redirect_to(new_user_session_path)
   end
 
-  def update
-    settings = Settings::App.get
-    settings.update_attributes setting_params
-    render json: settings.tap(&:reload)
-  end
+  describe "when logged in" do
+    before(:each){ sign_in user }
 
-  private
-
-  def setting_params
-    params.require(:setting).permit(:ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days)
+    it "should not authorize normal users" do
+      expect{ instance_eval &op }.to raise_error(CanCan::AccessDenied)
+    end
   end
 end

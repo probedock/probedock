@@ -212,7 +212,7 @@ this.Translations.en =
       copyToClipboard: "Copy"
       error: "Could not download test payload. It might have been purged."
   globalSettings:
-    title: "Settings"
+    title: "General"
     reportsCacheSize: "Reports Cache Size"
     reportsCacheSizeInstructions: "maximum number of reports to cache on disk (0 for no cache)"
     tagCloudSize: "Tag Cloud Size"

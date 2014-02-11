@@ -34,10 +34,11 @@ describe 'App routing' do
 
   it(nil, rox: { key: 'd31909fa2e05' }){ should route(:get, '').to(controller: :home, action: :index) }
   it(nil, rox: { key: 'bfe93538488b' }){ should route(:get, '/account').to(controller: :accounts, action: :show) }
+  it(nil, rox: { key: '7dccdffd40a2' }){ should route(:get, '/admin').to(controller: :admin, action: :index) }
+  it(nil, rox: { key: '2f4dac9841fb' }){ should route(:get, '/admin/settings').to(controller: :admin, action: :settings) }
   it(nil, rox: { key: '87bf98a672be' }){ should route(:get, '/metrics').to(controller: :metrics, action: :index) }
   it(nil, rox: { key: '251c38ec02ab' }){ should route(:get, '/projects').to(controller: :projects, action: :index) }
   it(nil, rox: { key: '796ada05066d' }){ should route(:get, '/projects/42').to(controller: :projects, action: :show, id: '42') }
-  it(nil, rox: { key: '2f4dac9841fb' }){ should route(:get, '/settings').to(controller: :settings, action: :show) }
   it(nil, rox: { key: 'dc2db17cfd5d' }){ should route(:get, '/status').to(controller: :home, action: :status) }
   it(nil, rox: { key: 'ca901bcb554a' }){ should route(:get, '/tags').to(controller: :tags, action: :index) }
   it(nil, rox: { key: '4a003aabf324' }){ should route(:get, '/payloads/42').to(controller: :test_payloads, action: :show, id: 42) }

@@ -30,35 +30,10 @@ describe SettingsController do
 
     describe "#show" do
 
-      describe "HTML" do
-        let!(:link_templates){ Array.new(3){ |i| create :link_template, created_at: i.days.ago } }
-        subject{ assigns }
-        before(:each){ get :show, locale: I18n.default_locale }
-
-        it "should set the window title", rox: { key: '15975da9031a' } do
-          expect(subject[:window_title]).to eq([ t('common.title'), t('settings.show.title') ])
-        end
-
-        it "should fetch status data", rox: { key: '1c2b01c71d98' } do
-          expect(subject[:status_data]).to eq(StatusData.compute)
-        end
-
-        it "should set the test counters configuration", rox: { key: '58b561514050' } do
-          expect(subject[:test_counters_config]).to eq(data: TestCountersData.compute)
-        end
-
-        it "should set the link templates configuration", rox: { key: '7c645e599730' } do
-          expect(subject[:link_templates_config]).to eq(link_templates.sort_by(&:created_at))
-        end
-      end
-
-      describe "JSON" do
-
-        it "should return the settings as JSON", rox: { key: '358d0dee856e' } do
-          get :show, format: :json
-          expect(response.success?).to be_true
-          expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
-        end
+      it "should return the settings as JSON", rox: { key: '358d0dee856e' } do
+        get :show, format: :json
+        expect(response.success?).to be_true
+        expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
       end
     end
 

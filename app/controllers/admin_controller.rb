@@ -14,24 +14,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class SettingsController < ApplicationController
+class AdminController < ApplicationController
   before_filter :authenticate_user!
-  before_filter{ authorize! :manage, :settings }
-  before_filter :check_maintenance, only: [ :update ]
+  before_filter(only: [ :index ]){ authorize! :manage, :app }
+  before_filter(except: [ :index ]){ authorize! :manage, :settings }
 
-  def show
-    render json: Settings::App.get
+  def index
+    window_title << t('admin.index.title')
+    @status_data = StatusData.compute
+    @test_counters_config = { data: TestCountersData.compute }
   end
 
-  def update
-    settings = Settings::App.get
-    settings.update_attributes setting_params
-    render json: settings.tap(&:reload)
-  end
-
-  private
-
-  def setting_params
-    params.require(:setting).permit(:ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days)
+  def settings
+    window_title << t('admin.settings.title')
+    @link_templates_config = LinkTemplate.order('created_at ASC').to_a
   end
 end

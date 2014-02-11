@@ -56,6 +56,8 @@ en:
       settings: "Settings"
       status: "Status"
       projects: "Projects"
+      admin: "Admin"
+      controls: "Control Center"
     docs:
       overview: "Overview"
       changelog: "Changelog"
@@ -70,6 +72,12 @@ en:
         resources: "Resources"
     footer:
       version: "v%{version}"
+
+  admin:
+    index:
+      title: "Control Center"
+    settings:
+      title: "Settings"
 
   doc:
     title: "Documentation"
@@ -130,10 +138,6 @@ en:
   tags:
     show:
       title: "Tests with the \"%{name}\" tag"
-
-  settings:
-    show:
-      title: "Settings"
 
   users:
     index:

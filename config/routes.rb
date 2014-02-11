@@ -33,6 +33,11 @@ ROXCenter::Application.routes.draw do
   match :maintenance, to: 'home#maintenance', via: [ :post, :delete ]
   resources :api_keys, controller: :account_api_keys, only: [ :index, :create, :show, :update, :destroy ]
 
+  namespace :admin, module: nil, path: :admin do
+    get '/', to: 'admin#index'
+    get :settings, to: 'admin#settings'
+  end
+
   resource :data, only: [] do
     get :status
     get :general
@@ -54,7 +59,6 @@ ROXCenter::Application.routes.draw do
   resource :account, only: [ :show ]
   resources :metrics, only: [ :index ]
   resources :projects, only: [ :index, :show ]
-  resource :settings, only: [ :show ]
   resources :tags, only: [ :index ]
   resources :test_infos, path: :tests, only: [ :index, :show ] do
     collection do
