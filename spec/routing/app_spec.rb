@@ -40,6 +40,7 @@ describe 'App routing' do
   it(nil, rox: { key: '2f4dac9841fb' }){ should route(:get, '/settings').to(controller: :settings, action: :show) }
   it(nil, rox: { key: 'dc2db17cfd5d' }){ should route(:get, '/status').to(controller: :home, action: :status) }
   it(nil, rox: { key: 'ca901bcb554a' }){ should route(:get, '/tags').to(controller: :tags, action: :index) }
+  it(nil, rox: { key: '4a003aabf324' }){ should route(:get, '/payloads/42').to(controller: :test_payloads, action: :show, id: 42) }
   it(nil, rox: { key: 'fbbc237d3753' }){ should route(:get, '/tests').to(controller: :test_infos, action: :index) }
   it(nil, rox: { key: '32f0b8d13a53' }){ should route(:get, '/tests/42').to(controller: :test_infos, action: :show, id: 42) }
   it(nil, rox: { key: '9c5b9e041869' }){ should route(:post, '/tests/deprecate').to(controller: :test_infos, action: :deprecate) }
