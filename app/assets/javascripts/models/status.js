@@ -33,24 +33,6 @@ App.module('models', function() {
   });
 
   var DbStatusData = Backbone.RelationalModel.extend({
-
-    databaseSize: function() {
-      return this.get('main') ? Math.round(this.get('main') / 10000) / 100 : undefined;
-    },
-
-    humanDatabaseSize: function() {
-      var size = this.databaseSize();
-      return size && size >= 0 ? size + ' MB' : I18n.t('jst.common.noData')
-    },
-
-    cacheSize: function() {
-      return this.get('cache') ? Math.round(this.get('cache') / 10000) / 100 : undefined;
-    },
-
-    humanCacheSize: function() {
-      var size = this.cacheSize();
-      return size && size >= 0 ? size + ' MB' : I18n.t('jst.common.noData');
-    }
   });
 
   var GeneralStatusData = this.GeneralStatusData = Backbone.RelationalModel.extend({

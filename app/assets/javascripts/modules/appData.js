@@ -82,18 +82,13 @@ App.autoModule('appData', function() {
     renderGeneral: function() {
       this.renderUptime();
       this.ui.environment.text(this.model.get('app').get('environment'));
-      this.ui.databaseSize.text(this.model.get('db').humanDatabaseSize());
-      this.ui.cacheSize.text(this.model.get('db').humanCacheSize());
-      this.ui.localStorageSize.text(this.localStorageSize());
+      this.ui.databaseSize.text(Format.bytes(this.model.get('db').get('main')));
+      this.ui.cacheSize.text(Format.bytes(this.model.get('db').get('cache')));
+      this.ui.localStorageSize.text(Format.bytes(App.storage.size()));
     },
 
     renderUptime: function() {
       this.ui.uptime.text(Format.duration(this.model.get('app').uptime(), { min: 's', shorten: 'd' }));
-    },
-
-    localStorageSize: function() {
-      var size = App.storage.size() / 1024;
-      return size >= 0 ? (Math.round(size * 100) / 100) + ' KB' : size
     },
 
     renderJobControls: function() {
