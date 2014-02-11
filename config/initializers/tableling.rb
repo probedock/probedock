@@ -18,6 +18,6 @@
 Tableling.global do
 
   serialize_type Time do |value|
-    value.to_i * 1000
+    value.to_ms
   end
 end

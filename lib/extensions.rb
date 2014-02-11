@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class Array
 
   def deep_stringify_keys!
@@ -56,5 +55,16 @@ class ActiveSupport::HashWithIndifferentAccess < Hash
   def omit! *args
     args = args.collect{ |a| convert_key a }
     delete_if{ |k,v| args.include? k.to_s }
+  end
+end
+
+class Time
+
+  def to_ms
+    (to_f * 1000).floor
+  end
+
+  def ms_from time
+    ((to_f - time.to_f) * 1000).round
   end
 end

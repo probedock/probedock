@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_maintenance
-    render json: { since: @maintenance[:since].to_i * 1000 }, status: :service_unavailable
+    render json: { since: @maintenance[:since].to_ms }, status: :service_unavailable
   end
 
   def check_maintenance

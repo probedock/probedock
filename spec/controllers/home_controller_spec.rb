@@ -34,7 +34,7 @@ describe HomeController do
         Time.stub now: now = Time.now
         post :maintenance
         expect(response.status).to eq(200)
-        expect(MultiJson.load(response.body)).to eq({ 'since' => now.to_i * 1000 })
+        expect(MultiJson.load(response.body)).to eq({ 'since' => now.to_ms })
         expect($redis.get(:maintenance)).to eq(now.to_r.to_s)
       end
 
@@ -42,7 +42,7 @@ describe HomeController do
         $redis.set :maintenance, (time = 1.hour.ago).to_r.to_s
         post :maintenance
         expect(response.status).to eq(200)
-        expect(MultiJson.load(response.body)).to eq({ 'since' => time.to_i * 1000 })
+        expect(MultiJson.load(response.body)).to eq({ 'since' => time.to_ms })
         expect($redis.get(:maintenance)).to eq(time.to_r.to_s)
       end
 

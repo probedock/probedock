@@ -23,7 +23,7 @@ class StatusData
 
   def self.compute
 
-    t = to_timestamp Time.now
+    t = Time.now.to_ms
     results = $redis.multi do
       DATES.each{ |d| $redis.hsetnx CACHE_KEY, d, t }
       $redis.hgetall CACHE_KEY
@@ -34,7 +34,7 @@ class StatusData
     DATES.inject({
       jobs: resque_status.to_s,
       counters: TestCountersData.fingerprint.to_s,
-      maintenance: results[1] ? Time.at(Rational(results[1])).to_i * 1000 : false
+      maintenance: results[1] ? Time.at(Rational(results[1])).to_ms : false
     }) do |memo,d|
       memo[d.camelize(:lower).to_sym] = results[0][d].to_i
       memo
@@ -49,13 +49,9 @@ class StatusData
   class << self
     DATES.each do |d|
       define_method "touch_#{d}" do
-        Time.now.tap{ |now| $redis.hset CACHE_KEY, d, to_timestamp(now) }
+        $redis.hset CACHE_KEY, d, Time.now.to_ms
       end
     end
-  end
-
-  def self.to_timestamp time
-    (time.to_f * 1000).to_i
   end
 
   def self.resque_status

@@ -32,7 +32,7 @@ class Api::PayloadsController < Api::ApiController
     payload = TestPayload.new(contents: body, user: current_api_user, received_at: time_received, test_keys: result[:free_keys]).tap(&:save!)
 
     Resque.enqueue ProcessNextTestPayloadJob
-    $api_logger.info "Accepted payload for processing in #{((Time.now - time_received) * 1000).round}ms"
+    $api_logger.info "Accepted payload for processing in #{Time.now.ms_from time_received}ms"
 
     head :accepted # HTTP 202 (accepted for processing)
   end

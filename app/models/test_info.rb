@@ -149,12 +149,12 @@ class TestInfo < ActiveRecord::Base
       name: name,
       project: project.to_client_hash(options),
       active: active,
-      created_at: created_at.to_i * 1000
+      created_at: created_at.to_ms
     }.tap do |h|
 
       h[:category] = category.name if category.present?
       h[:values] = custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo } if custom_values.any?
-      h[:deprecated_at] = deprecation.created_at.to_i * 1000 if deprecation
+      h[:deprecated_at] = deprecation.created_at.to_ms if deprecation
 
       if options[:type] == :test_run
         h[:author] = author_id

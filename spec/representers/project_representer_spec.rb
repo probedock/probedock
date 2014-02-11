@@ -30,7 +30,7 @@ describe ProjectRepresenter, rox: { tags: :unit } do
       urlToken: project.url_token,
       activeTestsCount: project.tests_count - project.deprecated_tests_count,
       deprecatedTestsCount: project.deprecated_tests_count,
-      createdAt: project.created_at.to_i * 1000
+      createdAt: project.created_at.to_ms
     })
   end
 end

@@ -73,7 +73,7 @@ class TestResult < ActiveRecord::Base
       h[:message] = message if message.present? and ![ :chart, :test ].include?(options[:type])
 
       if [ :chart, :test ].include?(options[:type])
-        h[:run_at] = run_at.to_i * 1000
+        h[:run_at] = run_at.to_ms
       end
 
       if options[:type] == :test

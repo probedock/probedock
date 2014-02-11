@@ -41,15 +41,15 @@ class TestPayload < ActiveRecord::Base
   def serializable_hash options = {}
     {
       id: id,
-      receivedAt: (received_at.to_f * 1000).round
+      receivedAt: received_at.to_ms
     }.tap do |h|
 
       if options[:type] == :listing
         h[:bytes] = contents_bytesize
       else
         h[:state] = state
-        h[:processingAt] = (processing_at.to_f * 1000).round if processing_at
-        h[:processedAt] = (processed_at.to_f * 1000).round if processed_at
+        h[:processingAt] = processing_at.to_ms if processing_at
+        h[:processedAt] = processed_at.to_ms if processed_at
         h[:contents] = contents
       end
     end

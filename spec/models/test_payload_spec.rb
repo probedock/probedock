@@ -93,7 +93,7 @@ describe TestPayload, rox: { tags: :unit } do
       payload = create :test_payload
       expect(payload.serializable_hash).to eq({
         id: payload.id,
-        receivedAt: (payload.received_at.to_f * 1000).round,
+        receivedAt: payload.received_at.to_ms,
         state: :created,
         contents: payload.contents
       })
@@ -103,8 +103,8 @@ describe TestPayload, rox: { tags: :unit } do
       payload = create :processing_test_payload
       expect(payload.serializable_hash).to eq({
         id: payload.id,
-        receivedAt: (payload.received_at.to_f * 1000).round,
-        processingAt: (payload.processing_at.to_f * 1000).round,
+        receivedAt: payload.received_at.to_ms,
+        processingAt: payload.processing_at.to_ms,
         state: :processing,
         contents: payload.contents
       })
@@ -114,9 +114,9 @@ describe TestPayload, rox: { tags: :unit } do
       payload = create :processed_test_payload
       expect(payload.serializable_hash).to eq({
         id: payload.id,
-        receivedAt: (payload.received_at.to_f * 1000).round,
-        processingAt: (payload.processing_at.to_f * 1000).round,
-        processedAt: (payload.processed_at.to_f * 1000).round,
+        receivedAt: payload.received_at.to_ms,
+        processingAt: payload.processing_at.to_ms,
+        processedAt: payload.processed_at.to_ms,
         state: :processed,
         contents: payload.contents
       })
@@ -126,7 +126,7 @@ describe TestPayload, rox: { tags: :unit } do
       payload = create :processed_test_payload
       expect(payload.serializable_hash(type: :listing)).to eq({
         id: payload.id,
-        receivedAt: (payload.received_at.to_f * 1000).round,
+        receivedAt: payload.received_at.to_ms,
         bytes: payload.contents_bytesize
       })
     end

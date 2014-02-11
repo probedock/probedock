@@ -28,7 +28,7 @@ class ProjectRepresenter < BaseRepresenter
     property :activeTestsCount, project.tests_count - project.deprecated_tests_count
 
     %w(created_at).each do |name|
-      property name.camelize(:lower), project.send(name).to_i * 1000
+      property name.camelize(:lower), project.send(name).to_ms
     end
   end
 end

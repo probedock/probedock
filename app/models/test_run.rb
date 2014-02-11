@@ -125,7 +125,7 @@ class TestRun < ActiveRecord::Base
   def to_client_hash options = {}
     {
       id: id,
-      ended_at: ended_at.to_i * 1000,
+      ended_at: ended_at.to_ms,
       duration: duration,
       results_count: results_count,
       passed_results_count: passed_results_count,

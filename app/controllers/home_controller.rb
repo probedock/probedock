@@ -56,7 +56,7 @@ class HomeController < ApplicationController
         $redis.setnx :maintenance, Time.now.to_r.to_s
         $redis.get :maintenance
       end.last
-      render json: { since: Time.at(Rational(time)).to_i * 1000 }
+      render json: { since: Time.at(Rational(time)).to_ms }
     else
       $redis.del :maintenance
       head :no_content

@@ -102,7 +102,7 @@ class User < ActiveRecord::Base
       if options[:type] == :info
         h[:active] = active
         h[:deletable] = deletable?
-        h[:created_at] = created_at.to_i * 1000
+        h[:created_at] = created_at.to_ms
       end
     end
   end

@@ -26,7 +26,7 @@ describe TestKeyRepresenter, rox: { tags: :unit } do
       value: test_key.key,
       projectApiId: test_key.project.api_id,
       free: test_key.free,
-      createdAt: test_key.created_at.to_i * 1000
+      createdAt: test_key.created_at.to_ms
     })
   end
 end

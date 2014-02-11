@@ -36,7 +36,7 @@ module ApplicationHelper
 
   def meta_maintenance
     {
-      since: @maintenance[:since].to_i * 1000
+      since: @maintenance[:since].to_ms
     }
   end
 end

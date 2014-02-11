@@ -22,6 +22,6 @@ class TestKeyRepresenter < BaseRepresenter
     property :value, test_key.key
     property :projectApiId, test_key.project.api_id
     property :free, test_key.free
-    property :createdAt, test_key.created_at.to_i * 1000
+    property :createdAt, test_key.created_at.to_ms
   end
 end

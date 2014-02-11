@@ -26,8 +26,8 @@ class ApiKeyRepresenter < BaseRepresenter
     property :id, api_key.identifier
     property :active, api_key.active
     property :usageCount, api_key.usage_count
-    property :lastUsedAt, api_key.last_used_at.to_i * 1000 if api_key.last_used_at
-    property :createdAt, api_key.created_at.to_i * 1000
+    property :lastUsedAt, api_key.last_used_at.to_ms if api_key.last_used_at
+    property :createdAt, api_key.created_at.to_ms
 
     if options[:detailed]
       property :sharedSecret, api_key.shared_secret

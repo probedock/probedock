@@ -39,7 +39,7 @@ describe ApplicationHelper do
 
     it "should generate meta data for the maintenance mode", rox: { key: '2c169da2c7e9' } do
       @maintenance = { since: now = Time.now }
-      expect(helper.meta_maintenance).to eq(since: now.to_i * 1000)
+      expect(helper.meta_maintenance).to eq(since: now.to_ms)
     end
   end
 end
