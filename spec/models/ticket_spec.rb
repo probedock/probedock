@@ -19,7 +19,7 @@ require 'spec_helper'
 describe Ticket, rox: { tags: :unit } do
 
   context "#url" do
-    let(:ticket){ create :ticket }
+    let(:ticket){ create :sample_ticket }
 
     it "should not return an URL if the ticketing system URL is not set", rox: { key: '55c7ff71779e' } do
       Settings.stub app: OpenStruct.new(ticketing_system_url: nil)
@@ -37,7 +37,7 @@ describe Ticket, rox: { tags: :unit } do
     it(nil, rox: { key: 'e416f98af1a8' }){ should ensure_length_of(:name).is_at_most(255) }
 
     context "with an existing ticket" do
-      let!(:ticket){ create :ticket }
+      let!(:ticket){ create :sample_ticket }
       it(nil, rox: { key: 'a3aaa98b10f9' }){ should validate_uniqueness_of(:name).case_insensitive }
 
       it "should not validate the uniqueness of name with quick validation", rox: { key: '2ef1cf87a9f8' } do

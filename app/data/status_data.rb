@@ -20,6 +20,7 @@ class StatusData
   on('api:payload'){ touch_last_api_payload }
   on('test:deprecated', 'test:undeprecated'){ touch_last_test_deprecation }
   on('test:counters'){ touch_last_test_counters }
+  on('purge:payloads', 'purge:tags', 'purge:tickets'){ touch_last_purge }
 
   def self.compute
 
@@ -44,7 +45,7 @@ class StatusData
   private
   
   CACHE_KEY = 'cache:status'
-  DATES = %w(last_api_payload last_test_deprecation last_test_counters)
+  DATES = %w(last_api_payload last_test_deprecation last_test_counters last_purge)
 
   class << self
     DATES.each do |d|

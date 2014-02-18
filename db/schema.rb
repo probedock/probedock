@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140210121501) do
+ActiveRecord::Schema.define(version: 20140211153453) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -29,10 +29,11 @@ ActiveRecord::Schema.define(version: 20140210121501) do
 
   create_table "app_settings", force: true do |t|
     t.string   "ticketing_system_url"
-    t.datetime "updated_at",           null: false
-    t.integer  "reports_cache_size",   null: false
-    t.integer  "tag_cloud_size",       null: false
-    t.integer  "test_outdated_days",   null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "reports_cache_size",     null: false
+    t.integer  "tag_cloud_size",         null: false
+    t.integer  "test_outdated_days",     null: false
+    t.integer  "test_payloads_lifespan", null: false
   end
 
   create_table "categories", force: true do |t|

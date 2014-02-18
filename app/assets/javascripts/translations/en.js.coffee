@@ -20,6 +20,26 @@ this.Translations.en =
     maintenance:
       title: "Maintenance Mode."
       notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
+  purge:
+    title: "Data Purge"
+    instructions: "Data is purged to save space. Some of the data is purged only after a given time, some as soon as it's no longer referenced."
+    lifetimeInstructions: "For the former, the lifetimes are defined in the"
+    settingsLink: "settings."
+    purge: "Purge"
+    all: "All"
+    none: "none"
+    confirm: "Are you sure you want to purge __name__ old data? This operation cannot be canceled."
+    purging: "Purging data..."
+    description:
+      outdated: "__n__ older than __lifespan__"
+      orphan: "__n__ unused"
+    info:
+      payloads:
+        name: "Test Payloads"
+      tags:
+        name: "Tags"
+      tickets:
+        name: "Tickets"
   statusModule:
     disconnected: "The connection to the server was lost. Data will not be refreshed anymore until you reload the page."
   linkTemplates:
@@ -219,6 +239,8 @@ this.Translations.en =
     tagCloudSizeInstructions: "maximum number of tags to show on the home page (1 or more)"
     testOutdatedDays: "Tests Outdated Days"
     testOutdatedDaysInstructions: "tests will be marked as outdated after this number of days (1 or more)"
+    testPayloadsLifespan: "Lifespan of Test Payloads"
+    testPayloadsLifespanInstructions: "payloads will be purged after this number of days (1 or more)"
     ticketingSystemUrl: "Ticketing System URL"
     save: "Save"
     error: "Could not save settings"

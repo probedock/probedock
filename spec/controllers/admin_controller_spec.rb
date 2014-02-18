@@ -42,6 +42,10 @@ describe AdminController do
       it "should set the test counters configuration", rox: { key: '58b561514050' } do
         expect(subject[:test_counters_config]).to eq(data: TestCountersData.compute)
       end
+
+      it "should set the purge configuration", rox: { key: '3fe76527ca85' } do
+        expect(subject[:purge_config]).to eq(PurgesController::PURGES.collect(&:purge_info))
+      end
     end
   end
 

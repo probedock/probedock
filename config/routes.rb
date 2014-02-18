@@ -59,6 +59,10 @@ ROXCenter::Application.routes.draw do
   resource :account, only: [ :show ]
   resources :metrics, only: [ :index ]
   resources :projects, only: [ :index, :show ]
+  resources :purges, only: [ :index ] do
+    post '/', action: :purge_all, on: :collection, as: :start_all
+    post '/', action: :purge, on: :member, as: :start
+  end
   resources :tags, only: [ :index ]
   resources :test_infos, path: :tests, only: [ :index, :show ] do
     collection do

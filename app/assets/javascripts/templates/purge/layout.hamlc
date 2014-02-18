@@ -1,0 +1,18 @@
+.panel-heading
+  %h3.panel-title= I18n.t('jst.purge.title')
+.panel-body
+  %p
+    = I18n.t('jst.purge.instructions')
+    = I18n.t('jst.purge.lifetimeInstructions')
+    %a.settingsLink= I18n.t('jst.purge.settingsLink')
+  %p
+    %em Note:
+    this must currently be triggered manually.
+%table.table.table-hover.table-bordered
+  %tbody
+.panel-footer
+  %form.form-inline{ role: 'form' }
+    %button.purge.btn.btn-warning{ type: 'submit' }= I18n.t('jst.purge.purge')
+    .form-group
+      %select.purgeTarget.form-control
+        %option{ value: '' }= I18n.t('jst.purge.all')

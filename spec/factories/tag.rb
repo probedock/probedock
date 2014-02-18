@@ -17,6 +17,14 @@
 
 FactoryGirl.define do
 
+  sequence :tag_name do |n|
+    "tag-#{n}"
+  end
+
+  factory :tag do
+    name{ generate :tag_name }
+  end
+
   factory :unit_tag, class: Tag do
     name 'unit'
 

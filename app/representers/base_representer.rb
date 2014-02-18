@@ -14,9 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
-# TODO: write specs
 class BaseRepresenter < Hal::Resource
+  # TODO: write specs
   helper RepresenterHelpers
 
   def initialize *args
@@ -26,5 +25,22 @@ class BaseRepresenter < Hal::Resource
   def self.representation &block
     @representation = block if block
     @representation
+  end
+
+  def self.collection_representation name, representer, options = {}, &block
+
+    camelcase_name = name.to_s.camelize :lower
+    hyphenized_name = name.to_s.gsub /\_/, '-'
+
+    representation do |res|
+      curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:#{camelcase_name}:{rel}", templated: true
+
+      link 'self', options[:uri] ? uri(options[:uri]) : api_uri(name)
+
+      property :total, res.total
+      property :page, res.page if res.page
+
+      embed_collection("v1:#{hyphenized_name}", res.data){ |o| representer.new o }
+    end
   end
 end

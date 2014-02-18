@@ -38,7 +38,7 @@ describe SettingsController do
     end
 
     describe "#update" do
-      let(:new_values){ { ticketing_system_url: 'http://example.com', reports_cache_size: 42, tag_cloud_size: 24, test_outdated_days: 66 } }
+      let(:new_values){ { ticketing_system_url: 'http://example.com', reports_cache_size: 42, tag_cloud_size: 24, test_outdated_days: 66, test_payloads_lifespan: 11 } }
 
       it "should update the settings", rox: { key: '394fc08c0929' } do
         put :update, setting: new_values

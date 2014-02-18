@@ -32,6 +32,6 @@ class SettingsController < ApplicationController
   private
 
   def setting_params
-    params.require(:setting).permit(:ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days)
+    params.require(:setting).permit(:ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days, :test_payloads_lifespan)
   end
 end

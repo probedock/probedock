@@ -14,18 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class ApiKeysRepresenter < BaseRepresenter
-
-  representation do |res|
-
-    curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:apiKeys:{rel}", templated: true
-
-    link 'self', uri(:api_keys, locale: nil)
-
-    property :total, res.total
-    property :page, res.page if res.page
-
-    embed_collection('v1:api-keys', res.data){ |k| ApiKeyRepresenter.new k }
-  end
+  collection_representation :api_keys, ApiKeyRepresenter, uri: :api_keys
 end

@@ -17,7 +17,15 @@
 
 FactoryGirl.define do
 
+  sequence :ticket_name do |n|
+    "ticket-#{n}"
+  end
+
   factory :ticket do
+    name{ generate :ticket_name }
+  end
+
+  factory :sample_ticket, class: Ticket do
     name 'JIRA-1337'
 
     factory :other_ticket do

@@ -14,19 +14,27 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+class PurgesController < ApplicationController
+  PURGES = [ PurgeTagsJob, PurgeTicketsJob, PurgeTestPayloadsJob ]
+  before_filter :authenticate_user!
+  before_filter{ authorize! :manage, :app }
+  before_filter :check_maintenance, only: [ :purge, :purge_all ]
 
-if Settings::App.get.blank?
-  Settings::App.new.tap do |s|
-    s.reports_cache_size = 50
-    s.tag_cloud_size = 50
-    s.test_outdated_days = 30
-    s.test_payloads_lifespan = 7
-  end.save!
+  def index
+    render json: PURGES.collect(&:purge_info)
+  end
+
+  def purge
+
+    purge = PURGES.find{ |p| p.purge_id.to_s == params[:id].to_s }
+    raise ActiveRecord::RecordNotFound unless purge
+
+    Resque.enqueue purge
+    head :no_content
+  end
+
+  def purge_all
+    PURGES.each{ |p| Resque.enqueue p }
+    head :no_content
+  end
 end

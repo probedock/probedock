@@ -14,19 +14,31 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+class PurgeTestPayloadsJob
+  @queue = :purge
 
-if Settings::App.get.blank?
-  Settings::App.new.tap do |s|
-    s.reports_cache_size = 50
-    s.tag_cloud_size = 50
-    s.test_outdated_days = 30
-    s.test_payloads_lifespan = 7
-  end.save!
+  def self.perform
+    n = outdated_payloads(Settings.app.test_payloads_lifespan).delete_all
+    Rails.logger.info "Purged #{n} outdated test payloads"
+    Rails.application.events.fire 'purge:payloads'
+  end
+
+  def self.purge_id
+    :payloads
+  end
+
+  def self.purge_info
+    lifespan = Settings.app.test_payloads_lifespan
+    {
+      id: :payloads,
+      lifespan: lifespan * 24 * 3600 * 1000,
+      total: outdated_payloads(lifespan).count
+    }
+  end
+
+  private
+
+  def self.outdated_payloads lifespan
+    TestPayload.where(state: :processed).where 'received_at < ?', Time.now - lifespan * 24 * 3600
+  end
 end

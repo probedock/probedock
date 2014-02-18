@@ -24,7 +24,8 @@ describe Settings, rox: { tags: :unit } do
       ticketing_system_url: 'foo',
       reports_cache_size: 24,
       tag_cloud_size: 66,
-      test_outdated_days: 32
+      test_outdated_days: 32,
+      test_payloads_lifespan: 11
     }
   }
   

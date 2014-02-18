@@ -28,6 +28,7 @@ App.autoModule('globalSettings', function() {
       reportsCacheSize: '#settings_reports_cache_size',
       tagCloudSize: '#settings_tag_cloud_size',
       testOutdatedDays: '#settings_test_outdated_days',
+      testPayloadsLifespan: '#settings_test_payloads_lifespan',
       fields: 'form :input',
       saveButton: 'form button',
       formControls: 'form .form-controls'
@@ -72,6 +73,7 @@ App.autoModule('globalSettings', function() {
       this.ui.reportsCacheSize.val(this.model.get('reports_cache_size'));
       this.ui.tagCloudSize.val(this.model.get('tag_cloud_size'));
       this.ui.testOutdatedDays.val(this.model.get('test_outdated_days'));
+      this.ui.testPayloadsLifespan.val(this.model.get('test_payloads_lifespan'));
     },
 
     save: function(e) {
@@ -89,7 +91,8 @@ App.autoModule('globalSettings', function() {
         ticketing_system_url: this.ui.ticketingSystemUrl.val(),
         reports_cache_size: this.ui.reportsCacheSize.val(),
         tag_cloud_size: this.ui.tagCloudSize.val(),
-        test_outdated_days: this.ui.testOutdatedDays.val()
+        test_outdated_days: this.ui.testOutdatedDays.val(),
+        test_payloads_lifespan: this.ui.testPayloadsLifespan.val()
       }, options).complete(_.bind(this.setBusy, this, false));
     },
 

@@ -43,7 +43,8 @@ describe Settings::App, rox: { tags: :unit } do
       Settings::App.first.serializable_hash.should == {
         reports_cache_size: 50,
         tag_cloud_size: 50,
-        test_outdated_days: 30
+        test_outdated_days: 30,
+        test_payloads_lifespan: 7
       }
 
       # try with a new instance
@@ -51,12 +52,14 @@ describe Settings::App, rox: { tags: :unit } do
       subject.reports_cache_size = 24
       subject.tag_cloud_size = 66
       subject.test_outdated_days = 77
+      subject.test_payloads_lifespan = 11
       subject.updated_at = Time.now
       subject.serializable_hash.should == {
         ticketing_system_url: 'foo',
         reports_cache_size: 24,
         tag_cloud_size: 66,
-        test_outdated_days: 77
+        test_outdated_days: 77,
+        test_payloads_lifespan: 11
       }
     end
   end
@@ -75,6 +78,7 @@ describe Settings::App, rox: { tags: :unit } do
     it(nil, rox: { key: '0ff5756f4e59' }){ should allow_value(1, 10, 25, 50, 1000).for(:test_outdated_days) }
     it(nil, rox: { key: '855a877b5e9d' }){ should_not allow_value(-1000, -42, -1, 0).for(:test_outdated_days) }
     it(nil, rox: { key: '87cce3001f23' }){ should ensure_length_of(:ticketing_system_url).is_at_most(255) }
+    it(nil, rox: { key: '03f3dde4d133' }){ should validate_numericality_of(:test_payloads_lifespan).only_integer.is_greater_than_or_equal_to(1) }
   end
 
   context "database table" do
@@ -88,6 +92,7 @@ describe Settings::App, rox: { tags: :unit } do
     it(nil, rox: { key: '428ab528584e' }){ should have_db_column(:reports_cache_size).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: 'b7d20d6e1a23' }){ should have_db_column(:tag_cloud_size).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '92e5fc23677f' }){ should have_db_column(:test_outdated_days).of_type(:integer).with_options(null: false) }
+    it(nil, rox: { key: '56f8ac256182' }){ should have_db_column(:test_payloads_lifespan).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: 'f779a63e0e35' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
   end
 end

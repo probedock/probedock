@@ -1,0 +1,2 @@
+%th= @name
+%td.description= @description
