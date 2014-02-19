@@ -1,0 +1,4 @@
+.panel.panel-info
+  .panel-heading
+    %h3.panel-title= @id
+  .panel-body

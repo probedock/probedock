@@ -14,13 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-config = YAML.load_file(Rails.root.to_s + '/config/redis.yml')
-config = config[Rails.env]
+class UserRepresenter < BaseRepresenter
 
-host, port, db = config.split /:/
-
-options = { host: host, port: port, db: db.to_i, driver: :hiredis }
-options[:logger] = Rails.logger unless ENV['QUEUE'] or ENV['RESQUE'] or Rails.env != 'development'
-
-$redis_db = Redis.new options
-$redis = Redis::Namespace.new 'rox', redis: $redis_db
+  representation do |user|
+    property :name, user.name
+    property :email, user.email if user.email
+  end
+end

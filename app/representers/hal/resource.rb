@@ -68,7 +68,16 @@ module Hal
 
         h.merge! @properties
 
-        h['_embedded'] = @embedded.inject({}){ |memo,(rel,resources)| memo[rel] = resources.collect{ |r| r.serializable_hash options }; memo } if @embedded.any?
+        if @embedded.any?
+          h['_embedded'] = @embedded.inject({}) do |memo,(rel,resources)|
+            memo[rel] = if resources.kind_of? Array
+              resources.collect{ |r| r.serializable_hash options }
+            else
+              resources.serializable_hash options
+            end
+            memo
+          end
+        end
       end
     end
 
@@ -99,12 +108,13 @@ module Hal
         @resource.properties[key.to_s] = value
       end
 
-      def embed rel, res = nil, options = {}
-        if options[:one]
-          @resource.embedded[rel] = res
-        else
+      def embed rel, res = nil, options = {}, &block
+        res = block ? block.call(res) : res
+        if options[:multiple]
           @resource.embedded[rel] ||= []
-          @resource.embedded[rel] << res if res
+          @resource.embedded[rel] << res
+        else
+          @resource.embedded[rel] = res
         end
       end
 

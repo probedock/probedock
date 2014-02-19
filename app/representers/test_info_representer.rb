@@ -14,13 +14,17 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-config = YAML.load_file(Rails.root.to_s + '/config/redis.yml')
-config = config[Rails.env]
+class TestInfoRepresenter < BaseRepresenter
 
-host, port, db = config.split /:/
+  representation do |test_info|
 
-options = { host: host, port: port, db: db.to_i, driver: :hiredis }
-options[:logger] = Rails.logger unless ENV['QUEUE'] or ENV['RESQUE'] or Rails.env != 'development'
+    curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:tests:{rel}", templated: true
 
-$redis_db = Redis.new options
-$redis = Redis::Namespace.new 'rox', redis: $redis_db
+    property :name, test_info.name
+    property :createdAt, test_info.created_at.to_ms
+
+    embed('v1:author', test_info.author){ |author| UserRepresenter.new author }
+    embed_collection('v1:tags', test_info.tags){ |tag| TagRepresenter.new tag }
+    embed_collection('v1:tickets', test_info.tickets){ |ticket| TicketRepresenter.new ticket }
+  end
+end

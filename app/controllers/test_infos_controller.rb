@@ -34,9 +34,17 @@ class TestInfosController < ApplicationController
   end
 
   def show
+
     # TODO: if params[:id] is only the test key and multiple tests match, show the list in a special page
     @test_info = @test_info.includes(*SHOW_INCLUDES).first! unless @test_info.kind_of? TestInfo
     window_title << TestInfo.model_name.human.pluralize.titleize << @test_info.project.name << truncate(@test_info.name, length: 100)
+
+    widget_data = Rails.application.test_widgets.inject({}) do |memo,name|
+      memo[name] = {}
+      memo
+    end
+
+    @test_widgets_config = { test: TestInfoRepresenter.new(@test_info).serializable_hash, widgets: widget_data }
   end
 
   def deprecate

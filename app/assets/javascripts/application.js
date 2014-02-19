@@ -53,4 +53,5 @@
 //= require_tree ./models
 //= require_tree ./views
 //= require_tree ./modules
+//= require_tree ./widgets
 //= require ./doc

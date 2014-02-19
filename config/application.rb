@@ -73,6 +73,12 @@ module ROXCenter
     VERSION = File.open(File.join(root, 'VERSION'), 'r').read
     VERSION_HASH = Digest::SHA512.hexdigest VERSION
 
+    TEST_WIDGETS = []
+
+    def test_widgets
+      TEST_WIDGETS
+    end
+
     config.after_initialize do
       self.started_at = Time.now
     end
