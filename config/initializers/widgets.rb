@@ -1,4 +1,3 @@
-
 # Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of ROX Center.
@@ -17,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 config = HashWithIndifferentAccess.new YAML.load_file(Rails.root.join('config', 'rox-center.yml'))
 
-test_widgets = %w(info)
+test_widgets = %w(info permalink)
 
 raise "test_widgets configuration must be an array" if config[:test_widgets] and !config[:test_widgets].kind_of?(Array)
 (config[:test_widgets] || test_widgets).each do |name|

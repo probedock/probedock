@@ -14,22 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class ProjectRepresenter < BaseRepresenter
+class CategoryRepresenter < BaseRepresenter
 
-  representation do |project|
-
-    link 'self', api_uri(:project, id: project.api_id)
-    link 'alternate', uri(:project, id: project), type: media_type(:html)
-
-    %w(name api_id url_token deprecated_tests_count).each do |name|
-      property name.camelize(:lower), project.send(name)
-    end
-
-    # TODO: rename activeTestsCount to testsCount or currentTestsCount to avoid confusion with active/inactive tests
-    property :activeTestsCount, project.tests_count - project.deprecated_tests_count
-
-    %w(created_at).each do |name|
-      property name.camelize(:lower), project.send(name).to_ms
-    end
+  representation do |category|
+    #curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:categories:{rel}", templated: true
+    link 'search', uri(:test_infos, categories: [ category.name ]), type: media_type(:html)
+    property :name, category.name
   end
 end

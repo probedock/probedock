@@ -14,32 +14,30 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-App.module('views', function() {
+(function() {
 
-  this.TestWidgetContainer = Marionette.Layout.extend({
+  App.addTestWidget('permalink', Marionette.ItemView, {
 
-    template: 'widgets/test',
-    className: function() {
-      return 'panel panel-info testWidget ' + this.model.id + 'TestWidget';
+    ui: {
+      permalinkField: 'form input',
+      permalinkButton: 'form button'
     },
 
-    regions: {
-      widgetBody: '.panel-body'
+    events: {
+      'click form input': 'selectPermalink'
     },
 
     serializeData: function() {
-      return _.extend(this.model.toJSON(), {
-        title: I18n.t('jst.testWidgets.' + this.model.id + '.title')
-      });
+      return { permalink: this.model.get('_links').bookmark.href };
     },
 
     onRender: function() {
-      this.showWidget();
+      Clipboard.setup(this.ui.permalinkButton, this.model.get('_links').bookmark.href);
     },
 
-    showWidget: function() {
-      var widgetClass = App.module('testWidgets')[this.model.id.underscore().camelize()];
-      this.widgetBody.show(new widgetClass({ model: this.model.get('test'), widget: this.model }));
+    selectPermalink: function(e) {
+      e.preventDefault();
+      this.ui.permalinkField.setSelection(0, this.ui.permalinkField.val().length);
     }
   });
-});
+})();

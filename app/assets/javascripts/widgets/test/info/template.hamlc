@@ -5,6 +5,6 @@
   %dd.project
   %dt= I18n.t('jst.models.test.createdAt')
   %dd= @humanCreatedAt
-  %dt= I18n.t('jst.models.test.category')
-  %dd.category
+  %dt= I18n.t('jst.models.test.lastRunAt')
+  %dd= @humanLastRunAt
 .labels

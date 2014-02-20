@@ -21,14 +21,20 @@ App.autoModule('testWidgets', function() {
   var HalUser = HalModel.extend({
   });
 
+  var HalProject = HalModel.extend({
+  });
+
+  var HalCategory = HalModel.extend({
+  });
+
   var HalTag = HalModel.extend({
   });
 
   var HalTicket = HalModel.extend({
 
     ticketHref: function() {
-      var describedByLink = this.get('_links').describedby;
-      return describedByLink ? describedByLink.href : this.get('_links')['v1:tests'].href;
+      var aboutLink = this.get('_links').about;
+      return aboutLink ? aboutLink.href : this.get('_links')['search'].href;
     }
   });
 
@@ -40,6 +46,18 @@ App.autoModule('testWidgets', function() {
         key: 'author',
         keySource: 'v1:author',
         relatedModel: HalUser
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'project',
+        keySource: 'v1:project',
+        relatedModel: HalProject
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'category',
+        keySource: 'v1:category',
+        relatedModel: HalCategory
       },
       {
         type: Backbone.HasMany,
@@ -87,8 +105,59 @@ App.autoModule('testWidgets', function() {
 
     template: 'widgets/layout',
     itemView: App.module('views').TestWidgetContainer,
-    itemViewContainer: '.col-md-6'
+    itemViewContainer: '.row',
+
+    ui: {
+      columns: '.row .col-md-6'
+    },
+
+    initRenderBuffer: function() {
+      Marionette.CompositeView.prototype.initRenderBuffer.apply(this, Array.prototype.slice.call(arguments));
+      this.elBuffer = [ $('<div />'), $('<div />') ];
+    },
+
+    appendBuffer: function(compositeView, buffer) {
+      this.ui.columns.each(function(index) {
+        $(this).html(buffer[index].children());
+      });
+    },
+
+    appendHtml: function(compositeView, itemView, index){
+      if (compositeView.isBuffering) {
+        compositeView.elBuffer[index].append(itemView.el);
+        compositeView._bufferedChildren.push(itemView);
+      } else {
+        this.ui.columns.find(':nth-child(' + (index + 1) + ')').append(itemView.el);
+      }
+    }
   });
+
+  App.addTestWidget = function(name, marionetteClass, definition) {
+
+    App.module('testWidgets', function() {
+
+      this[name.underscore().camelize()] = marionetteClass.extend(_.extend({
+
+        widget: name,
+        className: 'testWidgetBody',
+        
+        initialize: function() {
+
+          this.template = 'widgets/test/' + this.widget + '/template';
+
+          if (typeof(this.initializeWidget) == 'function') {
+            this.initializeWidget.apply(this, Array.prototype.slice.call(arguments));
+          }
+        },
+
+        t: function() {
+          var args = Array.prototype.slice.call(arguments);
+          args[0] = 'jst.testWidgets.' + this.widget + '.' + args[0];
+          return I18n.t.apply(I18n, args);
+        }
+      }, definition));
+    });
+  };
 
   this.addAutoInitializer(function(options) {
 

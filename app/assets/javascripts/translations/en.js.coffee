@@ -20,6 +20,16 @@ this.Translations.en =
     maintenance:
       title: "Maintenance Mode."
       notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
+  testWidgets:
+    info:
+      title: "Information"
+      goToCategory: "Go to the list of all tests in the __name__ category."
+      goToTag: "Go to the list of all tests with the __name__ tag."
+      goToTicket: "Go to the list of all tests related to the __name__ ticket."
+      goToExternalTicket: "Go to the __name__ ticket in the external ticketing system."
+    permalink:
+      title: "Permalink"
+      instructions: "Use this permalink to link to this test from elsewhere."
   purge:
     title: "Data Purge"
     instructions: "Data is purged to save space. Some of the data is purged only after a given time, some as soon as it's no longer referenced."
@@ -200,7 +210,6 @@ this.Translations.en =
     resultStatus:
       passed: "passed"
       failed: "failed"
-    permalinkInstructions: "Use this permalink to link to this test from elsewhere."
     copyToClipboard: "Copy to clipboard"
     copiedToClipboard: "Copied!"
   testRunReport:
@@ -343,7 +352,7 @@ this.Translations.en =
       project: "Project"
       author: "Author"
       key: "Key"
-      createdAt: "Created at"
+      createdAt: "Created"
       lastRunAt: "Last run"
       lastRunDuration: "Duration"
       status: "Status"

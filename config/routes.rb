@@ -46,10 +46,10 @@ ROXCenter::Application.routes.draw do
     match :test_counters, via: [ :get, :post ]
   end
 
-  namespace :go, module: nil, controller: :go do
-    get :project
-    get :run
-    get :test
+  namespace :go, module: nil, controller: :go, as: nil do
+    get :project, as: :project_permalink
+    get :run, as: :test_run_permalink
+    get :test, as: :test_permalink
   end
 
   devise_for :users, path_names: { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }

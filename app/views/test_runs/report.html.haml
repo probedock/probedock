@@ -118,7 +118,7 @@
             %dt= I18n.t('activerecord.attributes.test_info.author')
             %dd= link_to result.test_info.author.name, user_path(result.test_info.author)
             %dt= I18n.t('activerecord.attributes.test_info.project')
-            %dd= link_to result.test_info.project.name, go_project_path(apiId: result.test_info.project.api_id)
+            %dd= link_to result.test_info.project.name, project_permalink_path(apiId: result.test_info.project.api_id)
             %dt= I18n.t('activerecord.attributes.test_result.version')
             %dd= result.project_version.present? ? result.project_version.name : t('common.no_data')
             %dt= I18n.t('activerecord.attributes.test_result.duration')

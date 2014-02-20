@@ -17,8 +17,8 @@
 class TagRepresenter < BaseRepresenter
 
   representation do |tag|
-    curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:tags:{rel}", templated: true
-    link 'v1:tests', uri(:test_infos, tags: [ tag.name ]), type: media_type(:html)
+    #curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:tags:{rel}", templated: true
+    link 'search', uri(:test_infos, tags: [ tag.name ]), type: media_type(:html)
     property :name, tag.name
   end
 end

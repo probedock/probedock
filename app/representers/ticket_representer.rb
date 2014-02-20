@@ -17,9 +17,9 @@
 class TicketRepresenter < BaseRepresenter
 
   representation do |ticket|
-    curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:tickets:{rel}", templated: true
-    link 'describedby', ticket.url, type: media_type(:html) if ticket.url
-    link 'v1:tests', uri(:test_infos, tickets: [ ticket.name ]), type: media_type(:html)
+    #curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:tickets:{rel}", templated: true
+    link 'about', ticket.url, type: media_type(:html) if ticket.url
+    link 'search', uri(:test_infos, tickets: [ ticket.name ]), type: media_type(:html)
     property :name, ticket.name
   end
 end

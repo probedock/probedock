@@ -17,6 +17,7 @@
 class UserRepresenter < BaseRepresenter
 
   representation do |user|
+    link 'alternate', uri(:user, id: user), type: media_type(:html)
     property :name, user.name
     property :email, user.email if user.email
   end
