@@ -62,9 +62,9 @@ class TestInfo < ActiveRecord::Base
     default_view do
 
       field :name
-      field :created_at
-      field :last_run_at
-      field :last_run_duration
+      field :created_at, as: :createdAt
+      field :last_run_at, as: :lastRunAt
+      field :last_run_duration, as: :lastRunDuration
       field :passing, order: false
       field :active, order: false
 
@@ -75,12 +75,10 @@ class TestInfo < ActiveRecord::Base
 
       field :author, includes: :author do
         order{ |q,d| q.joins(:author).order("users.name #{d}") }
-        value{ |o| o.author.to_client_hash }
       end
 
       field :project, includes: :project do
         order{ |q,d| q.joins(:project).order("projects.name #{d}") }
-        value{ |o| o.project.to_client_hash }
       end
 
       field :key, includes: :key do
@@ -88,13 +86,15 @@ class TestInfo < ActiveRecord::Base
         value{ |o| o.key.key }
       end
 
-      field :effective_result, includes: { effective_result: [ :runner, :project_version ] } do
-        value{ |o| o.effective_result.to_client_hash type: :test }
-      end
+      field :effective_result, includes: { effective_result: [ :runner, :project_version ] }, as: :effectiveResult
 
       quick_search do |query,term|
         term = "%#{term.downcase}%"
         query.joins(:key).joins(:author).joins(:project).where('LOWER(test_infos.name) LIKE ? OR LOWER(projects.name) LIKE ? OR LOWER(test_keys.key) LIKE ? OR LOWER(users.name) LIKE ?', term, term, term, term)
+      end
+
+      serialize_response do |res|
+        TestInfosRepresenter.new OpenStruct.new(res)
       end
     end
   end

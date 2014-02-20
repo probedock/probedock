@@ -16,71 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testWidgets', function() {
 
-  var HalModel = App.module('models').HalModel;
-
-  var HalUser = HalModel.extend({
-
-    halLinks: [ 'alternate' ]
-  });
-
-  var HalProject = HalModel.extend({
-
-    halLinks: [ 'self', 'alternate' ]
-  });
-
-  var HalCategory = HalModel.extend({
-
-    halLinks: [ 'search' ]
-  });
-
-  var HalTag = HalModel.extend({
-
-    halLinks: [ 'search' ]
-  });
-
-  var HalTicket = HalModel.extend({
-
-    halLinks: [ 'about', 'search' ],
-
-    ticketHref: function() {
-      return this.hasLink('about') ? this.link('about').get('href') : this.link('search').get('href');
-    }
-  });
-
-  var HalTestEmbedded = Backbone.RelationalModel.extend({
-  });
-
-  var HalTest = HalModel.extend({
-
-    halLinks: [ 'bookmark' ],
-    halEmbedded: [
-      {
-        type: Backbone.HasOne,
-        key: 'v1:author',
-        relatedModel: HalUser
-      },
-      {
-        type: Backbone.HasOne,
-        key: 'v1:project',
-        relatedModel: HalProject
-      },
-      {
-        type: Backbone.HasOne,
-        key: 'v1:category',
-        relatedModel: HalCategory
-      },
-      {
-        type: Backbone.HasMany,
-        key: 'v1:tags',
-        relatedModel: HalTag
-      },
-      {
-        type: Backbone.HasMany,
-        key: 'v1:tickets',
-        relatedModel: HalTicket
-      }
-    ]
-  });
+  var Test = App.module('models').Test;
 
   var TestWidget = Backbone.Model.extend({
 
@@ -88,7 +24,7 @@ App.autoModule('testWidgets', function() {
       {
         type: Backbone.HasOne,
         key: 'test',
-        relatedModel: HalTest
+        relatedModel: Test
       }
     ]
   });
@@ -157,7 +93,7 @@ App.autoModule('testWidgets', function() {
 
   this.addAutoInitializer(function(options) {
 
-    var test = new HalTest(options.config.test);
+    var test = new Test(options.config.test);
 
     var widgetsData = new TestWidgetDataCollection(_.reduce(options.config.widgets, function(memo, data, name) {
 

@@ -38,7 +38,23 @@ App.module('models', function() {
         throw new Error('No link found with relation ' + rel);
       }
 
-      return this.get(rel);
+      var links = this.get(rel);
+      if (typeof(links.length) == 'undefined') {
+        return links;
+      }
+
+      var type = options.type;
+      var matching = links.filter(function(link) {
+        return link.get('type') != null && link.get('type') == type;
+      });
+
+      if (!matching.length) {
+        throw new Error('No link found with relation ' + rel + ' and type ' + type);
+      } else if (matching.length >= 2) {
+        throw new Error('Multiple links found with relation ' + rel + ' and type ' + type);
+      }
+
+      return _.first(matching);
     }
   });
 

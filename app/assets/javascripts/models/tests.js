@@ -16,7 +16,91 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var Test = this.Test = Backbone.RelationalModel.extend({
+  var HalModel = this.HalModel;
+
+  var HalUser = HalModel.extend({
+
+    halLinks: [ 'alternate' ],
+
+    linkTag: function() {
+      return this.link('alternate').tag(this.get('name'));
+    }
+  });
+
+  var HalProject = HalModel.extend({
+
+    halLinks: [ 'self', 'alternate' ],
+
+    linkTag: function() {
+      return this.link('alternate').tag(this.get('name'));
+    }
+  });
+
+  var HalCategory = HalModel.extend({
+
+    halLinks: [ 'search' ],
+
+    linkTag: function() {
+      return this.link('search').tag(this.get('name'));
+    }
+  });
+
+  var HalTag = HalModel.extend({
+
+    halLinks: [ 'search' ]
+  });
+
+  var HalTicket = HalModel.extend({
+
+    halLinks: [ 'about', 'search' ],
+
+    ticketHref: function() {
+      return this.hasLink('about') ? this.link('about').get('href') : this.link('search').get('href');
+    }
+  });
+
+  var Test = this.Test = HalModel.extend({
+
+    halLinks: [ 'self', 'alternate', 'bookmark', { key: 'v1:lastRun', type: Backbone.HasMany } ],
+    halEmbedded: [
+      {
+        type: Backbone.HasOne,
+        key: 'v1:author',
+        relatedModel: HalUser
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:lastRunner',
+        relatedModel: HalUser
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:project',
+        relatedModel: HalProject
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:category',
+        relatedModel: HalCategory
+      },
+      {
+        type: Backbone.HasMany,
+        key: 'v1:tags',
+        relatedModel: HalTag
+      },
+      {
+        type: Backbone.HasMany,
+        key: 'v1:tickets',
+        relatedModel: HalTicket
+      }
+    ],
+
+    isDeprecated: function() {
+      return !!this.get('deprecatedAt');
+    }
+  });
+
+  var LegacyTest = this.LegacyTest = Backbone.RelationalModel.extend({
 
     relations: [
       {
@@ -91,7 +175,9 @@ App.module('models', function() {
     }
   });
 
-  var TestTableCollection = this.TestTableCollection = Tableling.Collection.extend({
-    model: Test
+  var TestTableCollection = this.TestTableCollection = this.HalCollection.extend({
+
+    model: Test,
+    embeddedModels: 'v1:tests'
   });
 });

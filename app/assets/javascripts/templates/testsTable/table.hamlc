@@ -4,7 +4,7 @@
       %th.name.sorting{ :'data-field' => 'name' }= I18n.t('jst.models.test.name')
       %th.project.sorting{ :'data-field' => 'project' }= I18n.t('jst.models.test.project')
       %th.author.sorting{ :'data-field' => 'author' }= I18n.t('jst.models.test.author')
-      %th.createdAt.sorting{ :'data-field' => 'created_at' }= I18n.t('jst.models.test.createdAt')
+      %th.createdAt.sorting{ :'data-field' => 'createdAt' }= I18n.t('jst.models.test.createdAt')
       %th.key= I18n.t('jst.models.test.key')
       %th.action
   %tbody

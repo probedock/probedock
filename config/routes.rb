@@ -113,6 +113,8 @@ ROXCenter::Application.routes.draw do
 
     resources :projects, only: [ :index, :create, :update ]
 
+    resources :tests, only: [ :index, :show ]
+
     resources :test_keys, only: [ :index, :create ] do
       
       collection do
@@ -164,9 +166,6 @@ ROXCenter::Application.routes.draw do
       end
 
       resources :test_infos, path: :tests, only: [] do
-        collection do
-          get '/', action: :page
-        end
         member do
           get :results, action: :results_page
           get 'results/chart', action: :results_chart

@@ -38,13 +38,13 @@ App.autoModule('testsTable', function() {
 
     serializeData: function() {
       return {
-        lastRunAt: Format.datetime.short(new Date(this.model.get('last_run_at'))),
-        lastRunDuration: Format.duration(this.model.get('last_run_duration'), { shorten: 's' })
+        lastRunAt: Format.datetime.short(new Date(this.model.get('lastRunAt'))),
+        lastRunDuration: Format.duration(this.model.get('lastRunDuration'), { shorten: 's' })
       };
     },
 
     onRender: function() {
-      this.avatar.show(new views.UserAvatar({ model: this.model.get('effective_result').get('runner'), size: 'small', link: false }));
+      this.avatar.show(new views.UserAvatar({ model: this.model.embedded('v1:lastRunner'), size: 'small', link: false }));
     }
   });
 
@@ -85,8 +85,8 @@ App.autoModule('testsTable', function() {
       this.renderName();
       this.renderKey();
       this.renderProject();
-      this.author.show(new views.UserAvatar({ model: this.model.get('author'), size: 'small' }));
-      this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
+      this.author.show(new views.UserAvatar({ model: this.model.embedded('v1:author'), size: 'small' }));
+      this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('createdAt'))));
       this.renderStatus();
       this.updateSelection();
     },
@@ -107,7 +107,7 @@ App.autoModule('testsTable', function() {
     },
 
     renderName: function() {
-      this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
+      this.truncateLink(this.model.link('alternate').get('href'), this.model.get('name'), 75, this.ui.name);
     },
 
     renderKey: function() {
@@ -120,11 +120,12 @@ App.autoModule('testsTable', function() {
       }
 
       this.ui.key.html(el);
-      Clipboard.setup(el, this.model.permalink(true), { title: I18n.t('jst.testsTable.keyTooltip') });
+      Clipboard.setup(el, this.model.link('bookmark').get('href'), { title: I18n.t('jst.testsTable.keyTooltip') });
     },
 
     renderProject: function() {
-      this.truncateLink(this.model.get('project').path(), this.model.get('project').get('name'), 22, this.ui.project);
+      var project = this.model.embedded('v1:project');
+      this.truncateLink(project.link('alternate').get('href'), project.get('name'), 22, this.ui.project);
     },
 
     truncateLink: function(href, text, max, el) {
@@ -161,7 +162,7 @@ App.autoModule('testsTable', function() {
 
     renderStatus: function() {
 
-      this.ui.statusLink.attr('href', Path.build('runs', this.model.get('effective_result').get('test_run_id')));
+      this.ui.statusLink.attr('href', this.model.link('v1:lastRun', { type: 'text/html' }).get('href'));
       this.ui.statusIcon.removeClass('glyphicon-thumbs-up glyphicon-thumbs-down');
       this.ui.statusIcon.addClass('glyphicon-' + (this.model.get('passing') ? 'thumbs-up' : 'thumbs-down'));
 
@@ -293,12 +294,9 @@ App.autoModule('testsTable', function() {
     },
 
     tableView: TestsTableView,
-    tableViewOptions: {
-      collection: new models.TestTableCollection()
-    },
 
     config: {
-      sort: [ 'created_at desc' ],
+      sort: [ 'createdAt desc' ],
       pageSize: 15
     },
 

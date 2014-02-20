@@ -62,7 +62,16 @@ module Hal
       Hash.new.tap do |h|
 
         if @links.any?
-          h['_links'] = @links.inject({}){ |memo,(rel,link)| memo[rel] = link.serializable_hash options; memo }
+
+          h['_links'] = @links.inject({}) do |memo,(rel,links)|
+            memo[rel] = if links.kind_of? Array
+              links.collect{ |link| link.serializable_hash options }
+            else
+              links.serializable_hash options
+            end
+            memo
+          end
+
           h['_links']['curies'] = @curies.inject([]){ |memo,(name,curie)| memo << curie } if @curies.any?
         end
 
@@ -98,6 +107,14 @@ module Hal
         href = block ? block.call : args.shift || options.delete(:href)
         link = Hal::Link.new rel, href, options
         @resource.links[link.rel] = link
+      end
+
+      def links rel, *args, &block
+        options = args.last.kind_of?(Hash) ? args.pop : {}
+        href = block ? block.call : args.shift || options.delete(:href)
+        link = Hal::Link.new rel, href, options
+        @resource.links[link.rel] ||= []
+        @resource.links[link.rel] << link
       end
 
       def curie name, href, options = {}

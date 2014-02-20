@@ -31,6 +31,11 @@ App.module('views', function() {
       this.tooltip = options.tooltip;
     },
 
+    alternatePath: function() {
+      // FIXME: remove once hal author model is used everywhere
+      return _.isFunction(this.model.link) ? this.model.link('alternate').get('href') : this.model.path();
+    },
+
     onRender: function() {
 
       this.$el.addClass(this.avatarSizeClass());
@@ -48,13 +53,13 @@ App.module('views', function() {
     },
 
     renderLabel: function() {
-      this.link ? this.ui.name.html($('<a />').attr('href', this.model.path()).text(this.label)) : this.ui.name.text(this.label);
+      this.link ? this.ui.name.html($('<a />').attr('href', this.alternatePath()).text(this.label)) : this.ui.name.text(this.label);
     },
 
     renderAvatar: function() {
       var email = this.model.get('email') || 'example@lotaris.com';
       var img = $.gravatar(email, { size: this.avatarSizeValue(), secure: App.secure }).attr('alt', this.model.get('name'))
-      this.ui.avatar.html(this.link ? $('<a />').attr('href', this.model.path()).append(img) : img);
+      this.ui.avatar.html(this.link ? $('<a />').attr('href', this.alternatePath()).append(img) : img);
     },
 
     avatarSizeValue: function() {

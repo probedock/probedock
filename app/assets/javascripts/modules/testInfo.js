@@ -17,7 +17,7 @@
 App.autoModule('testInfo', function() {
 
   var models = App.module('models'),
-      Test = models.Test,
+      Test = models.LegacyTest,
       TestResult = models.TestResult,
       TestResultTableCollection = models.TestResultTableCollection;
 

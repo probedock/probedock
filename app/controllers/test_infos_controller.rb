@@ -29,10 +29,6 @@ class TestInfosController < ApplicationController
     @test_selector_config = { linkTemplates: LinkTemplate.order('name ASC').to_a }
   end
 
-  def page
-    render json: TestInfo.tableling.process(params.merge(TestSearch.options(params[:search])))
-  end
-
   def show
 
     # TODO: if params[:id] is only the test key and multiple tests match, show the list in a special page
