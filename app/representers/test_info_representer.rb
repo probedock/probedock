@@ -31,7 +31,7 @@ class TestInfoRepresenter < BaseRepresenter
 
     embed('v1:author', test_info.author){ |author| UserRepresenter.new author }
     embed('v1:project', test_info.project){ |project| ProjectRepresenter.new project }
-    embed('v1:category', test_info.category){ |category| CategoryRepresenter.new category }
+    embed('v1:category', test_info.category){ |category| CategoryRepresenter.new category } if test_info.category
     embed_collection('v1:tags', test_info.tags){ |tag| TagRepresenter.new tag }
     embed_collection('v1:tickets', test_info.tickets){ |ticket| TicketRepresenter.new ticket }
   end

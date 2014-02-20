@@ -19,69 +19,65 @@ App.autoModule('testWidgets', function() {
   var HalModel = App.module('models').HalModel;
 
   var HalUser = HalModel.extend({
+
+    halLinks: [ 'alternate' ]
   });
 
   var HalProject = HalModel.extend({
+
+    halLinks: [ 'self', 'alternate' ]
   });
 
   var HalCategory = HalModel.extend({
+
+    halLinks: [ 'search' ]
   });
 
   var HalTag = HalModel.extend({
+
+    halLinks: [ 'search' ]
   });
 
   var HalTicket = HalModel.extend({
 
+    halLinks: [ 'about', 'search' ],
+
     ticketHref: function() {
-      var aboutLink = this.get('_links').about;
-      return aboutLink ? aboutLink.href : this.get('_links')['search'].href;
+      return this.hasLink('about') ? this.link('about').get('href') : this.link('search').get('href');
     }
   });
 
   var HalTestEmbedded = Backbone.RelationalModel.extend({
-
-    relations: [
-      {
-        type: Backbone.HasOne,
-        key: 'author',
-        keySource: 'v1:author',
-        relatedModel: HalUser
-      },
-      {
-        type: Backbone.HasOne,
-        key: 'project',
-        keySource: 'v1:project',
-        relatedModel: HalProject
-      },
-      {
-        type: Backbone.HasOne,
-        key: 'category',
-        keySource: 'v1:category',
-        relatedModel: HalCategory
-      },
-      {
-        type: Backbone.HasMany,
-        key: 'tags',
-        keySource: 'v1:tags',
-        relatedModel: HalTag
-      },
-      {
-        type: Backbone.HasMany,
-        key: 'tickets',
-        keySource: 'v1:tickets',
-        relatedModel: HalTicket
-      }
-    ]
   });
 
   var HalTest = HalModel.extend({
 
-    relations: [
+    halLinks: [ 'bookmark' ],
+    halEmbedded: [
       {
         type: Backbone.HasOne,
-        key: 'embedded',
-        keySource: '_embedded',
-        relatedModel: HalTestEmbedded
+        key: 'v1:author',
+        relatedModel: HalUser
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:project',
+        relatedModel: HalProject
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:category',
+        relatedModel: HalCategory
+      },
+      {
+        type: Backbone.HasMany,
+        key: 'v1:tags',
+        relatedModel: HalTag
+      },
+      {
+        type: Backbone.HasMany,
+        key: 'v1:tickets',
+        relatedModel: HalTicket
       }
     ]
   });

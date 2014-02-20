@@ -28,11 +28,11 @@
     },
 
     serializeData: function() {
-      return { permalink: this.model.get('_links').bookmark.href };
+      return { permalink: this.model.link('bookmark').get('href') };
     },
 
     onRender: function() {
-      Clipboard.setup(this.ui.permalinkButton, this.model.get('_links').bookmark.href);
+      Clipboard.setup(this.ui.permalinkButton, this.model.link('bookmark').get('href'));
     },
 
     selectPermalink: function(e) {

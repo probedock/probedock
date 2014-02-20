@@ -38,22 +38,22 @@
     },
 
     renderAuthor: function() {
-      var author = this.model.get('embedded').get('author');
-      $('<a />').attr('href', author.get('_links').alternate.href).text(author.get('name')).appendTo(this.ui.author);
+      var author = this.model.embedded('v1:author');
+      author.link('alternate').tag(author.get('name')).appendTo(this.ui.author);
     },
 
     renderProject: function() {
-      var project = this.model.get('embedded').get('project');
-      $('<a />').attr('href', project.get('_links').alternate.href).text(project.get('name')).appendTo(this.ui.project);
+      var project = this.model.embedded('v1:project');
+      project.link('alternate').tag(project.get('name')).appendTo(this.ui.project);
     },
 
     renderLabels: function() {
 
       this.ui.labels.empty();
       
-      var category = this.model.get('embedded').get('category'),
-          tags = this.model.get('embedded').get('tags'),
-          tickets = this.model.get('embedded').get('tickets');
+      var category = this.model.embedded('v1:category'),
+          tags = this.model.embedded('v1:tags'),
+          tickets = this.model.embedded('v1:tickets');
 
       if (!category && !tags.length && !tickets.length) {
         this.ui.labels.hide();
@@ -63,22 +63,26 @@
       this.ui.labels.show();
 
       if (category) {
-        $('<a class="label label-primary" />').attr('href', category.get('_links')['search'].href).text(category.get('name')).appendTo(this.ui.labels).tooltip({
+        this.addLabelWithTooltip(category, 'search', 'name', 'primary', {
           title: this.t('goToCategory', { name: category.get('name') })
         });
       }
 
       tags.forEach(function(tag) {
-        $('<a class="label label-info" />').attr('href', tag.get('_links')['search'].href).text(tag.get('name')).appendTo(this.ui.labels).tooltip({
+        this.addLabelWithTooltip(tag, 'search', 'name', 'info', {
           title: this.t('goToTag', { name: tag.get('name') })
         });
       }, this);
 
       tickets.forEach(function(ticket) {
-        $('<a class="label label-warning" />').attr('href', ticket.ticketHref()).text(ticket.get('name')).appendTo(this.ui.labels).tooltip({
-          title: this.t(ticket.get('_links').about ? 'goToExternalTicket' : 'goToTicket', { name: ticket.get('name') })
-        });
+        this.addLabelWithTooltip(ticket, 'search', 'name', 'warning', {
+          title: this.t(ticket.hasLink('about') ? 'goToExternalTicket' : 'goToTicket', { name: ticket.get('name') })
+        }).attr('href', ticket.ticketHref());
       }, this);
+    },
+
+    addLabelWithTooltip: function(source, linkRel, labelProperty, labelType, options) {
+      return source.link(linkRel).tag(source.get(labelProperty)).addClass('label label-' + labelType).tooltip(options).appendTo(this.ui.labels);
     }
   });
 })();

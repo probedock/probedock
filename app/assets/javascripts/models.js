@@ -16,13 +16,106 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
+  var HalLink = Backbone.RelationalModel.extend({
+
+    idAttribute: 'href',
+
+    tag: function(contents, options) {
+      options = options || {};
+      return $('<a />').attr('href', this.get('href'))[options.html ? 'html' : 'text'](contents);
+    }
+  });
+
+  var HalLinkCollection = Backbone.Collection.extend({
+  });
+
+  var HalModelLinks = Backbone.RelationalModel.extend({
+
+    link: function(rel, options) {
+      options = _.defaults({}, options, { required: true });
+
+      if (options.required && !this.has(rel)) {
+        throw new Error('No link found with relation ' + rel);
+      }
+
+      return this.get(rel);
+    }
+  });
+
+  var HalModelEmbedded = Backbone.RelationalModel.extend({
+
+    embedded: function(rel) {
+      return this.get(rel);
+    }
+  });
+
   var HalModel = this.HalModel = Backbone.RelationalModel.extend({
 
     url: function() {
       var links = this.get('_links');
       return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
+    },
+
+    link: function() {
+      var links = this.get('_links');
+      return links.link.apply(links, Array.prototype.slice.call(arguments));
+    },
+    
+    hasLink: function(rel) {
+      return this.has('_links') && this.get('_links').has(rel);
+    },
+
+    embedded: function(rel) {
+      var embedded = this.get('_embedded');
+      return embedded.embedded.apply(embedded, Array.prototype.slice.call(arguments));
+    },
+
+    hasEmbedded: function(rel) {
+      return this.has('_embedded') && this.get('_embedded').has(rel);
     }
   });
+
+  var halModelExtend = HalModel.extend;
+
+  HalModel.extend = function(options) {
+
+    options = _.defaults({}, options, {
+      relations: [],
+      halLinks: [],
+      halEmbedded: []
+    });
+
+    var links = HalModelLinks.extend({
+
+      relations: _.map(options.halLinks, function(halLink) {
+        return _.defaults({}, _.isObject(halLink) ? halLink : { key: halLink }, {
+          type: Backbone.HasOne,
+          relatedModel: HalLink
+        });
+      })
+    });
+
+    var embedded = HalModelEmbedded.extend({
+
+      relations: _.map(options.halEmbedded, function(halEmbedded) {
+        return _.clone(halEmbedded);
+      })
+    });
+
+    options.relations.push({
+      type: Backbone.HasOne,
+      key: '_links',
+      relatedModel: links
+    });
+
+    options.relations.push({
+      type: Backbone.HasOne,
+      key: '_embedded',
+      relatedModel: embedded
+    });
+
+    return halModelExtend.call(HalModel, options);
+  };
 
   var HalCollection = this.HalCollection = Backbone.Collection.extend({
 
