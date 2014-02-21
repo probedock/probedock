@@ -18,10 +18,9 @@ class TestInfosController < ApplicationController
   include ActionView::Helpers::TextHelper
 
   before_filter :authenticate_user!
-  before_filter :check_maintenance, only: [ :deprecate, :undeprecate ]
   before_filter :find_test_by_key_only, only: [ :show ]
   load_resource find_by: :project_and_key
-  skip_load_resource only: [ :index, :page, :deprecate, :undeprecate ]
+  skip_load_resource only: [ :index, :page ]
 
   def index
     window_title << TestInfo.model_name.human.pluralize.titleize
@@ -43,66 +42,6 @@ class TestInfosController < ApplicationController
     @test_widgets_config = { test: TestInfoRepresenter.new(@test_info).serializable_hash, widgets: widget_data }
   end
 
-  def deprecate
-
-    tests = load_tests_for_deprecation
-    return unless tests
-
-    tests.reject!{ |t| t.deprecated? }
-    return head :no_content if tests.empty?
-
-    deprecations = []
-    TestDeprecation.transaction do
-      tests.each do |test|
-
-        deprecation = TestDeprecation.new
-        deprecation.deprecated = true
-        deprecation.test_info = test
-        deprecation.test_result = test.effective_result
-        deprecation.user = current_user
-
-        deprecation.save!
-        Project.increment_counter :deprecated_tests_count, test.project_id
-        test.update_attribute :deprecation_id, deprecation.id
-
-        deprecations << deprecation
-      end
-    end
-
-    Rails.application.events.fire 'test:deprecated', deprecations
-    head :no_content
-  end
-
-  def undeprecate
-
-    tests = load_tests_for_deprecation
-    return unless tests
-
-    tests.reject!{ |t| !t.deprecated? }
-    return head :no_content if tests.empty?
-
-    deprecations = []
-    TestDeprecation.transaction do
-      tests.each do |test|
-
-        deprecation = TestDeprecation.new
-        deprecation.deprecated = false
-        deprecation.test_info = test
-        deprecation.test_result = test.effective_result
-        deprecation.user = current_user
-
-        deprecation.save!
-        Project.decrement_counter :deprecated_tests_count, test.project_id
-        test.update_attribute :deprecation_id, nil
-
-        deprecations << deprecation
-      end
-    end
-
-    Rails.application.events.fire 'test:undeprecated', deprecations
-    head :no_content
-  end
-
   def results_page
     render json: TestResult.tableling.process(params.merge({ base: TestResult.where(test_info_id: @test_info.first!.id) }))
   end
@@ -112,52 +51,6 @@ class TestInfosController < ApplicationController
   end
 
   private
-
-  def load_tests_for_deprecation
-
-    unless params[:tests].kind_of? Array
-      render text: "The 'tests' parameter must be an array.", status: :bad_request
-      return false
-    end
-
-    invalid_test_params = []
-    keys_by_project = params[:tests].inject({}) do |memo,param|
-
-      parts = param.to_s.split '-'
-      if parts.length != 2
-        invalid_test_params << param
-        next memo
-      end
-
-      memo[parts[0]] ||= []
-      memo[parts[0]] << parts[1]
-
-      memo
-    end
-
-    if invalid_test_params.any?
-      render text: "Invalid test parameters: #{invalid_test_params.join ', '}.", status: :bad_request
-      return false
-    end
-
-    unknown_tests = []
-    tests = keys_by_project.inject([]) do |memo,(project,keys)|
-
-      current_tests = TestInfo.joins(:project, :key).where('projects.api_id = ? AND test_keys.key IN (?)', project, keys).includes(:key).to_a
-      if (missing_keys = keys.reject{ |k| current_tests.any?{ |t| t.key.key == k } }).any?
-        unknown_tests += missing_keys.collect{ |k| "#{project}-#{k}" }
-      end
-
-      memo + current_tests
-    end
-
-    if unknown_tests.any?
-      render text: "Unknown tests: #{unknown_tests.join ', '}.", status: :bad_request
-      return false
-    end
-
-    tests
-  end
   
   SHOW_INCLUDES = [ :key, :project, :author, :tags, :tickets, :custom_values ]
 

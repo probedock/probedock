@@ -66,7 +66,7 @@ class Api::ApiController < ApplicationController
     begin
       body.force_encoding 'UTF-8'
     rescue StandardError => e
-      fail :badEncoding, "Could not convert data to UTF-8: #{e.message}"
+      raise ApiError, "Could not convert data to UTF-8: #{e.message}", name: :badEncoding
     end
   end
 

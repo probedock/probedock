@@ -30,6 +30,18 @@ this.Translations.en =
     permalink:
       title: "Permalink"
       instructions: "Use this permalink to link to this test from elsewhere."
+    status:
+      title: "Status"
+      deprecate: "Deprecate"
+      deprecateConfirmation: "Are you sure you want to deprecate this test?"
+      undeprecate: "Undeprecate"
+      undeprecateConfirmation: "Are you sure you want to reactivate this test?"
+      deprecationError: "Could not change test status."
+      statusDescription:
+        passed: "The test <strong>passed</strong> the last time it was run."
+        failed: "The test <strong>failed</strong> the last time it was run."
+      inactiveDescription: "It is marked as <strong>inactive</strong> so it will not be counted as either passed or failed in test statistics."
+      deprecatedDescription: "It is <strong>deprecated</strong> so it will not be counted and remain hidden unless explicitly searching for deprecated tests."
   purge:
     title: "Data Purge"
     instructions: "Data is purged to save space. Some of the data is purged only after a given time, some as soon as it's no longer referenced."

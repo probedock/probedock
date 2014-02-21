@@ -19,6 +19,7 @@ App.module('views', function() {
   this.TestWidgetContainer = Marionette.Layout.extend({
 
     template: 'widgets/test',
+
     className: function() {
       return 'panel panel-info testWidget ' + this.model.id + 'TestWidget';
     },
@@ -39,7 +40,13 @@ App.module('views', function() {
 
     showWidget: function() {
       var widgetClass = App.module('testWidgets')[this.model.id.underscore().camelize()];
-      this.widgetBody.show(new widgetClass({ model: this.model.get('test'), widget: this.model }));
+      var widgetInstance = new widgetClass({ model: this.model.get('test'), widget: this.model });
+      this.listenTo(widgetInstance, 'widget:status', this.changeStatus);
+      this.widgetBody.show(widgetInstance);
+    },
+
+    changeStatus: function(status) {
+      this.$el.removeClass('panel-default panel-primary panel-success panel-info panel-warning panel-danger').addClass('panel-' + status);
     }
   });
 });

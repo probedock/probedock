@@ -64,12 +64,7 @@ ROXCenter::Application.routes.draw do
     post '/', action: :purge, on: :member, as: :start
   end
   resources :tags, only: [ :index ]
-  resources :test_infos, path: :tests, only: [ :index, :show ] do
-    collection do
-      post :deprecate
-      post :undeprecate
-    end
-  end
+  resources :test_infos, path: :tests, only: [ :index, :show ]
   resources :test_payloads, path: :payloads, only: [ :show ]
   resources :test_runs, path: :runs, only: [ :index, :show ] do
     member do
@@ -113,7 +108,13 @@ ROXCenter::Application.routes.draw do
 
     resources :projects, only: [ :index, :create, :update ]
 
-    resources :tests, only: [ :index, :show ]
+    resources :tests, only: [ :index, :show ] do
+      get :deprecation, on: :member
+      put :deprecation, action: :deprecate, on: :member
+      delete :deprecation, action: :undeprecate, on: :member
+    end
+
+    post :test_deprecations, to: 'tests#bulk_deprecations'
 
     resources :test_keys, only: [ :index, :create ] do
       

@@ -50,16 +50,16 @@ App.autoModule('testWidgets', function() {
 
     appendBuffer: function(compositeView, buffer) {
       this.ui.columns.each(function(index) {
-        $(this).html(buffer[index].children());
+        $(this).html(buffer[index % 2].children());
       });
     },
 
     appendHtml: function(compositeView, itemView, index){
       if (compositeView.isBuffering) {
-        compositeView.elBuffer[index].append(itemView.el);
+        compositeView.elBuffer[index % 2].append(itemView.el);
         compositeView._bufferedChildren.push(itemView);
       } else {
-        this.ui.columns.find(':nth-child(' + (index + 1) + ')').append(itemView.el);
+        this.ui.columns.find(':nth-child(' + ((index % 2) + 1) + ')').append(itemView.el);
       }
     }
   });

@@ -15,14 +15,102 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class Api::TestsController < Api::ApiController
-  before_filter :check_maintenance, only: [ :create, :update ]
+  before_filter :check_maintenance, only: [ :deprecate, :undeprecate, :bulk_deprecations ]
+  load_resource find_by: :project_and_key, class: TestInfo
+  skip_load_resource only: [ :index, :bulk_deprecations ]
 
   def index
     render_api TestInfo.tableling.process(params.merge(TestSearch.options(params[:search])))
   end
 
   def show
-    @test_info = TestInfo.find_by_project_and_key!(params[:id]).first!
-    render_api TestInfoRepresenter.new @test_info
+    render_api TestInfoRepresenter.new(@test.first!)
+  end
+
+  def deprecation
+    test_info = TestInfo.find_by_project_and_key!(params[:id]).first!
+    return head :not_found unless test_info.deprecation
+    render_api TestDeprecationRepresenter.new(test_info.deprecation)
+  end
+
+  def bulk_deprecations
+    
+    params = ActionController::Parameters.new parse_json_request
+
+    deprecate = !!params[:deprecate]
+
+    params = params.require(:_links).permit(related: :href)
+
+    raise ApiError.new(%/Missing "_links.related" property/) unless params.key? :related
+    raise ApiError.new(%/No link given in "_links.related"/) unless params[:related].present?
+
+    test_href_regexp = Regexp.new "\\A#{Regexp.escape(api_test_url(id: ''))}([a-z0-9]+)-([a-z0-9]+)\\Z"
+    test_hrefs = params[:related].collect{ |r| r[:href] }
+    test_hrefs_data = []
+    test_hrefs.each do |href|
+      m = href.match test_href_regexp
+      raise ApiError.new(%/No test found at URI "#{href}"/, name: :unknownResource, status: :unprocessable_entity) unless m
+      test_hrefs_data << { project: m[1], key: m[2], param: "#{m[1]}-#{m[2]}" }
+    end
+
+    keys_by_project = test_hrefs_data.inject({}) do |memo,data|
+      memo[data[:project]] ||= []
+      memo[data[:project]] << data[:key]
+      memo
+    end
+
+    tests = TestInfo.for_projects_and_keys(keys_by_project).includes(:project, :key).to_a
+
+    test_hrefs_data.each_with_index do |data,i|
+      raise ApiError.new(%/No test found at URI "#{test_hrefs[i]}"/, name: :unknownResource, status: :unprocessable_entity) unless tests.find{ |t| t.to_param == data[:param] }
+    end
+
+    tests_to_change = tests.reject{ |t| t.deprecated? == deprecate }
+    return render json: TestDeprecationsRepresenter.new(deprecate, tests, 0), status: :created if tests_to_change.empty?
+
+    perform_deprecations deprecate, *tests_to_change
+
+    render json: TestDeprecationsRepresenter.new(deprecate, tests, tests_to_change.length), status: :created
+  end
+
+  def deprecate
+    test = @test.includes(:deprecation).first!
+    return render json: TestDeprecationRepresenter.new(test.deprecation) if test.deprecated?
+    render json: TestDeprecationRepresenter.new(perform_deprecations(true, test).first), status: :created
+  end
+
+  def undeprecate
+    test = @test.first!
+    return head :no_content unless test.deprecated?
+    perform_deprecations false, test
+    head :no_content
+  end
+
+  private
+
+  def perform_deprecations deprecate, *tests
+
+    user = current_api_user
+    deprecations = []
+    TestDeprecation.transaction do
+      tests.each do |test|
+
+        deprecation = TestDeprecation.new
+        deprecation.deprecated = deprecate
+        deprecation.test_info = test
+        deprecation.test_result = test.effective_result
+        deprecation.user = user
+
+        deprecation.save!
+        Project.send deprecate ? :increment_counter : :decrement_counter, :deprecated_tests_count, test.project_id
+        test.update_attribute :deprecation_id, deprecate ? deprecation.id : nil
+
+        deprecations << deprecation
+      end
+    end
+
+    Rails.application.events.fire deprecate ? 'test:deprecated' : 'test:undeprecated', deprecations
+
+    deprecations
   end
 end

@@ -98,9 +98,9 @@ App.autoModule('testsTable', function() {
       }
     },
 
-    updateDeprecation: function(test, deprecated) {
-      if (this.model.toParam() == test.toParam()) {
-        this.model.setDeprecated(deprecated);
+    updateDeprecation: function(test, deprecated, time) {
+      if (this.model.link('self').get('href') == test.link('self').get('href')) {
+        this.model.setDeprecated(deprecated, time);
         this.renderKey();
         this.renderStatus();
       }

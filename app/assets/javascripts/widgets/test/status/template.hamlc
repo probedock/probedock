@@ -1,0 +1,6 @@
+%p.description
+  %span.status
+  %span.inactive
+  %span.deprecated
+.btn-group
+  %button.deprecate.btn{ type: 'button' }

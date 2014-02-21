@@ -119,6 +119,13 @@ class TestInfo < ActiveRecord::Base
     where 'deprecation_id IS NOT NULL'
   end
 
+  def self.for_projects_and_keys keys_by_project
+    conditions = ([ '(projects.api_id = ? AND test_keys.key IN (?))' ] * keys_by_project.length)
+    values = keys_by_project.inject([]){ |memo,(k,v)| memo << k << v }
+    where_args = values.unshift conditions.join(' OR ')
+    joins(:project).joins(:key).where *where_args
+  end
+
   def self.find_by_project_and_key project_and_key
     parts = project_and_key.split '-'
     return nil if parts.length != 2

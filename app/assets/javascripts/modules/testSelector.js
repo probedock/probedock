@@ -172,7 +172,7 @@ App.autoModule('testSelector', function() {
     },
 
     buildLink: function(test) {
-      return this.currentTemplate.replace(/\%\{label\}/g, test.get('key')).replace(/\%\{url\}/g, test.permalink(true));
+      return this.currentTemplate.replace(/\%\{label\}/g, test.get('key')).replace(/\%\{url\}/g, test.link('bookmark').get('href'));
     }
   });
 
@@ -192,7 +192,7 @@ App.autoModule('testSelector', function() {
     template: false,
 
     modelEvents: {
-      'change:deprecated_at': 'setStatusClass'
+      'change:deprecatedAt': 'setStatusClass'
     },
 
     onRender: function() {
@@ -207,7 +207,7 @@ App.autoModule('testSelector', function() {
 
     tooltipText: function() {
       return $('<div />')
-        .append($('<span />').text(this.model.get('project').get('name')))
+        .append($('<span />').text(this.model.embedded('v1:project').get('name')))
         .append(' - ')
         .append($('<span class="monospace" />').text(this.model.get('key')))
         .append(' - ')
@@ -288,9 +288,9 @@ App.autoModule('testSelector', function() {
     },
 
     isSelected: function(test) {
-      var needle = test.toParam();
+      var needle = test.link('self').get('href');
       return this.collection.some(function(currentTest) {
-        return needle == currentTest.toParam();
+        return needle == currentTest.link('self').get('href');
       });
     },
 
@@ -343,9 +343,9 @@ App.autoModule('testSelector', function() {
     },
 
     findSelectedTest: function(test) {
-      var needle = test.toParam();
+      var needle = test.link('self').get('href');
       return this.collection.find(function(currentTest) {
-        return needle == currentTest.toParam();
+        return needle == currentTest.link('self').get('href');
       });
     },
 
@@ -363,23 +363,30 @@ App.autoModule('testSelector', function() {
 
       var tests = this.collection.filter(function(test) {
         return test.isDeprecated() != deprecate;
-      }), params = _.map(tests, function(test) {
-        return test.toParam();
+      }), hrefs = _.map(tests, function(test) {
+        return test.link('self').get('href');
       });
 
       $.ajax({
-        url: Path.build('tests', deprecate ? 'deprecate' : 'undeprecate'),
+        url: ApiPath.build('test_deprecations'),
         type: 'POST',
-        data: {
-          tests: params
-        }
+        data: JSON.stringify({
+          deprecate: deprecate,
+          _links: {
+            related: _.map(hrefs, function(href) {
+              return { href: href };
+            })
+          }
+        }),
+        contentType: 'application/hal+json'
       }).done(_.bind(this.setTestsDeprecated, this, tests, deprecate)).fail(_.bind(this.showDeprecationError, this));
     },
 
     setTestsDeprecated: function(tests, deprecated) {
+      var now = new Date().getTime();
       _.each(tests, function(test) {
-        test.setDeprecated(deprecated);
-        App.trigger('test:deprecated', test, deprecated);
+        test.setDeprecated(deprecated, now);
+        App.trigger('test:deprecated', test, deprecated, now);
       });
       this.setBusy(false);
     },

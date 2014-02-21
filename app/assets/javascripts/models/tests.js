@@ -61,7 +61,7 @@ App.module('models', function() {
 
   var Test = this.Test = HalModel.extend({
 
-    halLinks: [ 'self', 'alternate', 'bookmark', { key: 'v1:lastRun', type: Backbone.HasMany } ],
+    halLinks: [ 'self', 'alternate', 'bookmark', 'v1:deprecation', { key: 'v1:lastRun', type: Backbone.HasMany } ],
     halEmbedded: [
       {
         type: Backbone.HasOne,
@@ -97,6 +97,24 @@ App.module('models', function() {
 
     isDeprecated: function() {
       return !!this.get('deprecatedAt');
+    },
+
+    setDeprecated: function(deprecated, time) {
+      if (deprecated) {
+        this.set({ deprecatedAt: time });
+      } else {
+        this.unset('deprecatedAt');
+      }
+    },
+
+    status: function() {
+      if (this.isDeprecated()) {
+        return 'deprecated';
+      } else if (!this.get('active')) {
+        return 'inactive';
+      } else {
+        return this.get('passing') ? 'passed' : 'failed';
+      }
     }
   });
 
