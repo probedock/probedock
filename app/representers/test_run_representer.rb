@@ -14,13 +14,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestKeyRepresenter < BaseRepresenter
+class TestRunRepresenter < BaseRepresenter
 
-  representation do |test_key|
+  representation do |run|
 
-    property :value, test_key.key
-    property :projectApiId, test_key.project.api_id
-    property :free, test_key.free
-    property :createdAt, test_key.created_at.to_ms
+    #curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:testRuns:{rel}", templated: true
+
+    link 'self', api_uri(:test_run, id: run.id)
+    link 'alternate', uri(:test_run, id: run.id), type: media_type(:html)
+
+    property :duration, run.duration
+    property :endedAt, run.ended_at.to_ms
   end
 end

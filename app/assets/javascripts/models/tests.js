@@ -36,6 +36,11 @@ App.module('models', function() {
     }
   });
 
+  var HalTestRun = HalModel.extend({
+
+    halLinks: [ 'self', 'alternate' ]
+  });
+
   var HalCategory = HalModel.extend({
 
     halLinks: [ 'search' ],
@@ -61,12 +66,17 @@ App.module('models', function() {
 
   var Test = this.Test = HalModel.extend({
 
-    halLinks: [ 'self', 'alternate', 'bookmark', 'v1:deprecation', { key: 'v1:lastRun', type: Backbone.HasMany } ],
+    halLinks: [ 'self', 'alternate', 'bookmark', 'v1:deprecation' ],
     halEmbedded: [
       {
         type: Backbone.HasOne,
         key: 'v1:author',
         relatedModel: HalUser
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:lastRun',
+        relatedModel: HalTestRun
       },
       {
         type: Backbone.HasOne,

@@ -14,13 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestKeyRepresenter < BaseRepresenter
+class Api::TestRunsController < Api::ApiController
+  load_resource
 
-  representation do |test_key|
-
-    property :value, test_key.key
-    property :projectApiId, test_key.project.api_id
-    property :free, test_key.free
-    property :createdAt, test_key.created_at.to_ms
+  def show
+    render_api TestRunRepresenter.new(@test_run)
   end
 end

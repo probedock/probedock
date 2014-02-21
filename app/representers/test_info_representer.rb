@@ -24,21 +24,19 @@ class TestInfoRepresenter < BaseRepresenter
     link 'alternate', uri(:test_info, id: test_info.to_param), type: media_type(:html)
     link 'bookmark', uri(:test_permalink, project: test_info.project.api_id, key: test_info.key.key), type: media_type(:html)
     link 'v1:deprecation', uri(:deprecation_api_test, id: test_info.to_param)
-    links 'v1:lastRun', uri(:test_run, id: test_info.effective_result.test_run_id), type: media_type(:html)
 
     property :name, test_info.name
     property :key, test_info.key.key
     property :passing, test_info.passing
     property :active, test_info.active
     property :createdAt, test_info.created_at.to_ms
-    property :lastRunAt, test_info.last_run_at.to_ms
-    property :lastRunDuration, test_info.last_run_duration
     property :deprecatedAt, test_info.deprecation.created_at if test_info.deprecation
 
     embed('v1:author', test_info.author){ |author| UserRepresenter.new author }
     embed('v1:project', test_info.project){ |project| ProjectRepresenter.new project }
     embed('v1:lastRunner', test_info.effective_result.runner){ |runner| UserRepresenter.new runner }
     embed('v1:category', test_info.category){ |category| CategoryRepresenter.new category } if test_info.category
+    embed('v1:lastRun', test_info.effective_result.test_run){ |run| TestRunRepresenter.new run }
     embed_collection('v1:tags', test_info.tags){ |tag| TagRepresenter.new tag }
     embed_collection('v1:tickets', test_info.tickets){ |ticket| TicketRepresenter.new ticket }
   end

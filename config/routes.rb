@@ -122,6 +122,8 @@ ROXCenter::Application.routes.draw do
         delete '/', action: :auto_release
       end
     end
+
+    resources :test_runs, only: [ :show ]
   end
 
   # api

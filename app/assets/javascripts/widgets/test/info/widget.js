@@ -27,7 +27,7 @@
     serializeData: function() {
       return _.extend(this.model.toJSON(), {
         humanCreatedAt: Format.datetime.full(new Date(this.model.get('createdAt'))),
-        humanLastRunAt: Format.datetime.full(new Date(this.model.get('lastRunAt')))
+        humanLastRunAt: Format.datetime.full(new Date(this.model.embedded('v1:lastRun').get('endedAt')))
       });
     },
 
