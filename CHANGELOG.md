@@ -1,14 +1,16 @@
 # Changelog
 
-## v2.3.0 - February 24, 2014
+## v2.2.1 - February 24, 2014
+
+* Tests can now also be filtered by ticket in test run reports.
+
+* Test custom values can now be up to 65535 bytes long.
+
+* Uptime is now indicated on the status page.
 
 * The old settings page (accessible only to administrators) has been split into settings and control center.
 
 * Old test payloads, categories, tags and tickets can be purged from the new control center page.
-
-* Uptime is now indicated on the status page.
-
-* Test custom values can now be up to 65535 bytes long.
 
 * Fixed a bug where test payloads in reports would not be pretty printed by default.
 
