@@ -14,12 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestValue < ActiveRecord::Base
+class IncreaseTestValueSize < ActiveRecord::Migration
 
-  belongs_to :test_info
-
-  strip_attributes except: :contents
-  validates :test_info, presence: true
-  validates :name, presence: true, uniqueness: { scope: :test_info_id }, length: { maximum: 50 }
-  validates :contents, length: { maximum: 65535, allow_nil: true, tokenizer: lambda{ |s| OpenStruct.new length: s.bytesize } }
+  def change
+    change_column :test_values, :contents, :text, null: false, limit: 65535
+  end
 end

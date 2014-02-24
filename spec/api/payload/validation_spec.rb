@@ -467,8 +467,13 @@ describe "API payload validations", rox: { tags: :unit } do
   end
 
   it "should fail if a test data value is too long", rox: { key: '8ce3929ed1cc' } do
-    sample_payload[:r][0][:t][0][:a] = { 'foo' => 'x' * 256 }
-    assert_fail sample_payload, :valueTooLong, "/r/0/t/0/a", got('256'.to_sym), got(sample_payload[:r][0][:t][0][:k])
+    sample_payload[:r][0][:t][0][:a] = { 'foo' => 'x' * 65536 }
+    assert_fail sample_payload, :valueTooLong, "/r/0/t/0/a", got('65536'.to_sym), got(sample_payload[:r][0][:t][0][:k])
+  end
+
+  it "should fail if a test data value is too long in bytes", rox: { key: '8545acfd99f7' } do
+    sample_payload[:r][0][:t][1][:a] = { 'foo' => 'x' * 65534 + "\u3042" }
+    assert_fail sample_payload, :valueTooLong, "/r/0/t/1/a", got('65537'.to_sym), got(sample_payload[:r][0][:t][1][:k])
   end
 
   private

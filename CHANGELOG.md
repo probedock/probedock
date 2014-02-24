@@ -8,6 +8,8 @@
 
 * Uptime is now indicated on the status page.
 
+* Test custom values can now be up to 65535 bytes long.
+
 * Fixed a bug where test payloads in reports would not be pretty printed by default.
 
 * Fixed asset URLs in HAL API browser.

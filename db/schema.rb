@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140211153453) do
+ActiveRecord::Schema.define(version: 20140224115941) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -246,7 +246,7 @@ ActiveRecord::Schema.define(version: 20140211153453) do
 
   create_table "test_values", force: true do |t|
     t.string  "name",         limit: 50, null: false
-    t.string  "contents",                null: false
+    t.text    "contents",                null: false
     t.integer "test_info_id",            null: false
   end
 
