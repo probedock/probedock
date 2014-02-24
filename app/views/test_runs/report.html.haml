@@ -82,6 +82,10 @@
         %option
         - index[:tags].each do |tag|
           %option{ value: tag }= tag
+      %select.tickets{ multiple: 'multiple', data: { placeholder: I18n.t('test_runs.report.filterByTickets') } }
+        %option
+        - index[:tickets].each do |ticket|
+          %option{ value: ticket }= ticket
       %button.clear.btn.btn-default{ type: 'button', disabled: 'disabled' }
         %i.glyphicon.glyphicon-remove-circle
   .visualReport
@@ -100,7 +104,7 @@
             %h4= category.try(:name) || t('test_runs.report.uncategorized')
             .categoryResults.clearfix
               - category_results.each do |result|
-                = result_card_link result, i, index[:tags]
+                = result_card_link result, i, index[:tags], index[:tickets]
                 - i += 1
         %p.back
           %a{ href: '#top' }= I18n.t('test_runs.report.backToSummary')
@@ -109,7 +113,7 @@
     %button.showAll.btn.btn-default{ type: 'button' }= I18n.t('test_runs.report.showAll')
     .details-container.onlyFailed
       - ordered_results.each_with_index do |result,i|
-        .well{ id: "r#{i.to_s(36)}", class: result_details_class(result, index[:tags]) }
+        .well{ id: "r#{i.to_s(36)}", class: result_details_class(result, index[:tags], index[:tickets]) }
           = result_details_indicator result
           %h3= link_to result.test_info.name, test_info_path(result.test_info)
           %dl.dl-horizontal

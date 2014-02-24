@@ -56,15 +56,15 @@
       :margin-top 0.6em
       :margin-bottom 0.6em
       :text-align right
-      .tags, .clear
+      .tags, .tickets, .clear
         :margin-top 0.4em
       .btn-toolbar
         :display inline
       .search
         :margin-left 1em
-        :width 22em
-    .tags
-      :width 30em
+        :width 30em
+    .tags, .tickets
+      :width 20em
   .resultDetails
     .well
       :margin-bottom 0
@@ -126,7 +126,7 @@
           :margin-right 0.4em
   .visualReport, .details
     .well, .categoryResults a
-      &.excludedBySearch, &.excludedByTags, &.excludedByStatus
+      &.excludedBySearch, &.excludedByTags, &.excludedByTickets, &.excludedByStatus
         :display none
     &.hidePassed
       .p

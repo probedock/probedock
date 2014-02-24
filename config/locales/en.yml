@@ -105,6 +105,7 @@ en:
     report:
       title: "Test Run Report"
       filterByTags: "Filter by tag..."
+      filterByTickets: "Filter by ticket..."
       filterBySearch: "Filter by name or key..."
       resultsByProject: "Results by project"
       details: "Details (%{n} results)"

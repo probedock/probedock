@@ -149,6 +149,7 @@ App.autoModule('testRunReport', function() {
       categoryResults: '.categoryResults',
       searchFilter: '.filters .search',
       tagsFilter: '.filters .tags',
+      ticketsFilter: '.filters .tickets',
       statusFilters: '.filters .status button',
       passedStatusFilter: '.filters .status .passed',
       failedStatusFilter: '.filters .status .failed',
@@ -162,6 +163,7 @@ App.autoModule('testRunReport', function() {
     events: {
       'change .filters .search': 'filterBySearch',
       'change .filters .tags': 'filterByTags',
+      'change .filters .tickets': 'filterByTickets',
       'click .visualReport a': 'showResult',
       'click .details .showAll': 'showAll',
       'click .filters .status button': 'filterByStatus',
@@ -179,6 +181,8 @@ App.autoModule('testRunReport', function() {
       this.setupGroupLinks();
       this.ui.tagsFilter.select2({ allowClear: true });
       this.ui.tagsFilter.select2('disable');
+      this.ui.ticketsFilter.select2({ allowClear: true });
+      this.ui.ticketsFilter.select2('disable');
 
       this.tooltipStatusClasses = _.map(STATUSES, function(status) {
         return status.charAt(0);
@@ -322,11 +326,12 @@ App.autoModule('testRunReport', function() {
 
       var search = this.ui.searchFilter.val() && this.ui.searchFilter.val().length,
           tags = this.ui.tagsFilter.select2('val').length,
+          tickets = this.ui.ticketsFilter.select2('val').length,
           status = _.find(this.statuses, function(s) {
             return !this.ui[s + 'StatusFilter'].hasClass('active');
           }, this);
 
-      this.ui.clearFilters.attr('disabled', !(search || tags || status));
+      this.ui.clearFilters.attr('disabled', !(search || tags || tickets || status));
       this.updateNotices();
     },
 
@@ -360,6 +365,9 @@ App.autoModule('testRunReport', function() {
 
       this.ui.tagsFilter.select2('data', null);
       this.filterByTags(false);
+
+      this.ui.ticketsFilter.select2('data', null);
+      this.filterByTickets(false);
 
       this.ui.statusFilters.addClass('active');
       this.filterByStatus(false);
@@ -435,9 +443,30 @@ App.autoModule('testRunReport', function() {
       return '.t' + this.tagsIndex.indexOf(tag).toString(36);
     },
 
+    filterByTickets: function(update) {
+
+      var tickets = this.ui.ticketsFilter.select2('val'),
+          cards = this.cards().removeClass('excludedByTickets'),
+          details = this.details().removeClass('excludedByTickets');
+
+      if (!tickets.length) {
+        return update !== false && this.updateControls();
+      }
+
+      var selector = _.map(tickets, this.ticketSelector, this).join(',');
+      cards.not(selector).addClass('excludedByTickets');
+      details.not(selector).addClass('excludedByTickets');
+      this.updateControls();
+    },
+
+    ticketSelector: function(ticket) {
+      return '.i' + this.ticketsIndex.indexOf(ticket).toString(36);
+    },
+
     finalize: function() {
       this.ui.searchFilter.attr('disabled', false);
       this.ui.tagsFilter.select2('enable');
+      this.ui.ticketsFilter.select2('enable');
     },
 
     buildIndex: function(callback) {
@@ -462,6 +491,7 @@ App.autoModule('testRunReport', function() {
       });
 
       this.tagsIndex = index.tags;
+      this.ticketsIndex = index.tickets;
       this.testsIndex = index.tests;
       App.debug('Built index of ' + this.testsIndex.length + ' tests in ' + (new Date().getTime() - start) + 'ms');
 

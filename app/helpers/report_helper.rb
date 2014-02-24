@@ -19,22 +19,25 @@ module ReportHelper
 
   def report_index results
     {
-      tags: results.collect{ |r| r.test_info.tags }.flatten.uniq.sort{ |a,b| a.name.downcase <=> b.name.downcase }.collect{ |t| t.name }
+      tags: results.collect{ |r| r.test_info.tags }.flatten.uniq.sort{ |a,b| a.name.downcase <=> b.name.downcase }.collect{ |t| t.name },
+      tickets: results.collect{ |r| r.test_info.tickets }.flatten.uniq.sort{ |a,b| a.name.downcase <=> b.name.downcase }.collect{ |t| t.name }
     }
   end
 
-  def result_card_link result, index, tags
+  def result_card_link result, index, tags, tickets
 
     klasses = [ (!result.active ? :i : (result.passed ? :p : :f)) ]
     klasses += result.test_info.tags.collect{ |tag| "t#{tags.index(tag.name).to_s(36)}" }
+    klasses += result.test_info.tickets.collect{ |ticket| "i#{tickets.index(ticket.name).to_s(36)}" }
 
     content_tag :a, '', class: klasses.collect{ |k| k.to_s }.join(' '), href: "#r#{index.to_s(36)}"
   end
 
-  def result_details_class result, tags
+  def result_details_class result, tags, tickets
     Array.new.tap do |classes|
       classes << (!result.active ? :i : (result.passed ? :p : :f))
       classes.concat result.test_info.tags.collect{ |tag| "t#{tags.index(tag.name).to_s(36)}" }
+      classes.concat result.test_info.tickets.collect{ |ticket| "i#{tickets.index(ticket.name).to_s(36)}" }
     end.join ' '
   end
 
