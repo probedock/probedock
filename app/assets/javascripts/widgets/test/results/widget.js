@@ -18,7 +18,7 @@
 
   var models = App.module('models'),
       TestResultCollection = models.TestResultCollection,
-      ProjectVersionCollection = models.ProjectVersionCollection;
+      views = App.module('views');
 
   var ResultCard = Marionette.ItemView.extend({
 
@@ -56,32 +56,25 @@
 
     itemView: ResultCard,
     itemViewContainer: '.results',
-    projectVersionBatchSize: 100,
 
     ui: {
-      form: 'form',
       results: '.results',
       description: '.description',
-      sizeSelect: 'form [name="size"]',
-      versionSelect: 'form [name="version"]',
-      controls: 'form :input'
-    },
-
-    events: {
-      'change form select': 'updateResults'
+      resultSelector: '.resultSelector'
     },
 
     collectionEvents: {
-      'reset': 'updateDescription'
+      'reset': 'updateDescription',
+      'error': 'showError'
     },
 
-    initializeWidget: function() {
+    initializeWidget: function(options) {
 
-      var collectionClass = this.buildCollectionClass();
-      this.collection = new collectionClass();
+      this.controller = options.controller;
+      this.collection = new (this.buildCollectionClass())();
+      this.resultSelector = new views.TestResultSelector({ controller: this.controller });
 
-      var projectVersionCollectionClass = this.buildProjectVersionCollectionClass();
-      this.projectVersionsCollection = new projectVersionCollectionClass();
+      this.listenTo(this.resultSelector, 'update', this.updateResults);
 
       this.listenToOnce(this.collection, 'reset', function() {
         this.ui.results.show();
@@ -90,83 +83,50 @@
     },
 
     onRender: function() {
+
       this.ui.results.hide();
       this.ui.description.hide();
-      this.loadProjectVersions();
-      this.updateResults();
+
+      this.ensureResultSelectorRegion();
+      this.resultSelectorRegion.show(this.resultSelector);
+      this.resultSelector.trigger('start');
     },
 
-    setBusy: function(n) {
-
-      var wasBusy = this.busy;
-
-      this.busy = this.busy || 0;
-      this.busy += n;
-
-      if (this.busy && !wasBusy) {
-        Loader.loading().appendTo(this.ui.form);
-      } else if (!this.busy && wasBusy) {
-        Loader.clear(this.ui.form);
+    ensureResultSelectorRegion: function() {
+      if (this.resultSelectorRegion) {
+        this.resultSelectorRegion.close();
+      } else {
+        this.resultSelectorRegion = new Marionette.Region({ el: this.ui.resultSelector });
       }
-
-      this.updateControls();
     },
 
-    loadProjectVersions: function(page) {
-
-      page = page || 1;
-      if (page >= 10) {
-        App.debug('More than ' + (10 * this.projectVersionBatchSize) + ' versions found');
-        return this.updateControls();
-      }
-
-      this.setBusy(1);
-
-      this.projectVersionsCollection.fetch({
-        reset: true,
-        data: {
-          page: page,
-          pageSize: this.projectVersionBatchSize,
-          sort: [ 'name asc' ]
-        }
-      }).done(_.bind(this.addProjectVersions, this, page));
+    onClose: function() {
+      this.resultSelectorRegion.close();
     },
 
-    addProjectVersions: function(page, response) {
-
-      this.projectVersionsCollection.forEach(function(version) {
-        $('<option />').attr('value', version.get('name')).text(version.get('name')).appendTo(this.ui.versionSelect);
-      }, this);
-
-      if (response.total > page * this.projectVersionBatchSize) {
-        this.loadProjectVersions(page + 1);
-      }
-
-      this.setBusy(-1);
-    },
-
-    updateResults: function() {
-
-      this.setBusy(1);
+    updateResults: function(resultSelectorData) {
 
       var data = {
-        pageSize: parseInt(this.ui.sizeSelect.val(), 10),
-        sort: [ 'runAt asc' ]
+        pageSize: resultSelectorData.size,
+        sort: [ 'runAt desc' ]
       };
 
-      var version = this.ui.versionSelect.val();
-      if (version.length) {
-        data.version = version;
+      if (resultSelectorData.version) {
+        data.version = resultSelectorData.version;
       }
+
+      this.ui.description.next('.text-danger').remove();
+
+      this.resultSelector.trigger('loading', true);
 
       this.collection.fetch({
         reset: true,
         data: data
-      }).complete(_.bind(this.setBusy, this, -1));
+      }).always(_.bind(this.resultSelector.trigger, this.resultSelector, 'loading', false));
     },
 
-    updateControls: function() {
-      this.ui.controls.attr('disabled', !!this.busy);
+    showError: function() {
+      $('<p class="text-danger" />').text(this.t('error')).insertAfter(this.ui.description).hide().slideDown();
     },
 
     updateDescription: function() {
@@ -177,9 +137,9 @@
         }));
       } else {
         this.ui.description.text(this.t('description', {
-          count: this.collection.length,
-          start: Format.datetime.long(new Date(this.collection.at(0).get('runAt'))),
-          end: Format.datetime.long(new Date(this.collection.at(this.collection.length - 1).get('runAt')))
+          count: this.collection.length, // NOTE: the first element is the most recent
+          start: Format.datetime.long(new Date(this.collection.at(this.collection.length - 1).get('runAt'))),
+          end: Format.datetime.long(new Date(this.collection.at(0).get('runAt')))
         }));
       }
     },
@@ -190,10 +150,15 @@
       });
     },
 
-    buildProjectVersionCollectionClass: function() {
-      return ProjectVersionCollection.extend({
-        url: this.model.link('v1:projectVersions').get('href')
-      });
+    // override marionette to render item views in reverse order
+    appendHtml: function(compositeView, itemView, index) {
+      if (compositeView.isBuffering) {
+        $(compositeView.elBuffer).prepend(itemView.el);
+        compositeView._bufferedChildren.push(itemView);
+      } else {
+        var $container = this.getItemViewContainer(compositeView);
+        $container.prepend(itemView.el);
+      }
     }
   });
 })();

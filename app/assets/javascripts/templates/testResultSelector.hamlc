@@ -1,0 +1,15 @@
+= I18n.t('jst.testResultSelector.show')
+.form-group
+  %label.sr-only{ for: 'resultsTestWidgetSize' }= I18n.t('jst.testResultSelector.size')
+  %select#resultsTestWidgetSize.form-control{ name: 'size' }
+    %option 250
+    %option 200
+    %option 150
+    %option{ selected: true } 100
+    %option 50
+    %option 25
+= I18n.t('jst.testResultSelector.resultsForVersion')
+.form-group
+  %label.sr-only{ for: 'resultsTestWidgetVersion' }= I18n.t('jst.testResultSelector.version')
+  %select#resultsTestWidgetVersion.form-control{ name: 'version' }
+    %option{ value: '' }= I18n.t('jst.testResultSelector.allVersions')

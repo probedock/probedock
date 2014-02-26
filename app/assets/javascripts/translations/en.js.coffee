@@ -44,16 +44,25 @@ this.Translations.en =
       deprecatedDescription: "It is <strong>deprecated</strong> so it will not be counted and remain hidden unless explicitly searching for deprecated tests."
     results:
       title: "Results"
-      show: "Show last"
-      resultsForVersion: "results for"
-      size: "Size"
-      version: "Version"
-      allVersions: "all versions"
       description: "1 result found on __time__."
       description_plural: "__count__ results from __start__ to __end__."
+      error: "Could not load test results."
       resultDescription:
         passed: "Passed on __time__ (version __version__)."
         failed: "Failed on __time__ (version __version__)."
+    executionTime:
+      title: "Execution Time"
+      error: "Could not load test results."
+      resultPointInstructions: "Click to see details"
+      resultStatus:
+        passed: "passed"
+        failed: "failed"
+  testResultSelector:
+    show: "Show last"
+    resultsForVersion: "results for"
+    size: "Size"
+    version: "Version"
+    allVersions: "all versions"
   purge:
     title: "Data Purge"
     instructions: "Data is purged to save space. Some of the data is purged only after a given time, some as soon as it's no longer referenced."
@@ -230,10 +239,6 @@ this.Translations.en =
     resultTable: "Result List"
     resultChart: "Execution Time"
     resultInstructions: "Click on a result to see its details."
-    resultPointInstructions: "Click to see details"
-    resultStatus:
-      passed: "passed"
-      failed: "failed"
     copyToClipboard: "Copy to clipboard"
     copiedToClipboard: "Copied!"
   testRunReport:

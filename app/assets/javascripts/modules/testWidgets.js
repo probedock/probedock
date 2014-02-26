@@ -16,6 +16,15 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testWidgets', function() {
 
+  var components = App.module('components');
+
+  var Controller = Marionette.Controller.extend({
+
+    initialize: function(options) {
+      this.projectVersions = new components.TestProjectVersions({ model: options.model });
+    }
+  });
+
   var Test = App.module('models').Test;
 
   var TestWidget = Backbone.Model.extend({
@@ -39,8 +48,16 @@ App.autoModule('testWidgets', function() {
     itemView: App.module('views').TestWidgetContainer,
     itemViewContainer: '.row',
 
+    itemViewOptions: function() {
+      return { controller: this.controller };
+    },
+
     ui: {
       columns: '.row .col-md-6'
+    },
+
+    initialize: function(options) {
+      this.controller = options.controller;
     },
 
     initRenderBuffer: function() {
@@ -93,7 +110,8 @@ App.autoModule('testWidgets', function() {
 
   this.addAutoInitializer(function(options) {
 
-    var test = new Test(options.config.test);
+    var test = new Test(options.config.test),
+        controller = new Controller({ model: test });
 
     var widgetsData = new TestWidgetDataCollection(_.reduce(options.config.widgets, function(memo, data, name) {
 
@@ -104,6 +122,6 @@ App.autoModule('testWidgets', function() {
       return memo;
     }, []));
 
-    options.region.show(new Layout({ model: test, collection: widgetsData }));
+    options.region.show(new Layout({ model: test, collection: widgetsData, controller: controller }));
   });
 });

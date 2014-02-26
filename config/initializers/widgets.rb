@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 config = HashWithIndifferentAccess.new YAML.load_file(Rails.root.join('config', 'rox-center.yml'))
 
-test_widgets = %w(info permalink status results)
+test_widgets = %w(info permalink status results executionTime)
 
 raise "test_widgets configuration must be an array" if config[:test_widgets] and !config[:test_widgets].kind_of?(Array)
 (config[:test_widgets] || test_widgets).each do |name|

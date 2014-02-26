@@ -28,6 +28,10 @@ App.module('views', function() {
       widgetBody: '.panel-body'
     },
 
+    initialize: function(options) {
+      this.controller = options.controller;
+    },
+
     serializeData: function() {
       return _.extend(this.model.toJSON(), {
         title: I18n.t('jst.testWidgets.' + this.model.id + '.title')
@@ -40,7 +44,7 @@ App.module('views', function() {
 
     showWidget: function() {
       var widgetClass = App.module('testWidgets')[this.model.id.underscore().camelize()];
-      var widgetInstance = new widgetClass({ model: this.model.get('test'), widget: this.model });
+      var widgetInstance = new widgetClass({ model: this.model.get('test'), widget: this.model, controller: this.controller });
       this.listenTo(widgetInstance, 'widget:status', this.changeStatus);
       this.widgetBody.show(widgetInstance);
     },

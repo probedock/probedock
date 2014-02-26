@@ -1,18 +1,3 @@
-%form.form-inline{ role: 'form' }
-  = I18n.t('jst.testWidgets.results.show')
-  .form-group
-    %label.sr-only{ for: 'resultsTestWidgetSize' }= I18n.t('jst.testWidgets.results.size')
-    %select#resultsTestWidgetSize.form-control{ name: 'size' }
-      %option 250
-      %option 200
-      %option 150
-      %option{ selected: true } 100
-      %option 50
-      %option 25
-  = I18n.t('jst.testWidgets.results.resultsForVersion')
-  .form-group
-    %label.sr-only{ for: 'resultsTestWidgetVersion' }= I18n.t('jst.testWidgets.results.version')
-    %select#resultsTestWidgetVersion.form-control{ name: 'version', disabled: true }
-      %option{ value: '' }= I18n.t('jst.testWidgets.results.allVersions')
+.resultSelector
 .results.clearfix
 %p.description.text-info
