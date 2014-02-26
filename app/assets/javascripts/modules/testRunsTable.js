@@ -49,21 +49,22 @@ App.autoModule('testRunsTable', function() {
       this.ui.endedAt.html(this.endedAtCell());
       this.ui.duration.text(Format.duration(this.model.get('duration')));
       this.renderGroup();
-      this.runner.show(new views.UserAvatar({ model: this.model.get('runner'), size: 'small' }));
+      this.runner.show(new views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small' }));
       this.status.show(new views.TestRunHealthBar({ model: this.model }));
     },
 
     renderGroup: function() {
       if (this.model.get('group')) {
-        this.ui.group.html($('<a />').attr('href', Path.build('runs?' + $.param({ groups: [ this.model.get('group') ] }))).text(this.model.get('group')));
+        var url = this.model.link('alternate').get('href') + '?' + $.param({ groups: [ this.model.get('group') ] });
+        this.ui.group.html($('<a />').attr('href', url).text(this.model.get('group')));
       } else {
         this.ui.group.text(I18n.t('jst.common.noData'));
       }
     },
 
     endedAtCell: function() {
-      var endedAt = Format.datetime.long(new Date(this.model.get('ended_at')));
-      return $('<a />').attr('href', this.model.path()).text(endedAt);
+      var endedAt = Format.datetime.long(new Date(this.model.get('endedAt')));
+      return $('<a />').attr('href', this.model.link('alternate').get('href')).text(endedAt);
     }
   });
 
@@ -89,7 +90,7 @@ App.autoModule('testRunsTable', function() {
     },
 
     config: {
-      sort: [ 'ended_at desc' ],
+      sort: [ 'endedAt desc' ],
       pageSize: 15
     },
 
@@ -97,6 +98,8 @@ App.autoModule('testRunsTable', function() {
     tableViewOptions: {
       collection: new models.TestRunCollection()
     },
+
+    wrapSearchData: false,
 
     searchFilters: [
       { name: 'groups' },

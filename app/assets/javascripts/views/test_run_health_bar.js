@@ -30,7 +30,7 @@ App.module('views', function() {
 
     onRender: function() {
 
-      this.$el.attr('href', this.model.path());
+      this.$el.attr('href', this.model.link('alternate').get('href'));
 
       var counts = this.model.counts(),
           percentages = this.model.percentages();

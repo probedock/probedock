@@ -13,3 +13,4 @@
 //= require ./i18next
 //= require ./ZeroClipboard
 //= require ./jstorage
+//= require ./uri-templates

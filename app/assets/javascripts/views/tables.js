@@ -85,6 +85,7 @@ App.module('views', function() {
     searchFilters: [],
 
     autoUpdate: false,
+    wrapSearchData: true, // FIXME: remove this parameter once all tables use the new API
 
     initializeTable: function(options) {
       Table.prototype.initializeTable.call(this, options);
@@ -221,9 +222,24 @@ App.module('views', function() {
 
       var data = Tableling.Bootstrap.Table.prototype.requestData.apply(this);
 
-      data.search = this.requestSearchData();
-      if (_.isEmpty(data.search)) {
-        delete data.search;
+      var target = data;
+      if (this.wrapSearchData) {
+        data.search = {};
+        target = data.search;
+      }
+
+      var searchData = this.requestSearchData();
+      _.extend(target, searchData);
+
+      // remove search data if needed
+      if (_.isEmpty(searchData)) {
+        if (this.wrapSearchData) {
+          delete data.search;
+        } else {
+          _.each(this.searchFilters, function(filter) {
+            delete data[filter.name];
+          });
+        }
       }
 
       return data;

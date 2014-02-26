@@ -72,7 +72,7 @@ App.autoModule('testWidgets', function() {
 
         widget: name,
         className: 'testWidgetBody',
-        
+
         initialize: function() {
 
           this.template = 'widgets/test/' + this.widget + '/template';

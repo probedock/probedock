@@ -48,7 +48,7 @@ class Api::ApiController < ApplicationController
 
   def index
     # TODO: spec etag
-    render_api ApiRootRepresenter.new, etag: true
+    render_api ApiRootRepresenter.new, etag: Rails.env.production?
   end
 
   private

@@ -14,12 +14,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-config = HashWithIndifferentAccess.new YAML.load_file(Rails.root.join('config', 'rox-center.yml'))
+class TestResultRepresenter < BaseRepresenter
 
-test_widgets = %w(info permalink status results)
+  representation do |result,res|
 
-raise "test_widgets configuration must be an array" if config[:test_widgets] and !config[:test_widgets].kind_of?(Array)
-(config[:test_widgets] || test_widgets).each do |name|
-  raise "Unknown test widget #{name}" unless test_widgets.include? name.to_s
-  Rails.application.test_widgets << name.to_s.to_sym
+    curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:testResults:{rel}", templated: true
+
+    link 'self', uri(:results_api_test, id: res.test.to_param)
+
+    property :passed, result.passed
+    property :active, result.active
+    property :duration, result.duration
+    property :version, result.project_version.name
+    property :runAt, result.run_at.to_ms
+    # property :message, result.message
+
+    embed('v1:runner', result.runner){ |runner| UserRepresenter.new runner }
+    embed('v1:testRun', result.test_run){ |run| TestRunRepresenter.new run }
+  end
 end

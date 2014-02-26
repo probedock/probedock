@@ -79,9 +79,12 @@
           title: this.t(ticket.hasLink('about') ? 'goToExternalTicket' : 'goToTicket', { name: ticket.get('name') })
         }).attr('href', ticket.ticketHref());
       }, this);
+
+      this.ui.labels.append(' ');
     },
 
     addLabelWithTooltip: function(source, linkRel, labelProperty, labelType, options) {
+      this.ui.labels.append(' ');
       return source.link(linkRel).tag(source.get(labelProperty)).addClass('label label-' + labelType).tooltip(options).appendTo(this.ui.labels);
     }
   });

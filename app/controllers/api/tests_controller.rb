@@ -27,6 +27,17 @@ class Api::TestsController < Api::ApiController
     render_api TestInfoRepresenter.new(@test.first!)
   end
 
+  def results
+    @test = @test.first!
+    render_api TestResult.tableling.process(TestResultSearch.options(params, test: @test).merge(response: { test: @test }))
+  end
+
+  def project_versions
+    @test = @test.select('test_infos.id').first!
+    rel = ProjectVersion.joins(:test_infos).where('test_infos.id = ?', @test.id)
+    render_api ProjectVersion.tableling.process(params.merge({ base: rel.group('project_versions.id'), base_count: rel.select('distinct project_versions.id') }))
+  end
+
   def deprecation
     test_info = TestInfo.find_by_project_and_key!(params[:id]).first!
     return head :not_found unless test_info.deprecation

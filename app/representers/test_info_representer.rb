@@ -24,6 +24,8 @@ class TestInfoRepresenter < BaseRepresenter
     link 'alternate', uri(:test_info, id: test_info.to_param), type: media_type(:html)
     link 'bookmark', uri(:test_permalink, project: test_info.project.api_id, key: test_info.key.key), type: media_type(:html)
     link 'v1:deprecation', uri(:deprecation_api_test, id: test_info.to_param)
+    link 'v1:testResults', uri(:results_api_test, id: test_info.to_param)
+    link 'v1:projectVersions', uri(:project_versions_api_test, id: test_info.to_param)
 
     property :name, test_info.name
     property :key, test_info.key.key

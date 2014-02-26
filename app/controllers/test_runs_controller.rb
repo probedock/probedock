@@ -18,7 +18,7 @@ require 'renderer'
 
 class TestRunsController < ApplicationController
   before_filter :authenticate_user!
-  load_resource :only => [ :previous, :next ]
+  load_resource only: [ :previous, :next ]
 
   def index
     window_title << TestRun.model_name.human.pluralize.titleize
@@ -48,10 +48,6 @@ class TestRunsController < ApplicationController
       @test_run.runner # pre-load runner here rather than in view
       render :loading_report
     end
-  end
-
-  def page
-    render :json => TestRun.tableling.process(params.merge(TestRunSearch.options(params[:search])))
   end
 
   def previous

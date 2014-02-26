@@ -66,7 +66,7 @@ App.module('models', function() {
 
   var Test = this.Test = HalModel.extend({
 
-    halLinks: [ 'self', 'alternate', 'bookmark', 'v1:deprecation' ],
+    halLinks: [ 'self', 'alternate', 'bookmark', 'v1:deprecation', 'v1:testResults', 'v1:projectVersions' ],
     halEmbedded: [
       {
         type: Backbone.HasOne,

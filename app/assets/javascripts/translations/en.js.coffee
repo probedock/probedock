@@ -42,6 +42,18 @@ this.Translations.en =
         failed: "The test <strong>failed</strong> the last time it was run."
       inactiveDescription: "It is marked as <strong>inactive</strong> so it will not be counted as either passed or failed in test statistics."
       deprecatedDescription: "It is <strong>deprecated</strong> so it will not be counted and remain hidden unless explicitly searching for deprecated tests."
+    results:
+      title: "Results"
+      show: "Show last"
+      resultsForVersion: "results for"
+      size: "Size"
+      version: "Version"
+      allVersions: "all versions"
+      description: "1 result found on __time__."
+      description_plural: "__count__ results from __start__ to __end__."
+      resultDescription:
+        passed: "Passed on __time__ (version __version__)."
+        failed: "Failed on __time__ (version __version__)."
   purge:
     title: "Data Purge"
     instructions: "Data is purged to save space. Some of the data is purged only after a given time, some as soon as it's no longer referenced."

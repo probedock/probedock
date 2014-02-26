@@ -33,14 +33,17 @@ class BaseRepresenter < Hal::Resource
     hyphenized_name = name.to_s.gsub /\_/, '-'
 
     representation do |res|
+
+      instance_exec res, &block if block
+
       curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:#{camelcase_name}:{rel}", templated: true
 
-      link 'self', options[:uri] ? uri(options[:uri]) : api_uri(name)
+      link 'self', options[:uri] ? uri(options[:uri]) : api_uri(name) unless link? 'self'
 
       property :total, res.total
       property :page, res.page if res.page
 
-      embed_collection("v1:#{hyphenized_name}", res.data){ |o| representer.new o }
+      embed_collection("v1:#{hyphenized_name}", res.data){ |o| representer.new o, res }
     end
   end
 end

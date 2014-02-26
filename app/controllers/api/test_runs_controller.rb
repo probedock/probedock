@@ -16,6 +16,18 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class Api::TestRunsController < Api::ApiController
   load_resource
+  skip_load_resource except: [ :show ]
+
+  def index
+
+    if params.key? :latest
+      cache = LatestTestRunsData.compute
+      render_api cache if cache_stale? cache
+      return
+    end
+
+    render_api TestRun.tableling.process(TestRunSearch.options(params))
+  end
 
   def show
     render_api TestRunRepresenter.new(@test_run)

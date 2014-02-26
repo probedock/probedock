@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class LatestTestRunsData
-  GROUP_LIMIT = 3
+  #GROUP_LIMIT = 3
 
   include RoxHook
   on 'api:payload' do |job|
@@ -29,6 +29,8 @@ class LatestTestRunsData
   private
 
   def self.compute_data
+
+=begin
     rel = TestRun.order('ended_at DESC').includes(:runner)
     ended_at_desc = Proc.new{ |a,b| b.ended_at <=> a.ended_at }
 
@@ -36,5 +38,9 @@ class LatestTestRunsData
     latest_for_users = rel.joins(:runner_as_last_run).where('users.roles_mask & ? = 0 AND test_runs.id NOT IN (?)', User.mask_for(:technical), latest_for_groups.collect(&:id)).to_a
 
     latest_for_groups.collect{ |r| r.to_client_hash type: :latest_group } + latest_for_users.collect{ |r| r.to_client_hash type: :latest }
+=end
+
+    # TODO: allow to customize default number of latest runs on home page
+    TestRun.tableling.process(pageSize: 8, sort: [ 'endedAt desc' ]).serializable_hash
   end
 end

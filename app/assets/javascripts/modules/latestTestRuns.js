@@ -16,13 +16,10 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('latestTestRuns', function() {
 
-  var models = App.module('models'),
-      views = App.module('views');
+  var views = App.module('views');
 
-  var LatestTestRunsCollection = Backbone.Collection.extend({
-
-    url: Path.builder('data', 'latest_test_runs'),
-    model: models.TestRun
+  var LatestTestRunsCollection = App.module('models').TestRunCollection.extend({
+    halUrl: [ { rel: 'v1:test-runs', template: { latest: '' } } ]
   });
 
   var EmptyRow = Marionette.ItemView.extend({
@@ -55,9 +52,13 @@ App.autoModule('latestTestRuns', function() {
     serializeData: function() {
       return {
         time: this.humanTime(),
-        href: this.model.path(),
-        label: this.model.get('runner') ? this.model.get('runner').get('name') : this.model.get('group')
+        href: this.model.link('alternate').get('href'),
+        label: this.isGroupDescription() ? this.model.get('group') : this.model.embedded('v1:runner').get('name')
       };
+    },
+
+    isGroupDescription: function() {
+      return this.model.embedded('v1:runner').get('technical') && this.model.has('group');
     },
 
     renderTime: function() {
@@ -65,15 +66,15 @@ App.autoModule('latestTestRuns', function() {
     },
 
     humanTime: function() {
-      return moment(this.model.get('ended_at')).fromNow();
+      return moment(this.model.get('endedAt')).fromNow();
     },
 
     onRender: function() {
-      if (this.model.get('runner')) {
-        this.avatar.show(new views.UserAvatar({ model: this.model.get('runner'), size: 'small', label: false }));
-      } else {
+      if (this.isGroupDescription()) {
         this.ui.avatar.remove();
         this.ui.link.addClass('group');
+      } else {
+        this.avatar.show(new views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small', label: false }));
       }
     }
   });
@@ -131,6 +132,6 @@ App.autoModule('latestTestRuns', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new Table({ collection: new LatestTestRunsCollection(options.config) }));
+    options.region.show(new Table({ collection: new LatestTestRunsCollection(options.config._embedded['v1:test-runs']) }));
   });
 });

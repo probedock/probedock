@@ -30,7 +30,7 @@ class HomeController < ApplicationController
     settings = Settings.app cached[0]
 
     @tag_cloud = home_tag_cloud cached[1].contents, settings
-    @latest_test_runs_data = cached[2].contents.first(8) # TODO: allow to customize default number of latest runs on home page
+    @latest_test_runs_data = cached[2].contents
     @latest_projects = cached[3].contents
     @links = cached[4].try :contents
     @current_test_metrics_config = CurrentTestMetricsData.compute

@@ -18,12 +18,19 @@ class TestRunRepresenter < BaseRepresenter
 
   representation do |run|
 
-    #curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:testRuns:{rel}", templated: true
+    curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:testRuns:{rel}", templated: true
 
     link 'self', api_uri(:test_run, id: run.id)
     link 'alternate', uri(:test_run, id: run.id), type: media_type(:html)
 
     property :duration, run.duration
     property :endedAt, run.ended_at.to_ms
+    property :group, run.group if run.group.present?
+    property :results, run.results_count
+    property :passedResults, run.passed_results_count
+    property :inactiveResults, run.inactive_results_count
+    property :inactivePassedResults, run.inactive_passed_results_count
+
+    embed('v1:runner', run.runner){ |runner| UserRepresenter.new runner }
   end
 end

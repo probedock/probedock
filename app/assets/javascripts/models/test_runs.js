@@ -16,23 +16,16 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var TestRun = this.TestRun = Backbone.RelationalModel.extend({
+  var TestRun = this.TestRun = this.HalModel.extend({
 
-    relations: [
+    halLinks: [ 'self', 'alternate' ],
+    halEmbedded: [
       {
         type: Backbone.HasOne,
-        key: 'runner',
+        key: 'v1:runner',
         relatedModel: 'User'
       }
     ],
-
-    url: function() {
-      return LegacyApiPath.build('runs', this.get('id'));
-    },
-
-    path: function() {
-      return Path.build('runs', this.get('id'));
-    },
 
     counts: function() {
       return {
@@ -63,23 +56,23 @@ App.module('models', function() {
     },
 
     passedCount: function(includeInactive) {
-      return this.get('passed_results_count') - (includeInactive ? 0 : this.get('inactive_passed_results_count'));
+      return this.get('passedResults') - (includeInactive ? 0 : this.get('inactivePassedResults'));
     },
 
     failedCount: function(includeInactive) {
-      return this.get('results_count') - this.get('passed_results_count') - (includeInactive ? 0 : this.get('inactive_results_count') - this.get('inactive_passed_results_count'));
+      return this.get('results') - this.get('passedResults') - (includeInactive ? 0 : this.get('inactiveResults') - this.get('inactivePassedResults'));
     },
 
     inactiveCount: function() {
-      return this.get('inactive_results_count');
+      return this.get('inactiveResults');
     },
 
     passedAndInactiveCount: function() {
-      return this.get('passed_results_count') + this.get('inactive_results_count') - this.get('inactive_passed_results_count');
+      return this.get('passedResults') + this.get('inactiveResults') - this.get('inactivePassedResults');
     },
 
     totalCount: function() {
-      return this.get('results_count');
+      return this.get('results');
     },
 
     successDescription: function() {
@@ -89,9 +82,10 @@ App.module('models', function() {
     }
   });
 
-  var TestRunCollection = this.TestRunCollection = Tableling.Collection.extend({
+  var TestRunCollection = this.TestRunCollection = this.HalCollection.extend({
 
-    url: LegacyApiPath.builder('runs'),
-    model: TestRun
+    model: TestRun,
+    embeddedModels: 'v1:test-runs',
+    halUrl: [ { rel: 'v1:test-runs', template: {} } ]
   });
 });

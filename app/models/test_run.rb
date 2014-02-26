@@ -67,30 +67,28 @@ class TestRun < ActiveRecord::Base
     default_view do
 
       field :id
-      field :results_count
-      field :passed_results_count
-      field :inactive_results_count
-      field :inactive_passed_results_count
-      field :ended_at
+      field :results_count, as: :results
+      field :passed_results_count, as: :passedResults
+      field :inactive_results_count, as: :inactiveResults
+      field :inactive_passed_results_count, as: :inactivePassedResults
+      field :ended_at, as: :endedAt
       field :duration
 
       field :group do
         order{ |q,d| q.order "#{group_column_name} #{d}" }
       end
 
-      field :runner, :includes => :runner do
+      field :runner, includes: :runner do
         order{ |q,d| q.joins(:runner).order("users.name #{d}") }
-        value{ |o| o.runner.to_client_hash }
-      end
-
-      field :status do
-        order{ |q,d| q.order("((test_runs.passed_results_count + test_runs.inactive_results_count - test_runs.inactive_passed_results_count) / test_runs.results_count) #{d}") }
-        value{ |o| (o.passed_results_count + o.inactive_results_count - o.inactive_passed_results_count) / o.results_count }
       end
 
       quick_search do |query,term|
         term = "%#{term.downcase}%"
         query.joins(:runner).where("LOWER(users.name) LIKE ? OR LOWER(#{TestRun.group_column_name}) LIKE ?", term, term)
+      end
+
+      serialize_response do |res|
+        TestRunsRepresenter.new OpenStruct.new(res)
       end
     end
   end

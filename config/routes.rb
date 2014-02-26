@@ -42,7 +42,6 @@ ROXCenter::Application.routes.draw do
     get :status
     get :general
     get :current_test_metrics
-    get :latest_test_runs
     match :test_counters, via: [ :get, :post ]
   end
 
@@ -106,12 +105,16 @@ ROXCenter::Application.routes.draw do
 
     resources :payloads, only: [ :create ]
 
-    resources :projects, only: [ :index, :create, :update ]
+    resources :projects, only: [ :index, :create, :show, :update ]
+
+    resources :project_versions, only: [ :index ]
 
     resources :tests, only: [ :index, :show ] do
       get :deprecation, on: :member
       put :deprecation, action: :deprecate, on: :member
       delete :deprecation, action: :undeprecate, on: :member
+      get :results, on: :member
+      get :project_versions, on: :member
     end
 
     post :test_deprecations, to: 'tests#bulk_deprecations'
@@ -123,7 +126,7 @@ ROXCenter::Application.routes.draw do
       end
     end
 
-    resources :test_runs, only: [ :show ]
+    resources :test_runs, only: [ :index, :show ]
   end
 
   # api
@@ -177,12 +180,7 @@ ROXCenter::Application.routes.draw do
 
       resources :test_results, path: :results, only: [ :show ]
 
-      resources :test_runs, path: :runs, only: [ :show ] do
-
-        collection do
-          get '/', action: :page
-        end
-      end
+      resources :test_runs, path: :runs, only: [ :show ]
 
       resources :users, only: [] do
 

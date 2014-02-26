@@ -117,6 +117,10 @@ module Hal
         @resource.links[link.rel] << link
       end
 
+      def link? rel
+        @resource.links.key? rel
+      end
+
       def curie name, href, options = {}
         @resource.curies[name.to_s] = options.merge(name: name.to_s, href: href).stringify_keys
       end

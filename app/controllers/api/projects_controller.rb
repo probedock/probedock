@@ -18,8 +18,15 @@ class Api::ProjectsController < Api::ApiController
   before_filter :check_maintenance, only: [ :create, :update ]
   before_filter(except: [ :index ]){ authorize! :manage, Project }
 
+  load_resource find_by: :api_id
+  skip_load_resource except: [ :show, :update ]
+
   def index
     render_api Project.tableling.process(params)
+  end
+
+  def show
+    render_api ProjectRepresenter.new(@project)
   end
 
   def create
@@ -32,7 +39,6 @@ class Api::ProjectsController < Api::ApiController
   end
 
   def update
-    @project = Project.where(api_id: params[:id].to_s).first
     if @project.errors.empty? and @project.update_attributes parse_json_project
       render_api ProjectRepresenter.new(@project)
     else
