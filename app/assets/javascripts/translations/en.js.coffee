@@ -9,6 +9,7 @@ this.Translations.en =
     create: "Create"
     delete: "Delete"
     loading: "Loading..."
+    close: "Close"
     alert:
       danger: "Oops!"
       warning: "Warning."
@@ -53,10 +54,21 @@ this.Translations.en =
     executionTime:
       title: "Execution Time"
       error: "Could not load test results."
-      resultPointInstructions: "Click to see details"
+      pointInstructions: "Click for details."
       resultStatus:
         passed: "passed"
         failed: "failed"
+    resultDetails:
+      title: "Result Details"
+      instructions: "Click on a result in the other widgets to display it here."
+      runAtTooltip: "Click to go to the test run."
+      noMessage: "No message was submitted with this result."
+      expandTooltip: "Show result information in a larger window."
+      messageError: "The result message could not be loaded."
+      status:
+        passed: "passed"
+        failed: "failed"
+        inactive: "inactive"
   testResultSelector:
     show: "Show last"
     resultsForVersion: "results for"
@@ -406,6 +418,7 @@ this.Translations.en =
       runner: "Runner"
       version: "Version"
       status: "Status"
+      test: "Test"
     project:
       name: "Name"
       activeTestsCount: "Number of tests"

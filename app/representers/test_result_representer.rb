@@ -16,18 +16,18 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestResultRepresenter < BaseRepresenter
 
-  representation do |result,res|
+  representation do |result,res,options|
 
     curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:testResults:{rel}", templated: true
 
-    link 'self', uri(:results_api_test, id: res.test.to_param)
+    link 'self', api_uri(:test_result, id: result.id)
 
     property :passed, result.passed
     property :active, result.active
     property :duration, result.duration
     property :version, result.project_version.name
     property :runAt, result.run_at.to_ms
-    # property :message, result.message
+    property :message, result.message if options.try(:[], :detailed) and result.message.present?
 
     embed('v1:runner', result.runner){ |runner| UserRepresenter.new runner }
     embed('v1:testRun', result.test_run){ |run| TestRunRepresenter.new run }

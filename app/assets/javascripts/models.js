@@ -68,8 +68,7 @@ App.module('models', function() {
   var HalModel = this.HalModel = Backbone.RelationalModel.extend({
 
     url: function() {
-      var links = this.get('_links');
-      return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
+      return this.link('self').get('href');
     },
 
     link: function() {
@@ -88,6 +87,14 @@ App.module('models', function() {
 
     hasEmbedded: function(rel) {
       return this.has('_embedded') && this.get('_embedded').has(rel);
+    },
+
+    hasSameUri: function(other) {
+      if (!other) {
+        return false;
+      }
+
+      return this.link('self').get('href') == other.link('self').get('href');
     }
   });
 

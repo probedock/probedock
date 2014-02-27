@@ -1,0 +1,22 @@
+%p.instructions
+  %em= @t('instructions')
+.details
+  %dl.dl-horizontal
+    %dt.runner= I18n.t('jst.models.testResult.runner')
+    %dd.runner
+    %dt= I18n.t('jst.models.testResult.runAt')
+    %dd.runAt
+    %dt= I18n.t('jst.models.testResult.duration')
+    %dd.duration
+    %dt= I18n.t('jst.models.testResult.version')
+    %dd.version
+    %dt= I18n.t('jst.models.testResult.status')
+    %dd
+      %span.status.label
+      %span.inactive.label.label-warning= @t('status.inactive')
+  %pre.message.pre-scrollable
+  %p.noMessage
+    %em= @t('noMessage')
+  %button.expand.btn.btn-default.pull-right{ type: 'button' }
+    %span.glyphicon.glyphicon-fullscreen
+.expanded

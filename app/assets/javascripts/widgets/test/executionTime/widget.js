@@ -108,7 +108,12 @@
 
         tooltip: {
           formatter: function() {
-            return Format.datetime.full(new Date(this.x))
+
+            var time = new Date(this.x);
+
+            return Format.datetime.full(time)
+              + '<br />'
+              + '(' + moment(time).fromNow() + ')'
               + '<br />'
               + _.template('<strong><%- duration %>:</strong> ', { duration: I18n.t('jst.models.testResult.duration') })
               + Format.duration(this.y)
@@ -116,7 +121,16 @@
               + _.template('<strong><%- status %>:</strong> ', { status: I18n.t('jst.models.testResult.status') })
               + I18n.t('jst.testWidgets.executionTime.resultStatus.' + (this.point.result.get('passed') ? 'passed' : 'failed'))
               + '<br />'
-              + _.template('<em><%- instructions %></em>', { instructions: I18n.t('jst.testWidgets.executionTime.resultPointInstructions') });
+              + _.template('<em><%- instructions %></em>', { instructions: I18n.t('jst.testWidgets.executionTime.pointInstructions') });
+          }
+        },
+
+        plotOptions: {
+          spline: {
+            cursor: 'pointer',
+            events: {
+              click: _.bind(this.selectResult, this)
+            }
           }
         },
 
@@ -130,6 +144,10 @@
       });
 
       callback();
+    },
+
+    selectResult: function(e) {
+      this.controller.trigger('result:selected', e.point.result);
     },
 
     addResults: function() {

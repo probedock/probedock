@@ -14,12 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-config = HashWithIndifferentAccess.new YAML.load_file(Rails.root.join('config', 'rox-center.yml'))
+class Api::TestResultsController < Api::ApiController
+  load_resource
+  skip_load_resource except: [ :show ]
 
-test_widgets = %w(info permalink status results executionTime resultDetails)
-
-raise "test_widgets configuration must be an array" if config[:test_widgets] and !config[:test_widgets].kind_of?(Array)
-(config[:test_widgets] || test_widgets).each do |name|
-  raise "Unknown test widget #{name}" unless test_widgets.include? name.to_s
-  Rails.application.test_widgets << name.to_s.to_sym
+  def show
+    render_api TestResultRepresenter.new(@test_result, OpenStruct.new(test: @test_result.test_info), detailed: true)
+  end
 end

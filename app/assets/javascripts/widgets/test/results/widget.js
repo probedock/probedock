@@ -29,9 +29,17 @@
       this.status = this.model.status();
     },
 
+    events: {
+      'click': 'selectResult'
+    },
+
     onRender: function() {
       this.renderStatus();
       this.renderTooltip();
+    },
+
+    selectResult: function() {
+      this.trigger('result:selected', this.model);
     },
 
     renderStatus: function() {
@@ -64,8 +72,7 @@
     },
 
     collectionEvents: {
-      'reset': 'updateDescription',
-      'error': 'showError'
+      'reset': 'updateDescription'
     },
 
     initializeWidget: function(options) {
@@ -75,11 +82,16 @@
       this.resultSelector = new views.TestResultSelector({ controller: this.controller });
 
       this.listenTo(this.resultSelector, 'update', this.updateResults);
+      this.listenTo(this, 'itemview:result:selected', this.selectResult);
 
       this.listenToOnce(this.collection, 'reset', function() {
         this.ui.results.show();
         this.ui.description.show();
       });
+    },
+
+    selectResult: function(view, result) {
+      this.controller.trigger('result:selected', result);
     },
 
     onRender: function() {
@@ -122,7 +134,7 @@
       this.collection.fetch({
         reset: true,
         data: data
-      }).always(_.bind(this.resultSelector.trigger, this.resultSelector, 'loading', false));
+      }).always(_.bind(this.resultSelector.trigger, this.resultSelector, 'loading', false)).fail(_.bind(this.showError, this));
     },
 
     showError: function() {

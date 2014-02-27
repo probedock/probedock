@@ -83,6 +83,12 @@ App.autoModule('testWidgets', function() {
 
   App.addTestWidget = function(name, marionetteClass, definition) {
 
+    var translate = function() {
+      var args = Array.prototype.slice.call(arguments);
+      args[0] = 'jst.testWidgets.' + name + '.' + args[0];
+      return I18n.t.apply(I18n, args);
+    };
+
     App.module('testWidgets', function() {
 
       this[name.underscore().camelize()] = marionetteClass.extend(_.extend({
@@ -90,20 +96,24 @@ App.autoModule('testWidgets', function() {
         widget: name,
         className: 'testWidgetBody',
 
-        initialize: function() {
+        templateHelpers: {
+          t: translate
+        },
+
+        initialize: function(options) {
 
           this.template = 'widgets/test/' + this.widget + '/template';
+
+          if (options && options.controller) {
+            this.controller = options.controller;
+          }
 
           if (typeof(this.initializeWidget) == 'function') {
             this.initializeWidget.apply(this, Array.prototype.slice.call(arguments));
           }
         },
 
-        t: function() {
-          var args = Array.prototype.slice.call(arguments);
-          args[0] = 'jst.testWidgets.' + this.widget + '.' + args[0];
-          return I18n.t.apply(I18n, args);
-        }
+        t: translate
       }, definition));
     });
   };

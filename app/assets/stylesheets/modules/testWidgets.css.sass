@@ -12,6 +12,15 @@
       :margin-bottom 0
 
   .infoTestWidget
+    dt
+      :width 120px
+    dd
+      :margin-left 140px
+    dt.author
+      :margin-bottom 0.4em
+      :padding-top 0.1em
+    dd.author
+      :margin-bottom 0.4em
     .labels
       :text-align center
       :line-height 2em
@@ -40,6 +49,7 @@
         :width 20px
         :height 20px
         :margin 0 0 1px 1px
+        :cursor pointer
     .description
       :margin 1em 0 0 0
     .text-danger
@@ -54,3 +64,30 @@
     .text-danger
       :margin 1em 0 0 0
       :text-align center
+
+  .resultDetailsTestWidget
+    dt
+      :width 120px
+    dd
+      :margin-left 140px
+    dt.runner
+      :margin-bottom 0.4em
+      :padding-top 0.1em
+    dd.runner
+      :margin-bottom 0.4em
+    .instructions
+      :margin-bottom 0
+    .details
+      .error
+        :text-align center
+      .noMessage
+        :margin-bottom 0
+        :text-align center
+    .modal
+      .modal-dialog
+        :width 900px
+      .modal-body
+        pre
+          :margin-bottom 0
+      .modal-footer
+        :margin-top 0

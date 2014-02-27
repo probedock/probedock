@@ -126,6 +126,8 @@ ROXCenter::Application.routes.draw do
       end
     end
 
+    resources :test_results, only: [ :show ]
+
     resources :test_runs, only: [ :index, :show ]
   end
 

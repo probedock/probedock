@@ -18,33 +18,38 @@
 
   App.addTestWidget('info', Marionette.Layout, {
 
+    regions: {
+      author: 'dd.author'
+    },
+
     ui: {
-      author: '.author',
       project: '.project',
-      labels: '.labels'
+      labels: '.labels',
+      lastRunAt: '.lastRunAt'
     },
 
     serializeData: function() {
+
+      var createdAt = new Date(this.model.get('createdAt'));
+
       return _.extend(this.model.toJSON(), {
-        humanCreatedAt: Format.datetime.full(new Date(this.model.get('createdAt'))),
-        humanLastRunAt: Format.datetime.full(new Date(this.model.embedded('v1:lastRun').get('endedAt')))
+        humanCreatedAt: Format.datetime.full(createdAt) + ' (' + moment(createdAt).fromNow() + ')'
       });
     },
 
     onRender: function() {
-      this.renderAuthor();
-      this.renderProject();
+      this.model.embedded('v1:project').linkTag().appendTo(this.ui.project);
+      this.author.show(new App.views.UserAvatar({ model: this.model.embedded('v1:author'), size: 'small' }));
+      this.renderLastRunAt();
       this.renderLabels();
     },
 
-    renderAuthor: function() {
-      var author = this.model.embedded('v1:author');
-      author.link('alternate').tag(author.get('name')).appendTo(this.ui.author);
-    },
+    renderLastRunAt: function() {
 
-    renderProject: function() {
-      var project = this.model.embedded('v1:project');
-      project.link('alternate').tag(project.get('name')).appendTo(this.ui.project);
+      var lastRun = this.model.embedded('v1:lastRun'),
+          endedAt = new Date(lastRun.get('endedAt'));
+
+      lastRun.link('alternate').tag(Format.datetime.full(endedAt) + ' (' + moment(endedAt).fromNow() + ')').appendTo(this.ui.lastRunAt);
     },
 
     renderLabels: function() {
