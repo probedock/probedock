@@ -2,5 +2,5 @@
   %thead
     %tr
       %th.name.sorting{ :'data-field' => 'name' }= I18n.t('jst.models.user.name')
-      %th.createdAt.sorting{ :'data-field' => 'created_at' }= I18n.t('jst.models.user.createdAt')
+      %th.createdAt.sorting{ :'data-field' => 'createdAt' }= I18n.t('jst.models.user.createdAt')
   %tbody

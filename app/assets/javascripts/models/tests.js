@@ -18,15 +18,6 @@ App.module('models', function() {
 
   var HalModel = this.HalModel;
 
-  var HalUser = HalModel.extend({
-
-    halLinks: [ 'alternate' ],
-
-    linkTag: function() {
-      return this.link('alternate').tag(this.get('name'));
-    }
-  });
-
   var HalProject = HalModel.extend({
 
     halLinks: [ 'self', 'alternate' ],
@@ -71,7 +62,7 @@ App.module('models', function() {
       {
         type: Backbone.HasOne,
         key: 'v1:author',
-        relatedModel: HalUser
+        relatedModel: 'User'
       },
       {
         type: Backbone.HasOne,
@@ -81,7 +72,7 @@ App.module('models', function() {
       {
         type: Backbone.HasOne,
         key: 'v1:lastRunner',
-        relatedModel: HalUser
+        relatedModel: 'User'
       },
       {
         type: Backbone.HasOne,

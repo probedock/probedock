@@ -129,6 +129,8 @@ ROXCenter::Application.routes.draw do
     resources :test_results, only: [ :show ]
 
     resources :test_runs, only: [ :index, :show ]
+
+    resources :users, only: [ :index, :show, :update, :destroy ]
   end
 
   # api

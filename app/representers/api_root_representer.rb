@@ -27,6 +27,7 @@ class ApiRootRepresenter < BaseRepresenter
     link 'v1:test-keys', api_uri(:test_keys), title: t('.root.test_keys')
     link 'v1:test-payloads', api_uri(:payloads), title: t('.root.payloads'), type: media_type(:rox_payload_v1)
     link 'v1:test-runs', "#{api_uri(:test_runs)}{?latest,groups[]*,runners[]*}", title: t('.root.test_runs'), templated: true
+    link 'v1:users', api_uri(:users), title: t('.root.users')
 
     property :appVersion, ROXCenter::Application::VERSION
   end

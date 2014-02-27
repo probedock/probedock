@@ -95,6 +95,10 @@ App.module('models', function() {
       }
 
       return this.link('self').get('href') == other.link('self').get('href');
+    },
+
+    isNew: function() {
+      return !this.hasLink('self')
     }
   });
 

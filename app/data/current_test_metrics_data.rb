@@ -70,7 +70,7 @@ class CurrentTestMetricsData
 
   def self.user_metric user, n
     {
-      user: user.to_client_hash,
+      user: UserRepresenter.new(user).serializable_hash,
       total: n
     }
   end

@@ -14,11 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('usersTable', function() {
-
-  var models = App.module('models'),
-      views = App.module('views');
 
   var NoUserRow = Marionette.ItemView.extend({
 
@@ -43,8 +39,11 @@ App.autoModule('usersTable', function() {
     },
 
     onRender: function() {
-      this.avatar.show(new views.UserAvatar({ model: this.model, size: 'small' }));
-      this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('created_at'))));
+
+      this.avatar.show(new App.views.UserAvatar({ model: this.model, size: 'small' }));
+
+      var createdAt = new Date(this.model.get('createdAt'));
+      this.ui.createdAt.text(Format.datetime.long(createdAt) + ' (' + moment(createdAt).fromNow() + ')');
     }
   });
 
@@ -56,7 +55,7 @@ App.autoModule('usersTable', function() {
     emptyView: NoUserRow
   });
 
-  var UsersTable = views.Table.extend({
+  var UsersTable = App.views.Table.extend({
 
     config: {
       pageSize: 25,
@@ -65,7 +64,7 @@ App.autoModule('usersTable', function() {
     
     tableView: UsersTableView,
     tableViewOptions: {
-      collection: new models.UserTableCollection()
+      collection: new App.models.UserCollection()
     }
   });
 

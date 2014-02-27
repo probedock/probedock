@@ -14,23 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class UserRepresenter < BaseRepresenter
-
-  representation do |user,*args|
-    options = args.last.kind_of?(Hash) ? args.pop : {}
-
-    link 'self', api_uri(:user, id: user.id)
-    link 'alternate', uri(:user, id: user), type: media_type(:html)
-    link 'edit', uri(:edit_user, id: user), type: media_type(:html)
-
-    property :name, user.name
-    property :email, user.email if user.email
-    property :createdAt, user.created_at.to_ms
-    property :technical, true if user.technical?
-
-    if options[:detailed]
-      property :active, user.active
-      property :deletable, user.deletable?
-    end
-  end
+class UsersRepresenter < BaseRepresenter
+  collection_representation :users, UserRepresenter
 end

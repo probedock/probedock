@@ -4,7 +4,7 @@
       .well
         %h2= t('.title')
         %p.endedAt= l @test_run.ended_at.localtime, format: :long
-        .autoUserAvatar{ data: { user: @test_run.runner.to_client_hash.to_json } }
+        .autoUserAvatar{ data: { user: UserRepresenter.new(@test_run.runner).serializable_hash.to_json } }
         %table.table
           %thead
             %tr

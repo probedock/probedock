@@ -16,15 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var HalUser = this.HalModel.extend({
-
-    halLinks: [ 'alternate' ],
-
-    linkTag: function() {
-      return this.link('alternate').tag(this.get('name'));
-    }
-  });
-
   var TestResult = this.TestResult = this.HalModel.extend({
 
     halLinks: [ 'self' ],
@@ -32,7 +23,7 @@ App.module('models', function() {
       {
         type: Backbone.HasOne,
         key: 'v1:runner',
-        relatedModel: HalUser
+        relatedModel: 'User'
       },
       {
         type: Backbone.HasOne,

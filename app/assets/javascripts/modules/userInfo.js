@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('userInfo', function() {
 
-  var models = App.module('models'),
-      views = App.module('views');
-
   var UserInfoView = Marionette.Layout.extend({
 
     template: 'userInfo/layout',
@@ -59,6 +56,11 @@ App.autoModule('userInfo', function() {
       'click .toggleActivated': 'toggleActivated'
     },
 
+    modelEvents: {
+      'change:active': 'renderActive updateControls',
+      'destroy': 'goBackToUsers'
+    },
+
     appEvents: {
       'maintenance:changed': 'updateControls'
     },
@@ -69,9 +71,9 @@ App.autoModule('userInfo', function() {
     },
 
     onRender: function() {
-      this.avatar.show(new views.UserAvatar({ model: this.model, link: false }));
+      this.avatar.show(new App.views.UserAvatar({ model: this.model, link: false }));
       this.ui.email.text(this.model.get('email') || I18n.t('jst.common.noData'));
-      this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('created_at'))));
+      this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('createdAt'))));
       this.renderActive();
       this.updateControls();
     },
@@ -101,7 +103,7 @@ App.autoModule('userInfo', function() {
       }
       this.ui.actions.show();
 
-      this.ui.editButton.attr('href', this.model.editPath());
+      this.ui.editButton.attr('href', this.model.link('edit').get('href'));
       this.ui.editButton.attr('disabled', this.busy || App.maintenance);
 
       this.ui.toggleActivatedButton.attr('disabled', this.busy || App.maintenance);
@@ -114,23 +116,10 @@ App.autoModule('userInfo', function() {
 
       this.$el.find('.text-danger').remove();
       this.setBusy(true);
-      
-      $.ajax({
-        url: this.model.path(),
-        type: 'PUT',
-        data: {
-          user: {
-            active: !this.model.get('active')
-          }
-        }
-      }).done(_.bind(this.setActivated, this)).fail(_.bind(this.showServerError, this, I18n.t('jst.userInfo.activationError')));
-    },
 
-    setActivated: function() {
-      this.setBusy(false);
-      this.model.set({ active: !this.model.get('active') }, { silent: true });
-      this.renderActive();
-      this.updateControls();
+      this.model.save({
+        active: !this.model.get('active')
+      }, { patch: true }).always(_.bind(this.setBusy, this, false)).fail(_.bind(this.showServerError, this, I18n.t('jst.userInfo.activationError')));
     },
 
     deleteUser: function() {
@@ -139,11 +128,7 @@ App.autoModule('userInfo', function() {
       }
 
       this.$el.find('.text-danger').remove();
-
-      $.ajax({
-        url: this.model.path(),
-        type: 'DELETE'
-      }).done(_.bind(this.goBackToUsers, this)).fail(_.bind(this.showServerError, this, I18n.t('jst.userInfo.deletionError')));
+      this.model.destroy({ wait: true }).fail(_.bind(this.showServerError, this, I18n.t('jst.userInfo.deletionError')));
     },
 
     goBackToUsers: function() {
@@ -165,6 +150,6 @@ App.autoModule('userInfo', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new UserInfoView({ model: new models.User(options.config.user), can: options.config.can }));
+    options.region.show(new UserInfoView({ model: new App.models.User(options.config.user), can: options.config.can }));
   });
 });
