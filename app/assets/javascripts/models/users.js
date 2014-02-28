@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var User = this.User = this.HalModel.extend({
+  this.User = this.HalModel.extend({
 
     halLinks: [ 'self', 'alternate', 'edit' ],
 
@@ -25,14 +25,10 @@ App.module('models', function() {
     }
   });
 
-  var UserCollection = this.UserCollection = this.HalCollection.extend({
+  this.UserCollection = this.HalCollection.extend({
 
-    model: User,
+    model: this.User,
     embeddedModels: 'v1:users',
-    halUrl: [ { rel: 'v1:users' } ],
-
-    comparator: function(a, b) {
-      return a.get('name').localeCompare(b.get('name'));
-    }
+    halUrl: [ { rel: 'v1:users' } ]
   });
 });
