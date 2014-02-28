@@ -18,15 +18,6 @@ App.module('models', function() {
 
   var HalModel = this.HalModel;
 
-  var HalProject = HalModel.extend({
-
-    halLinks: [ 'self', 'alternate' ],
-
-    linkTag: function() {
-      return this.link('alternate').tag(this.get('name'));
-    }
-  });
-
   var HalTestRun = HalModel.extend({
 
     halLinks: [ 'self', 'alternate' ]
@@ -77,7 +68,7 @@ App.module('models', function() {
       {
         type: Backbone.HasOne,
         key: 'v1:project',
-        relatedModel: HalProject
+        relatedModel: 'Project'
       },
       {
         type: Backbone.HasOne,

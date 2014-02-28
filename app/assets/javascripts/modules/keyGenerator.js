@@ -43,7 +43,7 @@ App.autoModule('keyGenerator', function() {
     itemView: KeyView,
 
     initialize: function() {
-      this.collection = this.model.get('testKeys');
+      this.collection = this.model.get('freeTestKeys');
     }
   });
 
@@ -111,7 +111,7 @@ App.autoModule('keyGenerator', function() {
           this.collection.add(project);
         }
 
-        project.get('testKeys').add(key);
+        project.get('freeTestKeys').add(key);
       }, this);
     },
 
@@ -139,7 +139,7 @@ App.autoModule('keyGenerator', function() {
     removeKeys: function() {
 
       this.collection.forEach(function(project) {
-        project.get('testKeys').reset();
+        project.get('freeTestKeys').reset();
       }, this);
 
       this.collection.reset();

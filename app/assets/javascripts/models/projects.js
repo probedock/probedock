@@ -16,40 +16,30 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var Project = this.Project = Backbone.RelationalModel.extend({
+  this.Project = this.HalModel.extend({
 
     idAttribute: 'apiId',
+    halLinks: [ 'self', 'alternate' ],
+    halUrl: [ { rel: 'v1:projects' } ],
+
+    linkTag: function() {
+      return this.link('alternate').tag(this.get('name'));
+    },
+
     relations: [
       {
         type: Backbone.HasMany,
-        key: 'testKeys',
+        key: 'freeTestKeys',
         relatedModel: 'TestKey',
-        collectionType: 'TestKeyCollection'
+        includeInJSON: false
       }
-    ],
-
-    url: function() {
-      return this.isNew() ? ApiPath.build('projects') : ApiPath.build('projects', this.get('apiId'));
-    },
-
-    path: function() {
-      return Path.build('projects', this.get('urlToken'));
-    },
-
-    link: function(options) {
-      options = _.defaults({}, options, { truncate: false });
-      return $('<a />').attr('href', this.path()).text(Format.truncate(this.get('name'), options.truncate));
-    }
+    ]
   });
 
-  var ProjectCollection = this.ProjectCollection = Backbone.Collection.extend({
-    model: Project
-  });
+  this.ProjectCollection = this.HalCollection.extend({
 
-  var ProjectTableCollection = this.ProjectTableCollection = this.HalCollection.extend({
-
-    url: ApiPath.builder('projects'),
-    model: Project,
-    embeddedModels: 'v1:projects'
+    model: this.Project,
+    embeddedModels: 'v1:projects',
+    halUrl: [ { rel: 'v1:projects' } ]
   });
 });

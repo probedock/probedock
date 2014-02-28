@@ -68,8 +68,7 @@ Backbone.fetchHalHref = function(refs, source, deferred) {
 
 Backbone.originalSync = Backbone.sync;
 Backbone.sync = function(method, model, options) {
-
-  options = options || {};
+  options = _.clone(options) || {};
 
   var url = null;
 
@@ -103,6 +102,15 @@ Backbone.sync = function(method, model, options) {
 
   if (!halUrl) {
     throw new Error('Model/collection must have url or halUrl.');
+  }
+
+  // WTF: fix for weird backbone behavior.
+  // Fore some reason, when creating a model, backbone resets empty attributes
+  // right after starting to sync with the server. Since the actual sync happens
+  // later (after the HAL URL has been fetched), we need to make sure the
+  // attributes are passed in the options instead.
+  if (!options.attrs) {
+    options.attrs = model.toJSON(options);
   }
 
   var args = Array.prototype.slice.call(arguments),
