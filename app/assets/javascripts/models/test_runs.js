@@ -18,7 +18,7 @@ App.module('models', function() {
 
   this.TestRun = this.HalModel.extend({
 
-    halLinks: [ 'self', 'alternate' ],
+    halLinks: [ 'self', 'alternate', 'v1:testPayloads' ],
 
     halEmbedded: [
       {

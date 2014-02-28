@@ -22,6 +22,7 @@ class TestRunRepresenter < BaseRepresenter
 
     link 'self', api_uri(:test_run, id: run.id)
     link 'alternate', uri(:test_run, id: run.id), type: media_type(:html)
+    link 'v1:testPayloads', uri(:payloads_api_test_run, id: run.id)
 
     property :duration, run.duration
     property :endedAt, run.ended_at.to_ms

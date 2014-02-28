@@ -6,6 +6,7 @@
 //= require ./jquery.smooth-scroll
 //= require ./jquery.tableofcontents
 //= require ./jquery.rangyinputs
+//= require ./jquery.base64
 //= require ./globalize/globalize
 //= require ./globalize/cultures/globalize.culture.en-US
 //= require ./inflection

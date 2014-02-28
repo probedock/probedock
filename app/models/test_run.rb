@@ -66,7 +66,6 @@ class TestRun < ActiveRecord::Base
 
     default_view do
 
-      field :id
       field :results_count, as: :results
       field :passed_results_count, as: :passedResults
       field :inactive_results_count, as: :inactiveResults

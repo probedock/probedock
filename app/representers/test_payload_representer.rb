@@ -14,11 +14,20 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestPayloadsController < ApplicationController
-  before_filter :authenticate_user!
-  load_resource
+class TestPayloadRepresenter < BaseRepresenter
 
-  def show
-    render json: TestPayload.find(params[:id].to_i).serializable_hash
+  representation do |payload,*args|
+    options = args.last.kind_of?(Hash) ? args.pop : {}
+
+    #curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:testPayloads:{rel}", templated: true
+
+    link 'self', api_uri(:test_payload, id: payload.id)
+
+    property :state, payload.state
+    property :bytes, payload.contents_bytesize
+    property :receivedAt, payload.received_at.to_ms
+    property :processingAt, payload.processing_at.to_ms
+    property :processedAt, payload.processed_at.to_ms
+    property :contents, Base64.strict_encode64(payload.contents) if options[:detailed]
   end
 end

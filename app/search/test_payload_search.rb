@@ -14,25 +14,17 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class Api::TestRunsController < Api::ApiController
-  load_resource only: [ :show, :payloads ]
+class TestPayloadSearch
 
-  def index
+  def self.options test_run, params, options = {}
 
-    if params.key? :latest
-      cache = LatestTestRunsData.compute
-      render_api cache if cache_stale? cache
-      return
-    end
+    q = test_run.test_payloads.for_listing
 
-    render_api TestRun.tableling.process(TestRunSearch.options(params))
-  end
+    return params.merge(base: q) if params.blank?
 
-  def show
-    render_api TestRunRepresenter.new(@test_run)
-  end
+    state = params[:state].to_s.strip
+    q = q.where state: state if state.present?
 
-  def payloads
-    render_api TestPayload.tableling.process(TestPayloadSearch.options(@test_run, params).merge(response: { test_run: @test_run }))
+    params.merge base: q
   end
 end

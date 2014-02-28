@@ -274,6 +274,7 @@ this.Translations.en =
     payloads:
       title: "API Payloads"
       purged: "No longer available."
+      listError: "Could not list test payloads."
       info: "__count__ payload"
       info_plural: "__count__ payloads"
       prettyPrint: "Pretty"

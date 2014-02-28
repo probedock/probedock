@@ -1,6 +1,6 @@
 - ordered_results = @test_run.ordered_results
 - index = report_index ordered_results
-.testRunReport{ data: { module: :testRunReport, config: { index: index }.to_json } }
+.testRunReport{ data: { module: :testRunReport, config: { testRun: TestRunRepresenter.new(@test_run).serializable_hash, index: index }.to_json } }
   %h1= t('.title')
   .row
     .col-md-8
