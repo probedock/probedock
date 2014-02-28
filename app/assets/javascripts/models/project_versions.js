@@ -16,14 +16,12 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var ProjectVersion = this.ProjectVersion = this.HalModel.extend({
-
+  this.ProjectVersion = this.HalModel.extend({
     halLinks: [ 'v1:project' ]
   });
 
-  var ProjectVersionCollection = this.ProjectVersionCollection = this.HalCollection.extend({
-
-    model: ProjectVersion,
+  this.ProjectVersionCollection = this.HalCollection.extend({
+    model: this.ProjectVersion,
     embeddedModels: 'v1:project-versions'
   });
 });

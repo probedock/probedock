@@ -17,12 +17,10 @@
 App.module('models', function() {
 
   this.ApiKey = this.HalModel.extend({
-
     halLinks: [ 'self' ]
   });
 
   this.ApiKeyCollection = this.HalCollection.extend({
-
     model: this.ApiKey,
     embeddedModels: 'v1:api-keys',
     halUrl: [ { rel: 'v1:apiKeys' } ]

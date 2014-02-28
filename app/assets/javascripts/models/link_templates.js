@@ -16,13 +16,12 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var LinkTemplate = this.LinkTemplate = Backbone.Model.extend({
+  this.LinkTemplate = Backbone.Model.extend({
     urlRoot: LegacyApiPath.builder('link_templates')
   });
 
-  var LinkTemplateCollection = this.LinkTemplateCollection = Backbone.Collection.extend({
-
-    model: LinkTemplate,
+  this.LinkTemplateCollection = Backbone.Collection.extend({
+    model: this.LinkTemplate,
     url: LegacyApiPath.builder('link_templates')
   });
 });

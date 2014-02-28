@@ -16,39 +16,14 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  this.TestResult = this.HalModel.extend({
-
-    halLinks: [ 'self' ],
-
-    halEmbedded: [
-      {
-        type: Backbone.HasOne,
-        key: 'v1:runner',
-        relatedModel: 'User'
-      },
-      {
-        type: Backbone.HasOne,
-        key: 'v1:testRun',
-        relatedModel: 'TestRun'
-      },
-      {
-        type: Backbone.HasOne,
-        key: 'v1:test',
-        relatedModel: 'Test'
-      }
-    ],
-
-    status: function() {
-      if (!this.get('active')) {
-        return 'inactive';
-      } else {
-        return this.get('passed') ? 'passed' : 'failed';
-      }
-    }
+  this.Tag = this.HalModel.extend({
+    halLinks: [ 'search' ]
   });
 
-  this.TestResultCollection = this.HalCollection.extend({
-    model: this.TestResult,
-    embeddedModels: 'v1:test-results'
+  this.TagCollection = this.HalCollection.extend({
+
+    comparator: function(a, b) {
+      return a.get('name').localeCompare(b.get('name'));
+    }
   });
 });

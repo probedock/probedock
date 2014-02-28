@@ -16,9 +16,10 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var TestRun = this.TestRun = this.HalModel.extend({
+  this.TestRun = this.HalModel.extend({
 
     halLinks: [ 'self', 'alternate' ],
+
     halEmbedded: [
       {
         type: Backbone.HasOne,
@@ -82,9 +83,9 @@ App.module('models', function() {
     }
   });
 
-  var TestRunCollection = this.TestRunCollection = this.HalCollection.extend({
+  this.TestRunCollection = this.HalCollection.extend({
 
-    model: TestRun,
+    model: this.TestRun,
     embeddedModels: 'v1:test-runs',
     halUrl: [ { rel: 'v1:test-runs', template: {} } ]
   });

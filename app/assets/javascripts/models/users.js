@@ -26,7 +26,6 @@ App.module('models', function() {
   });
 
   this.UserCollection = this.HalCollection.extend({
-
     model: this.User,
     embeddedModels: 'v1:users',
     halUrl: [ { rel: 'v1:users' } ]

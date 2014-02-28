@@ -16,37 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var HalModel = this.HalModel;
-
-  var HalTestRun = HalModel.extend({
-
-    halLinks: [ 'self', 'alternate' ]
-  });
-
-  var HalCategory = HalModel.extend({
-
-    halLinks: [ 'search' ],
-
-    linkTag: function() {
-      return this.link('search').tag(this.get('name'));
-    }
-  });
-
-  var HalTag = HalModel.extend({
-
-    halLinks: [ 'search' ]
-  });
-
-  var HalTicket = HalModel.extend({
-
-    halLinks: [ 'about', 'search' ],
-
-    ticketHref: function() {
-      return this.hasLink('about') ? this.link('about').get('href') : this.link('search').get('href');
-    }
-  });
-
-  this.Test = HalModel.extend({
+  this.Test = this.HalModel.extend({
 
     halLinks: [ 'self', 'alternate', 'bookmark', 'v1:deprecation', 'v1:testResults', 'v1:projectVersions' ],
     halEmbedded: [
@@ -58,7 +28,7 @@ App.module('models', function() {
       {
         type: Backbone.HasOne,
         key: 'v1:lastRun',
-        relatedModel: HalTestRun
+        relatedModel: 'TestRun'
       },
       {
         type: Backbone.HasOne,
@@ -73,17 +43,19 @@ App.module('models', function() {
       {
         type: Backbone.HasOne,
         key: 'v1:category',
-        relatedModel: HalCategory
+        relatedModel: 'Category'
       },
       {
         type: Backbone.HasMany,
         key: 'v1:tags',
-        relatedModel: HalTag
+        relatedModel: 'Tag',
+        collectionType: 'TagCollection'
       },
       {
         type: Backbone.HasMany,
         key: 'v1:tickets',
-        relatedModel: HalTicket
+        relatedModel: 'Ticket',
+        collectionType: 'TicketCollection'
       }
     ],
 
@@ -114,6 +86,7 @@ App.module('models', function() {
 
     model: this.Test,
     embeddedModels: 'v1:tests',
+
     halUrl: function() {
       return [ { rel: 'v1:tests', template: this.uriTemplateParams || {} } ];
     }

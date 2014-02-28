@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var TestPayload = this.TestPayload = Backbone.RelationalModel.extend({
+  this.TestPayload = Backbone.RelationalModel.extend({
 
     urlRoot: Path.builder('payloads'),
 
@@ -30,6 +30,6 @@ App.module('models', function() {
   });
 
   var TestPayloadCollection = this.TestPayloadCollection = Backbone.Collection.extend({
-    model: TestPayload
+    model: this.TestPayload
   });
 });
