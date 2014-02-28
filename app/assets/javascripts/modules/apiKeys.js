@@ -16,12 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('apiKeysTable', function() {
 
-  var models = App.module('models'),
-      ApiKey = models.ApiKey,
-      ApiKeyCollection = models.ApiKeyCollection;
-  
-  var views = App.module('views'),
-      Table = views.Table;
+  var ApiKey = App.models.ApiKey;
 
   var NoApiKeyRow = Marionette.ItemView.extend({
 
@@ -67,7 +62,7 @@ App.autoModule('apiKeysTable', function() {
 
     toggleActive: function(e) {
       e.preventDefault();
-      this.model.save({ active: !this.model.get('active') }, { wait: true, busy: true });
+      this.model.save({ active: !this.model.get('active') }, { patch: true, wait: true, busy: true });
     },
 
     checkBusy: function(model, xhr, options) {
@@ -165,7 +160,7 @@ App.autoModule('apiKeysTable', function() {
     emptyView: NoApiKeyRow
   });
 
-  var ApiKeysTable = Table.extend({
+  var ApiKeysTable = App.views.Table.extend({
 
     template: 'apiKeysTable/layout',
     ui: {
@@ -200,7 +195,7 @@ App.autoModule('apiKeysTable', function() {
     tableView: ApiKeysTableView,
 
     initializeTable: function() {
-      Table.prototype.initializeTable.apply(this, Array.prototype.slice.call(arguments));
+      App.views.Table.prototype.initializeTable.apply(this, Array.prototype.slice.call(arguments));
       App.bindEvents(this);
     },
 
@@ -210,19 +205,16 @@ App.autoModule('apiKeysTable', function() {
 
     createKey: function(e) {
       e.preventDefault();
+
       this.clearError();
+      this.setBusy(true);
 
-      var key = new ApiKey();
-      this.listenToOnce(key, 'request', _.bind(this.setBusy, this, true));
-      this.listenToOnce(key, 'sync error', _.bind(this.setBusy, this, false));
-      this.listenToOnce(key, 'error', this.showError);
-
-      key.save({}, {
+      (new ApiKey({}, { collection: this.getCollection() })).save({}, {
         wait: true,
         success: _.bind(function() {
           this.update({ sort: [ 'createdAt desc' ] });
         }, this)
-      });
+      }).always(_.bind(this.setBusy, this, false)).fail(_.bind(this.showError, this));
     },
 
     setBusy: function(busy) {
@@ -255,8 +247,8 @@ App.autoModule('apiKeysTable', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new ApiKeysTable(_.extend(options.config, {
-      collection: new ApiKeyCollection()
-    })));
+    options.region.show(new ApiKeysTable({
+      collection: new App.models.ApiKeyCollection()
+    }));
   });
 });

@@ -23,7 +23,10 @@ class ProjectsController < ApplicationController
   def show
     window_title << @project.name
     @project_editor_config = { model: ProjectRepresenter.new(@project).serializable_hash }
-    @test_search_config = TestSearch.config params, except: [ :projects, :current ]
+    @tests_table_config = {
+      uriTemplateParams: { 'projects[]' => [ @project.name ] },
+      search: TestSearch.config(params, except: [ :projects, :current ])
+    }
   end
 
   def tests_page

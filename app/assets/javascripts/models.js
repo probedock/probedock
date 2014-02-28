@@ -68,11 +68,16 @@ App.module('models', function() {
   var HalModel = this.HalModel = Backbone.RelationalModel.extend({
 
     url: function() {
-      return this.link('self').get('href');
+      return this.hasLink('self') ? this.link('self').get('href') : null;
     },
 
     link: function() {
+
       var links = this.get('_links');
+      if (!links) {
+        throw new Error('Resource has no _links property.');
+      }
+
       return links.link.apply(links, Array.prototype.slice.call(arguments));
     },
     
@@ -82,7 +87,7 @@ App.module('models', function() {
 
     embedded: function(rel) {
       var embedded = this.get('_embedded');
-      return embedded.embedded.apply(embedded, Array.prototype.slice.call(arguments));
+      return embedded ? embedded.embedded.apply(embedded, Array.prototype.slice.call(arguments)) : null;
     },
 
     hasEmbedded: function(rel) {
@@ -132,13 +137,15 @@ App.module('models', function() {
     options.relations.push({
       type: Backbone.HasOne,
       key: '_links',
-      relatedModel: links
+      relatedModel: links,
+      includeInJSON: false
     });
 
     options.relations.push({
       type: Backbone.HasOne,
       key: '_embedded',
-      relatedModel: embedded
+      relatedModel: embedded,
+      includeInJSON: false
     });
 
     return halModelExtend.call(HalModel, options);

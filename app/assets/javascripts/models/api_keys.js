@@ -16,14 +16,15 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var ApiKey = this.ApiKey = this.HalModel.extend({
-    fallbackUrl: Path.builder('api_keys')
+  this.ApiKey = this.HalModel.extend({
+
+    halLinks: [ 'self' ]
   });
 
-  var ApiKeyCollection = this.ApiKeyCollection = this.HalCollection.extend({
+  this.ApiKeyCollection = this.HalCollection.extend({
 
-    url: Path.builder('api_keys'),
-    model: ApiKey,
-    embeddedModels: 'v1:api-keys'
+    model: this.ApiKey,
+    embeddedModels: 'v1:api-keys',
+    halUrl: [ { rel: 'v1:apiKeys' } ]
   });
 });

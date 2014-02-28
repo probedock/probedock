@@ -31,7 +31,10 @@ class AccountsController < ApplicationController
       lastProjectApiId: current_user.settings.last_test_key_project_api_id
     }.reject{ |k,v| v.blank? }
 
-    @test_search_config = TestSearch.config(params, except: [ :authors, :current ])
+    @tests_table_config = {
+      uriTemplateParams: { 'authors[]' => [ current_user.name ] },
+      search: TestSearch.config(params, except: [ :authors, :current ])
+    }
   end
 
   # Lists tests authored by the current user.

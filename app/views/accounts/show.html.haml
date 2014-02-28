@@ -16,7 +16,7 @@
         %dd= l current_user.created_at, :format => :long
 
 %h2= t('.api_keys.title')
-.apiKeysTable.clearfix{ data: { module: :apiKeysTable, config: { path: api_keys_path }.to_json } }
+.apiKeysTable.clearfix{ data: { module: :apiKeysTable } }
 
 %h2= t('.latest.title')
-.testsTable{ data: { module: :testsTable, config: { path: tests_legacy_api_account_path, search: @test_search_config }.to_json } }
+.testsTable{ data: { module: :testsTable, config: @tests_table_config.to_json } }

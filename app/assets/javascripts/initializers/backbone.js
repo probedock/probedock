@@ -68,15 +68,49 @@ Backbone.fetchHalHref = function(refs, source, deferred) {
 
 Backbone.originalSync = Backbone.sync;
 Backbone.sync = function(method, model, options) {
-  if (model.url) {
+
+  options = options || {};
+
+  var url = null;
+
+  try {
+    url = options.url || _.result(model, 'url');
+  } catch (e) {
+    // nothing to do
+  }
+
+  var cachedUrl = _.result(model, 'halCachedUrl')
+  if (!cachedUrl && !model.halUrl) {
+    cachedUrl = _.result(model.collection, 'halCachedUrl');
+  }
+
+  if (!url && cachedUrl) {
+    url = cachedUrl;
+    options.url = cachedUrl;
+  }
+
+  if (url) {
     return Backbone.originalSync.apply(Backbone, Array.prototype.slice.call(arguments));
+  }
+
+  var halUrl = _.result(model, 'halUrl'),
+      halUrlSource = model;
+
+  if (!halUrl) {
+    halUrl = _.result(model.collection, 'halUrl');
+    halUrlSource = model.collection;
+  }
+
+  if (!halUrl) {
+    throw new Error('Model/collection must have url or halUrl.');
   }
 
   var args = Array.prototype.slice.call(arguments),
       deferred = $.Deferred();
 
-  Backbone.fetchHalHref(model.halUrl).fail(_.bind(deferred.reject, deferred)).done(function(url) {
-    model.url = url;
+  Backbone.fetchHalHref(halUrl.slice()).fail(_.bind(deferred.reject, deferred)).done(function(url) {
+    options.url = url;
+    halUrlSource.halCachedUrl = url;
     Backbone.originalSync.apply(Backbone, args).done(_.bind(deferred.resolve, deferred)).fail(_.bind(deferred.reject, deferred));
   });
 

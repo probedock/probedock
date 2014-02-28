@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('projectsTable', function() {
 
   var models = App.module('models'),

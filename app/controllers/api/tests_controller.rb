@@ -20,7 +20,7 @@ class Api::TestsController < Api::ApiController
   skip_load_resource only: [ :index, :bulk_deprecations ]
 
   def index
-    render_api TestInfo.tableling.process(params.merge(TestSearch.options(params[:search])))
+    render_api TestInfo.tableling.process(params.merge(TestSearch.options(params)))
   end
 
   def show

@@ -23,7 +23,9 @@ class ApiRootRepresenter < BaseRepresenter
     link 'self', api_uri, title: t('.root.title')
     link 'help', uri(:doc_api_overview), title: t('.root.help'), type: media_type(:md)
     link 'version-history', uri(:doc_changelog), title: t('.root.changelog'), type: media_type(:md)
+    link 'v1:apiKeys', uri(:api_keys)
     link 'v1:projects', api_uri(:projects), title: t('.root.projects')
+    link 'v1:tests', "#{api_uri(:tests)}{?authors[]*,projects[]*}", templated: true
     link 'v1:test-keys', api_uri(:test_keys), title: t('.root.test_keys')
     link 'v1:test-payloads', api_uri(:payloads), title: t('.root.payloads'), type: media_type(:rox_payload_v1)
     link 'v1:test-runs', "#{api_uri(:test_runs)}{?latest,groups[]*,runners[]*}", title: t('.root.test_runs'), templated: true

@@ -14,11 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class ApiKeyRepresenter < BaseRepresenter
 
   representation do |api_key,*args|
-
     options = args.last.kind_of?(Hash) ? args.pop : {}
 
     link 'self', uri(:api_key, id: api_key, locale: nil)

@@ -232,14 +232,14 @@ App.module('views', function() {
       _.extend(target, searchData);
 
       // remove search data if needed
-      if (_.isEmpty(searchData)) {
-        if (this.wrapSearchData) {
-          delete data.search;
-        } else {
-          _.each(this.searchFilters, function(filter) {
-            delete data[filter.name];
-          });
+      _.each(this.searchFilters, function(filter) {
+        if (typeof(searchData[filter.name]) == 'undefined') {
+          delete target[filter.name];
         }
+      });
+
+      if (_.isEmpty(searchData) && this.wrapSearchData) {
+        delete data.search;
       }
 
       return data;

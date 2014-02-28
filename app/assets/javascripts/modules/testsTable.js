@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testsTable', function() {
 
-  var models = App.module('models'),
-      views = App.module('views');
-
   var NoTestRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
@@ -44,7 +41,7 @@ App.autoModule('testsTable', function() {
     },
 
     onRender: function() {
-      this.avatar.show(new views.UserAvatar({ model: this.model.embedded('v1:lastRunner'), size: 'small', link: false }));
+      this.avatar.show(new App.views.UserAvatar({ model: this.model.embedded('v1:lastRunner'), size: 'small', link: false }));
     }
   });
 
@@ -85,7 +82,7 @@ App.autoModule('testsTable', function() {
       this.renderName();
       this.renderKey();
       this.renderProject();
-      this.author.show(new views.UserAvatar({ model: this.model.embedded('v1:author'), size: 'small' }));
+      this.author.show(new App.views.UserAvatar({ model: this.model.embedded('v1:author'), size: 'small' }));
       this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('createdAt'))));
       this.renderStatus();
       this.updateSelection();
@@ -270,9 +267,10 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestsTable = views.TableWithAdvancedSearch.extend({
+  var TestsTable = App.views.TableWithAdvancedSearch.extend({
 
     advancedSearchTemplate: 'testsTable/search',
+
     ui: {
       projectsFilter: '.advancedSearch form .projects',
       tagsFilter: '.advancedSearch form .tags',
@@ -294,6 +292,7 @@ App.autoModule('testsTable', function() {
     },
 
     tableView: TestsTableView,
+    wrapSearchData: false,
 
     config: {
       sort: [ 'createdAt desc' ],
@@ -332,9 +331,12 @@ App.autoModule('testsTable', function() {
 
   this.addAutoInitializer(function(options) {
 
-    var Tests = models.TestTableCollection.extend({
-      url: options.config.path
-    });
+    var extension = {};
+    if (options.config.uriTemplateParams) {
+      extension.uriTemplateParams = options.config.uriTemplateParams;
+    }
+
+    var Tests = App.models.TestCollection.extend(extension);
 
     var Table = TestsTable.extend({
       tableViewOptions: {
