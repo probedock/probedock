@@ -16,16 +16,12 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testWidgets', function() {
 
-  var components = App.module('components');
-
   var Controller = Marionette.Controller.extend({
 
     initialize: function(options) {
-      this.projectVersions = new components.TestProjectVersions({ model: options.model });
+      this.projectVersions = new App.components.TestProjectVersions({ model: options.model });
     }
   });
-
-  var Test = App.module('models').Test;
 
   var TestWidget = Backbone.Model.extend({
 
@@ -33,7 +29,7 @@ App.autoModule('testWidgets', function() {
       {
         type: Backbone.HasOne,
         key: 'test',
-        relatedModel: Test
+        relatedModel: App.models.Test
       }
     ]
   });
@@ -45,7 +41,7 @@ App.autoModule('testWidgets', function() {
   var Layout = Marionette.CompositeView.extend({
 
     template: 'widgets/layout',
-    itemView: App.module('views').TestWidgetContainer,
+    itemView: App.views.TestWidgetContainer,
     itemViewContainer: '.row',
 
     itemViewOptions: function() {
@@ -120,7 +116,7 @@ App.autoModule('testWidgets', function() {
 
   this.addAutoInitializer(function(options) {
 
-    var test = new Test(options.config.test),
+    var test = new App.models.Test(options.config.test),
         controller = new Controller({ model: test });
 
     var widgetsData = new TestWidgetDataCollection(_.reduce(options.config.widgets, function(memo, data, name) {

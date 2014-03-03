@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testRunsTable', function() {
 
-  var models = App.module('models'),
-      views = App.module('views');
-
   var NoTestRunRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
@@ -49,8 +46,8 @@ App.autoModule('testRunsTable', function() {
       this.ui.endedAt.html(this.endedAtCell());
       this.ui.duration.text(Format.duration(this.model.get('duration')));
       this.renderGroup();
-      this.runner.show(new views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small' }));
-      this.status.show(new views.TestRunHealthBar({ model: this.model }));
+      this.runner.show(new App.views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small' }));
+      this.status.show(new App.views.TestRunHealthBar({ model: this.model }));
     },
 
     renderGroup: function() {
@@ -76,7 +73,7 @@ App.autoModule('testRunsTable', function() {
     emptyView: NoTestRunRow,
   });
 
-  var TestRunsTable = views.TableWithAdvancedSearch.extend({
+  var TestRunsTable = App.views.TableWithAdvancedSearch.extend({
 
     advancedSearchTemplate: 'testRunsTable/search',
     ui: {
@@ -96,7 +93,7 @@ App.autoModule('testRunsTable', function() {
 
     tableView: TestRunsTableView,
     tableViewOptions: {
-      collection: new models.TestRunCollection()
+      collection: new App.models.TestRunCollection()
     },
 
     wrapSearchData: false,

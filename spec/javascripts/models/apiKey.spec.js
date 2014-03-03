@@ -38,7 +38,7 @@ var apiKeysResponse = {
 
 describe("ApiKey", function() {
 
-  var ApiKey = App.module('models').ApiKey,
+  var ApiKey = App.models.ApiKey,
       apiKey = undefined;
 
   beforeEach(function() {
@@ -58,9 +58,8 @@ describe("ApiKey", function() {
 
 describe("ApiKeyCollection", function() {
 
-  var models = App.module('models'),
-      ApiKey = models.ApiKey,
-      ApiKeyCollection = models.ApiKeyCollection,
+  var ApiKey = App.models.ApiKey,
+      ApiKeyCollection = App.models.ApiKeyCollection,
       col = undefined;
 
   beforeEach(function() {

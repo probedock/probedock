@@ -39,7 +39,7 @@ describe("TestPayload", function() {
         state: 'processed',
         processedAt: now - 30000
       }),
-      TestPayload = App.module('models').TestPayload,
+      TestPayload = App.models.TestPayload,
       testPayload = null;
 
   beforeEach(function() {
@@ -82,9 +82,8 @@ describe("TestPayload", function() {
 
 describe("TestPayloadCollection", function() {
 
-  var models = App.module('models'),
-      TestPayload = models.TestPayload,
-      TestPayloadCollection = models.TestPayloadCollection;
+  var TestPayload = App.models.TestPayload,
+      TestPayloadCollection = App.models.TestPayloadCollection;
 
   it("should use the TestPayload model", function() {
     this.meta = { rox: { key: '2c9d23afce24' } };

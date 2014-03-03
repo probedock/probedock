@@ -26,7 +26,7 @@ var testRunBase = {
 
 describe("TestRun", function() {
 
-  var TestRun = App.module('models').TestRun,
+  var TestRun = App.models.TestRun,
       testRun = undefined;
 
   beforeEach(function() {

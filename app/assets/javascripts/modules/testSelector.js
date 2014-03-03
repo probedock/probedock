@@ -16,14 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testSelector', function() {
 
-  var models = App.module('models'),
-      Test = models.Test,
-      LinkTemplateCollection = models.LinkTemplateCollection;
-
-  var SelectedTests = Backbone.Collection.extend({
-    model: Test
-  });
-
   var LinkTemplateOption = Marionette.ItemView.extend({
 
     tagName: 'option',
@@ -275,8 +267,8 @@ App.autoModule('testSelector', function() {
 
       App.bindEvents(this);
 
-      this.collection = new SelectedTests();
-      this.linkTemplates = new LinkTemplateCollection(options.linkTemplates);
+      this.collection = new App.models.TestCollection();
+      this.linkTemplates = new App.models.LinkTemplateCollection(options.linkTemplates);
     },
 
     onRender: function() {

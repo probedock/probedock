@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('menuLinksManager', function() {
 
-  var models = App.module('models'),
-      LinkCollection = models.LinkCollection;
-
   var EmptyRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
@@ -215,6 +212,6 @@ App.autoModule('menuLinksManager', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new LinksManager({ collection: new LinkCollection(options.config) }));
+    options.region.show(new LinksManager({ collection: new App.models.LinkCollection(options.config) }));
   });
 });

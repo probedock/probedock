@@ -35,10 +35,9 @@ var projectBase = {
 
 describe("Project", function() {
 
-  var models = App.module('models'),
-      Project = models.Project,
-      TestKey = models.TestKey,
-      TestKeyCollection = models.TestKeyCollection,
+  var Project = App.models.Project,
+      TestKey = App.models.TestKey,
+      TestKeyCollection = App.models.TestKeyCollection,
       project = undefined;
 
   beforeEach(function() {
@@ -73,9 +72,8 @@ describe("Project", function() {
 
 describe("ProjectCollection", function() {
 
-  var models = App.module('models'),
-      Project = models.Project,
-      ProjectCollection = models.ProjectCollection,
+  var Project = App.models.Project,
+      ProjectCollection = App.models.ProjectCollection,
       col = undefined;
 
   beforeEach(function() {

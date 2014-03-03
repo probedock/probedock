@@ -16,10 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('linkTemplates', function() {
 
-  var models = App.module('models'),
-      LinkTemplate = models.LinkTemplate,
-      LinkTemplateCollection = models.LinkTemplateCollection;
-
   var EmptyRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
@@ -224,6 +220,6 @@ App.autoModule('linkTemplates', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new LinkTemplatesManager({ collection: new LinkTemplateCollection(options.config) }));
+    options.region.show(new LinkTemplatesManager({ collection: new App.models.LinkTemplateCollection(options.config) }));
   });
 });

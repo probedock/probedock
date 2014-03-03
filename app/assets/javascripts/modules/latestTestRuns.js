@@ -16,9 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('latestTestRuns', function() {
 
-  var views = App.module('views');
-
-  var LatestTestRunsCollection = App.module('models').TestRunCollection.extend({
+  var LatestTestRunsCollection = App.models.TestRunCollection.extend({
     halUrl: [ { rel: 'v1:test-runs', template: { latest: '' } } ]
   });
 
@@ -74,7 +72,7 @@ App.autoModule('latestTestRuns', function() {
         this.ui.avatar.remove();
         this.ui.link.addClass('group');
       } else {
-        this.avatar.show(new views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small', label: false }));
+        this.avatar.show(new App.views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small', label: false }));
       }
     }
   });
@@ -95,7 +93,7 @@ App.autoModule('latestTestRuns', function() {
 
     onRender: function() {
       this.description.show(new TestRunDescription({ model: this.model }));
-      this.results.show(new views.TestRunHealthBar({ model: this.model }));
+      this.results.show(new App.views.TestRunHealthBar({ model: this.model }));
     },
 
     renderTime: function() {

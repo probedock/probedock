@@ -16,10 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
-  var models = App.module('models'),
-      TestResultCollection = models.TestResultCollection,
-      views = App.module('views');
-
   var ResultCard = Marionette.ItemView.extend({
 
     template: false,
@@ -79,7 +75,7 @@
 
       this.controller = options.controller;
       this.collection = new (this.buildCollectionClass())();
-      this.resultSelector = new views.TestResultSelector({ controller: this.controller });
+      this.resultSelector = new App.views.TestResultSelector({ controller: this.controller });
 
       this.listenTo(this.resultSelector, 'update', this.updateResults);
       this.listenTo(this, 'itemview:result:selected', this.selectResult);
@@ -157,7 +153,7 @@
     },
 
     buildCollectionClass: function() {
-      return TestResultCollection.extend({
+      return App.models.TestResultCollection.extend({
         url: this.model.link('v1:testResults').get('href')
       });
     },

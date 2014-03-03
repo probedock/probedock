@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('components', function() {
 
-  var ProjectVersionCollection = App.module('models').ProjectVersionCollection;
+  var ProjectVersionCollection = App.models.ProjectVersionCollection;
 
   this.TestProjectVersions = Marionette.Controller.extend({
 

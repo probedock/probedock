@@ -27,9 +27,8 @@ var testKeysResponse = {
 
 describe("TestKeyCollection", function() {
 
-  var models = App.module('models'),
-      TestKey = models.TestKey,
-      TestKeyCollection = models.TestKeyCollection,
+  var TestKey = App.models.TestKey,
+      TestKeyCollection = App.models.TestKeyCollection,
       col = undefined;
 
   beforeEach(function() {

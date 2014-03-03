@@ -16,10 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('keyGenerator', function() {
 
-  var models = App.module('models'),
-      Project = models.Project,
-      ProjectCollection = models.ProjectCollection;
-
   var KeyView = Marionette.ItemView.extend({
     tagName: 'span',
     template: _.template('<span class="label label-success"><%- value %></span><span>&nbsp; </span>')
@@ -80,7 +76,7 @@ App.autoModule('keyGenerator', function() {
       this.lastNumber = options.lastNumber;
       this.lastProjectApiId = options.lastProjectApiId;
 
-      this.collection = new ProjectCollection();
+      this.collection = new App.models.ProjectCollection();
       this.addKeys(options.freeKeys);
 
       App.bindEvents(this);
@@ -107,7 +103,7 @@ App.autoModule('keyGenerator', function() {
         }, this);
 
         if (!project) {
-          project = Project.findOrCreate(_.findWhere(this.projects, { apiId: key.projectApiId }));
+          project = App.models.Project.findOrCreate(_.findWhere(this.projects, { apiId: key.projectApiId }));
           this.collection.add(project);
         }
 

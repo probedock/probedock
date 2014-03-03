@@ -16,10 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
-  var models = App.module('models'),
-      TestResultCollection = models.TestResultCollection,
-      views = App.module('views');
-
   App.addTestWidget('executionTime', Marionette.ItemView, {
 
     ui: {
@@ -34,7 +30,7 @@
 
     initializeWidget: function(options) {
       this.collection = new (this.buildCollectionClass())();
-      this.resultSelector = new views.TestResultSelector({ controller: options.controller });
+      this.resultSelector = new App.views.TestResultSelector({ controller: options.controller });
       this.listenTo(this.resultSelector, 'update', this.updateResults);
     },
 
@@ -193,7 +189,7 @@
     },
 
     buildCollectionClass: function() {
-      return TestResultCollection.extend({
+      return App.models.TestResultCollection.extend({
         url: this.model.link('v1:testResults').get('href')
       });
     },
