@@ -16,12 +16,12 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TestPayloadsController do
+describe Api::TestPayloadsController do
   let(:user){ create :user }
 
   it "should not authorize unauthenticated users", rox: { key: '752a7db0dc8b' } do
     get :show, id: 42
-    expect(response).to redirect_to(new_user_session_path)
+    expect(response.status).to eq(401)
   end
 
   describe "#show" do
@@ -31,7 +31,7 @@ describe TestPayloadsController do
     it "should serialize a test payload", rox: { key: 'bce644d4907e' } do
       get :show, id: test_payload.id
       expect(response.status).to eq(200)
-      expect(MultiJson.load(response.body)).to eq(MultiJson.load(MultiJson.dump(test_payload.serializable_hash)))
+      expect(MultiJson.load(response.body)).to eq(TestPayloadRepresenter.new(test_payload, detailed: true).serializable_hash)
     end
   end
 end

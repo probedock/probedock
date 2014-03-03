@@ -22,7 +22,7 @@ Backbone.fetchHalHref = function(refs, source, deferred) {
   if (source) {
 
     if (!_.isObject(source._links)) {
-      throw new Error('Expected source to have a links in the _links property, got ' + JSON.stringify(source));
+      throw new Error('Expected source to have links in the _links property, got ' + JSON.stringify(source));
     }
 
     var ref = refs.shift();

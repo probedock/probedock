@@ -147,7 +147,7 @@ module SpecApiHelper
   end
 
   def post_api_payload payload, user, headers = {}
-    post api_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.lotaris.rox.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
+    post api_test_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.lotaris.rox.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
   end
 
   def api_authentication_headers user

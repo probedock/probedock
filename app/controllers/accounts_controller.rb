@@ -36,12 +36,4 @@ class AccountsController < ApplicationController
       search: TestSearch.config(params, except: [ :authors, :current ])
     }
   end
-
-  # Lists tests authored by the current user.
-  def tests_page
-    options = TestSearch.options params[:search], except: :authors
-    options[:base] = options[:base].where(author_id: current_user)
-    options[:base_count] = options[:base_count].where(author_id: current_user)
-    render :json => TestInfo.tableling.process(params.merge(options))
-  end
 end

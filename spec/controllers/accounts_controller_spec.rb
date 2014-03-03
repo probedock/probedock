@@ -33,7 +33,7 @@ describe AccountsController, rox: { tags: :unit } do
     end
 
     it "should set the test search configuration", rox: { key: 'ee865032290f' } do
-      expect(subject[:test_search_config]).to eq(TestSearch.config({}, except: [ :authors, :current ]))
+      expect(subject[:tests_table_config][:search]).to eq(TestSearch.config({}, except: [ :authors, :current ]))
     end
 
     describe "@key_generator_config" do

@@ -31,10 +31,10 @@ describe 'projects/show', rox: { tags: :unit } do
   end
 
   it "should inject the testsTable module", rox: { key: '5e5708265080' } do
-    assign :test_search_config, test_search_config = { test: 'search config' }
+    assign :tests_table_config, tests_table_config = { tests: 'table config' }
     sel = 'div[data-module="testsTable"]'
     expect(subject).to have_selector(sel)
-    expect(find(sel)['data-config']).to eq({ path: tests_page_legacy_api_project_path(project), search: test_search_config }.to_json)
+    expect(find(sel)['data-config']).to eq(tests_table_config.to_json)
   end
 
   context "with a user who can manage projects" do

@@ -31,6 +31,7 @@ App.module('models', function() {
         type: Backbone.HasMany,
         key: 'freeTestKeys',
         relatedModel: 'TestKey',
+        collectionType: 'TestKeyCollection',
         includeInJSON: false
       }
     ]

@@ -103,8 +103,6 @@ ROXCenter::Application.routes.draw do
 
     match '/' => "api#index", via: :get
 
-    resources :payloads, only: [ :create ]
-
     resources :projects, only: [ :index, :create, :show, :update ]
 
     resources :project_versions, only: [ :index ]
@@ -126,7 +124,7 @@ ROXCenter::Application.routes.draw do
       end
     end
 
-    resources :test_payloads, only: [ :show ]
+    resources :test_payloads, only: [ :create, :show ]
 
     resources :test_results, only: [ :show ]
 

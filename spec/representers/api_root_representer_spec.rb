@@ -25,7 +25,7 @@ describe ApiRootRepresenter, rox: { tags: :unit } do
   it(nil, rox: { key: '9482fb379866' }){ should hyperlink_to('version-history', uri(:doc_changelog), type: media_type(:markdown), title: t('api.root.changelog')) }
   it(nil, rox: { key: 'a5afe4dd2af1' }){ should hyperlink_to('v1:projects', api_uri(:projects), title: t('api.root.projects')) }
   it(nil, rox: { key: 'dc7c4d4eaf94' }){ should hyperlink_to('v1:test-keys', api_uri(:test_keys), title: t('api.root.test_keys')) }
-  it(nil, rox: { key: '691e9cae0eca' }){ should hyperlink_to('v1:test-payloads', api_uri(:payloads), type: media_type(:payload_v1), title: t('api.root.payloads')) }
+  it(nil, rox: { key: '691e9cae0eca' }){ should hyperlink_to('v1:test-payloads', api_uri(:test_payloads), type: media_type(:payload_v1), title: t('api.root.payloads')) }
   it(nil, rox: { key: '75c900a99394' }){ should have_only_properties(appVersion: ROXCenter::Application::VERSION) }
   it(nil, rox: { key: 'd94e0a55674a' }){ should have_curie(name: 'v1', templated: true, href: "#{uri(:doc_api_relation, name: 'v1')}:root:{rel}") }
 end

@@ -23,11 +23,11 @@ class TestPayloadRepresenter < BaseRepresenter
 
     link 'self', api_uri(:test_payload, id: payload.id)
 
-    property :state, payload.state
+    property :state, payload.state.to_s
     property :bytes, payload.contents_bytesize
     property :receivedAt, payload.received_at.to_ms
-    property :processingAt, payload.processing_at.to_ms
-    property :processedAt, payload.processed_at.to_ms
+    property :processingAt, payload.processing_at.to_ms if payload.processing_at
+    property :processedAt, payload.processed_at.to_ms if payload.processed_at
     property :contents, Base64.strict_encode64(payload.contents) if options[:detailed]
   end
 end

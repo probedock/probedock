@@ -84,17 +84,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def page
-    render json: User.tableling.process(params)
-  end
-
-  def tests_page
-    options = TestSearch.options params[:search], except: :authors
-    options[:base] = options[:base].where(author_id: @user)
-    options[:base_count] = options[:base_count].where(author_id: @user)
-    render json: TestInfo.tableling.process(params.merge(options))
-  end
-
   private
 
   def user_params

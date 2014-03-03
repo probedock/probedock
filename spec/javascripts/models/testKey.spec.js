@@ -41,23 +41,4 @@ describe("TestKeyCollection", function() {
     this.meta = { rox: { key: '48882a47a6a7' } };
     expect(TestKeyCollection.prototype.model).toBe(TestKey);
   });
-
-  it("should return the url of the test keys resource", function() {
-    this.meta = { rox: { key: 'd7106d5e5725' } };
-    expect(col.url()).toBe('/api/test_keys');
-  });
-
-  it("should get test keys from the tk:testKeys property", function() {
-    this.meta = { rox: { key: '480f9c762e1b' } };
-
-    fakeAjaxResponse(function() {
-      return col.fetch();
-    }, JSON.stringify(testKeysResponse));
-
-    runs(function() {
-      expect(col.models.length).toBe(2);
-      expect(col.at(0).attributes).toEqual(testKeysResponse._embedded['v1:test-keys'][0]);
-      expect(col.at(1).attributes).toEqual(testKeysResponse._embedded['v1:test-keys'][1]);
-    });
-  });
 });

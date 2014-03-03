@@ -18,18 +18,24 @@ describe("TestPayload", function() {
 
   var now = new Date().getTime(),
       baseTestPayload = {
-        id: 42,
+        _links: {
+          self: { href: 'http://example.com/payloads/42' }
+        },
         state: 'created',
         receivedAt: now - 3600000,
         contents: '{"foo":"bar"}'
       },
       processingTestPayload = _.extend({}, baseTestPayload, {
-        id: 43,
+        _links: {
+          self: { href: 'http://example.com/payloads/43' }
+        },
         state: 'processing',
         processingAt: now - 1200000
       }),
       processedTestPayload = _.extend({}, processingTestPayload, {
-        id: 44,
+        _links: {
+          self: { href: 'http://example.com/payloads/44' }
+        },
         state: 'processed',
         processedAt: now - 30000
       }),
@@ -40,10 +46,10 @@ describe("TestPayload", function() {
     loadFixtures('layout.html');
   });
 
-  it("should have API path /payloads/<id>", function() {
+  it("should use its self link as its url", function() {
     this.meta = { rox: { key: '73171e8d6ec2' } };
     var payload = new TestPayload(baseTestPayload);
-    expect(payload.url()).toBe('/payloads/42');
+    expect(payload.url()).toBe('http://example.com/payloads/42');
     cleanRelational(payload);
   });
 

@@ -37,7 +37,7 @@ describe("Format", function() {
 
     it("should format durations", function() {
       this.meta = { rox: { key: '64e8f449e8b5' } };
-      expect(Format.duration(0)).toBe('0');
+      expect(Format.duration(0)).toBe('0ms');
       expect(Format.duration(42)).toBe('42ms');
       expect(Format.duration(1000)).toBe('1s');
       expect(Format.duration(12345)).toBe('12s 345ms');
@@ -59,16 +59,16 @@ describe("Format", function() {
       this.meta = { rox: { key: 'f6ed7a2fb5d2' } };
 
       // only display seconds or higher
-      expect(Format.duration(0, { min: 's' })).toBe('0');
-      expect(Format.duration(432, { min: 's' })).toBe('0');
+      expect(Format.duration(0, { min: 's' })).toBe('0ms');
+      expect(Format.duration(432, { min: 's' })).toBe('0ms');
       expect(Format.duration(1234, { min: 's' })).toBe('1s');
       expect(Format.duration(61000, { min: 's' })).toBe('1m 1s');
 
       // only display hours or higher
-      expect(Format.duration(0, { min: 'h' })).toBe('0');
-      expect(Format.duration(123, { min: 'h' })).toBe('0');
-      expect(Format.duration(2345, { min: 'h' })).toBe('0');
-      expect(Format.duration(66666, { min: 'h' })).toBe('0');
+      expect(Format.duration(0, { min: 'h' })).toBe('0ms');
+      expect(Format.duration(123, { min: 'h' })).toBe('0ms');
+      expect(Format.duration(2345, { min: 'h' })).toBe('0ms');
+      expect(Format.duration(66666, { min: 'h' })).toBe('0ms');
       expect(Format.duration(7200000, { min: 'h' })).toBe('2h');
     });
 
@@ -86,7 +86,7 @@ describe("Format", function() {
       this.meta = { rox: { key: 'aeb61516a83f' } };
 
       // hide milliseconds once time is at least one second
-      expect(Format.duration(0, { shorten: 's' })).toBe('0');
+      expect(Format.duration(0, { shorten: 's' })).toBe('0ms');
       expect(Format.duration(123, { shorten: 's' })).toBe('123ms');
       expect(Format.duration(2345, { shorten: 's' })).toBe('2s');
       expect(Format.duration(65432, { shorten: 's' })).toBe('1m 5s');
@@ -113,8 +113,8 @@ describe("Format", function() {
 
     it("should combine the min and shorten options", function() {
       this.meta = { rox: { key: '5ae66dce56e6' } };
-      expect(Format.duration(0, { min: 's', shorten: 'm' })).toBe('0');
-      expect(Format.duration(345, { min: 's', shorten: 'm' })).toBe('0');
+      expect(Format.duration(0, { min: 's', shorten: 'm' })).toBe('0ms');
+      expect(Format.duration(345, { min: 's', shorten: 'm' })).toBe('0ms');
       expect(Format.duration(1234, { min: 's', shorten: 'm' })).toBe('1s');
       expect(Format.duration(56789, { min: 's', shorten: 'm' })).toBe('56s');
       expect(Format.duration(60000, { min: 's', shorten: 'm' })).toBe('1m');

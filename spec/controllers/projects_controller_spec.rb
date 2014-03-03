@@ -42,7 +42,7 @@ describe ProjectsController, rox: { tags: :unit } do
     end
 
     it "should set the test search configuration", rox: { key: 'd068433ab1b7' } do
-      expect(subject[:test_search_config]).to eq(TestSearch.config({}, except: [ :projects, :current ]))
+      expect(subject[:tests_table_config][:search]).to eq(TestSearch.config({}, except: [ :projects, :current ]))
     end
   end
 end

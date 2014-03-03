@@ -19,8 +19,8 @@ class TestInfosController < ApplicationController
 
   before_filter :authenticate_user!
   before_filter :find_test_by_key_only, only: [ :show ]
-  load_resource find_by: :project_and_key
-  skip_load_resource only: [ :index, :page ]
+
+  load_resource find_by: :project_and_key, only: [ :show ]
 
   def index
     window_title << TestInfo.model_name.human.pluralize.titleize
@@ -40,14 +40,6 @@ class TestInfosController < ApplicationController
     end
 
     @test_widgets_config = { test: TestInfoRepresenter.new(@test_info).serializable_hash, widgets: widget_data }
-  end
-
-  def results_page
-    render json: TestResult.tableling.process(params.merge({ base: TestResult.where(test_info_id: @test_info.first!.id) }))
-  end
-
-  def results_chart
-    render json: @test_info.first!.results.where('run_at <= ?', Time.now).order('run_at DESC').limit(50).to_a.reverse.collect{ |r| r.to_client_hash type: :chart }
   end
 
   private

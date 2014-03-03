@@ -50,17 +50,6 @@ describe("ApiKey", function() {
     Backbone.Relational.store.unregister(apiKey);
   });
 
-  it("should use the identifier as the id", function() {
-    this.meta = { rox: { key: '9c5bf30454e5' } };
-    expect(apiKey.id).toBe(apiKeyBase.id);
-  });
-
-  it("should return the url of the api keys resource", function() {
-    this.meta = { rox: { key: 'fe2908390313' } };
-    apiKey.unset('_links', { silent: true });
-    expect(apiKey.url()).toBe('/api_keys');
-  });
-
   it("should return its self link when links are given", function() {
     this.meta = { rox: { key: 'c1feb59b4b03' } };
     expect(apiKey.url()).toBe('http://example.com');
@@ -82,24 +71,5 @@ describe("ApiKeyCollection", function() {
   it("should use the ApiKey model", function() {
     this.meta = { rox: { key: '7ae87d0e9bc2' } };
     expect(ApiKeyCollection.prototype.model).toBe(ApiKey);
-  });
-
-  it("should return the url of the api keys resource", function() {
-    this.meta = { rox: { key: '410dab58a254' } };
-    expect(col.url()).toBe('/api_keys');
-  });
-
-  it("should get api keys from the v1:api-keys property", function() {
-    this.meta = { rox: { key: '13d97d48e658' } };
-    
-    fakeAjaxResponse(function() {
-      return col.fetch();
-    }, JSON.stringify(apiKeysResponse));
-
-    runs(function() {
-      expect(col.models.length).toBe(2);
-      expect(col.at(0).attributes).toEqual(apiKeysResponse._embedded['v1:api-keys'][0]);
-      expect(col.at(1).attributes).toEqual(apiKeysResponse._embedded['v1:api-keys'][1]);
-    });
   });
 });

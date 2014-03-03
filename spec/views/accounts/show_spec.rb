@@ -39,15 +39,14 @@ describe 'accounts/show', rox: { tags: :unit } do
   it "should inject the apiKeysTable module", rox: { key: '452d45ce102d' } do
     sel = 'div[data-module="apiKeysTable"]'
     expect(subject).to have_selector(sel)
-    expect(find(sel)['data-config']).to eq({ path: api_keys_path }.to_json)
+    expect(find(sel)['data-config']).to be_nil
   end
 
   it "should inject the testsTable module", rox: { key: 'b596c3856bdf' } do
-    test_search_config = { foo: 'bar' }
-    assign(:test_search_config, test_search_config)
+    assign :tests_table_config, tests_table_config = { foo: 'bar' }
     sel = 'div[data-module="testsTable"]'
     expect(subject).to have_selector(sel)
-    expect(find(sel)['data-config']).to eq({ path: tests_legacy_api_account_path, search: test_search_config }.to_json)
+    expect(find(sel)['data-config']).to eq(tests_table_config.to_json)
   end
 
   context 'with unknown users' do

@@ -49,8 +49,8 @@ describe TestPayload, rox: { tags: :unit } do
     end
     subject{ described_class.for_listing.to_a }
 
-    it "should list payloads in processed state in the order they were received", rox: { key: '3411f7809e83' } do
-      expect(subject).to eq(payloads[0, 2])
+    it "should list payloads in the order they were received", rox: { key: '3411f7809e83' } do
+      expect(subject).to eq(payloads)
     end
 
     it "should not load the contents", rox: { key: '3208cc65d6cc' } do
@@ -84,51 +84,6 @@ describe TestPayload, rox: { tags: :unit } do
       payload.contents = contents
       expect(payload.contents).to eq(contents)
       expect(payload.contents_bytesize).to eq(contents.bytesize)
-    end
-  end
-
-  describe "#serializable_hash" do
-
-    it "should serialize a payload in created state", rox: { key: 'a6997093b926' } do
-      payload = create :test_payload
-      expect(payload.serializable_hash).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        state: :created,
-        contents: payload.contents
-      })
-    end
-
-    it "should serialize a payload in processing state", rox: { key: 'b9504c6b47d6' } do
-      payload = create :processing_test_payload
-      expect(payload.serializable_hash).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        processingAt: payload.processing_at.to_ms,
-        state: :processing,
-        contents: payload.contents
-      })
-    end
-
-    it "should serialize a payload in processed state", rox: { key: '7dbd441f0753' } do
-      payload = create :processed_test_payload
-      expect(payload.serializable_hash).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        processingAt: payload.processing_at.to_ms,
-        processedAt: payload.processed_at.to_ms,
-        state: :processed,
-        contents: payload.contents
-      })
-    end
-
-    it "should serialize a payload for listing", rox: { key: '1ff7ee3ae796' } do
-      payload = create :processed_test_payload
-      expect(payload.serializable_hash(type: :listing)).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        bytes: payload.contents_bytesize
-      })
     end
   end
 
