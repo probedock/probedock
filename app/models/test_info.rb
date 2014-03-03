@@ -61,16 +61,19 @@ class TestInfo < ActiveRecord::Base
 
     default_view do
 
-      field :name
+      field :name, includes: [ :tags, :tickets ]
       field :created_at, as: :createdAt
       field :last_run_at, as: :lastRunAt
       field :last_run_duration, as: :lastRunDuration
       field :passing, order: false
       field :active, order: false
 
+      field :category, includes: :category do
+        order{ |q,d| q.joins(:category).order("LOWER(categories.name) ASC") }
+      end
+
       field :deprecated_at, includes: :deprecation do
         order{ |q,d| q.joins(:deprecation).order("test_deprecations.created_at #{d}") }
-        value{ |o| o.deprecation.try :created_at }
       end
 
       field :author, includes: :author do
@@ -83,10 +86,9 @@ class TestInfo < ActiveRecord::Base
 
       field :key, includes: :key do
         order{ |q,d| q.joins(:key).order("test_keys.key #{d}") }
-        value{ |o| o.key.key }
       end
 
-      field :effective_result, includes: { effective_result: [ :runner, :project_version ] }, as: :effectiveResult
+      field :effective_result, includes: { effective_result: [ :project_version, :runner, { test_run: [ :runner ] } ] }, as: :effectiveResult
 
       quick_search do |query,term|
         term = "%#{term.downcase}%"
