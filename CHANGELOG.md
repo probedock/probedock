@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.2.1 - February 24, 2014
+
+* Tests can now also be filtered by ticket in test run reports.
+
+* Test custom values can now be up to 65535 bytes long.
+
+* Uptime is now indicated on the status page.
+
+* The old settings page (accessible only to administrators) has been split into settings and control center.
+
+* Old test payloads, categories, tags and tickets can be purged from the new control center page.
+
+* Fixed a bug where test payloads in reports would not be pretty printed by default.
+
+* Fixed asset URLs in HAL API browser.
+
 ## v2.2.0 - February 10, 2014
 
 **Upgrade Notes:** changes in this version require counters to be recomputed from the settings page. Now that PostgreSQL is supported, administrators must omit the unwanted database when installing gems with the `--without` option (e.g. `--without mysql`), see the [deployment documentation](doc/deploy.md).

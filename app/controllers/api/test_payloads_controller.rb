@@ -178,7 +178,7 @@ class Api::TestPayloadsController < Api::ApiController
             fail :blankValue, "Test data name for test #{st test} must not be blank", "/r/#{i}/t/#{j}/a" if name.blank?
             fail :keyTooLong, "Test data name for test #{st test} must not be longer than 50 characters, got #{name.to_s.length}", "/r/#{i}/t/#{j}/a" if name.length > 50
             fail :invalidValue, "Test data value for test #{st test} must be a string, got #{sc value}", "/r/#{i}/t/#{j}/a" if !value.kind_of?(String)
-            fail :valueTooLong, "Test data value for test #{st test} must not be longer than 255 characters, got #{value.to_s.length}", "/r/#{i}/t/#{j}/a" if value.length > 255
+            fail :valueTooLong, "Test data value for test #{st test} must not be longer than 65535 bytes, got #{value.bytesize}", "/r/#{i}/t/#{j}/a" if value.bytesize > 65535
           end
         end
       end

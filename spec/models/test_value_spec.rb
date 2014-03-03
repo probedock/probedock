@@ -23,7 +23,19 @@ describe TestValue, rox: { tags: :unit } do
     it(nil, rox: { key: '5f97b421e2b2' }){ should validate_presence_of(:name) }
     it(nil, rox: { key: '3ce512bc0951' }){ should ensure_length_of(:name).is_at_most(50) }
     it(nil, rox: { key: '15220b99b6c9' }){ should allow_value('').for(:contents) }
-    it(nil, rox: { key: 'dfa244369dd1' }){ should ensure_length_of(:contents).is_at_most(255) }
+
+    it "should allow contents with 65535 bytes", rox: { key: '16b77606693a' } do
+      contents = 'x' * 65535
+      value = build :test_value, contents: contents
+      expect(value.valid?).to be_true
+    end
+
+    it "should ensure that the contents are not longer than 65535 bytes", rox: { key: 'dfa244369dd1' } do
+      contents = 'x' * 65534
+      contents << "\u3042"
+      value = build :test_value, contents: contents
+      expect(value.valid?).to be_false
+    end
 
     context "with an existing value" do
       let!(:test_value){ create :test_value }
@@ -38,7 +50,7 @@ describe TestValue, rox: { tags: :unit } do
   context "database table" do
     it(nil, rox: { key: 'a83c6e1ea226' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '023efd6a7ef0' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
-    it(nil, rox: { key: '37838a3713c2' }){ should have_db_column(:contents).of_type(:string).with_options(null: false, limit: 255) }
+    it(nil, rox: { key: '37838a3713c2' }){ should have_db_column(:contents).of_type(:text).with_options(null: false) }
     it(nil, rox: { key: '07774b12df6f' }){ should have_db_column(:test_info_id).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: 'bb180a3fb1d4' }){ should have_db_index([ :test_info_id, :name ]).unique(true) }
   end
