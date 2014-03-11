@@ -267,7 +267,7 @@ App.autoModule('testSelector', function() {
 
       App.bindEvents(this);
 
-      this.collection = new App.models.TestCollection();
+      this.collection = new Backbone.Collection();
       this.linkTemplates = new App.models.LinkTemplateCollection(options.linkTemplates);
     },
 

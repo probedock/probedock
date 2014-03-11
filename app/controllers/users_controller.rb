@@ -48,8 +48,16 @@ class UsersController < ApplicationController
 
   def show
     window_title << User.model_name.human.pluralize.titleize << @user.name
-    @user_info_config = { user: UserRepresenter.new(@user, detailed: true).serializable_hash, can: { manage: can?(:manage, User) } }
-    @test_search_config = TestSearch.config(params, except: [ :authors, :current ])
+
+    @user_info_config = {
+      user: UserRepresenter.new(@user, detailed: true).serializable_hash,
+      can: { manage: can?(:manage, User) }
+    }
+
+    @tests_table_config = {
+      halUrlTemplate: { 'authors[]' => [ @user.name ] },
+      search: TestSearch.config(params, except: [ :authors, :current ])
+    }
   end
 
   def edit

@@ -16,8 +16,13 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('latestTestRuns', function() {
 
-  var LatestTestRunsCollection = App.models.TestRunCollection.extend({
-    halUrl: [ { rel: 'v1:test-runs', template: { latest: '' } } ]
+  var LatestTestRunsCollection = App.models.TestRuns.extend({
+
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', { name: 'v1:testRuns', template: this.halUrlTemplate } ]);
+    },
+
+    halUrlTemplate: { latest: '' }
   });
 
   var EmptyRow = Marionette.ItemView.extend({
@@ -111,6 +116,10 @@ App.autoModule('latestTestRuns', function() {
     itemViewContainer: 'tbody',
     emptyView: EmptyRow,
 
+    initialize: function() {
+      this.collection = this.model.embedded('item');
+    },
+
     onRender: function() {
       App.watchStatus(this, this.refresh, { only: 'lastApiPayload' });
       setInterval(_.bind(this.refreshTime, this), 15000);
@@ -123,13 +132,13 @@ App.autoModule('latestTestRuns', function() {
     },
 
     refresh: function() {
-      this.collection.fetch({ reset: true }).done(function() {
+      this.model.fetch().done(function() {
         App.debug('Updated latest test runs after new activity');
       });
     }
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new Table({ collection: new LatestTestRunsCollection(options.config._embedded['v1:test-runs']) }));
+    options.region.show(new Table({ model: new LatestTestRunsCollection(options.config) }));
   });
 });

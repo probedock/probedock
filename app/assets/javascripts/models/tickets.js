@@ -18,14 +18,12 @@ App.module('models', function() {
 
   this.Ticket = this.HalModel.extend({
 
-    halLinks: [ 'about', 'search' ],
-
     ticketHref: function() {
-      return this.hasLink('about') ? this.link('about').get('href') : this.link('search').get('href');
+      return this.hasLink('about') ? this.link('about').href() : this.link('search').href();
     }
   });
 
-  this.TicketCollection = this.HalCollection.extend({
+  this.TicketCollection = Backbone.Collection.extend({
 
     comparator: function(a, b) {
       return a.get('name').localeCompare(b.get('name'));

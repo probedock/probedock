@@ -73,8 +73,10 @@
 
     initializeWidget: function(options) {
 
+      this.resultsModel = new App.models.TestResults();
+      this.collection = this.resultsModel.embedded('item');
+
       this.controller = options.controller;
-      this.collection = new (this.buildCollectionClass())();
       this.resultSelector = new App.views.TestResultSelector({ controller: this.controller });
 
       this.listenTo(this.resultSelector, 'update', this.updateResults);
@@ -127,9 +129,11 @@
 
       this.resultSelector.trigger('loading', true);
 
-      this.collection.fetch({
-        reset: true,
-        data: data
+      this.model.link('v1:testResults').fetchResource({
+        model: this.resultsModel,
+        fetch: {
+          data: data
+        }
       }).always(_.bind(this.resultSelector.trigger, this.resultSelector, 'loading', false)).fail(_.bind(this.showError, this));
     },
 
@@ -150,12 +154,6 @@
           end: Format.datetime.long(new Date(this.collection.at(0).get('runAt')))
         }));
       }
-    },
-
-    buildCollectionClass: function() {
-      return App.models.TestResultCollection.extend({
-        url: this.model.link('v1:testResults').get('href')
-      });
     },
 
     // override marionette to render item views in reverse order

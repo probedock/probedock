@@ -188,11 +188,9 @@ App.autoModule('apiKeysTable', function() {
       pageSize: 5,
       sort: [ 'createdAt desc' ]
     },
-    fetchOptions: {
-      reset: true
-    },
 
     tableView: ApiKeysTableView,
+    halEmbedded: 'item',
 
     initializeTable: function() {
       App.views.Table.prototype.initializeTable.apply(this, Array.prototype.slice.call(arguments));
@@ -209,7 +207,8 @@ App.autoModule('apiKeysTable', function() {
       this.clearError();
       this.setBusy(true);
 
-      (new ApiKey({}, { collection: this.getCollection() })).save({}, {
+      new ApiKey().save({}, {
+        url: this.model.url(),
         wait: true,
         success: _.bind(function() {
           this.update({ sort: [ 'createdAt desc' ] });
@@ -248,7 +247,7 @@ App.autoModule('apiKeysTable', function() {
 
   this.addAutoInitializer(function(options) {
     options.region.show(new ApiKeysTable({
-      collection: new App.models.ApiKeyCollection()
+      model: new App.models.ApiKeys()
     }));
   });
 });

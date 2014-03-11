@@ -41,6 +41,7 @@
 //= require_tree ./templates
 //= require tableling.backbone
 //= require ./vendor/backbone-relational
+//= require backbone-relational-hal
 //= require ./meta
 //= require ./boot
 //= require_tree ./translations

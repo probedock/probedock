@@ -18,26 +18,20 @@
 var testKeysResponse = {
   total: 5,
   _embedded: {
-    'v1:test-keys': [
+    'item': [
       { value: '000000000000' },
       { value: '111111111111' }
     ]
   }
 };
 
-describe("TestKeyCollection", function() {
+describe("TestKeys", function() {
 
   var TestKey = App.models.TestKey,
-      TestKeyCollection = App.models.TestKeyCollection,
-      col = undefined;
-
-  beforeEach(function() {
-    loadFixtures('layout.html');
-    col = new TestKeyCollection();
-  });
+      TestKeys = App.models.TestKeys;
 
   it("should use the TestKey model", function() {
     this.meta = { rox: { key: '48882a47a6a7' } };
-    expect(TestKeyCollection.prototype.model).toBe(TestKey);
+    expect(getEmbeddedRelation(TestKeys, 'item').relatedModel).toBe(TestKey);
   });
 });

@@ -122,7 +122,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
   describe "#index" do
 
     def parse_response options = {}
-      api_get user, api_test_keys_path(options)
+      api_get user, api_legacy_test_keys_path(options)
       HashWithIndifferentAccess.new MultiJson.load(response.body)
     end
 

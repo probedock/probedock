@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 var App = new Marionette.Application();
 
-// Current version is 2.2.1
+// Current version is 2.3.0
 App.version = <%= Rails.application.version.to_json %>;
 App.environment = <%= Rails.env.to_json %>;
 App.secure = App.environment == 'production';

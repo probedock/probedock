@@ -49,6 +49,22 @@ RSpec::Matchers.define :have_curie do |expected|
   end
 end
 
+RSpec::Matchers.define :have_no_curie do
+
+  match do |actual|
+    @curies = actual['_links'].try :[], 'curies'
+    @curies.nil?
+  end
+
+  failure_message_for_should do |actual|
+    "expected that #{actual} would have no curie, got #{@curies}"
+  end
+
+  description do
+    "have no curie"
+  end
+end
+
 RSpec::Matchers.define :have_embedded do |rel,expected|
 
   match do |actual|

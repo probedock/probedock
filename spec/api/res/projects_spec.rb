@@ -107,7 +107,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
   context "#index" do
 
     def parse_response options = {}
-      api_get user, api_projects_path(options)
+      api_get user, api_legacy_projects_path(options)
       HashWithIndifferentAccess.new MultiJson.load(response.body)
     end
 

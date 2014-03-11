@@ -133,6 +133,11 @@ ROXCenter::Application.routes.draw do
     end
 
     resources :users, only: [ :index, :show, :update, :destroy ]
+
+    namespace :legacy, module: nil do
+      get :projects, to: 'legacy#projects'
+      get :test_keys, to: 'legacy#test_keys'
+    end
   end
 
   # api

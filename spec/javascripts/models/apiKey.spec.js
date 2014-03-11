@@ -29,7 +29,7 @@ var apiKeyBase = {
 var apiKeysResponse = {
   total: 5,
   _embedded: {
-    'v1:api-keys': [
+    'item': [
       { id: '12345678901234567890' },
       { id: '23456789012345678901' }
     ]
@@ -56,19 +56,13 @@ describe("ApiKey", function() {
   });
 });
 
-describe("ApiKeyCollection", function() {
+describe("ApiKeys", function() {
 
   var ApiKey = App.models.ApiKey,
-      ApiKeyCollection = App.models.ApiKeyCollection,
-      col = undefined;
-
-  beforeEach(function() {
-    loadFixtures('layout.html');
-    col = new ApiKeyCollection();
-  });
+      ApiKeys = App.models.ApiKeys;
 
   it("should use the ApiKey model", function() {
     this.meta = { rox: { key: '7ae87d0e9bc2' } };
-    expect(ApiKeyCollection.prototype.model).toBe(ApiKey);
+    expect(getEmbeddedRelation(ApiKeys, 'item').relatedModel).toBe(ApiKey);
   });
 });

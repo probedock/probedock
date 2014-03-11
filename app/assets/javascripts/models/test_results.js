@@ -18,8 +18,6 @@ App.module('models', function() {
 
   this.TestResult = this.HalModel.extend({
 
-    halLinks: [ 'self' ],
-
     halEmbedded: [
       {
         type: Backbone.HasOne,
@@ -47,8 +45,5 @@ App.module('models', function() {
     }
   });
 
-  this.TestResultCollection = this.HalCollection.extend({
-    model: this.TestResult,
-    embeddedModels: 'v1:test-results'
-  });
+  this.TestResults = this.defineHalCollection(this.TestResult, {});
 });

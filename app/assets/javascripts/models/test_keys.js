@@ -16,13 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  this.TestKey = this.HalModel.extend({
-  });
+  this.TestKey = this.HalModel.extend({});
 
-  this.TestKeyCollection = this.HalCollection.extend({
-
-    model: this.TestKey,
-    embeddedModels: 'v1:test-keys',
-    halUrl: [ { rel: 'v1:test-keys' } ]
-  });
+  this.TestKeys = this.defineHalCollection(this.TestKey, {});
 });

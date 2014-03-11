@@ -32,6 +32,10 @@ App.module('views', function() {
       }
     },
 
+    getCollection: function(resource) {
+      return this.halEmbedded ? resource.embedded(this.halEmbedded) : this.collection;
+    },
+
     refresh: function() {
       var args = Array.prototype.slice.call(arguments);
       this.showLoading(true).load(_.bind(function() {

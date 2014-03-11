@@ -16,11 +16,9 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  this.Project = this.HalModel.extend({
+  this.Project = this.HalResource.extend({
 
     idAttribute: 'apiId',
-    halLinks: [ 'self', 'alternate' ],
-    halUrl: [ { rel: 'v1:projects' } ],
 
     linkTag: function() {
       return this.link('alternate').tag(this.get('name'));
@@ -31,16 +29,15 @@ App.module('models', function() {
         type: Backbone.HasMany,
         key: 'freeTestKeys',
         relatedModel: 'TestKey',
-        collectionType: 'TestKeyCollection',
         includeInJSON: false
       }
     ]
   });
 
-  this.ProjectCollection = this.HalCollection.extend({
+  this.Projects = this.defineHalCollection(this.Project, {
 
-    model: this.Project,
-    embeddedModels: 'v1:projects',
-    halUrl: [ { rel: 'v1:projects' } ]
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', 'v2:projects' ]);
+    }
   });
 });

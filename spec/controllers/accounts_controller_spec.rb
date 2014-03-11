@@ -48,7 +48,8 @@ describe AccountsController, rox: { tags: :unit } do
       end
 
       it "should contain representations of free test keys for the current user", rox: { key: 'f11a527de199' } do
-        expect(subject[:freeKeys]).to eq(test_keys.select{ |k| k.free? and k.user == user }.collect{ |k| TestKeyRepresenter.new(k).serializable_hash })
+        keys = test_keys.select{ |k| k.free? and k.user == user }
+        expect(subject[:freeKeys]).to eq(TestKeysRepresenter.new(OpenStruct.new(total: keys.length, data: keys)).serializable_hash)
       end
 
       it "should not contain a last test key number and project api id", rox: { key: 'f9888a718fa2' } do

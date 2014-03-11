@@ -79,6 +79,7 @@ gem 'highcharts-rails', '~> 3.0.0'
 # gem 'therubyracer', :platforms => :ruby
 gem 'uglifier', '>= 1.0.3'
 gem 'select2-rails'
+gem 'backbone-relational-hal-rails'
 
 # Tools
 gem 'rake-version'

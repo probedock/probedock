@@ -76,8 +76,10 @@ App.autoModule('keyGenerator', function() {
       this.lastNumber = options.lastNumber;
       this.lastProjectApiId = options.lastProjectApiId;
 
-      this.collection = new App.models.ProjectCollection();
-      this.addKeys(options.freeKeys);
+      this.collection = new Backbone.Collection();
+
+      var freeKeys = new App.models.TestKeys(options.freeKeys);
+      this.addKeys(freeKeys.embedded('item'));
 
       App.bindEvents(this);
     },
@@ -89,21 +91,22 @@ App.autoModule('keyGenerator', function() {
     },
 
     addNewKeys: function(response) {
-      this.addKeys(response._embedded['v1:test-keys']);
+
+      var newKeys = new App.models.TestKeys(response);
+      this.addKeys(newKeys.embedded('item'));
+
       this.busy = false;
       this.updateControls();
     },
 
     addKeys: function(keys) {
 
-      _.each(keys, function(key) {
+      keys.forEach(function(key) {
 
-        var project = this.collection.find(function(p) {
-          return p.get('apiId') == key.projectApiId;
-        }, this);
+        var project = this.collection.findWhere({ apiId: key.get('projectApiId') });
 
         if (!project) {
-          project = App.models.Project.findOrCreate(_.findWhere(this.projects, { apiId: key.projectApiId }));
+          project = App.models.Project.findOrCreate(_.findWhere(this.projects, { apiId: key.get('projectApiId') }));
           this.collection.add(project);
         }
 

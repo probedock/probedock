@@ -92,9 +92,7 @@ App.autoModule('testRunsTable', function() {
     },
 
     tableView: TestRunsTableView,
-    tableViewOptions: {
-      collection: new App.models.TestRunCollection()
-    },
+    halEmbedded: 'item',
 
     wrapSearchData: false,
 
@@ -110,6 +108,6 @@ App.autoModule('testRunsTable', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new TestRunsTable(options.config));
+    options.region.show(new TestRunsTable(_.extend(options.config, { model: new App.models.TestRuns() })));
   });
 });

@@ -14,6 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestKeysRepresenter < BaseRepresenter
-  collection_representation :test_keys, TestKeyRepresenter
+class LegacyProjectsRepresenter < BaseRepresenter
+  collection_representation :projects, ProjectRepresenter, hyphenize_relations: true, uri: :api_legacy_projects
 end

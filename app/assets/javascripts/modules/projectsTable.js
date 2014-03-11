@@ -61,12 +61,10 @@ App.autoModule('projectsTable', function() {
     },
 
     tableView : ProjectsTableView,
-    tableViewOptions : {
-      collection : new App.models.ProjectCollection()
-    }
+    halEmbedded: 'item'
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new ProjectsTable(options.config));
+    options.region.show(new ProjectsTable({ model: new App.models.Projects() }));
   });
 });

@@ -123,7 +123,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
       # table resource test configuration
       let(:records){ user.api_keys }
       let(:record_converter){ ->(k){ k.identifier } }
-      let(:embedded_rel){ 'v1:api-keys' }
+      let(:embedded_rel){ 'item' }
       let(:embedded_converter){ ->(k){ k[:id] } }
 
       describe "table resource", rox: { key: '4caf4e56251a', grouped: true } do

@@ -24,8 +24,8 @@ App.module('components', function() {
 
     initialize: function(options) {
       this.deferreds = [];
-      this.collectionClass = this.buildCollectionClass(options.model);
-      this.collection = new this.collectionClass();
+      this.model = options.model;
+      this.collection = new Backbone.Collection();
     },
 
     load: function() {
@@ -37,7 +37,7 @@ App.module('components', function() {
 
       if (!this.loadingCollection) {
         App.debug('Loading project versions in batches of ' + this.batchSize + ' for current test...');
-        this.loadingCollection = new this.collectionClass();
+        this.loadingCollection = new App.models.ProjectVersions();
         this.loadBatch();
       }
 
@@ -76,34 +76,30 @@ App.module('components', function() {
         return this.finishLoading();
       }
 
-      this.loadingCollection.fetch({
-        reset: true,
-        data: {
-          page: page,
-          pageSize: this.batchSize,
-          sort: [ 'name desc' ]
+      this.model.link('v1:projectVersions').fetchResource({
+        model: this.loadingCollection,
+        fetch: {
+          data: {
+            page: page,
+            pageSize: this.batchSize,
+            sort: [ 'name desc' ]
+          }
         }
       }).done(_.bind(this.add, this, page)).fail(_.bind(this.failLoading, this));
     },
 
-    add: function(page, response) {
+    add: function(page) {
 
-      var total = response.total;
-      App.debug('Loaded ' + this.loadingCollection.length + ' versions (batch ' + page + '/' + Math.ceil(total / this.batchSize) + ').');
+      var total = this.loadingCollection.get('total');
+      App.debug('Loaded ' + this.loadingCollection.embedded('item').length + ' versions (batch ' + page + '/' + Math.ceil(total / this.batchSize) + ').');
 
-      this.collection.add(this.loadingCollection.models);
+      this.collection.add(this.loadingCollection.embedded('item').models);
 
       if (total > page * this.batchSize) {
         this.loadBatch(page + 1);
       } else {
         this.finishLoading();
       }
-    },
-
-    buildCollectionClass: function(test) {
-      return ProjectVersionCollection.extend({
-        url: test.link('v1:projectVersions').get('href')
-      });
     }
   });
 });

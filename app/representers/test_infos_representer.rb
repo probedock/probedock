@@ -15,5 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestInfosRepresenter < BaseRepresenter
-  collection_representation :tests, TestInfoRepresenter
+  collection_representation :tests, TestInfoRepresenter do |res|
+    link 'self', "#{api_uri(:tests)}{?authors[]*,projects[]*}", templated: true
+  end
 end

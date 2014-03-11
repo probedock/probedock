@@ -24,7 +24,7 @@ class ProjectsController < ApplicationController
     window_title << @project.name
     @project_editor_config = { model: ProjectRepresenter.new(@project).serializable_hash }
     @tests_table_config = {
-      uriTemplateParams: { 'projects[]' => [ @project.name ] },
+      halUrlTemplate: { 'projects[]' => [ @project.name ] },
       search: TestSearch.config(params, except: [ :projects, :current ])
     }
   end

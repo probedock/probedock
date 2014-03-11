@@ -102,7 +102,7 @@ App.autoModule('testRunReport', function() {
       }
       this.setBusy(true);
 
-      this.model.fetch().complete(_.bind(this.setBusy, this, false)).fail(_.bind(this.showError, this));
+      this.model.fetch().always(_.bind(this.setBusy, this, false)).fail(_.bind(this.showError, this));
     },
 
     showError: function() {
@@ -129,6 +129,10 @@ App.autoModule('testRunReport', function() {
       return {
         index: this.collection.indexOf(model)
       };
+    },
+
+    initialize: function() {
+      this.collection = this.model.embedded('item');
     }
   });
 
@@ -191,7 +195,6 @@ App.autoModule('testRunReport', function() {
         return I18n.t('jst.testRunReport.tooltipMessage.' + status);
       });
 
-      //async.nextTick(_.bind(this.setupStatusFilterTooltips, this));
       setTimeout(_.bind(this.setup, this), 300);
     },
 
@@ -205,17 +208,21 @@ App.autoModule('testRunReport', function() {
     },
 
     setupPayloads: function(callback) {
-      var payloadsCollection = new (this.buildPayloadsCollectionClass())()
-      payloadsCollection.fetch().done(_.bind(this.showPayloads, this, payloadsCollection)).fail(_.bind(this.showPayloadsError, this));
+      this.model.link('v1:testPayloads').fetchResource({
+        type: App.models.TestPayloads,
+        fetch: {
+          success: _.bind(this.showPayloads, this)
+        }
+      }).fail(_.bind(this.showPayloadsError, this));
       callback();
     },
 
-    showPayloads: function(collection) {
-      if (collection.length) {
+    showPayloads: function(res) {
+      if (res.embedded('item').length) {
 
-        this.testPayloads.show(new PayloadsView({ collection: collection }));
+        this.testPayloads.show(new PayloadsView({ model: res }));
 
-        var link = $('<a href="#testPayloads" />').text(I18n.t('jst.testRunReport.payloads.info', { count: collection.length }));
+        var link = $('<a href="#testPayloads" />').text(I18n.t('jst.testRunReport.payloads.info', { count: res.embedded('item').length }));
         this.ui.payloadsInfo.html(link);
       } else {
         this.ui.payloadsInfo.html($('<em />').text(I18n.t('jst.testRunReport.payloads.purged')));
@@ -224,12 +231,6 @@ App.autoModule('testRunReport', function() {
 
     showPayloadsError: function() {
       this.ui.payloadsInfo.html($('<em class="text-warning" />').text(I18n.t('jst.testRunReport.payloads.listError')));
-    },
-
-    buildPayloadsCollectionClass: function() {
-      return App.models.TestPayloadCollection.extend({
-        url: this.model.link('v1:testPayloads').get('href')
-      });
     },
 
     setupStatusFilterTooltips: function(e) {

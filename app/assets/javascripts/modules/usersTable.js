@@ -63,12 +63,10 @@ App.autoModule('usersTable', function() {
     },
     
     tableView: UsersTableView,
-    tableViewOptions: {
-      collection: new App.models.UserCollection()
-    }
+    halEmbedded: 'item'
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new UsersTable());
+    options.region.show(new UsersTable({ collection: new App.models.Users() }));
   });
 });

@@ -80,13 +80,13 @@ describe("TestPayload", function() {
   });
 });
 
-describe("TestPayloadCollection", function() {
+describe("TestPayloads", function() {
 
   var TestPayload = App.models.TestPayload,
-      TestPayloadCollection = App.models.TestPayloadCollection;
+      TestPayloads = App.models.TestPayloads;
 
   it("should use the TestPayload model", function() {
     this.meta = { rox: { key: '2c9d23afce24' } };
-    expect(TestPayloadCollection.prototype.model).toBe(TestPayload);
+    expect(getEmbeddedRelation(TestPayloads, 'item').relatedModel).toBe(TestPayload);
   });
 });

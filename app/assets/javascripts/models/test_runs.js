@@ -16,9 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  this.TestRun = this.HalModel.extend({
-
-    halLinks: [ 'self', 'alternate', 'v1:testPayloads' ],
+  this.TestRun = this.HalResource.extend({
 
     halEmbedded: [
       {
@@ -83,10 +81,10 @@ App.module('models', function() {
     }
   });
 
-  this.TestRunCollection = this.HalCollection.extend({
+  this.TestRuns = this.defineHalCollection(this.TestRun, {
 
-    model: this.TestRun,
-    embeddedModels: 'v1:test-runs',
-    halUrl: [ { rel: 'v1:test-runs', template: {} } ]
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', 'v1:testRuns' ]);
+    }
   });
 });

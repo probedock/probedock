@@ -37,7 +37,6 @@ describe("Project", function() {
 
   var Project = App.models.Project,
       TestKey = App.models.TestKey,
-      TestKeyCollection = App.models.TestKeyCollection,
       project = undefined;
 
   beforeEach(function() {
@@ -56,7 +55,7 @@ describe("Project", function() {
 
   it("should have many test keys", function() {
     this.meta = { rox: { key: 'b40c06fb3d4a' } };
-    expect(Project).toHaveBackboneRelation({ type: Backbone.HasMany, key: 'freeTestKeys', relatedModel: 'TestKey', collectionType: 'TestKeyCollection', includeInJSON: false });
+    expect(Project).toHaveBackboneRelation({ type: Backbone.HasMany, key: 'freeTestKeys', relatedModel: 'TestKey', includeInJSON: false });
   });
 
   it("should return its self link as its url", function() {
@@ -70,19 +69,13 @@ describe("Project", function() {
   });
 });
 
-describe("ProjectCollection", function() {
+describe("Projects", function() {
 
   var Project = App.models.Project,
-      ProjectCollection = App.models.ProjectCollection,
-      col = undefined;
-
-  beforeEach(function() {
-    loadFixtures('layout.html');
-    col = new ProjectCollection();
-  });
+      Projects = App.models.Projects;
 
   it("should use the Project model", function() {
     this.meta = { rox: { key: 'd59a735a0cc6' } };
-    expect(ProjectCollection.prototype.model).toBe(Project);
+    expect(getEmbeddedRelation(Projects, 'item').relatedModel).toBe(Project);
   });
 });

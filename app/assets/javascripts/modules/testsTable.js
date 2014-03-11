@@ -293,6 +293,7 @@ App.autoModule('testsTable', function() {
 
     tableView: TestsTableView,
     wrapSearchData: false,
+    halEmbedded: 'item',
 
     config: {
       sort: [ 'createdAt desc' ],
@@ -330,21 +331,8 @@ App.autoModule('testsTable', function() {
   });
 
   this.addAutoInitializer(function(options) {
-
-    var extension = {};
-    if (options.config.uriTemplateParams) {
-      extension.uriTemplateParams = options.config.uriTemplateParams;
-    }
-
-    var Tests = App.models.TestCollection.extend(extension);
-
-    var Table = TestsTable.extend({
-      tableViewOptions: {
-        collection: new Tests()
-      }
-    });
-
-    options.region.show(new Table(options.config));
+    var res = new App.models.Tests({}, _.pick(options.config, 'halUrlTemplate'));
+    options.region.show(new TestsTable(_.extend(options.config, { model: res })));
   });
 });
 

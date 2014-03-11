@@ -16,11 +16,9 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  this.Tag = this.HalModel.extend({
-    halLinks: [ 'search' ]
-  });
+  this.Tag = this.HalModel.extend({});
 
-  this.TagCollection = this.HalCollection.extend({
+  this.TagCollection = Backbone.Collection.extend({
 
     comparator: function(a, b) {
       return a.get('name').localeCompare(b.get('name'));

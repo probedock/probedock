@@ -14,6 +14,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestKeysRepresenter < BaseRepresenter
-  collection_representation :test_keys, TestKeyRepresenter
+class Api::LegacyController < Api::ApiController
+
+  def projects
+    render_api Project.tableling.process(params.merge(response: { legacy: true }))
+  end
+
+  def test_keys
+    options = TestKeySearch.options params
+    options[:base] = options[:base].where(user_id: current_api_user)
+    render_api TestKey.tableling.process(params.merge(options).merge(response: { legacy: true }))
+  end
 end

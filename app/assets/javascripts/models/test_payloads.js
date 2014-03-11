@@ -18,8 +18,6 @@ App.module('models', function() {
 
   this.TestPayload = this.HalModel.extend({
 
-    halLinks: [ 'self' ],
-
     queueTime: function() {
       return this.has('processingAt') ? this.get('processingAt') - this.get('receivedAt') : -1;
     },
@@ -29,8 +27,5 @@ App.module('models', function() {
     }
   });
 
-  this.TestPayloadCollection = this.HalCollection.extend({
-    model: this.TestPayload,
-    embeddedModels: 'v1:test-payloads'
-  });
+  this.TestPayloads = this.defineHalCollection(this.TestPayload, {});
 });

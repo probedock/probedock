@@ -29,7 +29,8 @@
     },
 
     initializeWidget: function(options) {
-      this.collection = new (this.buildCollectionClass())();
+      this.resultsModel = new App.models.TestResults();
+      this.collection = this.resultsModel.embedded('item');
       this.resultSelector = new App.views.TestResultSelector({ controller: options.controller });
       this.listenTo(this.resultSelector, 'update', this.updateResults);
     },
@@ -178,20 +179,16 @@
       this.chart.showLoading();
       this.resultSelector.trigger('loading', true);
 
-      this.collection.fetch({
-        reset: true,
-        data: data
+      this.model.link('v1:testResults').fetchResource({
+        model: this.resultsModel,
+        fetch: {
+          data: data
+        }
       }).always(_.bind(this.resultSelector.trigger, this.resultSelector, 'loading', false), _.bind(this.chart.hideLoading, this.chart));
     },
 
     showError: function() {
       $('<p class="text-danger" />').text(this.t('error')).insertAfter(this.ui.chart).hide().slideDown();
-    },
-
-    buildCollectionClass: function() {
-      return App.models.TestResultCollection.extend({
-        url: this.model.link('v1:testResults').get('href')
-      });
-    },
+    }
   });
 })();
