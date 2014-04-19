@@ -25,7 +25,7 @@ Clients for other testing frameworks are under development:
 
 ## Installation
 
-See [deploy.md](doc/rox/deploy.md).
+See [deploy.md](doc/deploy.md).
 
 ## Usage
 
