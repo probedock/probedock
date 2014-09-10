@@ -40,7 +40,7 @@ gem 'redcarpet'
 gem 'pygments.rb'
 
 # Authentication & Authorization
-gem 'devise', '~> 3.2.2'
+gem 'devise', '~> 3.3.0'
 gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_authenticatable.git', branch: 'group-lookup-config'
 gem 'cancan'
 gem 'role_model'
@@ -73,7 +73,7 @@ gem 'haml_coffee_assets'
 gem 'therubyracer'
 gem 'execjs'
 gem 'clah-rails'
-gem 'highcharts-rails', '~> 3.0.0'
+gem 'highcharts-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', :platforms => :ruby
 gem 'uglifier', '>= 1.0.3'
