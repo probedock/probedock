@@ -84,7 +84,7 @@ class DocController < ApplicationController
     respond_to do |format|
 
       format.md do
-        render text: File.read("#{path}.md"), content_type: media_type(:md)
+        render body: File.read("#{path}.md"), content_type: media_type(:md)
       end
 
       format.html{ render path }

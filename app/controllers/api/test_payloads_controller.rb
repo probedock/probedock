@@ -35,7 +35,8 @@ class Api::TestPayloadsController < Api::ApiController
     json = parse_json_request_body body
     result = validate_payload json
 
-    payload = TestPayload.new(contents: body, user: current_api_user, received_at: time_received, test_keys: result[:free_keys]).tap(&:save!)
+    payload = TestPayload.new(contents: body, user: current_api_user, received_at: time_received, test_keys: result[:free_keys])
+    payload.save!
 
     Resque.enqueue ProcessNextTestPayloadJob
     $api_logger.info "Accepted payload for processing in #{Time.now.ms_from time_received}ms"
@@ -108,7 +109,7 @@ class Api::TestPayloadsController < Api::ApiController
 
     # Find all test keys in the payload.
     keys_by_project = run[:r].inject({}){ |memo,r| memo[r[:j]] = r[:t].collect{ |t| t[:k] }; memo }
-    existing_keys = TestKey.for_projects_and_keys(keys_by_project).select('test_keys.id, test_keys.key, test_keys.free, projects.api_id AS project_api_id').to_a
+    existing_keys = TestKey.for_projects_and_keys(keys_by_project).select('test_keys.*, projects.api_id AS project_api_id').to_a
 
     unfree_keys = existing_keys.reject(&:free?)
 

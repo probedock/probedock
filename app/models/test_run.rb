@@ -94,7 +94,7 @@ class TestRun < ActiveRecord::Base
 
   def ordered_results
     nothing = 'z' * 256
-    results.sort! do |a,b|
+    results.to_a.sort! do |a,b|
       [
         a.test_info.project <=> b.test_info.project,
         (a.test_info.category.try(:name) || nothing) <=> (b.test_info.category.try(:name) || nothing),

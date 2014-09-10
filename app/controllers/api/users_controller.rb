@@ -46,7 +46,7 @@ class Api::UsersController < Api::ApiController
       flash[:success] = t('users.destroy.success', user: @user.name)
       head :no_content
     rescue ActiveRecord::DeleteRestrictionError
-      return render text: t('users.destroy.restricted'), status: 409
+      return render plain: t('users.destroy.restricted'), status: 409
     end
   end
 end

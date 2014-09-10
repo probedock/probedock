@@ -47,7 +47,7 @@ class HomeController < ApplicationController
   end
 
   def ping
-    render text: "ROX Center v#{ROXCenter::Application::VERSION} #{Rails.env}"
+    render plain: "ROX Center v#{ROXCenter::Application::VERSION} #{Rails.env}"
   end
 
   def maintenance

@@ -29,7 +29,7 @@ class TestRunsController < ApplicationController
 
     if request.xhr?
       cached_report = TestRun.reports_cache.get params[:id].to_i, cache: :job
-      return render text: cached_report if cached_report
+      return render html: cached_report.html_safe, content_type: media_type(:html) if cached_report
       return head :no_content
     end
 
@@ -42,7 +42,7 @@ class TestRunsController < ApplicationController
     window_title << l(@test_run.ended_at.localtime, format: :long)
 
     if cached_report = TestRun.reports_cache.get(params[:id].to_i, cache: false)
-      render text: cached_report, layout: 'application'
+      render html: cached_report.html_safe, layout: 'application'
     else
       @test_run.runner # pre-load runner here rather than in view
       render :loading_report

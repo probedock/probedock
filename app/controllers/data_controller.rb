@@ -34,8 +34,8 @@ class DataController < ApplicationController
   def test_counters
 
     if request.post?
-      return render text: 'Must be in maintenance mode', status: 503 unless @maintenance
-      return render text: 'Already recomputing', status: 503 if !TestCounter.recompute!
+      return render plain: 'Must be in maintenance mode', status: 503 unless @maintenance
+      return render plain: 'Already recomputing', status: 503 if !TestCounter.recompute!
     end
 
     render json: TestCountersData.compute

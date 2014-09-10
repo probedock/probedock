@@ -2,11 +2,11 @@
 /.grunt
 /_SpecRunner.html
 /config/database.yml
+/config/initializers/ldap.rb
 /config/redis.yml
 /config/ldap.yml
 /config/rox-center.yml
-/config/initializers/app_secrets.rb
-/config/initializers/ldap.rb
+/config/secrets.yml
 /db/test.*
 /doc/app
 /local

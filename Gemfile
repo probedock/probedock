@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 source 'https://rubygems.org'
 
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.5'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -62,11 +62,10 @@ gem 'strip_attributes' # trimming
 gem 'oj'
 
 # Assets
-gem 'stylus', '~> 1.0.0'
 gem 'sass-rails', '>= 3.2'
-gem 'bootstrap-sass', '~> 3.1'
+gem 'bootstrap-sass', '~> 3.2'
+gem 'autoprefixer-rails'
 gem 'jquery-rails'
-gem 'compass-rails'
 gem 'backbone-on-rails'
 #gem 'marionette-rails' # currently provided by tableling-rails
 gem 'tableling-rails'
@@ -101,6 +100,7 @@ group :development, :test do
   gem 'httparty'
   gem 'rox-client-rspec', '~> 0.3.1'
   gem 'rspec-rails', '~> 2.14'
+  gem 'minitest' # FIXME: see if this can be removed when capybara/rspec are upgraded
 
   gem 'resque-pool'
 

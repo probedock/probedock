@@ -18,13 +18,15 @@ class TestPayloadSearch
 
   def self.options test_run, params, options = {}
 
-    q = test_run.test_payloads.for_listing
+    q = test_run.test_payloads
+    count_q = q
+    q = q.for_listing
 
-    return params.merge(base: q) if params.blank?
+    return params.merge(base: q, base_count: count_q) if params.blank?
 
     state = params[:state].to_s.strip
     q = q.where state: state if state.present?
 
-    params.merge base: q
+    params.merge base: q, base_count: count_q
   end
 end
