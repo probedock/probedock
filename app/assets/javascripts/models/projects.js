@@ -20,6 +20,10 @@ App.module('models', function() {
 
     idAttribute: 'apiId',
 
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', 'v2:projects' ]);
+    },
+
     linkTag: function() {
       return this.link('alternate').tag(this.get('name'));
     },
