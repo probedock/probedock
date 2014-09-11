@@ -28,7 +28,7 @@ describe StatusData do
 
   it "should set missing dates to now", rox: { key: 'd406a39215b8' } do
     $redis.hset STATUS_DATA_CACHE_KEY, 'last_api_payload', 123
-    Time.stub now: now = Time.now
+    allow(Time).to receive(:now).and_return(now = Time.now)
     expect(subject.compute).to include(lastApiPayload: 123, lastTestDeprecation: now.to_ms, lastTestCounters: now.to_ms, lastPurge: now.to_ms)
   end
 
@@ -41,7 +41,7 @@ describe StatusData do
 
     before :each do
       $redis.hmset STATUS_DATA_CACHE_KEY, 'last_api_payload', last_api_payload, 'last_test_deprecation', last_test_deprecation, 'last_test_counters', last_test_counters, 'last_purge', last_purge
-      Time.stub now: now
+      allow(Time).to receive(:now).and_return(now)
     end
 
     it "should touch the last api payload time on the api:payload event", rox: { key: '9d1d4f8f598d' } do

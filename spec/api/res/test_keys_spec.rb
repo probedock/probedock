@@ -27,10 +27,10 @@ describe Api::TestKeysController, rox: { tags: :unit } do
     it "should create the requested number of keys for a project and user", rox: { key: 'aa411bcb252e' } do
 
       expect{ generate_keys n: 5 }.to change(TestKey, :count).by(5)
-      expect(response.success?).to be_true
+      expect(response.success?).to be(true)
 
       keys = TestKey.order('created_at ASC').to_a
-      expect(keys.all?{ |k| k.user == user && k.project == project }).to be_true
+      expect(keys.all?{ |k| k.user == user && k.project == project }).to be(true)
       expect(MultiJson.load(response.body)).to eq(TestKeysRepresenter.new(OpenStruct.new(total: 5, data: keys)).serializable_hash)
     end
 
@@ -69,7 +69,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
       expect(settings.last_test_key_number).to be_nil
 
       generate_keys n: 5
-      expect(response.success?).to be_true
+      expect(response.success?).to be(true)
 
       settings.reload
       expect(settings.last_test_key_project).to eq(project)

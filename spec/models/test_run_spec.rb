@@ -22,9 +22,9 @@ describe TestRun, rox: { tags: :unit } do
   let(:grouped_runs){ Array.new(5){ |i| create :run, runner: user, ended_at: (5 - i).days.ago, group: i % 2 == 0 ? 'nightly' : 'daily' } }
 
   it "should clear its report cache when saved", rox: { key: '5f809c05a02a' } do
-    ReportCache.stub :clear
+    allow(ReportCache).to receive(:clear)
     run = create :run
-    ReportCache.should_receive(:clear).with run.id
+    expect(ReportCache).to receive(:clear).with(run.id)
     run.save
   end
 
@@ -42,8 +42,8 @@ describe TestRun, rox: { tags: :unit } do
       tests = Array.new(keys.length){ |i| create :test, key: keys[i], name: names.shift, category: categories.shift, test_run: run }
 
       report = TestRun.report run.id
-      report.should == run
-      report.should_not query_the_database.when_calling(:results)
+      expect(report).to eq(run)
+      expect(report).not_to query_the_database.when_calling(:results)
     end
   end
 
@@ -60,7 +60,7 @@ describe TestRun, rox: { tags: :unit } do
       run = create :run, runner: user
       tests = Array.new(keys.length){ |i| create :test, key: keys[i], name: names.shift, category: categories.shift, test_run: run }
 
-      run.ordered_results.collect(&:test_info).should == [ tests[3], tests[1], tests[0], tests[4], tests[2] ]
+      expect(run.ordered_results.collect(&:test_info)).to eq([ tests[3], tests[1], tests[0], tests[4], tests[2] ])
     end
   end
 
@@ -68,67 +68,67 @@ describe TestRun, rox: { tags: :unit } do
 
     it "should return a test run with all details included", rox: { key: 'a02815e3a91e' } do
       run = TestRun.with_report_data.find create(:run).id
-      run.should_not query_the_database.when_calling(:to_client_hash).with(type: :report)
+      expect(run).not_to query_the_database.when_calling(:to_client_hash).with(type: :report)
     end
   end
 
   context ".reports_cache" do
     
     it "should return the reports cache", rox: { key: '5c5ae1d49caf' } do
-      TestRun.reports_cache.class.should == ReportCache
+      expect(TestRun.reports_cache.class).to eq(ReportCache)
     end
   end
 
   context ".reports_cache_size" do
 
     it "should return a proc which returns the reports cache size in the app settings", rox: { key: 'f025a90a2881' } do
-      TestRun.reports_cache_size.call.should == Settings.app.reports_cache_size
+      expect(TestRun.reports_cache_size.call).to eq(Settings.app.reports_cache_size)
       Settings::App.first.tap{ |s| s.reports_cache_size = 42 }.save
-      TestRun.reports_cache_size.call.should == 42
+      expect(TestRun.reports_cache_size.call).to eq(42)
     end
   end
 
   context "#previous_in_group" do
 
     it "should return the previous run of the same group if any", rox: { key: '69379b166ae5' } do
-      grouped_runs[0].previous_in_group.should be_nil
-      grouped_runs[1].previous_in_group.should be_nil
-      grouped_runs[2].previous_in_group.should == grouped_runs[0]
-      grouped_runs[3].previous_in_group.should == grouped_runs[1]
-      grouped_runs[4].previous_in_group.should == grouped_runs[2]
+      expect(grouped_runs[0].previous_in_group).to be_nil
+      expect(grouped_runs[1].previous_in_group).to be_nil
+      expect(grouped_runs[2].previous_in_group).to eq(grouped_runs[0])
+      expect(grouped_runs[3].previous_in_group).to eq(grouped_runs[1])
+      expect(grouped_runs[4].previous_in_group).to eq(grouped_runs[2])
     end
   end
 
   context "#previous_in_group?" do
 
     it "should indicate whether there is a previous run of the same group", rox: { key: 'e8fee7db607a' } do
-      grouped_runs[0].previous_in_group?.should be_false
-      grouped_runs[1].previous_in_group?.should be_false
-      grouped_runs[2].previous_in_group?.should be_true
-      grouped_runs[3].previous_in_group?.should be_true
-      grouped_runs[4].previous_in_group?.should be_true
+      expect(grouped_runs[0].previous_in_group?).to be(false)
+      expect(grouped_runs[1].previous_in_group?).to be(false)
+      expect(grouped_runs[2].previous_in_group?).to be(true)
+      expect(grouped_runs[3].previous_in_group?).to be(true)
+      expect(grouped_runs[4].previous_in_group?).to be(true)
     end
   end
 
   context "#next_in_group" do
 
     it "should return the next run of the same group if any", rox: { key: 'cc979a5bba68' } do
-      grouped_runs[0].next_in_group.should == grouped_runs[2]
-      grouped_runs[1].next_in_group.should == grouped_runs[3]
-      grouped_runs[2].next_in_group.should == grouped_runs[4]
-      grouped_runs[3].next_in_group.should be_nil
-      grouped_runs[4].next_in_group.should be_nil
+      expect(grouped_runs[0].next_in_group).to eq(grouped_runs[2])
+      expect(grouped_runs[1].next_in_group).to eq(grouped_runs[3])
+      expect(grouped_runs[2].next_in_group).to eq(grouped_runs[4])
+      expect(grouped_runs[3].next_in_group).to be_nil
+      expect(grouped_runs[4].next_in_group).to be_nil
     end
   end
 
   context "#next_in_group?" do
 
     it "should indicate whether there is next run of the same group", rox: { key: '9cfcbffa63bc' } do
-      grouped_runs[0].next_in_group?.should be_true
-      grouped_runs[1].next_in_group?.should be_true
-      grouped_runs[2].next_in_group?.should be_true
-      grouped_runs[3].next_in_group?.should be_false
-      grouped_runs[4].next_in_group?.should be_false
+      expect(grouped_runs[0].next_in_group?).to be(true)
+      expect(grouped_runs[1].next_in_group?).to be(true)
+      expect(grouped_runs[2].next_in_group?).to be(true)
+      expect(grouped_runs[3].next_in_group?).to be(false)
+      expect(grouped_runs[4].next_in_group?).to be(false)
     end
   end
 
@@ -137,7 +137,7 @@ describe TestRun, rox: { tags: :unit } do
     it "should return distinct test run groups", rox: { key: '0126127d63ac' } do
       grouped_runs
       create :run, runner: user, group: 'yearly'
-      TestRun.groups.should match_array([ 'daily', 'nightly', 'yearly' ])
+      expect(TestRun.groups).to match_array([ 'daily', 'nightly', 'yearly' ])
     end
   end
 

@@ -62,7 +62,7 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
     let(:user){ create :user }
     let(:tickets){ Array.new(5){ |i| create :ticket } }
     let!(:tests){ Array.new(3){ |i| create :test, key: create(:test_key, user: user), tickets: tickets[i % 2, 1] } }
-    before(:each){ Rails.application.events.stub fire: nil }
+    before(:each){ allow(Rails.application.events).to receive(:fire).and_return(nil) }
 
     it "should delete unused tickets", rox: { key: '0fa08cad2703' } do
       subject.perform

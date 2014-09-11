@@ -83,7 +83,7 @@ module DatabaseMatchers
       end
     end
 
-    def failure_message_for_should
+    def failure_message
       if @options.key?(:expected_query_count)
         "Expected ##{@options[:method_name]} to cause #{@options[:expected_query_count]} database queries but it actually caused #{@queries.length} queries:" + friendly_queries
       else
@@ -91,7 +91,7 @@ module DatabaseMatchers
       end
     end
 
-    def failure_message_for_should_not
+    def failure_message_when_negated
       if @options[:expected_query_count]
         "Expected ##{@options[:method_name]} to not cause #{@options[:expected_query_count]} database queries but it actually caused #{@queries.length} queries:" + friendly_queries
       else

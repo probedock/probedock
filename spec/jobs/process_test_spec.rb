@@ -103,8 +103,8 @@ describe TestPayloadProcessing::ProcessTest do
 
         expect(test.name).to eq(sample_data[:n])
         expect(test.category).to eq(new_category)
-        expect(test.passing).to be_true
-        expect(test.active).to be_true
+        expect(test.passing).to be(true)
+        expect(test.active).to be(true)
 
         expect(test.last_run_at).to eq(time_received)
         expect(test.last_run_duration).to eq(sample_data[:d].to_i)
@@ -121,76 +121,76 @@ describe TestPayloadProcessing::ProcessTest do
         expect(result.runner).to eq(user)
         expect(result.test_info).to eq(p.test)
         expect(result.test_run).to eq(test_run)
-        expect(result.passed).to be_true
-        expect(result.active).to be_true
+        expect(result.passed).to be(true)
+        expect(result.active).to be(true)
         expect(result.duration).to eq(sample_data[:d].to_i)
         expect(result.project_version).to eq(project_version)
         expect(result.message).to eq(sample_data[:m])
         expect(result.run_at).to eq(test_run.ended_at)
 
-        expect(result.new_test).to be_true
+        expect(result.new_test).to be(true)
         expect(result.category).to eq(new_category)
         expect(result.previous_category).to be_nil
         expect(result.previous_passed).to be_nil
         expect(result.previous_active).to be_nil
-        expect(result.deprecated).to be_false
+        expect(result.deprecated).to be(false)
       end
     end
 
     it "should set whether the test and result are passing from passed", rox: { key: 'c4477e2b5377' } do
       sample_data[:p] = false
       process_new_test.tap do |p|
-        expect(p.test.passing).to be_false
-        expect(p.test_result.passed).to be_false
+        expect(p.test.passing).to be(false)
+        expect(p.test_result.passed).to be(false)
       end
     end
 
     it "should set whether the test and result are active from the flags", rox: { key: 'ebdf4ab41229' } do
       sample_data[:f] = TestInfo::INACTIVE
       process_new_test.tap do |p|
-        expect(p.test.active).to be_false
-        expect(p.test_result.active).to be_false
+        expect(p.test.active).to be(false)
+        expect(p.test_result.active).to be(false)
       end
     end
 
     it "should set the tags of the test", rox: { key: '9264eca0583a' } do
       p, tags = nil, cache[:tags]
       expect{ p = process_new_test }.not_to change(Tag, :count)
-      p.test.tags.should match_array(tags)
+      expect(p.test.tags).to match_array(tags)
     end
 
     it "should merge duplicate tags", rox: { key: 'f2d582008cc5' } do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] * 2).shuffle
       expect{ p = process_new_test }.not_to change(Tag, :count)
-      p.test.tags.should match_array(tags)
+      expect(p.test.tags).to match_array(tags)
     end
 
     it "should merge case-insensitive duplicate tags", rox: { key: '3d2813ba331d' } do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] + sample_data[:g].collect(&:capitalize)).shuffle
       expect{ p = process_new_test }.not_to change(Tag, :count)
-      p.test.tags.should match_array(tags)
+      expect(p.test.tags).to match_array(tags)
     end
 
     it "should set the tickets of the test", rox: { key: 'e7a4a9d94fe1' } do
       p, tickets = nil, cache[:tickets]
       expect{ p = process_new_test }.not_to change(Ticket, :count)
-      p.test.tickets.should match_array(tickets)
+      expect(p.test.tickets).to match_array(tickets)
     end
 
     it "should merge duplicate tickets", rox: { key: '16bfda0bc827' } do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] * 2).shuffle
       expect{ p = process_new_test }.not_to change(Ticket, :count)
-      p.test.tickets.should match_array(tickets)
+      expect(p.test.tickets).to match_array(tickets)
     end
 
     it "should merge case-insensitive duplicate tickets", rox: { key: '5e9d3c81f217' } do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] + sample_data[:t].collect(&:downcase)).shuffle
       expect{ p = process_new_test }.not_to change(Ticket, :count)
-      p.test.tickets.should match_array(tickets)
+      expect(p.test.tickets).to match_array(tickets)
     end
 
     it "should add new custom values", rox: { key: 'df41161a8092' } do
@@ -226,8 +226,8 @@ describe TestPayloadProcessing::ProcessTest do
 
         expect(test.name).to eq(sample_data[:n])
         expect(test.category).to eq(new_category)
-        expect(test.passing).to be_true
-        expect(test.active).to be_true
+        expect(test.passing).to be(true)
+        expect(test.active).to be(true)
 
         expect(test.last_run_at).to eq(time_received)
         expect(test.last_run_duration).to eq(sample_data[:d].to_i)
@@ -244,19 +244,19 @@ describe TestPayloadProcessing::ProcessTest do
         expect(result.runner).to eq(user)
         expect(result.test_info).to eq(p.test)
         expect(result.test_run).to eq(test_run)
-        expect(result.passed).to be_true
-        expect(result.active).to be_true
+        expect(result.passed).to be(true)
+        expect(result.active).to be(true)
         expect(result.duration).to eq(sample_data[:d].to_i)
         expect(result.project_version).to eq(project_version)
         expect(result.message).to eq(sample_data[:m])
         expect(result.run_at).to eq(test_run.ended_at)
 
-        expect(result.new_test).to be_false
+        expect(result.new_test).to be(false)
         expect(result.category).to eq(new_category)
         expect(result.previous_category).to eq(existing_category)
-        expect(result.previous_passed).to be_false
-        expect(result.previous_active).to be_false
-        expect(result.deprecated).to be_false
+        expect(result.previous_passed).to be(false)
+        expect(result.previous_active).to be(false)
+        expect(result.deprecated).to be(false)
       end
     end
 
@@ -271,31 +271,31 @@ describe TestPayloadProcessing::ProcessTest do
         expect(result.runner).to eq(user)
         expect(result.test_info).to eq(p.test)
         expect(result.test_run).to eq(test_run)
-        expect(result.passed).to be_true
-        expect(result.active).to be_true
+        expect(result.passed).to be(true)
+        expect(result.active).to be(true)
         expect(result.duration).to eq(sample_data[:d].to_i)
         expect(result.project_version).to eq(project_version)
         expect(result.message).to eq(sample_data[:m])
         expect(result.run_at).to eq(test_run.ended_at)
 
-        expect(result.new_test).to be_false
+        expect(result.new_test).to be(false)
         expect(result.category).to eq(existing_category) # category is not updated for deprecated tests
         expect(result.previous_category).to eq(existing_category)
-        expect(result.previous_passed).to be_false
-        expect(result.previous_active).to be_false
-        expect(result.deprecated).to be_true
+        expect(result.previous_passed).to be(false)
+        expect(result.previous_active).to be(false)
+        expect(result.deprecated).to be(true)
       end
     end
 
     it "should create a deprecated result if the test was deprecated while the payload was waiting for processing", rox: { key: 'b0b29e19f8e9' } do
       cache[:deprecations] << create(:deprecation, test_info: existing_test, created_at: time_received + 1.minute)
-      expect(process_existing_test.test_result.deprecated).to be_true
+      expect(process_existing_test.test_result.deprecated).to be(true)
     end
 
     it "should create a non-deprecated result if the test was undeprecated while the payload was waiting for processing", rox: { key: '88cac9b42ffe' } do
       existing_test.deprecation = create(:deprecation, test_info: existing_test, created_at: 1.day.ago)
       cache[:deprecations] << create(:deprecation, deprecated: false, test_info: existing_test, created_at: time_received + 1.minute)
-      expect(process_existing_test.test_result.deprecated).to be_false
+      expect(process_existing_test.test_result.deprecated).to be(false)
     end
 
     context "with a previous result" do
@@ -305,8 +305,8 @@ describe TestPayloadProcessing::ProcessTest do
         let(:existing_test_data){ super().merge passing: true, active: true }
 
         it "should correctly set previous passed and previous active attributes", rox: { key: '425cf52e8d97' } do
-          expect(result.previous_passed).to be_true
-          expect(result.previous_active).to be_true
+          expect(result.previous_passed).to be(true)
+          expect(result.previous_active).to be(true)
         end
       end
 
@@ -330,22 +330,22 @@ describe TestPayloadProcessing::ProcessTest do
     it "should set whether the test and result are passing from passed", rox: { key: '8252b6785dad' } do
       sample_data[:p] = false
       process_existing_test.tap do |p|
-        expect(p.test.passing).to be_false
-        expect(p.test_result.passed).to be_false
+        expect(p.test.passing).to be(false)
+        expect(p.test_result.passed).to be(false)
       end
     end
 
     it "should set whether the test and result are active from the flags", rox: { key: '527e2ee42826' } do
       sample_data[:f] = TestInfo::INACTIVE
       process_existing_test.tap do |p|
-        expect(p.test.active).to be_false
-        expect(p.test_result.active).to be_false
+        expect(p.test.active).to be(false)
+        expect(p.test_result.active).to be(false)
       end
     end
 
     it "should not change whether the test is active if the flags are not set", rox: { key: '0f8679dba515' } do
       sample_data.delete :f
-      expect(process_existing_test.test.active).to be_false
+      expect(process_existing_test.test.active).to be(false)
     end
 
     it "should not change the category if not set", rox: { key: '2dc39138d9d0' } do
@@ -389,14 +389,14 @@ describe TestPayloadProcessing::ProcessTest do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] * 2).shuffle
       expect{ p = process_existing_test }.not_to change(Tag, :count)
-      p.test.tags.should match_array(tags)
+      expect(p.test.tags).to match_array(tags)
     end
 
     it "should merge case-insensitive duplicate tags", rox: { key: '42eac83058cb' } do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] + sample_data[:g].collect(&:capitalize)).shuffle
       expect{ p = process_existing_test }.not_to change(Tag, :count)
-      p.test.tags.should match_array(tags)
+      expect(p.test.tags).to match_array(tags)
     end
 
     it "should update the tickets of the test", rox: { key: '40bb4a98a77f' } do
@@ -422,14 +422,14 @@ describe TestPayloadProcessing::ProcessTest do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] * 2).shuffle
       expect{ p = process_existing_test }.not_to change(Ticket, :count)
-      p.test.tickets.should match_array(tickets)
+      expect(p.test.tickets).to match_array(tickets)
     end
 
     it "should merge case-insensitive duplicate tickets", rox: { key: '0e5e6b8bb698' } do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] + sample_data[:t].collect(&:downcase)).shuffle
       expect{ p = process_existing_test }.not_to change(Ticket, :count)
-      p.test.tickets.should match_array(tickets)
+      expect(p.test.tickets).to match_array(tickets)
     end
 
     it "should add new custom values and modify existing ones", rox: { key: '077f7c1e5701' } do

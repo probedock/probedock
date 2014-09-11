@@ -22,7 +22,7 @@ describe LinkTemplate, rox: { tags: :unit } do
 
     it "should return a hash with the id, name and contents", rox: { key: '726e6f056c1e' } do
       template = create :link_template
-      template.to_client_hash.should == { id: template.id, name: template.name, contents: template.contents }
+      expect(template.to_client_hash).to eq({ id: template.id, name: template.name, contents: template.contents })
     end
   end
 

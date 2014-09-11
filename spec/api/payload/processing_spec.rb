@@ -199,7 +199,7 @@ describe "API sample payload", rox: { tags: :integration } do
     expect(saved_payloads[0].test_keys).to eq([ test_keys[0], test_keys[1], test_keys[2] ])
     expect(saved_payloads[1].test_keys).to be_empty
 
-    ProcessNextTestPayloadJob.should have_queue_size_of(payloads.length).in(:api)
+    expect(ProcessNextTestPayloadJob).to have_queue_size_of(payloads.length).in(:api)
   end
 
   context "when processed" do
@@ -327,7 +327,7 @@ describe "API sample payload", rox: { tags: :integration } do
     end
 
     it "should correctly mark all keys as used", rox: { key: '04b81846c673' } do
-      expect(test_keys.each(&:reload).any?(&:free?)).to be_false
+      expect(test_keys.each(&:reload).any?(&:free?)).to be(false)
     end
 
     it "should correctly create test run 1", rox: { key: '4f82f5889ab0' } do
@@ -384,8 +384,8 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.name).to eq("Test 1")
       expect(test.project).to eq(key.project)
       expect(test.author).to eq(key.user)
-      expect(test.passing).to be_false
-      expect(test.active).to be_true
+      expect(test.passing).to be(false)
+      expect(test.active).to be(true)
       expect(test.category).to eq(category("soapui"))
       expect(test.tags).to match_array([ tag(:integration), tag(:slow) ])
       expect(test.tickets).to match_array([ ticket('#12'), ticket('#34') ])
@@ -398,14 +398,14 @@ describe "API sample payload", rox: { tags: :integration } do
 
       result = results.first
       expect(result.project_version).to eq(project_version(key.project, "1.0.0"))
-      expect(result.passed).to be_true
-      expect(result.active).to be_false
+      expect(result.passed).to be(true)
+      expect(result.active).to be(false)
       expect(result.run_at).to be >= @before_posting_payloads
       expect(result.duration).to eq(500)
       expect(result.message).to be_nil
       expect(result.runner).to eq(users[0])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(1).first)
-      expect(result.new_test).to be_true
+      expect(result.new_test).to be(true)
       expect(result.category).to eq(category("junit"))
       expect(result.previous_category).to be_nil
       expect(result.previous_passed).to be_nil
@@ -413,18 +413,18 @@ describe "API sample payload", rox: { tags: :integration } do
 
       result = results.last
       expect(result.project_version).to eq(project_version(key.project, "1.0.0"))
-      expect(result.passed).to be_false
-      expect(result.active).to be_true
+      expect(result.passed).to be(false)
+      expect(result.active).to be(true)
       expect(result.run_at).to be >= @before_posting_payloads
       expect(result.duration).to eq(750)
       expect(result.message).to eq("fubar")
       expect(result.runner).to eq(users[1])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(2).first)
-      expect(result.new_test).to be_false
+      expect(result.new_test).to be(false)
       expect(result.category).to eq(category("soapui"))
       expect(result.previous_category).to eq(category("junit"))
-      expect(result.previous_passed).to be_true
-      expect(result.previous_active).to be_false
+      expect(result.previous_passed).to be(true)
+      expect(result.previous_active).to be(false)
     end
 
     it "should correctly update test 2", rox: { key: '1d7ebcd9419e' } do
@@ -435,8 +435,8 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.name).to eq("Test 2")
       expect(test.project).to eq(key.project)
       expect(test.author).to eq(key.user)
-      expect(test.passing).to be_true
-      expect(test.active).to be_true
+      expect(test.passing).to be(true)
+      expect(test.active).to be(true)
       expect(test.category).to eq(category("selenium"))
       expect(test.tags).to match_array([ tag(:automated) ])
       expect(test.tickets).to match_array([ ticket('#56') ])
@@ -449,14 +449,14 @@ describe "API sample payload", rox: { tags: :integration } do
 
       result = results.first
       expect(result.project_version).to eq(project_version(key.project, "1.0.0"))
-      expect(result.passed).to be_true
-      expect(result.active).to be_true
+      expect(result.passed).to be(true)
+      expect(result.active).to be(true)
       expect(result.run_at).to be >= @before_posting_payloads
       expect(result.duration).to eq(5000)
       expect(result.message).to eq("Foo")
       expect(result.runner).to eq(users[0])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(1).first)
-      expect(result.new_test).to be_true
+      expect(result.new_test).to be(true)
       expect(result.category).to eq(category("selenium"))
       expect(result.previous_category).to be_nil
       expect(result.previous_passed).to be_nil
@@ -471,8 +471,8 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.name).to eq("Test 3")
       expect(test.project).to eq(key.project)
       expect(test.author).to eq(key.user)
-      expect(test.passing).to be_true
-      expect(test.active).to be_true
+      expect(test.passing).to be(true)
+      expect(test.active).to be(true)
       expect(test.category).to eq(category("junit"))
       expect(test.tags).to match_array([ tag(:unit), tag(:performance), tag(:slow) ])
       expect(test.tickets).to match_array([ ticket('#78') ])
@@ -485,14 +485,14 @@ describe "API sample payload", rox: { tags: :integration } do
 
       result = results.first
       expect(result.project_version).to eq(project_version(key.project, "1.0.2"))
-      expect(result.passed).to be_false
-      expect(result.active).to be_true
+      expect(result.passed).to be(false)
+      expect(result.active).to be(true)
       expect(result.run_at).to be >= @before_posting_payloads
       expect(result.duration).to eq(300)
       expect(result.message).to eq("Didn't work.")
       expect(result.runner).to eq(users[0])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(1).first)
-      expect(result.new_test).to be_true
+      expect(result.new_test).to be(true)
       expect(result.category).to eq(category("junit"))
       expect(result.previous_category).to be_nil
       expect(result.previous_passed).to be_nil
@@ -500,18 +500,18 @@ describe "API sample payload", rox: { tags: :integration } do
 
       result = results.last
       expect(result.project_version).to eq(project_version(key.project, "1.0.3"))
-      expect(result.passed).to be_true
-      expect(result.active).to be_true
+      expect(result.passed).to be(true)
+      expect(result.active).to be(true)
       expect(result.run_at).to be >= @before_posting_payloads
       expect(result.duration).to eq(200)
       expect(result.message).to be_nil
       expect(result.runner).to eq(users[1])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(2).first)
-      expect(result.new_test).to be_false
+      expect(result.new_test).to be(false)
       expect(result.category).to eq(category("junit"))
       expect(result.previous_category).to eq(category("junit"))
-      expect(result.previous_passed).to be_false
-      expect(result.previous_active).to be_true
+      expect(result.previous_passed).to be(false)
+      expect(result.previous_active).to be(true)
     end
 
     it "should correctly update test 4", rox: { key: 'ec54b3e2dd8b' } do
@@ -522,8 +522,8 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.name).to eq("Test 4")
       expect(test.project).to eq(key.project)
       expect(test.author).to eq(key.user)
-      expect(test.passing).to be_true
-      expect(test.active).to be_true
+      expect(test.passing).to be(true)
+      expect(test.active).to be(true)
       expect(test.category).to eq(category("soapui"))
       expect(test.tags).to be_empty
       expect(test.tickets).to match_array([ ticket('#12') ])
@@ -535,13 +535,13 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(results).to have(2).items
 
       result = results.first # already existed before submitting payloads
-      expect(result.passed).to be_false
-      expect(result.active).to be_false
+      expect(result.passed).to be(false)
+      expect(result.active).to be(false)
       expect(result.run_at).to be < @before_posting_payloads
       expect(result.duration).to eq(50)
       expect(result.runner).to eq(users[1])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(0).first)
-      expect(result.new_test).to be_true
+      expect(result.new_test).to be(true)
       expect(result.category).to be_nil
       expect(result.previous_category).to be_nil
       expect(result.previous_passed).to be_nil
@@ -549,18 +549,18 @@ describe "API sample payload", rox: { tags: :integration } do
 
       result = results.last
       expect(result.project_version).to eq(project_version(key.project, "1.0.0"))
-      expect(result.passed).to be_true
-      expect(result.active).to be_true
+      expect(result.passed).to be(true)
+      expect(result.active).to be(true)
       expect(result.run_at).to be >= @before_posting_payloads
       expect(result.duration).to eq(75)
       expect(result.message).to be_nil
       expect(result.runner).to eq(users[0])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(1).first)
-      expect(result.new_test).to be_false
+      expect(result.new_test).to be(false)
       expect(result.category).to eq(category("soapui"))
       expect(result.previous_category).to be_nil
-      expect(result.previous_passed).to be_false
-      expect(result.previous_active).to be_false
+      expect(result.previous_passed).to be(false)
+      expect(result.previous_active).to be(false)
     end
 
     it "should correctly update test 5", rox: { key: '165123760e72' } do
@@ -571,8 +571,8 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.name).to eq("Test 5")
       expect(test.project).to eq(key.project)
       expect(test.author).to eq(key.user)
-      expect(test.passing).to be_true
-      expect(test.active).to be_true
+      expect(test.passing).to be(true)
+      expect(test.active).to be(true)
       expect(test.category).to be_nil
       expect(test.tags).to be_empty
       expect(test.tickets).to be_empty
@@ -585,14 +585,14 @@ describe "API sample payload", rox: { tags: :integration } do
 
       result = results.first
       expect(result.project_version).to eq(project_version(key.project, "1.0.3"))
-      expect(result.passed).to be_true
-      expect(result.active).to be_true
+      expect(result.passed).to be(true)
+      expect(result.active).to be(true)
       expect(result.run_at).to be >= @before_posting_payloads
       expect(result.duration).to eq(0)
       expect(result.message).to be_nil
       expect(result.runner).to eq(users[1])
       expect(result.test_run).to eq(TestRun.order('id ASC').limit(1).offset(2).first)
-      expect(result.new_test).to be_true
+      expect(result.new_test).to be(true)
       expect(result.category).to be_nil
       expect(result.previous_category).to be_nil
       expect(result.previous_passed).to be_nil

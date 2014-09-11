@@ -21,16 +21,16 @@ describe TestInfo, rox: { tags: :unit } do
   describe "#breaker" do
 
     it "should return nil for new tests", rox: { key: '1a5aee484d1f' } do
-      TestInfo.new.breaker.should be_nil
+      expect(TestInfo.new.breaker).to be_nil
     end
 
     it "should return nil for passing tests", rox: { key: '607f941fbdd2' } do
-      create(:test).breaker.should be_nil
+      expect(create(:test).breaker).to be_nil
     end
 
     it "should return the runner of the effective result for broken tests", rox: { key: 'd63d2e63d920' } do
       test = create :test, passing: false
-      test.breaker.should == test.effective_result.runner
+      expect(test.breaker).to eq(test.effective_result.runner)
     end
   end
 
@@ -38,7 +38,7 @@ describe TestInfo, rox: { tags: :unit } do
 
     it "should return the project api id and test key value joined with a hyphen", rox: { key: '27893c41b7af' } do
       test = create :test
-      test.to_param.should == "#{test.project.api_id}-#{test.key.key}"
+      expect(test.to_param).to eq("#{test.project.api_id}-#{test.key.key}")
     end
   end
 
@@ -78,8 +78,8 @@ describe TestInfo, rox: { tags: :unit } do
 
     it "should return true if the test is linked to a deprecation", rox: { key: '28ef7683957f' } do
       user = create :user
-      expect(create(:test, key: create(:key, user: user)).deprecated?).to be_false
-      expect(create(:test, key: create(:key, user: user), deprecated_at: 10.days.ago).deprecated?).to be_true
+      expect(create(:test, key: create(:key, user: user)).deprecated?).to be(false)
+      expect(create(:test, key: create(:key, user: user), deprecated_at: 10.days.ago).deprecated?).to be(true)
     end
   end
 
@@ -109,7 +109,7 @@ describe TestInfo, rox: { tags: :unit } do
     describe ".outdated" do
 
       it "should return standard tests that have not been run since the outdated delay", rox: { key: 'f72aff790693' } do
-        Settings.stub app: double(test_outdated_days: 2)
+        allow(Settings).to receive(:app).and_return(double(test_outdated_days: 2))
         expect(described_class.outdated.to_a).to match_array([ tests[1], tests[5], tests[7] ])
       end
 
@@ -153,7 +153,7 @@ describe TestInfo, rox: { tags: :unit } do
       create :test, key: create(:key, user: run.runner), test_run: run, category: categories[1]
       create :test, key: create(:key, user: run.runner), test_run: run, category: categories[2]
       create :test, key: create(:key, user: run.runner), test_run: run, category: nil
-      TestInfo.count_by_category.should match_array([
+      expect(TestInfo.count_by_category).to match_array([
         { category: categories[0].name, count: 1 },
         { category: categories[1].name, count: 2 },
         { category: categories[2].name, count: 3 },
@@ -173,7 +173,7 @@ describe TestInfo, rox: { tags: :unit } do
       create :test, key: create(:key, user: run.runner, project: projects[1]), test_run: run
       create :test, key: create(:key, user: run.runner, project: projects[2]), test_run: run
       create :test, key: create(:key, user: run.runner, project: projects[1]), test_run: run
-      TestInfo.count_by_project.should match_array([
+      expect(TestInfo.count_by_project).to match_array([
         { project: 'Project A', count: 1 },
         { project: 'Project B', count: 3 },
         { project: 'Project C', count: 2 }
@@ -192,7 +192,7 @@ describe TestInfo, rox: { tags: :unit } do
       create :test, key: create(:key, user: users[2]), test_run: run
       create :test, key: create(:key, user: users[0]), test_run: run
       create :test, key: create(:key, user: users[0]), test_run: run
-      TestInfo.count_by_author.should match_array([
+      expect(TestInfo.count_by_author).to match_array([
         { author: users[0], count: 3 },
         { author: users[1], count: 1 },
         { author: users[2], count: 2 }
@@ -228,7 +228,7 @@ describe TestInfo, rox: { tags: :unit } do
       it(nil, rox: { key: 'f2b5f79ca573' }){ should_not validate_presence_of(:key) }
 
       it "should not validate the uniqueness of key_id", rox: { key: 'cd41378e11ce' } do
-        lambda{ create :test, key: test.key, quick_validation: true }.should raise_unique_error
+        expect{ create :test, key: test.key, quick_validation: true }.to raise_unique_error
       end
     end
   end

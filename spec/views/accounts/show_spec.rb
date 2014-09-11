@@ -19,13 +19,13 @@ require 'spec_helper'
 describe 'accounts/show', rox: { tags: :unit } do
 
   let(:user){ create :user }
-  before(:each){ view.stub(:current_user){ user } }
+  before(:each){ allow(view).to receive(:current_user){ user } }
   subject{ render; rendered }
   let(:page) { Capybara::Node::Simple.new(subject) }
 
   it "should show user information", rox: { key: '03821f9cbb97' } do
-    subject.should include(user.name)
-    subject.should include(user.email)
+    expect(subject).to include(user.name)
+    expect(subject).to include(user.email)
   end
 
   it "should inject the keyGenerator module", rox: { key: '58f4d5b208ea' } do
@@ -53,7 +53,7 @@ describe 'accounts/show', rox: { tags: :unit } do
 
     it "should not show the e-mail", rox: { key: '3a1ab173bc4a' } do
       user.update_columns email: nil
-      subject.should_not include(User.human_attribute_name(:email))
+      expect(subject).not_to include(User.human_attribute_name(:email))
     end
   end
 end

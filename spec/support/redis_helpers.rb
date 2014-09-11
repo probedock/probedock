@@ -29,7 +29,7 @@ module RedisHelpers
 
   def stub_and_call_original object, method, &block
     original = object.method method
-    object.stub method do |*args,&run_block|
+    allow(object).to receive(method) do |*args,&run_block|
       block.call object
       original.call *args, &run_block
     end

@@ -56,23 +56,23 @@ describe TestPayloadProcessing::ProcessTestRun do
   let(:cache){ {} }
 
   before :each do
-    TestPayloadProcessing::ProcessTest.stub(:new){ |*args| processed_tests_args.shift }
-    Rails.application.events.stub :fire
+    allow(TestPayloadProcessing::ProcessTest).to receive(:new){ |*args| processed_tests_args.shift }
+    allow(Rails.application.events).to receive(:fire)
   end
 
   it "should process all tests in the test run", rox: { key: 'b6e8e058ea28' } do
-    TestPayloadProcessing::ProcessTest.should_receive(:new).exactly(3).times
+    expect(TestPayloadProcessing::ProcessTest).to receive(:new).exactly(3).times
     expect(process_test_run.processed_tests).to match_array(processed_tests)
   end
 
   it "should enrich test data with project and version", rox: { key: '0c55f491f8e5' } do
 
     additional_test_data = sample_payload[:r][0].pick :j, :v
-    TestPayloadProcessing::ProcessTest.should_receive(:new).ordered.with sample_payload[:r][0][:t][0].merge(additional_test_data), kind_of(TestRun), cache
-    TestPayloadProcessing::ProcessTest.should_receive(:new).ordered.with sample_payload[:r][0][:t][1].merge(additional_test_data), kind_of(TestRun), cache
+    expect(TestPayloadProcessing::ProcessTest).to receive(:new).ordered.with(sample_payload[:r][0][:t][0].merge(additional_test_data), kind_of(TestRun), cache)
+    expect(TestPayloadProcessing::ProcessTest).to receive(:new).ordered.with(sample_payload[:r][0][:t][1].merge(additional_test_data), kind_of(TestRun), cache)
 
     additional_test_data = sample_payload[:r][1].pick :j, :v
-    TestPayloadProcessing::ProcessTest.should_receive(:new).ordered.with sample_payload[:r][1][:t][0].merge(additional_test_data), kind_of(TestRun), cache
+    expect(TestPayloadProcessing::ProcessTest).to receive(:new).ordered.with(sample_payload[:r][1][:t][0].merge(additional_test_data), kind_of(TestRun), cache)
 
     process_test_run
   end
@@ -99,7 +99,7 @@ describe TestPayloadProcessing::ProcessTestRun do
   end
 
   it "should trigger an api:test_run event on the application", rox: { key: '06493acd8c6a' } do
-    Rails.application.events.should_receive(:fire).with 'api:test_run', kind_of(TestPayloadProcessing::ProcessTestRun)
+    expect(Rails.application.events).to receive(:fire).with('api:test_run', kind_of(TestPayloadProcessing::ProcessTestRun))
     process_test_run
   end
 
@@ -124,7 +124,7 @@ describe TestPayloadProcessing::ProcessTestRun do
       { passed: true, active: false }
     ]
 
-    TestPayloadProcessing::ProcessTest.stub(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
+    allow(TestPayloadProcessing::ProcessTest).to receive(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
 
     process_test_run.test_run.tap do |run|
       expect(run.results_count).to eq(6)
@@ -184,7 +184,7 @@ describe TestPayloadProcessing::ProcessTestRun do
         { passed: true, active: false }
       ]
 
-      TestPayloadProcessing::ProcessTest.stub(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
+      allow(TestPayloadProcessing::ProcessTest).to receive(:new){ |*args| state = states.shift; test_stub state[:passed], state[:active] }
 
       process_test_run.test_run.tap do |run|
         expect(run.results_count).to eq(10)

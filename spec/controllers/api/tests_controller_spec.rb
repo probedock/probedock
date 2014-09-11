@@ -7,7 +7,7 @@ describe Api::TestsController do
   before(:each){ sign_in user }
 
   describe "#deprecate" do
-    before(:each){ ROXCenter::Application.events.stub :fire }
+    before(:each){ allow(ROXCenter::Application.events).to receive(:fire) }
     let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
 
     it "should create a deprecation and link it to the test", rox: { key: 'd063686df8cc' } do
@@ -27,12 +27,12 @@ describe Api::TestsController do
 
       test.reload
       expect_deprecation_representation test.deprecation
-      expect(test.deprecated?).to be_true
+      expect(test.deprecated?).to be(true)
       expect(test.deprecation).not_to be_nil
 
       expect(event_deprecations).to eq([ test.deprecation ])
       test.deprecation.tap do |deprecation|
-        expect(deprecation.deprecated).to be_true
+        expect(deprecation.deprecated).to be(true)
         expect(deprecation.test_info).to eq(test)
         expect(deprecation.test_result).to eq(test.effective_result)
         expect(deprecation.user).to eq(user)
@@ -54,7 +54,7 @@ describe Api::TestsController do
       expect_deprecation_representation deprecation
 
       test.reload
-      expect(test.deprecated?).to be_true
+      expect(test.deprecated?).to be(true)
       expect(test.deprecation).to eq(deprecation)
 
       expect(ROXCenter::Application.events).not_to receive(:fire)
@@ -71,7 +71,7 @@ describe Api::TestsController do
       expect(response.status).to eq(503)
 
       test.reload
-      expect(test.deprecated?).to be_false
+      expect(test.deprecated?).to be(false)
       expect(test.deprecation_id).to be_nil
     end
 
@@ -103,13 +103,13 @@ describe Api::TestsController do
       expect(response.status).to eq(204)
 
       test.reload
-      expect(test.deprecated?).to be_false
+      expect(test.deprecated?).to be(false)
       expect(test.deprecation).to be_nil
 
       deprecation = test.deprecations.sort{ |a,b| a.created_at <=> b.created_at }.last
       expect(event_deprecations).to eq([ deprecation ])
       deprecation.tap do |deprecation|
-        expect(deprecation.deprecated).to be_false
+        expect(deprecation.deprecated).to be(false)
         expect(deprecation.test_info).to eq(test)
         expect(deprecation.test_result).to eq(test.effective_result)
         expect(deprecation.user).to eq(user)
@@ -130,7 +130,7 @@ describe Api::TestsController do
       expect(response.status).to eq(204)
 
       test.reload
-      expect(test.deprecated?).to be_false
+      expect(test.deprecated?).to be(false)
       expect(test.deprecation).to be_nil
 
       expect(ROXCenter::Application.events).not_to receive(:fire)
@@ -147,7 +147,7 @@ describe Api::TestsController do
       expect(response.status).to eq(503)
 
       test.reload
-      expect(test.deprecated?).to be_true
+      expect(test.deprecated?).to be(true)
       expect(test.deprecation_id).not_to be_nil
     end
 
@@ -157,7 +157,7 @@ describe Api::TestsController do
   end
 
   describe "#bulk_deprecations" do
-    before(:each){ ROXCenter::Application.events.stub :fire }
+    before(:each){ allow(ROXCenter::Application.events).to receive(:fire) }
 
     describe "deprecation" do
       let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
@@ -179,12 +179,12 @@ describe Api::TestsController do
         expect_deprecations_representation test, deprecate: true, changed: 1
 
         test.reload
-        expect(test.deprecated?).to be_true
+        expect(test.deprecated?).to be(true)
         expect(test.deprecation).not_to be_nil
 
         expect(event_deprecations).to eq([ test.deprecation ])
         test.deprecation.tap do |deprecation|
-          expect(deprecation.deprecated).to be_true
+          expect(deprecation.deprecated).to be(true)
           expect(deprecation.test_info).to eq(test)
           expect(deprecation.test_result).to eq(test.effective_result)
           expect(deprecation.user).to eq(user)
@@ -206,7 +206,7 @@ describe Api::TestsController do
         expect_deprecations_representation test, deprecate: true, changed: 0
 
         test.reload
-        expect(test.deprecated?).to be_true
+        expect(test.deprecated?).to be(true)
         expect(test.deprecation).to eq(deprecation)
 
         expect(ROXCenter::Application.events).not_to receive(:fire)
@@ -239,7 +239,7 @@ describe Api::TestsController do
         expect_deprecations_representation *tests, deprecate: true, changed: 3
 
         tests.each &:reload
-        expect(tests.all?(&:deprecated?)).to be_true
+        expect(tests.all?(&:deprecated?)).to be(true)
 
         expect(event_deprecations.collect(&:deprecated)).to eq([ true, true, true ])
         expect(event_deprecations).to eq([ tests[0].deprecation, tests[2].deprecation, tests[3].deprecation ])
@@ -256,7 +256,7 @@ describe Api::TestsController do
         expect(response.status).to eq(503)
 
         test.reload
-        expect(test.deprecated?).to be_false
+        expect(test.deprecated?).to be(false)
         expect(test.deprecation_id).to be_nil
       end
 
@@ -285,13 +285,13 @@ describe Api::TestsController do
         expect_deprecations_representation test, deprecate: false, changed: 1
 
         test.reload
-        expect(test.deprecated?).to be_false
+        expect(test.deprecated?).to be(false)
         expect(test.deprecation).to be_nil
 
         deprecation = test.deprecations.sort{ |a,b| a.created_at <=> b.created_at }.last
         expect(event_deprecations).to eq([ deprecation ])
         deprecation.tap do |deprecation|
-          expect(deprecation.deprecated).to be_false
+          expect(deprecation.deprecated).to be(false)
           expect(deprecation.test_info).to eq(test)
           expect(deprecation.test_result).to eq(test.effective_result)
           expect(deprecation.user).to eq(user)
@@ -313,7 +313,7 @@ describe Api::TestsController do
         expect_deprecations_representation test, deprecate: false, changed: 0
 
         test.reload
-        expect(test.deprecated?).to be_false
+        expect(test.deprecated?).to be(false)
         expect(test.deprecation).to be_nil
 
         expect(ROXCenter::Application.events).not_to receive(:fire)
@@ -346,7 +346,7 @@ describe Api::TestsController do
         expect_deprecations_representation *tests, deprecate: false, changed: 2
 
         tests.each &:reload
-        expect(tests.any?(&:deprecated?)).to be_false
+        expect(tests.any?(&:deprecated?)).to be(false)
 
         expect(event_deprecations).to have(2).items
         expect(event_deprecations.collect(&:deprecated)).to eq([ false, false ])
@@ -364,7 +364,7 @@ describe Api::TestsController do
         expect(response.status).to eq(503)
 
         test.reload
-        expect(test.deprecated?).to be_true
+        expect(test.deprecated?).to be(true)
         expect(test.deprecation_id).not_to be_nil
       end
 

@@ -93,33 +93,33 @@ describe TestPayload, rox: { tags: :unit } do
     it "should go through the created, processing and processed states", rox: { key: '23096f233917' } do
       
       expect(subject.state.to_sym).to eq(:created)
-      expect(subject.created?).to be_true
+      expect(subject.created?).to be(true)
       expect(subject.created_at).not_to be_nil
-      expect(subject.processing?).to be_false
+      expect(subject.processing?).to be(false)
       expect(subject.processing_at).to be_nil
-      expect(subject.processed?).to be_false
+      expect(subject.processed?).to be(false)
       expect(subject.processed_at).to be_nil
 
       subject.start_processing!
       subject.reload
 
       expect(subject.state.to_sym).to eq(:processing)
-      expect(subject.created?).to be_false
+      expect(subject.created?).to be(false)
       expect(subject.created_at).not_to be_nil
-      expect(subject.processing?).to be_true
+      expect(subject.processing?).to be(true)
       expect(subject.processing_at).not_to be_nil
-      expect(subject.processed?).to be_false
+      expect(subject.processed?).to be(false)
       expect(subject.processed_at).to be_nil
 
       subject.finish_processing!
       subject.reload
 
       expect(subject.state.to_sym).to eq(:processed)
-      expect(subject.created?).to be_false
+      expect(subject.created?).to be(false)
       expect(subject.created_at).not_to be_nil
-      expect(subject.processing?).to be_false
+      expect(subject.processing?).to be(false)
       expect(subject.processing_at).not_to be_nil
-      expect(subject.processed?).to be_true
+      expect(subject.processed?).to be(true)
       expect(subject.processed_at).not_to be_nil
 
       expect(subject.processing_at).to be >= subject.created_at
@@ -137,9 +137,9 @@ describe TestPayload, rox: { tags: :unit } do
     it "should ensure that the contents are not longer than 16777215 bytes", rox: { key: '8058cadefbaf' } do
       contents = "x" * 16777214
       payload = build :test_payload, contents: contents
-      expect(payload.valid?).to be_true
+      expect(payload.valid?).to be(true)
       payload.contents << "\u3042"
-      expect(payload.valid?).to be_false
+      expect(payload.valid?).to be(false)
     end
   end
 

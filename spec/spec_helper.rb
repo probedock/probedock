@@ -18,10 +18,11 @@
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
-require 'rspec/autorun'
+require 'rspec/its'
+require 'rspec/collection_matchers'
 require 'capybara/rails'
 require 'capybara/rspec'
-require 'cancan/matchers'
+#require 'cancan/matchers' (upgraded for rspec 3 in spec/support/cancan_matchers.rb)
 
 RoxClient::RSpec.configure do |config|
   config.project.category = 'RSpec'
@@ -45,6 +46,10 @@ RSpec.configure do |config|
   # Flush Redis test database before each test
   config.before(:suite){ $redis.flushdb }
   config.before(:each){ $redis.flushdb }
+
+  # Spec directories
+  config.infer_spec_type_from_file_location!
+  config.include RSpec::Rails::RequestExampleGroup, file_path: /spec\/api/
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   #config.fixture_path = "#{::Rails.root}/spec/fixtures"

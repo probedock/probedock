@@ -55,7 +55,7 @@ describe 'API routing' do
   it(nil, rox: { key: '1569b9a07f48' }){ should route(:get, '/api/v1/metrics/breakdown/categories').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :metrics, action: :category_breakdown) }
   it(nil, rox: { key: '565818ce6faa' }){ should route(:get, '/api/v1/metrics/breakdown/projects').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :metrics, action: :project_breakdown) }
   # This test must be written differently because multiple routes match this controller action (see https://github.com/thoughtbot/shoulda-matchers/issues/225).
-  it(nil, rox: { key: '7a549977839a' }){ { get: '/api/v1/settings' }.should route_to(LEGACY_API_ROUTE_OPTIONS.merge controller: 'settings', action: 'show') }
+  it(nil, rox: { key: '7a549977839a' }){ expect({ get: '/api/v1/settings' }).to route_to(LEGACY_API_ROUTE_OPTIONS.merge controller: 'settings', action: 'show') }
   it(nil, rox: { key: 'a3ee1bd68466' }){ should route(:put, '/api/v1/settings').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :settings, action: :update) }
   it(nil, rox: { key: 'bdd8ec3cbd3e' }){ should route(:get, '/api/v1/tags/cloud').to(LEGACY_API_ROUTE_OPTIONS.merge controller: :tags, action: :cloud) }
 end

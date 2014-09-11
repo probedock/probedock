@@ -56,7 +56,7 @@ RSpec::Matchers.define :have_no_curie do
     @curies.nil?
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     "expected that #{actual} would have no curie, got #{@curies}"
   end
 
@@ -71,7 +71,7 @@ RSpec::Matchers.define :have_embedded do |rel,expected|
     actual['_embedded'] and actual['_embedded'][rel] and actual['_embedded'][rel] == expected
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     "expected that #{actual} would have #{expected} with the #{rel} relation"
   end
 
@@ -94,11 +94,11 @@ RSpec::Matchers.define :hyperlink_to do |expected_rel,expected_href,*args|
     @rel_matches and @href_matches and @options_match
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     "expected that #{actual} would #{expectations(expected_rel, expected_href, @expected_options).join ' and '}"
   end
 
-  failure_message_for_should_not do |actual|
+  failure_message_when_negated do |actual|
     "expected that #{actual} would not #{expectations(expected_rel, expected_href, @expected_options).join ' or '}"
   end
 

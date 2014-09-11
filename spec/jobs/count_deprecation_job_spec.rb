@@ -30,7 +30,7 @@ describe CountDeprecationJob do
   describe "events" do
     let(:deprecation_double){ double }
     let(:timezones){ [ 'UTC', 'Bern' ] }
-    before(:each){ ROXCenter::Application.stub metrics_timezones: timezones }
+    before(:each){ allow(ROXCenter::Application).to receive(:metrics_timezones).and_return(timezones) }
 
     it "should enqueue a job on the test:deprecated event", rox: { key: '490db0b2e66a' } do
       expect(described_class).to receive(:enqueue_deprecations).with([ deprecation_double ], timezones: timezones)
@@ -83,7 +83,7 @@ describe CountDeprecationJob do
     let(:deprecated_test){ create :test, key: create(:test_key, user: user), deprecated_at: deprecated_at }
 
     it "should instantiate a job with loaded data", rox: { key: '45622943f63f' } do
-      described_class.stub new: nil
+      allow(described_class).to receive(:new).and_return(nil)
       expect(described_class).to receive(:new) do |*args|
         expect(args[0]).to eq(deprecated_test.deprecation)
         expect(args[1]).to eq(HashWithIndifferentAccess.new(foo: 'bar'))
@@ -93,7 +93,7 @@ describe CountDeprecationJob do
 
     it "should instantiate multiple jobs with loaded data", rox: { key: '40a201539841' } do
       deprecated_tests = [ deprecated_test ] + Array.new(2){ |i| create :test, key: create(:test_key, user: user), deprecated_at: i.days.ago }
-      described_class.stub new: nil
+      allow(described_class).to receive(:new).and_return(nil)
       deprecated_tests.each do |test|
         expect(described_class).to receive(:new).ordered do |*args|
           expect(args[0]).to eq(test.deprecation)
@@ -104,7 +104,7 @@ describe CountDeprecationJob do
     end
 
     it "should trigger a test:counters event on the application", rox: { key: 'd311529e3b65' } do
-      described_class.stub new: nil
+      allow(described_class).to receive(:new).and_return(nil)
       test = deprecated_test # create test before so that user:created event is skipped
       expect(Rails.application.events).to receive(:fire).with('test:counters')
       described_class.perform [ test.deprecation_id ], foo: 'bar'
@@ -124,7 +124,7 @@ describe CountDeprecationJob do
     let(:job_options){ { timezones: timezones } }
     let(:measures){ [] }
     before :each do
-      TestCounter.stub :measure do |options|
+      allow(TestCounter).to receive(:measure) do |options|
         measures << options
       end
     end

@@ -34,23 +34,23 @@ describe TestResult, rox: { tags: :unit } do
 
     it "should not allow more than 65535 one-byte characters", rox: { key: '5e28426e7f22' } do
       msg = one_byte_char * 65535
-      build_result(msg).valid?.should be_true
+      expect(build_result(msg).valid?).to be(true)
       msg << one_byte_char
-      build_result(msg).valid?.should be_false
+      expect(build_result(msg).valid?).to be(false)
     end
 
     it "should not allow more than 32767 two-byte characters", rox: { key: '5236fc0cb454' } do
       msg = two_byte_char * 32767
-      build_result(msg).valid?.should be_true
+      expect(build_result(msg).valid?).to be(true)
       msg << two_byte_char
-      build_result(msg).valid?.should be_false
+      expect(build_result(msg).valid?).to be(false)
     end
 
     it "should not allow more than 21845 three-byte characters", rox: { key: '24588d82defd' } do
       msg = three_byte_char * 21845
-      build_result(msg).valid?.should be_true
+      expect(build_result(msg).valid?).to be(true)
       msg << three_byte_char
-      build_result(msg).valid?.should be_false
+      expect(build_result(msg).valid?).to be(false)
     end
 
     def build_result message

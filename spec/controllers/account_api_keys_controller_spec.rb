@@ -35,7 +35,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
         existing_key = user.api_keys.first
         expect{ post :create }.to change(ApiKey, :count).by(1)
         expect(user.api_keys).to have(2).items
-        expect(response.success?).to be_true
+        expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new((user.api_keys - [ existing_key ]).first).serializable_hash)
       end
 
@@ -51,14 +51,14 @@ describe AccountApiKeysController, rox: { tags: :unit } do
       it "should show a detailed api key", rox: { key: '3c157dc6c596' } do
         key = user.api_keys.first
         get :show, id: key.identifier
-        expect(response.success?).to be_true
+        expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new(key, detailed: true).serializable_hash)
       end
 
       it "should work in maintenance mode", rox: { key: '7f71dcef0f27' } do
         set_maintenance_mode
         get :show, id: user.api_keys.first.identifier
-        expect(response.success?).to be_true
+        expect(response.success?).to be(true)
       end
 
       it "should not give access to other users' keys", rox: { key: '417d9239cbbe' } do
@@ -73,8 +73,8 @@ describe AccountApiKeysController, rox: { tags: :unit } do
       it "should update an api key", rox: { key: '6444cd3c2e91' } do
         key = user.api_keys.first
         put :update, id: key.identifier, account_api_key: { active: false }
-        expect(response.success?).to be_true
-        expect(key.tap(&:reload).active).to be_false
+        expect(response.success?).to be(true)
+        expect(key.tap(&:reload).active).to be(false)
         expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new(key).serializable_hash)
       end
 
@@ -82,7 +82,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
         set_maintenance_mode
         key = user.api_keys.first
         put :update, id: key.identifier, account_api_key: { active: false }
-        expect(key.tap(&:reload).active).to be_true
+        expect(key.tap(&:reload).active).to be(true)
         expect(response.status).to eq(503)
       end
     end

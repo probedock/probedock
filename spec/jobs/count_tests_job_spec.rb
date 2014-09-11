@@ -30,7 +30,7 @@ describe CountTestsJob do
 
   describe "events" do
     let(:timezones){ [ 'UTC', 'Bern' ] }
-    before(:each){ ROXCenter::Application.stub metrics_timezones: timezones }
+    before(:each){ allow(ROXCenter::Application).to receive(:metrics_timezones).and_return(timezones) }
 
     it "should enqueue results on the api:payload event", rox: { key: '9b89f251da79' } do
       result_doubles = Array.new(5){ |i| double id: i * 66 }
@@ -90,9 +90,11 @@ describe CountTestsJob do
     let(:test_counter_stub){ double recomputing?: false, clean_token_cache: nil, update_remaining_results: nil }
 
     before :each do
-      described_class.stub new: nil
+      allow(described_class).to receive(:new).and_return(nil)
       stub_const TestCounter.name, test_counter_stub
-      test_counter_stub.stub(:measure){ |options| measures << options }
+      allow(test_counter_stub).to receive(:measure) do |options|
+        measures << options
+      end
     end
 
     it "should raise an error without the :timezones option", rox: { key: '98b1ef1a0f84' } do
@@ -102,7 +104,7 @@ describe CountTestsJob do
     it "should instantiate a job for each loaded test results, with the timezone and an empty cache", rox: { key: '9eac8ec7751d' } do
 
       job_args = []
-      described_class.stub(:new){ |*args| job_args << args }
+      allow(described_class).to receive(:new){ |*args| job_args << args }
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
 
       expect(job_args).to have(6).items
@@ -116,14 +118,14 @@ describe CountTestsJob do
 
     it "should decrease remaining results by the number of results", rox: { key: '8e29da39dd6e' } do
       expect(test_counter_stub).to receive(:update_remaining_results).with(-test_results.length)
-      described_class.stub new: nil
+      allow(described_class).to receive(:new).and_return(nil)
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
     end
 
     it "should instantiate a job with the results of each loaded test run, with the timezone and an empty cache", rox: { key: '52e5beac81b7' } do
 
       job_args = []
-      described_class.stub(:new){ |*args| job_args << args }
+      allow(described_class).to receive(:new){ |*args| job_args << args }
       described_class.perform perform_options.merge(run_ids: test_runs.collect(&:id))
 
       expect(job_args).to have(6).items
@@ -137,7 +139,7 @@ describe CountTestsJob do
 
     it "should decrease remaining results by the number of results in the loaded test runs", rox: { key: 'a9a9cdd3c4f0' } do
       expect(test_counter_stub).to receive(:update_remaining_results).with(-test_results.length)
-      described_class.stub new: nil
+      allow(described_class).to receive(:new).and_return(nil)
       described_class.perform perform_options.merge(run_ids: test_runs.collect(&:id))
     end
 
@@ -148,7 +150,7 @@ describe CountTestsJob do
       2.times{ |i| create :test_result, runner: user, test_info: tests[i], run_at: now, test_run: test_runs.last }
 
       job_args = []
-      described_class.stub(:new){ |*args| job_args << args }
+      allow(described_class).to receive(:new){ |*args| job_args << args }
 
       max_time = now - 1.second
       described_class.perform perform_options.merge(run_ids: test_runs.collect(&:id), max_time: max_time)
@@ -171,14 +173,14 @@ describe CountTestsJob do
       max_time = now - 1.second
       expect(test_counter_stub).to receive(:update_remaining_results).with(-test_results.select{ |r| r.run_at <= max_time }.length)
 
-      described_class.stub new: nil
+      allow(described_class).to receive(:new).and_return(nil)
       described_class.perform perform_options.merge(run_ids: test_runs.collect(&:id), max_time: max_time)
     end
 
     it "should pass a counter cache to instantiated jobs", rox: { key: '937c52d98437' } do
 
       caches = []
-      described_class.stub(:new){ |*args| caches << args[2] }
+      allow(described_class).to receive(:new){ |*args| caches << args[2] }
       described_class.perform perform_options.merge(run_ids: test_runs.collect(&:id))
 
       today, yesterday = 0.days.ago, 1.day.ago
@@ -196,7 +198,7 @@ describe CountTestsJob do
     it "should measure counter updates resulting from job instantiation", rox: { key: '84348e75d2cc' } do
 
       two_days_ago, three_days_ago = 2.days.ago, 3.days.ago
-      described_class.stub :new do |result,timezone,cache|
+      allow(described_class).to receive(:new) do |result,timezone,cache|
         cache[{ time: two_days_ago, timezone: 'Bern' }][:written] += 1
         cache[{ time: two_days_ago, timezone: 'Bern', project: tests[0].project }][:written] += 2
         cache[{ time: two_days_ago, timezone: 'Bern', user: user }][:written] += 3
@@ -224,19 +226,21 @@ describe CountTestsJob do
     end
 
     it "should clean the token cache if not recomputing", rox: { key: '45dc83979e95' } do
-      test_counter_stub.stub recomputing?: false
+      allow(test_counter_stub).to receive(:recomputing?).and_return(false)
       expect(test_counter_stub).to receive(:clean_token_cache)
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
     end
 
     it "should trigger a test:counters event on the application", rox: { key: '4c74c37fb77b' } do
-      ROXCenter::Application.events.should_receive(:fire).with 'test:counters'
+      expect(ROXCenter::Application.events).to receive(:fire).with('test:counters')
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
     end
 
     describe "when recomputing" do
       before :each do
-        test_counter_stub.stub recomputing?: true, remaining_results: 42, clear_computing: nil
+        allow(test_counter_stub).to receive(:recomputing?).and_return(true)
+        allow(test_counter_stub).to receive(:remaining_results).and_return(42)
+        allow(test_counter_stub).to receive(:clear_computing).and_return(nil)
       end
 
       it "should not clean the token cache", rox: { key: 'c050382c580e' } do
@@ -246,7 +250,7 @@ describe CountTestsJob do
       end
 
       it "should clean the token cache and clear computing if there are no more remaining results", rox: { key: '11fd903d18b7' } do
-        test_counter_stub.stub remaining_results: 0
+        allow(test_counter_stub).to receive(:remaining_results).and_return(0)
         expect(test_counter_stub).to receive(:clean_token_cache)
         expect(test_counter_stub).to receive(:clear_computing)
         perform

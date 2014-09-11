@@ -55,7 +55,7 @@ describe TestCountersData, rox: { tags: :unit } do
       $redis.set TestCounter.cache_key(:recomputing), true
       $redis.set TestCounter.cache_key(:preparing), true
       $redis.set TestCounter.cache_key(:remaining_results), 42
-      TestCounter.stub count: 24
+      allow(TestCounter).to receive(:count).and_return(24)
 
       expect(subject.compute).to eq(jobs: 3, recomputing: true, remainingResults: 42, preparing: true, totalCounters: 24)
     end

@@ -27,14 +27,14 @@ describe TestValue, rox: { tags: :unit } do
     it "should allow contents with 65535 bytes", rox: { key: '16b77606693a' } do
       contents = 'x' * 65535
       value = build :test_value, contents: contents
-      expect(value.valid?).to be_true
+      expect(value.valid?).to be(true)
     end
 
     it "should ensure that the contents are not longer than 65535 bytes", rox: { key: 'dfa244369dd1' } do
       contents = 'x' * 65534
       contents << "\u3042"
       value = build :test_value, contents: contents
-      expect(value.valid?).to be_false
+      expect(value.valid?).to be(false)
     end
 
     context "with an existing value" do

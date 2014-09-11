@@ -23,6 +23,6 @@ describe "API root", rox: { tags: :unit } do
   subject{ api_get user, api_path }
 
   it "should have the correct representation", rox: { key: '2deae8e48068' } do
-    subject.should eq(ApiRootRepresenter.new.serializable_hash)
+    expect(subject).to eq(ApiRootRepresenter.new.serializable_hash)
   end
 end

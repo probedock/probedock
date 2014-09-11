@@ -98,9 +98,11 @@ end
 group :development, :test do
   gem 'thin'
   gem 'httparty'
-  gem 'rox-client-rspec', '~> 0.3.1'
-  gem 'rspec-rails', '~> 2.14'
-  gem 'minitest' # FIXME: see if this can be removed when capybara/rspec are upgraded
+  gem 'rox-client-rspec', '~> 0.4.1'
+  gem 'rspec-rails', '~> 3.1'
+  gem 'rspec-its'
+  gem 'rspec-collection_matchers'
+  gem 'minitest'
 
   gem 'resque-pool'
 

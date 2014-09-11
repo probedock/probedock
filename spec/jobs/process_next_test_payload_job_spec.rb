@@ -24,7 +24,7 @@ describe ProcessNextTestPayloadJob, rox: { tags: :unit } do
 
   before :each do
     ResqueSpec.reset!
-    ProcessPayload.stub new: nil
+    allow(ProcessPayload).to receive(:new).and_return(nil)
   end
 
   it "should go in the #{PROCESS_NEXT_TEST_PAYLOAD_JOB_QUEUE} queue", rox: { key: '406581eeba94' } do

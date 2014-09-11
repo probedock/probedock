@@ -23,7 +23,7 @@ describe PurgeTestPayloadsJob, rox: { tags: :unit } do
 
   before :each do
     ResqueSpec.reset!
-    Settings.stub app: double(test_payloads_lifespan: test_payloads_lifespan)
+    allow(Settings).to receive(:app).and_return(double(test_payloads_lifespan: test_payloads_lifespan))
   end
 
   it "should go in the #{PURGE_TEST_PAYLOADS_JOB_QUEUE} queue", rox: { key: '3a347f64fae3' } do
@@ -40,7 +40,7 @@ describe PurgeTestPayloadsJob, rox: { tags: :unit } do
   describe ".purge_info" do
     let(:user){ create :user }
     let(:test_payloads_lifespan){ 5 }
-    before(:each){ Settings.stub app: double(test_payloads_lifespan: test_payloads_lifespan) }
+    before(:each){ allow(Settings).to receive(:app).and_return(double(test_payloads_lifespan: test_payloads_lifespan)) }
 
     it "should count processed payloads", rox: { key: '8d23f622559e' } do
 

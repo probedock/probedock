@@ -29,7 +29,7 @@ module CanCanHelpers
 
     def fake_controller_current_ability type, target
       before :each do
-        controller.stub(:current_ability){ fake_ability type, target }
+        allow(controller).to receive(:current_ability){ fake_ability type, target }
       end
     end
   end

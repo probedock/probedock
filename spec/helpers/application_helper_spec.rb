@@ -21,12 +21,12 @@ describe ApplicationHelper do
   describe "#meta_session" do
 
     it "should generate meta data for the current user", rox: { key: '56d9618d23c8' } do
-      helper.stub current_user: user = create(:user)
+      allow(helper).to receive(:current_user).and_return(user = create(:user))
       expect(helper.meta_session).to eq(cache: cache_key(user))
     end
 
     it "should generate meta data for an admin user", rox: { key: 'fa2727d792bf' } do
-      helper.stub current_user: user = create(:admin)
+      allow(helper).to receive(:current_user).and_return(user = create(:admin))
       expect(helper.meta_session).to eq(admin: true, cache: cache_key(user))
     end
 

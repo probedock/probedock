@@ -31,7 +31,7 @@ describe HomeController do
       let(:user){ create :admin }
 
       it "should activate maintenance mode on POST", rox: { key: '5022486337f6' } do
-        Time.stub now: now = Time.now
+        allow(Time).to receive(:now).and_return(now = Time.now)
         post :maintenance
         expect(response.status).to eq(200)
         expect(MultiJson.load(response.body)).to eq({ 'since' => now.to_ms })

@@ -24,8 +24,8 @@ describe DataController do
     let(:test_counters_data){ { foo: 'bar' } }
 
     before :each do
-      TestCounter.stub recompute!: true
-      TestCountersData.stub compute: test_counters_data
+      allow(TestCounter).to receive(:recompute!).and_return(true)
+      allow(TestCountersData).to receive(:compute).and_return(test_counters_data)
     end
 
     it "should not authorize normal users", rox: { key: '9511700d6221' } do
@@ -50,7 +50,7 @@ describe DataController do
       end
 
       it "should return a 503 response if test counters are already recomputing", rox: { key: '4dde4abe9c27' } do
-        TestCounter.stub recompute!: false
+        allow(TestCounter).to receive(:recompute!).and_return(false)
         post :test_counters
         expect(response.status).to eq(503)
         expect(response.body).to eq('Must be in maintenance mode')

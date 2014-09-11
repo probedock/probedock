@@ -87,8 +87,8 @@ describe TestPayloadProcessing::ProcessPayload do
   end
 
   before :each do
-    TestPayloadProcessing::ProcessTestRun.stub(:new){ |*args| processed_test_run }
-    Rails.application.events.stub :fire
+    allow(TestPayloadProcessing::ProcessTestRun).to receive(:new){ |*args| processed_test_run }
+    allow(Rails.application.events).to receive(:fire)
   end
 
   it "should refuse a test payload not in processing state", rox: { key: '38b92d17f22b' } do
@@ -103,9 +103,9 @@ describe TestPayloadProcessing::ProcessPayload do
 
   it "should log the number of processed tests", rox: { key: '04e14ea5cd27' } do
     expect(Rails.logger).to receive(:info).ordered.twice
-    expect(Rails.logger).to receive(:info).ordered.once.with{ |*args|
-      args.first.should match(/#{sample_payload[:r].inject(0){ |memo,r| memo + r[:t].length }} test results/)
-    }
+    expect(Rails.logger).to receive(:info).ordered.once do |*args|
+      expect(args.first).to match(/#{sample_payload[:r].inject(0){ |memo,r| memo + r[:t].length }} test results/)
+    end
     process_payload
   end
 
@@ -127,13 +127,13 @@ describe TestPayloadProcessing::ProcessPayload do
   end
 
   it "should mark free keys as used", rox: { key: '874aab561f85' } do
-    expect(test_keys.any?(&:free?)).to be_true
+    expect(test_keys.any?(&:free?)).to be(true)
     process_payload
-    expect(test_keys.each(&:reload).none?(&:free)).to be_true
+    expect(test_keys.each(&:reload).none?(&:free)).to be(true)
   end
 
   it "should put the test payload in processed state", rox: { key: '0e6487f46a6e' } do
-    expect(process_payload.test_payload.processed?).to be_true
+    expect(process_payload.test_payload.processed?).to be(true)
   end
 
   it "should link the test payload to the test run", rox: { key: '38c69405f0d4' } do
@@ -224,14 +224,14 @@ describe TestPayloadProcessing::ProcessPayload do
       sample_payload[:r][0][:t][0][:g] = sample_payload[:r][0][:t][0][:g] + [ 'foo' ]
       sample_payload[:r][0][:t][1][:g] = sample_payload[:r][0][:t][1][:g] + [ 'Foo' ]
       tags = nil
-      lambda{ tags = process_payload.cache[:tags] }.should change(Tag, :count).by(6)
+      expect{ tags = process_payload.cache[:tags] }.to change(Tag, :count).by(6)
       expect(tags.collect(&:name)).to match_array(sample_payload[:r].inject([]){ |memo,r| memo + r[:t].inject([]){ |memo,t| memo + (t[:g] || []) } }.uniq(&:downcase))
     end
 
     it "should fetch existing tickets and create new ones", rox: { key: '348da45fdfbc' } do
       %w(#12 #78).each{ |name| Ticket.find_or_create_by name: name }
       tickets = nil
-      lambda{ tickets = process_payload.cache[:tickets] }.should change(Ticket, :count).by(2)
+      expect{ tickets = process_payload.cache[:tickets] }.to change(Ticket, :count).by(2)
       expect(tickets.collect(&:name)).to match_array(sample_payload[:r].inject([]){ |memo,r| memo + r[:t].inject([]){ |memo,t| memo + (t[:t] || []) } })
     end
 
@@ -239,7 +239,7 @@ describe TestPayloadProcessing::ProcessPayload do
       sample_payload[:r][0][:t][0][:t] = sample_payload[:r][0][:t][0][:t] + [ 'JIRA-dup' ]
       sample_payload[:r][0][:t][1][:g] = sample_payload[:r][0][:t][1][:g] + [ 'JIRA-DUP' ]
       tickets = nil
-      lambda{ tickets = process_payload.cache[:tickets] }.should change(Ticket, :count).by(5)
+      expect{ tickets = process_payload.cache[:tickets] }.to change(Ticket, :count).by(5)
       expect(tickets.collect(&:name)).to match_array(sample_payload[:r].inject([]){ |memo,r| memo + r[:t].inject([]){ |memo,t| memo + (t[:t] || []) } }.uniq(&:downcase))
     end
 
