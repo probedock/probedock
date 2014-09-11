@@ -129,7 +129,7 @@ describe TestPayload, rox: { tags: :unit } do
 
   context "validations" do
     it(nil, rox: { key: 'a61f47de36ef' }){ should validate_presence_of(:user) }
-    it(nil, rox: { key: 'b6af4595e273' }){ should ensure_inclusion_of(:state).in_array([ :created, 'created', :processing, 'processing', :processed, 'processed' ]) }
+    it(nil, rox: { key: 'b6af4595e273' }){ should validate_inclusion_of(:state).in_array([ :created, 'created', :processing, 'processing', :processed, 'processed' ]) }
     it(nil, rox: { key: '885d0470ed8d' }){ should validate_presence_of(:received_at) }
     it(nil, rox: { key: 'e31bb153e65e' }){ should validate_presence_of(:contents) }
     it(nil, rox: { key: 'fd75001324d1' }){ should validate_presence_of(:contents_bytesize) }
