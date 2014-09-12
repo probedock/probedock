@@ -67,14 +67,13 @@
   .filters
     %form.form-inline.pull-right{ role: 'form' }
       .form-group
-        .status.btn-toolbar
-          .btn-group{ data: { toggle: 'buttons' } }
-            %button.passed.btn.btn-success.active{ type: 'button' }
-              %i.glyphicon.glyphicon-thumbs-up
-            %button.failed.btn.btn-danger.active{ type: 'button' }
-              %i.glyphicon.glyphicon-thumbs-down
-            %button.inactive.btn.btn-warning.active{ type: 'button' }
-              %i.glyphicon.glyphicon-ban-circle
+        .status.btn-group{ data: { toggle: 'buttons' } }
+          %button.passed.btn.btn-success.active{ type: 'button' }
+            %i.glyphicon.glyphicon-thumbs-up
+          %button.failed.btn.btn-danger.active{ type: 'button' }
+            %i.glyphicon.glyphicon-thumbs-down
+          %button.inactive.btn.btn-warning.active{ type: 'button' }
+            %i.glyphicon.glyphicon-ban-circle
       .form-group
         %input.search.form-control{ type: 'text', disabled: 'disabled', placeholder: I18n.t('test_runs.report.filterBySearch') }
       %br
