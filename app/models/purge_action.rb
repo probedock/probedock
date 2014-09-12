@@ -14,29 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class PurgeTestPayloadsJob
-  @queue = :purge
+class PurgeAction < ActiveRecord::Base
 
-  def self.perform
-    n = outdated_payloads(Settings.app.test_payloads_lifespan).delete_all
-    Rails.logger.info "Purged #{n} outdated test payloads"
-    Rails.application.events.fire 'purge:payloads'
-  end
+  scope :previous_for, ->(type) { where(data_type: type.to_s).order('created_at desc').limit(1).first }
 
-  def self.purge_id
-    :payloads
-  end
-
-  def self.purge_info
-    lifespan = Settings.app.test_payloads_lifespan
-    {
-      id: :payloads,
-      lifespan: lifespan * 24 * 3600 * 1000,
-      total: outdated_payloads(lifespan).count
-    }
-  end
-
-  def self.outdated_payloads lifespan
-    TestPayload.where(state: :processed).where 'received_at < ?', Time.now - lifespan * 24 * 3600
-  end
+  validates :data_type, inclusion: { in: %w(tags test_payloads tickets) }
+  validates :number_purged, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :description, presence: true
 end

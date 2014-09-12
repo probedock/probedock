@@ -16,34 +16,27 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'resque/plugins/workers/lock'
 
-class PurgeTagsJob
+class PurgeJob
+  # TODO: use resque-throttle to ensure this job can only be queued once per hour
   extend Resque::Plugins::Workers::Lock
 
   @queue = :purge
 
   def self.perform
-    n = unused_tags.delete_all
-    Rails.logger.info "Purged #{n} unused tags"
-    Rails.application.events.fire 'purge:tags'
-  end
-
-  def self.purge_id
-    :tags
-  end
-
-  def self.purge_info
-    {
-      id: :tags,
-      total: unused_tags.count.length
-    }
+    Resque.enqueue PurgeTagsJob if last_purge_outdated(:tags) && PurgeTagsJob.unused_tags.count >= 1
+    Resque.enqueue PurgeTicketsJob if last_purge_outdated(:tickets) && PurgeTicketsJob.unused_tickets.count >= 1
+    Resque.enqueue PurgeTestPayloadsJob if last_purge_outdated(:test_payloads) && PurgeTestPayloadsJob.outdated_payloads.count >= 1
   end
 
   # resque-workers-lock: lock workers to prevent concurrency
   def self.lock_workers *args
-    ProcessNextTestPayloadJob.name # use the same lock as payload processing
+    name # the same lock (class name) is used for all workers
   end
 
-  def self.unused_tags
-    Tag.select('tags.id').joins('LEFT OUTER JOIN tags_test_infos ON tags.id = tags_test_infos.tag_id').where('tags_test_infos.test_info_id IS NULL').group('tags.id')
+  private
+
+  def last_purge_outdated data_type
+    previous_purge = PurgeAction.previous_for data_type
+    previous_purge.blank? || Time.now - previous_purge.created_at > 60.days
   end
 end
