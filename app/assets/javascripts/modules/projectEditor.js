@@ -30,7 +30,7 @@ App.autoModule('projectEditor', function() {
 
     events: {
       'click button.open': 'open',
-      'click button.cancel': 'close',
+      'click button.cancel': 'destroy',
       'keyup form input[name="name"]': 'autoFillToken',
       'change form input[name="urlToken"]': 'disableAutoFillToken'
     },
@@ -99,7 +99,7 @@ App.autoModule('projectEditor', function() {
       }, this));
     },
 
-    close: function() {
+    destroy: function() {
       this.ui.container.slideUp('normal', _.bind(function() {
         this.ui.openButton.slideDown('normal', _.bind(function() {
           this.updateFormControls();

@@ -65,7 +65,7 @@ App.autoModule('maintenanceControls', function() {
       $.ajax({
         url: Path.build('maintenance'),
         type: enabled ? 'POST' : 'DELETE'
-      }).done(_.bind(this.applyMaintenance, this, enabled)).fail(_.bind(this.showError, this)).complete(_.bind(this.setBusy, this, false));
+      }).done(_.bind(this.applyMaintenance, this, enabled)).fail(_.bind(this.showError, this)).always(_.bind(this.setBusy, this, false));
     },
 
     showError: function(xhr) {

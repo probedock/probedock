@@ -58,8 +58,8 @@
 
   App.addTestWidget('results', Marionette.CompositeView, {
 
-    itemView: ResultCard,
-    itemViewContainer: '.results',
+    childView: ResultCard,
+    childViewContainer: '.results',
 
     ui: {
       results: '.results',
@@ -80,7 +80,7 @@
       this.resultSelector = new App.views.TestResultSelector({ controller: this.controller });
 
       this.listenTo(this.resultSelector, 'update', this.updateResults);
-      this.listenTo(this, 'itemview:result:selected', this.selectResult);
+      this.listenTo(this, 'childview:result:selected', this.selectResult);
 
       this.listenToOnce(this.collection, 'reset', function() {
         this.ui.results.show();
@@ -104,14 +104,14 @@
 
     ensureResultSelectorRegion: function() {
       if (this.resultSelectorRegion) {
-        this.resultSelectorRegion.close();
+        this.resultSelectorRegion.destroy();
       } else {
         this.resultSelectorRegion = new Marionette.Region({ el: this.ui.resultSelector });
       }
     },
 
-    onClose: function() {
-      this.resultSelectorRegion.close();
+    onDestroy: function() {
+      this.resultSelectorRegion.destroy();
     },
 
     updateResults: function(resultSelectorData) {
@@ -157,13 +157,13 @@
     },
 
     // override marionette to render item views in reverse order
-    appendHtml: function(compositeView, itemView, index) {
+    attachHtml: function(compositeView, childView, index) {
       if (compositeView.isBuffering) {
-        $(compositeView.elBuffer).prepend(itemView.el);
-        compositeView._bufferedChildren.push(itemView);
+        $(compositeView.elBuffer).prepend(childView.el);
+        compositeView._bufferedChildren.push(childView);
       } else {
-        var $container = this.getItemViewContainer(compositeView);
-        $container.prepend(itemView.el);
+        var $container = this.getChildViewContainer(compositeView);
+        $container.prepend(childView.el);
       }
     }
   });

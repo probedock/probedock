@@ -25,7 +25,7 @@ App.autoModule('usersTable', function() {
     }
   });
 
-  var UserRow = Marionette.Layout.extend({
+  var UserRow = Marionette.LayoutView.extend({
 
     tagName: 'tr',
     template: 'usersTable/row',
@@ -50,8 +50,8 @@ App.autoModule('usersTable', function() {
   var UsersTableView = Tableling.Bootstrap.TableView.extend({
 
     template: 'usersTable/table',
-    itemView: UserRow,
-    itemViewContainer: 'tbody',
+    childView: UserRow,
+    childViewContainer: 'tbody',
     emptyView: NoUserRow
   });
 

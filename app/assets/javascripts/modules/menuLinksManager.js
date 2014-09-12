@@ -109,8 +109,8 @@ App.autoModule('menuLinksManager', function() {
       save: 'tfoot form button'
     },
 
-    itemView: LinkRow,
-    itemViewContainer: 'tbody',
+    childView: LinkRow,
+    childViewContainer: 'tbody',
     emptyView: EmptyRow,
 
     events: {
@@ -123,8 +123,8 @@ App.autoModule('menuLinksManager', function() {
     },
 
     initialize: function() {
-      this.listenTo(this, 'itemview:edit', this.editLink);
-      this.listenTo(this, 'itemview:edit:stop', this.clear);
+      this.listenTo(this, 'childview:edit', this.editLink);
+      this.listenTo(this, 'childview:edit:stop', this.clear);
       App.bindEvents(this);
     },
 

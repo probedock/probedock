@@ -48,8 +48,8 @@ App.autoModule('projectsTable', function() {
   var ProjectsTableView = Tableling.Bootstrap.TableView.extend({
 
     template : 'projectsTable/table',
-    itemView : ProjectRow,
-    itemViewContainer : 'tbody',
+    childView : ProjectRow,
+    childViewContainer : 'tbody',
     emptyView : NoProjectRow,
   });
 

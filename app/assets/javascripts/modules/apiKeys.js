@@ -155,8 +155,8 @@ App.autoModule('apiKeysTable', function() {
   var ApiKeysTableView = Tableling.Bootstrap.TableView.extend({
 
     template: 'apiKeysTable/table',
-    itemView: ApiKeyRow,
-    itemViewContainer: 'tbody',
+    childView: ApiKeyRow,
+    childViewContainer: 'tbody',
     emptyView: NoApiKeyRow
   });
 

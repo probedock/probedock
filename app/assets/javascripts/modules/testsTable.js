@@ -25,7 +25,7 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestTooltip = Marionette.Layout.extend({
+  var TestTooltip = Marionette.LayoutView.extend({
 
     template: 'testsTable/tooltip',
 
@@ -45,7 +45,7 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestRow = Marionette.Layout.extend({
+  var TestRow = Marionette.LayoutView.extend({
 
     tagName: 'tr',
     template: 'testsTable/row',
@@ -194,8 +194,8 @@ App.autoModule('testsTable', function() {
   var TestsTableView = Tableling.Bootstrap.TableView.extend({
 
     template: 'testsTable/table',
-    itemView: TestRow,
-    itemViewContainer: 'tbody',
+    childView: TestRow,
+    childViewContainer: 'tbody',
     emptyView: NoTestRow,
 
     ui: {

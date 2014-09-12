@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
-  var ExpandedView = Marionette.Layout.extend({
+  var ExpandedView = Marionette.LayoutView.extend({
 
     className: 'modal fade',
     template: 'widgets/test/resultDetails/modal',
@@ -92,7 +92,7 @@
     }
   });
 
-  App.addTestWidget('resultDetails', Marionette.Layout, {
+  App.addTestWidget('resultDetails', Marionette.LayoutView, {
 
     regions: {
       expanded: '.expanded',
@@ -133,8 +133,8 @@
       this.expanded.show(this.expandedView);
     },
 
-    onClose: function() {
-      this.expanded.close();
+    onDestroy: function() {
+      this.expanded.destroy();
     },
 
     showResult: function(result) {

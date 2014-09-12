@@ -81,8 +81,8 @@ App.autoModule('purge', function() {
 
     template: 'purge/layout',
     className: 'purgeControls panel panel-primary',
-    itemView: PurgeRow,
-    itemViewContainer: 'tbody',
+    childView: PurgeRow,
+    childViewContainer: 'tbody',
 
     ui: {
       settingsLink: 'a.settingsLink',
@@ -162,7 +162,7 @@ App.autoModule('purge', function() {
       }
       this.refreshing = true;
 
-      this.collection.fetch().complete(_.bind(function() {
+      this.collection.fetch().always(_.bind(function() {
         this.refreshing = false;
       }, this));
     },

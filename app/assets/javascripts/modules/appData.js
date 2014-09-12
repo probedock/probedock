@@ -60,7 +60,7 @@ App.autoModule('appData', function() {
       this.uptimeInterval = setInterval(_.bind(this.trigger, this, 'refreshUptime'), 1000);
     },
 
-    onClose: function() {
+    onDestroy: function() {
       clearInterval(this.uptimeInterval);
     },
 

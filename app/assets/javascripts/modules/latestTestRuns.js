@@ -34,7 +34,7 @@ App.autoModule('latestTestRuns', function() {
     }
   });
 
-  var TestRunDescription = Marionette.Layout.extend({
+  var TestRunDescription = Marionette.LayoutView.extend({
 
     template: _.template('<span class="runAvatar" /> <a href="<%- href %>"><%- label %> <span class="time"><%- time %></span></a>'),
 
@@ -82,7 +82,7 @@ App.autoModule('latestTestRuns', function() {
     }
   });
 
-  var Row = Marionette.Layout.extend({
+  var Row = Marionette.LayoutView.extend({
   
     tagName: 'tr',
     template: 'latestTestRuns/row',
@@ -112,8 +112,8 @@ App.autoModule('latestTestRuns', function() {
     tagName: 'table',
     className: 'table latestTestRuns',
 
-    itemView: Row,
-    itemViewContainer: 'tbody',
+    childView: Row,
+    childViewContainer: 'tbody',
     emptyView: EmptyRow,
 
     initialize: function() {

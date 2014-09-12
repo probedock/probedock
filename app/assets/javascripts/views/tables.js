@@ -100,7 +100,7 @@ App.module('views', function() {
       this.searchData = options && options.search && options.search.data ? options.search.data : {};
       this.currentSearch = options && options.search && options.search.current ? options.search.current : {};
 
-      this.listenTo(this, 'item:rendered', this.launch);
+      this.listenTo(this, 'render', this.launch);
       this.listenTo(this.vent, 'table:update', this.updateClearButton);
     },
 

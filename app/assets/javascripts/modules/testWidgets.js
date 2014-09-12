@@ -41,10 +41,10 @@ App.autoModule('testWidgets', function() {
   var Layout = Marionette.CompositeView.extend({
 
     template: 'widgets/layout',
-    itemView: App.views.TestWidgetContainer,
-    itemViewContainer: '.row',
+    childView: App.views.TestWidgetContainer,
+    childViewContainer: '.row',
 
-    itemViewOptions: function() {
+    childViewOptions: function() {
       return { controller: this.controller };
     },
 
@@ -61,18 +61,18 @@ App.autoModule('testWidgets', function() {
       this.elBuffer = [ $('<div />'), $('<div />') ];
     },
 
-    appendBuffer: function(compositeView, buffer) {
+    attachBuffer: function(compositeView, buffer) {
       this.ui.columns.each(function(index) {
         $(this).html(buffer[index % 2].children());
       });
     },
 
-    appendHtml: function(compositeView, itemView, index){
+    attachHtml: function(compositeView, childView, index){
       if (compositeView.isBuffering) {
-        compositeView.elBuffer[index % 2].append(itemView.el);
-        compositeView._bufferedChildren.push(itemView);
+        compositeView.elBuffer[index % 2].append(childView.el);
+        compositeView._bufferedChildren.push(childView);
       } else {
-        this.ui.columns.find(':nth-child(' + ((index % 2) + 1) + ')').append(itemView.el);
+        this.ui.columns.find(':nth-child(' + ((index % 2) + 1) + ')').append(childView.el);
       }
     }
   });

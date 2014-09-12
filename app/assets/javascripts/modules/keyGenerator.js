@@ -36,7 +36,7 @@ App.autoModule('keyGenerator', function() {
 
     template: _.template('<p><strong><%- name %></strong></p>'),
     className: 'projectKeys',
-    itemView: KeyView,
+    childView: KeyView,
 
     initialize: function() {
       this.collection = this.model.get('freeTestKeys');
@@ -55,9 +55,9 @@ App.autoModule('keyGenerator', function() {
       error: '.text-danger'
     },
 
-    itemView: ProjectKeysView,
+    childView: ProjectKeysView,
     emptyView: NoKeyView,
-    itemViewContainer: '.well',
+    childViewContainer: '.well',
 
     events: {
       'click form .generate': 'generateNewKeys',

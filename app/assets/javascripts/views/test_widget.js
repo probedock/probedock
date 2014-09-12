@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('views', function() {
 
-  this.TestWidgetContainer = Marionette.Layout.extend({
+  this.TestWidgetContainer = Marionette.LayoutView.extend({
 
     template: 'widgets/test',
 

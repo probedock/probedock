@@ -43,7 +43,7 @@
 
     ensureResultSelectorRegion: function() {
       if (this.resultSelectorRegion) {
-        this.resultSelectorRegion.close();
+        this.resultSelectorRegion.destroy();
       } else {
         this.resultSelectorRegion = new Marionette.Region({ el: this.ui.resultSelector });
       }

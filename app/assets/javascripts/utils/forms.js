@@ -67,7 +67,7 @@ var ApiForm = Marionette.ItemView.extend({
       window.location = this.model.link('alternate').get('href');
     } else {
       $('h2').text(this.model.get('name'));
-      this.close();
+      this.destroy();
     }
   },
 

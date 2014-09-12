@@ -30,8 +30,8 @@ App.autoModule('testSelector', function() {
   var LinkTemplateSelector = this.LinkTemplateSelector = Marionette.CompositeView.extend({
 
     template: 'testSelector/templateSelector',
-    itemView: LinkTemplateOption,
-    itemViewContainer: 'select',
+    childView: LinkTemplateOption,
+    childViewContainer: 'select',
 
     ui: {
       select: 'select'
@@ -56,7 +56,7 @@ App.autoModule('testSelector', function() {
     }
   });
 
-  var LinksView = Marionette.Layout.extend({
+  var LinksView = Marionette.LayoutView.extend({
 
     template: 'testSelector/links',
 
@@ -210,7 +210,7 @@ App.autoModule('testSelector', function() {
   var AllSelected = Marionette.CompositeView.extend({
 
     template: 'testSelector/allSelected',
-    itemView: SelectedTest,
+    childView: SelectedTest,
     emptyView: NoSelection,
 
     collectionEvents: {
@@ -231,7 +231,7 @@ App.autoModule('testSelector', function() {
     }
   });
 
-  var Layout = Marionette.Layout.extend({
+  var Layout = Marionette.LayoutView.extend({
 
     template: 'testSelector/layout',
 

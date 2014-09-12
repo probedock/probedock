@@ -58,7 +58,7 @@ App.autoModule('tagCloud', function() {
     tagName : 'div',
     className : 'tagCloud well',
     template : false,
-    itemView : TagInfoView,
+    childView : TagInfoView,
 
     initialize : function(options) {
       this.total = options.total;
@@ -89,8 +89,8 @@ App.autoModule('tagCloud', function() {
       this.$el.prepend(_.template('<a class="all btn btn-info btn-small pull-right" href="<%= path %>">All Tags</a>', { path : Path.build('tags') }));
     },
 
-    appendHtml: function(collectionView, itemView, index){
-      collectionView.$el.append(itemView.el);
+    attachHtml: function(collectionView, childView, index){
+      collectionView.$el.append(childView.el);
       collectionView.$el.append(' ');
     },
 

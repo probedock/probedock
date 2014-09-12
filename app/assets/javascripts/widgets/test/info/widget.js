@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
-  App.addTestWidget('info', Marionette.Layout, {
+  App.addTestWidget('info', Marionette.LayoutView, {
 
     regions: {
       author: 'dd.author'

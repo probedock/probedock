@@ -25,7 +25,7 @@ App.autoModule('testRunsTable', function() {
     }
   });
 
-  var TestRunRow = Marionette.Layout.extend({
+  var TestRunRow = Marionette.LayoutView.extend({
     
     tagName: 'tr',
     template: 'testRunsTable/row',
@@ -68,8 +68,8 @@ App.autoModule('testRunsTable', function() {
   var TestRunsTableView = Tableling.Bootstrap.TableView.extend({
 
     template: 'testRunsTable/table',
-    itemView: TestRunRow,
-    itemViewContainer: 'tbody',
+    childView: TestRunRow,
+    childViewContainer: 'tbody',
     emptyView: NoTestRunRow,
   });
 

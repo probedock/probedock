@@ -122,10 +122,10 @@ App.autoModule('testRunReport', function() {
   var PayloadsView = Marionette.CompositeView.extend({
 
     template: 'testRunReport/payloads',
-    itemView: PayloadView,
-    itemViewContainer: '.panel-group',
+    childView: PayloadView,
+    childViewContainer: '.panel-group',
 
-    itemViewOptions: function(model) {
+    childViewOptions: function(model) {
       return {
         index: this.collection.indexOf(model)
       };
@@ -136,7 +136,7 @@ App.autoModule('testRunReport', function() {
     }
   });
 
-  var Report = Marionette.Layout.extend({
+  var Report = Marionette.LayoutView.extend({
 
     template: false,
 
@@ -599,7 +599,7 @@ App.autoModule('testRunReport', function() {
       this.$el.fadeOut('normal', _.bind(function() {
 
         var parent = this.$el.parent();
-        this.close();
+        this.destroy();
 
         var el = $(html).appendTo(parent).hide().fadeIn();
 

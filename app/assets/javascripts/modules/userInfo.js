@@ -16,7 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('userInfo', function() {
 
-  var UserInfoView = Marionette.Layout.extend({
+  var UserInfoView = Marionette.LayoutView.extend({
 
     template: 'userInfo/layout',
     regions: {
@@ -32,7 +32,7 @@ App.autoModule('userInfo', function() {
     }
   });
 
-  var InfoView = Marionette.Layout.extend({
+  var InfoView = Marionette.LayoutView.extend({
 
     template: 'userInfo/info',
 

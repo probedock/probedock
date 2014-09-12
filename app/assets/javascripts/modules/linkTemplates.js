@@ -111,8 +111,8 @@ App.autoModule('linkTemplates', function() {
   var LinkTemplatesManager = Marionette.CompositeView.extend({
 
     template: 'linkTemplates/layout',
-    itemView: LinkTemplateRow,
-    itemViewContainer: 'tbody',
+    childView: LinkTemplateRow,
+    childViewContainer: 'tbody',
     emptyView: EmptyRow,
 
     ui: {
@@ -132,8 +132,8 @@ App.autoModule('linkTemplates', function() {
     },
 
     initialize: function() {
-      this.listenTo(this, 'itemview:edit:start', this.editTemplate);
-      this.listenTo(this, 'itemview:edit:stop', this.clearTemplate);
+      this.listenTo(this, 'childview:edit:start', this.editTemplate);
+      this.listenTo(this, 'childview:edit:stop', this.clearTemplate);
       App.bindEvents(this);
     },
 
