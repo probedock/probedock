@@ -19,7 +19,7 @@ shared_examples_for "a table resource" do |config|
   subject{ parse_response }
 
   it "should have the correct number of embedded resources" do
-    embedded(subject).should have(records.length).items
+    expect(embedded(subject)).to have(records.length).items
   end
 
   if config[:serialization]
@@ -43,7 +43,7 @@ shared_examples_for "a table resource" do |config|
       raise "At least two records are expected to test the first page" unless pagination_records.length >= 2
 
       res = parse_response sort: pagination_sort, page: 1, pageSize: 2
-      res[:total].should eq(records.length)
+      expect(res[:total]).to eq(records.length)
 
       compare_records pagination_records[0, 2], embedded(res)
     end
@@ -52,7 +52,7 @@ shared_examples_for "a table resource" do |config|
       raise "At least four records are expected to test the second page" unless pagination_records.length >= 4
 
       res = parse_response sort: pagination_sort, page: 2, pageSize: 2
-      res[:total].should eq(records.length)
+      expect(res[:total]).to eq(records.length)
 
       compare_records pagination_records[2, 2], embedded(res)
     end
@@ -62,7 +62,7 @@ shared_examples_for "a table resource" do |config|
 
       pages = (pagination_records.length.to_f / 2).ceil
       res = parse_response sort: pagination_sort, page: pages, pageSize: 2
-      res[:total].should eq(records.length)
+      expect(res[:total]).to eq(records.length)
 
       compare_records pagination_records[(pages - 1) * 2, 1], embedded(res)
     end
@@ -74,7 +74,7 @@ shared_examples_for "a table resource" do |config|
       it "should sort by #{key} asc" do
 
         res = parse_response sort: [ "#{key} asc" ]
-        res[:total].should eq(records.length)
+        expect(res[:total]).to eq(records.length)
 
         compare_records results_block.call(records), embedded(res)
       end
@@ -82,7 +82,7 @@ shared_examples_for "a table resource" do |config|
       it "should sort by #{key} desc" do
 
         res = parse_response sort: [ "#{key} desc" ]
-        res[:total].should eq(records.length)
+        expect(res[:total]).to eq(records.length)
 
         compare_records results_block.call(records).reverse, embedded(res)
       end
@@ -106,6 +106,6 @@ shared_examples_for "a table resource" do |config|
   end
 
   def compare_records expected, actual
-    expected.collect(&record_converter).should == actual.collect(&embedded_converter)
+    expect(expected.collect(&record_converter)).to eq(actual.collect(&embedded_converter))
   end
 end

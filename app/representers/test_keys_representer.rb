@@ -14,18 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TestKeysRepresenter < BaseRepresenter
-
-  representation do |res|
-
-    curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:testKeys:{rel}", templated: true
-
-    link 'self', api_uri(:test_keys)
-
-    property :total, res.total
-    property :page, res.page if res.page
-    
-    embed_collection('v1:test-keys', res.data){ |k| TestKeyRepresenter.new k }
-  end
+  collection_representation :test_keys, TestKeyRepresenter
 end

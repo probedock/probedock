@@ -23,7 +23,7 @@ describe Tag, rox: { tags: :unit } do
 
     it "should return the name", rox: { key: '2eed86e197e2' } do
       tag = create :unit_tag
-      tag.to_param.should == tag.name
+      expect(tag.to_param).to eq(tag.name)
     end
   end
 
@@ -40,7 +40,7 @@ describe Tag, rox: { tags: :unit } do
       it(nil, rox: { key: '193b8fba796c' }){ should validate_uniqueness_of(:name).case_insensitive }
 
       it "should not validate the uniqueness of name with quick validation", rox: { key: '5a54a294e171' } do
-        lambda{ Tag.new.tap{ |t| t.name = tag.name; t.quick_validation = true }.save! }.should raise_unique_error
+        expect{ Tag.new.tap{ |t| t.name = tag.name; t.quick_validation = true }.save! }.to raise_unique_error
       end
     end
   end

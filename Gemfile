@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 source 'https://rubygems.org'
 
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.5'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -40,7 +40,7 @@ gem 'redcarpet'
 gem 'pygments.rb'
 
 # Authentication & Authorization
-gem 'devise', '~> 3.2.2'
+gem 'devise', '~> 3.3.0'
 gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_authenticatable.git', branch: 'group-lookup-config'
 gem 'cancan'
 gem 'role_model'
@@ -62,11 +62,10 @@ gem 'strip_attributes' # trimming
 gem 'oj'
 
 # Assets
-gem 'stylus', '~> 1.0.0'
 gem 'sass-rails', '>= 3.2'
-gem 'bootstrap-sass', '~> 3.0.3.0'
+gem 'bootstrap-sass', '~> 3.2'
+gem 'autoprefixer-rails'
 gem 'jquery-rails'
-gem 'compass-rails'
 gem 'backbone-on-rails'
 #gem 'marionette-rails' # currently provided by tableling-rails
 gem 'tableling-rails'
@@ -74,11 +73,12 @@ gem 'haml_coffee_assets'
 gem 'therubyracer'
 gem 'execjs'
 gem 'clah-rails'
-gem 'highcharts-rails', '~> 3.0.0'
+gem 'highcharts-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', :platforms => :ruby
 gem 'uglifier', '>= 1.0.3'
 gem 'select2-rails'
+gem 'backbone-relational-hal-rails'
 
 # Tools
 gem 'rake-version'
@@ -98,8 +98,11 @@ end
 group :development, :test do
   gem 'thin'
   gem 'httparty'
-  gem 'rox-client-rspec', '~> 0.3.1'
-  gem 'rspec-rails', '~> 2.14'
+  gem 'rox-client-rspec', '~> 0.4.1'
+  gem 'rspec-rails', '~> 3.1'
+  gem 'rspec-its'
+  gem 'rspec-collection_matchers'
+  gem 'minitest'
 
   gem 'resque-pool'
 

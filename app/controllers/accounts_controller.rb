@@ -23,22 +23,18 @@ class AccountsController < ApplicationController
   def show
     window_title << t('accounts.show.title')
 
+    free_keys = current_user.free_test_keys.order('created_at ASC').to_a
     @key_generator_config = {
       path: api_test_keys_path,
       projects: Project.order(:name).to_a.collect{ |p| ProjectRepresenter.new(p).serializable_hash },
-      freeKeys: current_user.free_test_keys.order('created_at ASC').to_a.collect{ |k| TestKeyRepresenter.new(k).serializable_hash },
+      freeKeys: TestKeysRepresenter.new(OpenStruct.new(total: free_keys.length, data: free_keys)).serializable_hash,
       lastNumber: current_user.settings.last_test_key_number,
       lastProjectApiId: current_user.settings.last_test_key_project_api_id
     }.reject{ |k,v| v.blank? }
 
-    @test_search_config = TestSearch.config(params, except: [ :authors, :current ])
-  end
-
-  # Lists tests authored by the current user.
-  def tests_page
-    options = TestSearch.options params[:search], except: :authors
-    options[:base] = options[:base].where(author_id: current_user)
-    options[:base_count] = options[:base_count].where(author_id: current_user)
-    render :json => TestInfo.tableling.process(params.merge(options))
+    @tests_table_config = {
+      halUrlTemplate: { 'authors[]' => [ current_user.name ] },
+      search: TestSearch.config(params, except: [ :authors, :current ])
+    }
   end
 end

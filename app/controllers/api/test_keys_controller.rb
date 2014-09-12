@@ -20,7 +20,6 @@ class Api::TestKeysController < Api::ApiController
   def index
     options = TestKeySearch.options params
     options[:base] = options[:base].where(user_id: current_api_user)
-    options[:base_count] = options[:base_count].where(user_id: current_api_user)
     render_api TestKey.tableling.process(params.merge(options))
   end
 

@@ -48,8 +48,16 @@ class UsersController < ApplicationController
 
   def show
     window_title << User.model_name.human.pluralize.titleize << @user.name
-    @user_info_config = { user: @user.to_client_hash(type: :info), can: { manage: can?(:manage, User) } }
-    @test_search_config = TestSearch.config(params, except: [ :authors, :current ])
+
+    @user_info_config = {
+      user: UserRepresenter.new(@user, detailed: true).serializable_hash,
+      can: { manage: can?(:manage, User) }
+    }
+
+    @tests_table_config = {
+      halUrlTemplate: { 'authors[]' => [ @user.name ] },
+      search: TestSearch.config(params, except: [ :authors, :current ])
+    }
   end
 
   def edit
@@ -80,19 +88,8 @@ class UsersController < ApplicationController
       flash[:success] = t('users.destroy.success', user: @user.name)
       head :no_content
     rescue ActiveRecord::DeleteRestrictionError
-      return render text: t('users.destroy.restricted'), status: 409
+      return render plain: t('users.destroy.restricted'), status: 409
     end
-  end
-
-  def page
-    render json: User.tableling.process(params)
-  end
-
-  def tests_page
-    options = TestSearch.options params[:search], except: :authors
-    options[:base] = options[:base].where(author_id: @user)
-    options[:base_count] = options[:base_count].where(author_id: @user)
-    render json: TestInfo.tableling.process(params.merge(options))
   end
 
   private

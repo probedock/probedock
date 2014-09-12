@@ -16,40 +16,32 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var Project = this.Project = Backbone.RelationalModel.extend({
+  this.Project = this.HalResource.extend({
 
     idAttribute: 'apiId',
+
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', 'v2:projects' ]);
+    },
+
+    linkTag: function() {
+      return this.link('alternate').tag(this.get('name'));
+    },
+
     relations: [
       {
         type: Backbone.HasMany,
-        key: 'testKeys',
+        key: 'freeTestKeys',
         relatedModel: 'TestKey',
-        collectionType: 'TestKeyCollection'
+        includeInJSON: false
       }
-    ],
+    ]
+  });
 
-    url: function() {
-      return this.isNew() ? ApiPath.build('projects') : ApiPath.build('projects', this.get('apiId'));
-    },
+  this.Projects = this.defineHalCollection(this.Project, {
 
-    path: function() {
-      return Path.build('projects', this.get('urlToken'));
-    },
-
-    link: function(options) {
-      options = _.defaults({}, options, { truncate: false });
-      return $('<a />').attr('href', this.path()).text(Format.truncate(this.get('name'), options.truncate));
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', 'v2:projects' ]);
     }
-  });
-
-  var ProjectCollection = this.ProjectCollection = Backbone.Collection.extend({
-    model: Project
-  });
-
-  var ProjectTableCollection = this.ProjectTableCollection = this.HalCollection.extend({
-
-    url: ApiPath.builder('projects'),
-    model: Project,
-    embeddedModels: 'v1:projects'
   });
 });

@@ -61,40 +61,42 @@ class TestInfo < ActiveRecord::Base
 
     default_view do
 
-      field :name
-      field :created_at
-      field :last_run_at
-      field :last_run_duration
+      field :name, includes: [ :tags, :tickets ]
+      field :created_at, as: :createdAt
+      field :last_run_at, as: :lastRunAt
+      field :last_run_duration, as: :lastRunDuration
       field :passing, order: false
       field :active, order: false
 
+      field :category, includes: :category do
+        order{ |q,d| q.joins(:category).order("LOWER(categories.name) ASC") }
+      end
+
       field :deprecated_at, includes: :deprecation do
         order{ |q,d| q.joins(:deprecation).order("test_deprecations.created_at #{d}") }
-        value{ |o| o.deprecation.try :created_at }
       end
 
       field :author, includes: :author do
         order{ |q,d| q.joins(:author).order("users.name #{d}") }
-        value{ |o| o.author.to_client_hash }
       end
 
       field :project, includes: :project do
         order{ |q,d| q.joins(:project).order("projects.name #{d}") }
-        value{ |o| o.project.to_client_hash }
       end
 
       field :key, includes: :key do
         order{ |q,d| q.joins(:key).order("test_keys.key #{d}") }
-        value{ |o| o.key.key }
       end
 
-      field :effective_result, includes: { effective_result: [ :runner, :project_version ] } do
-        value{ |o| o.effective_result.to_client_hash type: :test }
-      end
+      field :effective_result, includes: { effective_result: [ :project_version, :runner, { test_run: [ :runner ] } ] }, as: :effectiveResult
 
       quick_search do |query,term|
         term = "%#{term.downcase}%"
         query.joins(:key).joins(:author).joins(:project).where('LOWER(test_infos.name) LIKE ? OR LOWER(projects.name) LIKE ? OR LOWER(test_keys.key) LIKE ? OR LOWER(users.name) LIKE ?', term, term, term, term)
+      end
+
+      serialize_response do |res|
+        TestInfosRepresenter.new OpenStruct.new(res)
       end
     end
   end
@@ -117,6 +119,13 @@ class TestInfo < ActiveRecord::Base
 
   def self.deprecated
     where 'deprecation_id IS NOT NULL'
+  end
+
+  def self.for_projects_and_keys keys_by_project
+    conditions = ([ '(projects.api_id = ? AND test_keys.key IN (?))' ] * keys_by_project.length)
+    values = keys_by_project.inject([]){ |memo,(k,v)| memo << k << v }
+    where_args = values.unshift conditions.join(' OR ')
+    joins(:project).joins(:key).where *where_args
   end
 
   def self.find_by_project_and_key project_and_key

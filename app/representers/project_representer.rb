@@ -19,6 +19,7 @@ class ProjectRepresenter < BaseRepresenter
   representation do |project|
 
     link 'self', api_uri(:project, id: project.api_id)
+    link 'alternate', uri(:project, id: project), type: media_type(:html)
 
     %w(name api_id url_token deprecated_tests_count).each do |name|
       property name.camelize(:lower), project.send(name)

@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testsData', function() {
 
-  var models = App.module('models'),
-      GeneralStatusData = models.GeneralStatusData;
-
   var TestsDataView = Marionette.ItemView.extend({
 
     template : 'testsData',
@@ -99,6 +96,6 @@ App.autoModule('testsData', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new TestsDataView({ model : new GeneralStatusData(options.config) }));
+    options.region.show(new TestsDataView({ model : new App.models.GeneralStatusData(options.config) }));
   });
 });

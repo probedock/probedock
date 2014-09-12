@@ -62,13 +62,31 @@ module Hal
       Hash.new.tap do |h|
 
         if @links.any?
-          h['_links'] = @links.inject({}){ |memo,(rel,link)| memo[rel] = link.serializable_hash options; memo }
+
+          h['_links'] = @links.inject({}) do |memo,(rel,links)|
+            memo[rel] = if links.kind_of? Array
+              links.collect{ |link| link.serializable_hash options }
+            else
+              links.serializable_hash options
+            end
+            memo
+          end
+
           h['_links']['curies'] = @curies.inject([]){ |memo,(name,curie)| memo << curie } if @curies.any?
         end
 
         h.merge! @properties
 
-        h['_embedded'] = @embedded.inject({}){ |memo,(rel,resources)| memo[rel] = resources.collect{ |r| r.serializable_hash options }; memo } if @embedded.any?
+        if @embedded.any?
+          h['_embedded'] = @embedded.inject({}) do |memo,(rel,resources)|
+            memo[rel] = if resources.kind_of? Array
+              resources.collect{ |r| r.serializable_hash options }
+            else
+              resources.serializable_hash options
+            end
+            memo
+          end
+        end
       end
     end
 
@@ -91,6 +109,18 @@ module Hal
         @resource.links[link.rel] = link
       end
 
+      def links rel, *args, &block
+        options = args.last.kind_of?(Hash) ? args.pop : {}
+        href = block ? block.call : args.shift || options.delete(:href)
+        link = Hal::Link.new rel, href, options
+        @resource.links[link.rel] ||= []
+        @resource.links[link.rel] << link
+      end
+
+      def link? rel
+        @resource.links.key? rel
+      end
+
       def curie name, href, options = {}
         @resource.curies[name.to_s] = options.merge(name: name.to_s, href: href).stringify_keys
       end
@@ -99,12 +129,13 @@ module Hal
         @resource.properties[key.to_s] = value
       end
 
-      def embed rel, res = nil, options = {}
-        if options[:one]
-          @resource.embedded[rel] = res
-        else
+      def embed rel, res = nil, options = {}, &block
+        res = block ? block.call(res) : res
+        if options[:multiple]
           @resource.embedded[rel] ||= []
-          @resource.embedded[rel] << res if res
+          @resource.embedded[rel] << res
+        else
+          @resource.embedded[rel] = res
         end
       end
 

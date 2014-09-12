@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TestRunSearch
 
   def self.options params, options = {}
@@ -22,7 +21,7 @@ class TestRunSearch
     except = Array.wrap(options[:except] || [])
 
     q = TestRun
-    return { base: q, base_count: q } if params.blank?
+    return params.merge(base: q) if params.blank?
 
     if !except.include?(:groups)
       groups = params[:groups].kind_of?(Array) ? params[:groups].collect(&:to_s).select(&:present?) : nil
@@ -34,7 +33,7 @@ class TestRunSearch
       q = q.joins(:runner).where('users.name IN (?)', runners) if runners.present?
     end
 
-    { base: q, base_count: q }
+    params.merge base: q
   end
 
   def self.config params, options = {}

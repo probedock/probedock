@@ -31,7 +31,7 @@ describe Settings::App, rox: { tags: :unit } do
   context ".get" do
 
     it "should return the app settings", rox: { key: 'b31e43aad6e5' } do
-      Settings::App.get.should == Settings::App.first
+      expect(Settings::App.get).to eq(Settings::App.first)
     end
   end
 
@@ -40,12 +40,12 @@ describe Settings::App, rox: { tags: :unit } do
     it "should return a hash of the accessible attributes that are present", rox: { key: '38774deef20d' } do
 
       # try with the defaults
-      Settings::App.first.serializable_hash.should == {
+      expect(Settings::App.first.serializable_hash).to eq({
         reports_cache_size: 50,
         tag_cloud_size: 50,
         test_outdated_days: 30,
         test_payloads_lifespan: 7
-      }
+      })
 
       # try with a new instance
       subject.ticketing_system_url = 'foo'
@@ -54,13 +54,13 @@ describe Settings::App, rox: { tags: :unit } do
       subject.test_outdated_days = 77
       subject.test_payloads_lifespan = 11
       subject.updated_at = Time.now
-      subject.serializable_hash.should == {
+      expect(subject.serializable_hash).to eq({
         ticketing_system_url: 'foo',
         reports_cache_size: 24,
         tag_cloud_size: 66,
         test_outdated_days: 77,
         test_payloads_lifespan: 11
-      }
+      })
     end
   end
 
@@ -84,7 +84,7 @@ describe Settings::App, rox: { tags: :unit } do
   context "database table" do
 
     it "should be stored in the app_settings table", rox: { key: '1c136c35641e' } do
-      Settings::App.table_name.should == 'app_settings'
+      expect(Settings::App.table_name).to eq('app_settings')
     end
 
     it(nil, rox: { key: '2fdda1efe6c0' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }

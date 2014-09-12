@@ -32,6 +32,10 @@ App.module('views', function() {
       }
     },
 
+    getCollection: function(resource) {
+      return this.halEmbedded ? resource.embedded(this.halEmbedded) : this.collection;
+    },
+
     refresh: function() {
       var args = Array.prototype.slice.call(arguments);
       this.showLoading(true).load(_.bind(function() {
@@ -85,6 +89,7 @@ App.module('views', function() {
     searchFilters: [],
 
     autoUpdate: false,
+    wrapSearchData: true, // FIXME: remove this parameter once all tables use the new API
 
     initializeTable: function(options) {
       Table.prototype.initializeTable.call(this, options);
@@ -95,7 +100,7 @@ App.module('views', function() {
       this.searchData = options && options.search && options.search.data ? options.search.data : {};
       this.currentSearch = options && options.search && options.search.current ? options.search.current : {};
 
-      this.listenTo(this, 'item:rendered', this.launch);
+      this.listenTo(this, 'render', this.launch);
       this.listenTo(this.vent, 'table:update', this.updateClearButton);
     },
 
@@ -221,8 +226,23 @@ App.module('views', function() {
 
       var data = Tableling.Bootstrap.Table.prototype.requestData.apply(this);
 
-      data.search = this.requestSearchData();
-      if (_.isEmpty(data.search)) {
+      var target = data;
+      if (this.wrapSearchData) {
+        data.search = {};
+        target = data.search;
+      }
+
+      var searchData = this.requestSearchData();
+      _.extend(target, searchData);
+
+      // remove search data if needed
+      _.each(this.searchFilters, function(filter) {
+        if (typeof(searchData[filter.name]) == 'undefined') {
+          delete target[filter.name];
+        }
+      });
+
+      if (_.isEmpty(searchData) && this.wrapSearchData) {
         delete data.search;
       }
 

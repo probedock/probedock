@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestPayload < ActiveRecord::Base
+  include Tableling::Model
 
   belongs_to :user
   belongs_to :test_run
   has_and_belongs_to_many :test_keys
 
   scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
-  scope :for_listing, ->{ select('id, state, received_at, contents_bytesize').where(state: :processed).order('received_at ASC') }
+  scope :for_listing, ->{ select('id, state, received_at, processing_at, processed_at, contents_bytesize').order('received_at ASC') }
 
   include SimpleStates
   states :created, :processing, :processed
@@ -34,25 +35,24 @@ class TestPayload < ActiveRecord::Base
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
 
-  def finish_processing
-    test_keys.clear
-  end
+  tableling do
 
-  def serializable_hash options = {}
-    {
-      id: id,
-      receivedAt: received_at.to_ms
-    }.tap do |h|
+    default_view do
 
-      if options[:type] == :listing
-        h[:bytes] = contents_bytesize
-      else
-        h[:state] = state
-        h[:processingAt] = processing_at.to_ms if processing_at
-        h[:processedAt] = processed_at.to_ms if processed_at
-        h[:contents] = contents
+      field :received_at, as: :receivedAt
+      field :contents_bytesize, as: :bytes
+      field :state
+      field :processing_at, as: :processingAt
+      field :processed_at, as: :processedAt
+
+      serialize_response do |res|
+        TestPayloadsRepresenter.new OpenStruct.new(res)
       end
     end
+  end
+
+  def finish_processing
+    test_keys.clear
   end
 
   def contents= contents

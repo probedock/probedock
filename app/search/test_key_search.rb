@@ -14,13 +14,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 class TestKeySearch
 
   def self.options params, options = {}
 
     q = TestKey
-    return { base: q, base_count: q } if params.blank?
+    return { base: q } if params.blank?
 
     if params[:free].to_s.match(/\A(1|y|yes|t|true)\Z/i)
       q = q.where free: true
@@ -32,6 +31,6 @@ class TestKeySearch
       q = q.joins(:project).where 'projects.api_id = ?', projectApiId
     end
 
-    { base: q, base_count: q }
+    { base: q }
   end
 end

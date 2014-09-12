@@ -16,13 +16,7 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var TestKey = this.TestKey = Backbone.RelationalModel.extend({
-  });
+  this.TestKey = this.HalModel.extend({});
 
-  var TestKeyCollection = this.TestKeyCollection = this.HalCollection.extend({
-
-    url: ApiPath.builder('test_keys'),
-    model: TestKey,
-    embeddedModels: 'v1:test-keys'
-  });
+  this.TestKeys = this.defineHalCollection(this.TestKey, {});
 });

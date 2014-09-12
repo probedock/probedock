@@ -25,7 +25,7 @@ describe User, rox: { tags: :unit } do
   end
 
   context "default values", rox: { key: 'fee0492b0511', grouped: true } do
-    its(:roles_mask){ should == 0 }
+    its(:roles_mask){ should eq(0) }
   end
 
   describe "metric key" do
@@ -39,8 +39,8 @@ describe User, rox: { tags: :unit } do
 
     it "should contain one active key when a user is created", rox: { key: 'e601c444711e' } do
       create(:user).api_keys.tap do |keys|
-        keys.should have(1).item
-        keys.first.active.should be_true
+        expect(keys).to have(1).item
+        expect(keys.first.active).to be(true)
       end
     end
   end
@@ -48,8 +48,8 @@ describe User, rox: { tags: :unit } do
   describe "#active_for_authentication?" do
 
     it "should return the same as active", rox: { key: 'da0d7472cda3' } do
-      expect(create(:user, active: true).active_for_authentication?).to be_true
-      expect(create(:other_user, active: false).active_for_authentication?).to be_false
+      expect(create(:user, active: true).active_for_authentication?).to be(true)
+      expect(create(:other_user, active: false).active_for_authentication?).to be(false)
     end
   end
 
@@ -58,27 +58,27 @@ describe User, rox: { tags: :unit } do
     it "should return true for a user without tests, results or counters", rox: { key: '2e4db3280f3f' } do
       user = create :user
       create :test_key, user: user
-      expect(user.deletable?).to be_true
+      expect(user.deletable?).to be(true)
     end
 
     it "should return false for a user with tests", rox: { key: 'f068c4276937' } do
       user = create :user
       key = create :test_key, user: user
       create :test, key: key, runner: create(:another_user)
-      expect(user.deletable?).to be_false
+      expect(user.deletable?).to be(false)
     end
 
     it "should return false for a user with test results", rox: { key: 'f6d7aa711dd4' } do
       user = create :user
       key = create :test_key, user: create(:another_user)
       create :test, key: key, runner: user
-      expect(user.deletable?).to be_false
+      expect(user.deletable?).to be(false)
     end
 
     it "should return false for a user with test counters", rox: { key: 'a70ed3065e37' } do
       user = create :user
       create :test_counter, user: user
-      expect(user.deletable?).to be_false
+      expect(user.deletable?).to be(false)
     end
   end
 
@@ -126,15 +126,15 @@ describe User, rox: { tags: :unit } do
   context "remember token" do
 
     it "should be 16 characters long", rox: { key: '24df4d561ba2' } do
-      10.times{ User.generate_remember_token.length.should == 16 }
+      10.times{ expect(User.generate_remember_token.length).to eq(16) }
     end
 
     it "should be unique", rox: { key: '470a6dfa0776' } do
       create(:user, remember_token: 'a')
       create(:other_user, remember_token: 'b')
       tokens = [ 'a', 'b', 'c' ]
-      User.stub(:generate_remember_token){ tokens.shift }
-      User.remember_token.should == 'c'
+      allow(User).to receive(:generate_remember_token){ tokens.shift }
+      expect(User.remember_token).to eq('c')
     end
   end
 

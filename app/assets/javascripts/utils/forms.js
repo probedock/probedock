@@ -46,27 +46,28 @@ var ApiForm = Marionette.ItemView.extend({
 
   save: function(e) {
     e.preventDefault();
+
     this.removeErrors();
     this.setBusy(true);
 
     this.wasNew = this.model.isNew();
-    this.oldPath = this.model.path();
+    this.oldPath = this.wasNew ? null : this.model.link('alternate').get('href');
 
     var data = _.inject(this.ui.form.serializeArray(), function(memo, e) {
       memo[e.name] = e.value;
       return memo;
     }, {});
 
-    this.model.save(data, { dataType: 'json', wait: true }).fail(_.bind(this.onFailed, this)).done(_.bind(this.onSaved, this));
+    this.model.save(data, { wait: true }).fail(_.bind(this.onFailed, this)).done(_.bind(this.onSaved, this));
   },
 
   onSaved: function() {
     // TODO: find a clean way to update url, name and title
-    if (this.wasNew || this.model.path() != this.oldPath) {
-      window.location = this.model.path();
+    if (this.wasNew || this.model.link('alternate').get('href') != this.oldPath) {
+      window.location = this.model.link('alternate').get('href');
     } else {
       $('h2').text(this.model.get('name'));
-      this.close();
+      this.destroy();
     }
   },
 

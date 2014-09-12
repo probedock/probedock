@@ -48,7 +48,7 @@ class Api::ApiController < ApplicationController
 
   def index
     # TODO: spec etag
-    render_api ApiRootRepresenter.new, etag: true
+    render_api ApiRootRepresenter.new, etag: Rails.env.production?
   end
 
   private
@@ -66,7 +66,7 @@ class Api::ApiController < ApplicationController
     begin
       body.force_encoding 'UTF-8'
     rescue StandardError => e
-      fail :badEncoding, "Could not convert data to UTF-8: #{e.message}"
+      raise ApiError, "Could not convert data to UTF-8: #{e.message}", name: :badEncoding
     end
   end
 
@@ -122,7 +122,7 @@ class Api::ApiController < ApplicationController
     media_type_strings.each do |media_type_string|
       return if !request.content_type or request.content_type[media_type_string] or request.content_type["application/*"] or request.content_type["*/*"]
     end
-    render text: "This resource consumes only the following type(s): #{media_type_strings.join ', '}", status: :unsupported_media_type, :content_type => Mime::TEXT
+    render plain: "This resource consumes only the following type(s): #{media_type_strings.join ', '}", status: :unsupported_media_type
   end
 
   def check_accept *media_types
@@ -130,7 +130,7 @@ class Api::ApiController < ApplicationController
     media_types.each do |media_type|
       media_type_string = media_type(media_type).to_s
       if request.accept and !request.accept[media_type_string] and !request.accept["application/*"] and !request.accept["*/*"]
-        render text: "This resource is only available in the #{media_type_string} type.", status: :not_acceptable, :content_type => Mime::TEXT
+        render plain: "This resource is only available in the #{media_type_string} type.", status: :not_acceptable
         return
       end
     end
@@ -144,12 +144,12 @@ class Api::ApiController < ApplicationController
     if params[:id]
       record_not_found exception
     else
-      render text: exception.message, status: :forbidden, content_type: media_type(:txt)
+      render plain: exception.message, status: :forbidden
     end
   end
 
   def record_not_found exception
-    render text: %/Couldn't find record with ID "#{params[:id]}"/, status: :not_found, content_type: media_type(:txt)
+    render plain: %/Couldn't find record with ID "#{params[:id]}"/, status: :not_found
   end
 
   def authenticate_api_user!

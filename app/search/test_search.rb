@@ -46,8 +46,8 @@ class TestSearch
       conditions, values = [], []
       conditions << 'test_infos.category_id IS NULL' if categories.delete ' '
       if categories.present?
-        q = q.joins 'LEFT OUTER JOIN categories ON test_infos.category_id = categories.id'
-        conditions << 'categories.name IN (?)'
+        q = q.joins 'LEFT OUTER JOIN categories AS categories_search ON test_infos.category_id = categories_search.id'
+        conditions << 'categories_search.name IN (?)'
         values << categories
       end
       if conditions.present?

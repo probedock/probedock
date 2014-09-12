@@ -1,0 +1,10 @@
+%dl.dl-horizontal
+  %dt.author= I18n.t('jst.models.test.author')
+  %dd.author
+  %dt= I18n.t('jst.models.test.project')
+  %dd.project
+  %dt= I18n.t('jst.models.test.createdAt')
+  %dd= @humanCreatedAt
+  %dt= I18n.t('jst.models.test.lastRunAt')
+  %dd.lastRunAt
+.labels

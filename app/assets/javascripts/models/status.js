@@ -35,7 +35,7 @@ App.module('models', function() {
   var DbStatusData = Backbone.RelationalModel.extend({
   });
 
-  var GeneralStatusData = this.GeneralStatusData = Backbone.RelationalModel.extend({
+  this.GeneralStatusData = Backbone.RelationalModel.extend({
 
     url: Path.builder('data', 'general'),
     relations: [

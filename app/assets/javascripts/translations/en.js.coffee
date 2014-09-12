@@ -9,6 +9,7 @@ this.Translations.en =
     create: "Create"
     delete: "Delete"
     loading: "Loading..."
+    close: "Close"
     alert:
       danger: "Oops!"
       warning: "Warning."
@@ -20,6 +21,60 @@ this.Translations.en =
     maintenance:
       title: "Maintenance Mode."
       notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
+  testWidgets:
+    info:
+      title: "Information"
+      goToCategory: "Go to the list of all tests in the __name__ category."
+      goToTag: "Go to the list of all tests with the __name__ tag."
+      goToTicket: "Go to the list of all tests related to the __name__ ticket."
+      goToExternalTicket: "Go to the __name__ ticket in the external ticketing system."
+    permalink:
+      title: "Permalink"
+      instructions: "Use this permalink to link to this test from elsewhere."
+    status:
+      title: "Status"
+      deprecate: "Deprecate"
+      deprecateConfirmation: "Are you sure you want to deprecate this test?"
+      undeprecate: "Undeprecate"
+      undeprecateConfirmation: "Are you sure you want to reactivate this test?"
+      deprecationError: "Could not change test status."
+      statusDescription:
+        passed: "The test <strong>passed</strong> the last time it was run."
+        failed: "The test <strong>failed</strong> the last time it was run."
+      inactiveDescription: "It is marked as <strong>inactive</strong> so it will not be counted as either passed or failed in test statistics."
+      deprecatedDescription: "It is <strong>deprecated</strong> so it will not be counted and remain hidden unless explicitly searching for deprecated tests."
+    results:
+      title: "Results"
+      description: "1 result found on __time__."
+      description_plural: "__count__ results from __start__ to __end__."
+      error: "Could not load test results."
+      resultDescription:
+        passed: "Passed on __time__ (version __version__)."
+        failed: "Failed on __time__ (version __version__)."
+    executionTime:
+      title: "Execution Time"
+      error: "Could not load test results."
+      pointInstructions: "Click for details."
+      resultStatus:
+        passed: "passed"
+        failed: "failed"
+    resultDetails:
+      title: "Result Details"
+      instructions: "Click on a result in the other widgets to display it here."
+      runAtTooltip: "Click to go to the test run."
+      noMessage: "No message was submitted with this result."
+      expandTooltip: "Show result information in a larger window."
+      messageError: "The result message could not be loaded."
+      status:
+        passed: "passed"
+        failed: "failed"
+        inactive: "inactive"
+  testResultSelector:
+    show: "Show last"
+    resultsForVersion: "results for"
+    size: "Size"
+    version: "Version"
+    allVersions: "all versions"
   purge:
     title: "Data Purge"
     instructions: "Data is purged to save space. Some of the data is purged only after a given time, some as soon as it's no longer referenced."
@@ -185,24 +240,6 @@ this.Translations.en =
     outdatedTests: "Outdated"
     inactiveTests: "Inactive"
     outdatedInstructions: "Tests that have not been run in __days__ days"
-  testInfo:
-    goToTestRun: "Click to go to the test run."
-    deprecationError: "The status of the test could not be changed."
-    deprecate: "Deprecate"
-    undeprecate: "Reactivate"
-    actions: "Actions :"
-    customValues: "Custom Data"
-    noCustomValues: "This test has no custom data."
-    resultTable: "Result List"
-    resultChart: "Execution Time"
-    resultInstructions: "Click on a result to see its details."
-    resultPointInstructions: "Click to see details"
-    resultStatus:
-      passed: "passed"
-      failed: "failed"
-    permalinkInstructions: "Use this permalink to link to this test from elsewhere."
-    copyToClipboard: "Copy to clipboard"
-    copiedToClipboard: "Copied!"
   testRunReport:
     loadingError: "Report data could not be loaded"
     loadingTimeout: "Report generation timed out"
@@ -224,6 +261,7 @@ this.Translations.en =
     payloads:
       title: "API Payloads"
       purged: "No longer available."
+      listError: "Could not list test payloads."
       info: "__count__ payload"
       info_plural: "__count__ payloads"
       prettyPrint: "Pretty"
@@ -343,7 +381,7 @@ this.Translations.en =
       project: "Project"
       author: "Author"
       key: "Key"
-      createdAt: "Created at"
+      createdAt: "Created"
       lastRunAt: "Last run"
       lastRunDuration: "Duration"
       status: "Status"
@@ -352,9 +390,7 @@ this.Translations.en =
       tickets: "Tickets"
       permalink: "Permalink"
       inactive: "Inactive"
-      inactiveInstructions: "This test will not be counted as either passed or failed."
       deprecated: "Deprecated"
-      deprecatedInstructions: "This test is no longer used. It will not show up in the list of outdated tests."
     testRun:
       runner: "Runner"
       status: "Status"
@@ -368,6 +404,7 @@ this.Translations.en =
       runner: "Runner"
       version: "Version"
       status: "Status"
+      test: "Test"
     project:
       name: "Name"
       activeTestsCount: "Number of tests"

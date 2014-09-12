@@ -16,16 +16,13 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('currentTestMetrics', function() {
 
-  var models = App.module('models'),
-      User = models.User;
-
   var UserMeasure = Backbone.RelationalModel.extend({
 
     relations: [
       {
         type: Backbone.HasOne,
         key: 'user',
-        relatedModel: User
+        relatedModel: App.models.User
       }
     ]
   });
@@ -202,7 +199,7 @@ App.autoModule('currentTestMetrics', function() {
     },
 
     renderUserAvatar: function(user, el, tooltipText) {
-      new (App.module('views').UserAvatar)({
+      new App.views.UserAvatar({
         model: user,
         el: $('<div />').appendTo(el),
         size: 'small',

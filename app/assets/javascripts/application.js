@@ -34,12 +34,14 @@
 //= require ./vendor
 //= require highcharts
 //= require highcharts/highcharts-more
+//= require highcharts/modules/no-data-to-display
 //= require select2
 //= require clah
 //= require hamlcoffee
 //= require_tree ./templates
 //= require tableling.backbone
 //= require ./vendor/backbone-relational
+//= require backbone-relational-hal
 //= require ./meta
 //= require ./boot
 //= require_tree ./translations
@@ -52,5 +54,7 @@
 //= require ./models
 //= require_tree ./models
 //= require_tree ./views
+//= require_tree ./components
 //= require_tree ./modules
+//= require_tree ./widgets
 //= require ./doc

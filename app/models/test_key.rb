@@ -55,7 +55,11 @@ class TestKey < ActiveRecord::Base
       end
 
       serialize_response do |res|
-        TestKeysRepresenter.new OpenStruct.new(res)
+        if res[:legacy]
+          LegacyTestKeysRepresenter.new OpenStruct.new(res)
+        else
+          TestKeysRepresenter.new OpenStruct.new(res)
+        end
       end
     end
   end

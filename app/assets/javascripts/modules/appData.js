@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('appData', function() {
 
-  var models = App.module('models'),
-      GeneralStatusData = models.GeneralStatusData;
-
   var AppDataView = Marionette.ItemView.extend({
 
     template: 'appData',
@@ -63,7 +60,7 @@ App.autoModule('appData', function() {
       this.uptimeInterval = setInterval(_.bind(this.trigger, this, 'refreshUptime'), 1000);
     },
 
-    onClose: function() {
+    onDestroy: function() {
       clearInterval(this.uptimeInterval);
     },
 
@@ -133,6 +130,6 @@ App.autoModule('appData', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new AppDataView({ model: new GeneralStatusData(options.config) }));
+    options.region.show(new AppDataView({ model: new App.models.GeneralStatusData(options.config) }));
   });
 });

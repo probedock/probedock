@@ -1,0 +1,3 @@
+.panel-heading
+  %h3.panel-title= @title
+.panel-body

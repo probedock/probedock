@@ -16,12 +16,9 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('projectEditor', function() {
 
-  var models = App.module('models'),
-      Project = models.Project;
-
   var CreatorView = ApiForm.extend({
 
-    modelClass: Project,
+    modelClass: App.models.Project,
     template: 'projectEditor',
     ui: {
       title: '.panel-title',
@@ -33,7 +30,7 @@ App.autoModule('projectEditor', function() {
 
     events: {
       'click button.open': 'open',
-      'click button.cancel': 'close',
+      'click button.cancel': 'destroy',
       'keyup form input[name="name"]': 'autoFillToken',
       'change form input[name="urlToken"]': 'disableAutoFillToken'
     },
@@ -102,7 +99,7 @@ App.autoModule('projectEditor', function() {
       }, this));
     },
 
-    close: function() {
+    destroy: function() {
       this.ui.container.slideUp('normal', _.bind(function() {
         this.ui.openButton.slideDown('normal', _.bind(function() {
           this.updateFormControls();
@@ -114,7 +111,7 @@ App.autoModule('projectEditor', function() {
   this.addAutoInitializer(function(options) {
     
     if (options.config && options.config.model) {
-      options.config.model = new Project(options.config.model);
+      options.config.model = new App.models.Project(options.config.model);
     }
 
     options.region.show(new CreatorView(options.config));

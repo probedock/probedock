@@ -9,5 +9,5 @@
     %dd.createdAt
 .btn-group.clearfix
   %a.btn.btn-default.edit= I18n.t('jst.common.edit')
-  %button.btn.btn-warning.toggleActivated
-  %button.btn.btn-danger.delete= I18n.t('jst.common.delete')
+  %button.btn.btn-warning.toggleActivated{ type: 'button' }
+  %button.btn.btn-danger.delete{ type: 'button' }= I18n.t('jst.common.delete')

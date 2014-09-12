@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testRunsTable', function() {
 
-  var models = App.module('models'),
-      views = App.module('views');
-
   var NoTestRunRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
@@ -28,7 +25,7 @@ App.autoModule('testRunsTable', function() {
     }
   });
 
-  var TestRunRow = Marionette.Layout.extend({
+  var TestRunRow = Marionette.LayoutView.extend({
     
     tagName: 'tr',
     template: 'testRunsTable/row',
@@ -49,33 +46,34 @@ App.autoModule('testRunsTable', function() {
       this.ui.endedAt.html(this.endedAtCell());
       this.ui.duration.text(Format.duration(this.model.get('duration')));
       this.renderGroup();
-      this.runner.show(new views.UserAvatar({ model: this.model.get('runner'), size: 'small' }));
-      this.status.show(new views.TestRunHealthBar({ model: this.model }));
+      this.runner.show(new App.views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small' }));
+      this.status.show(new App.views.TestRunHealthBar({ model: this.model }));
     },
 
     renderGroup: function() {
       if (this.model.get('group')) {
-        this.ui.group.html($('<a />').attr('href', Path.build('runs?' + $.param({ groups: [ this.model.get('group') ] }))).text(this.model.get('group')));
+        var url = this.model.link('alternate').get('href') + '?' + $.param({ groups: [ this.model.get('group') ] });
+        this.ui.group.html($('<a />').attr('href', url).text(this.model.get('group')));
       } else {
         this.ui.group.text(I18n.t('jst.common.noData'));
       }
     },
 
     endedAtCell: function() {
-      var endedAt = Format.datetime.long(new Date(this.model.get('ended_at')));
-      return $('<a />').attr('href', this.model.path()).text(endedAt);
+      var endedAt = Format.datetime.long(new Date(this.model.get('endedAt')));
+      return $('<a />').attr('href', this.model.link('alternate').get('href')).text(endedAt);
     }
   });
 
   var TestRunsTableView = Tableling.Bootstrap.TableView.extend({
 
     template: 'testRunsTable/table',
-    itemView: TestRunRow,
-    itemViewContainer: 'tbody',
+    childView: TestRunRow,
+    childViewContainer: 'tbody',
     emptyView: NoTestRunRow,
   });
 
-  var TestRunsTable = views.TableWithAdvancedSearch.extend({
+  var TestRunsTable = App.views.TableWithAdvancedSearch.extend({
 
     advancedSearchTemplate: 'testRunsTable/search',
     ui: {
@@ -89,14 +87,14 @@ App.autoModule('testRunsTable', function() {
     },
 
     config: {
-      sort: [ 'ended_at desc' ],
+      sort: [ 'endedAt desc' ],
       pageSize: 15
     },
 
     tableView: TestRunsTableView,
-    tableViewOptions: {
-      collection: new models.TestRunCollection()
-    },
+    halEmbedded: 'item',
+
+    wrapSearchData: false,
 
     searchFilters: [
       { name: 'groups' },
@@ -110,6 +108,6 @@ App.autoModule('testRunsTable', function() {
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new TestRunsTable(options.config));
+    options.region.show(new TestRunsTable(_.extend(options.config, { model: new App.models.TestRuns() })));
   });
 });

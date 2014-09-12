@@ -27,11 +27,6 @@ class DataController < ApplicationController
     render json: GeneralData.compute(params)
   end
 
-  def latest_test_runs
-    cache = LatestTestRunsData.compute
-    render json: cache.contents.first(params.key?(:n) ? params[:n].to_i : 8) if cache_stale? cache
-  end
-
   def current_test_metrics
     render json: CurrentTestMetricsData.compute
   end
@@ -39,8 +34,8 @@ class DataController < ApplicationController
   def test_counters
 
     if request.post?
-      return render text: 'Must be in maintenance mode', status: 503 unless @maintenance
-      return render text: 'Already recomputing', status: 503 if !TestCounter.recompute!
+      return render plain: 'Must be in maintenance mode', status: 503 unless @maintenance
+      return render plain: 'Already recomputing', status: 503 if !TestCounter.recompute!
     end
 
     render json: TestCountersData.compute

@@ -15,21 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class ProjectsController < ApplicationController
-
   before_filter :authenticate_user!
-  load_resource find_by: :url_token, only: [ :show, :tests_page ]
   before_filter{ window_title << Project.model_name.human.pluralize.titleize }
+
+  load_resource find_by: :url_token, only: [ :show, :tests_page ]
 
   def show
     window_title << @project.name
     @project_editor_config = { model: ProjectRepresenter.new(@project).serializable_hash }
-    @test_search_config = TestSearch.config params, except: [ :projects, :current ]
-  end
-
-  def tests_page
-    options = TestSearch.options params[:search], except: :projects
-    options[:base] = options[:base].where project_id: @project
-    options[:base_count] = options[:base_count].where project_id: @project
-    render json: TestInfo.tableling.process(params.merge(options))
+    @tests_table_config = {
+      halUrlTemplate: { 'projects[]' => [ @project.name ] },
+      search: TestSearch.config(params, except: [ :projects, :current ])
+    }
   end
 end

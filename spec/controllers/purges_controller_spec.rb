@@ -32,7 +32,7 @@ describe PurgesController do
 
       it "should return purge information", rox: { key: '1778e011efd2' } do
 
-        Settings.stub app: double(test_payloads_lifespan: 5)
+        allow(Settings).to receive(:app).and_return(double(test_payloads_lifespan: 5))
 
         tags = Array.new(3){ |i| create :tag }
         tickets = Array.new(6){ |i| create :ticket }
@@ -47,7 +47,7 @@ describe PurgesController do
         create :processed_test_payload, user: user, received_at: 11.days.ago
 
         get :index
-        expect(response.success?).to be_true
+        expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq([
           { 'id' => 'tags', 'total' => 1 }, # tags 0 and 1 used, tag 2 unused
           { 'id' => 'tickets', 'total' => 3 }, # tickets 0, 1 and 2 used, tickets 3, 4 and 5 unused
@@ -57,7 +57,7 @@ describe PurgesController do
 
       it "should return purge information when there is nothing to purge", rox: { key: 'f062e6ed2ac6' } do
         get :index
-        expect(response.success?).to be_true
+        expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq([
           { 'id' => 'tags', 'total' => 0 },
           { 'id' => 'tickets', 'total' => 0 },

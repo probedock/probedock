@@ -14,11 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('usersTable', function() {
-
-  var models = App.module('models'),
-      views = App.module('views');
 
   var NoUserRow = Marionette.ItemView.extend({
 
@@ -29,7 +25,7 @@ App.autoModule('usersTable', function() {
     }
   });
 
-  var UserRow = Marionette.Layout.extend({
+  var UserRow = Marionette.LayoutView.extend({
 
     tagName: 'tr',
     template: 'usersTable/row',
@@ -43,20 +39,23 @@ App.autoModule('usersTable', function() {
     },
 
     onRender: function() {
-      this.avatar.show(new views.UserAvatar({ model: this.model, size: 'small' }));
-      this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('created_at'))));
+
+      this.avatar.show(new App.views.UserAvatar({ model: this.model, size: 'small' }));
+
+      var createdAt = new Date(this.model.get('createdAt'));
+      this.ui.createdAt.text(Format.datetime.long(createdAt) + ' (' + moment(createdAt).fromNow() + ')');
     }
   });
 
   var UsersTableView = Tableling.Bootstrap.TableView.extend({
 
     template: 'usersTable/table',
-    itemView: UserRow,
-    itemViewContainer: 'tbody',
+    childView: UserRow,
+    childViewContainer: 'tbody',
     emptyView: NoUserRow
   });
 
-  var UsersTable = views.Table.extend({
+  var UsersTable = App.views.Table.extend({
 
     config: {
       pageSize: 25,
@@ -64,12 +63,10 @@ App.autoModule('usersTable', function() {
     },
     
     tableView: UsersTableView,
-    tableViewOptions: {
-      collection: new models.UserTableCollection()
-    }
+    halEmbedded: 'item'
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new UsersTable());
+    options.region.show(new UsersTable({ collection: new App.models.Users() }));
   });
 });

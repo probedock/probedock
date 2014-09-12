@@ -33,7 +33,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
 
       it "should create a project", rox: { key: 'a98ac452a495' } do
         expect{ create_project }.to change(Project, :count).by(1)
-        expect(response.success?).to be_true
+        expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(ProjectRepresenter.new(Project.first).serializable_hash)
       end
 
@@ -75,7 +75,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
       it "should update a project", rox: { key: 'ac1bfa813761' } do
         update_project
         check_project_update
-        expect(response.success?).to be_true
+        expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(ProjectRepresenter.new(project).serializable_hash)
       end
 
@@ -107,7 +107,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
   context "#index" do
 
     def parse_response options = {}
-      api_get user, api_projects_path(options)
+      api_get user, api_legacy_projects_path(options)
       HashWithIndifferentAccess.new MultiJson.load(response.body)
     end
 

@@ -79,7 +79,7 @@ var Format = {
     }
 
     if (milliseconds <= 0) {
-      return '0';
+      return '0ms';
     }
 
     if (options && options.shorten) {

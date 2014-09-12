@@ -47,7 +47,11 @@ class Project < ActiveRecord::Base
       end
 
       serialize_response do |res|
-        ProjectsRepresenter.new OpenStruct.new(res)
+        if res[:legacy]
+          LegacyProjectsRepresenter.new OpenStruct.new(res)
+        else
+          ProjectsRepresenter.new OpenStruct.new(res)
+        end
       end
     end
   end

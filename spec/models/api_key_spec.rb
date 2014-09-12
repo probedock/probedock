@@ -34,22 +34,22 @@ describe ApiKey do
 
     it "should find an active key", rox: { key: 'c6ee2ca39b6c' } do
       key = create :api_key
-      ApiKey.authenticated(key.identifier, key.shared_secret).first.should == key
+      expect(ApiKey.authenticated(key.identifier, key.shared_secret).first).to eq(key)
     end
 
     it "should not find an inactive key", rox: { key: 'd10128e718ce' } do
       key = create :api_key, active: false
-      ApiKey.authenticated(key.identifier, key.shared_secret).first.should be_blank
+      expect(ApiKey.authenticated(key.identifier, key.shared_secret).first).to be_blank
     end
 
     it "should not find a key belonging to an inactive user", rox: { key: '00127fea7b9a' } do
       user = create :user, active: false
       
       key = create :api_key, active: true, user: user
-      ApiKey.authenticated(key.identifier, key.shared_secret).first.should be_blank
+      expect(ApiKey.authenticated(key.identifier, key.shared_secret).first).to be_blank
 
       key = create :api_key, active: false, user: user
-      ApiKey.authenticated(key.identifier, key.shared_secret).first.should be_blank
+      expect(ApiKey.authenticated(key.identifier, key.shared_secret).first).to be_blank
     end
   end
 
@@ -65,7 +65,7 @@ describe ApiKey do
     
     it "should find an api key by its identifier", rox: { key: '26ee140c895a' } do
       key = create :api_key
-      ApiKey.find_by_identifier(key.identifier).first.should == key
+      expect(ApiKey.find_by_identifier(key.identifier).first).to eq(key)
     end
   end
 
@@ -74,14 +74,14 @@ describe ApiKey do
     it "should create an active key for the user", rox: { key: '36658a00d2e6' } do
 
       user = create :user
-      user.api_keys.should have(1).item
+      expect(user.api_keys).to have(1).item
 
       key = ApiKey.create_for_user user
-      key.active.should be_true
+      expect(key.active).to be(true)
 
       user.reload
-      user.api_keys.should have(2).items
-      user.api_keys.should include(key)
+      expect(user.api_keys).to have(2).items
+      expect(user.api_keys).to include(key)
     end
   end
 

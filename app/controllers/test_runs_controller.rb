@@ -18,7 +18,7 @@ require 'renderer'
 
 class TestRunsController < ApplicationController
   before_filter :authenticate_user!
-  load_resource :only => [ :previous, :next ]
+  load_resource only: [ :previous, :next ]
 
   def index
     window_title << TestRun.model_name.human.pluralize.titleize
@@ -29,13 +29,12 @@ class TestRunsController < ApplicationController
 
     if request.xhr?
       cached_report = TestRun.reports_cache.get params[:id].to_i, cache: :job
-      return render text: cached_report if cached_report
+      return render html: cached_report.html_safe, content_type: media_type(:html) if cached_report
       return head :no_content
     end
 
     @test_run = TestRun.find params[:id].to_i
     test_run_data = { previous: @test_run.previous_in_group?, next: @test_run.next_in_group? }
-    test_run_data[:payloads] = @test_run.test_payloads.for_listing.to_a.collect{ |p| p.serializable_hash type: :listing }
     @page_config = { testRun: test_run_data }
 
     window_title << t('test_runs.show.window_title')
@@ -43,15 +42,11 @@ class TestRunsController < ApplicationController
     window_title << l(@test_run.ended_at.localtime, format: :long)
 
     if cached_report = TestRun.reports_cache.get(params[:id].to_i, cache: false)
-      render text: cached_report, layout: 'application'
+      render html: cached_report.html_safe, layout: 'application'
     else
       @test_run.runner # pre-load runner here rather than in view
       render :loading_report
     end
-  end
-
-  def page
-    render :json => TestRun.tableling.process(params.merge(TestRunSearch.options(params[:search])))
   end
 
   def previous

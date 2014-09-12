@@ -19,8 +19,8 @@ require 'spec_helper'
 describe Link, rox: { tags: :unit } do
 
   it "should clear the links JSON cache when saved", rox: { key: '6cd99ae68ff1' } do
-    JsonCache.stub :clear
-    JsonCache.should_receive(:clear).exactly(3).times.with(:links)
+    allow(JsonCache).to receive(:clear)
+    expect(JsonCache).to receive(:clear).exactly(3).times.with(:links)
     link = create :link
     link.save
     link.destroy
@@ -30,7 +30,7 @@ describe Link, rox: { tags: :unit } do
 
     it "should return a hash with the id, name and url", rox: { key: 'd4d3cb96ecf2' } do
       link = create :link
-      link.to_client_hash.should == { id: link.id, name: link.name, url: link.url }
+      expect(link.to_client_hash).to eq({ id: link.id, name: link.name, url: link.url })
     end
   end
 

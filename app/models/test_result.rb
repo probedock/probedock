@@ -42,22 +42,23 @@ class TestResult < ActiveRecord::Base
       field :id
       field :duration
       field :passed
-      field :run_at
-      field :test_run_id
+      field :run_at, as: :runAt, includes: :test_run
 
       field :runner, includes: :runner do
         order{ |q,d| q.joins(:runner).order("users.name #{d}") }
-        value{ |o| o.runner.to_client_hash }
       end
 
       field :version, includes: :project_version do
         order{ |q,d| q.joins(:project_version).order("project_versions.name #{d}") }
-        value{ |o| o.project_version.name }
       end
 
       quick_search do |query,term|
         term = "%#{term.downcase}%"
         query.joins(:runner).joins(:project_version).where('LOWER(project_versions.name) LIKE ? OR LOWER(users.name) LIKE ?', term, term)
+      end
+
+      serialize_response do |res|
+        TestResultsRepresenter.new OpenStruct.new(res)
       end
     end
   end

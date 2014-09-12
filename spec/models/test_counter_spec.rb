@@ -129,10 +129,10 @@ describe TestCounter do
       measure 'Bern', Time.utc(2011, 12, 31, 23, 30), project: project, run: 3
       measure 'Minsk', Time.utc(2012, 1, 1, 22, 30), user: user, project: project, run: 4
 
-      expect(described_class.token_known?("UTC:2011-12-31:2:c")).to be_true
-      expect(described_class.token_known?("Hawaii:2011-12-31:3:u-c")).to be_true
-      expect(described_class.token_known?("Bern:2012-01-01:4:p")).to be_true
-      expect(described_class.token_known?("Minsk:2012-01-02:5:u-p")).to be_true
+      expect(described_class.token_known?("UTC:2011-12-31:2:c")).to be(true)
+      expect(described_class.token_known?("Hawaii:2011-12-31:3:u-c")).to be(true)
+      expect(described_class.token_known?("Bern:2012-01-01:4:p")).to be(true)
+      expect(described_class.token_known?("Minsk:2012-01-02:5:u-p")).to be(true)
     end
 
     def expect_counter token, timezone, timestamp, mask, options = {}
@@ -161,8 +161,8 @@ describe TestCounter do
     let!(:old_counters){ Array.new(3){ |i| create :test_counter, timestamp: i.days.ago } }
     before :each do
       ResqueSpec.reset!
-      CountTestsJob.stub enqueue_runs: nil
-      CountDeprecationJob.stub enqueue_deprecations: nil
+      allow(CountTestsJob).to receive(:enqueue_runs).and_return(nil)
+      allow(CountDeprecationJob).to receive(:enqueue_deprecations).and_return(nil)
     end
 
     it "should delete existing counters", rox: { key: 'c54f3b3fa06c' } do
@@ -174,9 +174,9 @@ describe TestCounter do
     it "should clean the token cache", rox: { key: '4e739ed3fd54' } do
       token = 'Bern:2012-01-01:0:'
       described_class.cache_token token, Time.now
-      expect(described_class.token_known?(token)).to be_true
+      expect(described_class.token_known?(token)).to be(true)
       recompute
-      expect(described_class.token_known?(token)).to be_false
+      expect(described_class.token_known?(token)).to be(false)
     end
 
     it "should not queue anything if there is no data", rox: { key: 'b5b2ce6d9d0a' } do
@@ -187,12 +187,12 @@ describe TestCounter do
 
     it "should be done preparing when exiting the recompute method", rox: { key: 'b37089337352' } do
       recompute
-      expect(described_class.preparing?).to be_false
+      expect(described_class.preparing?).to be(false)
     end
 
     it "should stop recomputing if there is no data", rox: { key: 'f7a31e1610e0' } do
       recompute
-      expect(described_class.recomputing?).to be_false
+      expect(described_class.recomputing?).to be(false)
     end
 
     describe "with data" do
@@ -211,7 +211,7 @@ describe TestCounter do
 
       it "should start recomputing", rox: { key: '2785845e9558' } do
         recompute
-        expect(described_class.recomputing?).to be_true
+        expect(described_class.recomputing?).to be(true)
       end
 
       it "should queue a batch job for deprecated tests", rox: { key: '73bf31307244' } do
@@ -238,32 +238,32 @@ describe TestCounter do
         expect(CountTestsJob).not_to receive(:enqueue_runs).ordered
         expect(CountTestsJob).not_to receive(:enqueue_results)
 
-        Time.stub now: now
+        allow(Time).to receive(:now).and_return(now)
         recompute
       end
 
       it "should be preparing inside the recompute method", rox: { key: 'e2884248b433' } do
-        CountDeprecationJob.stub(:enqueue_deprecations){ expect(described_class.preparing?).to be_true }
-        CountTestsJob.stub(:enqueue_runs){ expect(described_class.preparing?).to be_true }
+        allow(CountDeprecationJob).to receive(:enqueue_deprecations){ expect(described_class.preparing?).to be(true) }
+        allow(CountTestsJob).to receive(:enqueue_runs){ expect(described_class.preparing?).to be(true) }
         recompute
       end
 
       it "should not allow recomputing if already in progress", rox: { key: 'a2c73531db3c' } do
-        expect(recompute).to be_true
-        expect(recompute).to be_false
+        expect(recompute).to be(true)
+        expect(recompute).to be(false)
       end
 
       it "should be done preparing when exiting the recompute method", rox: { key: 'c0d1a6c3c691' } do
         recompute
-        expect(described_class.preparing?).to be_false
+        expect(described_class.preparing?).to be(false)
       end
 
       it "should stop with clear_computing", rox: { key: '5be8ef7d3d48' } do
         TestCounter.update_remaining_results 1234
         recompute
         described_class.clear_computing
-        expect(described_class.preparing?).to be_false
-        expect(described_class.recomputing?).to be_false
+        expect(described_class.preparing?).to be(false)
+        expect(described_class.recomputing?).to be(false)
         expect(described_class.remaining_results).to eq(0)
       end
     end
@@ -277,24 +277,24 @@ describe TestCounter do
     let(:token){ 'Bern:2012-01-01:0:' }
     
     it "should not know a token by default", rox: { key: '17b54ec2fd1c' } do
-      expect(described_class.token_known?(token)).to be_false
+      expect(described_class.token_known?(token)).to be(false)
     end
 
     it "should cache a token with a timestamp", rox: { key: '0f0365ae0b45' } do
       described_class.cache_token token, 14.hours.ago
-      expect(described_class.token_known?(token)).to be_true
+      expect(described_class.token_known?(token)).to be(true)
     end
 
     it "should clean tokens older than one day", rox: { key: '9d7a292fdfe2' } do
       described_class.cache_token token, 25.hours.ago
       described_class.clean_token_cache
-      expect(described_class.token_known?(token)).to be_false
+      expect(described_class.token_known?(token)).to be(false)
     end
 
     it "should clean all tokens if specified", rox: { key: '402836bc9b2a' } do
       described_class.cache_token token, 12.hours.ago
       described_class.clean_token_cache true
-      expect(described_class.token_known?(token)).to be_false
+      expect(described_class.token_known?(token)).to be(false)
     end
   end
 

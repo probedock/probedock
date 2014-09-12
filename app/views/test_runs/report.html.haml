@@ -1,6 +1,6 @@
 - ordered_results = @test_run.ordered_results
 - index = report_index ordered_results
-.testRunReport{ data: { module: :testRunReport, config: { index: index }.to_json } }
+.testRunReport{ data: { module: :testRunReport, config: { testRun: TestRunRepresenter.new(@test_run).serializable_hash, index: index }.to_json } }
   %h1= t('.title')
   .row
     .col-md-8
@@ -67,14 +67,13 @@
   .filters
     %form.form-inline.pull-right{ role: 'form' }
       .form-group
-        .status.btn-toolbar
-          .btn-group{ data: { toggle: 'buttons' } }
-            %button.passed.btn.btn-success.active{ type: 'button' }
-              %i.glyphicon.glyphicon-thumbs-up
-            %button.failed.btn.btn-danger.active{ type: 'button' }
-              %i.glyphicon.glyphicon-thumbs-down
-            %button.inactive.btn.btn-warning.active{ type: 'button' }
-              %i.glyphicon.glyphicon-ban-circle
+        .status.btn-group{ data: { toggle: 'buttons' } }
+          %button.passed.btn.btn-success.active{ type: 'button' }
+            %i.glyphicon.glyphicon-thumbs-up
+          %button.failed.btn.btn-danger.active{ type: 'button' }
+            %i.glyphicon.glyphicon-thumbs-down
+          %button.inactive.btn.btn-warning.active{ type: 'button' }
+            %i.glyphicon.glyphicon-ban-circle
       .form-group
         %input.search.form-control{ type: 'text', disabled: 'disabled', placeholder: I18n.t('test_runs.report.filterBySearch') }
       %br
@@ -122,7 +121,7 @@
             %dt= I18n.t('activerecord.attributes.test_info.author')
             %dd= link_to result.test_info.author.name, user_path(result.test_info.author)
             %dt= I18n.t('activerecord.attributes.test_info.project')
-            %dd= link_to result.test_info.project.name, go_project_path(apiId: result.test_info.project.api_id)
+            %dd= link_to result.test_info.project.name, project_permalink_path(apiId: result.test_info.project.api_id)
             %dt= I18n.t('activerecord.attributes.test_result.version')
             %dd= result.project_version.present? ? result.project_version.name : t('common.no_data')
             %dt= I18n.t('activerecord.attributes.test_result.duration')

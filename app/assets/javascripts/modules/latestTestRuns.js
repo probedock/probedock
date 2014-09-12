@@ -16,13 +16,13 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('latestTestRuns', function() {
 
-  var models = App.module('models'),
-      views = App.module('views');
+  var LatestTestRunsCollection = App.models.TestRuns.extend({
 
-  var LatestTestRunsCollection = Backbone.Collection.extend({
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', { name: 'v1:testRuns', template: this.halUrlTemplate } ]);
+    },
 
-    url: Path.builder('data', 'latest_test_runs'),
-    model: models.TestRun
+    halUrlTemplate: { latest: '' }
   });
 
   var EmptyRow = Marionette.ItemView.extend({
@@ -34,7 +34,7 @@ App.autoModule('latestTestRuns', function() {
     }
   });
 
-  var TestRunDescription = Marionette.Layout.extend({
+  var TestRunDescription = Marionette.LayoutView.extend({
 
     template: _.template('<span class="runAvatar" /> <a href="<%- href %>"><%- label %> <span class="time"><%- time %></span></a>'),
 
@@ -55,9 +55,13 @@ App.autoModule('latestTestRuns', function() {
     serializeData: function() {
       return {
         time: this.humanTime(),
-        href: this.model.path(),
-        label: this.model.get('runner') ? this.model.get('runner').get('name') : this.model.get('group')
+        href: this.model.link('alternate').get('href'),
+        label: this.isGroupDescription() ? this.model.get('group') : this.model.embedded('v1:runner').get('name')
       };
+    },
+
+    isGroupDescription: function() {
+      return this.model.embedded('v1:runner').get('technical') && this.model.has('group');
     },
 
     renderTime: function() {
@@ -65,20 +69,20 @@ App.autoModule('latestTestRuns', function() {
     },
 
     humanTime: function() {
-      return moment(this.model.get('ended_at')).fromNow();
+      return moment(this.model.get('endedAt')).fromNow();
     },
 
     onRender: function() {
-      if (this.model.get('runner')) {
-        this.avatar.show(new views.UserAvatar({ model: this.model.get('runner'), size: 'small', label: false }));
-      } else {
+      if (this.isGroupDescription()) {
         this.ui.avatar.remove();
         this.ui.link.addClass('group');
+      } else {
+        this.avatar.show(new App.views.UserAvatar({ model: this.model.embedded('v1:runner'), size: 'small', label: false }));
       }
     }
   });
 
-  var Row = Marionette.Layout.extend({
+  var Row = Marionette.LayoutView.extend({
   
     tagName: 'tr',
     template: 'latestTestRuns/row',
@@ -94,7 +98,7 @@ App.autoModule('latestTestRuns', function() {
 
     onRender: function() {
       this.description.show(new TestRunDescription({ model: this.model }));
-      this.results.show(new views.TestRunHealthBar({ model: this.model }));
+      this.results.show(new App.views.TestRunHealthBar({ model: this.model }));
     },
 
     renderTime: function() {
@@ -108,9 +112,13 @@ App.autoModule('latestTestRuns', function() {
     tagName: 'table',
     className: 'table latestTestRuns',
 
-    itemView: Row,
-    itemViewContainer: 'tbody',
+    childView: Row,
+    childViewContainer: 'tbody',
     emptyView: EmptyRow,
+
+    initialize: function() {
+      this.collection = this.model.embedded('item');
+    },
 
     onRender: function() {
       App.watchStatus(this, this.refresh, { only: 'lastApiPayload' });
@@ -124,13 +132,13 @@ App.autoModule('latestTestRuns', function() {
     },
 
     refresh: function() {
-      this.collection.fetch({ reset: true }).done(function() {
+      this.model.fetch().done(function() {
         App.debug('Updated latest test runs after new activity');
       });
     }
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new Table({ collection: new LatestTestRunsCollection(options.config) }));
+    options.region.show(new Table({ model: new LatestTestRunsCollection(options.config) }));
   });
 });

@@ -93,7 +93,7 @@ App.autoModule('globalSettings', function() {
         tag_cloud_size: this.ui.tagCloudSize.val(),
         test_outdated_days: this.ui.testOutdatedDays.val(),
         test_payloads_lifespan: this.ui.testPayloadsLifespan.val()
-      }, options).complete(_.bind(this.setBusy, this, false));
+      }, options).always(_.bind(this.setBusy, this, false));
     },
 
     onSaved: function(result) {

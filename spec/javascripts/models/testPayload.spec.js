@@ -18,32 +18,38 @@ describe("TestPayload", function() {
 
   var now = new Date().getTime(),
       baseTestPayload = {
-        id: 42,
+        _links: {
+          self: { href: 'http://example.com/payloads/42' }
+        },
         state: 'created',
         receivedAt: now - 3600000,
         contents: '{"foo":"bar"}'
       },
       processingTestPayload = _.extend({}, baseTestPayload, {
-        id: 43,
+        _links: {
+          self: { href: 'http://example.com/payloads/43' }
+        },
         state: 'processing',
         processingAt: now - 1200000
       }),
       processedTestPayload = _.extend({}, processingTestPayload, {
-        id: 44,
+        _links: {
+          self: { href: 'http://example.com/payloads/44' }
+        },
         state: 'processed',
         processedAt: now - 30000
       }),
-      TestPayload = App.module('models').TestPayload,
+      TestPayload = App.models.TestPayload,
       testPayload = null;
 
   beforeEach(function() {
     loadFixtures('layout.html');
   });
 
-  it("should have API path /payloads/<id>", function() {
+  it("should use its self link as its url", function() {
     this.meta = { rox: { key: '73171e8d6ec2' } };
     var payload = new TestPayload(baseTestPayload);
-    expect(payload.url()).toBe('/payloads/42');
+    expect(payload.url()).toBe('http://example.com/payloads/42');
     cleanRelational(payload);
   });
 
@@ -74,14 +80,13 @@ describe("TestPayload", function() {
   });
 });
 
-describe("TestPayloadCollection", function() {
+describe("TestPayloads", function() {
 
-  var models = App.module('models'),
-      TestPayload = models.TestPayload,
-      TestPayloadCollection = models.TestPayloadCollection;
+  var TestPayload = App.models.TestPayload,
+      TestPayloads = App.models.TestPayloads;
 
   it("should use the TestPayload model", function() {
     this.meta = { rox: { key: '2c9d23afce24' } };
-    expect(TestPayloadCollection.prototype.model).toBe(TestPayload);
+    expect(getEmbeddedRelation(TestPayloads, 'item').relatedModel).toBe(TestPayload);
   });
 });

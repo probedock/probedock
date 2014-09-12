@@ -21,7 +21,7 @@ describe "ROXCenter::Application.events" do
   subject{ ROXCenter::Application }
 
   it "should respond to #events", rox: { key: 'dc7ac63cdb50' } do
-    subject.should respond_to(:events)
+    expect(subject).to respond_to(:events)
   end
 
   it "should listen to and fire events", rox: { key: '618e880b4142' } do
@@ -31,6 +31,6 @@ describe "ROXCenter::Application.events" do
     end
     subject.events.fire :fubar, 'a'
     subject.events.fire :fubar, 'b', 'c'
-    result.should == [ 'a', 'b', 'c' ]
+    expect(result).to eq([ 'a', 'b', 'c' ])
   end
 end

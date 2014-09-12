@@ -42,11 +42,11 @@ module SpecApiHelper
       if expected[:path]
         expect(actual[:path]).to eq(expected[:path]), "Expected API error with #{matched} to have path #{expected[:path]}, got #{actual[:path]}"
       else
-        expect(actual.key?(:path)).to be_false, "Expected API error with #{matched} to have no path, got #{actual[:path]}"
+        expect(actual.key?(:path)).to be(false), "Expected API error with #{matched} to have no path, got #{actual[:path]}"
       end
 
       msg.each do |m|
-        expect(m.kind_of?(Regexp) ? actual[:message].match(m) : actual[:message] == m).to be_true, "Expected an API error with #{matched} to have a message matching #{m}"
+        expect(m.kind_of?(Regexp) ? !!actual[:message].match(m) : actual[:message] == m).to be(true), "Expected an API error with #{matched} to have a message matching #{m}"
       end
     end
 
@@ -73,7 +73,7 @@ module SpecApiHelper
     expect(response.status).to eq(401)
 
     get path, {}, api_authentication_headers(user)
-    expect(response.success?).to be_true
+    expect(response.success?).to be(true)
     expect(response.headers['Content-Type']).to match(/\Aapplication\/hal\+json/)
 
     MultiJson.load response.body, mode: :strict
@@ -147,7 +147,7 @@ module SpecApiHelper
   end
 
   def post_api_payload payload, user, headers = {}
-    post api_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.lotaris.rox.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
+    post api_test_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.lotaris.rox.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
   end
 
   def api_authentication_headers user

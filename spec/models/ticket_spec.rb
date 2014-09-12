@@ -22,13 +22,13 @@ describe Ticket, rox: { tags: :unit } do
     let(:ticket){ create :sample_ticket }
 
     it "should not return an URL if the ticketing system URL is not set", rox: { key: '55c7ff71779e' } do
-      Settings.stub app: OpenStruct.new(ticketing_system_url: nil)
-      ticket.url.should be_nil
+      allow(Settings).to receive(:app).and_return(OpenStruct.new(ticketing_system_url: nil))
+      expect(ticket.url).to be_nil
     end
 
     it "should return an URL with the ticket name if the ticketing system URL is set", rox: { key: '83afe4f8c3a7' } do
-      Settings.stub app: OpenStruct.new(ticketing_system_url: 'http://example.com/%{name}')
-      ticket.url.should == "http://example.com/#{ticket.name}"
+      allow(Settings).to receive(:app).and_return(OpenStruct.new(ticketing_system_url: 'http://example.com/%{name}'))
+      expect(ticket.url).to eq("http://example.com/#{ticket.name}")
     end
   end
 
@@ -41,7 +41,7 @@ describe Ticket, rox: { tags: :unit } do
       it(nil, rox: { key: 'a3aaa98b10f9' }){ should validate_uniqueness_of(:name).case_insensitive }
 
       it "should not validate the uniqueness of name with quick validation", rox: { key: '2ef1cf87a9f8' } do
-        lambda{ Ticket.new.tap{ |t| t.name = ticket.name; t.quick_validation = true }.save! }.should raise_unique_error
+        expect{ Ticket.new.tap{ |t| t.name = ticket.name; t.quick_validation = true }.save! }.to raise_unique_error
       end
     end
   end

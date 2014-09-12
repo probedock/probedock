@@ -62,7 +62,7 @@ describe PurgeTagsJob, rox: { tags: :unit } do
     let(:user){ create :user }
     let(:tags){ Array.new(5){ |i| create :tag } }
     let!(:tests){ Array.new(3){ |i| create :test, key: create(:test_key, user: user), tags: tags[i % 2, 1] } }
-    before(:each){ Rails.application.events.stub fire: nil }
+    before(:each){ allow(Rails.application.events).to receive(:fire).and_return(nil) }
 
     it "should delete unused tags", rox: { key: '35180fbca993' } do
       subject.perform

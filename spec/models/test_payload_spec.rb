@@ -49,8 +49,8 @@ describe TestPayload, rox: { tags: :unit } do
     end
     subject{ described_class.for_listing.to_a }
 
-    it "should list payloads in processed state in the order they were received", rox: { key: '3411f7809e83' } do
-      expect(subject).to eq(payloads[0, 2])
+    it "should list payloads in the order they were received", rox: { key: '3411f7809e83' } do
+      expect(subject).to eq(payloads)
     end
 
     it "should not load the contents", rox: { key: '3208cc65d6cc' } do
@@ -87,84 +87,39 @@ describe TestPayload, rox: { tags: :unit } do
     end
   end
 
-  describe "#serializable_hash" do
-
-    it "should serialize a payload in created state", rox: { key: 'a6997093b926' } do
-      payload = create :test_payload
-      expect(payload.serializable_hash).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        state: :created,
-        contents: payload.contents
-      })
-    end
-
-    it "should serialize a payload in processing state", rox: { key: 'b9504c6b47d6' } do
-      payload = create :processing_test_payload
-      expect(payload.serializable_hash).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        processingAt: payload.processing_at.to_ms,
-        state: :processing,
-        contents: payload.contents
-      })
-    end
-
-    it "should serialize a payload in processed state", rox: { key: '7dbd441f0753' } do
-      payload = create :processed_test_payload
-      expect(payload.serializable_hash).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        processingAt: payload.processing_at.to_ms,
-        processedAt: payload.processed_at.to_ms,
-        state: :processed,
-        contents: payload.contents
-      })
-    end
-
-    it "should serialize a payload for listing", rox: { key: '1ff7ee3ae796' } do
-      payload = create :processed_test_payload
-      expect(payload.serializable_hash(type: :listing)).to eq({
-        id: payload.id,
-        receivedAt: payload.received_at.to_ms,
-        bytes: payload.contents_bytesize
-      })
-    end
-  end
-
   context "state" do
     subject{ create :test_payload, contents: MultiJson.dump(foo: 'bar') }
 
     it "should go through the created, processing and processed states", rox: { key: '23096f233917' } do
       
       expect(subject.state.to_sym).to eq(:created)
-      expect(subject.created?).to be_true
+      expect(subject.created?).to be(true)
       expect(subject.created_at).not_to be_nil
-      expect(subject.processing?).to be_false
+      expect(subject.processing?).to be(false)
       expect(subject.processing_at).to be_nil
-      expect(subject.processed?).to be_false
+      expect(subject.processed?).to be(false)
       expect(subject.processed_at).to be_nil
 
       subject.start_processing!
       subject.reload
 
       expect(subject.state.to_sym).to eq(:processing)
-      expect(subject.created?).to be_false
+      expect(subject.created?).to be(false)
       expect(subject.created_at).not_to be_nil
-      expect(subject.processing?).to be_true
+      expect(subject.processing?).to be(true)
       expect(subject.processing_at).not_to be_nil
-      expect(subject.processed?).to be_false
+      expect(subject.processed?).to be(false)
       expect(subject.processed_at).to be_nil
 
       subject.finish_processing!
       subject.reload
 
       expect(subject.state.to_sym).to eq(:processed)
-      expect(subject.created?).to be_false
+      expect(subject.created?).to be(false)
       expect(subject.created_at).not_to be_nil
-      expect(subject.processing?).to be_false
+      expect(subject.processing?).to be(false)
       expect(subject.processing_at).not_to be_nil
-      expect(subject.processed?).to be_true
+      expect(subject.processed?).to be(true)
       expect(subject.processed_at).not_to be_nil
 
       expect(subject.processing_at).to be >= subject.created_at
@@ -174,7 +129,7 @@ describe TestPayload, rox: { tags: :unit } do
 
   context "validations" do
     it(nil, rox: { key: 'a61f47de36ef' }){ should validate_presence_of(:user) }
-    it(nil, rox: { key: 'b6af4595e273' }){ should ensure_inclusion_of(:state).in_array([ :created, 'created', :processing, 'processing', :processed, 'processed' ]) }
+    it(nil, rox: { key: 'b6af4595e273' }){ should validate_inclusion_of(:state).in_array([ :created, 'created', :processing, 'processing', :processed, 'processed' ]) }
     it(nil, rox: { key: '885d0470ed8d' }){ should validate_presence_of(:received_at) }
     it(nil, rox: { key: 'e31bb153e65e' }){ should validate_presence_of(:contents) }
     it(nil, rox: { key: 'fd75001324d1' }){ should validate_presence_of(:contents_bytesize) }
@@ -182,9 +137,9 @@ describe TestPayload, rox: { tags: :unit } do
     it "should ensure that the contents are not longer than 16777215 bytes", rox: { key: '8058cadefbaf' } do
       contents = "x" * 16777214
       payload = build :test_payload, contents: contents
-      expect(payload.valid?).to be_true
+      expect(payload.valid?).to be(true)
       payload.contents << "\u3042"
-      expect(payload.valid?).to be_false
+      expect(payload.valid?).to be(false)
     end
   end
 

@@ -20,7 +20,7 @@ describe 'Ping' do
 
   it "should return the version and environment", rox: { key: '01364b8c3340' } do
     get '/ping'
-    expect(response.success?).to be_true
+    expect(response.success?).to be(true)
     expect(response.body).to eq("ROX Center v#{ROXCenter::Application::VERSION} test")
   end
 end

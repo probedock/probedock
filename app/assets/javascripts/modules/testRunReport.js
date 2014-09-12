@@ -19,8 +19,6 @@ App.autoModule('testRunReport', function() {
   // Do not change order. Search for "STATUSES" to find uses.
   var STATUSES = [ 'passed', 'failed', 'inactive' ];
 
-  var models = App.module('models');
-
   var PayloadView = Marionette.ItemView.extend({
 
     template: 'testRunReport/payload',
@@ -75,7 +73,7 @@ App.autoModule('testRunReport', function() {
     },
 
     renderJson: function() {
-      var json = this.model.get('contents');
+      var json = $.base64.decode(this.model.get('contents'));
       if (this.ui.prettyDisplayButton.is(':checked') || !this.ui.contents.text().length) {
         json = JSON.stringify(JSON.parse(json), undefined, 2);
       }
@@ -104,7 +102,7 @@ App.autoModule('testRunReport', function() {
       }
       this.setBusy(true);
 
-      this.model.fetch().complete(_.bind(this.setBusy, this, false)).fail(_.bind(this.showError, this));
+      this.model.fetch().always(_.bind(this.setBusy, this, false)).fail(_.bind(this.showError, this));
     },
 
     showError: function() {
@@ -124,17 +122,21 @@ App.autoModule('testRunReport', function() {
   var PayloadsView = Marionette.CompositeView.extend({
 
     template: 'testRunReport/payloads',
-    itemView: PayloadView,
-    itemViewContainer: '.panel-group',
+    childView: PayloadView,
+    childViewContainer: '.panel-group',
 
-    itemViewOptions: function(model) {
+    childViewOptions: function(model) {
       return {
         index: this.collection.indexOf(model)
       };
+    },
+
+    initialize: function() {
+      this.collection = this.model.embedded('item');
     }
   });
 
-  var Report = Marionette.Layout.extend({
+  var Report = Marionette.LayoutView.extend({
 
     template: false,
 
@@ -173,7 +175,8 @@ App.autoModule('testRunReport', function() {
     statuses: [ 'passed', 'failed', 'inactive' ],
 
     initialize: function(options) {
-      this.config = options.config;
+      this.testRunIndex = options.config.index;
+      this.model = new App.models.TestRun(options.config.testRun);
     },
 
     onRender: function() {
@@ -192,7 +195,6 @@ App.autoModule('testRunReport', function() {
         return I18n.t('jst.testRunReport.tooltipMessage.' + status);
       });
 
-      //async.nextTick(_.bind(this.setupStatusFilterTooltips, this));
       setTimeout(_.bind(this.setup, this), 300);
     },
 
@@ -206,21 +208,29 @@ App.autoModule('testRunReport', function() {
     },
 
     setupPayloads: function(callback) {
-      
-      var config = this.getPageConfig();
+      this.model.link('v1:testPayloads').fetchResource({
+        type: App.models.TestPayloads,
+        fetch: {
+          success: _.bind(this.showPayloads, this)
+        }
+      }).fail(_.bind(this.showPayloadsError, this));
+      callback();
+    },
 
-      if (config.payloads && config.payloads.length) {
+    showPayloads: function(res) {
+      if (res.embedded('item').length) {
 
-        var payloads = new models.TestPayloadCollection(config.payloads);
-        this.testPayloads.show(new PayloadsView({ collection: payloads }));
+        this.testPayloads.show(new PayloadsView({ model: res }));
 
-        var link = $('<a href="#testPayloads" />').text(I18n.t('jst.testRunReport.payloads.info', { count: payloads.length }));
+        var link = $('<a href="#testPayloads" />').text(I18n.t('jst.testRunReport.payloads.info', { count: res.embedded('item').length }));
         this.ui.payloadsInfo.html(link);
       } else {
         this.ui.payloadsInfo.html($('<em />').text(I18n.t('jst.testRunReport.payloads.purged')));
       }
+    },
 
-      callback();
+    showPayloadsError: function() {
+      this.ui.payloadsInfo.html($('<em class="text-warning" />').text(I18n.t('jst.testRunReport.payloads.listError')));
     },
 
     setupStatusFilterTooltips: function(e) {
@@ -471,7 +481,7 @@ App.autoModule('testRunReport', function() {
 
     buildIndex: function(callback) {
 
-      var index = this.config.index;
+      var index = this.testRunIndex;
       index.tests = [];
 
       var start = new Date().getTime();
@@ -589,7 +599,7 @@ App.autoModule('testRunReport', function() {
       this.$el.fadeOut('normal', _.bind(function() {
 
         var parent = this.$el.parent();
-        this.close();
+        this.destroy();
 
         var el = $(html).appendTo(parent).hide().fadeIn();
 

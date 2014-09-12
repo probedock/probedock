@@ -15,16 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 var testRunBase = {
-  id : 42,
-  results_count : 100,
-  passed_results_count : 67,
-  inactive_results_count : 8,
-  inactive_passed_results_count : 3
+  _links: {
+    self: { href: 'http://example.com/runForrestRun' }
+  },
+  results: 100,
+  passedResults: 67,
+  inactiveResults: 8,
+  inactivePassedResults: 3
 };
 
 describe("TestRun", function() {
 
-  var TestRun = App.module('models').TestRun,
+  var TestRun = App.models.TestRun,
       testRun = undefined;
 
   beforeEach(function() {
@@ -36,33 +38,28 @@ describe("TestRun", function() {
     Backbone.Relational.store.unregister(testRun);
   });
 
-  it("should have API path /api/v1/runs/<id>", function() {
-    this.meta = { rox : { key : 'f4175d454c24' } };
-    expect(testRun.url()).toBe('/api/v1/runs/42');
-  });
-
-  it("should have path /runs/<id>", function() {
-    this.meta = { rox : { key : '9ea1cc49e142' } };
-    expect(testRun.path()).toBe('/runs/42');
+  it("should use its self link as its url", function() {
+    this.meta = { rox: { key: 'f4175d454c24' } };
+    expect(testRun.url()).toBe('http://example.com/runForrestRun');
   });
 
   it("should have a total count of 100", function() {
-    this.meta = { rox : { key : '88b9f44038c0' } };
+    this.meta = { rox: { key: '88b9f44038c0' } };
     expect(testRun.totalCount()).toBe(100);
   });
 
   it("should have a passed count of 64", function() {
-    this.meta = { rox : { key : 'f73d07f922a9' } };
+    this.meta = { rox: { key: 'f73d07f922a9' } };
     expect(testRun.passedCount()).toBe(64);
   });
 
   it("should have a failed count of 28", function() {
-    this.meta = { rox : { key : '8e2b359fc526' } };
+    this.meta = { rox: { key: '8e2b359fc526' } };
     expect(testRun.failedCount()).toBe(28);
   });
 
   it("should have an inactive count of 8", function() {
-    this.meta = { rox : { key : '5f5f977e7c54' } };
+    this.meta = { rox: { key: '5f5f977e7c54' } };
     expect(testRun.inactiveCount()).toBe(8);
   });
 });

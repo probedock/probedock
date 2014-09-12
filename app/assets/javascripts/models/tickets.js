@@ -16,14 +16,14 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var Ticket = this.Ticket = Backbone.RelationalModel.extend({
+  this.Ticket = this.HalModel.extend({
 
-    link: function() {
-      return $('<a />').attr('href', this.get('url')).text(this.get('name'));
+    ticketHref: function() {
+      return this.hasLink('about') ? this.link('about').href() : this.link('search').href();
     }
   });
 
-  var TicketCollection = this.TicketCollection = Backbone.Collection.extend({
+  this.TicketCollection = Backbone.Collection.extend({
 
     comparator: function(a, b) {
       return a.get('name').localeCompare(b.get('name'));

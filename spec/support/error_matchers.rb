@@ -30,5 +30,9 @@ module ErrorMatchers
         e.class == ActiveRecord::RecordNotUnique || (e.class == ActiveRecord::StatementInvalid && e.original_exception.try(:class) == SQLite3::ConstraintException)
       end
     end
+
+    def supports_block_expectations?
+      true
+    end
   end
 end

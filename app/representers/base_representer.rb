@@ -30,17 +30,29 @@ class BaseRepresenter < Hal::Resource
   def self.collection_representation name, representer, options = {}, &block
 
     camelcase_name = name.to_s.camelize :lower
+
+    hyphenized = options.key?(:compatibility) && Gem::Version.new(options[:compatibility])
     hyphenized_name = name.to_s.gsub /\_/, '-'
+    hyphenize = !!options[:hyphenize_relations]
+
+    include_curie = !!options[:curie] || hyphenize
 
     representation do |res|
-      curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:#{camelcase_name}:{rel}", templated: true
 
-      link 'self', options[:uri] ? uri(options[:uri]) : api_uri(name)
+      instance_exec res, &block if block
+
+      curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:#{camelcase_name}:{rel}", templated: true if include_curie
+
+      link 'self', options[:uri] ? uri(options[:uri]) : api_uri(name) unless link? 'self'
 
       property :total, res.total
       property :page, res.page if res.page
 
-      embed_collection("v1:#{hyphenized_name}", res.data){ |o| representer.new o }
+      embed_collection(hyphenize ? "v1:#{hyphenized_name}" : 'item', res.data){ |o| representer.new o, res }
     end
   end
+
+  private
+
+  HYPHENIZED_DEPRECATION_VERSION = Gem::Version.new('2.3.0')
 end

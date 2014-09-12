@@ -16,9 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('testsTable', function() {
 
-  var models = App.module('models'),
-      views = App.module('views');
-
   var NoTestRow = Marionette.ItemView.extend({
 
     tagName: 'tr',
@@ -28,7 +25,7 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestTooltip = Marionette.Layout.extend({
+  var TestTooltip = Marionette.LayoutView.extend({
 
     template: 'testsTable/tooltip',
 
@@ -38,17 +35,17 @@ App.autoModule('testsTable', function() {
 
     serializeData: function() {
       return {
-        lastRunAt: Format.datetime.short(new Date(this.model.get('last_run_at'))),
-        lastRunDuration: Format.duration(this.model.get('last_run_duration'), { shorten: 's' })
+        lastRunAt: Format.datetime.short(new Date(this.model.embedded('v1:lastRun').get('endedAt'))),
+        lastRunDuration: Format.duration(this.model.embedded('v1:lastRun').get('duration'), { shorten: 's' })
       };
     },
 
     onRender: function() {
-      this.avatar.show(new views.UserAvatar({ model: this.model.get('effective_result').get('runner'), size: 'small', link: false }));
+      this.avatar.show(new App.views.UserAvatar({ model: this.model.embedded('v1:lastRunner'), size: 'small', link: false }));
     }
   });
 
-  var TestRow = Marionette.Layout.extend({
+  var TestRow = Marionette.LayoutView.extend({
 
     tagName: 'tr',
     template: 'testsTable/row',
@@ -85,8 +82,8 @@ App.autoModule('testsTable', function() {
       this.renderName();
       this.renderKey();
       this.renderProject();
-      this.author.show(new views.UserAvatar({ model: this.model.get('author'), size: 'small' }));
-      this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('created_at'))));
+      this.author.show(new App.views.UserAvatar({ model: this.model.embedded('v1:author'), size: 'small' }));
+      this.ui.createdAt.text(Format.datetime.short(new Date(this.model.get('createdAt'))));
       this.renderStatus();
       this.updateSelection();
     },
@@ -98,16 +95,16 @@ App.autoModule('testsTable', function() {
       }
     },
 
-    updateDeprecation: function(test, deprecated) {
-      if (this.model.toParam() == test.toParam()) {
-        this.model.setDeprecated(deprecated);
+    updateDeprecation: function(test, deprecated, time) {
+      if (this.model.link('self').get('href') == test.link('self').get('href')) {
+        this.model.setDeprecated(deprecated, time);
         this.renderKey();
         this.renderStatus();
       }
     },
 
     renderName: function() {
-      this.truncateLink(this.model.path(), this.model.get('name'), 75, this.ui.name);
+      this.truncateLink(this.model.link('alternate').get('href'), this.model.get('name'), 75, this.ui.name);
     },
 
     renderKey: function() {
@@ -120,11 +117,12 @@ App.autoModule('testsTable', function() {
       }
 
       this.ui.key.html(el);
-      Clipboard.setup(el, this.model.permalink(true), { title: I18n.t('jst.testsTable.keyTooltip') });
+      Clipboard.setup(el, this.model.link('bookmark').get('href'), { title: I18n.t('jst.testsTable.keyTooltip') });
     },
 
     renderProject: function() {
-      this.truncateLink(this.model.get('project').path(), this.model.get('project').get('name'), 22, this.ui.project);
+      var project = this.model.embedded('v1:project');
+      this.truncateLink(project.link('alternate').get('href'), project.get('name'), 22, this.ui.project);
     },
 
     truncateLink: function(href, text, max, el) {
@@ -161,7 +159,7 @@ App.autoModule('testsTable', function() {
 
     renderStatus: function() {
 
-      this.ui.statusLink.attr('href', Path.build('runs', this.model.get('effective_result').get('test_run_id')));
+      this.ui.statusLink.attr('href', this.model.embedded('v1:lastRun').link('alternate').get('href'));
       this.ui.statusIcon.removeClass('glyphicon-thumbs-up glyphicon-thumbs-down');
       this.ui.statusIcon.addClass('glyphicon-' + (this.model.get('passing') ? 'thumbs-up' : 'thumbs-down'));
 
@@ -196,8 +194,8 @@ App.autoModule('testsTable', function() {
   var TestsTableView = Tableling.Bootstrap.TableView.extend({
 
     template: 'testsTable/table',
-    itemView: TestRow,
-    itemViewContainer: 'tbody',
+    childView: TestRow,
+    childViewContainer: 'tbody',
     emptyView: NoTestRow,
 
     ui: {
@@ -269,9 +267,10 @@ App.autoModule('testsTable', function() {
     }
   });
 
-  var TestsTable = views.TableWithAdvancedSearch.extend({
+  var TestsTable = App.views.TableWithAdvancedSearch.extend({
 
     advancedSearchTemplate: 'testsTable/search',
+
     ui: {
       projectsFilter: '.advancedSearch form .projects',
       tagsFilter: '.advancedSearch form .tags',
@@ -293,12 +292,11 @@ App.autoModule('testsTable', function() {
     },
 
     tableView: TestsTableView,
-    tableViewOptions: {
-      collection: new models.TestTableCollection()
-    },
+    wrapSearchData: false,
+    halEmbedded: 'item',
 
     config: {
-      sort: [ 'created_at desc' ],
+      sort: [ 'createdAt desc' ],
       pageSize: 15
     },
 
@@ -333,18 +331,8 @@ App.autoModule('testsTable', function() {
   });
 
   this.addAutoInitializer(function(options) {
-
-    var Tests = models.TestTableCollection.extend({
-      url: options.config.path
-    });
-
-    var Table = TestsTable.extend({
-      tableViewOptions: {
-        collection: new Tests()
-      }
-    });
-
-    options.region.show(new Table(options.config));
+    var res = new App.models.Tests({}, _.pick(options.config, 'halUrlTemplate'));
+    options.region.show(new TestsTable(_.extend(options.config, { model: res })));
   });
 });
 

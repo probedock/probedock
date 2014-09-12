@@ -61,14 +61,17 @@ class User < ActiveRecord::Base
 
     default_view do
 
-      field :id
       field :name
       field :email
-      field :created_at
+      field :created_at, as: :createdAt
 
       quick_search do |query,original_term|
         term = "%#{original_term.downcase}%"
         query.where('LOWER(users.name) LIKE ?', term)
+      end
+
+      serialize_response do |res|
+        UsersRepresenter.new OpenStruct.new(res)
       end
     end
   end

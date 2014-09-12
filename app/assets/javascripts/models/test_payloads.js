@@ -16,20 +16,16 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var TestPayload = this.TestPayload = Backbone.RelationalModel.extend({
-
-    urlRoot: Path.builder('payloads'),
+  this.TestPayload = this.HalModel.extend({
 
     queueTime: function() {
-      return this.get('processingAt') ? this.get('processingAt') - this.get('receivedAt') : -1;
+      return this.has('processingAt') ? this.get('processingAt') - this.get('receivedAt') : -1;
     },
 
     processingTime: function() {
-      return this.get('processingAt') && this.get('processedAt') ? this.get('processedAt') - this.get('processingAt') : -1;
+      return this.has('processingAt') && this.has('processedAt') ? this.get('processedAt') - this.get('processingAt') : -1;
     }
   });
 
-  var TestPayloadCollection = this.TestPayloadCollection = Backbone.Collection.extend({
-    model: TestPayload
-  });
+  this.TestPayloads = this.defineHalCollection(this.TestPayload, {});
 });

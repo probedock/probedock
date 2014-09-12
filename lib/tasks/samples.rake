@@ -163,7 +163,7 @@ class PayloadSender
 
   def send
 
-    req = Net::HTTP::Post.new Rails.application.routes.url_helpers.api_payloads_path
+    req = Net::HTTP::Post.new Rails.application.routes.url_helpers.api_test_payloads_path
     req.content_type = Mime::Type.lookup_by_extension(:rox_payload_v1).to_s
     req.body = @body
 

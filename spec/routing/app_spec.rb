@@ -22,7 +22,6 @@ describe 'App routing' do
   it(nil, rox: { key: '5cc16476592c' }){ should route(:get, '/data/status').to(controller: :data, action: :status) }
   it(nil, rox: { key: '17ee5765c3d0' }){ should route(:get, '/data/general').to(controller: :data, action: :general) }
   it(nil, rox: { key: 'a5aa58aa7a3e' }){ should route(:get, '/data/current_test_metrics').to(controller: :data, action: :current_test_metrics) }
-  it(nil, rox: { key: '8bcd3f90f524' }){ should route(:get, '/data/latest_test_runs').to(controller: :data, action: :latest_test_runs) }
   it(nil, rox: { key: 'd13ca3b0830b' }){ should route(:get, '/data/test_counters').to(controller: :data, action: :test_counters) }
   it(nil, rox: { key: 'd9a01140cf1c' }){ should route(:post, '/data/test_counters').to(controller: :data, action: :test_counters) }
   it(nil, rox: { key: '7328eddd1d72' }){ should route(:get, '/go/project').to(controller: :go, action: :project) }
@@ -41,11 +40,8 @@ describe 'App routing' do
   it(nil, rox: { key: '796ada05066d' }){ should route(:get, '/projects/42').to(controller: :projects, action: :show, id: '42') }
   it(nil, rox: { key: 'dc2db17cfd5d' }){ should route(:get, '/status').to(controller: :home, action: :status) }
   it(nil, rox: { key: 'ca901bcb554a' }){ should route(:get, '/tags').to(controller: :tags, action: :index) }
-  it(nil, rox: { key: '4a003aabf324' }){ should route(:get, '/payloads/42').to(controller: :test_payloads, action: :show, id: 42) }
   it(nil, rox: { key: 'fbbc237d3753' }){ should route(:get, '/tests').to(controller: :test_infos, action: :index) }
   it(nil, rox: { key: '32f0b8d13a53' }){ should route(:get, '/tests/42').to(controller: :test_infos, action: :show, id: 42) }
-  it(nil, rox: { key: '9c5b9e041869' }){ should route(:post, '/tests/deprecate').to(controller: :test_infos, action: :deprecate) }
-  it(nil, rox: { key: '8bd0ce3f3e61' }){ should route(:post, '/tests/undeprecate').to(controller: :test_infos, action: :undeprecate) }
   it(nil, rox: { key: 'a1df6cba5382' }){ should route(:get, '/runs').to(controller: :test_runs, action: :index) }
   it(nil, rox: { key: 'c7e41ec8ac17' }){ should route(:get, '/runs/42').to(controller: :test_runs, action: :show, id: 42) }
   it(nil, rox: { key: '51eb9ac64dd3' }){ should route(:get, '/runs/42/previous').to(controller: :test_runs, action: :previous, id: 42) }

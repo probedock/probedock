@@ -16,16 +16,17 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var Link = this.Link = Backbone.RelationalModel.extend({
+  this.Link = Backbone.RelationalModel.extend({
 
     url: function() {
       return this.get('id') ? LegacyApiPath.build('links', this.get('id')) : LegacyApiPath.build('links');
     }
   });
 
-  var LinkCollection = this.LinkCollection = Backbone.Collection.extend({
+  this.LinkCollection = Backbone.Collection.extend({
 
-    model: Link,
+    model: this.Link,
+
     comparator: function(a, b) {
       return a.get('name').localeCompare(b.get('name'));
     }

@@ -22,8 +22,8 @@ describe TestKey, rox: { tags: :unit } do
     
     it "should return the value of free", rox: { key: 'f80dc7bba1b7' } do
       user = create :user
-      expect(create(:test_key, user: user, free: false).free?).to be_false
-      expect(create(:test_key, user: user, free: true).free?).to be_true
+      expect(create(:test_key, user: user, free: false).free?).to be(false)
+      expect(create(:test_key, user: user, free: true).free?).to be(true)
     end
   end
 
@@ -42,22 +42,22 @@ describe TestKey, rox: { tags: :unit } do
   context "key" do
 
     it "should be 12 characters long", rox: { key: '9a8335194eb5' } do
-      10.times{ TestKey.generate_random_key.length.should == 12 }
+      10.times{ expect(TestKey.generate_random_key.length).to eq(12) }
     end
 
     it "should be unique", rox: { key: '0fe5f1cf41d3' } do
 
       keys = [ '0123456789ab', 'ab0123456789', 'cd0123456789' ]
-      TestKey.stub(:generate_random_key){ keys.shift }
+      allow(TestKey).to receive(:generate_random_key){ keys.shift }
 
       project = create :project
       create :test_key, key: '0123456789ab', user: create(:user), project: project
       create :test_key, key: 'ab0123456789', user: create(:other_user), project: project
-      TestKey.new_random_key(project.id).should == 'cd0123456789'
+      expect(TestKey.new_random_key(project.id)).to eq('cd0123456789')
     end
 
     it "should be automatically generated", rox: { key: '408c231c1648' } do
-      create(:test_key).key.should be_present
+      expect(create(:test_key).key).to be_present
     end
   end
 

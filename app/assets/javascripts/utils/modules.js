@@ -59,8 +59,8 @@ Marionette.Module.prototype.addAutoInitializer = function(func) {
   this.addInitializer(function(options) {
 
     _.each(options.injections, function(injection) {
-      func(injection);
-    });
+      func.call(this, injection);
+    }, this);
   });
 };
 

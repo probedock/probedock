@@ -16,6 +16,15 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 
 var projectBase = {
+  _links: {
+    self: {
+      href: 'http://example.com/project'
+    },
+    alternate: {
+      href: 'http://example.com/project.html',
+      type: 'text/html'
+    }
+  },
   name: 'A project',
   apiId: '123456789012',
   urlToken: 'a_project',
@@ -26,10 +35,8 @@ var projectBase = {
 
 describe("Project", function() {
 
-  var models = App.module('models'),
-      Project = models.Project,
-      TestKey = models.TestKey,
-      TestKeyCollection = models.TestKeyCollection,
+  var Project = App.models.Project,
+      TestKey = App.models.TestKey,
       project = undefined;
 
   beforeEach(function() {
@@ -48,34 +55,27 @@ describe("Project", function() {
 
   it("should have many test keys", function() {
     this.meta = { rox: { key: 'b40c06fb3d4a' } };
-    expect(Project).toHaveBackboneRelation({ type: Backbone.HasMany, key: 'testKeys', relatedModel: 'TestKey', collectionType: 'TestKeyCollection' });
+    expect(Project).toHaveBackboneRelation({ type: Backbone.HasMany, key: 'freeTestKeys', relatedModel: 'TestKey', includeInJSON: false });
   });
 
-  it("should return its path", function() {
+  it("should return its self link as its url", function() {
     this.meta = { rox: { key: '0b348a2dd438' } };
-    expect(project.path()).toBe('/projects/' + projectBase.urlToken);
+    expect(project.url()).toBe('http://example.com/project');
   });
 
-  it("should return a link to its path", function() {
+  it("should build a link tag for its alternate path", function() {
     this.meta = { rox: { key: '28f0306f5568' } };
-    expect(project.link()).toLinkTo('/projects/' + projectBase.urlToken, projectBase.name);
+    expect(project.linkTag()).toLinkTo('http://example.com/project.html', projectBase.name);
   });
 });
 
-describe("ProjectCollection", function() {
+describe("Projects", function() {
 
-  var models = App.module('models'),
-      Project = models.Project,
-      ProjectCollection = models.ProjectCollection,
-      col = undefined;
-
-  beforeEach(function() {
-    loadFixtures('layout.html');
-    col = new ProjectCollection();
-  });
+  var Project = App.models.Project,
+      Projects = App.models.Projects;
 
   it("should use the Project model", function() {
     this.meta = { rox: { key: 'd59a735a0cc6' } };
-    expect(ProjectCollection.prototype.model).toBe(Project);
+    expect(getEmbeddedRelation(Projects, 'item').relatedModel).toBe(Project);
   });
 });

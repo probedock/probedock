@@ -4,6 +4,20 @@ var cssFontSize = function(el, omitUnit) {
   return fontSize ? (omitUnit ? parseFloat(fontSize.replace(/[a-z]+$/, '')) : fontSize) : fontSize;
 };
 
+var getModelRelation = function(type, key) {
+  return _.findWhere(type.prototype.relations, { key: key });
+};
+
+var getEmbeddedRelation = function(type, key) {
+
+  var embeddedRel = getModelRelation(type, '_embedded');
+  if (!embeddedRel) {
+    return null;
+  }
+
+  return getModelRelation(embeddedRel.relatedModel, key);
+};
+
 var fakeAjaxResponse = function(op, response, options) {
 
   var reqDone = false;

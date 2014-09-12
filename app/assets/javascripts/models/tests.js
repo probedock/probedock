@@ -16,68 +16,58 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var Test = this.Test = Backbone.RelationalModel.extend({
+  this.Test = this.HalResource.extend({
 
-    relations: [
+    halEmbedded: [
       {
         type: Backbone.HasOne,
-        key: 'author',
+        key: 'v1:author',
         relatedModel: 'User'
       },
       {
         type: Backbone.HasOne,
-        key: 'project',
+        key: 'v1:lastRun',
+        relatedModel: 'TestRun'
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:lastRunner',
+        relatedModel: 'User'
+      },
+      {
+        type: Backbone.HasOne,
+        key: 'v1:project',
         relatedModel: 'Project'
       },
       {
-        type: Backbone.HasMany,
-        key: 'tickets',
-        relatedModel: 'Ticket',
-        collectionType: 'TicketCollection'
+        type: Backbone.HasOne,
+        key: 'v1:category',
+        relatedModel: 'Category'
       },
       {
-        type : Backbone.HasOne,
-        key : 'effective_result',
-        relatedModel : 'TestResult'
+        type: Backbone.HasMany,
+        key: 'v1:tags',
+        relatedModel: 'Tag',
+        collectionType: 'TagCollection'
+      },
+      {
+        type: Backbone.HasMany,
+        key: 'v1:tickets',
+        relatedModel: 'Ticket',
+        collectionType: 'TicketCollection'
       }
     ],
 
-    permalink: function(withHost) {
-      var path = Path.build('go', 'test') + '?' + $.param({ project: this.get('project').get('apiId'), key: this.get('key') });
-      return withHost ? Path.join(window.location.protocol + '//' + window.location.host, path) : path;
-    },
-
-    link: function(options) {
-      options = _.defaults({}, options, { truncate: false });
-      return $('<a />').attr('href', this.path()).text(Format.truncate(this.get('name'), options.truncate));
-    },
-
-    apiPath: function() {
-      return LegacyApiPath.build('tests', this.toParam());
-    },
-
-    path: function() {
-      return Path.build('tests', this.toParam());
-    },
-
-    toParam: function() {
-      return this.get('project').get('apiId') + '-' + this.get('key');
-    },
-
-    categoryPath: function() {
-      return this.get('category') ? Path.build('tests?' + $.param({ categories: [ this.get('category') ] })) : null;
-    },
-
-    categoryLink: function() {
-      return this.get('category') ? $('<a />').attr('href', this.categoryPath()).text(this.get('category')) : null;
-    },
-
     isDeprecated: function() {
-      return !!this.get('deprecated_at');
+      return !!this.get('deprecatedAt');
     },
 
-    setDeprecated: function(deprecated) {
-      this.set({ deprecated_at: deprecated ? new Date().getTime() : null });
+    setDeprecated: function(deprecated, time) {
+      if (deprecated) {
+        this.set({ deprecatedAt: time });
+      } else {
+        this.unset('deprecatedAt');
+      }
     },
 
     status: function() {
@@ -91,7 +81,10 @@ App.module('models', function() {
     }
   });
 
-  var TestTableCollection = this.TestTableCollection = Tableling.Collection.extend({
-    model: Test
+  this.Tests = this.defineHalCollection(this.Test, {
+
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', { name: 'v1:tests', template: this.halUrlTemplate } ]);
+    }
   });
 });

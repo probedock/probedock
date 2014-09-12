@@ -16,20 +16,43 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.module('models', function() {
 
-  var HalModel = this.HalModel = Backbone.RelationalModel.extend({
-
-    url: function() {
-      var links = this.get('_links');
-      return links && links.self ? links.self.href : _.result(this, 'fallbackUrl');
+  this.ApiRoot = Backbone.RelationalHalResource.extend({
+    defaults: function() {
+      return {
+        _links: {
+          self: {
+            href: Path.build('api')
+          }
+        }
+      };
     }
   });
 
-  var HalCollection = this.HalCollection = Backbone.Collection.extend({
-
-    // TODO: HalCollection should get its URL from API root through relations
-
-    parse: function(response, options) {
-      return response['_embedded'] ? response['_embedded'][this.embeddedModels] || [] : [];
-    }
+  this.addInitializer(function() {
+    App.apiRoot = new App.models.ApiRoot();
   });
+
+  // FIXME: remove HalModel once replaced by HalResource
+  this.HalModel = Backbone.RelationalHalResource;
+  this.HalResource = Backbone.RelationalHalResource;
+
+  this.defineHalCollection = function(model, options) {
+    return this.HalResource.extend(_.extend({
+      
+      halEmbedded: [
+        {
+          type: Backbone.HasMany,
+          key: 'item',
+          relatedModel: model,
+          reset: true // FIXME: see backbone-relational.js
+        }
+      ],
+
+      defaults: {
+        _embedded: {
+          'item': []
+        }
+      }
+    }, options));
+  };
 });

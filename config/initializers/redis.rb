@@ -14,10 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-rails_root = Rails.root || File.dirname(__FILE__) + '/../..'
-rails_env = Rails.env || 'development'
-config = YAML.load_file(rails_root.to_s + '/config/redis.yml')
-config = config[rails_env]
+config = YAML.load_file(Rails.root.to_s + '/config/redis.yml')
+config = config[Rails.env]
 
 host, port, db = config.split /:/
 

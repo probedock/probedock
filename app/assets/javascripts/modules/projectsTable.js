@@ -14,15 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 App.autoModule('projectsTable', function() {
-
-  var models = App.module('models'),
-      Project = models.Project,
-      ProjectTableCollection = models.ProjectTableCollection;
-
-  var views = App.module('views'),
-      Table = views.Table;
 
   var NoProjectRow = Marionette.ItemView.extend({
 
@@ -46,7 +38,7 @@ App.autoModule('projectsTable', function() {
     },
 
     onRender : function() {
-      this.ui.name.html(this.model.link());
+      this.ui.name.html(this.model.linkTag());
       this.ui.activeTestsCount.text(Format.number(this.model.get('activeTestsCount')));
       this.ui.apiId.text(this.model.get('apiId'));
       this.ui.createdAt.text(Format.datetime.long(new Date(this.model.get('createdAt'))));
@@ -56,12 +48,12 @@ App.autoModule('projectsTable', function() {
   var ProjectsTableView = Tableling.Bootstrap.TableView.extend({
 
     template : 'projectsTable/table',
-    itemView : ProjectRow,
-    itemViewContainer : 'tbody',
+    childView : ProjectRow,
+    childViewContainer : 'tbody',
     emptyView : NoProjectRow,
   });
 
-  var ProjectsTable = Table.extend({
+  var ProjectsTable = App.views.Table.extend({
 
     config : {
       pageSize : 15,
@@ -69,12 +61,10 @@ App.autoModule('projectsTable', function() {
     },
 
     tableView : ProjectsTableView,
-    tableViewOptions : {
-      collection : new ProjectTableCollection()
-    }
+    halEmbedded: 'item'
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new ProjectsTable(options.config));
+    options.region.show(new ProjectsTable({ model: new App.models.Projects() }));
   });
 });

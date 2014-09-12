@@ -42,14 +42,13 @@ ROXCenter::Application.routes.draw do
     get :status
     get :general
     get :current_test_metrics
-    get :latest_test_runs
     match :test_counters, via: [ :get, :post ]
   end
 
-  namespace :go, module: nil, controller: :go do
-    get :project
-    get :run
-    get :test
+  namespace :go, module: nil, controller: :go, as: nil do
+    get :project, as: :project_permalink
+    get :run, as: :test_run_permalink
+    get :test, as: :test_permalink
   end
 
   devise_for :users, path_names: { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }
@@ -64,12 +63,7 @@ ROXCenter::Application.routes.draw do
     post '/', action: :purge, on: :member, as: :start
   end
   resources :tags, only: [ :index ]
-  resources :test_infos, path: :tests, only: [ :index, :show ] do
-    collection do
-      post :deprecate
-      post :undeprecate
-    end
-  end
+  resources :test_infos, path: :tests, only: [ :index, :show ]
   resources :test_payloads, path: :payloads, only: [ :show ]
   resources :test_runs, path: :runs, only: [ :index, :show ] do
     member do
@@ -109,15 +103,40 @@ ROXCenter::Application.routes.draw do
 
     match '/' => "api#index", via: :get
 
-    resources :payloads, only: [ :create ]
+    resources :projects, only: [ :index, :create, :show, :update ]
 
-    resources :projects, only: [ :index, :create, :update ]
+    resources :project_versions, only: [ :index ]
+
+    resources :tests, only: [ :index, :show ] do
+      get :deprecation, on: :member
+      put :deprecation, action: :deprecate, on: :member
+      delete :deprecation, action: :undeprecate, on: :member
+      get :results, on: :member
+      get :project_versions, on: :member
+    end
+
+    post :test_deprecations, to: 'tests#bulk_deprecations'
 
     resources :test_keys, only: [ :index, :create ] do
       
       collection do
         delete '/', action: :auto_release
       end
+    end
+
+    resources :test_payloads, only: [ :create, :show ]
+
+    resources :test_results, only: [ :show ]
+
+    resources :test_runs, only: [ :index, :show ] do
+      get :payloads, on: :member
+    end
+
+    resources :users, only: [ :index, :show, :update, :destroy ]
+
+    namespace :legacy, module: nil do
+      get :projects, to: 'legacy#projects'
+      get :test_keys, to: 'legacy#test_keys'
     end
   end
 
@@ -164,9 +183,6 @@ ROXCenter::Application.routes.draw do
       end
 
       resources :test_infos, path: :tests, only: [] do
-        collection do
-          get '/', action: :page
-        end
         member do
           get :results, action: :results_page
           get 'results/chart', action: :results_chart
@@ -175,12 +191,7 @@ ROXCenter::Application.routes.draw do
 
       resources :test_results, path: :results, only: [ :show ]
 
-      resources :test_runs, path: :runs, only: [ :show ] do
-
-        collection do
-          get '/', action: :page
-        end
-      end
+      resources :test_runs, path: :runs, only: [ :show ]
 
       resources :users, only: [] do
 

@@ -33,21 +33,21 @@ describe Settings, rox: { tags: :unit } do
 
     it "should return the app settings", rox: { key: 'd5fe308a81f7' } do
       Settings::App.first.update_attributes sample_settings
-      Settings.app.should == OpenStruct.new(sample_settings)
+      expect(Settings.app).to eq(OpenStruct.new(sample_settings))
     end
 
     it "should cache the app settings", rox: { key: 'e90799259d27' } do
-      $redis.exists(SETTINGS_CACHE_KEY).should be_false
-      Settings.should query_the_database(1.times).when_calling(:app)
-      $redis.exists(SETTINGS_CACHE_KEY).should be_true
-      Settings.should_not query_the_database.when_calling(:app)
+      expect($redis.exists(SETTINGS_CACHE_KEY)).to be(false)
+      expect(Settings).to query_the_database(1.times).when_calling(:app)
+      expect($redis.exists(SETTINGS_CACHE_KEY)).to be(true)
+      expect(Settings).not_to query_the_database.when_calling(:app)
     end
 
     it "should used the given cached settings", rox: { key: '738c72ac035d' } do
       cached = double contents: sample_settings
-      Settings.should_not_receive :cache
-      Settings.should_not query_the_database.when_calling(:app).with(cached)
-      Settings.app(cached).should == OpenStruct.new(sample_settings)
+      expect(Settings).not_to receive(:cache)
+      expect(Settings).not_to query_the_database.when_calling(:app).with(cached)
+      expect(Settings.app(cached)).to eq(OpenStruct.new(sample_settings))
     end
   end
 end
