@@ -14,13 +14,30 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestDeprecation < ActiveRecord::Base
+class PurgeTestRunsJob < PurgeJob
+  @queue = :purge
 
-  belongs_to :test_info
-  belongs_to :category
-  belongs_to :user
+  def self.perform_purge purge_action
 
-  validates :user, presence: true
-  validates :test_info, presence: true
-  validates :deprecated, inclusion: { in: [ true, false ] }
+    start = Time.now
+
+    n = outdated_test_runs(Settings.app.test_runs_lifespan).delete_all
+    complete_purge! purge_action, n
+
+    Resque.logger.info "Purged #{n} outdated test runs in #{(Time.now - start).to_f.round 3}s"
+  end
+
+  def self.data_lifespan
+    Settings.app.test_runs_lifespan
+  end
+
+  def self.number_remaining
+    outdated_test_runs(Settings.app.test_runs_lifespan).count
+  end
+
+  private
+
+  def self.outdated_test_runs lifespan
+    TestRun.where 'ended_at < ?', Time.now - lifespan * 24 * 3600
+  end
 end

@@ -14,13 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestDeprecation < ActiveRecord::Base
-
-  belongs_to :test_info
-  belongs_to :category
-  belongs_to :user
-
-  validates :user, presence: true
-  validates :test_info, presence: true
-  validates :deprecated, inclusion: { in: [ true, false ] }
+class PurgeActionsRepresenter < BaseRepresenter
+  collection_representation :purges, PurgeActionRepresenter do |res|
+    property 'jobs', Resque.size(:purge)
+  end
 end

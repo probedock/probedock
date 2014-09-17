@@ -28,7 +28,7 @@ class CountDeprecationJob
   def self.perform deprecation_ids, options = {}
     options = HashWithIndifferentAccess.new options
 
-    deprecations = TestDeprecation.includes(test_info: [ :project, :author ], test_result: [ :category ]).find deprecation_ids
+    deprecations = TestDeprecation.includes([ :category, { test_info: [ :project, :author ] } ]).find deprecation_ids
     deprecations.each{ |deprecation| new deprecation, options }
 
     Rails.application.events.fire 'test:counters'
@@ -39,7 +39,7 @@ class CountDeprecationJob
 
     project = deprecation.test_info.project
     user = deprecation.test_info.author
-    category = deprecation.test_result.category
+    category = deprecation.category
 
     @counter_base = { cache: {}, time: deprecation.created_at, deprecated: deprecation.deprecated ? 1 : -1 }
     options[:timezones].each do |timezone|

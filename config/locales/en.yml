@@ -97,6 +97,10 @@ en:
     go:
       not_found: "No project was found matching your criteria."
 
+  purges:
+    index:
+      title: "Purges"
+
   test_runs:
     show:
       window_title: "Test Run Report"
@@ -186,6 +190,7 @@ en:
   activerecord:
     models:
       metric: "Metric"
+      purge_action: "Purge"
       test_info: "Test"
     attributes:
       test_key:

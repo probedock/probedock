@@ -16,34 +16,32 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'resque/plugins/workers/lock'
 
-class PurgeTicketsJob
+class PurgeTicketsJob < PurgeJob
   extend Resque::Plugins::Workers::Lock
-
   @queue = :purge
 
-  def self.perform
+  def self.perform_purge purge_action
+
+    start = Time.now
+
     n = unused_tickets.delete_all
-    Rails.logger.info "Purged #{n} unused tickets"
-    Rails.application.events.fire 'purge:tickets'
-  end
+    complete_purge! purge_action, n
 
-  def self.purge_id
-    :tickets
-  end
-
-  def self.purge_info
-    {
-      id: :tickets,
-      total: unused_tickets.count.length
-    }
-  end
-
-  def self.unused_tickets
-    Ticket.select('tickets.id').joins('LEFT OUTER JOIN test_infos_tickets ON tickets.id = test_infos_tickets.ticket_id').where('test_infos_tickets.test_info_id IS NULL').group('tickets.id')
+    Resque.logger.info "Purged #{n} unused tickets in #{(Time.now - start).to_f.round 3}s"
   end
 
   # resque-workers-lock: lock workers to prevent concurrency
   def self.lock_workers *args
     ProcessNextTestPayloadJob.name # use the same lock as payload processing
+  end
+
+  def self.number_remaining
+    unused_tickets.count
+  end
+
+  private
+
+  def self.unused_tickets
+    Ticket.select('distinct tickets.id').joins('LEFT OUTER JOIN test_infos_tickets ON tickets.id = test_infos_tickets.ticket_id').where('test_infos_tickets.test_info_id IS NULL')
   end
 end

@@ -37,7 +37,7 @@ class BaseRepresenter < Hal::Resource
 
     include_curie = !!options[:curie] || hyphenize
 
-    representation do |res|
+    representation do |res,*args|
 
       instance_exec res, &block if block
 
@@ -48,7 +48,7 @@ class BaseRepresenter < Hal::Resource
       property :total, res.total
       property :page, res.page if res.page
 
-      embed_collection(hyphenize ? "v1:#{hyphenized_name}" : 'item', res.data){ |o| representer.new o, res }
+      embed_collection(hyphenize ? "v1:#{hyphenized_name}" : 'item', res.data){ |o| representer.new o, res, *args }
     end
   end
 

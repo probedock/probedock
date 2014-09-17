@@ -16,29 +16,6 @@
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 App.autoModule('purge', function() {
 
-  var Purge = Backbone.RelationalModel.extend({
-
-    name: function() {
-      return I18n.t('jst.purge.info.' + this.id + '.name');
-    },
-
-    isPurgeable: function() {
-      return !!this.get('total');
-    }
-  });
-
-  var PurgeCollection = Backbone.Collection.extend({
-
-    url: Path.builder('purges'),
-    model: Purge,
-
-    isPurgeable: function() {
-      return this.some(function(purge) {
-        return purge.isPurgeable();
-      });
-    }
-  });
-
   var PurgeRow = Marionette.ItemView.extend({
     
     template: 'purge/purge',
@@ -64,14 +41,14 @@ App.autoModule('purge', function() {
     },
 
     purgeDescription: function() {
-      if (this.model.has('lifespan')) {
+      if (this.model.get('dataLifespan')) {
         return I18n.t('jst.purge.description.outdated', {
-          n: this.model.get('total') || I18n.t('jst.purge.none'),
-          lifespan: Format.duration(this.model.get('lifespan'))
+          n: this.model.get('numberRemaining') ? Format.number(this.model.get('numberRemaining')) : I18n.t('jst.purge.none'),
+          lifespan: Format.duration(this.model.get('dataLifespan') * 24 * 3600 * 1000)
         });
       } else {
         return I18n.t('jst.purge.description.orphan', {
-          n: this.model.get('total') || I18n.t('jst.purge.none')
+          n: this.model.get('numberRemaining') || I18n.t('jst.purge.none')
         });
       }
     }
@@ -88,12 +65,18 @@ App.autoModule('purge', function() {
       settingsLink: 'a.settingsLink',
       purgeSelect: '.purgeTarget',
       purgeButton: '.purge',
-      controls: '.panel-footer'
+      controls: '.panel-footer',
+      jobsRow: 'tfoot tr.jobs',
+      jobs: 'tfoot td'
     },
 
     events: {
       'submit form': 'purge',
       'change .purgeTarget': 'updateControls'
+    },
+
+    modelEvents: {
+      'change': 'renderJobs'
     },
 
     collectionEvents: {
@@ -104,56 +87,73 @@ App.autoModule('purge', function() {
       'maintenance:changed': 'updateControls'
     },
 
+    initialize: function() {
+      this.collection = this.model.embedded('item');
+    },
+
     onRender: function() {
 
       this.renderLinks();
-      this.renderSelect();
       this.updateControls();
 
       App.bindEvents(this);
       App.watchStatus(this, this.refresh, { only: 'lastPurge' });
+
+      this.setLoading(true);
+      this.refresh().done(_.bind(this.setLoading, this, false)).done(_.bind(this.renderSelect, this));
+    },
+
+    onRefreshed: function() {
+      this.renderJobs();
+      this.renderJobsRow();
+      this.updateControls();
     },
 
     purge: function(e) {
       e.preventDefault();
 
       var purge = this.selectedPurge();
-      if (!confirm(I18n.t('jst.purge.confirm', {
-        name: _.isFunction(purge.name) ? purge.name() : I18n.t('jst.purge.all')
-      }))) {
+      if (!confirm(I18n.t('jst.purge.confirm', { name: purge.name() }))) {
         return;
       }
 
       this.setBusy(true);
 
-      $.ajax({
-        url: purge.url(),
-        type: 'POST'
-      }).fail(_.bind(this.setBusy, this, false));
+      var newPurge = new App.models.Purge({
+        dataType: purge.get('dataType')
+      });
 
+      purge.save().done(_.bind(this.refresh, this)).fail(_.bind(this.setBusy, this, false));
+
+      purge.once('change', function() {
+        console.log('purge changed');
+      });
       purge.once('change', _.bind(this.setBusy, this, false));
     },
 
     setBusy: function(busy) {
       this.busy = busy;
-
-      if (busy && !this.ui.controls.find('.text-info').length) {
-        $('<p class="text-info" />').text(I18n.t('jst.purge.purging')).appendTo(this.ui.controls).hide().slideDown();
-      } else {
-        this.ui.controls.find('.text-info').slideUp('fast', function() {
-          $(this).remove();
-        });
-      }
-
       this.updateControls();
     },
 
+    setLoading: function(loading) {
+      if (loading) {
+        this.ui.jobs.html($('<em class="text-muted" />').text(I18n.t('jst.common.loading')));
+      } else {
+        this.ui.jobs.find('em').remove();
+      }
+    },
+
+    renderJobs: function() {
+      this.ui.jobs.text(Format.number(this.model.get('jobs')));
+    },
+
     updateControls: function() {
-      this.ui.purgeButton.attr('disabled', this.busy || App.maintenance || !this.selectedPurge().isPurgeable());
+      this.ui.purgeButton.attr('disabled', !!this.busy || !!App.maintenance || !this.selectedPurge().isPurgeable() || !!this.model.get('jobs'));
     },
 
     selectedPurge: function() {
-      return this.collection.findWhere({ id: this.ui.purgeSelect.val() }) || this.collection;
+      return this.collection.findWhere({ dataType: this.ui.purgeSelect.val() }) || this.model;
     },
 
     refresh: function() {
@@ -162,9 +162,18 @@ App.autoModule('purge', function() {
       }
       this.refreshing = true;
 
-      this.collection.fetch().always(_.bind(function() {
+      var promise = this.model.fetch({
+        data: {
+          info: true
+        }
+      });
+      
+      promise.always(_.bind(function() {
         this.refreshing = false;
+        this.triggerMethod('refreshed');
       }, this));
+
+      return promise;
     },
 
     renderLinks: function() {
@@ -173,12 +182,21 @@ App.autoModule('purge', function() {
 
     renderSelect: function() {
       this.collection.forEach(function(purge) {
-        $('<option />').val(purge.id).text(purge.name()).appendTo(this.ui.purgeSelect);
+        $('<option />').val(purge.get('dataType')).text(purge.name()).appendTo(this.ui.purgeSelect);
       }, this);
+      this.updateControls();
+    },
+
+    renderJobsRow: function() {
+      if (!!this.model.get('jobs')) {
+        this.ui.jobsRow.addClass('warning');
+      } else {
+        this.ui.jobsRow.removeClass('warning');
+      }
     }
   });
 
   this.addAutoInitializer(function(options) {
-    options.region.show(new Layout({ collection: new PurgeCollection(options.config) }));
+    options.region.show(new Layout({ model: new App.models.Purges() }));
   });
 });

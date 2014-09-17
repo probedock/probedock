@@ -15,10 +15,65 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class PurgeAction < ActiveRecord::Base
+  after_create :start_purge
 
-  scope :previous_for, ->(type) { where(data_type: type.to_s).order('created_at desc').limit(1).first }
+  DATA_TYPES = %w(tags testPayloads testRuns tickets)
+  JOBS = {
+    tags: PurgeTagsJob,
+    testPayloads: PurgeTestPayloadsJob,
+    testRuns: PurgeTestRunsJob,
+    tickets: PurgeTicketsJob
+  }
+  include Tableling::Model
 
-  validates :data_type, inclusion: { in: %w(tags test_payloads tickets) }
+  scope :last_for, ->(type) { where(data_type: type.to_s).order('created_at desc').limit(1) }
+
+  validates :data_type, inclusion: { in: DATA_TYPES }
   validates :number_purged, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :description, presence: true
+  validates :description, length: { maximum: 255 }
+
+  tableling do
+    default_view do
+      field :data_type, as: :dataType
+      field :number_purged, as: :numberPurged
+      field :description
+      field :start_at, as: :startAt
+      field :end_at, as: :endAt
+      field :created_at, as: :createdAt
+      field :completed_at, as: :completedAt
+
+      quick_search do |q,t|
+        term = "%#{t.downcase}%"
+        q.where 'LOWER(data_type) LIKE ? OR LOWER(description) LIKE ?', term, term
+      end
+
+      serialize_response do |res|
+        PurgeActionsRepresenter.new OpenStruct.new(res)
+      end
+    end
+  end
+
+  def data_lifespan
+    job = JOBS[data_type.to_sym]
+    job.respond_to?(:data_lifespan) ? job.data_lifespan : 0
+  end
+
+  def number_remaining
+    job_class.number_remaining
+  end
+
+  def self.job_class data_type
+    JOBS[data_type.to_sym]
+  end
+
+  private
+
+  def start_purge
+    Resque.enqueue job_class, self.id
+    Rails.application.events.fire "purge:#{data_type}", self
+  end
+
+  def job_class
+    self.class.job_class data_type
+  end
 end

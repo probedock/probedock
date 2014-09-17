@@ -16,26 +16,18 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'resque/plugins/workers/lock'
 
-class PurgeTagsJob
+class PurgeTagsJob < PurgeJob
   extend Resque::Plugins::Workers::Lock
-
   @queue = :purge
 
-  def self.perform
+  def self.perform_purge purge_action
+
+    start = Time.now
+
     n = unused_tags.delete_all
-    Rails.logger.info "Purged #{n} unused tags"
-    Rails.application.events.fire 'purge:tags'
-  end
+    complete_purge! purge_action, n
 
-  def self.purge_id
-    :tags
-  end
-
-  def self.purge_info
-    {
-      id: :tags,
-      total: unused_tags.count.length
-    }
+    Resque.logger.info "Purged #{n} unused tags in #{(Time.now - start).to_f.round 3}s"
   end
 
   # resque-workers-lock: lock workers to prevent concurrency
@@ -43,7 +35,13 @@ class PurgeTagsJob
     ProcessNextTestPayloadJob.name # use the same lock as payload processing
   end
 
+  def self.number_remaining
+    unused_tags.count
+  end
+
+  private
+
   def self.unused_tags
-    Tag.select('tags.id').joins('LEFT OUTER JOIN tags_test_infos ON tags.id = tags_test_infos.tag_id').where('tags_test_infos.test_info_id IS NULL').group('tags.id')
+    Tag.select('distinct tags.id').joins('LEFT OUTER JOIN tags_test_infos ON tags.id = tags_test_infos.tag_id').where('tags_test_infos.test_info_id IS NULL')
   end
 end

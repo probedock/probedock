@@ -37,6 +37,7 @@ App.module('models', function() {
   this.HalResource = Backbone.RelationalHalResource;
 
   this.defineHalCollection = function(model, options) {
+
     return this.HalResource.extend(_.extend({
       
       halEmbedded: [

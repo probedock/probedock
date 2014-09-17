@@ -20,7 +20,8 @@ class StatusData
   on('api:payload'){ touch_last_api_payload }
   on('test:deprecated', 'test:undeprecated'){ touch_last_test_deprecation }
   on('test:counters'){ touch_last_test_counters }
-  on('purge:payloads', 'purge:tags', 'purge:tickets'){ touch_last_purge }
+  # TODO: support regexp
+  on('purged:tags', 'purged:testPayloads', 'purged:testRuns', 'purged:tickets'){ touch_last_purge }
 
   def self.compute
 

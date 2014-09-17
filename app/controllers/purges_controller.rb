@@ -15,26 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class PurgesController < ApplicationController
-  PURGES = [ PurgeTagsJob, PurgeTicketsJob, PurgeTestPayloadsJob ]
   before_filter :authenticate_user!
   before_filter{ authorize! :manage, :app }
-  before_filter :check_maintenance, only: [ :purge, :purge_all ]
-
-  def index
-    render json: PURGES.collect(&:purge_info)
-  end
-
-  def purge
-
-    purge = PURGES.find{ |p| p.purge_id.to_s == params[:id].to_s }
-    raise ActiveRecord::RecordNotFound unless purge
-
-    Resque.enqueue purge
-    head :no_content
-  end
-
-  def purge_all
-    PURGES.each{ |p| Resque.enqueue p }
-    head :no_content
-  end
+  before_filter{ window_title << PurgeAction.model_name.human.pluralize.titleize }
 end

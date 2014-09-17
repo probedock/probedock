@@ -58,10 +58,7 @@ ROXCenter::Application.routes.draw do
   resource :account, only: [ :show ]
   resources :metrics, only: [ :index ]
   resources :projects, only: [ :index, :show ]
-  resources :purges, only: [ :index ] do
-    post '/', action: :purge_all, on: :collection, as: :start_all
-    post '/', action: :purge, on: :member, as: :start
-  end
+  resources :purges, only: [ :index ]
   resources :tags, only: [ :index ]
   resources :test_infos, path: :tests, only: [ :index, :show ]
   resources :test_payloads, path: :payloads, only: [ :show ]
@@ -106,6 +103,8 @@ ROXCenter::Application.routes.draw do
     resources :projects, only: [ :index, :create, :show, :update ]
 
     resources :project_versions, only: [ :index ]
+
+    resources :purges, only: [ :create, :index ]
 
     resources :tests, only: [ :index, :show ] do
       get :deprecation, on: :member

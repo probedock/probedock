@@ -30,6 +30,7 @@ class Settings::App < ActiveRecord::Base
   validates :tag_cloud_size, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
   validates :test_outdated_days, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
   validates :test_payloads_lifespan, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
+  validates :test_runs_lifespan, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
 
   def self.get
     first
@@ -44,5 +45,5 @@ class Settings::App < ActiveRecord::Base
 
   private
 
-  DATA_ATTRS = [ :ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days, :test_payloads_lifespan ]
+  DATA_ATTRS = [ :ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days, :test_payloads_lifespan, :test_runs_lifespan ]
 end

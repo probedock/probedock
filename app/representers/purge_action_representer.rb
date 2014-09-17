@@ -14,13 +14,24 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestDeprecation < ActiveRecord::Base
+class PurgeActionRepresenter < BaseRepresenter
 
-  belongs_to :test_info
-  belongs_to :category
-  belongs_to :user
+  representation do |purge,*args|
+    options = args.last.kind_of?(Hash) ? args.pop : {}
 
-  validates :user, presence: true
-  validates :test_info, presence: true
-  validates :deprecated, inclusion: { in: [ true, false ] }
+    #link 'self', api_uri(:purge, id: purge.id)
+
+    %w(data_type number_purged remaining_jobs description).each do |name|
+      property name.camelize(:lower), purge.send(name) if purge.send(name).present?
+    end
+
+    if options[:info]
+      property :dataLifespan, purge.data_lifespan
+      property :numberRemaining, purge.number_remaining
+    end
+
+    %w(created_at completed_at).each do |name|
+      property name.camelize(:lower), purge.send(name).to_ms if purge.send(name).present?
+    end
+  end
 end

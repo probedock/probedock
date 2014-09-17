@@ -17,6 +17,7 @@
 
 module EventEmitter
 
+  # TODO: support regexp
   def on *events, &block
     @vent ||= { nil => [] }
     @vent[nil] << block if events.empty?

@@ -28,4 +28,10 @@ RoxHook.hooks << CacheReportJobForUi
 RoxHook.hooks << CountDeprecationJob
 RoxHook.hooks << CountTestsJob
 
+RoxHook.hooks << PurgeAllJob
+RoxHook.hooks << PurgeTagsJob
+RoxHook.hooks << PurgeTestPayloadsJob
+RoxHook.hooks << PurgeTestRunsJob
+RoxHook.hooks << PurgeTicketsJob
+
 RoxHook.setup!

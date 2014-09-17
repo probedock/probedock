@@ -14,24 +14,35 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class SettingsController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter{ authorize! :manage, :settings }
-  before_filter :check_maintenance, only: [ :update ]
+class Api::PurgesController < Api::ApiController
+  before_filter{ authorize! :manage, PurgeAction }
 
-  def show
-    render json: Settings::App.get
+  def index
+    if params[:info].present?
+
+      purges = PurgeAction::DATA_TYPES.collect do |type|
+        PurgeAction.last_for(type).first || PurgeAction.new(data_type: type)
+      end
+
+      render_api PurgeActionsRepresenter.new(OpenStruct.new(data: purges, total: purges.length), info: true)
+      return
+    end
+
+    render_api PurgeAction.tableling.process(params)
   end
 
-  def update
-    settings = Settings::App.get
-    settings.update_attributes setting_params
-    render json: settings.tap(&:reload)
+  def create
+    @purge = PurgeAction.new parse_json_purge
+    if @purge.errors.empty? and @purge.save
+      render_api PurgeActionRepresenter.new(@purge)
+    else
+      render_api_model_errors @purge
+    end
   end
 
   private
 
-  def setting_params
-    params.require(:setting).permit(:ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days, :test_payloads_lifespan, :test_runs_lifespan)
+  def parse_json_purge
+    parse_json_model 'dataType'
   end
 end

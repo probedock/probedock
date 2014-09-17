@@ -9,10 +9,13 @@
     %em Note:
     this must currently be triggered manually.
 %table.table.table-hover.table-bordered
+  %tfoot
+    %tr.jobs
+      %th= I18n.t('jst.purge.jobsTitle')
+      %td
   %tbody
 .panel-footer
   %form.form-inline{ role: 'form' }
     %button.purge.btn.btn-warning{ type: 'submit' }= I18n.t('jst.purge.purge')
     .form-group
       %select.purgeTarget.form-control
-        %option{ value: '' }= I18n.t('jst.purge.all')

@@ -18,9 +18,11 @@ class CreatePurgeActions < ActiveRecord::Migration
   def change
     create_table :purge_actions do |t|
       t.string :data_type, null: false, limit: 20
-      t.integer :number_purged, null: false
-      t.string :description, null: false
-      t.datetime :created_at, null: false
+      t.integer :number_purged, null: false, default: 0
+      t.integer :remaining_jobs, null: false, default: 1
+      t.string :description
+      t.datetime :completed_at
+      t.timestamps null: false
     end
   end
 end

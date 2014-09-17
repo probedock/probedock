@@ -1,0 +1,8 @@
+%table.table.table-striped.table-hover
+  %thead
+    %tr
+      %th.dataType= I18n.t('jst.models.purge.dataType')
+      %th.numberPurged.sorting{ :'data-field' => 'numberPurged' }= I18n.t('jst.models.purge.numberPurged')
+      %th.createdAt.sorting{ :'data-field' => 'createdAt' }= I18n.t('jst.models.purge.createdAt')
+      %th.duration= I18n.t('jst.models.purge.duration')
+  %tbody

@@ -81,18 +81,20 @@ this.Translations.en =
     lifetimeInstructions: "For the former, the lifetimes are defined in the"
     settingsLink: "settings."
     purge: "Purge"
-    all: "All"
     none: "none"
-    confirm: "Are you sure you want to purge __name__ old data? This operation cannot be canceled."
-    purging: "Purging data..."
+    confirm: "Are you sure you want to purge unused/outdated __name__? This operation cannot be canceled."
+    loading: "Loading..."
+    jobsTitle: "Jobs"
     description:
       outdated: "__n__ older than __lifespan__"
       orphan: "__n__ unused"
     info:
-      payloads:
-        name: "Test Payloads"
       tags:
         name: "Tags"
+      testPayloads:
+        name: "Test Payloads"
+      testRuns:
+        name: "Test Runs"
       tickets:
         name: "Tickets"
   statusModule:
@@ -279,6 +281,8 @@ this.Translations.en =
     testOutdatedDaysInstructions: "tests will be marked as outdated after this number of days (1 or more)"
     testPayloadsLifespan: "Lifespan of Test Payloads"
     testPayloadsLifespanInstructions: "payloads will be purged after this number of days (1 or more)"
+    testRunsLifespan: "Lifespan of Test Runs"
+    testRunsLifespanInstructions: "test results will be purged after this number of days (1 or more)"
     ticketingSystemUrl: "Ticketing System URL"
     save: "Save"
     error: "Could not save settings"
@@ -297,6 +301,9 @@ this.Translations.en =
     generalError: "An error occurred while contacting the server."
   projectsTable:
     empty: "No projects found."
+  purgesTable:
+    empty: "No data was purged recently."
+    inProgress: "In progress..."
   keyGenerator:
     generate: "Generate"
     release: "Release unused keys"
@@ -414,3 +421,9 @@ this.Translations.en =
     link:
       name: "Name"
       url: "URL"
+    purge:
+      dataType: "Data type"
+      numberPurged: "Number purged"
+      createdAt: "Scheduled at"
+      completedAt: "Completed at"
+      duration: "Duration"

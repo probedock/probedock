@@ -17,26 +17,27 @@
 require 'resque/plugins/workers/lock'
 
 class PurgeJob
-  # TODO: use resque-throttle to ensure this job can only be queued once per hour
-  extend Resque::Plugins::Workers::Lock
-
-  @queue = :purge
-
-  def self.perform
-    Resque.enqueue PurgeTagsJob if last_purge_outdated(:tags) && PurgeTagsJob.unused_tags.count >= 1
-    Resque.enqueue PurgeTicketsJob if last_purge_outdated(:tickets) && PurgeTicketsJob.unused_tickets.count >= 1
-    Resque.enqueue PurgeTestPayloadsJob if last_purge_outdated(:test_payloads) && PurgeTestPayloadsJob.outdated_payloads.count >= 1
-  end
+  include RoxHook
 
   # resque-workers-lock: lock workers to prevent concurrency
   def self.lock_workers *args
     name # the same lock (class name) is used for all workers
   end
 
+  def self.perform purge_action_id
+    PurgeAction.transaction do
+      purge_action = PurgeAction.find purge_action_id
+      perform_purge purge_action
+      Rails.application.events.fire "purged:#{purge_action.data_type}"
+    end
+  end
+
   private
 
-  def last_purge_outdated data_type
-    previous_purge = PurgeAction.previous_for data_type
-    previous_purge.blank? || Time.now - previous_purge.created_at > 60.days
+  def self.complete_purge! purge, number_purged
+    purge.number_purged = number_purged
+    purge.completed_at = Time.now
+    purge.remaining_jobs = 0
+    purge.save!
   end
 end

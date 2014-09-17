@@ -17,3 +17,7 @@
 # config/initializers/redis.rb must be loaded first
 Resque.redis = $redis_db
 Resque.redis.namespace = 'rox:resque'
+
+resque_log_file = Rails.root.join 'log', "resque.#{Rails.env}.log"
+Resque.logger = Logger.new resque_log_file, 3, 1048576
+Resque.logger.level = Logger::INFO

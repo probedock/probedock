@@ -34,7 +34,7 @@ class GeneralData
 
   # TODO: expire db size cache every X minutes rather than for every payload
   include RoxHook
-  on('api:payload'){ $redis.hdel CACHE_KEY, [ :db_main, :db_cache, :count_tests, :count_runs, :count_results ] }
+  on('api:payload', 'purged:testRuns'){ $redis.hdel CACHE_KEY, [ :db_main, :db_cache, :count_tests, :count_runs, :count_results ] }
   on('user:created', 'user:destroyed'){ $redis.hdel CACHE_KEY, [ :count_users ] }
   on('test:deprecated', 'test:undeprecated'){ $redis.hdel CACHE_KEY, [ :tests_failing, :tests_inactive, :tests_outdated, :tests_deprecated ] }
   on('settings:app:saved'){ $redis.hdel CACHE_KEY, [ :tests_outdated, :tests_outdatedDays ] }

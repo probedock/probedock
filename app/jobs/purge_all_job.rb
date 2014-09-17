@@ -14,13 +14,24 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestDeprecation < ActiveRecord::Base
+class PurgeAllJob
+  @queue = :purge
 
-  belongs_to :test_info
-  belongs_to :category
-  belongs_to :user
+  include RoxHook
+  on('api:payload'){ |payload| enqueue_throttled }
 
-  validates :user, presence: true
-  validates :test_info, presence: true
-  validates :deprecated, inclusion: { in: [ true, false ] }
+  def self.enqueue_throttled
+    available = $redis.set 'purge:lock', Time.now.to_i, ex: 3600, nx: true
+    Resque.enqueue self if available
+    available
+  end
+
+  def self.perform
+    PurgeAction::DATA_TYPES.each do |data_type|
+      job_class = PurgeAction.job_class data_type
+      if job_class.number_remaining >= 1
+        PurgeAction.new(data_type: data_type).save!
+      end
+    end
+  end
 end

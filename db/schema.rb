@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140912140154) do
+ActiveRecord::Schema.define(version: 20140917144328) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20140912140154) do
     t.integer  "tag_cloud_size",         null: false
     t.integer  "test_outdated_days",     null: false
     t.integer  "test_payloads_lifespan", null: false
+    t.integer  "test_runs_lifespan",     null: false
   end
 
   create_table "categories", force: true do |t|
@@ -84,10 +85,13 @@ ActiveRecord::Schema.define(version: 20140912140154) do
   add_index "projects", ["metric_key"], name: "index_projects_on_metric_key", unique: true, using: :btree
 
   create_table "purge_actions", force: true do |t|
-    t.string   "data_type",     limit: 20, null: false
-    t.integer  "number_purged",            null: false
-    t.string   "description",              null: false
-    t.datetime "created_at",               null: false
+    t.string   "data_type",      limit: 20,             null: false
+    t.integer  "number_purged",             default: 0, null: false
+    t.integer  "remaining_jobs",            default: 1, null: false
+    t.string   "description"
+    t.datetime "completed_at"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
   end
 
   create_table "tags", force: true do |t|
@@ -127,15 +131,14 @@ ActiveRecord::Schema.define(version: 20140912140154) do
   add_index "test_counters", ["user_id"], name: "test_counters_user_id_fk", using: :btree
 
   create_table "test_deprecations", force: true do |t|
-    t.boolean  "deprecated",     null: false
-    t.integer  "test_result_id", null: false
-    t.integer  "test_info_id",   null: false
-    t.integer  "user_id",        null: false
-    t.datetime "created_at",     null: false
+    t.boolean  "deprecated",   null: false
+    t.integer  "test_info_id", null: false
+    t.integer  "user_id",      null: false
+    t.datetime "created_at",   null: false
+    t.integer  "category_id"
   end
 
   add_index "test_deprecations", ["test_info_id"], name: "test_deprecations_test_info_id_fk", using: :btree
-  add_index "test_deprecations", ["test_result_id"], name: "test_deprecations_test_result_id_fk", using: :btree
   add_index "test_deprecations", ["user_id"], name: "test_deprecations_user_id_fk", using: :btree
 
   create_table "test_infos", force: true do |t|
@@ -312,13 +315,12 @@ ActiveRecord::Schema.define(version: 20140912140154) do
   add_foreign_key "test_counters", "users", name: "test_counters_user_id_fk"
 
   add_foreign_key "test_deprecations", "test_infos", name: "test_deprecations_test_info_id_fk"
-  add_foreign_key "test_deprecations", "test_results", name: "test_deprecations_test_result_id_fk"
   add_foreign_key "test_deprecations", "users", name: "test_deprecations_user_id_fk"
 
   add_foreign_key "test_infos", "categories", name: "test_infos_category_id_fk"
   add_foreign_key "test_infos", "projects", name: "test_infos_project_id_fk"
   add_foreign_key "test_infos", "test_deprecations", name: "test_infos_deprecation_id_fk", column: "deprecation_id"
-  add_foreign_key "test_infos", "test_results", name: "test_infos_effective_result_id_fk", column: "effective_result_id"
+  add_foreign_key "test_infos", "test_results", name: "test_infos_effective_result_id_fk", column: "effective_result_id", dependent: :nullify
   add_foreign_key "test_infos", "users", name: "test_infos_author_id_fk", column: "author_id"
 
   add_foreign_key "test_infos_tickets", "test_infos", name: "test_infos_tickets_test_info_id_fk"
@@ -328,16 +330,16 @@ ActiveRecord::Schema.define(version: 20140912140154) do
   add_foreign_key "test_keys", "users", name: "test_keys_user_id_fk"
 
   add_foreign_key "test_keys_payloads", "test_keys", name: "test_keys_payloads_test_key_id_fk"
-  add_foreign_key "test_keys_payloads", "test_payloads", name: "test_keys_payloads_test_payload_id_fk"
+  add_foreign_key "test_keys_payloads", "test_payloads", name: "test_keys_payloads_test_payload_id_fk", dependent: :delete
 
-  add_foreign_key "test_payloads", "test_runs", name: "test_payloads_test_run_id_fk"
+  add_foreign_key "test_payloads", "test_runs", name: "test_payloads_test_run_id_fk", dependent: :delete
   add_foreign_key "test_payloads", "users", name: "test_payloads_user_id_fk"
 
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"
   add_foreign_key "test_results", "categories", name: "test_results_previous_category_id_fk", column: "previous_category_id"
   add_foreign_key "test_results", "project_versions", name: "test_results_project_version_id_fk"
   add_foreign_key "test_results", "test_infos", name: "test_results_test_info_id_fk"
-  add_foreign_key "test_results", "test_runs", name: "test_results_test_run_id_fk"
+  add_foreign_key "test_results", "test_runs", name: "test_results_test_run_id_fk", dependent: :delete
   add_foreign_key "test_results", "users", name: "test_results_runner_id_fk", column: "runner_id"
 
   add_foreign_key "test_runs", "users", name: "test_runs_runner_id_fk", column: "runner_id"
@@ -346,7 +348,7 @@ ActiveRecord::Schema.define(version: 20140912140154) do
 
   add_foreign_key "user_settings", "projects", name: "user_settings_last_test_key_project_id_fk", column: "last_test_key_project_id"
 
-  add_foreign_key "users", "test_runs", name: "users_last_run_id_fk", column: "last_run_id"
+  add_foreign_key "users", "test_runs", name: "users_last_run_id_fk", column: "last_run_id", dependent: :nullify
   add_foreign_key "users", "user_settings", name: "users_settings_id_fk", column: "settings_id"
 
 end

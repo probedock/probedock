@@ -70,7 +70,7 @@ class Api::TestsController < Api::ApiController
       memo
     end
 
-    tests = TestInfo.for_projects_and_keys(keys_by_project).includes(:project, :key).to_a
+    tests = TestInfo.for_projects_and_keys(keys_by_project).includes([ :project, :key, { effective_result: :category } ]).to_a
 
     test_hrefs_data.each_with_index do |data,i|
       raise ApiError.new(%/No test found at URI "#{test_hrefs[i]}"/, name: :unknownResource, status: :unprocessable_entity) unless tests.find{ |t| t.to_param == data[:param] }
@@ -85,13 +85,13 @@ class Api::TestsController < Api::ApiController
   end
 
   def deprecate
-    test = @test.includes(:deprecation).first!
+    test = @test.includes([ :deprecation, { effective_result: :category } ]).first!
     return render json: TestDeprecationRepresenter.new(test.deprecation) if test.deprecated?
     render json: TestDeprecationRepresenter.new(perform_deprecations(true, test).first), status: :created
   end
 
   def undeprecate
-    test = @test.first!
+    test = @test.includes(effective_result: :category).first!
     return head :no_content unless test.deprecated?
     perform_deprecations false, test
     head :no_content
@@ -109,7 +109,7 @@ class Api::TestsController < Api::ApiController
         deprecation = TestDeprecation.new
         deprecation.deprecated = deprecate
         deprecation.test_info = test
-        deprecation.test_result = test.effective_result
+        deprecation.category = test.effective_result.present? ? test.effective_result.category : test.category
         deprecation.user = user
 
         deprecation.save!
