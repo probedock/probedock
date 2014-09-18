@@ -16,8 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class AdminController < ApplicationController
   before_filter :authenticate_user!
-  before_filter(only: [ :index ]){ authorize! :manage, :app }
-  before_filter(except: [ :index ]){ authorize! :manage, :settings }
+  before_filter{ authorize! :manage, :app }
 
   def index
     window_title << t('admin.index.title')

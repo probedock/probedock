@@ -18,6 +18,7 @@ module SpecApiHelper
   MEDIA_TYPES = {
     errors: 'application/vnd.lotaris.rox.errors+json',
     payload_v1: 'application/vnd.lotaris.rox.payload.v1+json',
+    rox_payload_v1: 'application/vnd.lotaris.rox.payload.v1+json',
     markdown: 'text/x-markdown'
   }
 

@@ -35,15 +35,12 @@ class PurgeAction < ActiveRecord::Base
     default_view do
       field :data_type, as: :dataType
       field :number_purged, as: :numberPurged
-      field :description
-      field :start_at, as: :startAt
-      field :end_at, as: :endAt
       field :created_at, as: :createdAt
       field :completed_at, as: :completedAt
 
       quick_search do |q,t|
         term = "%#{t.downcase}%"
-        q.where 'LOWER(data_type) LIKE ? OR LOWER(description) LIKE ?', term, term
+        q.where 'LOWER(data_type) LIKE ?', term
       end
 
       serialize_response do |res|
