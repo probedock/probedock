@@ -83,10 +83,6 @@ App.autoModule('purge', function() {
       'change': 'updateControls'
     },
 
-    appEvents: {
-      'maintenance:changed': 'updateControls'
-    },
-
     initialize: function() {
       this.collection = this.model.embedded('item');
     },
@@ -96,14 +92,14 @@ App.autoModule('purge', function() {
       this.renderLinks();
       this.updateControls();
 
-      App.bindEvents(this);
       App.watchStatus(this, this.refresh, { only: 'lastPurge' });
 
       this.setLoading(true);
-      this.refresh().done(_.bind(this.setLoading, this, false)).done(_.bind(this.renderSelect, this));
+      this.refresh().done(_.bind(this.setLoading, this, false)).done(_.bind(this.renderSelect, this)).fail(_.bind(this.showLoadingError, this));
     },
 
     onRefreshed: function() {
+      this.setBusy(false);
       this.renderJobs();
       this.renderJobsRow();
       this.updateControls();
@@ -118,17 +114,7 @@ App.autoModule('purge', function() {
       }
 
       this.setBusy(true);
-
-      var newPurge = new App.models.Purge({
-        dataType: purge.get('dataType')
-      });
-
       purge.save().done(_.bind(this.refresh, this)).fail(_.bind(this.setBusy, this, false));
-
-      purge.once('change', function() {
-        console.log('purge changed');
-      });
-      purge.once('change', _.bind(this.setBusy, this, false));
     },
 
     setBusy: function(busy) {
@@ -144,12 +130,16 @@ App.autoModule('purge', function() {
       }
     },
 
+    showLoadingError: function() {
+      this.ui.jobs.html($('<em class="text-danger" />').text(I18n.t('jst.purge.loadingError')));
+    },
+
     renderJobs: function() {
       this.ui.jobs.text(Format.number(this.model.get('jobs')));
     },
 
     updateControls: function() {
-      this.ui.purgeButton.attr('disabled', !!this.busy || !!App.maintenance || !this.selectedPurge().isPurgeable() || !!this.model.get('jobs'));
+      this.ui.purgeButton.attr('disabled', !!this.busy || !this.selectedPurge().isPurgeable() || !!this.model.get('jobs'));
     },
 
     selectedPurge: function() {
@@ -167,7 +157,7 @@ App.autoModule('purge', function() {
           info: true
         }
       });
-      
+
       promise.always(_.bind(function() {
         this.refreshing = false;
         this.triggerMethod('refreshed');
@@ -181,9 +171,12 @@ App.autoModule('purge', function() {
     },
 
     renderSelect: function() {
+
       this.collection.forEach(function(purge) {
         $('<option />').val(purge.get('dataType')).text(purge.name()).appendTo(this.ui.purgeSelect);
       }, this);
+      this.ui.purgeSelect.attr('disabled', false);
+
       this.updateControls();
     },
 

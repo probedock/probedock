@@ -58,6 +58,7 @@ en:
       projects: "Projects"
       admin: "Admin"
       controls: "Control Center"
+      purges: "Purged Data"
     docs:
       overview: "Overview"
       changelog: "Changelog"

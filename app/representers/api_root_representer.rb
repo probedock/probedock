@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class ApiRootRepresenter < BaseRepresenter
 
-  representation do
+  representation do |ability|
 
     curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:root:{rel}", templated: true
 
@@ -30,6 +30,11 @@ class ApiRootRepresenter < BaseRepresenter
     link 'v1:testPayloads', api_uri(:test_payloads), title: t('.root.payloads'), type: media_type(:rox_payload_v1)
     link 'v1:testRuns', "#{api_uri(:test_runs)}{?latest,groups[]*,runners[]*}", title: t('.root.test_runs'), templated: true
     link 'v1:users', api_uri(:users), title: t('.root.users')
+
+    # admin
+    if ability.can? :manage, :app
+      link 'v1:purges', api_uri(:purges), title: t('.root.purges')
+    end
 
     # legacy
     link 'v1:projects', api_uri(:legacy_projects)

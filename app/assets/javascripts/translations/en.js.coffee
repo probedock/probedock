@@ -83,7 +83,7 @@ this.Translations.en =
     purge: "Purge"
     none: "none"
     confirm: "Are you sure you want to purge unused/outdated __name__? This operation cannot be canceled."
-    loading: "Loading..."
+    loadingError: "Could not load data"
     jobsTitle: "Jobs"
     description:
       outdated: "__n__ older than __lifespan__"

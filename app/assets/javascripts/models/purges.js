@@ -18,8 +18,9 @@ App.module('models', function() {
 
   this.Purge = this.HalResource.extend({
 
-    // TODO: use HAL link
-    url: '/api/purges',
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', 'v1:purges' ]);
+    },
 
     name: function() {
       return I18n.t('jst.purge.info.' + this.get('dataType') + '.name');
@@ -32,8 +33,9 @@ App.module('models', function() {
 
   this.Purges = this.defineHalCollection(this.Purge, {
 
-    // TODO: use HAL link
-    url: '/api/purges',
+    halUrl: function() {
+      return App.apiRoot.fetchHalUrl([ 'self', 'v1:purges' ]);
+    },
 
     isPurgeable: function() {
       return this.embedded('item').some(function(purge) {

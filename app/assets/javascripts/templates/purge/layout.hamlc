@@ -5,9 +5,6 @@
     = I18n.t('jst.purge.instructions')
     = I18n.t('jst.purge.lifetimeInstructions')
     %a.settingsLink= I18n.t('jst.purge.settingsLink')
-  %p
-    %em Note:
-    this must currently be triggered manually.
 %table.table.table-hover.table-bordered
   %tfoot
     %tr.jobs
@@ -18,4 +15,4 @@
   %form.form-inline{ role: 'form' }
     %button.purge.btn.btn-warning{ type: 'submit' }= I18n.t('jst.purge.purge')
     .form-group
-      %select.purgeTarget.form-control
+      %select.purgeTarget.form-control{ disabled: true }
