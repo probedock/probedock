@@ -18,7 +18,7 @@ class PurgeAction < ActiveRecord::Base
   after_create :start_purge
 
   DATA_TYPES = %w(tags testPayloads testRuns tickets)
-  JOBS = {
+  JOB_CLASSES = {
     tags: PurgeTagsJob,
     testPayloads: PurgeTestPayloadsJob,
     testRuns: PurgeTestRunsJob,
@@ -30,7 +30,6 @@ class PurgeAction < ActiveRecord::Base
 
   validates :data_type, inclusion: { in: DATA_TYPES }
   validates :number_purged, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :description, length: { maximum: 255 }
 
   tableling do
     default_view do
@@ -54,7 +53,7 @@ class PurgeAction < ActiveRecord::Base
   end
 
   def data_lifespan
-    job = JOBS[data_type.to_sym]
+    job = JOB_CLASSES[data_type.to_sym]
     job.respond_to?(:data_lifespan) ? job.data_lifespan : 0
   end
 
@@ -63,7 +62,7 @@ class PurgeAction < ActiveRecord::Base
   end
 
   def self.job_class data_type
-    JOBS[data_type.to_sym]
+    JOB_CLASSES[data_type.to_sym]
   end
 
   private

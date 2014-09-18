@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140917144328) do
+ActiveRecord::Schema.define(version: 20140918082032) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -85,13 +85,11 @@ ActiveRecord::Schema.define(version: 20140917144328) do
   add_index "projects", ["metric_key"], name: "index_projects_on_metric_key", unique: true, using: :btree
 
   create_table "purge_actions", force: true do |t|
-    t.string   "data_type",      limit: 20,             null: false
-    t.integer  "number_purged",             default: 0, null: false
-    t.integer  "remaining_jobs",            default: 1, null: false
-    t.string   "description"
+    t.string   "data_type",     limit: 20,             null: false
+    t.integer  "number_purged",            default: 0, null: false
     t.datetime "completed_at"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   create_table "tags", force: true do |t|

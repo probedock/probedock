@@ -14,24 +14,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class PurgeActionRepresenter < BaseRepresenter
+FactoryGirl.define do
 
-  representation do |purge,*args|
-    options = args.last.kind_of?(Hash) ? args.pop : {}
+  factory :purge_action do
+    data_type 'tags'
+    created_at{ Time.now - 1.day }
 
-    #link 'self', api_uri(:purge, id: purge.id)
-
-    %w(data_type number_purged).each do |name|
-      property name.camelize(:lower), purge.send(name) if purge.send(name).present?
-    end
-
-    if options[:info]
-      property :dataLifespan, purge.data_lifespan
-      property :numberRemaining, purge.number_remaining
-    end
-
-    %w(created_at completed_at).each do |name|
-      property name.camelize(:lower), purge.send(name).to_ms if purge.send(name).present?
+    factory :completed_purge_action do
+      number_purged{ rand(1000) + 1 }
+      completed_at{ created_at + (rand(10) + 1).minutes }
     end
   end
 end

@@ -37,7 +37,6 @@ class PurgeJob
   def self.complete_purge! purge, number_purged
     purge.number_purged = number_purged
     purge.completed_at = Time.now
-    purge.remaining_jobs = 0
     purge.save!
   end
 end
