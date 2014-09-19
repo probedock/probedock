@@ -1,3 +1,4 @@
+* use foreigner-matcher to test foreign keys
 * action to purge all data in purge control panel
 * purge outdated tests
 * purge test deprecations

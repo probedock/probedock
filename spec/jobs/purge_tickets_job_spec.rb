@@ -35,14 +35,7 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
     end
   end
 
-  describe ".purge_id" do
-
-    it "should return :tickets", rox: { key: 'f11c203ab2ed' } do
-      expect(subject.purge_id).to eq(:tickets)
-    end
-  end
-
-  describe ".purge_info" do
+  describe ".number_remaining" do
     let(:user){ create :user }
 
     it "should count unused tickets", rox: { key: '6ff8978e1ab2' } do
@@ -50,11 +43,11 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
       tickets = Array.new(5){ |i| create :ticket }
       tests = Array.new(3){ |i| create :test, key: create(:test_key, user: user), tickets: tickets[i % 2, 1] }
 
-      expect(subject.purge_info).to eq({ id: :tickets, total: 3 })
+      expect(subject.number_remaining).to eq(3)
     end
 
     it "should indicate that there is nothing to purge", rox: { key: '68f742d42f71' } do
-      expect(subject.purge_info).to eq({ id: :tickets, total: 0 })
+      expect(subject.number_remaining).to eq(0)
     end
   end
 
@@ -62,21 +55,31 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
     let(:user){ create :user }
     let(:tickets){ Array.new(5){ |i| create :ticket } }
     let!(:tests){ Array.new(3){ |i| create :test, key: create(:test_key, user: user), tickets: tickets[i % 2, 1] } }
-    before(:each){ allow(Rails.application.events).to receive(:fire).and_return(nil) }
+    let(:purge_action){ create :purge_action, data_type: 'tickets', created_at: 2.minutes.ago }
+
+    before :each do
+      allow(Rails.logger).to receive(:info)
+      allow(Rails.application.events).to receive(:fire)
+      subject.perform purge_action.id
+    end
 
     it "should delete unused tickets", rox: { key: '0fa08cad2703' } do
-      subject.perform
       expect(Ticket.all.to_a).to match_array(tickets[0, 2])
+      expect_purge_completed purge_action, 3
     end
 
     it "should log the number of purged tickets", rox: { key: '7326cf8ae42d' } do
-      expect(Rails.logger).to receive(:info).with("Purged 3 unused tickets")
-      subject.perform
+      expect(Rails.logger).to have_received(:info).with(/\APurged 3 unused tickets in [0-9\.]+s\Z/)
     end
 
-    it "should fire the purge:tickets event", rox: { key: 'ba212612ce39' } do
-      expect(Rails.application.events).to receive(:fire).with('purge:tickets')
-      subject.perform
+    it "should fire the purged:tickets event", rox: { key: 'ba212612ce39' } do
+      expect(Rails.application.events).to have_received(:fire).with('purged:tickets')
     end
+  end
+
+  def expect_purge_completed purge_action, number_purged
+    purge_action.reload
+    expect(purge_action.completed_at).not_to be_nil
+    expect(purge_action.number_purged).to eq(number_purged)
   end
 end

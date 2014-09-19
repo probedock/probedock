@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class PurgeActionsRepresenter < BaseRepresenter
-  collection_representation :purges, PurgeActionRepresenter do |res|
-    property 'jobs', Resque.size(:purge)
+  collection_representation :purges, PurgeActionRepresenter do |res,*args|
+    options = args.extract_options!
+    property 'jobs', Resque.size(:purge) if options[:info]
   end
 end

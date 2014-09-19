@@ -24,7 +24,7 @@ class PurgeTestRunsJob < PurgeJob
     n = outdated_test_runs(Settings.app.test_runs_lifespan).delete_all
     complete_purge! purge_action, n
 
-    Resque.logger.info "Purged #{n} outdated test runs in #{(Time.now - start).to_f.round 3}s"
+    Rails.logger.info "Purged #{n} outdated test runs in #{(Time.now - start).to_f.round 3}s"
   end
 
   def self.data_lifespan

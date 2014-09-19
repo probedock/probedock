@@ -29,11 +29,18 @@ describe PurgeActionsRepresenter, rox: { tags: :unit } do
       create(:purge_action, data_type: 'tags', created_at: Time.now - 1.hour)
     ]
   end
-  let(:options){ { total: purge_actions.length, page: 1 } }
-  subject{ PurgeActionsRepresenter.new(OpenStruct.new(options.merge(data: purge_actions))).serializable_hash }
+  let(:data){ { total: purge_actions.length, page: 1 } }
+  let(:options){ {} }
+  subject{ PurgeActionsRepresenter.new(OpenStruct.new(data.merge(data: purge_actions)), options).serializable_hash }
 
   it(nil, rox: { key: '974d3e7f1d16' }){ should have_no_curie }
   it(nil, rox: { key: '09d8b0f214f3' }){ should hyperlink_to('self', uri(:api_purges, locale: nil)) }
-  it(nil, rox: { key: '731863169800' }){ should have_only_properties(total: 3, page: 1, jobs: 42) }
+  it(nil, rox: { key: '731863169800' }){ should have_only_properties(total: 3, page: 1) }
   it(nil, rox: { key: 'a14c557251b5' }){ should have_embedded('item', purge_actions.collect{ |a| PurgeActionRepresenter.new(a).serializable_hash }) }
+
+  describe "with the :info option" do
+    let(:data){ super().merge page: nil }
+    let(:options){ super().merge info: true }
+    it(nil, rox: { key: '354b5552da1b' }){ should have_only_properties(total: 3, jobs: 42) }
+  end
 end

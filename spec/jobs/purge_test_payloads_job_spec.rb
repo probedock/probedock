@@ -30,17 +30,8 @@ describe PurgeTestPayloadsJob, rox: { tags: :unit } do
     expect(described_class.instance_variable_get('@queue').to_sym).to eq(PURGE_TEST_PAYLOADS_JOB_QUEUE)
   end
 
-  describe ".purge_id" do
-
-    it "should return :payloads", rox: { key: '262e65b1c44a' } do
-      expect(described_class.purge_id).to eq(:payloads)
-    end
-  end
-
-  describe ".purge_info" do
+  describe ".number_remaining" do
     let(:user){ create :user }
-    let(:test_payloads_lifespan){ 5 }
-    before(:each){ allow(Settings).to receive(:app).and_return(double(test_payloads_lifespan: test_payloads_lifespan)) }
 
     it "should count processed payloads", rox: { key: '8d23f622559e' } do
 
@@ -50,11 +41,19 @@ describe PurgeTestPayloadsJob, rox: { tags: :unit } do
       create :processed_test_payload, user: user, received_at: 6.days.ago
       create :processed_test_payload, user: user, received_at: 7.days.ago
 
-      expect(described_class.purge_info).to eq({ id: :payloads, total: 2, lifespan: test_payloads_lifespan * 24 * 3600 * 1000 })
+      expect(described_class.number_remaining).to eq(2)
     end
 
     it "should indicate that there is nothing to purge", rox: { key: 'f6505ee9c327' } do
-      expect(described_class.purge_info).to eq({ id: :payloads, total: 0, lifespan: test_payloads_lifespan * 24 * 3600 * 1000 })
+      expect(described_class.number_remaining).to eq(0)
+    end
+  end
+
+  describe ".data_lifespan" do
+    before(:each){ allow(Settings).to receive(:app).and_return(double(test_payloads_lifespan: 5)) }
+
+    it "should return the lifespan of test payloads", rox: { key: '4219cc9c2db0' } do
+      expect(described_class.data_lifespan).to eq(5)
     end
   end
 
@@ -69,20 +68,24 @@ describe PurgeTestPayloadsJob, rox: { tags: :unit } do
         create(:processed_test_payload, user: user, received_at: 7.days.ago)
       ]
     end
+    let!(:purge_action){ create :purge_action, data_type: 'testPayloads', created_at: 2.minutes.ago }
+
+    before :each do
+      allow(Rails.logger).to receive(:info)
+      allow(Rails.application.events).to receive(:fire)
+      subject.perform purge_action.id
+    end
 
     it "should delete outdated payloads", rox: { key: '83a4f8a7541b' } do
-      subject.perform
       expect(TestPayload.all.to_a).to match_array(payloads[0, 3])
     end
 
     it "should log the number of purged payloads", rox: { key: '7789eb6d1618' } do
-      expect(Rails.logger).to receive(:info).with("Purged 2 outdated test payloads")
-      subject.perform
+      expect(Rails.logger).to have_received(:info).with(/\APurged 2 outdated test payloads in [0-9\.]+s\Z/)
     end
 
-    it "should fire the purge:payloads event", rox: { key: '9cae911112e2' } do
-      expect(Rails.application.events).to receive(:fire).with('purge:payloads')
-      subject.perform
+    it "should fire the purged:payloads event", rox: { key: '9cae911112e2' } do
+      expect(Rails.application.events).to have_received(:fire).with('purged:testPayloads')
     end
   end
 end

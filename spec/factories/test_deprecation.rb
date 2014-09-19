@@ -20,7 +20,7 @@ FactoryGirl.define do
 
     deprecated true
     test_info
-    test_result{ test_info.effective_result }
+    category{ test_info.category }
     user{ test_info.author }
     created_at{ Time.now }
   end

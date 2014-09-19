@@ -34,7 +34,7 @@ describe Api::TestsController do
       test.deprecation.tap do |deprecation|
         expect(deprecation.deprecated).to be(true)
         expect(deprecation.test_info).to eq(test)
-        expect(deprecation.test_result).to eq(test.effective_result)
+        expect(deprecation.category).to eq(test.category)
         expect(deprecation.user).to eq(user)
       end
     end
@@ -111,7 +111,7 @@ describe Api::TestsController do
       deprecation.tap do |deprecation|
         expect(deprecation.deprecated).to be(false)
         expect(deprecation.test_info).to eq(test)
-        expect(deprecation.test_result).to eq(test.effective_result)
+        expect(deprecation.category).to eq(test.category)
         expect(deprecation.user).to eq(user)
       end
     end
@@ -186,7 +186,7 @@ describe Api::TestsController do
         test.deprecation.tap do |deprecation|
           expect(deprecation.deprecated).to be(true)
           expect(deprecation.test_info).to eq(test)
-          expect(deprecation.test_result).to eq(test.effective_result)
+          expect(deprecation.category).to eq(test.category)
           expect(deprecation.user).to eq(user)
         end
       end
@@ -293,7 +293,7 @@ describe Api::TestsController do
         deprecation.tap do |deprecation|
           expect(deprecation.deprecated).to be(false)
           expect(deprecation.test_info).to eq(test)
-          expect(deprecation.test_result).to eq(test.effective_result)
+          expect(deprecation.category).to eq(test.category)
           expect(deprecation.user).to eq(user)
         end
       end

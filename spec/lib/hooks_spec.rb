@@ -17,7 +17,12 @@
 require 'spec_helper'
 
 describe RoxHook do
-  let(:hooks){ [ TagsData, StatusData, GeneralData, LatestTestRunsData, LatestProjectsData, Settings::App, CurrentTestMetricsData, CacheReportJobForUi, CountDeprecationJob, CountTestsJob ] }
+  let(:hooks){
+    [
+      TagsData, StatusData, GeneralData, LatestTestRunsData, LatestProjectsData, Settings::App, CurrentTestMetricsData,
+      CacheReportJobForUi, CountDeprecationJob, CountTestsJob, PurgeAllJob, PurgeTagsJob, PurgeTestPayloadsJob, PurgeTestRunsJob, PurgeTicketsJob
+    ]
+  }
 
   it "should have all hooks registered", rox: { key: 'c0f472250ab4' } do
     expect(described_class.hooks).to match_array(hooks)

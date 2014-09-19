@@ -64,10 +64,10 @@ describe StatusData do
       expect_dates lastTestCounters: now.to_ms
     end
 
-    keys = %w(b2d41c805d17 70082515e647 46929ecafd3c)
-    %w(tags tickets payloads).each do |e|
-      it "should touch the last purge date on the purge:#{e} event", rox: { key: keys.shift } do
-        subject.fire "purge:#{e}"
+    keys = %w(b2d41c805d17 46929ecafd3c a8c2fdad3669 70082515e647)
+    %w(tags testPayloads testRuns tickets).each do |e|
+      it "should touch the last purge date on the purged:#{e} event", rox: { key: keys.shift } do
+        subject.fire "purged:#{e}"
         expect_dates lastPurge: now.to_ms
       end
     end

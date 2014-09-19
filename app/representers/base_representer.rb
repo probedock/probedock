@@ -39,7 +39,7 @@ class BaseRepresenter < Hal::Resource
 
     representation do |res,*args|
 
-      instance_exec res, &block if block
+      instance_exec res, *args, &block if block
 
       curie 'v1', "#{uri(:doc_api_relation, name: 'v1')}:#{camelcase_name}:{rel}", templated: true if include_curie
 

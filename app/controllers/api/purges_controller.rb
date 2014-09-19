@@ -24,6 +24,7 @@ class Api::PurgesController < Api::ApiController
         PurgeAction.last_for(type).first || PurgeAction.new(data_type: type)
       end
 
+      # TODO: remove total when :info option is used
       render_api PurgeActionsRepresenter.new(OpenStruct.new(data: purges, total: purges.length), info: true)
       return
     end
@@ -34,7 +35,7 @@ class Api::PurgesController < Api::ApiController
   def create
     @purge = PurgeAction.new parse_json_purge
     if @purge.errors.empty? and @purge.save
-      render_api PurgeActionRepresenter.new(@purge)
+      render_api PurgeActionRepresenter.new(@purge), status: :created
     else
       render_api_model_errors @purge
     end

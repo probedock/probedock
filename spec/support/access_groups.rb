@@ -29,3 +29,20 @@ shared_examples_for "an admin resource" do |op|
     end
   end
 end
+
+shared_examples_for "an admin API resource" do |op|
+
+  it "should not authorize unauthenticated users" do
+    instance_eval &op
+    expect(response.status).to eq(401)
+  end
+
+  describe "when logged in" do
+    before(:each){ sign_in user }
+
+    it "should not authorize normal users" do
+      instance_eval &op
+      expect(response.status).to eq(403)
+    end
+  end
+end

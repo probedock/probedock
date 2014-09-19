@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe PurgeTagsJob, rox: { tags: :unit } do
+RSpec.describe PurgeTagsJob, rox: { tags: :unit } do
   PURGE_TAGS_JOB_QUEUE = :purge
   subject{ described_class }
 
@@ -35,14 +35,7 @@ describe PurgeTagsJob, rox: { tags: :unit } do
     end
   end
 
-  describe ".purge_id" do
-
-    it "should return :tags", rox: { key: '96bf74e27514' } do
-      expect(subject.purge_id).to eq(:tags)
-    end
-  end
-
-  describe ".purge_info" do
+  describe ".number_remaining" do
     let(:user){ create :user }
 
     it "should count unused tags", rox: { key: '407c7af39e87' } do
@@ -50,11 +43,11 @@ describe PurgeTagsJob, rox: { tags: :unit } do
       tags = Array.new(5){ |i| create :tag }
       tests = Array.new(3){ |i| create :test, key: create(:test_key, user: user), tags: tags[i % 2, 1] }
 
-      expect(subject.purge_info).to eq({ id: :tags, total: 3 })
+      expect(subject.number_remaining).to eq(3)
     end
 
     it "should indicate that there is nothing to purge", rox: { key: '9d95485a3f2a' } do
-      expect(subject.purge_info).to eq({ id: :tags, total: 0 })
+      expect(subject.number_remaining).to eq(0)
     end
   end
 
@@ -62,21 +55,31 @@ describe PurgeTagsJob, rox: { tags: :unit } do
     let(:user){ create :user }
     let(:tags){ Array.new(5){ |i| create :tag } }
     let!(:tests){ Array.new(3){ |i| create :test, key: create(:test_key, user: user), tags: tags[i % 2, 1] } }
-    before(:each){ allow(Rails.application.events).to receive(:fire).and_return(nil) }
+    let(:purge_action){ create :purge_action, data_type: 'tags', created_at: 2.minutes.ago }
+
+    before :each do
+      allow(Rails.logger).to receive(:info)
+      allow(Rails.application.events).to receive(:fire)
+      subject.perform purge_action.id
+    end
 
     it "should delete unused tags", rox: { key: '35180fbca993' } do
-      subject.perform
       expect(Tag.all.to_a).to match_array(tags[0, 2])
+      expect_purge_completed purge_action, 3
     end
 
     it "should log the number of purged tags", rox: { key: '698f34518430' } do
-      expect(Rails.logger).to receive(:info).with("Purged 3 unused tags")
-      subject.perform
+      expect(Rails.logger).to have_received(:info).with(/\APurged 3 unused tags in [0-9\.]+s\Z/)
     end
 
     it "should fire the purge:tags event", rox: { key: '385b5ca1a64a' } do
-      expect(Rails.application.events).to receive(:fire).with('purge:tags')
-      subject.perform
+      expect(Rails.application.events).to have_received(:fire).with('purged:tags')
     end
+  end
+
+  def expect_purge_completed purge_action, number_purged
+    purge_action.reload
+    expect(purge_action.completed_at).not_to be_nil
+    expect(purge_action.number_purged).to eq(number_purged)
   end
 end

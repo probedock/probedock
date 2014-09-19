@@ -27,7 +27,7 @@ class PurgeTagsJob < PurgeJob
     n = unused_tags.delete_all
     complete_purge! purge_action, n
 
-    Resque.logger.info "Purged #{n} unused tags in #{(Time.now - start).to_f.round 3}s"
+    Rails.logger.info "Purged #{n} unused tags in #{(Time.now - start).to_f.round 3}s"
   end
 
   # resque-workers-lock: lock workers to prevent concurrency
