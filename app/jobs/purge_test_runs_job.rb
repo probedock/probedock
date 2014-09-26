@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class PurgeTestRunsJob < PurgeJob
+  extend Resque::Plugins::Workers::Lock
   @queue = :purge
 
   def self.perform_purge purge_action
@@ -25,6 +26,11 @@ class PurgeTestRunsJob < PurgeJob
     complete_purge! purge_action, n
 
     Rails.logger.info "Purged #{n} outdated test runs in #{(Time.now - start).to_f.round 3}s"
+  end
+
+  # resque-workers-lock: lock workers to prevent concurrency
+  def self.lock_workers *args
+    ProcessNextTestPayloadJob.name # use the same lock as payload processing
   end
 
   def self.data_lifespan

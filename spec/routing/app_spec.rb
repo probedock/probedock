@@ -40,12 +40,13 @@ describe 'App routing' do
   it(nil, rox: { key: '796ada05066d' }){ should route(:get, '/projects/42').to(controller: :projects, action: :show, id: '42') }
   it(nil, rox: { key: 'dc2db17cfd5d' }){ should route(:get, '/status').to(controller: :home, action: :status) }
   it(nil, rox: { key: 'ca901bcb554a' }){ should route(:get, '/tags').to(controller: :tags, action: :index) }
-  it(nil, rox: { key: 'fbbc237d3753' }){ should route(:get, '/tests').to(controller: :test_infos, action: :index) }
-  it(nil, rox: { key: '32f0b8d13a53' }){ should route(:get, '/tests/42').to(controller: :test_infos, action: :show, id: 42) }
+  it(nil, rox: { key: 'd1b858c4bd85' }){ should route(:get, '/purges').to(controller: :purges, action: :index) }
   it(nil, rox: { key: 'a1df6cba5382' }){ should route(:get, '/runs').to(controller: :test_runs, action: :index) }
   it(nil, rox: { key: 'c7e41ec8ac17' }){ should route(:get, '/runs/42').to(controller: :test_runs, action: :show, id: 42) }
   it(nil, rox: { key: '51eb9ac64dd3' }){ should route(:get, '/runs/42/previous').to(controller: :test_runs, action: :previous, id: 42) }
   it(nil, rox: { key: 'fbde78225701' }){ should route(:get, '/runs/42/next').to(controller: :test_runs, action: :next, id: 42) }
+  it(nil, rox: { key: 'fbbc237d3753' }){ should route(:get, '/tests').to(controller: :test_infos, action: :index) }
+  it(nil, rox: { key: '32f0b8d13a53' }){ should route(:get, '/tests/42').to(controller: :test_infos, action: :show, id: 42) }
   it(nil, rox: { key: 'd9d0d910cd0a' }){ should route(:get, '/users').to(controller: :users, action: :index) }
   it(nil, rox: { key: '81843bae5e3b' }){ should route(:get, '/users/new').to(controller: :users, action: :new) }
   it(nil, rox: { key: '9f0db46268aa' }){ should route(:get, '/user/abc').to(controller: :users, action: :show, id: 'abc') }

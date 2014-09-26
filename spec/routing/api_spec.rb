@@ -34,6 +34,8 @@ describe 'API routing' do
   it(nil, rox: { key: '9c5b9e041869' }){ should route(:put, '/api/tests/42/deprecation').to(controller: 'api/tests', action: :deprecate, id: '42') }
   it(nil, rox: { key: '8bd0ce3f3e61' }){ should route(:delete, '/api/tests/42/deprecation').to(controller: 'api/tests', action: :undeprecate, id: '42') }
   it(nil, rox: { key: '89059466db61' }){ should route(:get, '/api/users').to(controller: 'api/users', action: :index) }
+  it(nil, rox: { key: '074b0fcbc78f' }){ should route(:get, '/api/purges').to(controller: 'api/purges', action: :index) }
+  it(nil, rox: { key: '0f65f7465ee8' }){ should route(:post, '/api/purges').to(controller: 'api/purges', action: :create) }
 
   # API keys
   it(nil, rox: { key: '520ba7b406a4' }){ should route(:get, '/api_keys').to(controller: :account_api_keys, action: :index) }

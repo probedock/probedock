@@ -18,12 +18,6 @@ class PurgeAction < ActiveRecord::Base
   after_create :start_purge
 
   DATA_TYPES = %w(tags testPayloads testRuns tickets)
-  JOB_CLASSES = {
-    tags: PurgeTagsJob,
-    testPayloads: PurgeTestPayloadsJob,
-    testRuns: PurgeTestRunsJob,
-    tickets: PurgeTicketsJob
-  }
   include Tableling::Model
 
   scope :last_for, ->(type) { where(data_type: type.to_s).order('created_at desc').limit(1) }
@@ -50,7 +44,7 @@ class PurgeAction < ActiveRecord::Base
   end
 
   def data_lifespan
-    job = JOB_CLASSES[data_type.to_sym]
+    job = self.class.job_class data_type
     job.respond_to?(:data_lifespan) ? job.data_lifespan : 0
   end
 
@@ -59,7 +53,7 @@ class PurgeAction < ActiveRecord::Base
   end
 
   def self.job_class data_type
-    JOB_CLASSES[data_type.to_sym]
+    const_get("Purge#{data_type.to_s.underscore.camelize}Job")
   end
 
   private

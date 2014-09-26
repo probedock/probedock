@@ -30,6 +30,13 @@ describe PurgeTestRunsJob, rox: { tags: :unit } do
     expect(described_class.instance_variable_get('@queue').to_sym).to eq(PURGE_TEST_RUNS_JOB_QUEUE)
   end
 
+  describe ".lock_workers" do
+
+    it "should use the same lock as the payload processing job", rox: { key: 'e6e35312a6e9' } do
+      expect(subject.lock_workers).to eq(ProcessNextTestPayloadJob.name)
+    end
+  end
+
   describe ".number_remaining" do
 
     it "should count outdated test runs", rox: { key: 'ca1ec2d41ada' } do
