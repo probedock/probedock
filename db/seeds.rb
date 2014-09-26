@@ -28,5 +28,6 @@ if Settings::App.get.blank?
     s.tag_cloud_size = 50
     s.test_outdated_days = 30
     s.test_payloads_lifespan = 7
+    s.test_runs_lifespan = 60
   end.save!
 end

@@ -113,7 +113,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
       # data
       let(:usage_counts){ [ 3, 6, 4, 1 ] }
       let(:created_ats){ k = user.api_keys.first; [ -1, 2, 4, 3 ].collect{ |n| k.created_at + n.days } }
-      let(:last_used_ats){ [ 1, 3, 6, 2 ].collect{ |n| Time.now - n.days } }
+      let(:last_used_ats){ [ 1, 3, 6, 2 ].collect{ |n| n.days.ago } }
       let!(:additional_api_keys){ Array.new(4){ create :api_key, user: user, usage_count: usage_counts.shift, created_at: created_ats.shift, last_used_at: last_used_ats.shift } }
 
       # inaccessible data (to check scoping)

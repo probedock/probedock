@@ -20,8 +20,8 @@ Clients for other testing frameworks are under development:
 ## Requirements
 
 * Ruby 1.9.3
-* MySQL 5.5
-* Redis 2
+* MySQL 5.5 or higher (or PostgreSQL 9 or higher)
+* Redis 2.6.12 or higher
 
 ## Installation
 

@@ -1,12 +1,16 @@
 class DeleteTestRunResultsWithForeignKey < ActiveRecord::Migration
 
   def up
-    remove_foreign_key :test_results, :test_runs
-    add_foreign_key :test_results, :test_runs, dependent: :delete
+    change_table :test_results do |t|
+      t.remove_foreign_key :test_runs
+      t.foreign_key :test_runs, dependent: :delete
+    end
   end
 
   def down
-    remove_foreign_key :test_results, :test_runs
-    add_foreign_key :test_results, :test_runs
+    change_table :test_results do |t|
+      t.remove_foreign_key :test_runs
+      t.foreign_key :test_runs
+    end
   end
 end
