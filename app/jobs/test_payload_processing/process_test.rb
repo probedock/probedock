@@ -55,6 +55,7 @@ module TestPayloadProcessing
 
       @test.last_run_at = @test_result.run_at
       @test.last_run_duration = @test_result.duration
+      @test.last_runner = test_run.runner
       @test.effective_result = @test_result
 
       @test.tags = tags data, cache if data.key?(:g)

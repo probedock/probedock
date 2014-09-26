@@ -27,6 +27,7 @@ class TestInfo < ActiveRecord::Base
   belongs_to :project, counter_cache: :tests_count
   belongs_to :category
   belongs_to :deprecation, class_name: "TestDeprecation"
+  belongs_to :last_runner, class_name: "User"
   has_many :results, class_name: "TestResult"
   belongs_to :effective_result, class_name: "TestResult"
   has_many :custom_values, class_name: "TestValue"

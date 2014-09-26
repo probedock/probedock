@@ -33,13 +33,16 @@ class TestInfoRepresenter < BaseRepresenter
     property :active, test_info.active
     property :createdAt, test_info.created_at.to_ms
     property :deprecatedAt, test_info.deprecation.created_at if test_info.deprecation
+    property :lastRunAt, test_info.last_run_at.to_ms
+    property :lastRunDuration, test_info.last_run_duration
+    property :runCount, test_info.results_count
 
     embed('v1:author', test_info.author){ |author| UserRepresenter.new author }
     embed('v1:project', test_info.project){ |project| ProjectRepresenter.new project }
     embed('v1:category', test_info.category){ |category| CategoryRepresenter.new category } if test_info.category
+    embed('v1:lastRunner', test_info.last_runner){ |runner| UserRepresenter.new runner }
 
     if test_info.effective_result.present?
-      embed('v1:lastRunner', test_info.effective_result.runner){ |runner| UserRepresenter.new runner }
       embed('v1:lastRun', test_info.effective_result.test_run){ |run| TestRunRepresenter.new run }
     end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140918082032) do
+ActiveRecord::Schema.define(version: 20140926143209) do
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -153,6 +153,8 @@ ActiveRecord::Schema.define(version: 20140918082032) do
     t.integer  "project_id",                         null: false
     t.integer  "category_id"
     t.integer  "deprecation_id"
+    t.integer  "results_count",       default: 0,    null: false
+    t.integer  "last_runner_id"
   end
 
   add_index "test_infos", ["author_id"], name: "test_infos_author_id_fk", using: :btree
@@ -160,6 +162,7 @@ ActiveRecord::Schema.define(version: 20140918082032) do
   add_index "test_infos", ["deprecation_id"], name: "test_infos_deprecation_id_fk", using: :btree
   add_index "test_infos", ["effective_result_id"], name: "test_infos_effective_result_id_fk", using: :btree
   add_index "test_infos", ["key_id", "project_id"], name: "index_test_infos_on_key_id_and_project_id", unique: true, using: :btree
+  add_index "test_infos", ["last_runner_id"], name: "test_infos_last_runner_id_fk", using: :btree
   add_index "test_infos", ["project_id"], name: "test_infos_project_id_fk", using: :btree
 
   create_table "test_infos_tickets", id: false, force: true do |t|
@@ -320,6 +323,7 @@ ActiveRecord::Schema.define(version: 20140918082032) do
   add_foreign_key "test_infos", "test_deprecations", name: "test_infos_deprecation_id_fk", column: "deprecation_id"
   add_foreign_key "test_infos", "test_results", name: "test_infos_effective_result_id_fk", column: "effective_result_id", dependent: :nullify
   add_foreign_key "test_infos", "users", name: "test_infos_author_id_fk", column: "author_id"
+  add_foreign_key "test_infos", "users", name: "test_infos_last_runner_id_fk", column: "last_runner_id"
 
   add_foreign_key "test_infos_tickets", "test_infos", name: "test_infos_tickets_test_info_id_fk"
   add_foreign_key "test_infos_tickets", "tickets", name: "test_infos_tickets_ticket_id_fk"

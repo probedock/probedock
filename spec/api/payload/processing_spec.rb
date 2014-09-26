@@ -392,6 +392,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo }).to eq({ 'sql_nb_queries' => '5', 'custom' => lorem_ipsum })
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(750)
+      expect(test.last_runner).to eq(users[1])
 
       results = test.results.order('created_at ASC').to_a
       expect(results).to have(2).items
@@ -443,6 +444,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo }).to eq({ 'custom' => lorem_ipsum })
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(5000)
+      expect(test.last_runner).to eq(users[0])
 
       results = test.results.to_a
       expect(results).to have(1).item
@@ -479,6 +481,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.custom_values).to be_empty
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(200)
+      expect(test.last_runner).to eq(users[1])
 
       results = test.results.to_a
       expect(results).to have(2).items
@@ -530,6 +533,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo }).to eq({ 'custom' => lorem_ipsum })
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(75)
+      expect(test.last_runner).to eq(users[0])
 
       results = test.results.to_a
       expect(results).to have(2).items
@@ -579,6 +583,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(test.custom_values).to be_empty
       expect(test.last_run_at).to be >= @before_posting_payloads
       expect(test.last_run_duration).to eq(0)
+      expect(test.last_runner).to eq(users[1])
 
       results = test.results.to_a
       expect(results).to have(1).item

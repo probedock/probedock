@@ -242,6 +242,7 @@ describe TestInfo, rox: { tags: :unit } do
     it(nil, rox: { key: '54dd25e1a5b9' }){ should have_many(:custom_values).class_name('TestValue') }
     it(nil, rox: { key: '3f942894c522' }){ should belong_to(:deprecation).class_name('TestDeprecation') }
     it(nil, rox: { key: 'cc1c7ebded24' }){ should have_many(:deprecations).class_name('TestDeprecation') }
+    it(nil, rox: { key: '84e15116a27e' }){ should belong_to(:last_runner).class_name('User') }
     it(nil, rox: { key: '2432961a8bd0' }){ should have_and_belong_to_many(:tags) }
     it(nil, rox: { key: 'f317cd684dc0' }){ should have_and_belong_to_many(:tickets) }
   end
@@ -259,6 +260,7 @@ describe TestInfo, rox: { tags: :unit } do
     it(nil, rox: { key: 'ebe42ba9512b' }){ should have_db_column(:deprecation_id).of_type(:integer).with_options(null: true) }
     it(nil, rox: { key: 'a38d95731133' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, rox: { key: 'e6a98cbba2a1' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
+    it(nil, rox: { key: '33292ca8134d' }){ should have_db_column(:last_runner_id).of_type(:integer).with_options(null: true) }
     it(nil, rox: { key: 'b80a47e5de7d' }){ should have_db_column(:last_run_at).of_type(:datetime).with_options(null: false) }
     it(nil, rox: { key: 'b89a76619893' }){ should have_db_column(:last_run_duration).of_type(:integer).with_options(null: false) }
     it(nil, rox: { key: '68c77eaabb79' }){ should have_db_index([ :key_id, :project_id ]).unique(true) }

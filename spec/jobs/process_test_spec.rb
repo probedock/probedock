@@ -106,6 +106,7 @@ describe TestPayloadProcessing::ProcessTest do
         expect(test.passing).to be(true)
         expect(test.active).to be(true)
 
+        expect(test.last_runner).to eq(user)
         expect(test.last_run_at).to eq(time_received)
         expect(test.last_run_duration).to eq(sample_data[:d].to_i)
         expect(test.effective_result).to eq(processed.test_result)
@@ -229,6 +230,7 @@ describe TestPayloadProcessing::ProcessTest do
         expect(test.passing).to be(true)
         expect(test.active).to be(true)
 
+        expect(test.last_runner).to eq(user)
         expect(test.last_run_at).to eq(time_received)
         expect(test.last_run_duration).to eq(sample_data[:d].to_i)
         expect(test.effective_result).to eq(processed.test_result)
@@ -257,6 +259,32 @@ describe TestPayloadProcessing::ProcessTest do
         expect(result.previous_passed).to be(false)
         expect(result.previous_active).to be(false)
         expect(result.deprecated).to be(false)
+      end
+    end
+
+    describe "with a new runner" do
+      let(:new_runner){ create :other_user }
+      let(:test_run){ create :run, runner: new_runner, ended_at: time_received }
+
+      it "should update the last runner", rox: { key: '924e24036053' } do
+
+        (processed = process_existing_test).test.tap do |test|
+
+          expect(test).to be_a_kind_of(TestInfo)
+          expect(test.key).to eq(test_key)
+          expect(test.author).to eq(user)
+          expect(test.project).to eq(project)
+
+          expect(test.name).to eq(sample_data[:n])
+          expect(test.category).to eq(new_category)
+          expect(test.passing).to be(true)
+          expect(test.active).to be(true)
+
+          expect(test.last_runner).to eq(new_runner)
+          expect(test.last_run_at).to eq(time_received)
+          expect(test.last_run_duration).to eq(sample_data[:d].to_i)
+          expect(test.effective_result).to eq(processed.test_result)
+        end
       end
     end
 

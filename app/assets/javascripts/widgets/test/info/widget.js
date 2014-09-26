@@ -45,11 +45,17 @@
     },
 
     renderLastRunAt: function() {
+      this.ui.lastRunAt.empty();
 
       var lastRun = this.model.embedded('v1:lastRun'),
-          endedAt = new Date(lastRun.get('endedAt'));
+          endedAt = new Date(this.model.get('lastRunAt')),
+          text = Format.datetime.full(endedAt) + ' (' + moment(endedAt).fromNow() + ')';
 
-      lastRun.link('alternate').tag(Format.datetime.full(endedAt) + ' (' + moment(endedAt).fromNow() + ')').appendTo(this.ui.lastRunAt);
+      if (lastRun) {
+        lastRun.link('alternate').tag(text).appendTo(this.ui.lastRunAt);
+      } else {
+        this.ui.lastRunAt.text(text);
+      }
     },
 
     renderLabels: function() {

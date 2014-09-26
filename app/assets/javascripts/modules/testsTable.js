@@ -35,8 +35,8 @@ App.autoModule('testsTable', function() {
 
     serializeData: function() {
       return {
-        lastRunAt: Format.datetime.short(new Date(this.model.embedded('v1:lastRun').get('endedAt'))),
-        lastRunDuration: Format.duration(this.model.embedded('v1:lastRun').get('duration'), { shorten: 's' })
+        lastRunAt: Format.datetime.short(new Date(this.model.get('lastRunAt'))),
+        lastRunDuration: Format.duration(this.model.get('lastRunDuration'), { shorten: 's' })
       };
     },
 
@@ -159,7 +159,10 @@ App.autoModule('testsTable', function() {
 
     renderStatus: function() {
 
-      this.ui.statusLink.attr('href', this.model.embedded('v1:lastRun').link('alternate').get('href'));
+      var lastRun = this.model.embedded('v1:lastRun'),
+          linkTarget = lastRun ? lastRun : this.model;
+      this.ui.statusLink.attr('href', linkTarget.link('alternate').get('href'));
+
       this.ui.statusIcon.removeClass('glyphicon-thumbs-up glyphicon-thumbs-down');
       this.ui.statusIcon.addClass('glyphicon-' + (this.model.get('passing') ? 'thumbs-up' : 'thumbs-down'));
 
