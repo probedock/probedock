@@ -70,6 +70,7 @@ gem 'backbone-on-rails'
 #gem 'marionette-rails' # currently provided by tableling-rails
 gem 'tableling-rails'
 gem 'haml_coffee_assets'
+gem 'libv8', '3.16.14.3'
 gem 'therubyracer'
 gem 'execjs'
 gem 'clah-rails'
