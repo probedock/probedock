@@ -20,4 +20,5 @@
 .panel-footer
   %p.maintenance.text-info= I18n.t('jst.testCountersManager.maintenanceNotice')
   %p.started.text-success= I18n.t('jst.testCountersManager.recomputingStarted')
+  %p.text-danger This feature is temporarily unavailable.
   %button.recompute.btn{ type: 'button' }= I18n.t('jst.testCountersManager.recompute')

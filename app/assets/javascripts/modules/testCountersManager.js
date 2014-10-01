@@ -117,7 +117,7 @@ App.autoModule('testCountersManager', function() {
     updateControls: function() {
       var status = this.model.status();
       this.ui.recomputeButton.removeClass('btn-warning btn-default').addClass('btn-' + (App.maintenance ? 'warning' : 'default'));
-      this.ui.recomputeButton.attr('disabled', !App.maintenance || status != 'idle');
+      this.ui.recomputeButton.attr('disabled', true || !App.maintenance || status != 'idle');
     },
 
     refresh: function() {
