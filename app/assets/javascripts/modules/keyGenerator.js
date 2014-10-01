@@ -18,7 +18,7 @@ App.autoModule('keyGenerator', function() {
 
   var KeyView = Marionette.ItemView.extend({
     tagName: 'span',
-    template: _.template('<span class="label label-success"><%- value %></span><span>&nbsp; </span>')
+    template: _.template('<span class="label label-success"><%- value %></span> ')
   });
 
   var NoKeyView = Marionette.ItemView.extend({
