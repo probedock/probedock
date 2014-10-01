@@ -45,7 +45,9 @@ describe DataController do
       it "should return a 503 response if maintenance mode is not enabled", rox: { key: '00d368f6a4b2' } do
         post :test_counters
         expect(response.status).to eq(503)
-        expect(response.body).to eq('Must be in maintenance mode')
+        # FIXME: fix or remove test counter recomputing
+        #expect(response.body).to eq('Must be in maintenance mode')
+        expect(response.body).to eq('Feature temporarily disabled')
         expect(TestCounter).not_to receive(:recompute!)
       end
 
@@ -53,15 +55,20 @@ describe DataController do
         allow(TestCounter).to receive(:recompute!).and_return(false)
         post :test_counters
         expect(response.status).to eq(503)
-        expect(response.body).to eq('Must be in maintenance mode')
+        # FIXME: fix or remove test counter recomputing
+        #expect(response.body).to eq('Must be in maintenance mode')
+        expect(response.body).to eq('Feature temporarily disabled')
       end
 
       it "should start recomputing test counters", rox: { key: '21b413472419' } do
         set_maintenance_mode
-        expect(TestCounter).to receive(:recompute!)
+        #expect(TestCounter).to receive(:recompute!)
         post :test_counters
-        expect(response.status).to eq(200)
-        expect(MultiJson.load(response.body)).to eq({ 'foo' => 'bar' })
+        #expect(response.status).to eq(200)
+        #expect(MultiJson.load(response.body)).to eq({ 'foo' => 'bar' })
+        # FIXME: fix or remove test counter recomputing
+        expect(response.status).to eq(503)
+        expect(response.body).to eq('Feature temporarily disabled')
       end
     end
   end
