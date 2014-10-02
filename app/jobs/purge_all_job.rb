@@ -21,7 +21,7 @@ class PurgeAllJob
   on('api:payload'){ |payload| enqueue_throttled }
 
   def self.enqueue_throttled
-    available = $redis.set 'purge:lock', Time.now.to_i, ex: 3600, nx: true
+    available = $redis.set 'purge:lock', Time.now.to_i, ex: 86400, nx: true
     Resque.enqueue self if available
     available
   end
