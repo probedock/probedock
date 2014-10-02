@@ -146,5 +146,5 @@ RAILS_ENV=production PIDFILE=tmp/pids/resque.pid BACKGROUND=yes QUEUE=* INTERVAL
 sudo kill -s USR2 `cat tmp/pids/unicorn.pid`
 
 # Clear and warm up the cache.
-RAILS_ENV=production rake cache:deploy
+RAILS_ENV=production bundle exec rake cache:deploy
 ```
