@@ -11,7 +11,7 @@ You must first set up the configuration files. Each of the following files has d
 * `config/database.yml` is the configuration to connect to your MySQL database.
 * `config/redis.yml` is the configuration to connect to your Redis database.
 * `config/rox-center.yml` is the ROX Center configuration.
-* `config/initializers/app_secrets.rb` configures the secret keys used to verify the integrity of session cookies and generate user passwords.
+* `config/secrets.yml` configures the secret keys used to verify the integrity of session cookies and generate user passwords.
 
 In the `rox-center.yml` file, you must choose between database authentication (ROX Center stores its own passwords in the MySQL database), or LDAP authentication (against an external LDAP server). If you are using LDAP authentication, you must also set up the LDAP configuration files.
 

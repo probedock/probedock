@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.3.0 - October 2, 2014
+
+**Upgrade Notes:**
+Redis 2.6.12 or higher is now required.
+The secret keys previously in `config/initializers/app_secrets.rb` must be moved to `config/secrets.yml`. See the [deployment documentation](doc/deploy.md) and the example in `config/samples/secrets.yml`.
+
+* The information page for each test has been revamped into widgets.
+
+* Test results payloads are now automatically purged after 30 days, test runs after 60 days. These lifetimes are configurable by administrators in the settings page. Administrators can also:
+
+  * manually trigger a purge from the control center;
+
+  * see the list of purged data.
+
 ## v2.2.1 - February 24, 2014
 
 * Tests can now also be filtered by ticket in test run reports.
