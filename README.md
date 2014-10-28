@@ -8,14 +8,26 @@ It has two main components: the ROX Center server and ROX clients.
 ROX clients run your tests and upload the results to your ROX Center server for analysis.
 The ROX Center server generates test run reports and day-to-day metrics on your tests.
 
-Currently, there is one ROX client:
+These are the existing ROX clients:
 
 * [RSpec client](https://github.com/lotaris/rox-client-rspec)
+* [Karma client](https://github.com/lotaris/rox-client-karma)
+* [Jasmine (grunt) client](https://github.com/lotaris/rox-client-grunt-jasmine)
+* [Jasmine (grunt-contrib-jasmine) client](https://github.com/lotaris/rox-client-grunt-contrib-jasmine)
+* [PHPUnit client](https://github.com/lotaris/rox-client-phpunit)
+* [XCTest client](https://github.com/lotaris/rox-client-xctest)
 
 Clients for other testing frameworks are under development:
 
 * JUnit
-* Jasmine
+* [Bwoken client](https://github.com/lotaris/rox-client-bwoken)
+
+The following documentation and packages can be used to develop new clients:
+
+* [ROX client integration guide](https://github.com/lotaris/rox-client)
+* [Node.js utilities](https://github.com/lotaris/rox-client-node)
+* [Grunt utilities](https://github.com/lotaris/rox-client-grunt)
+* [Ruby utilities](https://github.com/lotaris/rox-client-ruby)
 
 ## Requirements
 
