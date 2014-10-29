@@ -17,17 +17,8 @@ These are the existing ROX clients:
 * [PHPUnit client](https://github.com/lotaris/rox-client-phpunit)
 * [XCTest client](https://github.com/lotaris/rox-client-xctest)
 
-Clients for other testing frameworks are under development:
-
-* JUnit
-* [Bwoken client](https://github.com/lotaris/rox-client-bwoken)
-
-The following documentation and packages can be used to develop new clients:
-
-* [ROX client integration guide](https://github.com/lotaris/rox-client)
-* [Node.js utilities](https://github.com/lotaris/rox-client-node)
-* [Grunt utilities](https://github.com/lotaris/rox-client-grunt)
-* [Ruby utilities](https://github.com/lotaris/rox-client-ruby)
+Check out the [client integration guide](https://github.com/lotaris/rox-client) for more information on how to use these clients.
+It also contains links to client libraries that provide utilities to develop new clients, as well as a list of the new clients under development.
 
 ## Requirements
 
@@ -54,7 +45,7 @@ You will need this for the client configuration.
 Also go to your account page (`You`); you will see that an API key has been generated for you.
 Take a note of its ID and shared secret.
 
-Follow the setup instructions from the [RSpec client](https://github.com/lotaris/rox-client-rspec).
+Follow the setup instructions from the [client integration guide](https://github.com/lotaris/rox-client#setup-procedure).
 
 Once your client is set up, run your tests and the data should appear in ROX Center!
 
