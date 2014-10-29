@@ -16,6 +16,8 @@ These are the existing ROX clients:
 * [Jasmine (grunt-contrib-jasmine) client](https://github.com/lotaris/rox-client-grunt-contrib-jasmine)
 * [PHPUnit client](https://github.com/lotaris/rox-client-phpunit)
 * [XCTest client](https://github.com/lotaris/rox-client-xctest)
+* [JUnit Client](https://github.com/lotaris/rox-client-junit)
+* [Java EE ITF Client](https://github.com/lotaris/rox-client-jee-itf)
 
 Check out the [client integration guide](https://github.com/lotaris/rox-client) for more information on how to use these clients.
 It also contains links to client libraries that provide utilities to develop new clients, as well as a list of the new clients under development.
