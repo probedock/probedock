@@ -40,7 +40,7 @@ RSpec.describe PurgeAllJob, rox: { tags: :unit } do
       described_class.enqueue_throttled
       expect(PurgeAllJob).to have_queue_size_of(1)
       expect($redis.get('purge:lock')).not_to be_falsy
-      expect($redis.ttl('purge:lock')).to be <= 3600
+      expect($redis.ttl('purge:lock')).to be <= 86400
     end
 
     it "should not enqueue the job if it is locked", rox: { key: '10016513ea62' } do
