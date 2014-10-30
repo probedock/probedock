@@ -9,11 +9,4 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require select2
- *= require ./bootstrap-import
- *= require ./main
- *= require ./sort
- *= require ./documentation
- *= require ./pygments
- *= require_tree ./modules
  */

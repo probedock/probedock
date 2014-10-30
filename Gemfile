@@ -16,28 +16,17 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.5'
+gem 'rails', '4.1.6'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
-
-# Database
-group :mysql do
-  gem 'mysql2'
-end
-
-group :postgresql do
-  gem 'pg'
-end
+gem 'pg'
 
 gem 'foreigner'
 
-# Templating
-gem 'haml'
-gem 'haml-rails'
-gem 'markdown-rails'
-gem 'redcarpet'
-gem 'pygments.rb'
+# Assets
+gem 'slim-rails'
+gem 'stylus'
+gem 'therubyracer'
+gem 'uglifier', '>= 1.3.0'
 
 # Authentication & Authorization
 gem 'devise', '~> 3.3.0'
@@ -57,36 +46,17 @@ gem 'resque-workers-lock'
 # Model Extensions
 gem 'simple_states' # state machines
 gem 'strip_attributes' # trimming
+gem 'tableling-rails'
 
 # Fast JSON
 gem 'oj'
-
-# Assets
-gem 'sass-rails', '>= 3.2'
-gem 'bootstrap-sass', '~> 3.2'
-gem 'autoprefixer-rails'
-gem 'jquery-rails'
-gem 'backbone-on-rails'
-#gem 'marionette-rails' # currently provided by tableling-rails
-gem 'tableling-rails'
-gem 'haml_coffee_assets'
-gem 'libv8', '3.16.14.3'
-gem 'therubyracer'
-gem 'execjs'
-gem 'clah-rails'
-gem 'highcharts-rails', '~> 4.0.0'
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', :platforms => :ruby
-gem 'uglifier', '>= 1.0.3'
-gem 'select2-rails'
-gem 'backbone-relational-hal-rails'
 
 # Tools
 gem 'rake-version'
 gem 'paint'
 
 group :production do
-  gem 'unicorn', '4.6.2'
+  gem 'unicorn'
 end
 
 group :development do
@@ -121,18 +91,3 @@ group :test do
   gem 'resque_spec'
   gem 'database_cleaner'
 end
-
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
-
-# To use debugger
-# gem 'debugger'

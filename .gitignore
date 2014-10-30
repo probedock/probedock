@@ -1,6 +1,7 @@
 /.bundle
 /.grunt
 /_SpecRunner.html
+/bower_components
 /config/database.yml
 /config/initializers/ldap.rb
 /config/redis.yml

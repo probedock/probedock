@@ -24,7 +24,7 @@ ROXCenter::Application.load_tasks
 
 require 'rake-version'
 RakeVersion::Tasks.new do |v|
-  v.copy 'app/assets/javascripts/boot.js.erb', 'package.json', 'rox.json', 'spec/javascripts/version.spec.js'
+  v.copy 'bower.json', 'package.json', 'rox.json', 'spec/javascripts/version.spec.js'
 end
 
 if Rails.env != 'production'

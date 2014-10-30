@@ -14,14 +14,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-var App = new Marionette.Application();
+angular.module('rox', [])
+  .constant('version', <%= JSON.dump Rails.application.version %>)
+  .constant('environment', <%= JSON.dump Rails.env %>)
 
-// Current version is 2.3.0
-App.version = <%= Rails.application.version.to_json %>;
-App.environment = <%= Rails.env.to_json %>;
-App.secure = App.environment == 'production';
-
-var Translations = {},
-    I18n = {
-      defaultLocale: <%= I18n.default_locale.to_s.to_json %>
-    };
+  // enable debug log unless in production
+  .config(['environment', '$logProvider', function(env, $logProvider) {
+    $logProvider.debugEnabled(env !== 'production');
+  }])
+;

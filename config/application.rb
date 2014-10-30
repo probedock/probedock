@@ -120,7 +120,6 @@ module ROXCenter
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
-    config.assets.precompile += %w(hal.js hal.css)
     config.assets.paths << Rails.root.join('app', 'assets', 'flash')
 
     config.generators.assets = false

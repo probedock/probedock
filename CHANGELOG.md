@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.0 (not yet released)
+
+* **The v3 release will be backwards-incompatible.**
+
 ## v2.3.0 - October 2, 2014
 
 **Upgrade Notes:**

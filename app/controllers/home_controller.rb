@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class HomeController < ApplicationController
-  before_filter :authenticate_user!, except: [ :ping ]
+  #before_filter :authenticate_user!, except: [ :ping ]
   before_filter :load_status_data, only: [ :status ]
   before_filter(only: [ :maintenance ]){ authorize! :manage, :settings }
   skip_before_filter :load_links, only: [ :index, :ping ]
 
   def index
 
+=begin
     # Load all caches at the same time to avoid separate commands being sent to Redis.
     caches = Settings.cache, TagsData.cloud, LatestTestRunsData.compute, LatestProjectsData.compute
     caches << cached_links if user_signed_in?
@@ -39,6 +40,7 @@ class HomeController < ApplicationController
     # TODO: include load_maintenance in the $redis.multi done by JsonCache.get above
     @status_data = StatusData.compute
     @general_data = GeneralData.compute settings: settings, count: { tests: true, runs: true }, tests: true
+=end
   end
 
   def status
