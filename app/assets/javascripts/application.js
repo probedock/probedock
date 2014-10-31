@@ -29,14 +29,13 @@
 //
 //= require underscore
 //= require jquery
-//= require bootstrap
 //= require angular
 //= require angular-ui-router
-//= require angular-ui-bootstrap
 //= require angular-ui-bootstrap-tpls
 //= require angular-local-storage
-//= require bootstrap.js
+//= require angular-base64
 //= require ./boot
+//= require_tree ./angular
 
 // require ./vendor
 // require highcharts

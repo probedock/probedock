@@ -17,24 +17,13 @@
 require 'digest/sha2'
 
 class User < ActiveRecord::Base
-  include Metric
   include Tableling::Model
 
-  attr_accessor :cached_groups
+  has_secure_password
 
   before_create :create_settings
-  after_create :create_api_key
   after_create{ Rails.application.events.fire 'user:created' }
   after_destroy{ Rails.application.events.fire 'user:destroyed' }
-
-  # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
-  # :lockable, :timeoutable and :omniauthable, :validatable
-  if ROXCenter::AUTHENTICATION_MODULE == 'ldap'
-    devise :ldap_authenticatable, :rememberable, :trackable
-  else
-    devise :database_authenticatable, :registerable, :rememberable, :trackable, :validatable
-  end
 
   # Role-based authorization
   include RoleModel
@@ -43,7 +32,6 @@ class User < ActiveRecord::Base
   # are stored in a bitmask. Only append new roles to the list.
   roles :admin, :technical
 
-  has_many :api_keys, dependent: :destroy
   has_many :test_keys, dependent: :destroy
   has_many :free_test_keys, -> { select('test_keys.*').joins('LEFT OUTER JOIN test_keys_payloads ON (test_keys.id = test_keys_payloads.test_key_id)').where(free: true).where('test_keys_payloads.test_payload_id IS NULL').group('test_keys.id') }, class_name: "TestKey"
   has_many :test_infos, foreign_key: :author_id, dependent: :restrict_with_exception
@@ -110,24 +98,9 @@ class User < ActiveRecord::Base
     end
   end
 
-  # Generates a random remember token that does not yet exist in the database.
-  def self.remember_token
-    while exists?(remember_token: (token = generate_remember_token)); end
-    token
-  end
-
-  # Generates a random remember token of 16 hexadecimal characters.
-  def self.generate_remember_token
-    SecureRandom.hex 8 # result string is twice as long as n
-  end
-
   private
 
   def create_settings
     self.settings = Settings::User.new.tap(&:save!)
-  end
-
-  def create_api_key
-    ApiKey.create_for_user self
   end
 end

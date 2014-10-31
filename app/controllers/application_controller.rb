@@ -20,16 +20,12 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   helper_method :window_title, :cached_links
   before_filter :set_locale
-  before_filter :load_links
-  before_filter :load_maintenance
-  before_filter :configure_devise_permitted_parameters, if: :devise_controller?
+  #before_filter :load_links
+  #before_filter :load_maintenance
+  #before_filter :configure_devise_permitted_parameters, if: :devise_controller?
 
   rescue_from ROXCenter::Errors::XHRRequired do |exception|
     render :text => exception.message, :status => 400
-  end
-
-  rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
-    render :text => exception, :status => 500
   end
 
   def window_title

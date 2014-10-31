@@ -20,9 +20,24 @@ class HomeController < ApplicationController
   before_filter(only: [ :maintenance ]){ authorize! :manage, :settings }
   skip_before_filter :load_links, only: [ :index, :ping ]
 
-  def index
+  def template
+
+    # only accept html templates
+    return render_template_not_found unless params[:format] == 'html'
+
+    # only accept alphanumeric characters, hyphens and underscores, separated by slashes
+    return render_template_not_found unless params[:name].to_s.match /\A[a-z0-9\-\_]+(\.[a-z0-9\-\_]+)*\Z/i
+
+    begin
+      render template: "templates/#{params[:name]}", layout: false
+    rescue ActionView::MissingTemplate
+      render_template_not_found
+    end
+  end
 
 =begin
+  def index
+
     # Load all caches at the same time to avoid separate commands being sent to Redis.
     caches = Settings.cache, TagsData.cloud, LatestTestRunsData.compute, LatestProjectsData.compute
     caches << cached_links if user_signed_in?
@@ -40,8 +55,8 @@ class HomeController < ApplicationController
     # TODO: include load_maintenance in the $redis.multi done by JsonCache.get above
     @status_data = StatusData.compute
     @general_data = GeneralData.compute settings: settings, count: { tests: true, runs: true }, tests: true
-=end
   end
+=end
 
   def status
     window_title << t('home.status.title')
@@ -66,6 +81,10 @@ class HomeController < ApplicationController
   end
 
   private
+
+  def render_template_not_found
+    render text: 'Template not found', status: :not_found
+  end
 
   def home_tag_cloud contents, settings
     size = settings.tag_cloud_size

@@ -14,6 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+require 'json/jwt'
+
 class Api::ApiController < ApplicationController
 
   class ApiError < StandardError
@@ -30,7 +32,7 @@ class Api::ApiController < ApplicationController
     end
   end
 
-  before_filter :authenticate_api_user!
+  before_filter :authenticate_api_user!, except: :authenticate
 
   # TODO: write specs for Accept and Content-Type checks
 
@@ -42,7 +44,7 @@ class Api::ApiController < ApplicationController
   skip_before_filter :load_links
 
   # Handle unknown and forbidden records the same way
-  rescue_from CanCan::AccessDenied, with: :forbidden_or_record_not_found
+  rescue_from JSON::JWS::VerificationFailed, with: :unauthorized
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ApiError, with: :render_api_error
 
@@ -52,11 +54,30 @@ class Api::ApiController < ApplicationController
     render_api ApiRootRepresenter.new(current_ability), etag: Rails.env.production?
   end
 
+  def authenticate
+
+    model = parse_json_model :username, :password
+
+    user = User.where(email: model[:username]).first
+
+    # TODO: protect against timing attacks
+    return unauthorized unless user
+    return unauthorized unless user.authenticate model[:password]
+
+    jwt = JSON::JWT.new({
+      iss: user.email,
+      exp: 1.year.from_now,
+      nbf: Time.now
+    }).sign(Rails.application.secrets.secret_key_base, 'HS512')
+
+    render json: { token: jwt.to_s }
+  end
+
   private
 
   def parse_json_model *attrs
     json = parse_json_request
-    json.pick(*attrs).inject({}){ |memo,(k,v)| memo[k.underscore] = v; memo }
+    HashWithIndifferentAccess.new json.pick(*attrs.collect(&:to_s)).inject({}){ |memo,(k,v)| memo[k.underscore] = v; memo }
   end
 
   def parse_json_request
@@ -127,7 +148,7 @@ class Api::ApiController < ApplicationController
   end
 
   def check_accept *media_types
-    media_types = [ :hal_json ] unless media_types.any?
+    media_types = [ :json ] unless media_types.any?
     media_types.each do |media_type|
       media_type_string = media_type(media_type).to_s
       if request.accept and !request.accept[media_type_string] and !request.accept["application/*"] and !request.accept["*/*"]
@@ -141,54 +162,37 @@ class Api::ApiController < ApplicationController
     object == true ? ROXCenter::Application::VERSION_HASH : object.to_s
   end
 
-  def forbidden_or_record_not_found exception
-    if params[:id]
-      record_not_found exception
-    else
-      render plain: exception.message, status: :forbidden
-    end
-  end
-
   def record_not_found exception
     render plain: %/Couldn't find record with ID "#{params[:id]}"/, status: :not_found
   end
 
+  def unauthorized
+    head :unauthorized
+  end
+
   def authenticate_api_user!
-    return if user_signed_in?
 
-    key = api_key_from_header || api_key_from_params
+    @auth_token = auth_token_from_header || auth_token_from_params
 
-    if key.blank?
-      response.headers['WWW-Authenticate'] = 'RoxApiKey'
-      return head :unauthorized
-    end
+    return unauthorized if @auth_token.blank?
 
-    ApiKey.where(id: key.id).update_all [ 'usage_count = usage_count + 1, last_used_at = ?', Time.now ]
-    @current_api_key = key
+    # TODO: use another secret for signing auth tokens
+    @auth_claims = JSON::JWT.decode(jwt_string, Rails.application.secrets.secret_key_base)
   end
 
-  def api_key_from_params
-    if params[:api_key_id] and params[:api_key_secret]
-      ApiKey.authenticated(params[:api_key_id].to_s, params[:api_key_secret].to_s).first
+  def auth_token_from_params
+    params[:authToken]
+  end
+
+  def auth_token_from_header
+    if m = request.headers["Authorization"].try(:match, /\ABearer (.+)\Z/)
+      m[1]
     else
       nil
     end
   end
 
-  def api_key_from_header
-    if m = request.headers["Authorization"].try(:match, /\ARoxApiKey id="?([^"]+)"? secret="?([^"]+)"?\Z/)
-      ApiKey.authenticated(m[1], m[2]).first
-    else
-      nil
-    end
-  end
-
-  def current_api_user
-    current_user || @current_api_key.user
-  end
-
-  # CanCan override
-  def current_ability
-    @current_ability ||= Ability.new(current_api_user)
+  def current_user
+    User.where(email: @auth_claims['iss']).first!
   end
 end

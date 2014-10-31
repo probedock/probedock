@@ -1,3 +1,9 @@
+## v3
+
+* manage access keys
+
+## Notes
+
 * allow to configure test run purge throttling delay
 * use foreigner-matcher to test foreign keys (including dependent option)
 * action to purge all data in purge control panel

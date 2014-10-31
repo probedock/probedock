@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140926143209) do
+ActiveRecord::Schema.define(version: 20141031124422) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "api_keys", force: true do |t|
     t.string   "identifier",    limit: 20,                null: false
@@ -195,15 +198,15 @@ ActiveRecord::Schema.define(version: 20140926143209) do
   add_index "test_keys_payloads", ["test_payload_id"], name: "test_keys_payloads_test_payload_id_fk", using: :btree
 
   create_table "test_payloads", force: true do |t|
-    t.text     "contents",          limit: 16777215, null: false
-    t.integer  "contents_bytesize",                  null: false
-    t.string   "state",             limit: 12,       null: false
-    t.datetime "received_at",                        null: false
+    t.text     "contents",                     null: false
+    t.integer  "contents_bytesize",            null: false
+    t.string   "state",             limit: 12, null: false
+    t.datetime "received_at",                  null: false
     t.datetime "processing_at"
     t.datetime "processed_at"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.integer  "user_id",                            null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.integer  "user_id",                      null: false
     t.integer  "test_run_id"
   end
 
@@ -280,27 +283,19 @@ ActiveRecord::Schema.define(version: 20140926143209) do
   add_index "user_settings", ["last_test_key_project_id"], name: "user_settings_last_test_key_project_id_fk", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "name",                                          null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                  default: 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.integer  "roles_mask",                     default: 0,    null: false
+    t.string   "name",                           null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.integer  "sign_in_count",   default: 0
+    t.integer  "roles_mask",      default: 0,    null: false
     t.string   "email"
-    t.string   "remember_token",      limit: 16
     t.integer  "last_run_id"
-    t.string   "encrypted_password"
-    t.string   "metric_key",          limit: 5,                 null: false
-    t.boolean  "active",                         default: true, null: false
-    t.integer  "settings_id",                                   null: false
+    t.boolean  "active",          default: true, null: false
+    t.integer  "settings_id",                    null: false
+    t.string   "password_digest",                null: false
   end
 
   add_index "users", ["last_run_id"], name: "users_last_run_id_fk", using: :btree
-  add_index "users", ["metric_key"], name: "index_users_on_metric_key", unique: true, using: :btree
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
   add_index "users", ["settings_id"], name: "index_users_on_settings_id", unique: true, using: :btree
 

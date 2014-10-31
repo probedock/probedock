@@ -16,7 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.6'
+gem 'rails', '4.1.7'
 
 gem 'pg'
 
@@ -24,15 +24,15 @@ gem 'foreigner'
 
 # Assets
 gem 'slim-rails'
+gem 'less-rails'
 gem 'stylus'
 gem 'therubyracer'
 gem 'uglifier', '>= 1.3.0'
 
 # Authentication & Authorization
-gem 'devise', '~> 3.3.0'
-gem 'devise_ldap_authenticatable', git: 'https://github.com/Prevole/devise_ldap_authenticatable.git', branch: 'group-lookup-config'
-gem 'cancan'
+gem 'bcrypt'
 gem 'role_model'
+gem 'json-jwt'
 
 # Memory Database
 gem 'redis'
@@ -54,6 +54,7 @@ gem 'oj'
 # Tools
 gem 'rake-version'
 gem 'paint'
+gem 'highline'
 
 group :production do
   gem 'unicorn'

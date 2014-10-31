@@ -15,15 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require File.expand_path('../boot', __FILE__)
-require 'yaml'
-
-module ROXCenter; end
-ROX_CONFIG = YAML.load_file File.join(File.dirname(__FILE__), ENV['ROX_CENTER_CONFIG'] || 'rox-center.yml')
-
-supported = [ 'database', 'ldap' ]
-raise "ROX configuration file error: authentication_module must be one of #{supported.join ', '}" unless supported.include? ROX_CONFIG['authentication_module']
-ROXCenter::AUTHENTICATION_MODULE = ROX_CONFIG['authentication_module']
-
 require 'rails/all'
 require './lib/extensions'
 require './lib/exceptions'
@@ -31,15 +22,9 @@ require './lib/validation'
 require './lib/utils/event_emitter'
 require 'silencer/logger' if Rails.env == 'development'
 
-timezones = ROX_CONFIG['timezones'] || [ 'UTC' ]
-raise "ROX configuration file error: timezones must be a list of timezone names" if !timezones or timezones.empty?
-unsupported = timezones.select{ |name| !ActiveSupport::TimeZone[name] }
-raise "ROX configuration file error: unsupported timezones #{unsupported.join ', '}" if unsupported.any?
-ROXCenter::METRICS_TIMEZONES = timezones
-
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(:default, Rails.env)
+Bundler.require(*Rails.groups)
 
 module ROXCenter
   class Application < Rails::Application
@@ -60,10 +45,6 @@ module ROXCenter
 
     def events
       self.class.events
-    end
-
-    def self.metrics_timezones
-      METRICS_TIMEZONES.dup
     end
 
     def version

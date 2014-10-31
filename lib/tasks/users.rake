@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+require 'highline/import'
 
 namespace :users do
 
@@ -31,5 +32,24 @@ namespace :users do
     user.save!
 
     puts Paint["User #{user.name} is now an administrator", :green]
+  end
+
+  desc %|Register a new user|
+  task :register, [ :email, :name ] => :environment do |t,args|
+
+    email, name = args[:email], args[:name]
+    puts Paint[%/The "email" argument is required/, :red] unless email
+
+    user = User.where(email: email).first
+    puts Paint["There is already a user with e-mail #{email}", :red] if user
+
+    name ||= email.sub(/\@.*$/, '')
+    password = ask('Enter the password of the new user: '){ |q| q.echo = false }
+    puts Paint["Password cannot be blank", :red] if password.blank?
+
+    user = User.new email: email, name: name, password: password
+    user.save!
+
+    puts Paint["User #{email} successfully created", :green]
   end
 end

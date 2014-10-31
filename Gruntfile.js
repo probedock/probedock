@@ -23,34 +23,32 @@ module.exports = function(grunt) {
     copy: {
       assets: {
         files: [
+          // javascripts
           { nonull: true, src: 'bower_components/underscore/underscore.js', dest: 'vendor/assets/javascripts/underscore.js' },
           { nonull: true, src: 'bower_components/jquery/dist/jquery.js', dest: 'vendor/assets/javascripts/jquery.js' },
           { nonull: true, src: 'bower_components/angular/angular.js', dest: 'vendor/assets/javascripts/angular.js' },
           { nonull: true, src: 'bower_components/angular-ui-router/release/angular-ui-router.js', dest: 'vendor/assets/javascripts/angular-ui-router.js' },
-          { nonull: true, src: 'bower_components/angular-bootstrap/ui-bootstrap.js', dest: 'vendor/assets/javascripts/angular-ui-bootstrap.js' },
           { nonull: true, src: 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js', dest: 'vendor/assets/javascripts/angular-ui-bootstrap-tpls.js' },
           { nonull: true, src: 'bower_components/angular-local-storage/dist/angular-local-storage.js', dest: 'vendor/assets/javascripts/angular-local-storage.js' },
-          { nonull: true, src: 'bower_components/bootstrap/dist/js/bootstrap.js', dest: 'vendor/assets/javascripts/bootstrap.js' },
+          { nonull: true, src: 'bower_components/angular-base64/angular-base64.js', dest: 'vendor/assets/javascripts/angular-base64.js' },
+          // stylesheets
+          { nonull: true, src: 'bower_components/normalize.css/normalize.css', dest: 'vendor/assets/stylesheets/normalize.css' },
+          // fonts
           { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true }
         ]
       },
 
       bootstrap: {
-        src: 'bower_components/bootstrap/dist/css/bootstrap.css',
-        dest: 'vendor/assets/stylesheets/bootstrap.css.less',
+        expand: true,
+        cwd: 'bower_components/bootstrap/less',
+        src: ['**/*.less'],
+        dest: 'vendor/assets/stylesheets/bootstrap/',
         options: {
           process: function(content) {
-            return content.replace(/url\('\.\.\/fonts\//g, 'asset-url(\'').replace(/\/\*\#.*\*\//, '');
-          }
-        }
-      },
-
-      bootstrapTheme: {
-        src: 'bower_components/bootstrap/dist/css/bootstrap-theme.css',
-        dest: 'vendor/assets/stylesheets/bootstrap-theme.css',
-        options: {
-          process: function(content) {
-            return content.replace(/\/\*\#.*\*\//, '');
+            return content
+              .replace(/url\(\'\@\{icon-font-path\}\@\{icon-font-name\}/g, 'asset-url(\'glyphicons-halflings-regular')
+              .replace(/\@\{icon-font-svg-id\}/g, 'glyphicons_halflingsregular')
+              .replace(/\/\*\#.*\*\//, '');
           }
         }
       }
@@ -65,5 +63,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
   grunt.registerTask('default', [ 'jshint' ]);
-  grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap', 'copy:bootstrapTheme' ]);
+  grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap' ]);
 };
