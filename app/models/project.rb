@@ -14,69 +14,65 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class Project < ActiveRecord::Base
-  include Metric
-  include Tableling::Model
-  URL_TOKEN_REGEXP = /\A[a-z0-9\_\-]+\Z/i
+require_dependency 'random'
 
-  before_create :set_api_id
+class Project < ActiveRecord::Base
+  include Tableling::Model
+
+  before_create :set_key
 
   has_many :tests, class_name: 'TestInfo'
 
   strip_attributes
   validates :name, presence: { name: :blankValue }, length: { maximum: 255, name: :valueTooLong }
-  validates :url_token, presence: { name: :blankValue }, length: { maximum: 25, name: :valueTooLong }, format: { with: URL_TOKEN_REGEXP, name: :invalidValue, unless: Proc.new{ |p| p.url_token.blank? } }
 
   tableling do
 
     default_view do
 
+      field :key, as: :id
       field :name
-      field :url_token, as: :urlToken
-      field :api_id, as: :apiId
-      field :tests_count, as: :activeTestsCount do
-        order{ |q,d| q.order "tests_count - deprecated_tests_count #{d}" }
-        value{ |o| o.tests_count - o.deprecated_tests_count }
-      end
+      field :tests_count, as: :testsCount
       field :deprecated_tests_count, as: :deprecatedTestsCount
       field :created_at, as: :createdAt
 
       quick_search do |q,t|
         term = "%#{t.downcase}%"
-        q.where 'LOWER(name) LIKE ? OR LOWER(url_token) LIKE ? OR LOWER(api_id) LIKE ?', term, term, term
+        q.where 'LOWER(name) LIKE ? OR LOWER(key) LIKE ?', term, term
       end
 
       serialize_response do |res|
-        if res[:legacy]
-          LegacyProjectsRepresenter.new OpenStruct.new(res)
-        else
-          ProjectsRepresenter.new OpenStruct.new(res)
-        end
+        res[:data].collect{ |p| p.to_builder.attributes! }
       end
     end
   end
 
-  # TODO: remove Project#to_client_hash once TestInfo has a representer
-  def to_client_hash options = {}
-    { name: name, apiId: api_id, urlToken: url_token }
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.id key
+      json.name name
+      json.testsCount tests_count
+      json.deprecatedTestsCount deprecated_tests_count
+      json.createdAt created_at.iso8601(3)
+    end
   end
 
-  def to_param options = {}
-    url_token
+  def to_json options = {}
+    to_builder(options).attributes!
   end
 
   private
 
-  def self.new_api_id
-    next while exists?(api_id: id = generate_api_id)
-    id
+  def self.generate_new_key
+    next while exists?(key: key = generate_key)
+    key
   end
 
-  def self.generate_api_id
-    SecureRandom.hex 6
+  def self.generate_key
+    SecureRandom.random_alphanumeric 12
   end
 
-  def set_api_id
-    self.api_id = self.class.new_api_id
+  def set_key
+    self.key = self.class.generate_new_key
   end
 end

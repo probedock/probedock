@@ -12,4 +12,5 @@
  *= require normalize
  *= require ./bootstrap
  *= require ./layout
+ *= require ./spinner
  */

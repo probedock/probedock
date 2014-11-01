@@ -70,7 +70,12 @@ class Api::ApiController < ApplicationController
       nbf: Time.now
     }).sign(Rails.application.secrets.secret_key_base, 'HS512')
 
-    render json: { token: jwt.to_s }
+    render json: {
+      token: jwt.to_s,
+      user: {
+        email: user.email
+      }
+    }
   end
 
   private
@@ -173,11 +178,10 @@ class Api::ApiController < ApplicationController
   def authenticate_api_user!
 
     @auth_token = auth_token_from_header || auth_token_from_params
-
     return unauthorized if @auth_token.blank?
 
     # TODO: use another secret for signing auth tokens
-    @auth_claims = JSON::JWT.decode(jwt_string, Rails.application.secrets.secret_key_base)
+    @auth_claims = JSON::JWT.decode(@auth_token, Rails.application.secrets.secret_key_base)
   end
 
   def auth_token_from_params

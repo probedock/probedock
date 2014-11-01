@@ -16,20 +16,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "api_keys", force: true do |t|
-    t.string   "identifier",    limit: 20,                null: false
-    t.string   "shared_secret", limit: 50,                null: false
-    t.boolean  "active",                   default: true, null: false
-    t.integer  "user_id",                                 null: false
-    t.integer  "usage_count",              default: 0,    null: false
-    t.datetime "last_used_at"
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-  end
-
-  add_index "api_keys", ["identifier"], name: "index_api_keys_on_identifier", unique: true, using: :btree
-  add_index "api_keys", ["user_id"], name: "api_keys_user_id_fk", using: :btree
-
   create_table "app_settings", force: true do |t|
     t.string   "ticketing_system_url"
     t.datetime "updated_at",             null: false
@@ -75,17 +61,14 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "projects", force: true do |t|
     t.string   "name",                                          null: false
-    t.string   "url_token",              limit: 25,             null: false
-    t.string   "api_id",                 limit: 12,             null: false
+    t.string   "key",                    limit: 12,             null: false
     t.integer  "tests_count",                       default: 0, null: false
     t.integer  "deprecated_tests_count",            default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
-    t.string   "metric_key",             limit: 5,              null: false
   end
 
-  add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
-  add_index "projects", ["metric_key"], name: "index_projects_on_metric_key", unique: true, using: :btree
+  add_index "projects", ["key"], name: "index_projects_on_key", unique: true, using: :btree
 
   create_table "purge_actions", force: true do |t|
     t.string   "data_type",     limit: 20,             null: false
@@ -298,8 +281,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "users", ["last_run_id"], name: "users_last_run_id_fk", using: :btree
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
   add_index "users", ["settings_id"], name: "index_users_on_settings_id", unique: true, using: :btree
-
-  add_foreign_key "api_keys", "users", name: "api_keys_user_id_fk"
 
   add_foreign_key "project_versions", "projects", name: "project_versions_project_id_fk"
 

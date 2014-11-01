@@ -1,63 +1,71 @@
-angular.module('rox.auth', ['base64', 'LocalStorageModule', 'ui.bootstrap'])
+angular.module('rox.auth', ['LocalStorageModule', 'ui.bootstrap'])
 
-  .factory('AuthService', ['$base64', '$http', 'localStorageService', '$rootScope', function($base64, $http, $local, $rootScope) {
+  .factory('AuthService', ['$http', 'localStorageService', '$rootScope', function($http, $local, $rootScope) {
 
     $rootScope.currentUser = null;
 
-    return {
+    var service = {
 
-      logout: function() {
-        $rootScope.currentUser = null;
-      },
-
-      authenticate: function(username, password) {
+      signIn: function(credentials) {
         return $http({
           method: 'POST',
           url: '/api/authenticate',
-          data: {
-            username: username,
-            password: password
-          }
-        }).then(function(response) {
+          data: _.pick(credentials, 'username', 'password')
+        }).then(onSignedIn);
+      },
 
-          var token = response.data.token,
-              parts = token.split(/\./),
-              claimsBase64 = parts[1];
+      signOut: function() {
+        delete service.token;
+        $rootScope.currentUser = null;
+        $local.remove('auth');
+      },
 
-          var padding = claimsBase64.length % 4;
-          if (padding) {
-            claimsBase64 += Array(padding + 1).join('=');
-          }
+      checkSignedIn: function() {
 
-          var claims = JSON.parse($base64.decode(claimsBase64));
-
-          $rootScope.currentUser = {
-            email: claims.iss
-          };
-        });
+        var authData = $local.get('auth');
+        if (authData) {
+          authenticate(authData);
+        }
       }
     };
+
+    function onSignedIn(response) {
+      authenticate(response.data);
+      $local.set('auth', response.data);
+    }
+
+    function authenticate(authData) {
+      service.token = authData.token;
+      $rootScope.currentUser = authData.user;
+    }
+
+    return service;
   }])
 
   .controller('AuthController', ['AuthService', '$modal', '$scope', function($auth, $modal, $scope) {
 
     $scope.showSignIn = function() {
-      var modal = $modal.open({
+      $modal.open({
         templateUrl: '/templates/loginDialog.html',
         controller: 'LoginController'
       });
     };
 
-    $scope.signOut = function() {
-      $auth.logout();
-    };
+    $scope.signOut = $auth.signOut;
   }])
 
   .controller('LoginController', ['AuthService', '$http', '$scope', function($auth, $http, $scope) {
 
+    $scope.credentials = {};
+
     $scope.signIn = function() {
-      $auth.authenticate($scope.username, $scope.password).then($scope.$close);
+      delete $scope.error;
+      $auth.signIn($scope.credentials).then($scope.$close, showError);
     };
+
+    function showError() {
+      $scope.error = true;
+    }
   }])
 
 ;

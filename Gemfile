@@ -34,6 +34,9 @@ gem 'bcrypt'
 gem 'role_model'
 gem 'json-jwt'
 
+# API
+gem 'jbuilder'
+
 # Memory Database
 gem 'redis'
 gem 'hiredis'

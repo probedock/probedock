@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-angular.module('rox', ['rox.state', 'rox.routes', 'rox.auth', 'rox.dashboard'])
+angular.module('rox', ['rox.state', 'rox.routes', 'rox.auth', 'rox.dashboard', 'rox.projects', 'rox.api'])
 
   .constant('version', <%= JSON.dump Rails.application.version %>)
   .constant('environment', <%= JSON.dump Rails.env %>)
@@ -26,5 +26,10 @@ angular.module('rox', ['rox.state', 'rox.routes', 'rox.auth', 'rox.dashboard'])
 
   .config(['localStorageServiceProvider', function(localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('rox');
-  }]);
+  }])
+
+  .run(['AuthService', function($auth) {
+    $auth.checkSignedIn();
+  }])
+
 ;

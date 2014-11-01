@@ -18,6 +18,6 @@
 Tableling.global do
 
   serialize_type Time do |value|
-    value.to_ms
+    value.iso8601 3
   end
 end

@@ -15,14 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class Api::ProjectsController < Api::ApiController
-  before_filter :check_maintenance, only: [ :create, :update ]
-  before_filter(except: [ :index ]){ authorize! :manage, Project }
+  #before_filter :check_maintenance, only: [ :create, :update ]
+  #before_filter(except: [ :index ]){ authorize! :manage, Project }
 
-  load_resource find_by: :api_id
-  skip_load_resource except: [ :show, :update ]
+  #load_resource find_by: :api_id
+  #skip_load_resource except: [ :show, :update ]
 
   def index
-    render_api Project.tableling.process(params)
+    render json: Project.tableling.process(params)
   end
 
   def show
@@ -32,7 +32,7 @@ class Api::ProjectsController < Api::ApiController
   def create
     @project = Project.new parse_json_project
     if @project.errors.empty? and @project.save
-      render_api ProjectRepresenter.new(@project)
+      render json: @project.to_json
     else
       render_api_model_errors @project
     end
@@ -49,6 +49,6 @@ class Api::ProjectsController < Api::ApiController
   private
 
   def parse_json_project
-    parse_json_model 'name', 'urlToken'
+    parse_json_model 'name'
   end
 end

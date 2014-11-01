@@ -2,12 +2,13 @@
   h4.modal-title Sign in
 form role='form'
   .modal-body
-    .form-group
-      label for='username' E-mail
-      input#username.form-control type='email' ng-model='username' placeholder='Your e-mail address'
-    .form-group
-      label for='password' Password
-      input#password.form-control type='password' ng-model='password' placeholder='Your password'
+    .form-group ng-class='{"has-error": error, "has-feedback": error}'
+      input#username.form-control type='email' ng-model='credentials.username' placeholder='Your e-mail address' autofocus=true
+      span.glyphicon.glyphicon-remove.form-control-feedback ng-show='error'
+    .form-group ng-class='{"has-error": error, "has-feedback": error}'
+      input#password.form-control type='password' ng-model='credentials.password' placeholder='Your password'
+      span.glyphicon.glyphicon-remove.form-control-feedback ng-show='error'
+    p.text-danger.text-center ng-show='error' Your e-mail or password are incorrect.
   .modal-footer
     button.btn.btn-default type='button' ng-click='$close()' Close
     button.btn.btn-primary type='submit' ng-click='signIn()' Submit
