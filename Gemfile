@@ -35,6 +35,7 @@ gem 'role_model'
 gem 'json-jwt'
 
 # API
+gem 'grape'
 gem 'jbuilder'
 
 # Memory Database

@@ -14,12 +14,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require_dependency 'random'
-
 class Project < ActiveRecord::Base
+  include JsonResource
+  include IdentifiableResource
   include Tableling::Model
 
-  before_create :set_key
+  before_create{ set_identifier :api_id }
 
   has_many :tests, class_name: 'TestInfo'
 
@@ -31,7 +31,7 @@ class Project < ActiveRecord::Base
 
     default_view do
 
-      field :key, as: :id
+      field :api_id, as: :id
       field :name
       field :description, order: false
       field :tests_count, as: :testsCount
@@ -40,7 +40,7 @@ class Project < ActiveRecord::Base
 
       quick_search do |q,t|
         term = "%#{t.downcase}%"
-        q.where 'LOWER(name) LIKE ? OR LOWER(key) LIKE ?', term, term
+        q.where 'LOWER(name) LIKE ? OR LOWER(api_id) LIKE ?', term, term
       end
 
       serialize_response do |res|
@@ -51,31 +51,12 @@ class Project < ActiveRecord::Base
 
   def to_builder options = {}
     Jbuilder.new do |json|
-      json.id key
+      json.id api_id
       json.name name
       json.description description if description.present?
       json.testsCount tests_count
       json.deprecatedTestsCount deprecated_tests_count
       json.createdAt created_at.iso8601(3)
     end
-  end
-
-  def to_json options = {}
-    to_builder(options).attributes!
-  end
-
-  private
-
-  def self.generate_new_key
-    next while exists?(key: key = generate_key)
-    key
-  end
-
-  def self.generate_key
-    SecureRandom.random_alphanumeric 12
-  end
-
-  def set_key
-    self.key = self.class.generate_new_key
   end
 end

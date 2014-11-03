@@ -14,12 +14,24 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-module ROXCenter
+require_dependency 'random'
 
-  module Errors
+module IdentifiableResource
+  extend ActiveSupport::Concern
 
-    class Error < StandardError; end
-    class XHRRequired < Error; end
-    class Unauthorized < Error; end
+  def set_identifier attr
+    self[attr] = self.class.generate_new_identifier attr
+  end
+
+  module ClassMethods
+
+    def generate_new_identifier attr
+      next while exists?(attr => id = generate_identifier)
+      id
+    end
+
+    def generate_identifier size = 12
+      SecureRandom.random_alphanumeric size
+    end
   end
 end

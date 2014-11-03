@@ -24,10 +24,7 @@ ROXCenter::Application.routes.draw do
 
   get '/templates/:name', to: 'home#template'
 
-  namespace :api, module: :api do
-    post :authenticate, to: 'api#authenticate'
-    resources :projects, only: [ :index, :create, :update ]
-  end
+  mount ROXCenter::API => '/api'
 
   get '/*path', to: 'home#index'
   root to: 'home#index'

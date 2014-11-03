@@ -105,5 +105,8 @@ module ROXCenter
 
     config.generators.assets = false
     config.generators.helper = false
+
+    config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
+    config.autoload_paths += Dir[Rails.root.join('app', 'api', '*')]
   end
 end

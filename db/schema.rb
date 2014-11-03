@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "projects", force: true do |t|
     t.string   "name",                   limit: 100,             null: false
-    t.string   "key",                    limit: 12,              null: false
+    t.string   "api_id",                 limit: 12,              null: false
     t.integer  "tests_count",                        default: 0, null: false
     t.integer  "deprecated_tests_count",             default: 0, null: false
     t.datetime "created_at",                                     null: false
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.text     "description"
   end
 
-  add_index "projects", ["key"], name: "index_projects_on_key", unique: true, using: :btree
+  add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
 
   create_table "purge_actions", force: true do |t|
     t.string   "data_type",     limit: 20,             null: false

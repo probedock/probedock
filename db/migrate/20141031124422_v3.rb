@@ -19,7 +19,6 @@ class V3 < ActiveRecord::Migration
   def up
     remove_column :projects, :metric_key
     remove_column :projects, :url_token
-    rename_column :projects, :api_id, :key
     add_column :projects, :description, :text
     change_column :projects, :name, :string, limit: 100
 

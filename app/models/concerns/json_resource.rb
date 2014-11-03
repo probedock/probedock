@@ -14,12 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-module ROXCenter
+module JsonResource
+  extend ActiveSupport::Concern
 
-  module Errors
-
-    class Error < StandardError; end
-    class XHRRequired < Error; end
-    class Unauthorized < Error; end
+  def to_json options = {}
+    to_builder(options).attributes!.to_json
   end
 end
