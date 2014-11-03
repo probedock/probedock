@@ -53,32 +53,6 @@ module ROXCenter
       'pong'
     end
 
-    namespace :projects do
-      helpers do
-        def parse_project
-          parse_object :name, :description
-        end
-      end
-
-      get do
-        Project.tableling.process(params)
-      end
-
-      post do
-        create_record Project.new(parse_project)
-      end
-
-      namespace '/:id' do
-        helpers do
-          def current_project
-            Project.where(api_id: params[:id]).first!
-          end
-        end
-
-        patch do
-          update_record current_project, parse_project
-        end
-      end
-    end
+    mount ProjectsApi
   end
 end
