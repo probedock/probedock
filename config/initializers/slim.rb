@@ -1,6 +1,6 @@
 slim_options = {
   # Disable {} attributes to play nice with angular
-  attr_delims: { '(' => ')', '[' => ']' }
+  attr_list_delims: { '(' => ')', '[' => ']' }
 }
 
 slim_options[:pretty] = true if Rails.env == 'development'

@@ -20,6 +20,8 @@ class V3 < ActiveRecord::Migration
     remove_column :projects, :metric_key
     remove_column :projects, :url_token
     rename_column :projects, :api_id, :key
+    add_column :projects, :description, :text
+    change_column :projects, :name, :string, limit: 100
 
     remove_column :users, :remember_token
     remove_column :users, :remember_created_at
@@ -29,10 +31,7 @@ class V3 < ActiveRecord::Migration
     remove_column :users, :last_sign_in_ip
     remove_column :users, :encrypted_password
     remove_column :users, :metric_key
-
-    change_table :users do |t|
-      t.string :password_digest, null: false
-    end
+    add_column :users, :password_digest, :string, null: false
 
     drop_table :api_keys
   end

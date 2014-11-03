@@ -25,6 +25,7 @@ class Project < ActiveRecord::Base
 
   strip_attributes
   validates :name, presence: { name: :blankValue }, length: { maximum: 255, name: :valueTooLong }
+  validates :description, length: { maximum: 1000, name: :valueTooLong }
 
   tableling do
 
@@ -32,6 +33,7 @@ class Project < ActiveRecord::Base
 
       field :key, as: :id
       field :name
+      field :description, order: false
       field :tests_count, as: :testsCount
       field :deprecated_tests_count, as: :deprecatedTestsCount
       field :created_at, as: :createdAt
@@ -51,6 +53,7 @@ class Project < ActiveRecord::Base
     Jbuilder.new do |json|
       json.id key
       json.name name
+      json.description description if description.present?
       json.testsCount tests_count
       json.deprecatedTestsCount deprecated_tests_count
       json.createdAt created_at.iso8601(3)

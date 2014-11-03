@@ -39,8 +39,9 @@ class Api::ProjectsController < Api::ApiController
   end
 
   def update
+    @project = Project.where(key: params[:id]).first!
     if @project.errors.empty? and @project.update_attributes parse_json_project
-      render_api ProjectRepresenter.new(@project)
+      render json: @project.to_json
     else
       render_api_model_errors @project
     end
@@ -49,6 +50,6 @@ class Api::ProjectsController < Api::ApiController
   private
 
   def parse_json_project
-    parse_json_model 'name'
+    parse_json_model :name, :description
   end
 end

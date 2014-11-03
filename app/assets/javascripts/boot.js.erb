@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-angular.module('rox', ['rox.state', 'rox.routes', 'rox.auth', 'rox.dashboard', 'rox.projects', 'rox.api'])
+angular.module('rox', ['rox.state', 'rox.routes', 'rox.auth', 'rox.dashboard', 'rox.projects', 'rox.api', 'angularMoment'])
 
   .constant('version', <%= JSON.dump Rails.application.version %>)
   .constant('environment', <%= JSON.dump Rails.env %>)

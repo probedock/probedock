@@ -1,0 +1,27 @@
+form.projectPanel.panel.panel-default ng-class='{"panel-primary": !editedProject && lastCreatedProject !== project, "panel-warning": editedProject, "panel-success": lastCreatedProject === project}' role='form' name='editProjectForm'
+  .panel-heading.clearfix
+    .label.label-info.apiId.pull-right ng-hide='editedProject' tooltip='Project ID' {{ project.id }}
+    h3.panel-title ng-hide='editedProject' {{ project.name }}
+    .form-group ng-show='editedProject' ng-class='{"has-error": editProjectForm.name.$dirty && editProjectForm.name.$invalid}'
+      input.form-control type='text' ng-model='editedProject.name' name='name' autofocus=true required=true maxlength=100
+  .panel-body
+    .btn-group.pull-right dropdown=true ng-hide='editedProject'
+      button.btn.btn-default.btn-sm.dropdown-toggle type='button' data-toggle='dropdown'
+        span.glyphicon.glyphicon-cog
+      ul.dropdown-menu role='menu'
+        li
+          a href='#' ng-click='edit()' Edit
+    p ng-show='project.description && !editedProject' {{ project.description }}
+    p.text-muted ng-hide='project.description || editedProject'
+      em No description.
+    dl.dl-horizontal ng-hide='editedProject'
+      dt Number of Tests
+      dd {{ project.testsCount - project.deprecatedTestsCount }}
+      dt Creation Date
+      dd {{ project.createdAt | amDateFormat:'llll' }}
+    .form-group ng-show='editedProject' ng-class='{"has-error": newProjectForm.description.$dirty && newProjectForm.description.$invalid}'
+      label for='project{{ project.id }}Description' Description
+      textarea.form-control ng-attr-id='project{{ project.id }}Description' ng-model='editedProject.description' name='description' rows=3 maxlength=1000
+    .btn-group.pull-right ng-show='editedProject'
+      button.btn.btn-default type='button' ng-click='cancelEdit()' ng-show='editedProject' Cancel
+      button.btn.btn-primary type='submit' ng-click='save()' ng-show='editedProject' Save

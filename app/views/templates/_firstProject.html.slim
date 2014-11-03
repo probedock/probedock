@@ -1,0 +1,8 @@
+form role='form' name='firstProjectForm'
+  .form-group ng-class='{"has-error": firstProjectForm.name.$dirty && firstProjectForm.name.$invalid}'
+    label for='newProjectName' Name
+    input#newProjectName.form-control type='text' ng-model='newProject.name' name='name' placeholder='Enter the name of the project' autofocus=true required=true maxlength=100
+  .form-group ng-class='{"has-error": firstProjectForm.description.$dirty && firstProjectForm.description.$invalid}'
+    label for='newProjectDescription' Description
+    textarea#newProjectDescription.form-control ng-model='newProject.description' name='description' placeholder='Enter a more detailed description of the project' rows=3 maxlength=1000
+  button.btn.btn-primary.btn-lg type='submit' ng-click='createProject(firstProjectForm)' ng-disabled='firstProjectForm.$invalid' Add the project

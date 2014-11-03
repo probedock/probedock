@@ -26,7 +26,7 @@ ROXCenter::Application.routes.draw do
 
   namespace :api, module: :api do
     post :authenticate, to: 'api#authenticate'
-    resources :projects, only: [ :index, :create ]
+    resources :projects, only: [ :index, :create, :update ]
   end
 
   get '/*path', to: 'home#index'

@@ -60,12 +60,13 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "project_versions", ["project_id", "name"], name: "index_project_versions_on_project_id_and_name", unique: true, using: :btree
 
   create_table "projects", force: true do |t|
-    t.string   "name",                                          null: false
-    t.string   "key",                    limit: 12,             null: false
-    t.integer  "tests_count",                       default: 0, null: false
-    t.integer  "deprecated_tests_count",            default: 0, null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.string   "name",                   limit: 100,             null: false
+    t.string   "key",                    limit: 12,              null: false
+    t.integer  "tests_count",                        default: 0, null: false
+    t.integer  "deprecated_tests_count",             default: 0, null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.text     "description"
   end
 
   add_index "projects", ["key"], name: "index_projects_on_key", unique: true, using: :btree

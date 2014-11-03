@@ -29,10 +29,12 @@
 //
 //= require underscore
 //= require jquery
+//= require moment
 //= require angular
 //= require angular-ui-router
 //= require angular-ui-bootstrap-tpls
 //= require angular-local-storage
+//= require angular-moment
 //= require angular-base64
 //= require ./boot
 //= require_tree ./angular

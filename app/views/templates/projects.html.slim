@@ -7,24 +7,16 @@ div ng-controller='ProjectsController'
     .jumbotron ng-show='projects && !projects.length'
       h1 Projects
       p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi. Ut non nulla nulla. Nam et auctor ipsum, vitae pharetra dolor. In quis nisl finibus ex semper blandit. Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis. Sed vel vehicula arcu. Pellentesque orci ligula, placerat non porta a, eleifend quis turpis. Quisque ultrices, erat nec cursus euismod, lorem diam mollis purus, id ultrices est mauris sit amet quam. Sed eget iaculis magna. Nullam nisi diam, eleifend vitae egestas placerat, ornare quis magna. Phasellus commodo, arcu sit amet luctus sagittis, eros lorem lobortis eros, a aliquam dolor lacus non sem. Quisque in turpis non tellus suscipit dignissim sed vitae ex.
-      form role='form'
-        .form-group
-          label for='newProjectName' Name
-          input#newProjectName.form-control type='text' ng-model='newProject.name' placeholder='Enter the name of the project' autofocus=true
-        button.btn.btn-primary.btn-lg type='submit' ng-click='createProject()' Add the project
-  .row ng-show='projects.length'
-    .col-xs-3
-      h1 Projects
-      p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi.
-      form role='form'
-        .form-group
-          label for='newProjectName' Name
-          input#newProjectName.form-control type='text' ng-model='newProject.name' placeholder='Enter the name of the project' autofocus=true
-        button.btn.btn-primary.btn-lg type='submit' ng-click='createProject()' Add the project
-    .col-xs-9
-      .col-xs-4 ng-repeat='project in projects'
-        .panel.panel-default
-          .panel-heading
-            h3.panel-title {{ project.name }}
-          .panel-body
-            p Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis.
+      = render partial: 'templates/firstProject'
+  .container-fluid ng-show='projects.length'
+    .col-xs-12.col-sm-4.col-md-3
+      .well
+        h1 Projects
+        p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi.
+        = render partial: 'templates/newProject'
+    .col-xs-12.col-sm-8.col-md-9
+      div ng-repeat='project in projects'
+        .visible-md-block.clearfix ng-if='$index % 2 === 0'
+        .visible-lg-block.clearfix ng-if='$index % 3 === 0'
+        .col-xs-12.col-sm-12.col-md-6.col-lg-4 ng-controller='ProjectController'
+          = render partial: 'templates/project'
