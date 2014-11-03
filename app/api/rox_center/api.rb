@@ -45,12 +45,30 @@ module ROXCenter
     helpers ApiAuthenticationHelper
     helpers ApiResourceHelper
 
-    before do
-      authenticate!
-    end
-
     get :ping do
       'pong'
+    end
+
+    post :authenticate do
+
+      data = parse_object :username, :password
+      user = User.where(email: data[:username]).first
+
+      # TODO: protect against timing attacks
+      raise ROXCenter::Errors::Unauthorized.new 'Invalid credentials' unless user && user.authenticate(data[:password])
+
+      jwt = JSON::JWT.new({
+        iss: user.email,
+        exp: 1.year.from_now,
+        nbf: Time.now
+      }).sign(Rails.application.secrets.secret_key_base, 'HS512')
+
+      {
+        token: jwt.to_s,
+        user: {
+          email: user.email
+        }
+      }
     end
 
     mount ProjectsApi

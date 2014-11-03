@@ -19,6 +19,10 @@ module ROXCenter
 
     namespace :projects do
 
+      before do
+        authenticate!
+      end
+
       helpers do
         def parse_project
           parse_object :name, :description
