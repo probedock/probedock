@@ -72,5 +72,6 @@ module ROXCenter
     end
 
     mount ProjectsApi
+    mount TestPayloadsApi
   end
 end

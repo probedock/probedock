@@ -15,10 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestPayload < ActiveRecord::Base
+  include JsonResource
+  include IdentifiableResource
   include Tableling::Model
 
-  belongs_to :user
-  belongs_to :test_run
+  before_create{ set_identifier :api_id }
+
+  belongs_to :runner, class_name: 'User'
   has_and_belongs_to_many :test_keys
 
   scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
@@ -29,11 +32,12 @@ class TestPayload < ActiveRecord::Base
   event :start_processing, from: :created, to: :processing
   event :finish_processing, from: :processing, to: :processed
 
-  validates :user, presence: true
-  validates :contents, presence: true, length: { maximum: 16777215, tokenizer: lambda{ |s| OpenStruct.new length: s.bytesize } }
+  validates :runner, presence: true
+  #validates :contents, presence: true, length: { maximum: 16777215, tokenizer: lambda{ |s| OpenStruct.new length: s.bytesize } }
   validates :contents_bytesize, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
+  validates :run_ended_at, presence: true
 
   tableling do
 
@@ -46,7 +50,7 @@ class TestPayload < ActiveRecord::Base
       field :processed_at, as: :processedAt
 
       serialize_response do |res|
-        TestPayloadsRepresenter.new OpenStruct.new(res)
+        res[:data].collect{ |p| p.to_builder.attributes! }
       end
     end
   end
@@ -55,8 +59,14 @@ class TestPayload < ActiveRecord::Base
     test_keys.clear
   end
 
-  def contents= contents
-    write_attribute :contents, contents
-    write_attribute :contents_bytesize, contents.bytesize if contents
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.id api_id
+      json.bytes contents_bytesize
+      json.state state
+      json.receivedAt received_at.iso8601(3)
+      json.processingAt processing_at.iso8601(3) if processing_at
+      json.processedAt processed_at.iso8601(3) if processed_at
+    end
   end
 end

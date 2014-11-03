@@ -17,10 +17,21 @@
 class V3 < ActiveRecord::Migration
 
   def up
+
+    drop_table :api_keys
+
     remove_column :projects, :metric_key
     remove_column :projects, :url_token
     add_column :projects, :description, :text
     change_column :projects, :name, :string, limit: 100
+
+    remove_column :test_payloads, :test_run_id
+    add_column :test_payloads, :api_id, :string, null: false, limit: 12
+    add_column :test_payloads, :run_ended_at, :datetime, null: false
+    rename_column :test_payloads, :user_id, :runner_id
+    remove_column :test_payloads, :contents
+    add_column :test_payloads, :contents, :json, null: false
+    add_index :test_payloads, :api_id, unique: true
 
     remove_column :users, :remember_token
     remove_column :users, :remember_created_at
@@ -31,8 +42,6 @@ class V3 < ActiveRecord::Migration
     remove_column :users, :encrypted_password
     remove_column :users, :metric_key
     add_column :users, :password_digest, :string, null: false
-
-    drop_table :api_keys
   end
 
   def down
