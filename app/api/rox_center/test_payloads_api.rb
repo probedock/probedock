@@ -32,9 +32,11 @@ module ROXCenter
           received_at = Time.now
 
           body = env['api.request.input']
-          json = Oj.load body, mode: :strict
+          json = MultiJson.load body
+          # TODO: validate test payload (format, byte size)
 
-          payload = TestPayload.new runner: current_user, received_at: received_at, run_ended_at: received_at
+          # TODO: handle uuid conflict
+          payload = TestPayload.new uuid: SecureRandom.uuid, runner: current_user, received_at: received_at, run_ended_at: received_at
           payload.contents = json
           payload.contents_bytesize = body.bytesize
 
@@ -43,7 +45,13 @@ module ROXCenter
           status 202
 
           {
-            payload: payload.to_builder.attributes!
+            receivedAt: received_at.iso8601(3),
+            payloads: [
+              {
+                uuid: payload.uuid,
+                bytes: body.bytesize
+              }
+            ]
           }
         end
       end
@@ -51,6 +59,7 @@ module ROXCenter
       namespace :payloads do
 
         get do
+          # TODO: do not fetch payload contents from database
           TestPayload.tableling.process(params)
         end
       end

@@ -27,12 +27,10 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   end
 
   create_table "categories", force: true do |t|
-    t.string   "name",                 null: false
-    t.datetime "created_at",           null: false
-    t.string   "metric_key", limit: 5, null: false
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
   end
 
-  add_index "categories", ["metric_key"], name: "index_categories_on_metric_key", unique: true, using: :btree
   add_index "categories", ["name"], name: "index_categories_on_name", unique: true, using: :btree
 
   create_table "link_templates", force: true do |t|
@@ -93,62 +91,28 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "tags_test_infos", ["tag_id", "test_info_id"], name: "index_tags_test_infos_on_tag_id_and_test_info_id", unique: true, using: :btree
   add_index "tags_test_infos", ["test_info_id"], name: "tags_test_infos_test_info_id_fk", using: :btree
 
-  create_table "test_counters", force: true do |t|
-    t.string   "timezone",           limit: 30,              null: false
-    t.datetime "timestamp",                                  null: false
-    t.integer  "mask",                                       null: false
-    t.string   "unique_token",       limit: 100,             null: false
-    t.integer  "user_id"
-    t.integer  "category_id"
-    t.integer  "project_id"
-    t.integer  "written_counter",                default: 0, null: false
-    t.integer  "run_counter",                    default: 0, null: false
-    t.integer  "total_written"
-    t.integer  "total_run"
-    t.integer  "deprecated_counter",             default: 0, null: false
-    t.integer  "total_deprecated"
-  end
-
-  add_index "test_counters", ["category_id"], name: "test_counters_category_id_fk", using: :btree
-  add_index "test_counters", ["project_id"], name: "test_counters_project_id_fk", using: :btree
-  add_index "test_counters", ["timezone", "timestamp", "mask"], name: "index_test_counters_on_timezone_and_timestamp_and_mask", using: :btree
-  add_index "test_counters", ["unique_token"], name: "index_test_counters_on_unique_token", unique: true, using: :btree
-  add_index "test_counters", ["user_id"], name: "test_counters_user_id_fk", using: :btree
-
-  create_table "test_deprecations", force: true do |t|
-    t.boolean  "deprecated",   null: false
-    t.integer  "test_info_id", null: false
-    t.integer  "user_id",      null: false
-    t.datetime "created_at",   null: false
-    t.integer  "category_id"
-  end
-
-  add_index "test_deprecations", ["test_info_id"], name: "test_deprecations_test_info_id_fk", using: :btree
-  add_index "test_deprecations", ["user_id"], name: "test_deprecations_user_id_fk", using: :btree
-
   create_table "test_infos", force: true do |t|
-    t.string   "name",                               null: false
-    t.integer  "author_id",                          null: false
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.integer  "key_id",                             null: false
-    t.boolean  "passing",                            null: false
-    t.integer  "effective_result_id"
-    t.datetime "last_run_at",                        null: false
-    t.boolean  "active",              default: true, null: false
-    t.integer  "last_run_duration",                  null: false
-    t.integer  "project_id",                         null: false
+    t.string   "name",                             null: false
+    t.integer  "author_id",                        null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.integer  "key_id",                           null: false
+    t.boolean  "passing",                          null: false
+    t.integer  "last_result_id"
+    t.datetime "last_run_at",                      null: false
+    t.boolean  "active",            default: true, null: false
+    t.integer  "last_run_duration",                null: false
+    t.integer  "project_id",                       null: false
     t.integer  "category_id"
-    t.integer  "deprecation_id"
-    t.integer  "results_count",       default: 0,    null: false
+    t.integer  "results_count",     default: 0,    null: false
     t.integer  "last_runner_id"
+    t.datetime "deprecated_at"
   end
 
   add_index "test_infos", ["author_id"], name: "test_infos_author_id_fk", using: :btree
   add_index "test_infos", ["category_id"], name: "test_infos_category_id_fk", using: :btree
-  add_index "test_infos", ["deprecation_id"], name: "test_infos_deprecation_id_fk", using: :btree
-  add_index "test_infos", ["effective_result_id"], name: "test_infos_effective_result_id_fk", using: :btree
   add_index "test_infos", ["key_id", "project_id"], name: "index_test_infos_on_key_id_and_project_id", unique: true, using: :btree
+  add_index "test_infos", ["last_result_id"], name: "test_infos_effective_result_id_fk", using: :btree
   add_index "test_infos", ["last_runner_id"], name: "test_infos_last_runner_id_fk", using: :btree
   add_index "test_infos", ["project_id"], name: "test_infos_project_id_fk", using: :btree
 
@@ -182,48 +146,50 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_keys_payloads", ["test_payload_id"], name: "test_keys_payloads_test_payload_id_fk", using: :btree
 
   create_table "test_payloads", force: true do |t|
-    t.integer  "contents_bytesize",            null: false
-    t.string   "state",             limit: 12, null: false
-    t.datetime "received_at",                  null: false
+    t.integer  "contents_bytesize",                                    null: false
+    t.string   "state",                         limit: 12,             null: false
+    t.datetime "received_at",                                          null: false
     t.datetime "processing_at"
     t.datetime "processed_at"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
-    t.integer  "runner_id",                    null: false
-    t.string   "api_id",            limit: 12, null: false
-    t.datetime "run_ended_at",                 null: false
-    t.json     "contents",                     null: false
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+    t.integer  "runner_id",                                            null: false
+    t.string   "api_id",                        limit: 12,             null: false
+    t.json     "contents",                                             null: false
+    t.string   "uuid",                                                 null: false
+    t.integer  "duration"
+    t.datetime "run_ended_at"
+    t.integer  "results_count",                            default: 0, null: false
+    t.integer  "passed_results_count",                     default: 0, null: false
+    t.integer  "inactive_results_count",                   default: 0, null: false
+    t.integer  "inactive_passed_results_count",            default: 0, null: false
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree
   add_index "test_payloads", ["runner_id"], name: "test_payloads_user_id_fk", using: :btree
   add_index "test_payloads", ["state"], name: "index_test_payloads_on_state", using: :btree
+  add_index "test_payloads", ["uuid"], name: "index_test_payloads_on_uuid", unique: true, using: :btree
 
   create_table "test_results", force: true do |t|
-    t.boolean  "passed",                               null: false
-    t.integer  "runner_id",                            null: false
-    t.integer  "test_info_id",                         null: false
-    t.datetime "created_at",                           null: false
-    t.datetime "run_at",                               null: false
-    t.integer  "duration",                             null: false
+    t.boolean  "passed",                             null: false
+    t.integer  "runner_id",                          null: false
+    t.integer  "test_info_id",                       null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "run_at",                             null: false
+    t.integer  "duration",                           null: false
     t.text     "message"
-    t.integer  "test_run_id",                          null: false
-    t.boolean  "active",               default: true,  null: false
-    t.integer  "project_version_id",                   null: false
-    t.boolean  "new_test",             default: false, null: false
+    t.boolean  "active",             default: true,  null: false
+    t.integer  "project_version_id",                 null: false
+    t.boolean  "new_test",           default: false, null: false
     t.integer  "category_id"
-    t.integer  "previous_category_id"
-    t.boolean  "previous_passed"
-    t.boolean  "previous_active"
-    t.boolean  "deprecated",           default: false, null: false
+    t.boolean  "deprecated",         default: false, null: false
+    t.integer  "test_payload_id",                    null: false
   end
 
   add_index "test_results", ["category_id"], name: "test_results_category_id_fk", using: :btree
-  add_index "test_results", ["previous_category_id"], name: "test_results_previous_category_id_fk", using: :btree
   add_index "test_results", ["project_version_id"], name: "test_results_project_version_id_fk", using: :btree
   add_index "test_results", ["runner_id"], name: "test_results_runner_id_fk", using: :btree
   add_index "test_results", ["test_info_id"], name: "test_results_test_info_id_fk", using: :btree
-  add_index "test_results", ["test_run_id", "test_info_id"], name: "index_test_results_on_test_run_id_and_test_info_id", unique: true, using: :btree
 
   create_table "test_runs", force: true do |t|
     t.string   "uid"
@@ -289,17 +255,9 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "tags_test_infos", "tags", name: "tags_test_infos_tag_id_fk"
   add_foreign_key "tags_test_infos", "test_infos", name: "tags_test_infos_test_info_id_fk"
 
-  add_foreign_key "test_counters", "categories", name: "test_counters_category_id_fk"
-  add_foreign_key "test_counters", "projects", name: "test_counters_project_id_fk"
-  add_foreign_key "test_counters", "users", name: "test_counters_user_id_fk"
-
-  add_foreign_key "test_deprecations", "test_infos", name: "test_deprecations_test_info_id_fk"
-  add_foreign_key "test_deprecations", "users", name: "test_deprecations_user_id_fk"
-
   add_foreign_key "test_infos", "categories", name: "test_infos_category_id_fk"
   add_foreign_key "test_infos", "projects", name: "test_infos_project_id_fk"
-  add_foreign_key "test_infos", "test_deprecations", name: "test_infos_deprecation_id_fk", column: "deprecation_id"
-  add_foreign_key "test_infos", "test_results", name: "test_infos_effective_result_id_fk", column: "effective_result_id", dependent: :nullify
+  add_foreign_key "test_infos", "test_results", name: "test_infos_effective_result_id_fk", column: "last_result_id", dependent: :nullify
   add_foreign_key "test_infos", "users", name: "test_infos_author_id_fk", column: "author_id"
   add_foreign_key "test_infos", "users", name: "test_infos_last_runner_id_fk", column: "last_runner_id"
 
@@ -315,10 +273,9 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_payloads", "users", name: "test_payloads_user_id_fk", column: "runner_id"
 
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"
-  add_foreign_key "test_results", "categories", name: "test_results_previous_category_id_fk", column: "previous_category_id"
   add_foreign_key "test_results", "project_versions", name: "test_results_project_version_id_fk"
   add_foreign_key "test_results", "test_infos", name: "test_results_test_info_id_fk"
-  add_foreign_key "test_results", "test_runs", name: "test_results_test_run_id_fk", dependent: :delete
+  add_foreign_key "test_results", "test_payloads", name: "test_results_test_payload_id_fk"
   add_foreign_key "test_results", "users", name: "test_results_runner_id_fk", column: "runner_id"
 
   add_foreign_key "test_runs", "users", name: "test_runs_runner_id_fk", column: "runner_id"

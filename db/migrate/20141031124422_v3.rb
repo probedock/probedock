@@ -18,20 +18,45 @@ class V3 < ActiveRecord::Migration
 
   def up
 
+    remove_foreign_key :test_infos, :deprecation
+
     drop_table :api_keys
+    drop_table :test_counters
+    drop_table :test_deprecations
+
+    remove_column :categories, :metric_key
 
     remove_column :projects, :metric_key
     remove_column :projects, :url_token
     add_column :projects, :description, :text
     change_column :projects, :name, :string, limit: 100
 
+    remove_column :test_infos, :deprecation_id
+    add_column :test_infos, :deprecated_at, :datetime
+    rename_column :test_infos, :effective_result_id, :last_result_id
+
     remove_column :test_payloads, :test_run_id
     add_column :test_payloads, :api_id, :string, null: false, limit: 12
-    add_column :test_payloads, :run_ended_at, :datetime, null: false
     rename_column :test_payloads, :user_id, :runner_id
     remove_column :test_payloads, :contents
     add_column :test_payloads, :contents, :json, null: false
+    add_column :test_payloads, :uuid, :string, null: false
+    add_column :test_payloads, :duration, :integer
+    add_column :test_payloads, :run_ended_at, :datetime
+    add_column :test_payloads, :results_count, :integer, null: false, default: 0
+    add_column :test_payloads, :passed_results_count, :integer, null: false, default: 0
+    add_column :test_payloads, :inactive_results_count, :integer, null: false, default: 0
+    add_column :test_payloads, :inactive_passed_results_count, :integer, null: false, default: 0
     add_index :test_payloads, :api_id, unique: true
+    add_index :test_payloads, :uuid, unique: true
+
+    remove_index :test_results, [ :test_run_id, :test_info_id ]
+    remove_column :test_results, :test_run_id
+    remove_column :test_results, :previous_passed
+    remove_column :test_results, :previous_active
+    remove_column :test_results, :previous_category_id
+    add_column :test_results, :test_payload_id, :integer, null: false
+    add_foreign_key :test_results, :test_payloads
 
     remove_column :users, :remember_token
     remove_column :users, :remember_created_at

@@ -23,7 +23,6 @@ TMP_DIR = File.join Rails.root, 'tmp', 'samples'
 class SamplesGenerator
 
   def initialize config
-    @group = config[:group]
     @categories = config[:categories]
     @tags = config[:tags]
     @tickets = Array.new(12){ |i| "JIRA-#{rand(10000)}" }
@@ -41,43 +40,32 @@ class SamplesGenerator
     fail "Samples generator requires at least one existing user" if runner.blank?
     puts Paint[runner.name, :green]
 
-    print "Fetching api key..."
-    api_key = runner.api_keys.where(active: true).first
-    fail "Samples generator requires user #{runner.name} to have at least one active API key" if api_key.blank?
-    puts Paint[api_key.identifier, :green]
+    print "Generating authentication token..."
+    token = runner.generate_auth_token
+    puts Paint[token, :green]
 
-    print "Fetching projects... "
-    all_projects = Project.all.to_a
-    fail "Samples generator requires at least one existing project" if n == 1 and all_projects.empty?
-    fail "Samples generator requires at least two existing projects" if all_projects.length < 2
-    projects = all_projects.shuffle[0, 2]
-    puts Paint[projects.collect{ |p| %/"#{p.name}"/ }.to_sentence, :green]
+    print "Fetching project... "
+    project = Project.all.to_a.sample
+    fail "Samples generator requires at least one existing project" if project.blank?
+    puts Paint[project.name, :green]
 
-    payload = { r: [] }
-    payload[:g] = @group if @group.present?
+    payload = {
+      p: project.api_id,
+      v: random_project_version,
+      t: []
+    }
 
-    projects.each{ |p| payload[:r] << { j: p.api_id, v: random_project_version, t: [] } }
-
-    print "Generating tests and results... "
-    n.times do |i|
-
-      project, project_index = if n >= 2
-        [ projects[i % 2], i % 2 ]
-      else
-        [ projects.first, 0 ]
-      end
-
-      payload[:r][project_index][:t] << test_payload(project, runner)
-    end
+    print "Generating test results... "
+    n.times{ |i| payload[:t] << test_payload(project, runner) }
     puts Paint["done", :green]
 
-    payload[:d] = rand(100) + payload[:r].inject(0){ |memo,r| memo + r[:t].inject(0){ |memo,t| memo + t[:d] } }
+    payload[:d] = rand(100) + payload[:t].inject(0){ |memo,result| memo + result[:d] }
 
     json = payload.to_json
     FileUtils.mkdir_p TMP_DIR
     File.open(File.join(TMP_DIR, 'samples_payload.json'), 'w'){ |f| f.write json }
 
-    PayloadSender.new(json, runner, api_key).send
+    PayloadSender.new(json, runner, token).send
   end
 
   def random_sentence n = 5
@@ -94,26 +82,17 @@ class SamplesGenerator
 
   def test_payload project, author
 
-    key = TestKey.new.tap do |k|
-      k.user = author
-      k.project = project
-      k.save!
-    end
-
     passed = rand(2) == 1
-
-    flags = 0
-    flags = flags | TestInfo::INACTIVE if rand(5) > 3
+    active = rand(5) > 0
 
     {
-      :k => key.key,
       :n => random_sentence,
       :g => test_tags,
       :t => test_tickets,
       :p => passed,
-      :f => flags,
       :d => rand(26)
     }.tap do |h|
+      h[:v] = false unless active
       h[:c] = test_category if rand(4) > 0
       h[:m] = random_sentence 50 unless passed
       h[:a] = random_data if rand(2) == 0
@@ -155,19 +134,19 @@ end
 
 class PayloadSender
 
-  def initialize body, user, api_key
+  def initialize body, user, token
     @body = body
     @user = user
-    @api_key = api_key
+    @token = token
   end
 
   def send
 
-    req = Net::HTTP::Post.new Rails.application.routes.url_helpers.api_test_payloads_path
-    req.content_type = Mime::Type.lookup_by_extension(:rox_payload_v1).to_s
+    req = Net::HTTP::Post.new '/api/publish'
+    req.content_type = 'application/json'
     req.body = @body
 
-    req['Authorization'] = %/RoxApiKey id="#{@api_key.identifier}" secret="#{@api_key.shared_secret}"/
+    req['Authorization'] = %/Bearer #{@token}/
 
     print "Sending payload... "
     Net::HTTP.new('127.0.0.1', 3000).start do |http|
@@ -180,6 +159,9 @@ class PayloadSender
         puts Paint[res.body, :yellow]
       else
         puts Paint["done", :green]
+        puts
+        puts Paint[res.body, :bold]
+        puts
         puts Paint["All done!", :bold, :green]
       end
     end

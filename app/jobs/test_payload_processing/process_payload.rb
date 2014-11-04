@@ -19,61 +19,58 @@ require 'benchmark'
 module TestPayloadProcessing
 
   class ProcessPayload
-    attr_reader :processed_test_run, :test_payload, :cache
+    attr_reader :test_payload, :cache
 
     def initialize test_payload
 
       raise "Test payload must be in :processing state" unless test_payload.processing?
 
-      data = MultiJson.load test_payload.contents
       @test_payload = test_payload
+      data = test_payload.contents
       Rails.logger.info "Starting to process payload received at #{@test_payload.received_at}"
 
       time = Benchmark.realtime do
 
         data = HashWithIndifferentAccess.new data
 
-        TestRun.transaction do
+        TestPayload.transaction do
 
-          @cache = self.class.build_cache data, @test_payload.received_at
-          @processed_test_run = ProcessTestRun.new data, @test_payload, @cache
+          @cache = self.class.build_cache data
+          #@processed_test_run = ProcessTestRun.new data, @test_payload, @cache
 
           # Mark test keys as used.
-          free_keys = @cache[:keys].select &:free?
-          TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
+          #free_keys = @cache[:keys].select &:free?
+          #TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
 
-          test_payload.test_run = @processed_test_run.test_run
+          #test_payload.test_run = @processed_test_run.test_run
           test_payload.finish_processing!
         end
       end
 
       duration = (time * 1000).round 1
-      number_of_test_results = data[:r].inject(0){ |memo,results| memo + results[:t].length }
-      Rails.logger.info "Processed API payload with #{number_of_test_results} test results in #{duration}ms"
+      number_of_test_results = data[:t].length
+      Rails.logger.info "Processed API test payload with #{number_of_test_results} test results in #{duration}ms"
 
-      Rails.application.events.fire 'api:payload', self
+      #Rails.application.events.fire 'api:payload', self
     end
 
     private
 
-    def self.build_cache data, time_received
+    def self.build_cache data
       Hash.new.tap do |cache|
 
         time = Benchmark.realtime do
 
-          projects = Project.where(api_id: data[:r].collect{ |r| r[:j] }).to_a
-          cache[:projects] = projects
-          cache[:project_versions] = build_project_versions_cache data, projects
+          project = Project.where(api_id: data[:p]).first!
+          cache[:project] = project
 
-          keys_by_project = data[:r].inject({}){ |memo,results| memo[results[:j]] = results[:t].collect{ |t| t[:k] }; memo }
-          cache[:keys] = TestKey.for_projects_and_keys(keys_by_project).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).to_a
+          cache[:project_version] = project.versions.where(name: data[:v]).first || ProjectVersion.new.tap{ |v| v.project_id = project.id; v.name = data[:v]; v.quick_validation = true; v.save! }
+
+          cache[:keys] = project.test_keys.where(key: data[:t].select{ |t| t[:k] }.collect{ |t| t[:k] }).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).to_a
           cache[:tests] = cache[:keys].collect(&:test_info).compact
-          cache[:deprecations] = build_deprecations_cache cache[:tests], time_received
 
-          custom_value_names = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:a].keys if test[:a].present? }; memo }
+          custom_value_names = data[:t].collect{ |result| result[:a].try :keys }.compact.flatten.uniq
           cache[:custom_values] = TestValue.select('id, name, test_info_id').where(name: custom_value_names, test_info_id: cache[:tests].collect(&:id))
-
-          cache[:run] = TestRun.where('LOWER(uid) IN (?)', data[:u].downcase).first if data[:u].present?
 
           cache[:categories] = build_categories_cache data
           cache[:tags] = build_tags_cache data
@@ -84,48 +81,25 @@ module TestPayloadProcessing
       end
     end
 
-    def self.build_deprecations_cache tests, time_received
-      return [] if tests.empty?
-      TestDeprecation.select('id, test_info_id, created_at, deprecated').where('test_info_id IN (?) AND created_at >= ?', tests.collect{ |t| t.id }, time_received).to_a
-    end
-
     def self.build_categories_cache data
-      category_names = data[:r].inject([]){ |memo,results| memo.concat results[:t].collect{ |test| test[:c] } }.select(&:present?).uniq{ |name| name.downcase }
-      Category.where('LOWER(name) IN (?)', category_names.collect(&:downcase)).to_a.tap do |categories|
-        category_names.reject{ |name| categories.find{ |cat| cat.name.downcase == name.downcase } }.each do |name|
+      category_names = data[:t].collect{ |result| result[:c] }.compact.uniq
+      Category.where('name IN (?)', category_names).to_a.tap do |categories|
+        category_names.reject{ |name| categories.find{ |cat| cat.name == name } }.each do |name|
           categories << Category.new.tap{ |cat| cat.name = name; cat.quick_validation = true; cat.save! }
         end
       end
     end
 
     def self.build_tags_cache data
-      tags = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:g] if test[:g].present? }; memo }.select(&:present?).uniq{ |name| name.downcase }
-      existing_tags = Tag.where('LOWER(name) IN (?)', tags.collect(&:downcase))
-      tags.collect{ |name| existing_tags.find{ |tag| tag.name.downcase == name.downcase } || Tag.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
+      tags = data[:t].collect{ |result| result[:g] }.compact.flatten.uniq
+      existing_tags = Tag.where('name IN (?)', tags)
+      tags.collect{ |name| existing_tags.find{ |tag| tag.name == name } || Tag.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
     end
 
     def self.build_tickets_cache data
-      tickets = data[:r].inject([]){ |memo,results| results[:t].each{ |test| memo.concat test[:t] if test[:t].present? }; memo }.select(&:present?).uniq{ |name| name.downcase }
-      existing_tickets = Ticket.where('LOWER(name) IN (?)', tickets.collect(&:downcase))
-      tickets.collect{ |name| existing_tickets.find{ |ticket| ticket.name.downcase == name.downcase } || Ticket.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
-    end
-
-    def self.build_project_versions_cache data, projects
-
-      versions_by_project = data[:r].inject({}){ |memo,results| memo[projects.find{ |p| p.api_id == results[:j] }.id] = results[:v]; memo }
-
-      conditions, values = [], []
-      versions_by_project.each_pair do |project_id,version_name|
-        conditions << "project_id = ? AND LOWER(name) = ?"
-        values << project_id << version_name.downcase
-      end
-
-      ProjectVersion.where(*values.unshift(conditions.join(' OR '))).to_a.tap do |versions|
-        versions.each{ |v| versions_by_project.delete v.project_id }
-        versions_by_project.each do |project_id,version_name|
-          versions << ProjectVersion.new.tap{ |v| v.project_id = project_id; v.name = version_name; v.quick_validation = true; v.save! }
-        end
-      end
+      tickets = data[:t].collect{ |result| result[:t] }.compact.flatten.uniq
+      existing_tickets = Ticket.where('name IN (?)', tickets)
+      tickets.collect{ |name| existing_tickets.find{ |ticket| ticket.name == name } || Ticket.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
     end
   end
 end

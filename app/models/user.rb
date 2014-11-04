@@ -64,6 +64,14 @@ class User < ActiveRecord::Base
     end
   end
 
+  def generate_auth_token
+    JSON::JWT.new({
+      iss: email,
+      exp: 1.week.from_now,
+      nbf: Time.now
+    }).sign(Rails.application.secrets.secret_key_base, 'HS512').to_s
+  end
+
   def active_for_authentication?
     !!active
   end

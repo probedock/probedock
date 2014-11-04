@@ -21,7 +21,9 @@ class Project < ActiveRecord::Base
 
   before_create{ set_identifier :api_id }
 
+  has_many :test_keys
   has_many :tests, class_name: 'TestInfo'
+  has_many :versions, class_name: 'ProjectVersion'
 
   strip_attributes
   validates :name, presence: { name: :blankValue }, length: { maximum: 255, name: :valueTooLong }

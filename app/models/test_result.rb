@@ -19,10 +19,9 @@ class TestResult < ActiveRecord::Base
 
   belongs_to :test_info
   belongs_to :runner, class_name: 'User'
-  belongs_to :test_run
+  belongs_to :test_payload
   belongs_to :project_version
   belongs_to :category
-  belongs_to :previous_category, class_name: 'Category'
 
   strip_attributes
   validates :passed, inclusion: [ true, false ]

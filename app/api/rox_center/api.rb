@@ -57,14 +57,8 @@ module ROXCenter
       # TODO: protect against timing attacks
       raise ROXCenter::Errors::Unauthorized.new 'Invalid credentials' unless user && user.authenticate(data[:password])
 
-      jwt = JSON::JWT.new({
-        iss: user.email,
-        exp: 1.year.from_now,
-        nbf: Time.now
-      }).sign(Rails.application.secrets.secret_key_base, 'HS512')
-
       {
-        token: jwt.to_s,
+        token: user.generate_auth_token,
         user: {
           email: user.email
         }

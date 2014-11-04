@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class Category < ActiveRecord::Base
-  include Metric
   attr_accessor :quick_validation
 
   has_many :test_infos

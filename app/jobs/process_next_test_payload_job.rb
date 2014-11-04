@@ -23,10 +23,14 @@ class ProcessNextTestPayloadJob
 
   def self.perform
 
-    payload = TestPayload.waiting_for_processing.includes(:user).first!
+    payload = TestPayload.waiting_for_processing.includes(:runner).first
     payload.start_processing!
 
-    TestPayloadProcessing::ProcessPayload.new payload
+    begin
+      TestPayloadProcessing::ProcessPayload.new payload
+    rescue
+      payload.fail_processing!
+    end
   end
 
   # resque-workers-lock: lock workers to prevent concurrency

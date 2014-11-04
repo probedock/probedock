@@ -25,8 +25,6 @@ RoxHook.hooks << Settings::App
 RoxHook.hooks << CurrentTestMetricsData
 
 RoxHook.hooks << CacheReportJobForUi
-RoxHook.hooks << CountDeprecationJob
-RoxHook.hooks << CountTestsJob
 
 RoxHook.hooks << PurgeAllJob
 RoxHook.hooks << PurgeTagsJob

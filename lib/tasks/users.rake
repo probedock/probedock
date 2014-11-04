@@ -35,21 +35,34 @@ namespace :users do
   end
 
   desc %|Register a new user|
-  task :register, [ :email, :name ] => :environment do |t,args|
+  task :register, [ :email, :password ] => :environment do |t,args|
 
-    email, name = args[:email], args[:name]
+    email = args[:email]
     puts Paint[%/The "email" argument is required/, :red] unless email
 
     user = User.where(email: email).first
     puts Paint["There is already a user with e-mail #{email}", :red] if user
 
-    name ||= email.sub(/\@.*$/, '')
-    password = ask('Enter the password of the new user: '){ |q| q.echo = false }
+    name = email.sub(/\@.*$/, '')
+    password = args[:password] || ask('Enter the password of the new user: '){ |q| q.echo = false }
     puts Paint["Password cannot be blank", :red] if password.blank?
 
     user = User.new email: email, name: name, password: password
     user.save!
 
     puts Paint["User #{email} successfully created", :green]
+  end
+
+  desc %|Generate an authentication token for a user and export it as $ROX_TOKEN|
+  task :token, [ :email ] => :environment do |t,args|
+
+    email = args[:email]
+    user = User.where(email: email).first
+    unless user
+      puts Paint[%/No user found with e-mail #{email}/, :red]
+      next
+    end
+
+    puts user.generate_auth_token
   end
 end
