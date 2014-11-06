@@ -14,13 +14,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestDeprecation < ActiveRecord::Base
+module QuickValidation
+  extend ActiveSupport::Concern
 
-  belongs_to :test_info
-  belongs_to :category
-  belongs_to :user
+  included do
+    attr_accessor :quick_validation
+  end
 
-  validates :user, presence: true
-  validates :test_info, presence: true
-  validates :deprecated, inclusion: { in: [ true, false ] }
+  def save_quickly! *args
+    self.quick_validation = true
+    begin
+      save!
+    ensure
+      self.quick_validation = false
+    end
+  end
 end

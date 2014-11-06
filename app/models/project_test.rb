@@ -14,29 +14,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require 'active_support/concern'
+class ProjectTest < ActiveRecord::Base
+  include QuickValidation
 
-module Metric
-  extend ActiveSupport::Concern
-  KEY_CHARACTERS = (48..57).to_a + (97..122).to_a
+  belongs_to :key, class_name: 'TestKey'
+  belongs_to :project, counter_cache: :tests_count
+  has_many :descriptions, class_name: 'TestDescription', foreign_key: 'test_id'
 
-  included do
-    before_create :set_metric_key
-  end
-
-  def set_metric_key
-    self.metric_key = self.class.new_metric_key
-  end
-
-  module ClassMethods
-    
-    def new_metric_key
-      next while exists?(metric_key: key = generate_metric_key)
-      key
-    end
-
-    def generate_metric_key
-      ([ nil ] * 5).map{ KEY_CHARACTERS.sample.chr }.join
-    end
-  end
+  validates :name, presence: true, length: { maximum: 255 }
+  validates :project, presence: true
+  validates :key, presence: { unless: :quick_validation }
+  validates :key_id, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }
 end

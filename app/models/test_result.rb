@@ -15,9 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestResult < ActiveRecord::Base
+  include QuickValidation
   include Tableling::Model
 
-  belongs_to :test_info
+  belongs_to :test, class_name: 'ProjectTest'
   belongs_to :runner, class_name: 'User'
   belongs_to :test_payload
   belongs_to :project_version
@@ -29,10 +30,10 @@ class TestResult < ActiveRecord::Base
   validates :message, length: { maximum: 65535, tokenizer: lambda{ |s| s.bytes.to_a } } # byte length
   validates :active, inclusion: [ true, false ]
   validates :run_at, presence: true
-  validates :runner, presence: true
-  validates :test_info, presence: true
-  validates :test_payload, presence: true
-  validates :project_version, presence: true
+  validates :runner, presence: { unless: :quick_validation }
+  validates :test, presence: { unless: :quick_validation }
+  validates :test_payload, presence: { unless: :quick_validation }
+  validates :project_version, presence: { unless: :quick_validation }
 
   tableling do
 

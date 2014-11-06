@@ -15,10 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class Tag < ActiveRecord::Base
-
+  include QuickValidation
   NAME_REGEXP = /\A[a-z0-9\-\_]+\Z/i
-
-  attr_accessor :quick_validation
 
   has_and_belongs_to_many :test_infos
 

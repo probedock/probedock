@@ -14,34 +14,32 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestInfo < ActiveRecord::Base
+class TestDescription < ActiveRecord::Base
+  include QuickValidation
   include Tableling::Model
 
   # Flags
   INACTIVE = 1
 
-  attr_accessor :quick_validation
-
-  belongs_to :key, class_name: "TestKey"
-  belongs_to :project, counter_cache: :tests_count
+  belongs_to :test, class_name: 'ProjectTest'
+  belongs_to :project_version
   belongs_to :category
-  belongs_to :deprecation, class_name: "TestDeprecation"
-  belongs_to :last_runner, class_name: "User"
-  has_many :results, class_name: "TestResult"
-  belongs_to :last_result, class_name: "TestResult"
-  has_many :custom_values, class_name: "TestValue"
+  belongs_to :last_runner, class_name: 'User'
+  belongs_to :last_result, class_name: 'TestResult'
+  has_many :results, class_name: 'TestResult'
+  has_many :custom_values, class_name: 'TestValue'
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
 
   strip_attributes
-  validates :key, presence: { unless: :quick_validation }
-  validates :key_id, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }
   validates :name, presence: true, length: { maximum: 255 }
-  validates :project, presence: true
+  validates :test, presence: { unless: :quick_validation }
+  validates :project_version, presence: { unless: :quick_validation }
   validates :passing, inclusion: [ true, false ]
-  validates :last_run_at, presence: true
-  validates :last_run_duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :active, inclusion: [ true, false ]
+  validates :last_run_at, presence: true
+  validates :last_duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :last_runner, presence: { unless: :quick_validation }
 
   def self.count_by_category
     standard.select('category_id, count(id) AS tests_count').group('category_id').includes(:category).to_a.collect{ |t| { category: t.category.try(:name), count: t.tests_count } }

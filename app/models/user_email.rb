@@ -16,4 +16,6 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class UserEmail < ActiveRecord::Base
   has_one :user, foreign_key: :email_id
+
+  validates :email, presence: true, length: { maximum: 255, allow_blank: true }
 end

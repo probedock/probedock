@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestKey < ActiveRecord::Base
+  include QuickValidation
   include Tableling::Model
-  attr_accessor :quick_validation
   KEY_REGEXP = /\A[a-z0-9]{12}\Z/
 
   before_create :set_value
@@ -24,7 +24,7 @@ class TestKey < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :project
-  has_one :test_info, foreign_key: :key_id
+  has_one :test, class_name: 'ProjectTest', foreign_key: :key_id
   has_and_belongs_to_many :test_payloads
 
   strip_attributes

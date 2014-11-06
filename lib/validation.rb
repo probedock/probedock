@@ -20,7 +20,7 @@ module ActiveModel
     attr_accessor :name, :path
  
     def initialize message, options = {}
-      super message
+      super message.to_s
       @name, @path = options[:name], options[:path]
     end
   end

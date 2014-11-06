@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class ProjectVersion < ActiveRecord::Base
+  include QuickValidation
   include Tableling::Model
-  attr_accessor :quick_validation
 
   belongs_to :project
   has_many :test_results
-  has_many :test_infos, through: :test_results
+  has_many :test_descriptions
 
   strip_attributes
   validates :name, presence: true, uniqueness: { scope: :project_id, case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }

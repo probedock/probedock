@@ -34,7 +34,7 @@ module TestPayloadProcessing
         TestPayload.transaction do
 
           project_version = ProjectVersion.joins(:project).where('projects.api_id = ? AND project_versions.name = ?', data['p'], data['v']).includes(:project).first
-          project_version ||= ProjectVersion.new.tap{ |v| v.project_id = Project.where(api_id: data['p']).first!.id; v.name = data['v']; v.quick_validation = true; v.save! }
+          project_version ||= ProjectVersion.new(project_id: Project.where(api_id: data['p']).first!.id, name: data['v']).tap(&:save_quickly!)
           @test_payload.project_version = project_version
 
           @test_payload.results_count = data['t'].length
@@ -89,8 +89,8 @@ module TestPayloadProcessing
 
     def build_cache
       {
-        tests: {},
         test_keys: {},
+        test_descriptions: [],
         custom_values: [],
         categories: {},
         tags: {},
@@ -101,7 +101,6 @@ module TestPayloadProcessing
     def fill_cache results
 
       time = Benchmark.realtime do
-        cache_test_keys results
         cache_tests results
         cache_custom_values results
         cache_records results, Category, 'c'
@@ -112,25 +111,29 @@ module TestPayloadProcessing
       Rails.logger.info "Cached data for #{results.length} results in #{(time * 1000).round 1}ms"
     end
 
-    def cache_test_keys results
-
-      keys = results.inject([]){ |memo,result| memo << result['k'] if result['k']; memo }
-      return if keys.blank?
-
-      existing_keys = @test_result.project_version.project.test_keys.where(key: keys).includes([ :user, :project, :test_info ]).to_a.inject({}){ |memo,test_key| memo[test_key.key] = test_key; memo }
-
-      keys.each do |key|
-        @cache[:test_keys][key] = existing_keys[key] || TestKey.new(key: key, free: false, project_id: @test_result.project_version.project.id).tap{ |k| k.quick_validation = true; k.save! }
-      end
-    end
-
     def cache_tests results
 
-      test_names = results.inject([]){ |memo,result| memo << result['n'] unless result['k']; memo }
-      return if test_names.blank?
+      new_keys = results.inject([]){ |memo,result| memo << result['k'] if result['k']; memo }.reject{ |k| @cache[:test_keys].key? k }
+      existing_keys = nil
 
-      tests = TestInfo.where(project_id: @test_payload.project_version.project.id, name: test_names).to_a
-      @cache[:tests] = tests.inject({}){ |memo,test| memo[test.name] = test; memo }
+      if new_keys.present?
+        existing_keys = @test_result.project_version.project.test_keys.where(key: new_keys).includes([ :user, :project, :test ]).to_a.inject({}){ |memo,test_key| memo[test_key.key] = test_key; memo }
+
+        new_keys.each do |key|
+          @cache[:test_keys][key] = existing_keys[key] || TestKey.new(key: key, free: false, project_id: @test_result.project_version.project.id).tap(&:save_quickly!)
+        end
+      end
+
+      if existing_keys.present?
+        @cache[:test_descriptions] |= TestDescription.joins(:test).where(project_version_id: @test_payload.project_version_id, project_tests: { key_id: existing_keys.collect(&:id) }).includes(test: :key).to_a
+      end
+
+      test_names = results.inject([]){ |memo,result| memo << result['n'] unless result['k']; memo }
+      test_names.reject!{ |name| @cache[:test_descriptions].any?{ |d| d.name == name } }
+
+      if test_names.present?
+        @cache[:test_descriptions] |= TestDescription.joins(:project_version).where(project_versions: { project_id: @test_payload.project_version.project_id }, name: test_names).includes(test: :key).to_a
+      end
     end
 
     def cache_custom_values results
@@ -138,7 +141,7 @@ module TestPayloadProcessing
       names = results.inject(Set.new){ |memo,result| result['a'].present? ? memo | result['a'].keys : memo }.to_a
       return if names.blank?
 
-      @cache[:custom_values] = TestValue.select('id, name, test_info_id').where(name: names, test_info_id: @cache[:tests].collect(&:id)).to_a
+      @cache[:custom_values] = TestValue.select('id, name, test_description_id').where(name: names, test_description_id: @cache[:test_descriptions].collect(&:id)).to_a
     end
 
     def cache_records results, model, payload_property
