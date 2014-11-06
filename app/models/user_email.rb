@@ -14,13 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestValue < ActiveRecord::Base
-  attr_accessor :quick_validation
-
-  belongs_to :test_info
-
-  strip_attributes except: :contents
-  validates :test_info, presence: { unless: :quick_validation }
-  validates :name, presence: true, uniqueness: { scope: :test_info_id }, length: { maximum: 50 }
-  validates :contents, length: { maximum: 65535, allow_nil: true, tokenizer: lambda{ |s| OpenStruct.new length: s.bytesize } }
+class UserEmail < ActiveRecord::Base
+  has_one :user, foreign_key: :email_id
 end

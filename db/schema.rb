@@ -93,7 +93,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "test_infos", force: true do |t|
     t.string   "name",                             null: false
-    t.integer  "author_id",                        null: false
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
     t.integer  "key_id",                           null: false
@@ -109,7 +108,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.datetime "deprecated_at"
   end
 
-  add_index "test_infos", ["author_id"], name: "test_infos_author_id_fk", using: :btree
   add_index "test_infos", ["category_id"], name: "test_infos_category_id_fk", using: :btree
   add_index "test_infos", ["key_id", "project_id"], name: "index_test_infos_on_key_id_and_project_id", unique: true, using: :btree
   add_index "test_infos", ["last_result_id"], name: "test_infos_effective_result_id_fk", using: :btree
@@ -126,7 +124,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "test_keys", force: true do |t|
     t.string   "key",        limit: 12,                null: false
-    t.integer  "user_id",                              null: false
+    t.integer  "user_id"
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
     t.boolean  "free",                  default: true, null: false
@@ -154,21 +152,20 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.datetime "created_at",                                           null: false
     t.datetime "updated_at",                                           null: false
     t.integer  "runner_id",                                            null: false
-    t.string   "api_id",                        limit: 12,             null: false
+    t.string   "api_id",                        limit: 36,             null: false
     t.json     "contents",                                             null: false
-    t.string   "uuid",                                                 null: false
     t.integer  "duration"
     t.datetime "run_ended_at"
     t.integer  "results_count",                            default: 0, null: false
     t.integer  "passed_results_count",                     default: 0, null: false
     t.integer  "inactive_results_count",                   default: 0, null: false
     t.integer  "inactive_passed_results_count",            default: 0, null: false
+    t.integer  "project_version_id"
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree
   add_index "test_payloads", ["runner_id"], name: "test_payloads_user_id_fk", using: :btree
   add_index "test_payloads", ["state"], name: "index_test_payloads_on_state", using: :btree
-  add_index "test_payloads", ["uuid"], name: "index_test_payloads_on_uuid", unique: true, using: :btree
 
   create_table "test_results", force: true do |t|
     t.boolean  "passed",                             null: false
@@ -225,6 +222,12 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "tickets", ["name"], name: "index_tickets_on_name", unique: true, using: :btree
 
+  create_table "user_emails", force: true do |t|
+    t.string "email", null: false
+  end
+
+  add_index "user_emails", ["email"], name: "index_user_emails_on_email", unique: true, using: :btree
+
   create_table "user_settings", force: true do |t|
     t.integer  "last_test_key_project_id"
     t.datetime "updated_at",               null: false
@@ -234,19 +237,18 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "user_settings", ["last_test_key_project_id"], name: "user_settings_last_test_key_project_id_fk", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "name",                           null: false
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
-    t.integer  "sign_in_count",   default: 0
-    t.integer  "roles_mask",      default: 0,    null: false
-    t.string   "email"
-    t.integer  "last_run_id"
-    t.boolean  "active",          default: true, null: false
-    t.integer  "settings_id",                    null: false
-    t.string   "password_digest",                null: false
+    t.string   "name",                                null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.integer  "sign_in_count",        default: 0
+    t.integer  "roles_mask",           default: 0,    null: false
+    t.boolean  "active",               default: true, null: false
+    t.integer  "settings_id",                         null: false
+    t.integer  "email_id"
+    t.string   "password_digest",                     null: false
+    t.integer  "last_test_payload_id"
   end
 
-  add_index "users", ["last_run_id"], name: "users_last_run_id_fk", using: :btree
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
   add_index "users", ["settings_id"], name: "index_users_on_settings_id", unique: true, using: :btree
 
@@ -258,7 +260,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_infos", "categories", name: "test_infos_category_id_fk"
   add_foreign_key "test_infos", "projects", name: "test_infos_project_id_fk"
   add_foreign_key "test_infos", "test_results", name: "test_infos_effective_result_id_fk", column: "last_result_id", dependent: :nullify
-  add_foreign_key "test_infos", "users", name: "test_infos_author_id_fk", column: "author_id"
   add_foreign_key "test_infos", "users", name: "test_infos_last_runner_id_fk", column: "last_runner_id"
 
   add_foreign_key "test_infos_tickets", "test_infos", name: "test_infos_tickets_test_info_id_fk"
@@ -270,6 +271,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_keys_payloads", "test_keys", name: "test_keys_payloads_test_key_id_fk"
   add_foreign_key "test_keys_payloads", "test_payloads", name: "test_keys_payloads_test_payload_id_fk", dependent: :delete
 
+  add_foreign_key "test_payloads", "project_versions", name: "test_payloads_project_version_id_fk"
   add_foreign_key "test_payloads", "users", name: "test_payloads_user_id_fk", column: "runner_id"
 
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"
@@ -284,7 +286,8 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_foreign_key "user_settings", "projects", name: "user_settings_last_test_key_project_id_fk", column: "last_test_key_project_id"
 
-  add_foreign_key "users", "test_runs", name: "users_last_run_id_fk", column: "last_run_id", dependent: :nullify
+  add_foreign_key "users", "test_payloads", name: "users_last_test_payload_id_fk", column: "last_test_payload_id"
+  add_foreign_key "users", "user_emails", name: "users_email_id_fk", column: "email_id"
   add_foreign_key "users", "user_settings", name: "users_settings_id_fk", column: "settings_id"
 
 end

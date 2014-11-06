@@ -22,16 +22,14 @@ class TestInfo < ActiveRecord::Base
 
   attr_accessor :quick_validation
 
-  belongs_to :author, class_name: "User"
   belongs_to :key, class_name: "TestKey"
   belongs_to :project, counter_cache: :tests_count
   belongs_to :category
   belongs_to :deprecation, class_name: "TestDeprecation"
   belongs_to :last_runner, class_name: "User"
   has_many :results, class_name: "TestResult"
-  belongs_to :effective_result, class_name: "TestResult"
+  belongs_to :last_result, class_name: "TestResult"
   has_many :custom_values, class_name: "TestValue"
-  has_many :deprecations, class_name: "TestDeprecation"
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
 
@@ -39,7 +37,6 @@ class TestInfo < ActiveRecord::Base
   validates :key, presence: { unless: :quick_validation }
   validates :key_id, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }
   validates :name, presence: true, length: { maximum: 255 }
-  validates :author, presence: true
   validates :project, presence: true
   validates :passing, inclusion: [ true, false ]
   validates :last_run_at, presence: true

@@ -16,6 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestKey < ActiveRecord::Base
   include Tableling::Model
+  attr_accessor :quick_validation
   KEY_REGEXP = /\A[a-z0-9]{12}\Z/
 
   before_create :set_value
@@ -27,8 +28,7 @@ class TestKey < ActiveRecord::Base
   has_and_belongs_to_many :test_payloads
 
   strip_attributes
-  validates :user, presence: true
-  validates :project, presence: true
+  validates :project, presence: { unless: :quick_validation }
 
   def self.for_projects_and_keys keys_by_project
     conditions = ([ '(projects.api_id = ? AND test_keys.key IN (?))' ] * keys_by_project.length)
@@ -79,7 +79,7 @@ class TestKey < ActiveRecord::Base
   end
 
   def set_value
-    self.key = self.class.new_random_key project_id
+    self.key ||= self.class.new_random_key project_id
   end
 
   # Generates a random test key that does not yet exist in the database.
@@ -88,8 +88,7 @@ class TestKey < ActiveRecord::Base
     key
   end
 
-  # Generates a random test key of 12 hexadecimal characters.
   def self.generate_random_key
-    SecureRandom.hex 6 # result string is twice as long as n
+    SecureRandom.random_alphanumeric 12
   end
 end

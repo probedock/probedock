@@ -28,8 +28,10 @@ class ProcessNextTestPayloadJob
 
     begin
       TestPayloadProcessing::ProcessPayload.new payload
-    rescue
+    rescue StandardError => e # TODO: save error in payload
+      payload.reload
       payload.fail_processing!
+      raise e
     end
   end
 

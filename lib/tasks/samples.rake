@@ -18,6 +18,7 @@ require 'net/http'
 require 'uri'
 require 'paint'
 
+# TODO: use forgery
 TMP_DIR = File.join Rails.root, 'tmp', 'samples'
 
 class SamplesGenerator

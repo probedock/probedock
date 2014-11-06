@@ -21,7 +21,7 @@ class Ticket < ActiveRecord::Base
   has_and_belongs_to_many :test_infos
 
   strip_attributes
-  validates :name, presence: true, uniqueness: { case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }
+  validates :name, presence: true, uniqueness: { unless: :quick_validation }, length: { maximum: 255 }
 
   def url
     return nil unless ticketing_system_url = Settings.app.ticketing_system_url

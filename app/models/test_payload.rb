@@ -16,11 +16,9 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestPayload < ActiveRecord::Base
   include JsonResource
-  include IdentifiableResource
   include Tableling::Model
 
-  before_create{ set_identifier :api_id }
-
+  belongs_to :project_version
   belongs_to :runner, class_name: 'User'
   has_many :results, class_name: 'TestResult'
   has_and_belongs_to_many :test_keys
@@ -33,13 +31,14 @@ class TestPayload < ActiveRecord::Base
   event :finish_processing, from: :processing, to: :processed
   event :fail_processing, from: :processing, to: :failed
 
+  validates :api_id, presence: true, length: { is: 36, allow_blank: true }
   validates :runner, presence: true
+  validates :project_version, presence: { if: :processed? }
   validates :contents, presence: true
   validates :contents_bytesize, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
   validates :run_ended_at, presence: true
-  validates :uuid, presence: true, uniqueness: true
   validates :results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :passed_results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :inactive_results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

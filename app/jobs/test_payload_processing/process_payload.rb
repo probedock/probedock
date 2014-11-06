@@ -19,7 +19,7 @@ require 'benchmark'
 module TestPayloadProcessing
 
   class ProcessPayload
-    attr_reader :test_payload, :cache
+    attr_reader :test_payload, :processed_results, :cache
 
     def initialize test_payload
 
@@ -31,24 +31,55 @@ module TestPayloadProcessing
 
       time = Benchmark.realtime do
 
-        data = HashWithIndifferentAccess.new data
-
         TestPayload.transaction do
 
-          @cache = self.class.build_cache data
-          #@processed_test_run = ProcessTestRun.new data, @test_payload, @cache
+          project_version = ProjectVersion.joins(:project).where('projects.api_id = ? AND project_versions.name = ?', data['p'], data['v']).includes(:project).first
+          project_version ||= ProjectVersion.new.tap{ |v| v.project_id = Project.where(api_id: data['p']).first!.id; v.name = data['v']; v.quick_validation = true; v.save! }
+          @test_payload.project_version = project_version
+
+          @test_payload.results_count = data['t'].length
+          @test_payload.duration = 0
+
+          data['t'].each do |result|
+
+            @test_payload.duration += result['d']
+
+            passed, active = result.fetch('p', true), result.fetch('v', true)
+            @test_payload.passed_results_count += 1 if passed
+            @test_payload.inactive_results_count += 1 unless active
+            @test_payload.inactive_passed_results_count += 1 if passed && !active
+          end
+
+          @test_payload.duration = data['d'] if data.key? 'd'
+
+          @cache = build_cache
+
+          @processed_results = Array.new data['t'].length
+
+          i = 0
+          data['t'].each_slice 100 do |results|
+
+            fill_cache results
+            results.each do |result|
+              @processed_results[i] = ProcessResult.new(result, @test_payload, @cache)
+              i += 1
+            end
+          end
+
+          @test_payload.save!
+
+          @test_payload.runner.update_attribute :last_test_payload_id, @test_payload.id
 
           # Mark test keys as used.
-          #free_keys = @cache[:keys].select &:free?
-          #TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
-
-          #test_payload.test_run = @processed_test_run.test_run
-          test_payload.finish_processing!
+          free_keys = @cache[:test_keys].values.select &:free?
+          TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
         end
       end
 
       duration = (time * 1000).round 1
-      number_of_test_results = data[:t].length
+      number_of_test_results = data['t'].length
+
+      test_payload.finish_processing!
       Rails.logger.info "Processed API test payload with #{number_of_test_results} test results in #{duration}ms"
 
       #Rails.application.events.fire 'api:payload', self
@@ -56,50 +87,85 @@ module TestPayloadProcessing
 
     private
 
-    def self.build_cache data
-      Hash.new.tap do |cache|
+    def build_cache
+      {
+        tests: {},
+        test_keys: {},
+        custom_values: [],
+        categories: {},
+        tags: {},
+        tickets: {}
+      }
+    end
 
-        time = Benchmark.realtime do
+    def fill_cache results
 
-          project = Project.where(api_id: data[:p]).first!
-          cache[:project] = project
+      time = Benchmark.realtime do
+        cache_test_keys results
+        cache_tests results
+        cache_custom_values results
+        cache_records results, Category, 'c'
+        cache_records results, Tag, 'g'
+        cache_records results, Ticket, 't'
+      end
 
-          cache[:project_version] = project.versions.where(name: data[:v]).first || ProjectVersion.new.tap{ |v| v.project_id = project.id; v.name = data[:v]; v.quick_validation = true; v.save! }
+      Rails.logger.info "Cached data for #{results.length} results in #{(time * 1000).round 1}ms"
+    end
 
-          cache[:keys] = project.test_keys.where(key: data[:t].select{ |t| t[:k] }.collect{ |t| t[:k] }).includes([ :user, :project, { test_info: [ :deprecation, :tags, :tickets ] } ]).to_a
-          cache[:tests] = cache[:keys].collect(&:test_info).compact
+    def cache_test_keys results
 
-          custom_value_names = data[:t].collect{ |result| result[:a].try :keys }.compact.flatten.uniq
-          cache[:custom_values] = TestValue.select('id, name, test_info_id').where(name: custom_value_names, test_info_id: cache[:tests].collect(&:id))
+      keys = results.inject([]){ |memo,result| memo << result['k'] if result['k']; memo }
+      return if keys.blank?
 
-          cache[:categories] = build_categories_cache data
-          cache[:tags] = build_tags_cache data
-          cache[:tickets] = build_tickets_cache data
-        end
+      existing_keys = @test_result.project_version.project.test_keys.where(key: keys).includes([ :user, :project, :test_info ]).to_a.inject({}){ |memo,test_key| memo[test_key.key] = test_key; memo }
 
-        Rails.logger.info "Cached payload data in #{(time * 1000).round 1}ms"
+      keys.each do |key|
+        @cache[:test_keys][key] = existing_keys[key] || TestKey.new(key: key, free: false, project_id: @test_result.project_version.project.id).tap{ |k| k.quick_validation = true; k.save! }
       end
     end
 
-    def self.build_categories_cache data
-      category_names = data[:t].collect{ |result| result[:c] }.compact.uniq
-      Category.where('name IN (?)', category_names).to_a.tap do |categories|
-        category_names.reject{ |name| categories.find{ |cat| cat.name == name } }.each do |name|
-          categories << Category.new.tap{ |cat| cat.name = name; cat.quick_validation = true; cat.save! }
-        end
+    def cache_tests results
+
+      test_names = results.inject([]){ |memo,result| memo << result['n'] unless result['k']; memo }
+      return if test_names.blank?
+
+      tests = TestInfo.where(project_id: @test_payload.project_version.project.id, name: test_names).to_a
+      @cache[:tests] = tests.inject({}){ |memo,test| memo[test.name] = test; memo }
+    end
+
+    def cache_custom_values results
+
+      names = results.inject(Set.new){ |memo,result| result['a'].present? ? memo | result['a'].keys : memo }.to_a
+      return if names.blank?
+
+      @cache[:custom_values] = TestValue.select('id, name, test_info_id').where(name: names, test_info_id: @cache[:tests].collect(&:id)).to_a
+    end
+
+    def cache_records results, model, payload_property
+
+      # convert model name to cache type
+      # e.g. Tag => :tags
+      type = model.name.underscore.pluralize.to_sym
+
+      # collect all unique result values for the payload property
+      # e.g. for tags [{ "g": ["unit", "integration"] }, { "g": ["unit","api"] }] => ["unit", "integration", "api"]
+      names = results.inject(Set.new){ |memo,result| result[payload_property].present? ? memo | [*result[payload_property]] : memo }.to_a
+
+      # ignore records that have already been cached
+      names.delete_if{ |name| @cache[type].key? name }
+
+      # do nothing if there are no new records
+      return if names.blank?
+
+      # fetch the new records that already exist in the database
+      # and build a hash of those records by name
+      existing_records = model.where('name IN (?)', names).to_a.inject({}){ |memo,record| memo[record.name] = record; memo }
+
+      # add the new records to the cache
+      names.each do |name|
+        # create new active record objects for the records that are not yet persisted
+        @cache[type][name] = existing_records[name] || model.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! }
       end
-    end
-
-    def self.build_tags_cache data
-      tags = data[:t].collect{ |result| result[:g] }.compact.flatten.uniq
-      existing_tags = Tag.where('name IN (?)', tags)
-      tags.collect{ |name| existing_tags.find{ |tag| tag.name == name } || Tag.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
-    end
-
-    def self.build_tickets_cache data
-      tickets = data[:t].collect{ |result| result[:t] }.compact.flatten.uniq
-      existing_tickets = Ticket.where('name IN (?)', tickets)
-      tickets.collect{ |name| existing_tickets.find{ |ticket| ticket.name == name } || Ticket.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! } }
     end
   end
 end

@@ -31,7 +31,7 @@ class TestResult < ActiveRecord::Base
   validates :run_at, presence: true
   validates :runner, presence: true
   validates :test_info, presence: true
-  validates :test_run, presence: true
+  validates :test_payload, presence: true
   validates :project_version, presence: true
 
   tableling do
@@ -41,7 +41,7 @@ class TestResult < ActiveRecord::Base
       field :id
       field :duration
       field :passed
-      field :run_at, as: :runAt, includes: :test_run
+      field :run_at, as: :runAt, includes: :test_payload
 
       field :runner, includes: :runner do
         order{ |q,d| q.joins(:runner).order("users.name #{d}") }

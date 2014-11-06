@@ -23,7 +23,7 @@ class Tag < ActiveRecord::Base
   has_and_belongs_to_many :test_infos
 
   strip_attributes
-  validates :name, presence: true, uniqueness: { case_sensitive: false, unless: :quick_validation }, length: { maximum: 50 }, format: { with: NAME_REGEXP }
+  validates :name, presence: true, uniqueness: { unless: :quick_validation }, length: { maximum: 50 }, format: { with: NAME_REGEXP }
 
   def to_param options = {}
     name.try :to_s
