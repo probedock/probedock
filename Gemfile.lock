@@ -259,6 +259,7 @@ GEM
     slop (3.6.0)
     spoon (0.0.4)
       ffi
+    spring (1.1.3)
     sprockets (2.12.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -356,6 +357,7 @@ DEPENDENCIES
   silencer
   simple_states
   slim-rails
+  spring
   sqlite3
   strip_attributes
   stylus
