@@ -111,6 +111,7 @@ class V3 < ActiveRecord::Migration
     add_column :test_payloads, :inactive_results_count, :integer, null: false, default: 0
     add_column :test_payloads, :inactive_passed_results_count, :integer, null: false, default: 0
     add_column :test_payloads, :project_version_id, :integer
+    add_column :test_payloads, :backtrace, :text
     add_index :test_payloads, :api_id, unique: true
     add_foreign_key :test_payloads, :project_versions
 

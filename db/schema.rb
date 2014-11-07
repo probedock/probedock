@@ -179,6 +179,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.integer  "inactive_results_count",                   default: 0, null: false
     t.integer  "inactive_passed_results_count",            default: 0, null: false
     t.integer  "project_version_id"
+    t.text     "backtrace"
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree

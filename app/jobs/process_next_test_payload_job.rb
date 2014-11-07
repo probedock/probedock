@@ -31,6 +31,7 @@ class ProcessNextTestPayloadJob
     rescue StandardError => e
       # TODO: save error in payload
       payload.reload
+      payload.backtrace = e.backtrace.join "\n"
       payload.fail_processing!
       raise e
     end
