@@ -192,25 +192,37 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "test_result_contributors", ["test_result_id", "user_email_id"], name: "index_test_contributors_on_result_and_user_email", unique: true, using: :btree
 
+  create_table "test_result_values", force: true do |t|
+    t.string  "name",           limit: 50, null: false
+    t.text    "contents",                  null: false
+    t.integer "test_result_id",            null: false
+  end
+
+  add_index "test_result_values", ["name", "test_result_id"], name: "index_test_result_values_on_name_and_test_result_id", unique: true, using: :btree
+
   create_table "test_results", force: true do |t|
-    t.boolean  "passed",                             null: false
-    t.integer  "runner_id",                          null: false
-    t.integer  "test_id",                            null: false
-    t.datetime "created_at",                         null: false
-    t.datetime "run_at",                             null: false
-    t.integer  "duration",                           null: false
+    t.boolean  "passed",                                null: false
+    t.integer  "runner_id",                             null: false
+    t.integer  "test_id"
+    t.datetime "created_at",                            null: false
+    t.datetime "run_at",                                null: false
+    t.integer  "duration",                              null: false
     t.text     "message"
-    t.boolean  "active",             default: true,  null: false
-    t.integer  "project_version_id",                 null: false
-    t.boolean  "new_test",           default: false, null: false
+    t.boolean  "active",                 default: true, null: false
+    t.integer  "project_version_id",                    null: false
+    t.boolean  "new_test"
     t.integer  "category_id"
-    t.integer  "test_payload_id",                    null: false
+    t.integer  "test_payload_id",                       null: false
+    t.integer  "key_id"
+    t.string   "name"
+    t.integer  "payload_properties_set", default: 0,    null: false
   end
 
   add_index "test_results", ["category_id"], name: "test_results_category_id_fk", using: :btree
   add_index "test_results", ["project_version_id"], name: "test_results_project_version_id_fk", using: :btree
   add_index "test_results", ["runner_id"], name: "test_results_runner_id_fk", using: :btree
   add_index "test_results", ["test_id"], name: "test_results_test_info_id_fk", using: :btree
+  add_index "test_results", ["test_payload_id", "key_id"], name: "index_test_results_on_test_payload_id_and_key_id", unique: true, using: :btree
 
   create_table "test_results_tickets", id: false, force: true do |t|
     t.integer "test_result_id", null: false
@@ -319,9 +331,12 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_result_contributors", "test_results", name: "test_result_contributors_test_result_id_fk"
   add_foreign_key "test_result_contributors", "user_emails", name: "test_result_contributors_user_email_id_fk"
 
+  add_foreign_key "test_result_values", "test_results", name: "test_result_values_test_result_id_fk"
+
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"
   add_foreign_key "test_results", "project_tests", name: "test_results_test_id_fk", column: "test_id"
   add_foreign_key "test_results", "project_versions", name: "test_results_project_version_id_fk"
+  add_foreign_key "test_results", "test_keys", name: "test_results_key_id_fk", column: "key_id"
   add_foreign_key "test_results", "test_payloads", name: "test_results_test_payload_id_fk"
   add_foreign_key "test_results", "users", name: "test_results_runner_id_fk", column: "runner_id"
 

@@ -121,9 +121,16 @@ class V3 < ActiveRecord::Migration
     remove_column :test_results, :previous_category_id
     remove_column :test_results, :deprecated
     add_column :test_results, :test_payload_id, :integer, null: false
+    add_column :test_results, :key_id, :integer
+    add_column :test_results, :name, :string
+    add_column :test_results, :payload_properties_set, :integer, null: false, default: 0
     rename_column :test_results, :test_info_id, :test_id
+    change_column :test_results, :new_test, :boolean, null: true, default: nil
+    change_column :test_results, :test_id, :integer, null: true
+    add_index :test_results, [ :test_payload_id, :key_id ], unique: true
     add_foreign_key :test_results, :test_payloads
     add_foreign_key :test_results, :project_tests, column: :test_id
+    add_foreign_key :test_results, :test_keys, column: :key_id
 
     create_table :test_result_contributors, id: false do |t|
       t.integer :test_result_id
@@ -155,6 +162,14 @@ class V3 < ActiveRecord::Migration
       t.integer :test_description_id, null: false
       t.index [ :name, :test_description_id ], unique: true
       t.foreign_key :test_descriptions
+    end
+
+    create_table :test_result_values do |t|
+      t.string :name, null: false, limit: 50
+      t.text :contents, null: false
+      t.integer :test_result_id, null: false
+      t.index [ :name, :test_result_id ], unique: true
+      t.foreign_key :test_results
     end
 
     remove_column :users, :remember_token

@@ -49,6 +49,7 @@ gem 'resque-workers-lock'
 
 # Model Extensions
 gem 'simple_states' # state machines
+gem 'bitmask_attributes' # bitmasks
 gem 'strip_attributes' # trimming
 gem 'tableling-rails'
 

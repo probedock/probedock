@@ -14,23 +14,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-module QuickValidation
-  extend ActiveSupport::Concern
+class TestResultValue < ActiveRecord::Base
+  include QuickValidation
 
-  included do
-    attr_accessor :quick_validation
-  end
+  belongs_to :test_result
 
-  def validate_quickly!
-    self.quick_validation = true
-  end
-
-  def save_quickly! *args
-    self.quick_validation = true
-    begin
-      save!
-    ensure
-      self.quick_validation = false
-    end
-  end
+  strip_attributes except: :contents
+  validates :test_result, presence: { unless: :quick_validation }
+  validates :name, presence: true, uniqueness: { scope: :test_result_id, unless: :quick_validation }, length: { maximum: 50 }
+  validates :contents, length: { maximum: 65535, allow_nil: true, tokenizer: lambda{ |s| OpenStruct.new length: s.bytesize } }
 end

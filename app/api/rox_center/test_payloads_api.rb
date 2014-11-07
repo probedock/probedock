@@ -44,6 +44,8 @@ module ROXCenter
             return record_errors payload
           end
 
+          Resque.enqueue ProcessNextTestPayloadJob
+
           status 202
 
           {

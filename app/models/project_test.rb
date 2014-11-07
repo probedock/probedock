@@ -21,7 +21,7 @@ class ProjectTest < ActiveRecord::Base
   belongs_to :project, counter_cache: :tests_count
   has_many :descriptions, class_name: 'TestDescription', foreign_key: 'test_id'
 
-  validates :name, presence: true, length: { maximum: 255 }
+  validates :name, presence: true, length: { maximum: 255, allow_blank: true }
   validates :project, presence: true
   validates :key, presence: { unless: :quick_validation }
   validates :key_id, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }

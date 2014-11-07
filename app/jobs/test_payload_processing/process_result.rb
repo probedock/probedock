@@ -17,104 +17,77 @@
 module TestPayloadProcessing
 
   class ProcessResult
-    attr_reader :test, :test_result
+    attr_reader :test_result
 
     def initialize data, test_payload, cache
 
-      category = cache[:categories][data['c']]
-      raise "Expected to find category '#{data['c']}' in cache" if data.key?('c') && category.blank?
+      @test_result = TestResult.new
 
-      test_key = cache[:test_keys][data['k']]
-      raise "Expected to find test key '#{data['k']}' in cache" if data.key?('k') && test_key.blank?
+      @test_result.key = test_key data, cache
+      @test_result.test_payload = test_payload
+      @test_result.runner = test_payload.runner
+      @test_result.project_version = test_payload.project_version
 
-      @test_description = if data.key? 'k'
-        cache[:test_descriptions].find{ |d| d.test.key.try(:key) == data['k'] }
-      else
-        cache[:test_descriptions].find{ |d| d.test.name == data['n'] }
-      end
+      @test_result.name = data['n'] if data.key? 'n'
+      @test_result.passed = data.fetch 'p', true
+      @test_result.active = data.fetch 'v', true
+      @test_result.duration = data['d'].to_i
+      @test_result.message = data['m'].to_s if data['m'].present?
+      @test_result.run_at = test_payload.run_ended_at
 
-      @test = @test_description.try(:test) || ProjectTest.new
+      @test_result.category = category data, cache if data.key 'c'
+      @test_result.tags = tags data, cache if data.key? 'g'
+      @test_result.tickets = tickets data, cache if data.key? 't'
 
-      if @test.new_record?
-        @test.key = test_key
-        @test.project = test_payload.project_version.project
-
-        # TODO: set contributors from key and annotation
-      end
-
-      if @test_description.blank?
-        @test_description = TestDescription.new test: @test, project_version: test_payload.project_version
-      end
-
-      if @test.key.blank?
-        @test.key = TestKey.new(project: test_payload.project_version.project, free: false).tap(&:save_quickly!)
-      end
-
-      @test.results_count += 1
-      @test_description.results_count += 1
-
-      @test_result = build_result data, test, test_payload, cache
-
-      @test_description.name = data['n'].to_s if data['n'].present?
-      @test_description.passing = @test_result.passed
-      @test_description.active = @test_result.active
-
-      @test_description.category = category if data.key?('c')
-      @test_result.category = @test_description.category
-
-      @test_description.last_run_at = @test_result.run_at
-      @test_description.last_duration = @test_result.duration
-      @test_description.last_runner = test_payload.runner
-      @test_description.last_result = @test_result
-
-      @test_description.tags = tags data, cache if data.key?('g')
-      @test_description.tickets = tickets data, cache if data.key?('g')
+      @test_result.payload_properties_set = payload_properties_set data
 
       if data['a'].present?
         data['a'].each_pair do |name,contents|
-          value = cache[:custom_values].find{ |v| v.name == name.to_s && v.test_description_id == @test_description.id }
-          value ||= TestValue.new(name: name, test_description: @test_description).tap{ |v| v.quick_validation = true }
-          value.contents = contents
-          @test_description.custom_values << value
+          @test_result.custom_values << TestResultValue.new(name: name, contents: contents).tap(&:validate_quickly!)
         end
       end
 
-      # TODO: only if more recent version
-      @test.name = @test_description.name
+      # TODO: save contributors
 
-      @test.save_quickly!
-      @test_description.save_quickly!
       @test_result.save_quickly!
     end
 
-    def build_result data, test, payload, cache
-      TestResult.new.tap do |result|
-        result.new_test = test.new_record?
-        result.runner = payload.runner
-        result.test = test
-        result.test_payload = payload
-        result.passed = data.fetch 'p', true
-        result.active = data.fetch 'v', true
-        result.duration = data['d'].to_i
-        result.project_version = payload.project_version
-        result.message = data['m'].to_s if data['m'].present?
-        result.run_at = payload.run_ended_at
+    def payload_properties_set data
+      {
+        key: 'k',
+        name: 'n',
+        category: 'c',
+        tags: 'g',
+        tickets: 't',
+        custom_values: 'a'
+      }.inject([]){ |memo,(property,key)| data.key?(key) ? memo << property : memo }
+    end
+
+    def test_key data, cache
+      cache[:test_keys][data['k']].tap do |test_key|
+        raise "Expected to find test key '#{data['k']}' in cache" if data.key?('k') && test_key.blank?
+      end
+    end
+
+    def category data, cache
+      cache[:categories][data['c']].tap do |category|
+        raise "Expected to find category '#{data['c']}' in cache" if data.key?('c') && category.blank?
       end
     end
 
     def tags data, cache
       data['g'].uniq.collect do |name|
-        tag = cache[:tags][name]
-        raise "Expected to find tag '#{name}' in cache" if tag.blank?
-        tag
+        cache[:tags][name].tap do |tag|
+          raise "Expected to find tag '#{name}' in cache" if tag.blank?
+        end
       end
     end
 
     def tickets data, cache
       data['t'].uniq.collect do |name|
-        ticket = cache[:tickets][name]
-        raise "Expected to find ticket '#{name}' in cache" if ticket.blank?
-        ticket
+        cache[:tickets][name].tap do |ticket|
+          raise "Expected to find ticket '#{name}' in cache" if ticket.blank?
+        end
       end
     end
   end

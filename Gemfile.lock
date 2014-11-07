@@ -34,6 +34,8 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     bcrypt (3.1.9)
     bindata (2.1.0)
+    bitmask_attributes (1.0.0)
+      activerecord (>= 3.1)
     builder (3.2.2)
     capybara (2.4.4)
       mime-types (>= 1.16)
@@ -318,6 +320,7 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt
+  bitmask_attributes
   capybara
   database_cleaner
   factory_girl

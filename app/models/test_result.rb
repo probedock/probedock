@@ -19,19 +19,25 @@ class TestResult < ActiveRecord::Base
   include Tableling::Model
 
   belongs_to :test, class_name: 'ProjectTest'
+  belongs_to :key, class_name: 'TestKey'
   belongs_to :runner, class_name: 'User'
   belongs_to :test_payload
   belongs_to :project_version
   belongs_to :category
+  has_and_belongs_to_many :tags
+  has_and_belongs_to_many :tickets
+  has_many :custom_values, class_name: 'TestResultValue'
+
+  bitmask :payload_properties_set, as: [ :key, :name, :category, :tags, :tickets, :custom_values ], null: false
 
   strip_attributes
+  validates :name, length: { maximum: 255, allow_blank: true }
   validates :passed, inclusion: [ true, false ]
   validates :duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :message, length: { maximum: 65535, tokenizer: lambda{ |s| s.bytes.to_a } } # byte length
   validates :active, inclusion: [ true, false ]
   validates :run_at, presence: true
   validates :runner, presence: { unless: :quick_validation }
-  validates :test, presence: { unless: :quick_validation }
   validates :test_payload, presence: { unless: :quick_validation }
   validates :project_version, presence: { unless: :quick_validation }
 
