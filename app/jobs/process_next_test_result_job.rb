@@ -16,27 +16,29 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 require 'resque/plugins/workers/lock'
 
-class ProcessNextTestPayloadJob
+module ProcessNextTestResultJob
   extend Resque::Plugins::Workers::Lock
 
   @queue = :api
 
-  def self.perform
+  def self.enqueue_test_result test_result
 
-    payload = TestPayload.waiting_for_processing.includes(:runner).first
-    payload.start_processing!
-
-    begin
-      TestPayloadProcessing::ProcessPayload.new payload
-    rescue StandardError => e
-      payload.reload
-      payload.backtrace = e.message + "\n" + e.backtrace.join("\n")
-      payload.fail_processing!
+    lock_type, lock_value = if test_result.payload_properties_set?(:key)
+      [ :key, test_result.key.key ]
+    else
+      [ :name, test_result.name ]
     end
+
+    Resque.enqueue self, test_result.id, lock_type, lock_value
   end
 
-  # resque-workers-lock: lock workers to prevent concurrency
-  def self.lock_workers *args
-    name # the same lock (class name) is used for all workers
+  def self.perform test_result_id, *args
+    test_result = TestResult.find test_result_id
+    test_result.update_attribute :processed, true
+    TestPayload.increment_counter :processed_results_count, test_result.test_payload_id
+  end
+
+  def self.lock_workers test_result_id, lock_type, lock_value
+    "#{lock_type}:#{lock_value}"
   end
 end

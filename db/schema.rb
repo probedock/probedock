@@ -180,6 +180,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.integer  "inactive_passed_results_count",            default: 0, null: false
     t.integer  "project_version_id"
     t.text     "backtrace"
+    t.integer  "processed_results_count",                  default: 0, null: false
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree
@@ -202,21 +203,22 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_result_values", ["name", "test_result_id"], name: "index_test_result_values_on_name_and_test_result_id", unique: true, using: :btree
 
   create_table "test_results", force: true do |t|
-    t.boolean  "passed",                                null: false
-    t.integer  "runner_id",                             null: false
+    t.boolean  "passed",                                 null: false
+    t.integer  "runner_id",                              null: false
     t.integer  "test_id"
-    t.datetime "created_at",                            null: false
-    t.datetime "run_at",                                null: false
-    t.integer  "duration",                              null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "run_at",                                 null: false
+    t.integer  "duration",                               null: false
     t.text     "message"
-    t.boolean  "active",                 default: true, null: false
-    t.integer  "project_version_id",                    null: false
+    t.boolean  "active",                 default: true,  null: false
+    t.integer  "project_version_id",                     null: false
     t.boolean  "new_test"
     t.integer  "category_id"
-    t.integer  "test_payload_id",                       null: false
+    t.integer  "test_payload_id",                        null: false
     t.integer  "key_id"
     t.string   "name"
-    t.integer  "payload_properties_set", default: 0,    null: false
+    t.integer  "payload_properties_set", default: 0,     null: false
+    t.boolean  "processed",              default: false, null: false
   end
 
   add_index "test_results", ["category_id"], name: "test_results_category_id_fk", using: :btree

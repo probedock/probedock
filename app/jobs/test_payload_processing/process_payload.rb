@@ -72,18 +72,24 @@ module TestPayloadProcessing
           free_keys = @cache[:test_keys].values.select &:free?
           TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
         end
+
+        enqueue_result_jobs
       end
 
       duration = (time * 1000).round 1
       number_of_test_results = data['t'].length
 
       test_payload.finish_processing!
-      Rails.logger.info "Processed API test payload with #{number_of_test_results} test results in #{duration}ms"
+      Rails.logger.info "Processed test payload with #{number_of_test_results} test results in #{duration}ms"
 
       #Rails.application.events.fire 'api:payload', self
     end
 
     private
+
+    def enqueue_result_jobs
+      @processed_results.each{ |r| ProcessNextTestResultJob.enqueue_test_result r.test_result }
+    end
 
     def build_cache
       {
