@@ -98,6 +98,7 @@ class V3 < ActiveRecord::Migration
     end
 
     change_column :test_keys, :user_id, :integer, null: true
+    add_column :test_keys, :tracked, :boolean, null: false, default: true
 
     remove_column :test_payloads, :test_run_id
     add_column :test_payloads, :api_id, :string, null: false, limit: 36

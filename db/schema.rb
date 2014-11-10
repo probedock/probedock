@@ -147,6 +147,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.datetime "updated_at",                           null: false
     t.boolean  "free",                  default: true, null: false
     t.integer  "project_id",                           null: false
+    t.boolean  "tracked",               default: true, null: false
   end
 
   add_index "test_keys", ["key", "project_id"], name: "index_test_keys_on_key_and_project_id", unique: true, using: :btree

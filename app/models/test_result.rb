@@ -69,6 +69,12 @@ class TestResult < ActiveRecord::Base
     end
   end
 
+  def enqueue_processing_job
+    lock = processing_lock
+    $redis.rpush "processing:results:#{lock}", id
+    Resque.enqueue ProcessNextTestResultJob, lock
+  end
+
   def passed?
     passed
   end
@@ -96,5 +102,11 @@ class TestResult < ActiveRecord::Base
         h[:test] = test_info.to_client_hash options
       end
     end
+  end
+
+  private
+
+  def processing_lock
+    "key:#{Digest::SHA1.hexdigest(key.key)}"
   end
 end

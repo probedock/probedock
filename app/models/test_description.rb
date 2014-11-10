@@ -23,13 +23,13 @@ class TestDescription < ActiveRecord::Base
 
   belongs_to :test, class_name: 'ProjectTest'
   belongs_to :project_version
-  belongs_to :category
   belongs_to :last_runner, class_name: 'User'
   belongs_to :last_result, class_name: 'TestResult'
-  has_many :results, class_name: 'TestResult'
-  has_many :custom_values, class_name: 'TestValue'
+  belongs_to :category
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
+  has_many :custom_values, class_name: 'TestValue'
+  has_many :results, class_name: 'TestResult'
 
   strip_attributes
   validates :name, presence: true, length: { maximum: 255 }

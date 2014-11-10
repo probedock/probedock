@@ -14,13 +14,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class TestValue < ActiveRecord::Base
-  include QuickValidation
+namespace :redis do
 
-  belongs_to :test_description
-
-  strip_attributes except: :contents
-  validates :test_description, presence: { unless: :quick_validation }
-  validates :name, presence: true, uniqueness: { scope: :test_description_id, unless: :quick_validation }, length: { maximum: 50 }
-  validates :contents, length: { maximum: 65535, allow_nil: true, tokenizer: lambda{ |s| OpenStruct.new length: s.bytesize } }
+  desc %|Flushes the Redis database|
+  task clean: :environment do
+    keys = $redis.keys.reject{ |k| k.match /^resque:/ }
+    $redis.del *keys if keys.present?
+    puts Paint["Deleted #{keys.length} keys from Redis", :green]
+  end
 end

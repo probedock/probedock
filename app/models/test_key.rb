@@ -25,10 +25,11 @@ class TestKey < ActiveRecord::Base
   belongs_to :user
   belongs_to :project
   has_one :test, class_name: 'ProjectTest', foreign_key: :key_id
+  has_many :test_results, foreign_key: :key_id
   has_and_belongs_to_many :test_payloads
 
   strip_attributes
-  validates :key, format: { with: /\A[a-z0-9]{12}\Z/, allow_blank: true }
+  validates :key, uniqueness: { scope: :project_id, if: :key }, format: { with: /\A[a-z0-9]{12}\Z/, allow_blank: true }
   validates :project, presence: { unless: :quick_validation }
 
   def self.for_projects_and_keys keys_by_project

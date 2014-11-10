@@ -24,6 +24,9 @@ module TestPayloadProcessing
       @test_result = TestResult.new
 
       @test_result.key = test_key data, cache
+      @test_result.key ||= TestKey.joins(:test_results).where(test_keys: { tracked: false }, test_results: { name: @test_result.name }).first
+      @test_result.key ||= TestKey.new(project: test_payload.project_version.project, free: false, tracked: false).tap(&:save_quickly!)
+
       @test_result.test_payload = test_payload
       @test_result.runner = test_payload.runner
       @test_result.project_version = test_payload.project_version

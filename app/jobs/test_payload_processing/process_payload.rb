@@ -88,7 +88,9 @@ module TestPayloadProcessing
     private
 
     def enqueue_result_jobs
-      @processed_results.each{ |r| ProcessNextTestResultJob.enqueue_test_result r.test_result }
+      @processed_results.each do |r|
+        r.test_result.enqueue_processing_job
+      end
     end
 
     def build_cache
