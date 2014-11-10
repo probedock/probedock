@@ -66,7 +66,7 @@ module ProcessNextTestResultJob
         test.save!
       end
 
-      test_result.update_attribute :processed, true
+      TestResult.where(id: test_result.id).update_all processed: true, new_test: new_test
       TestPayload.increment_counter :processed_results_count, test_result.test_payload_id
     end
   end
