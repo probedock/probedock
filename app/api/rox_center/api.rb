@@ -52,7 +52,7 @@ module ROXCenter
     post :authenticate do
 
       data = parse_object :username, :password
-      user = User.where(email: data[:username]).first
+      user = User.joins(:email).where(user_emails: { email: data[:username] }).first
 
       # TODO: protect against timing attacks
       raise ROXCenter::Errors::Unauthorized.new 'Invalid credentials' unless user && user.authenticate(data[:password])
@@ -60,12 +60,13 @@ module ROXCenter
       {
         token: user.generate_auth_token,
         user: {
-          email: user.email
+          email: user.email.email
         }
       }
     end
 
     mount ProjectsApi
     mount TestPayloadsApi
+    mount TestReportsApi
   end
 end

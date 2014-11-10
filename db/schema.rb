@@ -188,6 +188,20 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_payloads", ["runner_id"], name: "test_payloads_user_id_fk", using: :btree
   add_index "test_payloads", ["state"], name: "index_test_payloads_on_state", using: :btree
 
+  create_table "test_payloads_reports", id: false, force: true do |t|
+    t.integer "test_payload_id", null: false
+    t.integer "test_report_id",  null: false
+  end
+
+  add_index "test_payloads_reports", ["test_payload_id", "test_report_id"], name: "index_test_payloads_reports_on_payload_and_report_id", unique: true, using: :btree
+
+  create_table "test_reports", force: true do |t|
+    t.string   "api_id",     limit: 12, null: false
+    t.integer  "runner_id",             null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
   create_table "test_result_contributors", id: false, force: true do |t|
     t.integer "test_result_id"
     t.integer "user_email_id"
@@ -284,16 +298,17 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "user_settings", ["last_test_key_project_id"], name: "user_settings_last_test_key_project_id_fk", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "name",                                null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.integer  "sign_in_count",        default: 0
-    t.integer  "roles_mask",           default: 0,    null: false
-    t.boolean  "active",               default: true, null: false
-    t.integer  "settings_id",                         null: false
+    t.string   "name",                                           null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.integer  "sign_in_count",                   default: 0
+    t.integer  "roles_mask",                      default: 0,    null: false
+    t.boolean  "active",                          default: true, null: false
+    t.integer  "settings_id",                                    null: false
     t.integer  "email_id"
-    t.string   "password_digest",                     null: false
+    t.string   "password_digest",                                null: false
     t.integer  "last_test_payload_id"
+    t.string   "api_id",               limit: 12,                null: false
   end
 
   add_index "users", ["email_id"], name: "index_users_on_email_id", unique: true, using: :btree
@@ -331,6 +346,11 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_foreign_key "test_payloads", "project_versions", name: "test_payloads_project_version_id_fk"
   add_foreign_key "test_payloads", "users", name: "test_payloads_user_id_fk", column: "runner_id"
+
+  add_foreign_key "test_payloads_reports", "test_payloads", name: "test_payloads_reports_test_payload_id_fk"
+  add_foreign_key "test_payloads_reports", "test_reports", name: "test_payloads_reports_test_report_id_fk"
+
+  add_foreign_key "test_reports", "users", name: "test_reports_runner_id_fk", column: "runner_id"
 
   add_foreign_key "test_result_contributors", "test_results", name: "test_result_contributors_test_result_id_fk"
   add_foreign_key "test_result_contributors", "user_emails", name: "test_result_contributors_user_email_id_fk"

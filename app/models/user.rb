@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class User < ActiveRecord::Base
+  include JsonResource
+  include IdentifiableResource
   include Tableling::Model
+
+  before_create{ set_identifier :api_id }
 
   has_secure_password
 
@@ -64,6 +68,13 @@ class User < ActiveRecord::Base
       serialize_response do |res|
         UsersRepresenter.new OpenStruct.new(res)
       end
+    end
+  end
+
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.id api_id
+      json.email email.email if email.present?
     end
   end
 

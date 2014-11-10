@@ -117,6 +117,21 @@ class V3 < ActiveRecord::Migration
     add_index :test_payloads, :api_id, unique: true
     add_foreign_key :test_payloads, :project_versions
 
+    create_table :test_reports do |t|
+      t.string :api_id, null: false, limit: 12
+      t.integer :runner_id, null: false
+      t.timestamps null: false
+      t.foreign_key :users, column: :runner_id
+    end
+
+    create_table :test_payloads_reports, id: false do |t|
+      t.integer :test_payload_id, null: false
+      t.integer :test_report_id, null: false
+      t.index [ :test_payload_id, :test_report_id ], unique: true, name: 'index_test_payloads_reports_on_payload_and_report_id'
+      t.foreign_key :test_payloads
+      t.foreign_key :test_reports
+    end
+
     remove_index :test_results, [ :test_run_id, :test_info_id ]
     remove_column :test_results, :test_run_id
     remove_column :test_results, :previous_passed
@@ -189,6 +204,7 @@ class V3 < ActiveRecord::Migration
     add_column :users, :email_id, :integer
     add_column :users, :password_digest, :string, null: false
     add_column :users, :last_test_payload_id, :integer
+    add_column :users, :api_id, :string, null: false, limit: 12
     add_index :users, :email_id, unique: true
     add_foreign_key :users, :user_emails, column: :email_id
     add_foreign_key :users, :test_payloads, column: :last_test_payload_id

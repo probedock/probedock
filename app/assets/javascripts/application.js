@@ -36,6 +36,7 @@
 //= require angular-local-storage
 //= require angular-moment
 //= require angular-base64
+//= require angular-smart-table
 //= require ./boot
 //= require_tree ./angular
 

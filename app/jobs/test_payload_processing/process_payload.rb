@@ -71,6 +71,8 @@ module TestPayloadProcessing
           # Mark test keys as used.
           free_keys = @cache[:test_keys].values.select &:free?
           TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
+
+          TestReport.new(runner: @test_payload.runner, test_payloads: [ @test_payload ]).save_quickly!
         end
 
         enqueue_result_jobs

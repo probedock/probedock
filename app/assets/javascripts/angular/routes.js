@@ -26,6 +26,24 @@ angular.module('rox.routes', [ 'ui.router' ])
           }
         }
       })
+
+      .state('std.reports', {
+        url: '/reports',
+        views: {
+          'content@std': {
+            templateUrl: '/templates/reports.html'
+          }
+        }
+      })
+
+      .state('std.report', {
+        url: '/reports/:reportId',
+        views: {
+          'content@std': {
+            templateUrl: '/templates/report.html'
+          }
+        }
+      })
       
     ;
 
