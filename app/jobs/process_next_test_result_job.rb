@@ -38,7 +38,7 @@ module ProcessNextTestResultJob
         test = ProjectTest.new(key: key, project: project, name: test_result.name, results_count: 1).tap(&:save_quickly!)
       end
 
-      description = new_test ? nil : test.descriptions.where(project_version_id: test_result.project_version_id).first
+      description = new_test ? nil : test.descriptions.where(project_version_id: test_result.project_version_id).includes(:custom_values).first
       new_description = description.blank?
 
       if new_description
@@ -55,7 +55,18 @@ module ProcessNextTestResultJob
       description.category = test_result.category
       description.tags = test_result.tags
       description.tickets = test_result.tickets
-      description.custom_values = test_result.custom_values.inject([]){ |memo,value| memo << TestValue.new(name: value.name, contents: value.contents).tap(&:validate_quickly!) }
+
+      custom_values = description.custom_values.to_a
+      test_result.custom_values.each do |custom_value|
+
+        previous_custom_value = custom_values.find{ |v| v.name == custom_value.name }
+        custom_values.delete previous_custom_value if previous_custom_value
+
+        custom_values << custom_value
+      end
+
+      description.custom_values = custom_values
+
       description.results_count += 1
       description.save!
 

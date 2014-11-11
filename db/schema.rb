@@ -108,6 +108,27 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "test_contributors", ["test_description_id", "user_email_id"], name: "index_test_contributors_on_description_and_user_email", unique: true, using: :btree
 
+  create_table "test_custom_values", force: true do |t|
+    t.string "name",     limit: 50, null: false
+    t.text   "contents",            null: false
+  end
+
+  add_index "test_custom_values", ["name", "contents"], name: "index_test_custom_values_on_name_and_contents", unique: true, using: :btree
+
+  create_table "test_custom_values_descriptions", id: false, force: true do |t|
+    t.integer "test_description_id",  null: false
+    t.integer "test_custom_value_id", null: false
+  end
+
+  add_index "test_custom_values_descriptions", ["test_description_id", "test_custom_value_id"], name: "index_test_custom_values_descriptions_on_desc_and_value_ids", unique: true, using: :btree
+
+  create_table "test_custom_values_results", id: false, force: true do |t|
+    t.integer "test_result_id",       null: false
+    t.integer "test_custom_value_id", null: false
+  end
+
+  add_index "test_custom_values_results", ["test_result_id", "test_custom_value_id"], name: "index_test_custom_values_results_on_result_and_value_id", unique: true, using: :btree
+
   create_table "test_descriptions", force: true do |t|
     t.string   "name",                           null: false
     t.integer  "test_id",                        null: false
@@ -202,14 +223,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "test_result_contributors", ["test_result_id", "user_email_id"], name: "index_test_contributors_on_result_and_user_email", unique: true, using: :btree
 
-  create_table "test_result_values", force: true do |t|
-    t.string  "name",           limit: 50, null: false
-    t.text    "contents",                  null: false
-    t.integer "test_result_id",            null: false
-  end
-
-  add_index "test_result_values", ["name", "test_result_id"], name: "index_test_result_values_on_name_and_test_result_id", unique: true, using: :btree
-
   create_table "test_results", force: true do |t|
     t.boolean  "passed",                                 null: false
     t.integer  "runner_id",                              null: false
@@ -259,14 +272,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_runs", ["group"], name: "index_test_runs_on_group", using: :btree
   add_index "test_runs", ["runner_id"], name: "test_runs_runner_id_fk", using: :btree
   add_index "test_runs", ["uid"], name: "index_test_runs_on_uid", unique: true, using: :btree
-
-  create_table "test_values", force: true do |t|
-    t.string  "name",                limit: 50, null: false
-    t.text    "contents",                       null: false
-    t.integer "test_description_id",            null: false
-  end
-
-  add_index "test_values", ["name", "test_description_id"], name: "index_test_values_on_name_and_test_description_id", unique: true, using: :btree
 
   create_table "tickets", force: true do |t|
     t.string   "name",       null: false
@@ -322,6 +327,12 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_contributors", "test_descriptions", name: "test_contributors_test_description_id_fk"
   add_foreign_key "test_contributors", "user_emails", name: "test_contributors_user_email_id_fk"
 
+  add_foreign_key "test_custom_values_descriptions", "test_custom_values", name: "test_custom_values_descriptions_test_custom_value_id_fk"
+  add_foreign_key "test_custom_values_descriptions", "test_descriptions", name: "test_custom_values_descriptions_test_description_id_fk"
+
+  add_foreign_key "test_custom_values_results", "test_custom_values", name: "test_custom_values_results_test_custom_value_id_fk"
+  add_foreign_key "test_custom_values_results", "test_results", name: "test_custom_values_results_test_result_id_fk"
+
   add_foreign_key "test_descriptions", "categories", name: "test_descriptions_category_id_fk"
   add_foreign_key "test_descriptions", "project_tests", name: "test_descriptions_test_id_fk", column: "test_id"
   add_foreign_key "test_descriptions", "project_versions", name: "test_descriptions_project_version_id_fk"
@@ -348,8 +359,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_result_contributors", "test_results", name: "test_result_contributors_test_result_id_fk"
   add_foreign_key "test_result_contributors", "user_emails", name: "test_result_contributors_user_email_id_fk"
 
-  add_foreign_key "test_result_values", "test_results", name: "test_result_values_test_result_id_fk"
-
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"
   add_foreign_key "test_results", "project_tests", name: "test_results_test_id_fk", column: "test_id"
   add_foreign_key "test_results", "project_versions", name: "test_results_project_version_id_fk"
@@ -361,8 +370,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_results_tickets", "tickets", name: "test_results_tickets_ticket_id_fk"
 
   add_foreign_key "test_runs", "users", name: "test_runs_runner_id_fk", column: "runner_id"
-
-  add_foreign_key "test_values", "test_descriptions", name: "test_values_test_description_id_fk"
 
   add_foreign_key "user_settings", "projects", name: "user_settings_last_test_key_project_id_fk", column: "last_test_key_project_id"
 

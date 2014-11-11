@@ -24,6 +24,7 @@ module TestPayloadProcessing
       @test_result = TestResult.new
 
       @test_result.key = test_key data, cache
+      # TODO: cache untracked test keys to reuse them across results
       @test_result.key ||= TestKey.joins(:test_results).where(test_keys: { tracked: false }, test_results: { name: @test_result.name }).first
       @test_result.key ||= TestKey.new(project: test_payload.project_version.project, free: false, tracked: false).tap(&:save_quickly!)
 
@@ -42,15 +43,11 @@ module TestPayloadProcessing
       @test_result.tags = tags data, cache if data.key? 'g'
       @test_result.tickets = tickets data, cache if data.key? 't'
 
-      @test_result.payload_properties_set = payload_properties_set data
-
-      if data['a'].present?
-        data['a'].each_pair do |name,contents|
-          @test_result.custom_values << TestResultValue.new(name: name, contents: contents).tap(&:validate_quickly!)
-        end
-      end
+      @test_result.custom_values = custom_values data, cache if data.key? 'a'
 
       # TODO: save contributors
+
+      @test_result.payload_properties_set = payload_properties_set data
 
       @test_result.save_quickly!
     end
@@ -91,6 +88,14 @@ module TestPayloadProcessing
         cache[:tickets][name].tap do |ticket|
           raise "Expected to find ticket '#{name}' in cache" if ticket.blank?
         end
+      end
+    end
+
+    def custom_values data, cache
+      @test_result.custom_values = data['a'].inject [] do |memo,(name,contents)|
+        custom_value = cache[:custom_values][name].try :[], contents
+        raise "Expected to find custom value '#{name}' with the correct contents in cache" if custom_value.blank?
+        memo << custom_value
       end
     end
   end

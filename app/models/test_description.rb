@@ -28,7 +28,7 @@ class TestDescription < ActiveRecord::Base
   belongs_to :category
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
-  has_many :custom_values, class_name: 'TestValue'
+  has_and_belongs_to_many :custom_values, class_name: 'TestCustomValue'
   has_many :results, class_name: 'TestResult'
 
   strip_attributes
@@ -133,43 +133,6 @@ class TestDescription < ActiveRecord::Base
   def self.find_by_project_and_key! project_and_key
     find_by_project_and_key(project_and_key).tap do |rel|
       raise ActiveRecord::RecordNotFound unless rel
-    end
-  end
-
-  def breaker
-    !new_record? && !passing ? effective_result.runner : nil
-  end
-
-  def to_param options = {}
-    "#{project.try(:api_id)}-#{key.try(:key)}"
-  end
-
-  def deprecated?
-    !!deprecation_id
-  end
-
-  def to_client_hash options = {}
-    {
-      key: key.key,
-      name: name,
-      project: project.to_client_hash(options),
-      active: active,
-      created_at: created_at.to_ms
-    }.tap do |h|
-
-      h[:category] = category.name if category.present?
-      h[:values] = custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo } if custom_values.any?
-      h[:deprecated_at] = deprecation.created_at.to_ms if deprecation
-
-      if options[:type] == :test_run
-        h[:author] = author_id
-        h[:tags] = tags.collect(&:id) if tags.any?
-        h[:tickets] = tickets.collect(&:id) if tickets.any?
-      else
-        h[:author] = author.to_client_hash
-        h[:tags] = tags.collect(&:name) if tags.any?
-        h[:tickets] = tickets.collect(&:to_client_hash) if tickets.any?
-      end
     end
   end
 end

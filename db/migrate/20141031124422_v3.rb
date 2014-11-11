@@ -176,20 +176,26 @@ class V3 < ActiveRecord::Migration
       t.foreign_key :tickets
     end
 
-    create_table :test_values do |t|
+    create_table :test_custom_values do |t|
       t.string :name, null: false, limit: 50
       t.text :contents, null: false
-      t.integer :test_description_id, null: false
-      t.index [ :name, :test_description_id ], unique: true
-      t.foreign_key :test_descriptions
+      t.index [ :name, :contents ], unique: true
     end
 
-    create_table :test_result_values do |t|
-      t.string :name, null: false, limit: 50
-      t.text :contents, null: false
+    create_table :test_custom_values_descriptions, id: false do |t|
+      t.integer :test_description_id, null: false
+      t.integer :test_custom_value_id, null: false
+      t.index [ :test_description_id, :test_custom_value_id ], unique: true, name: 'index_test_custom_values_descriptions_on_desc_and_value_ids'
+      t.foreign_key :test_descriptions
+      t.foreign_key :test_custom_values
+    end
+
+    create_table :test_custom_values_results, id: false do |t|
       t.integer :test_result_id, null: false
-      t.index [ :name, :test_result_id ], unique: true
+      t.integer :test_custom_value_id, null: false
+      t.index [ :test_result_id, :test_custom_value_id ], unique: true, name: 'index_test_custom_values_results_on_result_and_value_id'
       t.foreign_key :test_results
+      t.foreign_key :test_custom_values
     end
 
     remove_column :users, :remember_token

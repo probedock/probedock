@@ -100,7 +100,8 @@ module TestPayloadProcessing
         test_keys: {},
         categories: {},
         tags: {},
-        tickets: {}
+        tickets: {},
+        custom_values: {}
       }
     end
 
@@ -111,6 +112,7 @@ module TestPayloadProcessing
         cache_records results, Category, 'c'
         cache_records results, Tag, 'g'
         cache_records results, Ticket, 't'
+        cache_custom_values results
       end
 
       Rails.logger.info "Cached data for #{results.length} results in #{(time * 1000).round 1}ms"
@@ -118,13 +120,27 @@ module TestPayloadProcessing
 
     def cache_test_keys results
 
-      new_keys = results.inject([]){ |memo,result| memo << result['k'] if result['k']; memo }.reject{ |k| @cache[:test_keys].key? k }
+      new_keys = results.inject([]){ |memo,result| memo << result['k'] if result.key? 'k'; memo }.reject{ |k| @cache[:test_keys].key? k }
 
       if new_keys.present?
+        @test_payload.project_version.project.test_keys.where(key: new_keys).update_all tracked: true
         existing_keys = @test_payload.project_version.project.test_keys.where(key: new_keys).to_a.inject({}){ |memo,test_key| memo[test_key.key] = test_key; memo }
 
         new_keys.each do |key|
           @cache[:test_keys][key] = existing_keys[key] || TestKey.new(key: key, free: false, project_id: @test_payload.project_version.project_id).tap(&:save_quickly!)
+        end
+      end
+    end
+
+    def cache_custom_values results
+      results.each do |r|
+        next unless r['a'].present?
+
+        r['a'].each_pair do |name,contents|
+          @cache[:custom_values][name] ||= {}
+          # FIXME: retrieve existing custom values with 1 query instead of 100
+          @cache[:custom_values][name][contents] ||= TestCustomValue.where(name: name, contents: contents).first
+          @cache[:custom_values][name][contents] ||= TestCustomValue.new(name: name, contents: contents).tap(&:save_quickly!)
         end
       end
     end
