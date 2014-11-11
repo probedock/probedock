@@ -125,6 +125,14 @@ class V3 < ActiveRecord::Migration
       t.foreign_key :users, column: :runner_id
     end
 
+    create_table :test_reports_results, id: false do |t|
+      t.integer :test_report_id, null: false
+      t.integer :test_result_id, null: false
+      t.index [ :test_report_id, :test_result_id ], unique: true
+      t.foreign_key :test_reports
+      t.foreign_key :test_results
+    end
+
     create_table :test_payloads_reports, id: false do |t|
       t.integer :test_payload_id, null: false
       t.integer :test_report_id, null: false

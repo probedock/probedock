@@ -18,7 +18,7 @@ class ProjectTest < ActiveRecord::Base
   include QuickValidation
 
   belongs_to :key, class_name: 'TestKey'
-  belongs_to :project, counter_cache: :tests_count
+  belongs_to :project
   has_many :descriptions, class_name: 'TestDescription', foreign_key: 'test_id'
 
   validates :name, presence: true, length: { maximum: 255, allow_blank: true }

@@ -216,6 +216,13 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.datetime "updated_at",            null: false
   end
 
+  create_table "test_reports_results", id: false, force: true do |t|
+    t.integer "test_report_id", null: false
+    t.integer "test_result_id", null: false
+  end
+
+  add_index "test_reports_results", ["test_report_id", "test_result_id"], name: "index_test_reports_results_on_test_report_id_and_test_result_id", unique: true, using: :btree
+
   create_table "test_result_contributors", id: false, force: true do |t|
     t.integer "test_result_id"
     t.integer "user_email_id"
@@ -355,6 +362,9 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_payloads_reports", "test_reports", name: "test_payloads_reports_test_report_id_fk"
 
   add_foreign_key "test_reports", "users", name: "test_reports_runner_id_fk", column: "runner_id"
+
+  add_foreign_key "test_reports_results", "test_reports", name: "test_reports_results_test_report_id_fk"
+  add_foreign_key "test_reports_results", "test_results", name: "test_reports_results_test_result_id_fk"
 
   add_foreign_key "test_result_contributors", "test_results", name: "test_result_contributors_test_result_id_fk"
   add_foreign_key "test_result_contributors", "user_emails", name: "test_result_contributors_user_email_id_fk"

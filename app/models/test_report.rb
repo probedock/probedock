@@ -24,6 +24,7 @@ class TestReport < ActiveRecord::Base
 
   belongs_to :runner, class_name: 'User'
   has_and_belongs_to_many :test_payloads
+  has_and_belongs_to_many :results, class_name: 'TestResult'
 
   validates :runner, presence: { unless: :quick_validation }
 
@@ -50,13 +51,17 @@ class TestReport < ActiveRecord::Base
       json.inactiveResultsCount inactive_results_count
       json.inactivePassedResultsCount inactive_passed_results_count
       json.createdAt created_at.iso8601(3)
+
+      if options[:detailed]
+        json.categories Category.joins(test_results: :test_reports).where(test_reports: { id: id }).order('categories.name').pluck('distinct categories.name')
+        json.tags Tag.joins(test_results: :test_reports).where(test_reports: { id: id }).order('tags.name').pluck('distinct tags.name')
+        json.tickets Ticket.joins(test_results: :test_reports).where(test_reports: { id: id }).order('tickets.name').pluck('distinct tickets.name')
+      end
     end
   end
 
   %w(duration results_count passed_results_count inactive_results_count inactive_passed_results_count).each do |method|
-    define_method method do
-      sum_payload_values method
-    end
+    define_method(method){ sum_payload_values method }
   end
 
   private

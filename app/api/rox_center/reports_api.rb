@@ -14,12 +14,31 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class Category < ActiveRecord::Base
-  include QuickValidation
+module ROXCenter
+  class ReportsApi < Grape::API
 
-  has_many :test_descriptions
-  has_many :test_results
+    namespace :reports do
 
-  strip_attributes
-  validates :name, presence: true, uniqueness: { case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }
+      before do
+        authenticate!
+      end
+
+      get do
+        TestReport.tableling.process(params)
+      end
+
+      namespace '/:id' do
+
+        helpers do
+          def current_report
+            TestReport.where(api_id: params[:id]).first!
+          end
+        end
+
+        get do
+          current_report.to_builder(detailed: true).attributes!
+        end
+      end
+    end
+  end
 end

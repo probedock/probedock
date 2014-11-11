@@ -81,10 +81,7 @@ module TestPayloadProcessing
       duration = (time * 1000).round 1
       number_of_test_results = data['t'].length
 
-      test_payload.finish_processing!
-      Rails.logger.info "Processed test payload with #{number_of_test_results} test results in #{duration}ms"
-
-      #Rails.application.events.fire 'api:payload', self
+      Rails.logger.info "Saved #{number_of_test_results} test payload results in #{duration}ms"
     end
 
     private

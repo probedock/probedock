@@ -14,12 +14,25 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-class Category < ActiveRecord::Base
-  include QuickValidation
+require 'resque/plugins/workers/lock'
 
-  has_many :test_descriptions
-  has_many :test_results
+class FillTestReportJob
+  extend Resque::Plugins::Workers::Lock
 
-  strip_attributes
-  validates :name, presence: true, uniqueness: { case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }
+  @queue = :reports
+
+  def self.perform test_report_id, test_payload_id
+
+    report = TestReport.includes(:results).find test_report_id
+    payload = TestPayload.includes(:results).find test_payload_id
+
+    TestReport.transaction do
+      report.results |= payload.results
+    end
+  end
+
+  # resque-workers-lock: lock workers to prevent concurrency
+  def self.lock_workers test_report_id, *args
+    "#{name}:#{test_report_id}"
+  end
 end

@@ -14,31 +14,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-module ROXCenter
-  class TestReportsApi < Grape::API
+require 'resque/plugins/workers/lock'
 
-    namespace :reports do
+module CompleteTestPayloadProcessingJob
+  extend Resque::Plugins::Workers::Lock
 
-      before do
-        authenticate!
-      end
+  @queue = :api
 
-      get do
-        TestReport.tableling.process(params)
-      end
+  def self.perform test_payload_id
 
-      namespace '/:id' do
+    TestPayload.find(test_payload_id).finish_processing!
 
-        helpers do
-          def current_report
-            TestReport.where(api_id: params[:id]).first!
-          end
-        end
-
-        get do
-          current_report
-        end
-      end
+    TestReport.joins(:test_payloads).where(test_payloads: { id: test_payload_id }).to_a.each do |report|
+      Resque.enqueue FillTestReportJob, report.id, test_payload_id
     end
   end
 end

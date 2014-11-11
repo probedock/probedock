@@ -17,7 +17,8 @@
 class Ticket < ActiveRecord::Base
   include QuickValidation
 
-  has_and_belongs_to_many :test_infos
+  has_and_belongs_to_many :test_descriptions
+  has_and_belongs_to_many :test_results
 
   strip_attributes
   validates :name, presence: true, uniqueness: { unless: :quick_validation }, length: { maximum: 255 }

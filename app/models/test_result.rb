@@ -27,6 +27,7 @@ class TestResult < ActiveRecord::Base
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
   has_and_belongs_to_many :custom_values, class_name: 'TestCustomValue'
+  has_and_belongs_to_many :test_reports
 
   bitmask :payload_properties_set, as: [ :key, :name, :category, :tags, :tickets, :custom_values ], null: false
 

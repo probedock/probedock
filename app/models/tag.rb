@@ -18,7 +18,8 @@ class Tag < ActiveRecord::Base
   include QuickValidation
   NAME_REGEXP = /\A[a-z0-9\-\_]+\Z/i
 
-  has_and_belongs_to_many :test_infos
+  has_and_belongs_to_many :test_descriptions
+  has_and_belongs_to_many :test_results
 
   strip_attributes
   validates :name, presence: true, uniqueness: { unless: :quick_validation }, length: { maximum: 50 }, format: { with: NAME_REGEXP }

@@ -65,8 +65,8 @@ module ROXCenter
       }
     end
 
+    mount PayloadsApi
     mount ProjectsApi
-    mount TestPayloadsApi
-    mount TestReportsApi
+    mount ReportsApi
   end
 end

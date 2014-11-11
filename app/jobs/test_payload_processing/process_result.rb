@@ -39,7 +39,7 @@ module TestPayloadProcessing
       @test_result.message = data['m'].to_s if data['m'].present?
       @test_result.run_at = test_payload.run_ended_at
 
-      @test_result.category = category data, cache if data.key 'c'
+      @test_result.category = category data, cache if data.key? 'c'
       @test_result.tags = tags data, cache if data.key? 'g'
       @test_result.tickets = tickets data, cache if data.key? 't'
 
