@@ -1,5 +1,0 @@
-%h2= t('.test_breakdown')
-.row
-  - %w(author project category).each do |breakdown|
-    .col-md-4
-      .breakdownChart{ data: { module: :breakdownChart, config: instance_variable_get("@#{breakdown}_breakdown_config").to_json } }

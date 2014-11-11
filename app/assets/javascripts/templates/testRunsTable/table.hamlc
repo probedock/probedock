@@ -1,9 +1,0 @@
-%table.table.table-striped.table-hover
-  %thead
-    %tr
-      %th.endedAt.sorting{ :'data-field' => 'endedAt' }= I18n.t('jst.models.testRun.endedAt')
-      %th.status= I18n.t('jst.models.testRun.status')
-      %th.duration.sorting{ :'data-field' => 'duration' }= I18n.t('jst.models.testRun.duration')
-      %th.runner.sorting{ :'data-field' => 'runner' }= I18n.t('jst.models.testRun.runner')
-      %th.group.sorting{ :'data-field' => 'group' }= I18n.t('jst.models.testRun.group')
-  %tbody

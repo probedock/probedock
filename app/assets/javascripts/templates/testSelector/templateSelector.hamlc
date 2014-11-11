@@ -1,2 +1,0 @@
-%label.sr-only{ for: 'testSelectorLinkTemplate' }
-%select#testSelectorLinkTemplate.form-control

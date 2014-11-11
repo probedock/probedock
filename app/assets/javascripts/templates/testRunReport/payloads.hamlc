@@ -1,2 +1,0 @@
-%h2= I18n.t('jst.testRunReport.payloads.title')
-.panel-group#testPayloads

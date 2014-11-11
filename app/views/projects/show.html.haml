@@ -1,6 +1,0 @@
-%h2
-  = @project.name
-  %small.monospace= @project.api_id
-- if can? :manage, Project
-  .projectEditor{ data: { module: :projectEditor, config: @project_editor_config.to_json } }
-.testsTable{ data: { module: :testsTable, config: @tests_table_config.to_json } }

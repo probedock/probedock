@@ -1,8 +1,0 @@
-%td.name
-%td.project
-%td.author
-%td.createdAt
-%td.key.monospace.text-warning
-%td.action
-  %a.btn.btn-xs
-    %span.glyphicon

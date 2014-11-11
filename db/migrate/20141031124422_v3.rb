@@ -21,6 +21,7 @@ class V3 < ActiveRecord::Migration
     remove_foreign_key :test_infos, :deprecation
 
     drop_table :api_keys
+    drop_table :links
     drop_table :test_counters
     drop_table :test_deprecations
     drop_table :tags_test_infos

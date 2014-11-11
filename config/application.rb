@@ -18,7 +18,6 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 require './lib/extensions'
 require './lib/exceptions'
-require './lib/validation'
 require './lib/utils/event_emitter'
 require 'silencer/logger' if Rails.env == 'development'
 
@@ -69,10 +68,6 @@ module ROXCenter
     # -- all .rb files in that directory are automatically loaded.
     config.cache_store = :file_store, File.join(Rails.root, 'tmp', 'cache', 'store', Rails.env)
 
-    if Rails.env == 'development'
-      config.middleware.swap Rails::Rack::Logger, Silencer::Logger, silence: [%r{^/data/status}]
-    end
-
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
     config.eager_load_paths += %W(#{config.root}/lib/utils #{config.root}/lib/utils/cache)
@@ -96,7 +91,7 @@ module ROXCenter
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password, :api_key_secret]
+    config.filter_parameters += [:password]
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true

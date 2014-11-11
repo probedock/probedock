@@ -16,15 +16,7 @@
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: try to auto-discover classes with hooks
-RoxHook.hooks << TagsData
-RoxHook.hooks << StatusData
-RoxHook.hooks << GeneralData
-RoxHook.hooks << LatestTestRunsData
-RoxHook.hooks << LatestProjectsData
 RoxHook.hooks << Settings::App
-RoxHook.hooks << CurrentTestMetricsData
-
-RoxHook.hooks << CacheReportJobForUi
 
 RoxHook.hooks << PurgeAllJob
 RoxHook.hooks << PurgeTagsJob

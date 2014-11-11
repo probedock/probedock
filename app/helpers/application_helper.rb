@@ -15,28 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 module ApplicationHelper
-
-  def body_data
-    # TODO: spec ApplicationHelper#body_data
-    data = {}
-    data[:config] = @page_config.to_json if @page_config
-    data[:status] = @status_data.to_json if @status_data
-    data.present? ? data : nil
-  end
-
-  def human_window_title
-    window_title.join t('common.title_separator')
-  end
-
-  def meta_session
-    { cache: current_user.client_cache_key }.tap do |h|
-      h[:admin] = true if current_user.try(:admin?)
-    end
-  end
-
-  def meta_maintenance
-    {
-      since: @maintenance[:since].to_ms
-    }
-  end
 end

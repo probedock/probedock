@@ -42,13 +42,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "link_templates", ["name"], name: "index_link_templates_on_name", unique: true, using: :btree
 
-  create_table "links", force: true do |t|
-    t.string   "name",       limit: 50, null: false
-    t.string   "url",                   null: false
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
-  end
-
   create_table "project_tests", force: true do |t|
     t.string   "name",                      null: false
     t.integer  "key_id",                    null: false

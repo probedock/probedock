@@ -14,5 +14,5 @@
  *= require ./layout
  *= require ./generic
  *= require ./spinner
- *= require_tree ./angular
+ *= require_tree ./modules
  */

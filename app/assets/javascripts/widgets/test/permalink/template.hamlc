@@ -1,8 +1,0 @@
-%p= I18n.t('jst.testWidgets.permalink.instructions')
-%form.form-inline{ role: 'form' }
-  .form-group
-    .input-group
-      %input.monospace.form-control{ type: 'text', readonly: true, value: @permalink }
-      .input-group-btn
-        %button.btn.btn-default{ type: 'button' }
-          %span.glyphicon.glyphicon-edit

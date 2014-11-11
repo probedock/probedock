@@ -1,9 +1,0 @@
-- if record.errors.any?
-  .alert.alert-danger
-    %p The following errors prevented this record from being saved:
-    %ul
-      - record.errors.each do |attr,errors|
-        - Array.wrap(errors).each do |error|
-          %li
-            %strong= record.class.human_attribute_name(attr)
-            = error

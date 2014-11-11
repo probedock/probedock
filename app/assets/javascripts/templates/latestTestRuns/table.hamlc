@@ -1,5 +1,0 @@
-%thead
-  %tr
-    %th.description= I18n.t('jst.latestTestRuns.title')
-    %th= I18n.t('jst.latestTestRuns.results')
-%tbody
