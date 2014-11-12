@@ -55,10 +55,13 @@ class Project < ActiveRecord::Base
     Jbuilder.new do |json|
       json.id api_id
       json.name name
-      json.description description if description.present?
-      json.testsCount tests_count
-      json.deprecatedTestsCount deprecated_tests_count
-      json.createdAt created_at.iso8601(3)
+
+      unless options[:link]
+        json.description description if description.present?
+        json.testsCount tests_count
+        json.deprecatedTestsCount deprecated_tests_count
+        json.createdAt created_at.iso8601(3)
+      end
     end
   end
 end

@@ -1,28 +1,38 @@
-.container-fluid ng-controller='ReportsController'
+.container-fluid ng-controller='ReportsCtrl'
   .col-xs-12
-    h1 Test Run Reports
-    table.reports.table.table-striped.table-bordered.table-hover st-table='reports' st-pipe='fetchReports'
-      thead
-        tr
-          th Runner
-          th Status
-          th Duration
-          th Date
-          th
-      tbody
-        tr ng-repeat='report in reports'
-          td {{ report.runner.email }}
-          td
-            .progress
-              .progress-bar.progress-bar-success style='width: {{ report.percentages.passed }}%'
-                | {{ report.passedResultsCount - report.inactivePassedResultsCount }}
-              .progress-bar.progress-bar-danger style='width: {{ report.percentages.failed }}%'
-                | {{ report.resultsCount - report.passedResultsCount - report.inactiveResultsCount + report.inactivePassedResultsCount }}
-              .progress-bar.progress-bar-warning style='width: {{ report.percentages.inactive }}%'
-                | {{ report.inactiveResultsCount }}
-          td {{ report.duration | durationFormat }}
-          td {{ report.createdAt | amDateFormat:'llll' }}
-          td.actions
-            a.btn.btn-primary.btn-xs ui-sref='std.report({ reportId: report.id })'
-              span.glyphicon.glyphicon-eye-open
-              |  View
+    tabset
+      tab heading='Latest Reports' ng-controller='LatestReportsCtrl' active='latestTabActive'
+        .spinner ng-show='!reports'
+          .bounce1
+          .bounce2
+          .bounce3
+        table.reports.table.table-striped.table-bordered.table-hover st-table='reports' st-pipe='fetchReports' ng-show='reports'
+          thead
+            tr
+              th.results Results
+              th.runner Runner
+              th.duration Duration
+              th.date Date
+              th.projects Projects
+          tbody
+            tr ng-repeat='report in reports'
+              td.results
+                .progress ui-sref='std.reports.details({ reportId: report.id })' tooltip='Click to see the detailed report'
+                  .progress-bar.progress-bar-success style='width: {{ report.percentages.passed }}%'
+                    | {{ report.passedResultsCount - report.inactivePassedResultsCount }}
+                  .progress-bar.progress-bar-danger style='width: {{ report.percentages.failed }}%'
+                    | {{ report.resultsCount - report.passedResultsCount - report.inactiveResultsCount + report.inactivePassedResultsCount }}
+                  .progress-bar.progress-bar-warning style='width: {{ report.percentages.inactive }}%'
+                    | {{ report.inactiveResultsCount }}
+              td.runner
+                img.gravatar gravatar-src="report.runner.email" gravatar-size="30" tooltip="{{ report.runner.email }}"
+              td.duration {{ report.duration | durationFormat }}
+              td.date {{ report.createdAt | amDateFormat:'llll' }}
+              td.projects
+                .label.label-primary ng-repeat='project in report.projects' {{ project.name }}
+      tab heading='Loading Report...' ng-repeat='reportTab in reportDetailsTabs' ng-controller='ReportDetailsCtrl' active='reportTab.active'
+        .spinner ng-hide='report'
+          .bounce1
+          .bounce2
+          .bounce3
+        p ng-show='report' Report loaded

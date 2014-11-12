@@ -51,6 +51,7 @@ class TestReport < ActiveRecord::Base
       json.inactiveResultsCount inactive_results_count
       json.inactivePassedResultsCount inactive_passed_results_count
       json.createdAt created_at.iso8601(3)
+      json.projects projects.select('projects.id, projects.api_id, projects.name').to_a.collect{ |p| p.to_builder(link: true).attributes! }
 
       if options[:detailed]
         json.categories Category.joins(test_results: :test_reports).where(test_reports: { id: id }).order('categories.name').pluck('distinct categories.name')
@@ -62,6 +63,10 @@ class TestReport < ActiveRecord::Base
 
   %w(duration results_count passed_results_count inactive_results_count inactive_passed_results_count).each do |method|
     define_method(method){ sum_payload_values method }
+  end
+
+  def projects
+    Project.joins(versions: { test_results: :test_reports }).where(test_reports: { id: id }).group('projects.id').order('projects.name')
   end
 
   private

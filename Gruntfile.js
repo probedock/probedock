@@ -34,6 +34,8 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-moment/angular-moment.js', dest: 'vendor/assets/javascripts/angular-moment.js' },
           { nonull: true, src: 'bower_components/angular-base64/angular-base64.js', dest: 'vendor/assets/javascripts/angular-base64.js' }, // TODO: remove if unused
           { nonull: true, src: 'bower_components/angular-smart-table/dist/smart-table.debug.js', dest: 'vendor/assets/javascripts/angular-smart-table.js' },
+          { nonull: true, src: 'bower_components/angular-gravatar/build/md5.js', dest: 'vendor/assets/javascripts/angular-md5.js' },
+          { nonull: true, src: 'bower_components/angular-gravatar/build/angular-gravatar.js', dest: 'vendor/assets/javascripts/angular-gravatar.js' },
           // stylesheets
           { nonull: true, src: 'bower_components/normalize.css/normalize.css', dest: 'vendor/assets/stylesheets/normalize.css' },
           // fonts

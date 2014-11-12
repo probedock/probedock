@@ -36,13 +36,8 @@ angular.module('rox.routes', [ 'ui.router' ])
         }
       })
 
-      .state('std.report', {
-        url: '/reports/:reportId',
-        views: {
-          'content@std': {
-            templateUrl: '/templates/report.html'
-          }
-        }
+      .state('std.reports.details', {
+        url: '/:reportId'
       })
       
     ;

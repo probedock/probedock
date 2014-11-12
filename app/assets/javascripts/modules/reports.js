@@ -1,13 +1,44 @@
 angular.module('rox.reports', ['rox.api'])
 
-  .controller('ReportController', ['ApiService', '$scope', '$stateParams', function($api, $scope, $stateParams) {
+  .controller('ReportsCtrl', ['$rootScope', '$scope', '$state', '$stateParams', function($rootScope, $scope, $state, $stateParams) {
+
+    $scope.latestTabActive = true;
+    $scope.reportDetailsTabs = [];
+
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams) {
+      checkState(toState, toParams);
+    });
+
+    $scope.showReportDetails = function(reportId) {
+
+      $scope.latestTabActive = false;
+      _.each($scope.reportDetailsTabs, function(tab) {
+        tab.active = false;
+      });
+
+      $scope.reportDetailsTabs.push({
+        active: true,
+        reportId: reportId
+      });
+    };
+
+    checkState($state.current, $stateParams);
+
+    function checkState(state, params) {
+      if (state.name == 'std.reports.details') {
+        $scope.showReportDetails(params.reportId);
+      }
+    }
+  }])
+
+  .controller('ReportDetailsCtrl', ['ApiService', '$scope', function($api, $scope) {
 
     fetchReport();
 
     function fetchReport() {
       $api.http({
         method: 'GET',
-        url: '/api/reports/' + $stateParams.reportId
+        url: '/api/reports/' + $scope.reportTab.reportId
       }).then(showReport);
     }
 
@@ -16,7 +47,7 @@ angular.module('rox.reports', ['rox.api'])
     }
   }])
 
-  .controller('ReportsController', ['ApiService', '$scope', function($api, $scope) {
+  .controller('LatestReportsCtrl', ['ApiService', '$scope', function($api, $scope) {
 
     $scope.fetchReports = function(params) {
       $api.http({

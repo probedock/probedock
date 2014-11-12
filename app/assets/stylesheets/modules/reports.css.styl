@@ -1,5 +1,24 @@
 table.reports
+  th, td
+    &.results
+      width 30%
+    &.runner
+      width 7em
+      text-align center
+    &.duration
+      width 10em
+      text-align center
+    &.date
+      width 16em
+      text-align center
   .progress
     margin-bottom 0
-  td.actions
-    text-align center
+    cursor pointer
+    height 20px
+    .progress-bar
+      font-size 12px
+      line-height 20px
+  tbody
+    tr
+      td
+        vertical-align middle

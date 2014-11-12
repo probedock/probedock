@@ -1,4 +1,5 @@
 .container-fluid ng-controller='ReportController'
   .col-xs-12
-    h1 Test Run Report
+    h1 ng-hide='report' Test Run Report
+    h1 ng-show='report' Report by {{ report.runner.email }} at {{ report.createdAt | amDateFormat:'llll' }}
     p ng-show='report' Report fetched

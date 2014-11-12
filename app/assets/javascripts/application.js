@@ -37,5 +37,7 @@
 //= require angular-moment
 //= require angular-base64
 //= require angular-smart-table
+//= require angular-md5
+//= require angular-gravatar
 //= require ./boot
 //= require_tree ./modules
