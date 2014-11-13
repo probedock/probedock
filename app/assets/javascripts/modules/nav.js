@@ -8,7 +8,7 @@ angular.module('rox.nav', [])
     });
 
     $scope.isMenuActive = function(stateName) {
-      return state && state.name.indexOf('std.' + stateName) === 0;
+      return state && state.name && state.name.indexOf('std.' + stateName) === 0;
     };
   }])
 

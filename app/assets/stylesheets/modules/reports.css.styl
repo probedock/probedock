@@ -1,3 +1,17 @@
+large-progress-bar()
+  .summary
+    .gravatar
+      margin 0 0 10px 10px
+  .progress
+    height 20px
+    margin-bottom 0
+    .progress-bar
+      font-size 12px
+      line-height 20px
+
+#testReportDetails
+  large-progress-bar()
+
 table.reports
   th, td
     &.results
@@ -11,13 +25,7 @@ table.reports
     &.date
       width 16em
       text-align center
-  .progress
-    margin-bottom 0
-    cursor pointer
-    height 20px
-    .progress-bar
-      font-size 12px
-      line-height 20px
+  large-progress-bar()
   tbody
     tr
       td

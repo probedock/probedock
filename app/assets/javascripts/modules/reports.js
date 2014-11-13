@@ -1,55 +1,64 @@
 angular.module('rox.reports', ['rox.api'])
 
-  .controller('ReportsCtrl', ['$rootScope', '$scope', '$state', '$stateParams', function($rootScope, $scope, $state, $stateParams) {
+  .controller('ReportsCtrl', ['$scope', 'StateService', function($scope, $stateService) {
 
-    $scope.latestTabActive = true;
-    $scope.reportDetailsTabs = [];
+    $scope.activeTabs = {
+      latest: true,
+      details: false
+    };
+    $scope.detailsTabReportId = null;
 
-    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams) {
-      checkState(toState, toParams);
+    $stateService.onState({ name: [ 'std.reports', 'std.reports.details' ] }, $scope, function(state, params) {
+      if (state && state.name == 'std.reports.details') {
+        showReportDetails(params.reportId);
+      } else {
+        $scope.activeTabs.latest = true;
+        $scope.activeTabs.details = false;
+      }
     });
 
-    $scope.showReportDetails = function(reportId) {
-
-      $scope.latestTabActive = false;
-      _.each($scope.reportDetailsTabs, function(tab) {
-        tab.active = false;
-      });
-
-      $scope.reportDetailsTabs.push({
-        active: true,
-        reportId: reportId
-      });
+    function showReportDetails(reportId) {
+      $scope.activeTabs.latest = false;
+      $scope.activeTabs.details = true;
+      $scope.detailsTabReportId = reportId;
     };
-
-    checkState($state.current, $stateParams);
-
-    function checkState(state, params) {
-      if (state.name == 'std.reports.details') {
-        $scope.showReportDetails(params.reportId);
-      }
-    }
   }])
 
-  .controller('ReportDetailsCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('ReportDetailsCtrl', ['ApiService', 'ReportService', '$scope', 'StateService', function($api, $reportService, $scope, $stateService) {
 
-    fetchReport();
+    var reportId;
+    $stateService.onState({ name: 'std.reports.details' }, $scope, function(state, params) {
+      if (params.reportId != reportId) {
+        delete $scope.report;
+        reportId = params.reportId;
+        fetchReport();
+      }
+    });
 
     function fetchReport() {
       $api.http({
         method: 'GET',
-        url: '/api/reports/' + $scope.reportTab.reportId
+        url: '/api/reports/' + reportId
       }).then(showReport);
     }
 
     function showReport(response) {
-      $scope.report = response.data;
+      $scope.report = $reportService.enrichReports(response.data);
     }
   }])
 
-  .controller('LatestReportsCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('LatestReportsCtrl', ['ApiService', 'ReportService', '$scope', 'StateService', function($api, $reportService, $scope, $stateService) {
 
-    $scope.fetchReports = function(params) {
+    $stateService.onState({ name: 'std.reports' }, $scope, function() {
+      if ($scope.reports === undefined) {
+        fetchReports();
+      }
+    });
+
+    function fetchReports() {
+
+      $scope.reports = false;
+
       $api.http({
         method: 'GET',
         url: '/api/reports',
@@ -60,28 +69,34 @@ angular.module('rox.reports', ['rox.api'])
       }).then(showReports);
     };
 
-    $scope.fetchReports();
-
     function showReports(response) {
-
-      $scope.reports = response.data;
-
-      _.each($scope.reports, function(report) {
-
-        var passed = Math.round((report.passedResultsCount - report.inactivePassedResultsCount) * 100 / report.resultsCount),
-            inactive = Math.round(report.inactiveResultsCount * 100 / report.resultsCount);
-
-        if (passed + inactive > 100) {
-          inactive = 100 - passed;
-        }
-
-        report.percentages = {
-          passed: passed,
-          inactive: inactive,
-          failed: 100 - passed - inactive
-        };
-      });
+      $scope.reports = $reportService.enrichReports(response.data);
     }
+  }])
+
+  .factory('ReportService', [function() {
+    return {
+      enrichReports: function(reports) {
+
+        _.each(_.isArray(reports) ? reports : [ reports ], function(report) {
+
+          var passed = Math.round((report.passedResultsCount - report.inactivePassedResultsCount) * 100 / report.resultsCount),
+              inactive = Math.round(report.inactiveResultsCount * 100 / report.resultsCount);
+
+          if (passed + inactive > 100) {
+            inactive = 100 - passed;
+          }
+
+          report.percentages = {
+            passed: passed,
+            inactive: inactive,
+            failed: 100 - passed - inactive
+          };
+        });
+
+        return reports;
+      }
+    };
   }])
 
 ;
