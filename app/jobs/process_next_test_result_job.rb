@@ -92,7 +92,7 @@ module ProcessNextTestResultJob
       test.save!
     end
 
-    TestResult.where(id: test_result.id).update_all processed: true, new_test: new_test
+    TestResult.where(id: test_result.id).update_all processed: true, new_test: new_test, test_id: test.id
     TestPayload.increment_counter :processed_results_count, test_result.test_payload_id
     Project.increment_counter :tests_count, test_result.project_version.project_id if new_test
   end

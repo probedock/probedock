@@ -20,6 +20,7 @@ class ProjectTest < ActiveRecord::Base
   belongs_to :key, class_name: 'TestKey'
   belongs_to :project
   has_many :descriptions, class_name: 'TestDescription', foreign_key: 'test_id'
+  has_many :results, class_name: 'TestResult', foreign_key: 'test_id'
 
   validates :name, presence: true, length: { maximum: 255, allow_blank: true }
   validates :project, presence: true
