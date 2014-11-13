@@ -31,16 +31,12 @@
                 | {{ report.inactiveResultsCount }}
   .results ng-controller='ReportResultsCtrl'
     h3 List of results
-    .spinner ng-hide='results'
-      .bounce1
-      .bounce2
-      .bounce3
-    .col-xs-12.col-sm-6.col-lg-4 ng-repeat='result in results' infinite-scroll='showMoreResults()' infinite-scroll-disabled='!allResultsShown || loadingMoreResults || noMoreResults'
+    .col-xs-12.col-sm-6.col-lg-4 ng-repeat='result in results' infinite-scroll='showMoreResults()' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
       .panel ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
         .panel-body
           strong ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}' {{ result.name }}
-    button.center-block.btn.btn-primary ng-show='!allResultsShown && total > results.length' ng-click='showAllResults()' Show {{ total - results.length }} more results
-    .spinner ng-show='loadingMoreResults'
+    button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()' Show {{ total - results.length }} more results
+    .spinner ng-show='fetchingMoreResults'
       .bounce1
       .bounce2
       .bounce3

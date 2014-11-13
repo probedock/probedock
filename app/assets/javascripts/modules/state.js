@@ -5,7 +5,7 @@ angular.module('rox.state', [ 'ui.router' ])
     $urlRouterProvider.otherwise("/");
   }])
 
-  .factory('StateService', ['$rootScope', '$state', '$stateParams', function($rootScope, $state, $stateParams) {
+  .factory('StateService', ['$rootScope', '$state', '$stateParams', '$timeout', function($rootScope, $state, $stateParams, $timeout) {
 
     var onStateCallbacks = [];
 
@@ -37,7 +37,9 @@ angular.module('rox.state', [ 'ui.router' ])
         var callback = { options: stateOptions, callback: callback };
         onStateCallbacks.push(callback);
 
-        checkState(undefined, $state.current, $stateParams);
+        $timeout(function() {
+          checkState(undefined, $state.current, $stateParams);
+        });
 
         scope.$on('$destroy', function() {
           onStateCallbacks.splice(onStateCallbacks.indexOf(callback), 1);

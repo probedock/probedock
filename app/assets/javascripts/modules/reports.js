@@ -2,33 +2,40 @@ angular.module('rox.reports', ['rox.api'])
 
   .controller('ReportResultsCtrl', ['ApiService', '$scope', function($api, $scope) {
 
-    var page = 1,
-        pageSize = 30;
+    var page, pageSize, reportId;
 
-    $scope.allResultsShown = false;
-    $scope.loadingMoreResults = false;
-    $scope.noMoreResults = false;
+    $scope.$on('report.init', init);
 
     $scope.showAllResults = function() {
-      $scope.allResultsShown = true;
+      $scope.showingAllResults = true;
     };
 
     $scope.showMoreResults = function() {
       page++;
-      $scope.loadingMoreResults = true;
       fetchResults().then(addResults);
     };
 
-    $scope.$watch('report', function(value) {
-      if (value) {
-        fetchResults().then(addResults);
-      }
-    });
+    function init(event, newReportId) {
+
+      page = 1;
+      pageSize = 30;
+      $scope.showingAllResults = false;
+      $scope.fetchingMoreResults = false;
+      $scope.noMoreResults = false;
+      delete $scope.results;
+      delete $scope.total;
+
+      reportId = newReportId;
+      fetchResults().then(addResults);
+    }
 
     function fetchResults() {
+
+      $scope.fetchingMoreResults = true;
+
       return $api.http({
         method: 'GET',
-        url: '/api/reports/' + $scope.report.id + '/results',
+        url: '/api/reports/' + reportId + '/results',
         params: {
           page: page,
           pageSize: 30
@@ -38,7 +45,7 @@ angular.module('rox.reports', ['rox.api'])
 
     function addResults(response) {
 
-      $scope.loadingMoreResults = false;
+      $scope.fetchingMoreResults = false;
       $scope.total = response.headers('X-Pagination').match(/total=(\d+)/)[1];
 
       if (!$scope.results) {
@@ -80,8 +87,11 @@ angular.module('rox.reports', ['rox.api'])
     var reportId;
     $stateService.onState({ name: 'std.reports.details' }, $scope, function(state, params) {
       if (params.reportId != reportId) {
+
         delete $scope.report;
         reportId = params.reportId;
+        $scope.$broadcast('report.init', reportId);
+
         fetchReport();
       }
     });
