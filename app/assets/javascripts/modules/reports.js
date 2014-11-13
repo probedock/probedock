@@ -1,5 +1,56 @@
 angular.module('rox.reports', ['rox.api'])
 
+  .controller('ReportResultsCtrl', ['ApiService', '$scope', function($api, $scope) {
+
+    var page = 1,
+        pageSize = 30;
+
+    $scope.allResultsShown = false;
+    $scope.loadingMoreResults = false;
+    $scope.noMoreResults = false;
+
+    $scope.showAllResults = function() {
+      $scope.allResultsShown = true;
+    };
+
+    $scope.showMoreResults = function() {
+      page++;
+      $scope.loadingMoreResults = true;
+      fetchResults().then(addResults);
+    };
+
+    $scope.$watch('report', function(value) {
+      if (value) {
+        fetchResults().then(addResults);
+      }
+    });
+
+    function fetchResults() {
+      return $api.http({
+        method: 'GET',
+        url: '/api/reports/' + $scope.report.id + '/results',
+        params: {
+          page: page,
+          pageSize: 30
+        }
+      });
+    }
+
+    function addResults(response) {
+
+      $scope.loadingMoreResults = false;
+      $scope.total = response.headers('X-Pagination').match(/total=(\d+)/)[1];
+
+      if (!$scope.results) {
+        $scope.results = response.data;
+      } else {
+        $scope.results = $scope.results.concat(response.data);
+      }
+
+      $scope.noMoreResults = $scope.results.length >= $scope.total || !response.data.length;
+    }
+  }])
+
   .controller('ReportsCtrl', ['$scope', 'StateService', function($scope, $stateService) {
 
     $scope.activeTabs = {

@@ -1,6 +1,6 @@
 angular.module('rox.projects', ['rox.api'])
 
-  .controller('ProjectsController', ['ApiService', '$scope', function($api, $scope) {
+  .controller('ProjectsCtrl', ['ApiService', '$scope', function($api, $scope) {
 
     $scope.newProject = {};
 
@@ -33,7 +33,7 @@ angular.module('rox.projects', ['rox.api'])
     };
   }])
 
-  .controller('ProjectController', ['ApiService', '$scope', function($api, $scope) {
+  .controller('ProjectCtrl', ['ApiService', '$scope', function($api, $scope) {
 
     $scope.edit = function() {
       $scope.editedProject = angular.copy($scope.project);

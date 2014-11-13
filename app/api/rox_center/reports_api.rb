@@ -38,6 +38,25 @@ module ROXCenter
         get do
           current_report.to_builder(detailed: true).attributes!
         end
+
+        namespace '/results' do
+
+          get do
+
+            results = current_report.results
+            total = results.count
+
+            limit = params[:pageSize].to_i
+            limit = 100 if limit <= 0 || limit > 100
+
+            page = params[:page].to_i
+            page = 1 if page < 1
+            offset = (page - 1) * limit
+
+            header 'X-Pagination', "page=#{page} pageSize=#{limit} total=#{total}"
+            results.order('active desc, passed, name, id').offset(offset).limit(limit).to_a.collect{ |r| r.to_builder.attributes! }
+          end
+        end
       end
     end
   end

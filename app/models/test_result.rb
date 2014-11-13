@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 class TestResult < ActiveRecord::Base
+  include JsonResource
   include QuickValidation
   include Tableling::Model
 
@@ -61,12 +62,21 @@ class TestResult < ActiveRecord::Base
 
       quick_search do |query,term|
         term = "%#{term.downcase}%"
-        query.joins(:runner).joins(:project_version).where('LOWER(project_versions.name) LIKE ? OR LOWER(users.name) LIKE ?', term, term)
+        query.where('LOWER(test_results.name) LIKE ?', term)
       end
 
       serialize_response do |res|
-        TestResultsRepresenter.new OpenStruct.new(res)
+        res[:data].collect{ |p| p.to_builder.attributes! }
       end
+    end
+  end
+
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.id id
+      json.name name
+      json.passed passed
+      json.active active
     end
   end
 

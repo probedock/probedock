@@ -39,5 +39,6 @@
 //= require angular-smart-table
 //= require angular-md5
 //= require angular-gravatar
+//= require angular-ng-infinite-scroll
 //= require ./boot
 //= require_tree ./modules

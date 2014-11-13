@@ -42,19 +42,19 @@ angular.module('rox.auth', ['LocalStorageModule', 'ui.bootstrap'])
     return service;
   }])
 
-  .controller('AuthController', ['AuthService', '$modal', '$scope', function($auth, $modal, $scope) {
+  .controller('AuthCtrl', ['AuthService', '$modal', '$scope', function($auth, $modal, $scope) {
 
     $scope.showSignIn = function() {
       $modal.open({
         templateUrl: '/templates/loginDialog.html',
-        controller: 'LoginController'
+        controller: 'LoginCtrl'
       });
     };
 
     $scope.signOut = $auth.signOut;
   }])
 
-  .controller('LoginController', ['AuthService', '$http', '$scope', function($auth, $http, $scope) {
+  .controller('LoginCtrl', ['AuthService', '$http', '$scope', function($auth, $http, $scope) {
 
     $scope.credentials = {};
 
