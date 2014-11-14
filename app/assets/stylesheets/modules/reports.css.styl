@@ -1,7 +1,6 @@
+@import '../mixins.css.styl'
+
 large-progress-bar()
-  .summary
-    .gravatar
-      margin 0 0 10px 10px
   .progress
     height 20px
     margin-bottom 0
@@ -11,6 +10,32 @@ large-progress-bar()
 
 #testReportDetails
   large-progress-bar()
+  .summary
+    .gravatar
+      margin 0 0 10px 10px
+  .health
+    .spinner
+      margin-top 10px
+    a
+      &.p, &.f, &.i
+        display block
+        float left
+        width 10px
+        height 10px
+        @media (min-width: 768px)
+          width 20px
+          height 20px
+        margin 0 0 1px 1px
+      &.p
+        @extend .passedTest
+      &.f
+        @extend .failedTest
+      &.i
+        @extend .inactiveTest
+    .popover
+      .popover-content
+        ul
+          margin-bottom 0
   .results
     margin-bottom 2em
     h3

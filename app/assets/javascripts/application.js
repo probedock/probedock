@@ -31,6 +31,7 @@
 //= require jquery
 //= require moment
 //= require angular
+//= require angular-sanitize
 //= require angular-ui-router
 //= require angular-ui-bootstrap-tpls
 //= require angular-local-storage
@@ -40,5 +41,7 @@
 //= require angular-md5
 //= require angular-gravatar
 //= require angular-ng-infinite-scroll
+//= require bootstrap-tooltip
+//= require bootstrap-popover
 //= require ./boot
 //= require_tree ./modules

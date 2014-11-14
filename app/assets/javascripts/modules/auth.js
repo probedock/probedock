@@ -1,4 +1,4 @@
-angular.module('rox.auth', ['LocalStorageModule', 'ui.bootstrap'])
+angular.module('rox.auth', ['LocalStorageModule'])
 
   .factory('AuthService', ['$http', 'localStorageService', '$rootScope', function($http, $local, $rootScope) {
 

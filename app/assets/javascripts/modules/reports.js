@@ -1,9 +1,66 @@
-angular.module('rox.reports', ['rox.api'])
+angular.module('rox.reports', ['ngSanitize', 'rox.api'])
+
+  .directive('healthTooltips', ['$compile', function ($compile) {
+    return function(scope, element, attrs) {
+
+      var titleTemplate = _.template('<strong class="<%= titleClass %>"><%- title %></strong>'),
+          contentTemplate = _.template('<ul class="list-unstyled"><li><strong>Duration:</strong> <%- duration %></li></ul>');
+
+      element.on('mouseenter', 'a', function() {
+
+        var e = $(this);
+
+        if (!e.data('bs.popover')) {
+
+          var titleClass = 'text-success';
+
+          if (e.is('.f')) {
+            titleClass = 'text-danger';
+          } else if (e.is('.i')) {
+            titleClass = 'text-warning';
+          }
+
+          e.popover({
+            trigger: 'hover manual',
+            placement: 'auto',
+            title: titleTemplate({ title: e.data('n'), titleClass: titleClass }),
+            // FIXME: format duration
+            content: contentTemplate({ duration: e.data('d') }),
+            html: true
+          });
+
+          e.popover('show');
+        }
+      });
+    };
+  }])
+
+  .controller('ReportHealthCtrl', ['ApiService', '$sce', '$scope', function($api, $sce, $scope) {
+
+    var reportId;
+    $scope.$on('report.init', init);
+
+    function init(event, newReportId) {
+      delete $scope.healthHtml;
+      reportId = newReportId;
+      fetchHealth().then(showHealth);
+    }
+
+    function fetchHealth() {
+      return $api.http({
+        method: 'GET',
+        url: '/api/reports/' + reportId + '/health'
+      });
+    }
+
+    function showHealth(response) {
+      $scope.healthHtml = $sce.trustAsHtml(response.data.html);
+    }
+  }])
 
   .controller('ReportResultsCtrl', ['ApiService', '$scope', function($api, $scope) {
 
     var page, pageSize, reportId;
-
     $scope.$on('report.init', init);
 
     $scope.showAllResults = function() {

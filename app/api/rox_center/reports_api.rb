@@ -33,29 +33,48 @@ module ROXCenter
           def current_report
             TestReport.where(api_id: params[:id]).first!
           end
+
+          def report_health_template
+            @report_health_template ||= Slim::Template.new(Rails.root.join('app', 'views', 'reports', 'health.html.slim').to_s)
+          end
         end
 
         get do
           current_report.to_builder(detailed: true).attributes!
         end
 
-        namespace '/results' do
+        get :health do
 
-          get do
+          html = ''
 
-            results = current_report.results
-            total = results.count
+          offset = 0
+          limit = 100
 
-            limit = params[:pageSize].to_i
-            limit = 100 if limit <= 0 || limit > 100
+          begin
+            current_results = current_report.results.order('name, id').offset(offset).limit(limit).to_a
+            html << report_health_template.render(OpenStruct.new(results: current_results))
+            offset += limit
+          end while current_results.present?
 
-            page = params[:page].to_i
-            page = 1 if page < 1
-            offset = (page - 1) * limit
+          {
+            html: html
+          }
+        end
 
-            header 'X-Pagination', "page=#{page} pageSize=#{limit} total=#{total}"
-            results.order('active desc, passed, name, id').offset(offset).limit(limit).to_a.collect{ |r| r.to_builder.attributes! }
-          end
+        get :results do
+
+          results = current_report.results
+          total = results.count
+
+          limit = params[:pageSize].to_i
+          limit = 100 if limit <= 0 || limit > 100
+
+          page = params[:page].to_i
+          page = 1 if page < 1
+          offset = (page - 1) * limit
+
+          header 'X-Pagination', "page=#{page} pageSize=#{limit} total=#{total}"
+          results.order('active desc, passed, name, id').offset(offset).limit(limit).to_a.collect{ |r| r.to_builder.attributes! }
         end
       end
     end

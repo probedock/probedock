@@ -27,8 +27,12 @@ angular.module('rox', [
   'angularMoment',
   'smart-table',
   'ui.gravatar',
-  'infinite-scroll'
+  'infinite-scroll',
+  'ui.bootstrap'
 ])
+
+  // FIXME: ui-bootstrap tooltip animation is broken using angular 1.3
+  // upgrade to 1.3.1+ only once fixed: https://github.com/angular-ui/bootstrap/issues/2828
 
   .constant('version', <%= JSON.dump Rails.application.version %>)
   .constant('environment', <%= JSON.dump Rails.env %>)

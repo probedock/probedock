@@ -90,6 +90,10 @@ class TestResult < ActiveRecord::Base
     passed
   end
 
+  def active?
+    active
+  end
+
   def to_client_hash options = {}
     { id: id, passed: passed, active: active, duration: duration }.tap do |h|
 
