@@ -31,6 +31,7 @@
 //= require jquery
 //= require moment
 //= require angular
+//= require angular-animate
 //= require angular-sanitize
 //= require angular-ui-router
 //= require angular-ui-bootstrap-tpls

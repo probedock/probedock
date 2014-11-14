@@ -165,30 +165,56 @@ angular.module('rox.reports', ['ngSanitize', 'rox.api'])
     }
   }])
 
-  .controller('LatestReportsCtrl', ['ApiService', 'ReportService', '$scope', 'StateService', function($api, $reportService, $scope, $stateService) {
+  .controller('LatestReportsCtrl', ['ApiService', 'ReportService', '$scope', 'StateService', '$timeout', function($api, $reportService, $scope, $stateService, $timeout) {
+
+    var hideNoNewReportsPromise;
+    $scope.fetchingReports = false;
 
     $stateService.onState({ name: 'std.reports' }, $scope, function() {
       if ($scope.reports === undefined) {
-        fetchReports();
+        $scope.fetchLatestReports();
       }
     });
 
-    function fetchReports() {
+    $scope.fetchLatestReports = function() {
 
-      $scope.reports = false;
+      var params = {
+        pageSize: 10,
+        'sort[]': [ 'createdAt desc' ]
+      };
+
+      if ($scope.reports === undefined) {
+        $scope.reports = false;
+      } else if ($scope.reports && $scope.reports.length) {
+        params.after = $scope.reports[0].id;
+      }
+
+      $scope.fetchingReports = true;
+
+      $scope.noNewReports = false;
+      if (hideNoNewReportsPromise) {
+        $timeout.cancel(hideNoNewReportsPromise);
+      }
 
       $api.http({
         method: 'GET',
         url: '/api/reports',
-        params: {
-          pageSize: 10,
-          'sort[]': [ 'createdAt desc' ]
-        }
+        params: params
       }).then(showReports);
     };
 
     function showReports(response) {
-      $scope.reports = $reportService.enrichReports(response.data);
+
+      $scope.fetchingReports = false;
+
+      if (response.data.length) {
+        $scope.reports = $reportService.enrichReports(response.data).concat($scope.reports || []);
+      } else if ($scope.reports.length) {
+        $scope.noNewReports = true;
+        hideNoNewReportsPromise = $timeout(function() {
+          $scope.noNewReports = false;
+        }, 5000);
+      }
     }
   }])
 

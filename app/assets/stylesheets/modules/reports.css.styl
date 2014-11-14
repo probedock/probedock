@@ -41,10 +41,10 @@ large-progress-bar()
     h3
       margin-bottom 1em
 
-table.reports
+table.latestReports
   th, td
-    &.results
-      width 30%
+    &.projects
+      width 35%
     &.runner
       width 7em
       text-align center
@@ -55,6 +55,22 @@ table.reports
       width 16em
       text-align center
   large-progress-bar()
+  thead
+    tr
+      th
+        vertical-align middle
+        &.results
+          button
+            margin-left 0.5em
+          .text-danger
+            font-weight normal
+            &.ng-hide-add.ng-hide-add-active,
+            &.ng-hide-remove.ng-hide-remove-active
+              -webkit-transition all linear 0.5s
+              transition all linear 0.5s
+            &.ng-hide
+              opacity 0
+              margin 0 10px
   tbody
     tr
       td

@@ -3,14 +3,19 @@ div ng-controller='LatestReportsCtrl'
     .bounce1
     .bounce2
     .bounce3
-  table.reports.table.table-striped.table-bordered.table-hover ng-show='reports'
+  table.latestReports.table.table-striped.table-bordered.table-hover ng-show='reports'
     thead
       tr
-        th.results Results
+        th.results
+          | Results
+          .pull-right
+            span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
+            button.btn.btn-primary.btn-xs ng-click='fetchLatestReports()' ng-disabled='fetchingReports' tooltip='Refresh'
+              span.glyphicon.glyphicon-refresh
         th.runner Runner
-        th.duration Duration
-        th.date Date
-        th.projects Projects
+        th.duration.hidden-xs.hidden-sm Duration
+        th.date.hidden-xs.hidden-sm.hidden-md Date
+        th.projects.hidden-xs Projects
     tbody
       tr ng-repeat='report in reports'
         td.results
@@ -24,7 +29,7 @@ div ng-controller='LatestReportsCtrl'
                 | {{ report.inactiveResultsCount }}
         td.runner
           img.gravatar gravatar-src="report.runner.email" gravatar-size="30" tooltip="{{ report.runner.email }}"
-        td.duration {{ report.duration | durationFormat }}
-        td.date {{ report.createdAt | amDateFormat:'llll' }}
-        td.projects
+        td.duration.hidden-xs.hidden-sm {{ report.duration | durationFormat }}
+        td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
+        td.projects.hidden-xs
           .label.label-primary ng-repeat='project in report.projects' {{ project.name }}
