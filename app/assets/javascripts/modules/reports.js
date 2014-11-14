@@ -179,7 +179,7 @@ angular.module('rox.reports', ['ngSanitize', 'rox.api'])
     $scope.fetchLatestReports = function() {
 
       var params = {
-        pageSize: 10,
+        pageSize: 15,
         'sort[]': [ 'createdAt desc' ]
       };
 

@@ -15,7 +15,7 @@
           ul
             li {{ report.resultsCount | number }} test results
             li Run in {{ report.duration | durationFormat }}
-          .progress
+          .progress.clear
             .progress-bar.progress-bar-success style='width: {{ report.percentages.passed }}%'
               | {{ report.passedResultsCount - report.inactivePassedResultsCount }}
             .progress-bar.progress-bar-danger style='width: {{ report.percentages.failed }}%'
