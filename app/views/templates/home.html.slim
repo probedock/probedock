@@ -1,1 +1,23 @@
-p Hello World
+.container-fluid
+  .col-lg-4
+    .dashboardLatestReports.panel.panel-default ng-controller='DashboardLatestReportsCtrl'
+      .panel-body
+        table.table.table-hover
+          thead
+            tr
+              th.runs Latest Test Runs
+              th.results Results
+          tbody
+            tr.loading ng-hide='reports'
+              td colspan=2
+                em Loading...
+            tr.empty ng-show='reports && !reports.length'
+              td colspan=2
+                em No tests have recently been run.
+            tr ng-repeat='report in reports' ng-show='reports.length'
+              td.runs
+                img gravatar-src='report.runner.email' gravatar-size=30 tooltip='{{ report.runner.email }}' tooltip-placement='right'
+                span.time am-time-ago='report.createdAt'
+              td.results
+                a href='#' ui-sref='std.reports.details({ reportId: report.id })'
+                  report-health-bar report='report' click-for-details=true

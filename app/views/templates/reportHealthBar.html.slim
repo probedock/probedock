@@ -1,0 +1,7 @@
+.reportHealthBar.progress tooltip='{{ tooltipText }}'
+  .progress-bar.progress-bar-success style='width: {{ percentages.passed }}%' ng-show='percentages.passed'
+    | {{ report.passedResultsCount - report.inactivePassedResultsCount }}
+  .progress-bar.progress-bar-danger style='width: {{ percentages.failed }}%' ng-show='percentages.failed'
+    | {{ report.resultsCount - report.passedResultsCount - report.inactiveResultsCount + report.inactivePassedResultsCount }}
+  .progress-bar.progress-bar-warning style='width: {{ percentages.inactive }}%' ng-show='percentages.inactive'
+    | {{ report.inactiveResultsCount }}

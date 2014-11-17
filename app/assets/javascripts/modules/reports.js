@@ -1,5 +1,46 @@
 angular.module('rox.reports', ['ngSanitize', 'rox.api'])
 
+  .directive('reportHealthBar', [function() {
+
+    function tooltipText(report, clickForDetails) {
+
+        var tooltipText = [],
+            numberPassed = report.passedResultsCount - report.inactivePassedResultsCount,
+            numberInactive = report.inactiveResultsCount,
+            numberFailed = report.resultsCount - numberPassed - numberInactive;
+
+        if (numberPassed) {
+          tooltipText.push(numberPassed + ' passed');
+        }
+        if (numberFailed) {
+          tooltipText.push(numberFailed + ' failed');
+        }
+        if (numberInactive) {
+          tooltipText.push(numberInactive + ' inactive');
+        }
+
+        tooltipText = tooltipText.join(', ');
+        if (clickForDetails) {
+          tooltipText += '. Click to see the detailed report.';
+        }
+
+        return tooltipText;
+    }
+
+    return {
+      restrict: 'E',
+      scope: {
+        report: '=',
+        clickForDetails: '@'
+      },
+      controller: ['$attrs', 'ReportService', '$scope', function($attrs, $reportService, $scope) {
+        $scope.percentages = $reportService.percentages($scope.report);
+        $scope.tooltipText = tooltipText($scope.report, $attrs.clickForDetails !== undefined);
+      }],
+      templateUrl: '/templates/reportHealthBar.html'
+    };
+  }])
+
   .directive('healthTooltips', ['$compile', function ($compile) {
     return function(scope, element, attrs) {
 
@@ -25,7 +66,7 @@ angular.module('rox.reports', ['ngSanitize', 'rox.api'])
             placement: 'auto',
             title: titleTemplate({ title: e.data('n'), titleClass: titleClass }),
             // FIXME: format duration
-            content: contentTemplate({ duration: e.data('d') }),
+            content: contentTemplate({ duration: e.data('d') + 'ms' }),
             html: true
           });
 
@@ -161,7 +202,7 @@ angular.module('rox.reports', ['ngSanitize', 'rox.api'])
     }
 
     function showReport(response) {
-      $scope.report = $reportService.enrichReports(response.data);
+      $scope.report = response.data;
     }
   }])
 
@@ -208,7 +249,7 @@ angular.module('rox.reports', ['ngSanitize', 'rox.api'])
       $scope.fetchingReports = false;
 
       if (response.data.length) {
-        $scope.reports = $reportService.enrichReports(response.data).concat($scope.reports || []);
+        $scope.reports = response.data.concat($scope.reports || []);
       } else if ($scope.reports.length) {
         $scope.noNewReports = true;
         hideNoNewReportsPromise = $timeout(function() {
@@ -220,25 +261,20 @@ angular.module('rox.reports', ['ngSanitize', 'rox.api'])
 
   .factory('ReportService', [function() {
     return {
-      enrichReports: function(reports) {
+      percentages: function(report) {
 
-        _.each(_.isArray(reports) ? reports : [ reports ], function(report) {
+        var passed = Math.round((report.passedResultsCount - report.inactivePassedResultsCount) * 100 / report.resultsCount),
+            inactive = Math.round(report.inactiveResultsCount * 100 / report.resultsCount);
 
-          var passed = Math.round((report.passedResultsCount - report.inactivePassedResultsCount) * 100 / report.resultsCount),
-              inactive = Math.round(report.inactiveResultsCount * 100 / report.resultsCount);
+        if (passed + inactive > 100) {
+          inactive = 100 - passed;
+        }
 
-          if (passed + inactive > 100) {
-            inactive = 100 - passed;
-          }
-
-          report.percentages = {
-            passed: passed,
-            inactive: inactive,
-            failed: 100 - passed - inactive
-          };
-        });
-
-        return reports;
+        return percentages = {
+          passed: passed,
+          inactive: inactive,
+          failed: 100 - passed - inactive
+        };
       }
     };
   }])

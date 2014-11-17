@@ -20,13 +20,7 @@ div ng-controller='LatestReportsCtrl'
       tr ng-repeat='report in reports'
         td.results
           a href='#' ui-sref='std.reports.details({ reportId: report.id })'
-            .progress tooltip='Click to see the detailed report'
-              .progress-bar.progress-bar-success style='width: {{ report.percentages.passed }}%'
-                | {{ report.passedResultsCount - report.inactivePassedResultsCount }}
-              .progress-bar.progress-bar-danger style='width: {{ report.percentages.failed }}%'
-                | {{ report.resultsCount - report.passedResultsCount - report.inactiveResultsCount + report.inactivePassedResultsCount }}
-              .progress-bar.progress-bar-warning style='width: {{ report.percentages.inactive }}%'
-                | {{ report.inactiveResultsCount }}
+            report-health-bar report='report' click-for-details=true
         td.runner
           img.gravatar gravatar-src="report.runner.email" gravatar-size="30" tooltip="{{ report.runner.email }}"
         td.duration.hidden-xs.hidden-sm {{ report.duration | durationFormat }}

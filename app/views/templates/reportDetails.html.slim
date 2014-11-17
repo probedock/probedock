@@ -15,13 +15,7 @@
           ul
             li {{ report.resultsCount | number }} test results
             li Run in {{ report.duration | durationFormat }}
-          .progress.clear
-            .progress-bar.progress-bar-success style='width: {{ report.percentages.passed }}%'
-              | {{ report.passedResultsCount - report.inactivePassedResultsCount }}
-            .progress-bar.progress-bar-danger style='width: {{ report.percentages.failed }}%'
-              | {{ report.resultsCount - report.passedResultsCount - report.inactiveResultsCount + report.inactivePassedResultsCount }}
-            .progress-bar.progress-bar-warning style='width: {{ report.percentages.inactive }}%'
-              | {{ report.inactiveResultsCount }}
+          report-health-bar.clear report='report' ng-if='report'
     .col-md-7.col-lg-8
       .health.panel.panel-default ng-controller='ReportHealthCtrl'
         .panel-heading
