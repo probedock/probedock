@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
   has_many :test_payloads, dependent: :restrict_with_exception
   belongs_to :last_test_payload, class_name: "TestPayload"
   belongs_to :settings, class_name: "Settings::User", dependent: :destroy
-  belongs_to :email, class_name: "UserEmail"
+  belongs_to :email
 
   strip_attributes
   validates :name, presence: true, uniqueness: { case_sensitive: false }
@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
       field :created_at, as: :createdAt
 
       field :email do
-        order{ |q,d| q.joins(:email).where("user_emails.email #{d}") }
+        order{ |q,d| q.joins(:email).where("emails.email #{d}") }
         value{ |o| o.email.email }
       end
 

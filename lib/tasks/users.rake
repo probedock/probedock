@@ -40,14 +40,14 @@ namespace :users do
     email = args[:email]
     puts Paint[%/The "email" argument is required/, :red] unless email
 
-    user = User.joins(:email).where(user_emails: { email: email }).first
+    user = User.joins(:email).where(emails: { email: email }).first
     puts Paint["There is already a user with e-mail #{email}", :red] if user
 
     name = email.sub(/\@.*$/, '')
     password = args[:password] || ask('Enter the password of the new user: '){ |q| q.echo = false }
     puts Paint["Password cannot be blank", :red] if password.blank?
 
-    user = User.new name: name, email: UserEmail.new(email: email), password: password
+    user = User.new name: name, email: Email.new(email: email), password: password
     user.save!
 
     puts Paint["User #{email} successfully created", :green]
@@ -57,7 +57,7 @@ namespace :users do
   task :token, [ :email ] => :environment do |t,args|
 
     email = args[:email]
-    user = User.joins(:email).where(user_emails: { email: email }).first
+    user = User.joins(:email).where(emails: { email: email }).first
     unless user
       puts Paint[%/No user found with e-mail #{email}/, :red]
       next

@@ -30,7 +30,7 @@ class V3 < ActiveRecord::Migration
     remove_foreign_key :test_results, :test_infos
     drop_table :test_infos
 
-    create_table :user_emails do |t|
+    create_table :emails do |t|
       t.string :email, null: false
       t.index :email, unique: true
     end
@@ -92,10 +92,10 @@ class V3 < ActiveRecord::Migration
 
     create_table :test_contributors, id: false do |t|
       t.integer :test_description_id
-      t.integer :user_email_id
-      t.index [ :test_description_id, :user_email_id ], unique: true, name: 'index_test_contributors_on_description_and_user_email'
+      t.integer :email_id
+      t.index [ :test_description_id, :email_id ], unique: true, name: 'index_test_contributors_on_description_and_email'
       t.foreign_key :test_descriptions
-      t.foreign_key :user_emails
+      t.foreign_key :emails
     end
 
     change_column :test_keys, :user_id, :integer, null: true
@@ -162,10 +162,10 @@ class V3 < ActiveRecord::Migration
 
     create_table :test_result_contributors, id: false do |t|
       t.integer :test_result_id
-      t.integer :user_email_id
-      t.index [ :test_result_id, :user_email_id ], unique: true, name: 'index_test_contributors_on_result_and_user_email'
+      t.integer :email_id
+      t.index [ :test_result_id, :email_id ], unique: true, name: 'index_test_contributors_on_result_and_email'
       t.foreign_key :test_results
-      t.foreign_key :user_emails
+      t.foreign_key :emails
     end
 
     create_table :tags_test_results, id: false do |t|
@@ -221,7 +221,7 @@ class V3 < ActiveRecord::Migration
     add_column :users, :last_test_payload_id, :integer
     add_column :users, :api_id, :string, null: false, limit: 12
     add_index :users, :email_id, unique: true
-    add_foreign_key :users, :user_emails, column: :email_id
+    add_foreign_key :users, :emails, column: :email_id
     add_foreign_key :users, :test_payloads, column: :last_test_payload_id
   end
 

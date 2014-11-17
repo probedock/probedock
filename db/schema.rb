@@ -33,6 +33,12 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "categories", ["name"], name: "index_categories_on_name", unique: true, using: :btree
 
+  create_table "emails", force: true do |t|
+    t.string "email", null: false
+  end
+
+  add_index "emails", ["email"], name: "index_emails_on_email", unique: true, using: :btree
+
   create_table "link_templates", force: true do |t|
     t.string   "name",       limit: 50, null: false
     t.string   "contents",              null: false
@@ -103,10 +109,10 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "test_contributors", id: false, force: true do |t|
     t.integer "test_description_id"
-    t.integer "user_email_id"
+    t.integer "email_id"
   end
 
-  add_index "test_contributors", ["test_description_id", "user_email_id"], name: "index_test_contributors_on_description_and_user_email", unique: true, using: :btree
+  add_index "test_contributors", ["test_description_id", "email_id"], name: "index_test_contributors_on_description_and_email", unique: true, using: :btree
 
   create_table "test_custom_values", force: true do |t|
     t.string "name",     limit: 50, null: false
@@ -225,10 +231,10 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "test_result_contributors", id: false, force: true do |t|
     t.integer "test_result_id"
-    t.integer "user_email_id"
+    t.integer "email_id"
   end
 
-  add_index "test_result_contributors", ["test_result_id", "user_email_id"], name: "index_test_contributors_on_result_and_user_email", unique: true, using: :btree
+  add_index "test_result_contributors", ["test_result_id", "email_id"], name: "index_test_contributors_on_result_and_email", unique: true, using: :btree
 
   create_table "test_results", force: true do |t|
     t.boolean  "passed",                                 null: false
@@ -288,12 +294,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "tickets", ["name"], name: "index_tickets_on_name", unique: true, using: :btree
 
-  create_table "user_emails", force: true do |t|
-    t.string "email", null: false
-  end
-
-  add_index "user_emails", ["email"], name: "index_user_emails_on_email", unique: true, using: :btree
-
   create_table "user_settings", force: true do |t|
     t.integer  "last_test_key_project_id"
     t.datetime "updated_at",               null: false
@@ -331,8 +331,8 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "tags_test_results", "tags", name: "tags_test_results_tag_id_fk"
   add_foreign_key "tags_test_results", "test_results", name: "tags_test_results_test_result_id_fk"
 
+  add_foreign_key "test_contributors", "emails", name: "test_contributors_email_id_fk"
   add_foreign_key "test_contributors", "test_descriptions", name: "test_contributors_test_description_id_fk"
-  add_foreign_key "test_contributors", "user_emails", name: "test_contributors_user_email_id_fk"
 
   add_foreign_key "test_custom_values_descriptions", "test_custom_values", name: "test_custom_values_descriptions_test_custom_value_id_fk"
   add_foreign_key "test_custom_values_descriptions", "test_descriptions", name: "test_custom_values_descriptions_test_description_id_fk"
@@ -366,8 +366,8 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_reports_results", "test_reports", name: "test_reports_results_test_report_id_fk"
   add_foreign_key "test_reports_results", "test_results", name: "test_reports_results_test_result_id_fk"
 
+  add_foreign_key "test_result_contributors", "emails", name: "test_result_contributors_email_id_fk"
   add_foreign_key "test_result_contributors", "test_results", name: "test_result_contributors_test_result_id_fk"
-  add_foreign_key "test_result_contributors", "user_emails", name: "test_result_contributors_user_email_id_fk"
 
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"
   add_foreign_key "test_results", "project_tests", name: "test_results_test_id_fk", column: "test_id"
@@ -383,8 +383,8 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_foreign_key "user_settings", "projects", name: "user_settings_last_test_key_project_id_fk", column: "last_test_key_project_id"
 
+  add_foreign_key "users", "emails", name: "users_email_id_fk"
   add_foreign_key "users", "test_payloads", name: "users_last_test_payload_id_fk", column: "last_test_payload_id"
-  add_foreign_key "users", "user_emails", name: "users_email_id_fk", column: "email_id"
   add_foreign_key "users", "user_settings", name: "users_settings_id_fk", column: "settings_id"
 
 end

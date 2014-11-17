@@ -42,6 +42,6 @@ module ApiAuthenticationHelper
   end
 
   def current_user
-    @current_user ||= User.joins(:email).where(user_emails: { email: @auth_claims['iss'] }).first!
+    @current_user ||= User.joins(:email).where(emails: { email: @auth_claims['iss'] }).first!
   end
 end
