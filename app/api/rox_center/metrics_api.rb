@@ -24,7 +24,12 @@ module ROXCenter
       end
 
       get :newTests do
-        ProjectTest.select("count(project_tests.id) as project_tests_count, date_trunc('day', created_at) as project_tests_day").group('project_tests_day').order('project_tests_day').limit(7).to_a.collect do |data|
+
+        rel = ProjectTest.select("count(project_tests.id) as project_tests_count, date_trunc('day', created_at) as project_tests_day")
+        rel = rel.where 'created_at >= ?', 30.days.ago
+        rel = rel.group('project_tests_day').order('project_tests_day').limit(7)
+
+        rel.to_a.collect do |data|
           {
             date: data.project_tests_day.strftime('%Y-%m-%d'),
             testsCount: data.project_tests_count
