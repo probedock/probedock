@@ -1,9 +1,6 @@
 div ng-controller='ProjectsCtrl'
-  .container ng-show='!projects.length'
-    .spinner ng-show='!projects'
-      .bounce1
-      .bounce2
-      .bounce3
+  .container ng-hide='projects.length'
+    spinner ng-hide='projects'
     .jumbotron ng-show='projects && !projects.length'
       h1 Projects
       p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi. Ut non nulla nulla. Nam et auctor ipsum, vitae pharetra dolor. In quis nisl finibus ex semper blandit. Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis. Sed vel vehicula arcu. Pellentesque orci ligula, placerat non porta a, eleifend quis turpis. Quisque ultrices, erat nec cursus euismod, lorem diam mollis purus, id ultrices est mauris sit amet quam. Sed eget iaculis magna. Nullam nisi diam, eleifend vitae egestas placerat, ornare quis magna. Phasellus commodo, arcu sit amet luctus sagittis, eros lorem lobortis eros, a aliquam dolor lacus non sem. Quisque in turpis non tellus suscipit dignissim sed vitae ex.

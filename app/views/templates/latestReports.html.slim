@@ -1,8 +1,5 @@
 div ng-controller='LatestReportsCtrl' 
-  .spinner ng-show='!reports'
-    .bounce1
-    .bounce2
-    .bounce3
+  spinner ng-hide='reports'
   table.latestReports.table.table-striped.table-bordered.table-hover ng-show='reports'
     thead
       tr

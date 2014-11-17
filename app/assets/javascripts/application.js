@@ -30,6 +30,7 @@
 //= require underscore
 //= require jquery
 //= require moment
+//= require jqcloud2
 //= require angular
 //= require angular-animate
 //= require angular-sanitize
@@ -42,6 +43,7 @@
 //= require angular-md5
 //= require angular-gravatar
 //= require angular-ng-infinite-scroll
+//= require angular-jqcloud
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot

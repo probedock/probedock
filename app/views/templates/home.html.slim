@@ -1,11 +1,13 @@
 .container-fluid
-  .col-lg-4
+  .col-xs-12.col-sm-6.col-lg-4
     .dashboardLatestReports.panel.panel-default ng-controller='DashboardLatestReportsCtrl'
+      .panel-heading
+        h3.panel-title Latest Reports
       .panel-body
         table.table.table-hover
           thead
             tr
-              th.runs Latest Test Runs
+              th.runs Run by
               th.results Results
           tbody
             tr.loading ng-hide='reports'
@@ -17,7 +19,16 @@
             tr ng-repeat='report in reports' ng-show='reports.length'
               td.runs
                 img gravatar-src='report.runner.email' gravatar-size=30 tooltip='{{ report.runner.email }}' tooltip-placement='right'
-                span.time am-time-ago='report.createdAt'
+                span.time.hidden-xs am-time-ago='report.createdAt'
               td.results
                 a href='#' ui-sref='std.reports.details({ reportId: report.id })'
                   report-health-bar report='report' click-for-details=true
+  .col-xs-12.col-sm-6.col-lg-4
+    .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
+      .panel-heading
+        h3.panel-title Test Tags
+      .panel-body
+        spinner ng-hide='tags'
+        jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
+        .empty ng-show='tags && !tags.length'
+          em No tests have been tagged.

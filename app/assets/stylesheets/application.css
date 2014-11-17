@@ -10,6 +10,7 @@
  *
  *= require_self
  *= require normalize
+ *= require jqcloud2
  *= require ./bootstrap
  *= require ./layout
  *= require ./generic

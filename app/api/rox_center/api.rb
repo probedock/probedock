@@ -68,5 +68,6 @@ module ROXCenter
     mount PayloadsApi
     mount ProjectsApi
     mount ReportsApi
+    mount TagsApi
   end
 end
