@@ -26,6 +26,7 @@ angular.module('rox', [
   'rox.nav',
   'angularMoment',
   'angular-jqcloud',
+  'nvd3ChartDirectives',
   //'ngAnimate', // FIXME: include ngAnimate when ui-bootstrap tooltip is fixed (https://github.com/angular-ui/bootstrap/issues/2951)
   'smart-table',
   'ui.gravatar',
@@ -51,5 +52,9 @@ angular.module('rox', [
   .run(['AuthService', function($auth) {
     $auth.checkSignedIn();
   }])
+
+  .run(function() {
+    nv.dev = false; // disable nvd3 graph generation time logs
+  })
 
 ;

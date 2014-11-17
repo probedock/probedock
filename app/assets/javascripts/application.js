@@ -31,6 +31,8 @@
 //= require jquery
 //= require moment
 //= require jqcloud2
+//= require d3
+//= require nvd3
 //= require angular
 //= require angular-animate
 //= require angular-sanitize
@@ -44,6 +46,7 @@
 //= require angular-gravatar
 //= require angular-ng-infinite-scroll
 //= require angular-jqcloud
+//= require angular-nvd3
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot
