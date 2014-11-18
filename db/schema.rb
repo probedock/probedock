@@ -268,24 +268,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "test_results_tickets", ["test_result_id", "ticket_id"], name: "index_test_results_tickets_on_test_result_id_and_ticket_id", unique: true, using: :btree
 
-  create_table "test_runs", force: true do |t|
-    t.string   "uid"
-    t.string   "group"
-    t.datetime "ended_at",                      null: false
-    t.integer  "duration",                      null: false
-    t.integer  "runner_id",                     null: false
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-    t.integer  "results_count",                 null: false
-    t.integer  "passed_results_count",          null: false
-    t.integer  "inactive_results_count",        null: false
-    t.integer  "inactive_passed_results_count", null: false
-  end
-
-  add_index "test_runs", ["group"], name: "index_test_runs_on_group", using: :btree
-  add_index "test_runs", ["runner_id"], name: "test_runs_runner_id_fk", using: :btree
-  add_index "test_runs", ["uid"], name: "index_test_runs_on_uid", unique: true, using: :btree
-
   create_table "tickets", force: true do |t|
     t.string   "name",       null: false
     t.datetime "created_at", null: false
@@ -298,9 +280,11 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.integer  "last_test_key_project_id"
     t.datetime "updated_at",               null: false
     t.integer  "last_test_key_number"
+    t.integer  "user_id"
   end
 
   add_index "user_settings", ["last_test_key_project_id"], name: "user_settings_last_test_key_project_id_fk", using: :btree
+  add_index "user_settings", ["user_id"], name: "index_user_settings_on_user_id", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "name",                                           null: false
@@ -309,7 +293,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.integer  "sign_in_count",                   default: 0
     t.integer  "roles_mask",                      default: 0,    null: false
     t.boolean  "active",                          default: true, null: false
-    t.integer  "settings_id",                                    null: false
     t.integer  "email_id"
     t.string   "password_digest",                                null: false
     t.integer  "last_test_payload_id"
@@ -318,7 +301,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "users", ["email_id"], name: "index_users_on_email_id", unique: true, using: :btree
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
-  add_index "users", ["settings_id"], name: "index_users_on_settings_id", unique: true, using: :btree
 
   add_foreign_key "project_tests", "projects", name: "project_tests_project_id_fk"
   add_foreign_key "project_tests", "test_keys", name: "project_tests_key_id_fk", column: "key_id"
@@ -379,12 +361,10 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_results_tickets", "test_results", name: "test_results_tickets_test_result_id_fk"
   add_foreign_key "test_results_tickets", "tickets", name: "test_results_tickets_ticket_id_fk"
 
-  add_foreign_key "test_runs", "users", name: "test_runs_runner_id_fk", column: "runner_id"
-
   add_foreign_key "user_settings", "projects", name: "user_settings_last_test_key_project_id_fk", column: "last_test_key_project_id"
+  add_foreign_key "user_settings", "users", name: "user_settings_user_id_fk"
 
   add_foreign_key "users", "emails", name: "users_email_id_fk"
   add_foreign_key "users", "test_payloads", name: "users_last_test_payload_id_fk", column: "last_test_payload_id"
-  add_foreign_key "users", "user_settings", name: "users_settings_id_fk", column: "settings_id"
 
 end

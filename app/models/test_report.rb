@@ -44,7 +44,7 @@ class TestReport < ActiveRecord::Base
   def to_builder options = {}
     Jbuilder.new do |json|
       json.id api_id
-      json.runner runner.to_builder
+      json.runner runner.to_builder(link: true)
       json.duration duration
       json.resultsCount results_count
       json.passedResultsCount passed_results_count

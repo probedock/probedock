@@ -17,5 +17,5 @@
 class Email < ActiveRecord::Base
   has_one :user, foreign_key: :email_id
 
-  validates :email, presence: true, length: { maximum: 255, allow_blank: true }
+  validates :email, presence: true, length: { maximum: 255, allow_blank: true }, uniqueness: true
 end

@@ -60,7 +60,10 @@ module ROXCenter
       {
         token: user.generate_auth_token,
         user: {
-          email: user.email.email
+          id: user.api_id,
+          email: user.email.email,
+          emailMd5: Digest::MD5.hexdigest(user.email.email),
+          roles: user.roles.collect(&:to_s)
         }
       }
     end
@@ -70,5 +73,6 @@ module ROXCenter
     mount ProjectsApi
     mount ReportsApi
     mount TagsApi
+    mount UsersApi
   end
 end

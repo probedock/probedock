@@ -39,7 +39,7 @@ module ROXCenter
 
         helpers do
           def current_report
-            TestReport.where(api_id: params[:id]).first!
+            TestReport.where(api_id: params[:id].to_s).first!
           end
 
           def report_health_template

@@ -19,7 +19,7 @@ div ng-controller='LatestReportsCtrl'
           a href='#' ui-sref='std.reports.details({ reportId: report.id })'
             report-health-bar report='report' click-for-details=true
         td.runner
-          img.gravatar gravatar-src="report.runner.email" gravatar-size="30" tooltip="{{ report.runner.email }}"
+          img.gravatar gravatar-src="report.runner.emailMd5" gravatar-size="30" tooltip="{{ report.runner.email }}"
         td.duration.hidden-xs.hidden-sm {{ report.duration | durationFormat }}
         td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
         td.projects.hidden-xs

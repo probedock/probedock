@@ -19,6 +19,9 @@ class V3 < ActiveRecord::Migration
   def up
 
     remove_foreign_key :test_infos, :deprecation
+    remove_foreign_key :test_payloads, :test_run
+    remove_foreign_key :test_results, :test_run
+    remove_foreign_key :users, :last_run
 
     drop_table :api_keys
     drop_table :links
@@ -26,6 +29,7 @@ class V3 < ActiveRecord::Migration
     drop_table :test_deprecations
     drop_table :tags_test_infos
     drop_table :test_infos_tickets
+    drop_table :test_runs
     drop_table :test_values
     remove_foreign_key :test_results, :test_infos
     drop_table :test_infos
@@ -216,6 +220,7 @@ class V3 < ActiveRecord::Migration
     remove_column :users, :metric_key
     remove_column :users, :email
     remove_column :users, :last_run_id
+    remove_column :users, :settings_id
     add_column :users, :email_id, :integer
     add_column :users, :password_digest, :string, null: false
     add_column :users, :last_test_payload_id, :integer
@@ -223,6 +228,10 @@ class V3 < ActiveRecord::Migration
     add_index :users, :email_id, unique: true
     add_foreign_key :users, :emails, column: :email_id
     add_foreign_key :users, :test_payloads, column: :last_test_payload_id
+
+    add_column :user_settings, :user_id, :integer
+    add_index :user_settings, :user_id, unique: true
+    add_foreign_key :user_settings, :users
   end
 
   def down

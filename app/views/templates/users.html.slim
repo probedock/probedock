@@ -1,0 +1,64 @@
+.container-fluid
+  h1 User Management
+  .col-xs-12.col-md-7.col-lg-8 ng-controller='UsersListCtrl'
+    spinner ng-hide='users'
+    table.usersList.table.table-hover.table-bordered ng-show='users.length'
+      thead
+        tr
+          th colspan=2 User
+          th.hidden-xs.hidden-sm.hidden-md E-mail
+          th.hidden-xs Registered since
+          th
+      tbody
+        tr ng-repeat='user in users' ng-class='{info: user.id === selectedUserId}'
+          td.avatar
+            img gravatar-src='user.emailMd5' gravatar-size=30
+          td.name {{ user.name }}
+          td.email.hidden-xs.hidden-sm.hidden-md {{ user.email }}
+          td.registeredAt.hidden-xs
+            | {{ user.createdAt | amDateFormat:'ll' }}
+            |  
+            | ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
+          td.actions
+            a.btn.btn-primary.btn-sm type='button' ui-sref='std.users.details({ userId: user.id })' ng-show='user.id !== selectedUserId'
+              span.glyphicon.glyphicon-info-sign
+            a.btn.btn-primary.btn-sm type='button' ui-sref='std.users' ng-show='user.id === selectedUserId'
+              span.glyphicon.glyphicon-remove-sign
+  .col-xs-12.col-md-5.col-lg-4
+    .userDetails.panel.panel-default ng-controller='UserDetailsCtrl'
+      .panel-heading
+        h3.panel-title ng-hide='loadingSelectedUser || selectedUser' No user selected 
+        h3.panel-title ng-show='loadingSelectedUser' Loading user...
+        h3.panel-title ng-show='selectedUser' User Details
+      .panel-body
+        em.text-muted ng-hide='loadingSelectedUser || selectedUser' Select a user from the list to see more details and edit.
+        spinner ng-show='loadingSelectedUser'
+        div ng-show='selectedUser'
+          img.pull-right gravatar-src='selectedUser.emailMd5' gravatar-size=100 ng-hide='editedUser'
+          dl ng-hide='editedUser'
+            dt Username
+            dd {{ selectedUser.name }}
+            dt E-mail
+            dd {{ selectedUser.email }}
+          form role='form' ng-show='editedUser'
+            .form-group
+              label for='userName' Username
+              input#userName.form-control type='text' required=true maxlength=255 autofocus=true ng-model='editedUser.name'
+            .form-group
+              label for='userEmail' E-mail
+              input#userEmail.form-control type='email' required=true maxlength=255 ng-model='editedUser.email'
+          .alert.alert-warning.clear ng-show='!editedUser && !selectedUser.active'
+            | This user is not active; it cannot log in or use the API.
+          .alert.alert-danger.clear ng-show='editError'
+            | The user could not be saved. The username or e-mail may already be taken.
+          .alert.alert-danger.clear ng-show='deleteError'
+            | This user cannot be deleted because it is still linked to other resources.
+          .actions.clear
+            .btn-group
+              button.btn.btn-default ng-click='edit()' ng-disabled='busy' ng-if='!editedUser' Edit
+              button.btn.btn-warning ng-click='toggleActive()' ng-disabled='busy' ng-if='!editedUser'
+                span ng-show='selectedUser.active' Deactivate
+                span ng-hide='selectedUser.active' Activate
+              button.btn.btn-danger ng-click='delete()' ng-disabled='busy || currentUser.id === selectedUser.id' ng-if='!editedUser' Delete
+              button.btn.btn-default ng-click='cancelEdit()' ng-disabled='busy' ng-if='editedUser' Cancel
+              button.btn.btn-primary ng-click='save()' ng-disabled='busy' ng-if='editedUser' Save

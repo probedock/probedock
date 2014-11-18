@@ -1,8 +1,16 @@
 angular.module('rox.auth', ['LocalStorageModule'])
 
-  .factory('AuthService', ['$http', 'localStorageService', '$rootScope', function($http, $local, $rootScope) {
+  .factory('AuthService', ['$http', 'localStorageService', '$log', '$rootScope', function($http, $local, $log, $rootScope) {
 
     $rootScope.currentUser = null;
+
+    $rootScope.currentUserIs = function() {
+
+      var currentUser = $rootScope.currentUser,
+          roles = Array.prototype.slice.call(arguments);
+
+      return currentUser && _.isArray(currentUser.roles) && _.intersection(currentUser.roles, roles).length == roles.length;
+    };
 
     var service = {
 
@@ -37,6 +45,11 @@ angular.module('rox.auth', ['LocalStorageModule'])
     function authenticate(authData) {
       service.token = authData.token;
       $rootScope.currentUser = authData.user;
+
+      var roles = authData.user.roles,
+          rolesDescription = _.isArray(roles) && roles.length ? roles.join(', ') : 'none';
+
+      $log.debug(authData.user.email + ' logged in (roles: ' + rolesDescription + ')');
     }
 
     return service;

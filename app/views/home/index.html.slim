@@ -14,6 +14,13 @@ script type='text/ng-template' id='/templates/main.html'
             a href='#' ui-sref='std.reports' Reports
           li ng-class='{active: isMenuActive("projects")}'
             a href='#' ui-sref='std.projects' Projects
+          li.dropdown ng-class='{active: isMenuActive("users")}' ng-show='currentUserIs("admin")'
+            a.dropdown-toggle href='#' data-toggle='dropdown'
+              | Admin
+              span.caret
+            ul.dropdown-menu role='menu'
+              li
+                a href='#' ui-sref='std.users' Users
         ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
           li ng-hide='currentUser'
             a href='#' ng-click='showSignIn()' Sign in

@@ -24,8 +24,8 @@ module ApiResourceHelper
     record.errors.empty? && record.save ? record : record_errors(record)
   end
 
-  def update_record record, updates
-    record.errors.empty? && record.update_attributes(updates) ? record : record_errors(record)
+  def update_record record, updates, &block
+    record.errors.empty? && (block ? block.call(record, updates) && record.valid? : record.update_attributes(updates)) ? record : record_errors(record)
   end
 
   def record_errors record

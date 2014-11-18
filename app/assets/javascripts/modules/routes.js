@@ -19,7 +19,7 @@ angular.module('rox.routes', [ 'ui.router' ])
       })
 
       .state('std.projects', {
-        url: '/projects',
+        url: '^/projects',
         views: {
           'content@std': {
             templateUrl: '/templates/projects.html'
@@ -28,7 +28,7 @@ angular.module('rox.routes', [ 'ui.router' ])
       })
 
       .state('std.reports', {
-        url: '/reports',
+        url: '^/reports',
         views: {
           'content@std': {
             templateUrl: '/templates/reports.html'
@@ -38,6 +38,19 @@ angular.module('rox.routes', [ 'ui.router' ])
 
       .state('std.reports.details', {
         url: '/:reportId'
+      })
+
+      .state('std.users', {
+        url: '^/users',
+        views: {
+          'content@std': {
+            templateUrl: '/templates/users.html'
+          }
+        }
+      })
+
+      .state('std.users.details', {
+        url: '/:userId'
       })
       
     ;

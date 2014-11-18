@@ -15,38 +15,48 @@
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
 module ROXCenter
-  class ProjectsApi < Grape::API
+  class UsersApi < Grape::API
 
-    namespace :projects do
+    namespace :users do
 
       before do
         authenticate!
       end
 
       helpers do
-        def parse_project
-          parse_object :name, :description
+        def parse_user
+          parse_object :name, :email, :active
         end
       end
 
       get do
-        Project.tableling.process(params)
-      end
-
-      post do
-        create_record Project.new(parse_project)
+        User.tableling.process(params)
       end
 
       namespace '/:id' do
 
         helpers do
-          def current_project
-            Project.where(api_id: params[:id].to_s).first!
+          def current_user
+            User.where(api_id: params[:id].to_s).first!
           end
         end
 
+        get do
+          current_user
+        end
+
         patch do
-          update_record current_project, parse_project
+          update_record current_user, parse_user do |user,updates|
+            user.name = updates[:name] if updates.key? :name
+            user.active = !!updates[:active] if updates.key? :active
+            user.email = Email.where(email: updates[:email]).first || Email.new(email: updates[:email]) if updates[:email] != user.email.try(:email) if updates.key? :email
+            user.save
+          end
+        end
+
+        delete do
+          current_user.destroy
+          status 204
         end
       end
     end
