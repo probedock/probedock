@@ -40,13 +40,13 @@
             dd {{ selectedUser.name }}
             dt E-mail
             dd {{ selectedUser.email }}
-          form role='form' ng-show='editedUser'
-            .form-group
+          form role='form' name='editUserForm' ng-show='editedUser'
+            .form-group ng-class='{"has-error": editUserForm.name.$dirty && editUserForm.name.$invalid}'
               label for='userName' Username
-              input#userName.form-control type='text' required=true maxlength=255 autofocus=true ng-model='editedUser.name'
-            .form-group
+              input#userName.form-control type='text' name='name' required=true maxlength=255 autofocus=true ng-model='editedUser.name'
+            .form-group ng-class='{"has-error": editUserForm.email.$dirty && editUserForm.email.$invalid}'
               label for='userEmail' E-mail
-              input#userEmail.form-control type='email' required=true maxlength=255 ng-model='editedUser.email'
+              input#userEmail.form-control type='email' name='email' required=true maxlength=255 ng-model='editedUser.email'
           .alert.alert-warning.clear ng-show='!editedUser && !selectedUser.active'
             | This user is not active; it cannot log in or use the API.
           .alert.alert-danger.clear ng-show='editError'
@@ -61,4 +61,4 @@
                 span ng-hide='selectedUser.active' Activate
               button.btn.btn-danger ng-click='delete()' ng-disabled='busy || currentUser.id === selectedUser.id' ng-if='!editedUser' Delete
               button.btn.btn-default ng-click='cancelEdit()' ng-disabled='busy' ng-if='editedUser' Cancel
-              button.btn.btn-primary ng-click='save()' ng-disabled='busy' ng-if='editedUser' Save
+              button.btn.btn-primary ng-click='save()' ng-disabled='busy || editUserForm.$invalid' ng-if='editedUser' Save
