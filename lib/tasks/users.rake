@@ -47,7 +47,7 @@ namespace :users do
     password = args[:password] || ask('Enter the password of the new user: '){ |q| q.echo = false }
     puts Paint["Password cannot be blank", :red] if password.blank?
 
-    user = User.new name: name, email: Email.new(email: email), password: password
+    user = User.new name: name, email: Email.where(email: email).first || Email.new(email: email), password: password
     user.save!
 
     puts Paint["User #{email} successfully created", :green]

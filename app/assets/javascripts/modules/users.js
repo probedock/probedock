@@ -1,6 +1,16 @@
 angular.module('rox.users', ['rox.api', 'rox.state'])
 
-  .controller('UsersListCtrl', ['ApiService', '$scope', 'StateService', function($api, $scope, $stateService) {
+  .factory('UserService', ['$window', function($window) {
+
+    var jvent = new $window.Jvent();
+
+    return {
+      on: _.bind(jvent.on, jvent),
+      emit: _.bind(jvent.emit, jvent)
+    };
+  }])
+
+  .controller('UsersListCtrl', ['ApiService', '$scope', 'StateService', 'UserService', function($api, $scope, $stateService, $userService) {
 
     var page = 1;
     // TODO: recursively fetch all users
@@ -18,6 +28,14 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
       return new Date().getTime() - new Date(iso8601).getTime();
     };
 
+    $userService.on('deleted', function(user) {
+
+      var deletedUser = _.findWhere($scope.users, { id: user.id });
+      if (deletedUser) {
+        $scope.users.splice(_.indexOf($scope.users, deletedUser), 1);
+      }
+    });
+
     function fetchUsers() {
       return $api.http({
         method: 'GET',
@@ -34,7 +52,7 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
     }
   }])
 
-  .controller('UserDetailsCtrl', ['ApiService', '$scope', 'StateService', '$window', function($api, $scope, $stateService, $window) {
+  .controller('UserDetailsCtrl', ['ApiService', '$scope', '$state', 'StateService', 'UserService', '$window', function($api, $scope, $state, $stateService, $userService, $window) {
 
     var userId;
     reset();
@@ -98,7 +116,8 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
     };
 
     function onDeleted() {
-      reset();
+      $userService.emit('deleted', { id: $scope.selectedUser.id });
+      $state.go('std.users');
     }
 
     function onDeleteError() {

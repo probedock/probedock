@@ -27,6 +27,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/underscore/underscore.js', dest: 'vendor/assets/javascripts/underscore.js' },
           { nonull: true, src: 'bower_components/jquery/dist/jquery.js', dest: 'vendor/assets/javascripts/jquery.js' },
           { nonull: true, src: 'bower_components/moment/moment.js', dest: 'vendor/assets/javascripts/moment.js' },
+          { nonull: true, src: 'bower_components/jvent/dist/jvent.js', dest: 'vendor/assets/javascripts/jvent.js' },
           { nonull: true, src: 'bower_components/jqcloud2/dist/jqcloud.js', dest: 'vendor/assets/javascripts/jqcloud2.js' },
           { nonull: true, src: 'bower_components/d3/d3.js', dest: 'vendor/assets/javascripts/d3.js' },
           { nonull: true, src: 'bower_components/nvd3/nv.d3.js', dest: 'vendor/assets/javascripts/nvd3.js' },

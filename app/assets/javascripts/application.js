@@ -30,6 +30,7 @@
 //= require underscore
 //= require jquery
 //= require moment
+//= require jvent
 //= require jqcloud2
 //= require d3
 //= require nvd3
