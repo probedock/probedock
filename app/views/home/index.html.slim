@@ -14,8 +14,6 @@ script type='text/ng-template' id='/templates/main.html'
             a href='#' ui-sref='std.reports' Reports
           li ng-class='{active: isMenuActive("projects")}'
             a href='#' ui-sref='std.projects' Projects
-          li
-            a href='#' Tests
         ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
           li ng-hide='currentUser'
             a href='#' ng-click='showSignIn()' Sign in
