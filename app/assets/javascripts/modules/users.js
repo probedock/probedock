@@ -65,6 +65,13 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
       $scope.lastCreatedUser = user;
     });
 
+    $userService.on('updated', function(user) {
+      var updatedUser = _.findWhere($scope.users, { id: user.id });
+      if (updatedUser) {
+        _.extend(updatedUser, user);
+      }
+    });
+
     $userService.on('deleted', function(user) {
       var deletedUser = _.findWhere($scope.users, { id: user.id });
       if (deletedUser) {
@@ -162,6 +169,7 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
 
     function onSaved(response) {
       $scope.selectedUser = response.data;
+      $userService.emit('updated', response.data);
       delete $scope.editedUser;
       $scope.busy = false;
     }
