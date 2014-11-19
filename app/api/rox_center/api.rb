@@ -59,12 +59,7 @@ module ROXCenter
 
       {
         token: user.generate_auth_token,
-        user: {
-          id: user.api_id,
-          email: user.email.email,
-          emailMd5: Digest::MD5.hexdigest(user.email.email),
-          roles: user.roles.collect(&:to_s)
-        }
+        user: user.to_builder.attributes!
       }
     end
 

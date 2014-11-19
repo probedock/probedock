@@ -84,6 +84,7 @@ class User < ActiveRecord::Base
 
       unless options[:link]
         json.active active
+        json.roles roles.collect(&:to_s)
         json.createdAt created_at.iso8601(3)
       end
     end

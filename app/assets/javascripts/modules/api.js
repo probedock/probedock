@@ -9,6 +9,17 @@ angular.module('rox.api', ['rox.auth'])
         });
 
         return $http(options);
+      },
+
+      compact: function(data) {
+        return _.reduce(data, function(memo, value, attr) {
+
+          if (value && value.length) {
+            memo[attr] = value;
+          }
+
+          return memo;
+        }, {});
       }
     };
   }])

@@ -29,6 +29,8 @@ script type='text/ng-template' id='/templates/main.html'
               | {{ currentUser.email }}
               span.caret
             ul.dropdown-menu role='menu'
+              li ng-controller='ProfileCtrl'
+                a href='#' ng-click='editProfile()' Edit Profile
               li
                 a href='#' ng-click='signOut()' Sign out
   div ui-view='content'

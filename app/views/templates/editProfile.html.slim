@@ -1,0 +1,22 @@
+.modal-header
+  h3.modal-title Edit Profile
+form role='form' name='profileForm'
+  .modal-body
+    .form-group ng-class='{"has-error": profileForm.name.$dirty && profileForm.name.$invalid}'
+      label for='profileName' Username
+      input#profileName.form-control type='text' name='name' required=true maxlength=255 autofocus=true ng-model='profile.name'
+    .form-group ng-class='{"has-error": profileForm.email.$dirty && profileForm.email.$invalid}'
+      label for='profileEmail' E-mail
+      input#profileEmail.form-control type='email' name='email' required=true maxlength=255 ng-model='profile.email'
+    .form-group ng-class='{"has-error": profileForm.password.$dirty && profileForm.password.$invalid}'
+      label for='profilePassword' Password
+      input#profilePassword.form-control type='password' name='password' placeholder='Leave blank for no change' maxlength=255 ng-model='profile.password'
+    .form-group ng-class='{"has-error": profileForm.passwordConfirmation.$dirty && profileForm.passwordConfirmation.$invalid}'
+      label for='profilePasswordConfirmation' Password confirmation
+      input#profilePasswordConfirmation.form-control type='password' name='passwordConfirmation' placeholder='Leave blank for no change' maxlength=255 ng-model='profile.passwordConfirmation'
+    .alert.alert-danger ng-show='saveError'
+      | Your profile could not be updated. Either the name or e-mail are already taken, or the password confirmation does not match the password.
+  .modal-footer
+    .btn-group
+      button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
+      button.btn.btn-primary type='submit' ng-click='save()' Save

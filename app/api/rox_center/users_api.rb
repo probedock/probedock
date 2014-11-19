@@ -71,7 +71,7 @@ module ROXCenter
 
             if updates.key? :password
               user.password = updates[:password]
-              user.password_confirmation = updates[:passwordConfirmation]
+              user.password_confirmation = updates[:password_confirmation] || ''
             end
 
             user.save

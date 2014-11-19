@@ -95,7 +95,7 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
     }
   }])
 
-  .controller('UserDetailsCtrl', ['ApiService', '$scope', '$state', 'StateService', 'UserService', '$window', function($api, $scope, $state, $stateService, $userService, $window) {
+  .controller('UserDetailsCtrl', ['ApiService', 'AuthService', '$scope', '$state', 'StateService', 'UserService', '$window', function($api, $auth, $scope, $state, $stateService, $userService, $window) {
 
     var userId;
     reset();
@@ -138,7 +138,7 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
     };
 
     $scope.edit = function() {
-      $scope.editedUser = angular.copy($scope.selectedUser);
+      $scope.editedUser = _.pick($scope.selectedUser, 'name', 'email');
     };
 
     $scope.cancelEdit = function() {
@@ -154,7 +154,7 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
       $api.http({
         method: 'PATCH',
         url: '/api/users/' + $scope.selectedUser.id,
-        data: $scope.editedUser
+        data: $api.compact($scope.editedUser)
       }).then(onSaved, onEditError);
     };
 
@@ -168,8 +168,14 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
     }
 
     function onSaved(response) {
+
       $scope.selectedUser = response.data;
       $userService.emit('updated', response.data);
+
+      if ($auth.currentUser.id === response.data.id) {
+        _.extend($auth.currentUser, response.data);
+      }
+
       delete $scope.editedUser;
       $scope.busy = false;
     }

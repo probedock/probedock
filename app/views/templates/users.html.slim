@@ -40,6 +40,10 @@
             dd {{ selectedUser.name }}
             dt E-mail
             dd {{ selectedUser.email }}
+          .alert.alert-warning.clear ng-show='!editedUser && !selectedUser.active'
+            | This user is not active; it cannot log in or use the API.
+          .alert.alert-danger.clear ng-show='!editedUser && deleteError'
+            | This user cannot be deleted because it is still linked to other resources.
           form role='form' name='editUserForm' ng-show='editedUser'
             .form-group ng-class='{"has-error": editUserForm.name.$dirty && editUserForm.name.$invalid}'
               label for='userName' Username
@@ -53,21 +57,19 @@
             .form-group ng-class='{"has-error": editUserForm.passwordConfirmation.$dirty && editUserForm.passwordConfirmation.$invalid}'
               label for='userPasswordConfirmation' Password confirmation
               input#userPasswordConfirmation.form-control type='password' name='passwordConfirmation' placeholder='Leave blank for no change' maxlength=255 ng-model='editedUser.passwordConfirmation'
-          .alert.alert-warning.clear ng-show='!editedUser && !selectedUser.active'
-            | This user is not active; it cannot log in or use the API.
-          .alert.alert-danger.clear ng-show='editError'
-            | The user could not be saved. The username or e-mail may already be taken, or the password confirmation does not match the password.
-          .alert.alert-danger.clear ng-show='deleteError'
-            | This user cannot be deleted because it is still linked to other resources.
-          .actions.clear
+            .alert.alert-danger.clear ng-show='editError'
+              | The user could not be saved. The username or e-mail may already be taken, or the password confirmation does not match the password.
+            .controls
+              .btn-group
+                button.btn.btn-default type='button' ng-click='cancelEdit()' ng-disabled='busy' Cancel
+                button.btn.btn-primary type='submit' ng-click='save()' ng-disabled='busy || editUserForm.$invalid' Save
+          .controls.clear ng-show='!editedUser'
             .btn-group
-              button.btn.btn-default type='button' ng-click='edit()' ng-disabled='busy' ng-if='!editedUser' Edit
-              button.btn.btn-warning type='button' ng-click='toggleActive()' ng-disabled='busy' ng-if='!editedUser'
+              button.btn.btn-default type='button' ng-click='edit()' ng-disabled='busy' Edit
+              button.btn.btn-warning type='button' ng-click='toggleActive()' ng-disabled='busy'
                 span ng-show='selectedUser.active' Deactivate
                 span ng-hide='selectedUser.active' Activate
-              button.btn.btn-danger type='button' ng-click='delete()' ng-disabled='busy || currentUser.id === selectedUser.id' ng-if='!editedUser' Delete
-              button.btn.btn-default type='button' ng-click='cancelEdit()' ng-disabled='busy' ng-if='editedUser' Cancel
-              button.btn.btn-primary type='submit' ng-click='save()' ng-disabled='busy || editUserForm.$invalid' ng-if='editedUser' Save
+              button.btn.btn-danger type='button' ng-click='delete()' ng-disabled='busy || currentUser.id === selectedUser.id' Delete
     .userCreation ng-controller='NewUserCtrl'
       .controls ng-hide='newUser'
         button.btn.btn-primary.btn-lg ng-click='addNewUser()' Add a new user

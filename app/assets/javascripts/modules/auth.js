@@ -24,6 +24,7 @@ angular.module('rox.auth', ['LocalStorageModule'])
 
       signOut: function() {
         delete service.token;
+        delete service.currentUser;
         $rootScope.currentUser = null;
         $local.remove('auth');
       },
@@ -44,6 +45,7 @@ angular.module('rox.auth', ['LocalStorageModule'])
 
     function authenticate(authData) {
       service.token = authData.token;
+      service.currentUser = authData.user;
       $rootScope.currentUser = authData.user;
 
       var roles = authData.user.roles,

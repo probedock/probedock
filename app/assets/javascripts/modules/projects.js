@@ -36,7 +36,7 @@ angular.module('rox.projects', ['rox.api'])
   .controller('ProjectCtrl', ['ApiService', '$scope', function($api, $scope) {
 
     $scope.edit = function() {
-      $scope.editedProject = angular.copy($scope.project);
+      $scope.editedProject = _.pick($scope.project, 'name', 'description');
     };
 
     $scope.cancelEdit = function() {
