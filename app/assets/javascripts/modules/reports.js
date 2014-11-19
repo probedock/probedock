@@ -250,7 +250,9 @@ angular.module('rox.reports', ['ngSanitize', 'rox.api', 'rox.state'])
 
       if (response.data.length) {
         $scope.reports = response.data.concat($scope.reports || []);
-      } else if ($scope.reports.length) {
+      } else if (!$scope.reports) {
+        $scope.reports = [];
+      } else {
         $scope.noNewReports = true;
         hideNoNewReportsPromise = $timeout(function() {
           $scope.noNewReports = false;
