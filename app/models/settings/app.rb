@@ -19,11 +19,6 @@ class Settings::App < ActiveRecord::Base
 
   after_save{ Rails.application.events.fire 'settings:app:saved' }
 
-  include RoxHook
-  on 'settings:app:saved' do
-    JsonCache.clear 'settings:app'
-  end
-
   strip_attributes
   validates :ticketing_system_url, length: { maximum: 255 }
   validates :reports_cache_size, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

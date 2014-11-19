@@ -14,23 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-module Renderer
-
-  def self.render options = {}
-
-    assigns = options.delete(:assigns) || {}
-    view = view_class.new ActionController::Base.view_paths, assigns
-
-    view.extend ApplicationHelper
-    view.extend HumanHelper
-    view.extend ReportHelper
-
-    view.render options
-  end
-
-  def self.view_class
-    @view_class ||= Class.new ActionView::Base do
-      include Rails.application.routes.url_helpers
-    end
-  end
+namespace :db do
+  desc %/Drops and re-creates the database from the schema and seeds/
+  task :wipe => [ 'db:drop', 'db:create', 'db:schema:load', 'db:seed' ]
 end

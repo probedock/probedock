@@ -18,11 +18,7 @@ require 'ostruct'
 
 module Settings
 
-  def self.app cached = nil
-    OpenStruct.new (cached || cache).contents
-  end
-
-  def self.cache
-    @cache ||= JsonCache.new('settings:app', etag: false){ Settings::App.get.serializable_hash.deep_stringify_keys! }
+  def self.app
+    OpenStruct.new Settings::App.get.try(:serializable_hash) || {}
   end
 end

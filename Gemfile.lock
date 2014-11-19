@@ -65,6 +65,7 @@ GEM
     ffi (1.9.6)
     foreigner (1.6.1)
       activerecord (>= 3.0.0)
+    forgery (0.6.0)
     formatador (0.2.5)
     grape (0.9.0)
       activesupport
@@ -325,6 +326,7 @@ DEPENDENCIES
   database_cleaner
   factory_girl
   foreigner
+  forgery
   grape
   guard
   guard-process

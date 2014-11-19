@@ -14,220 +14,167 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-require 'net/http'
-require 'uri'
 require 'paint'
 
-# TODO: use forgery
-TMP_DIR = File.join Rails.root, 'tmp', 'samples'
+desc %|Generates random test results (25 by default)|
+task :samples, [ :n, :runner, :project ] => :environment do |t,args|
 
-class SamplesGenerator
+  puts
+  n = (args[:n] || 25).to_i
+  puts Paint["Generating #{n} test results...", :bold]
+  puts
 
-  def initialize config
-    @categories = config[:categories]
-    @tags = config[:tags]
-    @tickets = Array.new(12){ |i| "JIRA-#{rand(10000)}" }
-    @words = config[:words].split(' ')
+  next unless runner = fetch_samples_runner(args[:runner])
+
+  project_name = args[:project]
+  print "Fetching project... "
+  project = project_name.present? ? Project.where(name: project_name).first : Project.all.to_a.sample
+  if project_name.present? and project.blank?
+    puts Paint["Project #{project_name} not found in database", :red]
+    next
+  elsif project.blank?
+    puts Paint["Samples generator requires at least one existing project", :red]
+    next
   end
+  puts Paint[project.name, :green]
 
-  def run n = 25, runner_name = nil
+  payload = {
+    p: project.api_id,
+    v: "#{rand(3)}.#{rand(20)}.#{rand(10)}",
+    r: []
+  }
 
-    n = (n || 25).to_i
-    puts Paint["Generating #{n} test results", :bold]
+  test_tags = Forgery.dictionaries[:test_tags]
+  test_categories = Forgery.dictionaries[:test_categories]
 
-    print "Fetching runner... "
-    runner = User.where(name: runner_name).first || User.all.to_a.sample
-    fail "User #{runner} not found in database" if runner_name.present? and runner.blank?
-    fail "Samples generator requires at least one existing user" if runner.blank?
-    puts Paint[runner.name, :green]
-
-    print "Generating authentication token..."
-    token = runner.generate_auth_token
-    puts Paint[token, :green]
-
-    print "Fetching project... "
-    project = Project.all.to_a.sample
-    fail "Samples generator requires at least one existing project" if project.blank?
-    puts Paint[project.name, :green]
-
-    payload = {
-      p: project.api_id,
-      v: random_project_version,
-      t: []
-    }
-
-    print "Generating test results... "
-    n.times{ |i| payload[:t] << test_payload(project, runner) }
-    puts Paint["done", :green]
-
-    payload[:d] = rand(100) + payload[:t].inject(0){ |memo,result| memo + result[:d] }
-
-    json = payload.to_json
-    FileUtils.mkdir_p TMP_DIR
-    File.open(File.join(TMP_DIR, 'samples_payload.json'), 'w'){ |f| f.write json }
-
-    PayloadSender.new(json, runner, token).send
-  end
-
-  def random_sentence n = 5
-    words = random_words n
-    words.shift.humanize + ' ' + words.join(' ')
-  end
-
-  private
-
-  def fail message
-    warn Paint[message, :red]
-    exit 2
-  end
-
-  def test_payload project, author
+  print "Generating test results... "
+  n.times do
 
     passed = rand(2) == 1
     active = rand(5) > 0
 
-    {
-      :n => random_sentence,
-      :g => test_tags,
-      :t => test_tickets,
-      :p => passed,
-      :d => rand(26)
+    result = {
+      n: Forgery(:lorem_ipsum).words(rand(14) + 2).humanize,
+      g: Array.new(rand(test_tags.length)){ |i| test_tags.random.unextend }.uniq,
+      t: Array.new(rand(3)){ |i| "JIRA-#{rand(1000)}" },
+      p: passed,
+      d: rand(2500)
     }.tap do |h|
       h[:v] = false unless active
-      h[:c] = test_category if rand(4) > 0
-      h[:m] = random_sentence 50 unless passed
-      h[:a] = random_data if rand(2) == 0
+      h[:c] = test_categories.random.unextend if rand(4) > 0
+      h[:m] = Forgery(:lorem_ipsum).words(50).humanize unless passed
+      h[:a] = {}.tap{ |h| (rand(3) + 1).times{ h[Forgery(:lorem_ipsum).words(3).split(' ').join('.')] = Forgery(:lorem_ipsum).words(rand(5) + 1) } } if rand(2) == 0
     end
+
+    payload[:r] << result
   end
 
-  def random_data
-    Hash.new.tap do |data|
-      (rand(3) + 1).times do
-        data[random_words(3).join('.')] = random_sentence
-      end
-    end
-  end
+  payload[:d] = rand(60000) + payload[:r].inject(0){ |memo,result| memo + result[:d] }
+  puts Paint['done', :green]
 
-  def test_category
-    @categories.sample
-  end
+  print "Saving payload... "
+  payload_file = Rails.root.join 'tmp', 'samples', 'payload.json'
+  File.open(payload_file, 'w'){ |f| f.write payload.to_json }
+  puts Paint[Pathname.new(payload_file).relative_path_from(Rails.root), :green]
 
-  def test_tags
-    n = rand @tags.length
-    Array.new(n){ |i| @tags[i] }
-  end
-
-  def test_tickets
-    n = rand(5) - 2
-    n >= 1 ? Array.new(n){ |i| @tickets.sample }.uniq : []
-  end
-
-  def random_project_version
-    "#{rand(10)}.#{rand(10)}.#{rand(10)}"
-  end
-
-  def random_words n = 5
-    Array.new.tap do |words|
-      (rand(n) + 1).times{ words << @words.sample }
-    end
-  end
-end
-
-class PayloadSender
-
-  def initialize body, user, token
-    @body = body
-    @user = user
-    @token = token
-  end
-
-  def send
-
-    req = Net::HTTP::Post.new '/api/publish'
-    req.content_type = 'application/json'
-    req.body = @body
-
-    req['Authorization'] = %/Bearer #{@token}/
-
-    print "Sending payload... "
-    Net::HTTP.new('127.0.0.1', 3000).start do |http|
-
-      res = http.request req
-
-      if res.code.to_i != 202
-        puts Paint["failed", :red]
-        puts
-        puts Paint[res.body, :yellow]
-      else
-        puts Paint["done", :green]
-        puts
-        puts Paint[res.body, :bold]
-        puts
-        puts Paint["All done!", :bold, :green]
-      end
-    end
-  end
-end
-
-desc %|Generates random test results (25 by default) for a user in lib/tasks/samples.yml|
-task :samples, [ :n, :runner ] => :environment do |t,args|
-  config = YAML.load_file(File.join(File.dirname(__FILE__), 'samples.yml'))
-  SamplesGenerator.new(HashWithIndifferentAccess.new(config)).run args.n, args.runner
+  publish_samples_payload payload, runner
 end
 
 namespace :samples do
 
-  desc %|Send the last generated payload with updated results (values: true, false, random)|
-  task :update, [ :passed, :runner_name ] => :environment do |t,args|
+  desc %|Send the last generated payload with updated results (first argument: true, false, random)|
+  task :update, [ :passed, :runner ] => :environment do |t,args|
 
-    config = YAML.load_file(File.join(File.dirname(__FILE__), 'samples.yml'))
-    gen = SamplesGenerator.new(HashWithIndifferentAccess.new(config))
-    
-    payload = File.join TMP_DIR, 'samples_payload.json'
-    if !File.exists?(payload)
-      raise "Could not find #{payload}; run `rake samples` first"
+    puts
+    print "Reading last samples payload..." 
+    payload_file = Rails.root.join 'tmp', 'samples', 'payload.json'
+    unless File.exists? payload_file
+      puts Paint["No payload file found at #{payload_file}; run the samples task first", :red]
+      next
     end
+    payload = HashWithIndifferentAccess.new MultiJson.load(File.read(payload_file))
+    puts Paint['done', :green]
 
-    payload = HashWithIndifferentAccess.new MultiJson.load(File.open(payload, 'r').read)
-    n = payload[:r].inject(0){ |memo,r| memo + r[:t].length }
+    print "Fetching project... "
+    project_api_id = payload[:p]
+    project = Project.where(api_id: project_api_id).first
+    if project.blank?
+      puts Paint["Project API ID #{project_api_id} used in last samples payload not found in database", :red]
+      next
+    end
+    puts Paint[project.name, :green]
 
-    passed = case args.passed
+    next unless runner = fetch_samples_runner(args[:runner])
+
+    n = payload[:r].length
+
+    passed = case args[:passed]
     when /true/i
-      puts Paint["Re-sending #{n} passing test results", :bold]
+      puts "Re-sending #{n} passing test results"
       lambda{ true }
     when /false/i
-      puts Paint["Re-sending #{n} failing test results", :bold]
+      puts "Re-sending #{n} failing test results"
       lambda{ false }
     else
-      puts Paint["Re-sending #{n} random test results", :bold]
+      puts "Re-sending #{n} random test results"
       lambda{ rand(2) == 1 }
     end
 
-    payload[:r].each do |results|
-      results[:t].each do |test|
+    payload[:r].each do |result|
 
-        test[:p] = passed.call
-        test[:d] = rand(26)
+      result[:p] = passed.call
+      result[:d] = rand(2500)
 
-        if !test[:p]
-          test[:m] = gen.random_sentence 50
-        elsif test.key? :m
-          test.delete :m
-        end
+      if !result[:p]
+        result[:m] = Forgery(:lorem_ipsum).words(rand(40) + 11).humanize
+      elsif result.key? :m
+        result.delete :m
       end
     end
 
-    print "Fetching runner... "
-    runner = User.where(name: args.runner_name).first || User.all.to_a.sample
-    fail "User #{runner} not found in database" if args.runner_name.present? and runner.blank?
-    fail "Samples generator requires at least one existing user" if runner.blank?
+    publish_samples_payload payload, runner
+  end
+end
+
+def fetch_samples_runner name
+
+  print "Fetching runner... "
+  runner = name.present? ? User.where(name: name).first : User.all.to_a.sample
+
+  if name.present? and runner.blank?
+    puts Paint["User #{name} not found in database", :red]
+    false
+  elsif runner.blank?
+    puts Paint["Samples generator requires at least one existing user", :red]
+    false
+  else
     puts Paint[runner.name, :green]
+    runner
+  end
+end
 
-    print "Fetching api key..."
-    api_key = runner.api_keys.where(active: true).first
-    fail "Samples generator requires user #{runner.name} to have at least one active API key" if api_key.blank?
-    puts Paint[api_key.identifier, :green]
+def publish_samples_payload payload, runner
+  puts
+  print "Publishing payload... "
+  res = HTTParty.post('http://127.0.0.1:3000/api/publish', {
+    body: payload.to_json,
+    headers: {
+      'Content-Type' => 'application/json',
+      'Authorization' => "Bearer #{runner.generate_auth_token}"
+    }
+  })
 
-    PayloadSender.new(payload.to_json, runner, api_key).send
+  if res.code != 202
+    puts Paint["HTTP #{res.code}", :red]
+    puts Paint[res.body, :yellow]
+    puts
+    puts Paint["Publishing failed", :bold, :red]
+    puts
+  else
+    puts Paint["HTTP 202 Accepted", :green]
+    puts Paint[res.body, :bold]
+    puts
+    puts Paint["All done!", :bold, :green]
+    puts
   end
 end

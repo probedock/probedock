@@ -71,6 +71,7 @@ group :development do
   gem 'silencer' # used to silence status polling logs
   gem 'hpricot'
   gem 'ruby_parser'
+  gem 'forgery'
 end
 
 group :development, :test do

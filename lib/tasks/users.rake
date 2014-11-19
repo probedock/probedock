@@ -21,9 +21,7 @@ namespace :users do
   desc %|Give administrator privileges to a user|
   task :admin, [ :name ] => :environment do |t,args|
 
-    user = User.where(name: args.name).first
-
-    unless user
+    unless user = User.where(name: args.name).first
       puts Paint["No user found with name #{args.name}", :red]
       next
     end
@@ -35,31 +33,50 @@ namespace :users do
   end
 
   desc %|Register a new user|
-  task :register, [ :email, :password ] => :environment do |t,args|
+  task :register, [ :name, :email, :password ] => :environment do |t,args|
 
-    email = args[:email]
-    puts Paint[%/The "email" argument is required/, :red] unless email
+    unless name = args[:name]
+      puts Paint[%/A username must be given as first argument/, :red]
+      next
+    end
 
-    user = User.joins(:email).where(emails: { email: email }).first
-    puts Paint["There is already a user with e-mail #{email}", :red] if user
+    unless email = args[:email]
+      puts Paint[%/An e-mail must be given as second argument/, :red]
+      next
+    end
 
-    name = email.sub(/\@.*$/, '')
+    if user = User.where(name: name).first
+      puts Paint["There is already a user with name #{name}", :red]
+      next
+    end
+
+    if user = User.joins(:email).where(emails: { email: email }).first
+      puts Paint["There is already a user with e-mail #{email}", :red]
+      next
+    end
+
     password = args[:password] || ask('Enter the password of the new user: '){ |q| q.echo = false }
-    puts Paint["Password cannot be blank", :red] if password.blank?
+    if password.blank?
+      puts Paint["Password cannot be blank", :red]
+      next
+    end
 
     user = User.new name: name, email: Email.where(email: email).first || Email.new(email: email), password: password
     user.save!
 
-    puts Paint["User #{email} successfully created", :green]
+    puts Paint["User #{name} with e-mail #{email} was successfully created", :green]
   end
 
   desc %|Generate an authentication token for a user and export it as $ROX_TOKEN|
-  task :token, [ :email ] => :environment do |t,args|
+  task :token, [ :name ] => :environment do |t,args|
 
-    email = args[:email]
-    user = User.joins(:email).where(emails: { email: email }).first
-    unless user
-      puts Paint[%/No user found with e-mail #{email}/, :red]
+    unless name = args[:name]
+      puts Paint[%/A username must be given as first argument/, :red]
+      next
+    end
+
+    unless user = User.where(name: name).first
+      puts Paint[%/No user found with name #{name}/, :red]
       next
     end
 

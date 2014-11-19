@@ -39,13 +39,13 @@ module TestPayloadProcessing
 
           @cache = build_cache
 
-          @processed_results = Array.new data['t'].length
+          @processed_results = Array.new data['r'].length
 
-          @test_payload.results_count = data['t'].length
+          @test_payload.results_count = data['r'].length
           @test_payload.duration = 0
 
           i = 0
-          data['t'].each_slice 100 do |results|
+          data['r'].each_slice 100 do |results|
 
             fill_cache results
             results.each do |result|
@@ -79,7 +79,7 @@ module TestPayloadProcessing
       end
 
       duration = (time * 1000).round 1
-      number_of_test_results = data['t'].length
+      number_of_test_results = data['r'].length
 
       Rails.logger.info "Saved #{number_of_test_results} test payload results in #{duration}ms"
     end
