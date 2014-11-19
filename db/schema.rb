@@ -79,14 +79,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
 
-  create_table "purge_actions", force: true do |t|
-    t.string   "data_type",     limit: 20,             null: false
-    t.integer  "number_purged",            default: 0, null: false
-    t.datetime "completed_at"
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
-  end
-
   create_table "tags", force: true do |t|
     t.string "name", limit: 50, null: false
   end

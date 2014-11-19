@@ -25,6 +25,7 @@ class V3 < ActiveRecord::Migration
 
     drop_table :api_keys
     drop_table :links
+    drop_table :purge_actions
     drop_table :test_counters
     drop_table :test_deprecations
     drop_table :tags_test_infos
