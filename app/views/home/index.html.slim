@@ -22,15 +22,12 @@ script type='text/ng-template' id='/templates/main.html'
               li
                 a href='#' ui-sref='std.users' Users
         ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
+          li ng-show='currentUser'
+            a href='#' ui-sref='std.profile' {{ currentUser.email }}
           li ng-hide='currentUser'
-            a href='#' ng-click='showSignIn()' Sign in
-          li.dropdown ng-show='currentUser'
-            a.dropdown-toggle href='#' data-toggle='dropdown'
-              | {{ currentUser.email }}
-              span.caret
-            ul.dropdown-menu role='menu'
-              li ng-controller='ProfileCtrl'
-                a href='#' ng-click='editProfile()' Edit Profile
-              li
-                a href='#' ng-click='signOut()' Sign out
+            a.btn.btn-default.btn-xs href='#' ng-click='showSignIn()' tooltip='Sign in' tooltip-placement='left'
+              span.glyphicon.glyphicon-log-in
+          li ng-show='currentUser'
+            a.btn.btn-default.btn-xs href='#' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'
+              span.glyphicon.glyphicon-log-out
   div ui-view='content'

@@ -1,0 +1,38 @@
+.container-fluid
+  h1.text-center Profile
+  .col-md-offset-1.col-lg-offset-2.col-xs-12.col-sm-6.col-md-5.col-lg-4
+    .profileUserDetails.panel.panel-default ng-controller='ProfileDetailsCtrl'
+      .panel-heading
+        h3.panel-title User Details
+      .panel-body
+        img.pull-right gravatar-src='currentUser.emailMd5' gravatar-size=100 ng-hide='editedProfile'
+        dl ng-hide='editedProfile'
+          dt Username
+          dd {{ currentUser.name }}
+          dt E-mail
+          dd {{ currentUser.email }}
+          dt Registered since
+          dd {{ currentUser.createdAt | amDateFormat:'ll' }}
+        form role='form' name='profileForm' ng-show='editedProfile'
+          .form-group ng-class='{"has-error": profileForm.name.$dirty && profileForm.name.$invalid}'
+            label for='profileName' Username
+            input#profileName.form-control type='text' name='name' required=true maxlength=255 autofocus=true ng-model='editedProfile.name'
+          .form-group ng-class='{"has-error": profileForm.email.$dirty && profileForm.email.$invalid}'
+            label for='profileEmail' E-mail
+            input#profileEmail.form-control type='email' name='email' required=true maxlength=255 ng-model='editedProfile.email'
+          .form-group ng-class='{"has-error": profileForm.password.$dirty && profileForm.password.$invalid}'
+            label for='profilePassword' Password
+            input#profilePassword.form-control type='password' name='password' placeholder='Leave blank for no change' maxlength=255 ng-model='editedProfile.password'
+          .form-group ng-class='{"has-error": profileForm.passwordConfirmation.$dirty && profileForm.passwordConfirmation.$invalid}'
+            label for='profilePasswordConfirmation' Password confirmation
+            input#profilePasswordConfirmation.form-control type='password' name='passwordConfirmation' placeholder='Leave blank for no change' maxlength=255 ng-model='editedProfile.passwordConfirmation'
+          .alert.alert-danger ng-show='saveError'
+            | Your profile could not be updated. Either the name or e-mail are already taken, or the password confirmation does not match the password.
+      .panel-footer.text-center
+        .btn-group
+          button.btn.btn-default type='button' ng-click='edit()' tooltip='Edit profile or change password' tooltip-placement='right' ng-if='!editedProfile'
+            span.glyphicon.glyphicon-edit
+          button.btn.btn-default type='button' ng-click='cancel()' tooltip='Cancel' ng-if='editedProfile'
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-primary type='submit' ng-click='save()' tooltip='Save' ng-if='editedProfile'
+            span.glyphicon.glyphicon-ok

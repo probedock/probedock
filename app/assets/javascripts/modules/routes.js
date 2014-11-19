@@ -18,6 +18,15 @@ angular.module('rox.routes', [ 'ui.router' ])
         }
       })
 
+      .state('std.profile', {
+        url: '^/profile',
+        views: {
+          'content@std': {
+            templateUrl: '/templates/profile.html'
+          }
+        }
+      })
+
       .state('std.projects', {
         url: '^/projects',
         views: {
