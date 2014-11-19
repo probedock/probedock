@@ -54,7 +54,7 @@ angular.module('rox.projects', ['rox.api'])
 
     function onProjectSaved(response) {
       $scope.editProjectForm.$setPristine();
-      $scope.project = $scope.editedProject;
+      _.extend($scope.project, $scope.editedProject);
       delete $scope.editedProject;
     };
   }]);
