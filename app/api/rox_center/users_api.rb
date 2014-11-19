@@ -24,13 +24,30 @@ module ROXCenter
       end
 
       helpers do
-        def parse_user
-          parse_object :name, :email, :active
+
+        def parse_user_for_creation
+          parse_object :name, :email, :password, :passwordConfirmation
+        end
+
+        def parse_user_for_update
+          parse_object :name, :email, :active, :password, :passwordConfirmation
         end
       end
 
       get do
         User.tableling.process(params)
+      end
+
+      post do
+
+        data = parse_user_for_creation
+        email = data.delete :email
+        data[:password_confirmation] ||= ''
+
+        user = User.new data
+        user.email = Email.where(email: email).first || Email.new(email: email)
+
+        create_record user
       end
 
       namespace '/:id' do
@@ -46,10 +63,17 @@ module ROXCenter
         end
 
         patch do
-          update_record current_user, parse_user do |user,updates|
+          update_record current_user, parse_user_for_update do |user,updates|
+
             user.name = updates[:name] if updates.key? :name
             user.active = !!updates[:active] if updates.key? :active
             user.email = Email.where(email: updates[:email]).first || Email.new(email: updates[:email]) if updates[:email] != user.email.try(:email) if updates.key? :email
+
+            if updates.key? :password
+              user.password = updates[:password]
+              user.password_confirmation = updates[:passwordConfirmation]
+            end
+
             user.save
           end
         end

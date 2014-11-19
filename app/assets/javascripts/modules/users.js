@@ -10,6 +10,38 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
     };
   }])
 
+  .controller('NewUserCtrl', ['ApiService', '$scope', 'UserService', function($api, $scope, $userService) {
+
+    $scope.addNewUser = function() {
+      if ($scope.newUserForm) {
+        $scope.newUserForm.$setPristine();
+      }
+
+      $scope.newUser = {};
+    };
+
+    $scope.cancel = function() {
+      delete $scope.newUser;
+    };
+
+    $scope.save = function() {
+      $api.http({
+        method: 'POST',
+        url: '/api/users',
+        data: $scope.newUser
+      }).then(onSaved, onSaveError);
+    };
+
+    function onSaveError() {
+      $scope.saveError = true;
+    }
+
+    function onSaved(response) {
+      $userService.emit('created', response.data);
+      delete $scope.newUser;
+    }
+  }])
+
   .controller('UsersListCtrl', ['ApiService', '$scope', 'StateService', 'UserService', function($api, $scope, $stateService, $userService) {
 
     var page = 1;
@@ -28,8 +60,12 @@ angular.module('rox.users', ['rox.api', 'rox.state'])
       return new Date().getTime() - new Date(iso8601).getTime();
     };
 
-    $userService.on('deleted', function(user) {
+    $userService.on('created', function(user) {
+      $scope.users.unshift(user);
+      $scope.lastCreatedUser = user;
+    });
 
+    $userService.on('deleted', function(user) {
       var deletedUser = _.findWhere($scope.users, { id: user.id });
       if (deletedUser) {
         $scope.users.splice(_.indexOf($scope.users, deletedUser), 1);

@@ -10,7 +10,7 @@
           th.hidden-xs Registered since
           th
       tbody
-        tr ng-repeat='user in users' ng-class='{info: user.id === selectedUserId}'
+        tr ng-repeat='user in users' ng-class='{info: user.id === selectedUserId, success: user.id === lastCreatedUser.id && user.id !== selectedUserId}'
           td.avatar
             img gravatar-src='user.emailMd5' gravatar-size=30
           td.name {{ user.name }}
@@ -55,10 +55,36 @@
             | This user cannot be deleted because it is still linked to other resources.
           .actions.clear
             .btn-group
-              button.btn.btn-default ng-click='edit()' ng-disabled='busy' ng-if='!editedUser' Edit
-              button.btn.btn-warning ng-click='toggleActive()' ng-disabled='busy' ng-if='!editedUser'
+              button.btn.btn-default type='button' ng-click='edit()' ng-disabled='busy' ng-if='!editedUser' Edit
+              button.btn.btn-warning type='button' ng-click='toggleActive()' ng-disabled='busy' ng-if='!editedUser'
                 span ng-show='selectedUser.active' Deactivate
                 span ng-hide='selectedUser.active' Activate
-              button.btn.btn-danger ng-click='delete()' ng-disabled='busy || currentUser.id === selectedUser.id' ng-if='!editedUser' Delete
-              button.btn.btn-default ng-click='cancelEdit()' ng-disabled='busy' ng-if='editedUser' Cancel
-              button.btn.btn-primary ng-click='save()' ng-disabled='busy || editUserForm.$invalid' ng-if='editedUser' Save
+              button.btn.btn-danger type='button' ng-click='delete()' ng-disabled='busy || currentUser.id === selectedUser.id' ng-if='!editedUser' Delete
+              button.btn.btn-default type='button' ng-click='cancelEdit()' ng-disabled='busy' ng-if='editedUser' Cancel
+              button.btn.btn-primary type='submit' ng-click='save()' ng-disabled='busy || editUserForm.$invalid' ng-if='editedUser' Save
+    .userCreation ng-controller='NewUserCtrl'
+      .controls ng-hide='newUser'
+        button.btn.btn-primary.btn-lg ng-click='addNewUser()' Add a new user
+      .panel.panel-default ng-show='newUser'
+        .panel-heading
+          h3.panel-title New user
+        .panel-body
+          form role='form' name='newUserForm'
+            .form-group ng-class='{"has-error": newUserForm.name.$dirty && newUserForm.name.$invalid}'
+              label for='newUserName' Username
+              input#newUserName.form-control type='text' name='name' placeholder='Unique username' required=true maxlength=255 autofocus=true ng-model='newUser.name'
+            .form-group ng-class='{"has-error": newUserForm.email.$dirty && newUserForm.email.$invalid}'
+              label for='newUserEmail' E-mail
+              input#newUserEmail.form-control type='email' name='email' placeholder='E-mail address' required=true maxlength=255 ng-model='newUser.email'
+            .form-group ng-class='{"has-error": newUserForm.password.$dirty && newUserForm.password.$invalid}'
+              label for='newUserPassword' Password
+              input#newUserPassword.form-control type='password' name='password' placeholder='Password' required=true maxlength=255 ng-model='newUser.password'
+            .form-group ng-class='{"has-error": newUserForm.passwordConfirmation.$dirty && newUserForm.passwordConfirmation.$invalid}'
+              label for='newUserPasswordConfirmation' Password
+              input#newUserPasswordConfirmation.form-control type='password' name='passwordConfirmation' placeholder='Password' required=true maxlength=255 ng-model='newUser.passwordConfirmation'
+            .alert.alert-danger ng-show='saveError'
+              | The user could not be created. Either the name or e-mail are already taken or the password confirmation does not match the password.
+            .controls
+              .btn-group
+                button.btn.btn-default type='button' ng-click='cancel()' ng-disabled='busy' Cancel
+                button.btn.btn-primary type='submit' ng-click='save()' ng-disabled='busy || newUserForm.$invalid' Save

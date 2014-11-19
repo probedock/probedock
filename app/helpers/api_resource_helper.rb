@@ -21,11 +21,21 @@ module ApiResourceHelper
   end
 
   def create_record record
-    record.errors.empty? && record.save ? record : record_errors(record)
+    if record.errors.empty? && record.save
+      record
+    else
+      status 422
+      record_errors record
+    end
   end
 
   def update_record record, updates, &block
-    record.errors.empty? && (block ? block.call(record, updates) && record.valid? : record.update_attributes(updates)) ? record : record_errors(record)
+    if record.errors.empty? && (block ? block.call(record, updates) && record.valid? : record.update_attributes(updates))
+      record
+    else
+      status 422
+      record_errors record
+    end
   end
 
   def record_errors record
@@ -33,14 +43,7 @@ module ApiResourceHelper
     errors = []
     record.errors.each do |attr,errs|
       Array.wrap(errs).each do |err|
-
-        error = { message: "#{attr.to_s.humanize} #{err}", path: "/#{attr.to_s.camelize(:lower)}" }
-
-        if err.kind_of? ActiveModel::RoxErrorMessage
-          [ :name, :path ].each{ |k| error[k] = err.send(k) if err.send(k) }
-        end
-
-        errors << error
+        errors << { message: "#{attr.to_s.humanize} #{err}", path: "/#{attr.to_s.camelize(:lower)}" }
       end
     end
 
