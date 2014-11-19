@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   has_one :settings, class_name: "Settings::User", dependent: :destroy
   belongs_to :email # TODO: make email required
 
-  strip_attributes
+  strip_attributes except: :password_digest
   validates :name, presence: true, uniqueness: true
   validates :email, presence: true
   validates :email_id, uniqueness: true
