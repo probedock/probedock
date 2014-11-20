@@ -12,7 +12,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = 'phusion/ubuntu-14.04-amd64'
 
+  config.vm.provision 'shell', inline: 'cp /vagrant/Gemfile /vagrant/Gemfile.lock /vagrant/docker/app/'
+
   config.vm.provision 'docker' do |d|
+    d.build_image '/vagrant/docker/ruby', args: '-t rox-center-ruby'
+    d.build_image '/vagrant/docker/app', args: '-t rox-center'
     d.run 'postgres'
     d.run 'redis'
   end

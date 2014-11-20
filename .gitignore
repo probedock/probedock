@@ -11,6 +11,7 @@
 /config/secrets.yml
 /db/test.*
 /doc/app
+/docker/app/Gem*
 /local
 /log
 /node_modules
