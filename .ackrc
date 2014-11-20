@@ -1,7 +1,8 @@
+--ignore-dir=bower_components
 --ignore-dir=local
 --ignore-dir=log
 --ignore-dir=node_modules
 --ignore-dir=tmp
 --ignore-dir=doc/app
---ignore-dir=app/assets/javascripts/vendor
 --ignore-dir=public/javascripts
+--ignore-dir=vendor

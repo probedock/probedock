@@ -31,6 +31,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/jqcloud2/dist/jqcloud.js', dest: 'vendor/assets/javascripts/jqcloud2.js' },
           { nonull: true, src: 'bower_components/d3/d3.js', dest: 'vendor/assets/javascripts/d3.js' },
           { nonull: true, src: 'bower_components/nvd3/nv.d3.js', dest: 'vendor/assets/javascripts/nvd3.js' },
+          { nonull: true, src: 'bower_components/zeroclipboard/dist/ZeroClipboard.js', dest: 'vendor/assets/javascripts/zero-clipboard.js' },
           { nonull: true, src: 'bower_components/angular/angular.js', dest: 'vendor/assets/javascripts/angular.js' },
           { nonull: true, src: 'bower_components/angular-animate/angular-animate.js', dest: 'vendor/assets/javascripts/angular-animate.js' },
           { nonull: true, src: 'bower_components/angular-sanitize/angular-sanitize.js', dest: 'vendor/assets/javascripts/angular-sanitize.js' },
@@ -45,6 +46,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js', dest: 'vendor/assets/javascripts/angular-ng-infinite-scroll.js' },
           { nonull: true, src: 'bower_components/angular-jqcloud/angular-jqcloud.js', dest: 'vendor/assets/javascripts/angular-jqcloud.js' },
           { nonull: true, src: 'bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js', dest: 'vendor/assets/javascripts/angular-nvd3.js' },
+          { nonull: true, src: 'bower_components/ng-clip/src/ngClip.js', dest: 'vendor/assets/javascripts/angular-ng-clip.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },
           // stylesheets
@@ -52,7 +54,9 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/jqcloud2/dist/jqcloud.css', dest: 'vendor/assets/stylesheets/jqcloud2.css' },
           { nonull: true, src: 'bower_components/nvd3/nv.d3.css', dest: 'vendor/assets/stylesheets/nvd3.css' },
           // fonts
-          { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true }
+          { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
+          // flash
+          { nonull: true, src: 'bower_components/zeroclipboard/dist/ZeroClipboard.swf', dest: 'vendor/assets/flash/zero-clipboard.swf' }
         ]
       },
 
