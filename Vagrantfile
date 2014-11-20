@@ -13,11 +13,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = 'phusion/ubuntu-14.04-amd64'
 
   config.vm.provision 'docker' do |d|
-    d.build_image '/vagrant', args: '-t rox-center'
     d.run 'postgres'
     d.run 'redis'
-    d.run 'rox-center-migrate', image: 'rox-center', cmd: 'rake db:migrate', args: '--link postgres:postgres --link redis:redis --rm', daemonize: false
-    d.run 'rox-center-deploy', image: 'rox-center', args: '--link postgres:postgres --link redis:redis -p 3000:3000'
   end
 
   # Disable automatic box update checking. If you disable this, then
