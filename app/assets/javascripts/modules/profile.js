@@ -1,5 +1,32 @@
 angular.module('rox.profile', ['rox.api', 'rox.auth'])
 
+  .controller('ProfileAccessTokensCtrl', ['ApiService', '$scope', function($api, $scope) {
+
+    $scope.busy = false;
+
+    $scope.generate = function() {
+
+      $scope.busy = true;
+      delete $scope.token;
+
+      $api.http({
+        method: 'POST',
+        url: '/api/tokens'
+      }).then(showToken, onGenerateError);
+    };
+
+    function onGenerateError() {
+      delete $scope.token;
+      $scope.generateError = true;
+      $scope.busy = false;
+    }
+
+    function showToken(response) {
+      $scope.token = response.data.token;
+      $scope.busy = false;
+    }
+  }])
+
   .controller('ProfileDetailsCtrl', ['ApiService', 'AuthService', '$scope', function($api, $auth, $scope) {
 
     var modal;

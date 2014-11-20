@@ -73,7 +73,9 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
   puts Paint['done', :green]
 
   print "Saving payload... "
-  payload_file = Rails.root.join 'tmp', 'samples', 'payload.json'
+  payload_dir = Rails.root.join 'tmp', 'samples'
+  FileUtils.mkdir_p payload_dir
+  payload_file = File.join payload_dir, 'payload.json'
   File.open(payload_file, 'w'){ |f| f.write payload.to_json }
   puts Paint[Pathname.new(payload_file).relative_path_from(Rails.root), :green]
 

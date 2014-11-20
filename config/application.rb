@@ -18,7 +18,6 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 require './lib/extensions'
 require './lib/exceptions'
-require './lib/utils/event_emitter'
 require 'silencer/logger' if Rails.env == 'development'
 
 # Require the gems listed in Gemfile, including any gems
@@ -36,28 +35,11 @@ module ROXCenter
       self.class.started_at
     end
 
-    class Events; include EventEmitter; end
-
-    def self.events
-      @events ||= Events.new
-    end
-
-    def events
-      self.class.events
-    end
-
     def version
       VERSION
     end
 
     VERSION = File.open(File.join(root, 'VERSION'), 'r').read
-    VERSION_HASH = Digest::SHA512.hexdigest VERSION
-
-    TEST_WIDGETS = []
-
-    def test_widgets
-      TEST_WIDGETS
-    end
 
     config.after_initialize do
       self.started_at = Time.now
@@ -70,7 +52,6 @@ module ROXCenter
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
-    config.eager_load_paths += %W(#{config.root}/lib/utils #{config.root}/lib/utils/cache)
     #config.autoload_once_paths += %W(#{config.root}/lib/utils #{config.root}/lib/utils/cache)
     config.watchable_dirs['lib'] = [:rb]
 
@@ -96,7 +77,8 @@ module ROXCenter
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
-    config.assets.paths << Rails.root.join('app', 'assets', 'flash')
+    config.assets.precompile << '*.swf'
+    config.assets.paths << Rails.root.join('vendor', 'assets', 'flash')
 
     config.generators.assets = false
     config.generators.helper = false

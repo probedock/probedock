@@ -19,6 +19,7 @@ angular.module('rox', [
   'rox.auth',
   'rox.dashboard',
   'rox.format',
+  'rox.forms',
   'rox.nav',
   'rox.profile',
   'rox.projects',
@@ -28,11 +29,12 @@ angular.module('rox', [
   'rox.users',
   'angularMoment',
   'angular-jqcloud',
+  'infinite-scroll',
+  'ngClipboard',
   'nvd3ChartDirectives',
   //'ngAnimate', // FIXME: include ngAnimate when ui-bootstrap tooltip is fixed (https://github.com/angular-ui/bootstrap/issues/2951)
   'smart-table',
   'ui.gravatar',
-  'infinite-scroll',
   'ui.bootstrap'
 ])
 
@@ -41,6 +43,7 @@ angular.module('rox', [
 
   .constant('version', <%= JSON.dump Rails.application.version %>)
   .constant('environment', <%= JSON.dump Rails.env %>)
+  .constant('zeroClipboardFlash', <%= JSON.dump asset_path('zero-clipboard.swf') %>)
 
   // enable debug log unless in production
   .config(['environment', '$logProvider', function(env, $logProvider) {
@@ -49,6 +52,10 @@ angular.module('rox', [
 
   .config(['localStorageServiceProvider', function(localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('rox');
+  }])
+
+  .config(['ngClipProvider', 'zeroClipboardFlash', function(ngClipProvider, assetPath) {
+    ngClipProvider.setPath(assetPath);
   }])
 
   .run(['AuthService', function($auth) {

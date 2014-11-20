@@ -24,8 +24,6 @@ class User < ActiveRecord::Base
   has_secure_password
 
   after_create :create_settings
-  after_create{ Rails.application.events.fire 'user:created' }
-  after_destroy{ Rails.application.events.fire 'user:destroyed' }
 
   # Role-based authorization
   include RoleModel

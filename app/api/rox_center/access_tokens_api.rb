@@ -14,22 +14,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
+module ROXCenter
+  class AccessTokensApi < Grape::API
 
-module EventEmitter
+    namespace :tokens do
 
-  # TODO: support regexp
-  def on *events, &block
-    @vent ||= { nil => [] }
-    @vent[nil] << block if events.empty?
-    events.each do |event|
-      @vent[event] ||= []
-      @vent[event] << block
+      before do
+        authenticate!
+      end
+
+      post do
+        { token: current_user.generate_auth_token }
+      end
     end
-  end
-
-  def fire event, *args
-    return unless @vent
-    @vent[nil].each{ |block| block.call event, *args }
-    @vent[event].each{ |block| block.call *args } if @vent[event]
   end
 end
