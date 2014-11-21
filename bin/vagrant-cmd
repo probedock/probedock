@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+ARGS="$@"
+APP_LINKS="--link postgres:postgres --link redis:redis --volume /vagrant:/app"
+
+vagrant ssh -c "docker run --rm $APP_LINKS rox-center $ARGS"
