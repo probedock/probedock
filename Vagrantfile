@@ -9,6 +9,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = 'ubuntu/trusty64'
 
+  config.vm.provider 'virtualbox' do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
   # install docker
   config.vm.provision 'docker'
 
@@ -21,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # update Gemfile and Gemfile.lock for app image
   config.vm.provision 'shell', inline: 'cp /vagrant/Gemfile /vagrant/Gemfile.lock /vagrant/docker/app/'
 
-  app_links = '--link postgres:postgres --link redis:redis -v /vagrant:/app'
+  app_links = '--link postgres:postgres --link redis:redis --volume /vagrant:/app'
 
   config.vm.provision 'docker' do |d|
     # start postgresql
@@ -38,7 +43,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision 'docker', run: 'always' do |d|
     d.run 'postgres'
     d.run 'redis'
-    d.run 'rox-center', cmd: 'rails server', args: "#{app_links} -p 3000:3000"
+    d.run 'rox-center-server', image: 'rox-center', cmd: 'rails server', args: "#{app_links} -p 3000:3000"
+    d.run 'rox-center-resque', image: 'rox-center', cmd: 'guard start --no-interactions --force-polling --latency 0.5 -w app lib -g resque-pool', args: "#{app_links}"
   end
 
   config.vm.network 'private_network', ip: '192.168.50.4'

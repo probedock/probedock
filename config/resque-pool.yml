@@ -1,4 +1,2 @@
 development:
-  "*": 5
-vagrant:
-  "*": 5
+  "*": 3

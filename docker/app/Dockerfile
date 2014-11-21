@@ -1,5 +1,7 @@
 FROM alphahydrae/rox-center-dev:angular
 
+EXPOSE 3000
+
 RUN mkdir -p /build
 WORKDIR /build
 

@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+CONTAINER_COMMAND='exec psql -h postgres -p 5432 -U postgres rox-center'
+HOST_COMMAND="docker run -it --link postgres:postgres --rm postgres sh -c \"$CONTAINER_COMMAND\""
+
+vagrant ssh -c "$HOST_COMMAND"
