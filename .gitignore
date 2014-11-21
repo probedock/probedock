@@ -12,6 +12,7 @@
 /db/test.*
 /doc/app
 /docker/app/Gem*
+/docker/dev/Gem*
 /local
 /log
 /node_modules

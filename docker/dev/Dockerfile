@@ -1,4 +1,5 @@
-FROM alphahydrae/rox-center-dev:angular
+FROM alphahydrae/ruby-node-pg:0.1.0
+MAINTAINER Simon Oulevay <docker@alphahydrae.com>
 
 RUN mkdir -p /build
 WORKDIR /build
