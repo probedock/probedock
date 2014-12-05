@@ -14,20 +14,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ROX Center.  If not, see <http://www.gnu.org/licenses/>.
-
 FactoryGirl.define do
 
-  sequence :user_name do |n|
-    "user-#{n}"
+  sequence :email_address do |n|
+    "email-#{n}@example.com"
   end
 
-  factory :user, aliases: [ :author, :runner ] do
-    name{ generate :user_name }
-    email
-    password 'test'
-
-    factory :admin_user, aliases: [ :admin ] do
-      roles_mask User.mask_for(:admin)
-    end
+  factory :email do
+    email{ generate :email_address }
   end
 end

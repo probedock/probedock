@@ -55,8 +55,6 @@ RSpec.configure do |config|
   #config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   config.include FactoryGirl::Syntax::Methods
-  config.include Devise::TestHelpers, type: :controller
-  config.include Devise::TestHelpers, type: :view
   config.include Shoulda::Matchers::ActionController
   config.include DatabaseMatchers
   config.include ErrorMatchers

@@ -80,22 +80,13 @@ module SpecApiHelper
     MultiJson.load response.body, mode: :strict
   end
 
-  def api_post user, path, body, params = {}, options = {}
+  def api_post path, body, options = {}
 
-    headers = { 'CONTENT_TYPE' => options[:content_type] || 'application/json' }
     headers = options[:headers] || {}
+    headers['Content-Type'] ||= options[:content_type] || 'application/json'
+    headers['Authorization'] = "Bearer #{user.generate_auth_token}" if options[:user]
 
-    if options[:functional]
-      @request.env['RAW_POST_DATA'] = body
-      post path, params # without authentication
-      expect(response.status).to eq(401)
-      @request.env.merge! headers.merge(api_authentication_headers(user))
-      post path, params
-    else
-      post send("#{path}_path", params), body, headers # without authentication
-      expect(response.status).to eq(401)
-      post send("#{path}_path", params), body, headers.merge(api_authentication_headers(user))
-    end
+    post path, body, headers
   end
 
   def api_put user, path, body, params = {}, options = {}
