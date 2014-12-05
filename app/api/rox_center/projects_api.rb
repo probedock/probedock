@@ -34,7 +34,14 @@ module ROXCenter
       end
 
       post do
-        create_record Project.new(parse_project)
+        project = Project.new parse_project
+        ProjectValidations.errapi(:model).validate validation_context.with(value: project)
+        if validation_state.valid?
+          create_record project
+        else
+          status 422
+          validation_state.errors
+        end
       end
 
       namespace '/:id' do

@@ -8,7 +8,8 @@ screen -t db 2
 stuff "psql rox-center\012"
 screen -t server 3
 stuff "bundle exec rails server\012"
-screen -t vim 4 $EDITOR -c GG
+screen -t vim 4
+stuff "\${PROJECT_EDITOR-\$EDITOR}\012"
 screen -t zsh 5
 screen -t spec 6
 stuff "bundle exec rake"

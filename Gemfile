@@ -37,6 +37,7 @@ gem 'json-jwt'
 # API
 gem 'grape'
 gem 'jbuilder'
+gem 'errapi', git: 'git@github.com:AlphaHydrae/errapi.git'
 
 # Memory Database
 gem 'redis'

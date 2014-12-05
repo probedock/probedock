@@ -38,5 +38,15 @@ RSpec.describe ROXCenter::ProjectsApi do
         'createdAt' => created_project.created_at.iso8601(3)
       })
     end
+
+    it "should not create an invalid project" do
+
+      expect do
+        api_post '/api/projects', {}.to_json, user: user
+      end.not_to change(Project, :count)
+
+      expect(response.status).to eq(422)
+      puts response.body
+    end
   end
 end

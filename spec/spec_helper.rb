@@ -63,7 +63,6 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   config.include RedisHelpers
   config.include MaintenanceHelpers, type: :controller
-  config.extend SpecOverrides
 
   config.include CanCanHelpers
   config.extend CanCanHelpers::ClassMethods
