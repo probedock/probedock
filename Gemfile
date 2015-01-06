@@ -37,7 +37,8 @@ gem 'json-jwt'
 # API
 gem 'grape'
 gem 'jbuilder'
-gem 'errapi', git: 'git@github.com:AlphaHydrae/errapi.git'
+#gem 'errapi', path: "#{ENV['HOME']}/Projects/errapi"
+gem 'errapi', git: 'git@github.com:AlphaHydrae/errapi.git', branch: 'refactoring'
 
 # Memory Database
 gem 'redis'

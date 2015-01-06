@@ -25,6 +25,10 @@ module ROXCenter
     cascade false
     rescue_from :all do |e|
 
+      if e.kind_of? Errapi::ValidationFailed
+        next Rack::Response.new([ JSON.dump({ errors: e.context.errors.collect{ |e| e.serializable_hash only: %i(code message location) } }) ], 422, { "Content-Type" => "application/json" }).finish
+      end
+
       if Rails.env != 'production'
         puts e.message
         puts e.backtrace.join("\n")
@@ -39,7 +43,7 @@ module ROXCenter
         [ 500, 'An internal server error occurred.' ]
       end
 
-      Rack::Response.new([ JSON.dump({ errors: [ { message: message || e.message } ] }) ], code, { "Content-type" => "application/json" }).finish
+      Rack::Response.new([ JSON.dump({ errors: [ { message: message || e.message } ] }) ], code, { "Content-Type" => "application/json" }).finish
     end
 
     helpers ApiAuthenticationHelper

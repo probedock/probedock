@@ -1,8 +1,9 @@
 GIT
   remote: git@github.com:AlphaHydrae/errapi.git
-  revision: 738f1ced7a83d6b24d319bfbcff0b26f70264656
+  revision: 5e372a524053aa485958f58ed073868341a287ac
+  branch: refactoring
   specs:
-    errapi (0.1.0)
+    errapi (0.1.1)
 
 GEM
   remote: https://rubygems.org/

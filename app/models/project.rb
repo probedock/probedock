@@ -26,8 +26,8 @@ class Project < ActiveRecord::Base
   has_many :versions, class_name: 'ProjectVersion'
 
   strip_attributes
-  validates :name, presence: { name: :blankValue }, length: { maximum: 255, name: :valueTooLong }
-  validates :description, length: { maximum: 1000, name: :valueTooLong }
+  validates :name, presence: true, length: { maximum: 50 }
+  validates :description, length: { maximum: 1000 }
 
   tableling do
 

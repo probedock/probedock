@@ -38,12 +38,8 @@ module ApiResourceHelper
     end
   end
 
-  def validation_state
-    validation_context.state
-  end
-
   def validation_context
-    @validation_context ||= Errapi::ValidationContext.new
+    @validation_context ||= Errapi.config.new_context
   end
 
   def record_errors record

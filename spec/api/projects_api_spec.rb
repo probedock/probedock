@@ -42,7 +42,7 @@ RSpec.describe ROXCenter::ProjectsApi do
     it "should not create an invalid project" do
 
       expect do
-        api_post '/api/projects', {}.to_json, user: user
+        api_post '/api/projects', { description: 's' * 1001 }.to_json, user: user
       end.not_to change(Project, :count)
 
       expect(response.status).to eq(422)
