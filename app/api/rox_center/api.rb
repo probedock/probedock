@@ -26,7 +26,7 @@ module ROXCenter
     rescue_from :all do |e|
 
       if e.kind_of? Errapi::ValidationFailed
-        next Rack::Response.new([ JSON.dump({ errors: e.context.errors.collect{ |e| e.serializable_hash only: %i(code message location) } }) ], 422, { "Content-Type" => "application/json" }).finish
+        next Rack::Response.new([ JSON.dump(e.context.serialize) ], 422, { "Content-Type" => "application/json" }).finish
       end
 
       if Rails.env != 'production'

@@ -46,7 +46,10 @@ RSpec.describe ROXCenter::ProjectsApi do
       end.not_to change(Project, :count)
 
       expect(response.status).to eq(422)
-      puts response.body
+      expect(response).to have_api_errors([
+        { reason: 'null', location: '/name', locationType: 'json', message: /cannot be null/ },
+        { reason: 'tooLong', location: '/description', locationType: 'json', message: /too long/ }
+      ])
     end
   end
 end

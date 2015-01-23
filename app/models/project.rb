@@ -25,10 +25,6 @@ class Project < ActiveRecord::Base
   has_many :tests, class_name: 'TestInfo'
   has_many :versions, class_name: 'ProjectVersion'
 
-  strip_attributes
-  validates :name, presence: true, length: { maximum: 50 }
-  validates :description, length: { maximum: 1000 }
-
   tableling do
 
     default_view do

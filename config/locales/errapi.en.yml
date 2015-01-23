@@ -1,0 +1,10 @@
+en:
+  errapi:
+    missing: "This value is required."
+    "null": "This value cannot be null."
+    empty: "This value cannot be empty."
+    blank: "This value cannot be blank."
+    too_long: "This value is too long (the maximum is %{check_value} while the actual length is %{checked_value})."
+    too_short: "This value is too short (the maximum is %{check_value} while the actual length is %{checked_value})."
+    wrong_length: "This value is the wrong length (the expected length is %{check_value} while the actual length is %{checked_value}."
+    wrong_type: "This value is of the wrong type."

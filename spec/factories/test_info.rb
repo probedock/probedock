@@ -18,7 +18,7 @@ FactoryGirl.define do
 
   factory :test_info, aliases: [ :test ] do
 
-    ignore do
+    transient do
       runner nil
       test_run nil
       run_at nil

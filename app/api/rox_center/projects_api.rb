@@ -35,7 +35,7 @@ module ROXCenter
 
       post do
         project = Project.new parse_project
-        ProjectValidations.errapi(:model).validate project, validation_context, raise_error: true
+        ProjectValidations.validate project, validation_context, location_type: :json, raise_error: true
         create_record project
       end
 
