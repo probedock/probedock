@@ -31,5 +31,5 @@ end
 if Rails.env != 'production'
   require 'probe_dock_rspec'
   ProbeDockRSpec::Tasks.new
-  Rake::Task['spec'].prerequisites.unshift('spec:jasmine:fast').unshift('spec:probe-dock:uid')
+  Rake::Task['spec'].prerequisites.unshift('spec:probe-dock:uid')
 end
