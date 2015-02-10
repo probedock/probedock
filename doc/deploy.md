@@ -2,7 +2,7 @@
 
 ## Installation
 
-Clone ROX Center in a directory accessible to your web server.
+Clone Probe Dock in a directory accessible to your web server.
 
 ### Configuration
 
@@ -10,13 +10,8 @@ You must first set up the configuration files. Each of the following files has d
 
 * `config/database.yml` is the configuration to connect to your MySQL database.
 * `config/redis.yml` is the configuration to connect to your Redis database.
-* `config/rox-center.yml` is the ROX Center configuration.
+* `config/probe-dock.yml` is the Probe Dock server configuration.
 * `config/secrets.yml` configures the secret keys used to verify the integrity of session cookies and generate user passwords.
-
-In the `rox-center.yml` file, you must choose between database authentication (ROX Center stores its own passwords in the MySQL database), or LDAP authentication (against an external LDAP server). If you are using LDAP authentication, you must also set up the LDAP configuration files.
-
-* `config/ldap.yml` contains the configuration to connect to your LDAP server.
-* `config/initializers/ldap.rb` customizes the LDAP configuration.
 
 ### GCC
 
@@ -38,7 +33,7 @@ apt-get install build-essential
 ### Development Setup
 
 ```bash
-cd /path/to/rox-center
+cd /path/to/probe-dock
 
 # Install gems.
 # If you use MySQL, you may add the "--without postgresql" option.
@@ -57,10 +52,10 @@ bundle exec rails server
 
 ### Production Setup
 
-ROX Center comes with a sample configuration file for the [Unicorn](http://unicorn.bogomips.org) server in `config/samples/unicorn.rb`. Copy it to `config/unicorn.rb` and update it to suit your environment.
+Probe Dock comes with a sample configuration file for the [Unicorn](http://unicorn.bogomips.org) server in `config/samples/unicorn.rb`. Copy it to `config/unicorn.rb` and update it to suit your environment.
 
 ```bash
-cd /path/to/rox-center
+cd /path/to/probe-dock
 
 # Install gems.
 # If you use MySQL, you may add "postgresql" to the without option.
@@ -85,7 +80,7 @@ RAILS_ENV=production bundle exec unicorn_rails -c config/unicorn.rb -E productio
 ### Full Upgrade
 
 ```bash
-cd /path/to/rox-center
+cd /path/to/probe-dock
 
 # Gracefully stop the unicorn server.
 sudo kill -s QUIT `cat tmp/pids/unicorn.pid`
@@ -121,11 +116,11 @@ RAILS_ENV=production bundle exec unicorn_rails -c config/unicorn.rb -E productio
 
 ### Hot Deploy
 
-When an upgrade requires no migration, ROX Center can be upgraded with no downtime.
+When an upgrade requires no migration, Probe Dock can be upgraded with no downtime.
 The changelog will indicate to which versions this scenario is applicable.
 
 ```bash
-cd /path/to/rox-center
+cd /path/to/probe-dock
 
 # Update the code.
 git pull
