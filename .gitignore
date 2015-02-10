@@ -7,7 +7,7 @@
 /config/initializers/ldap.rb
 /config/redis.yml
 /config/ldap.yml
-/config/rox-center.yml
+/config/probe-dock.yml
 /config/secrets.yml
 /db/test.*
 /doc/app
