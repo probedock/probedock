@@ -1,4 +1,5 @@
 #!/usr/bin/env rake
+# Copyright (c) 2015 42 inside
 # Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of Probe Dock.
