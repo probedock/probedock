@@ -20,7 +20,7 @@ describe SettingsController do
   let(:user){ create :user }
   before(:each){ sign_in user }
 
-  it "should not authorize normal users", rox: { key: '9c54f0e0bacd' } do
+  it "should not authorize normal users", probe_dock: { key: '9c54f0e0bacd' } do
     expect{ get :show }.to raise_error(CanCan::AccessDenied)
     expect{ put :update, setting: { ticketing_system_url: 'http://example.com' } }.to raise_error(CanCan::AccessDenied)
   end
@@ -30,7 +30,7 @@ describe SettingsController do
 
     describe "#show" do
 
-      it "should return the settings as JSON", rox: { key: '358d0dee856e' } do
+      it "should return the settings as JSON", probe_dock: { key: '358d0dee856e' } do
         get :show, format: :json
         expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
@@ -49,20 +49,20 @@ describe SettingsController do
         }
       end
 
-      it "should update the settings", rox: { key: '394fc08c0929' } do
+      it "should update the settings", probe_dock: { key: '394fc08c0929' } do
         put :update, setting: new_values
         expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(new_values))
       end
 
-      it "should ignore the update if any value is invalid", rox: { key: '5606b1076e8b' } do
+      it "should ignore the update if any value is invalid", probe_dock: { key: '5606b1076e8b' } do
         new_values[:test_outdated_days] = -2
         put :update, setting: new_values
         expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(HashWithIndifferentAccess.new(Settings::App.get.serializable_hash))
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: 'dadc01cfce0c' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: 'dadc01cfce0c' } do
         old_values = Settings::App.get.serializable_hash
         set_maintenance_mode
         put :update, setting: new_values

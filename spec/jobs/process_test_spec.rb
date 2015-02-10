@@ -60,39 +60,39 @@ describe TestPayloadProcessing::ProcessTest do
     }
   end
 
-  it "should raise an error if the project API ID is unknown", rox: { key: '7fd99c1b832d' } do
+  it "should raise an error if the project API ID is unknown", probe_dock: { key: '7fd99c1b832d' } do
     cache[:projects].clear
     expect{ process_test }.to raise_error(StandardError, Regexp.new(sample_data[:j]))
   end
 
-  it "should raise an error if the project version is unknown", rox: { key: '7320d15fa554' } do
+  it "should raise an error if the project version is unknown", probe_dock: { key: '7320d15fa554' } do
     cache[:project_versions].clear
     expect{ process_test }.to raise_error(StandardError, Regexp.new(sample_data[:v]))
   end
 
-  it "should raise an error if the test key is unknown", rox: { key: '639a15b41e1a' } do
+  it "should raise an error if the test key is unknown", probe_dock: { key: '639a15b41e1a' } do
     cache[:keys].clear
     expect{ process_test }.to raise_error(StandardError, Regexp.new(sample_data[:k]))
   end
 
-  it "should raise an error if the category is unknown", rox: { key: 'a621563c5597' } do
+  it "should raise an error if the category is unknown", probe_dock: { key: 'a621563c5597' } do
     cache[:categories].clear
     expect{ process_test }.to raise_error(StandardError, Regexp.new(sample_data[:c]))
   end
 
-  it "should raise an error if a tag is unknown", rox: { key: 'cb1de9ada295' } do
+  it "should raise an error if a tag is unknown", probe_dock: { key: 'cb1de9ada295' } do
     cache[:tags].clear
     expect{ process_test }.to raise_error(StandardError, Regexp.new(sample_data[:g].first))
   end
 
-  it "should raise an error if a ticket is unknown", rox: { key: 'f8aa513dba2f' } do
+  it "should raise an error if a ticket is unknown", probe_dock: { key: 'f8aa513dba2f' } do
     cache[:tickets].clear
     expect{ process_test }.to raise_error(StandardError, Regexp.new(sample_data[:t].first))
   end
 
   context "for a new test" do
 
-    it "should create the test", rox: { key: 'e1e22b72b04f' } do
+    it "should create the test", probe_dock: { key: 'e1e22b72b04f' } do
 
       (processed = process_new_test).test.tap do |test|
 
@@ -113,7 +113,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should create a result for the new test", rox: { key: '6dca7bed3193' } do
+    it "should create a result for the new test", probe_dock: { key: '6dca7bed3193' } do
 
       p = nil
       expect{ p = process_new_test }.to change(TestResult, :count).by(1)
@@ -138,7 +138,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should set whether the test and result are passing from passed", rox: { key: 'c4477e2b5377' } do
+    it "should set whether the test and result are passing from passed", probe_dock: { key: 'c4477e2b5377' } do
       sample_data[:p] = false
       process_new_test.tap do |p|
         expect(p.test.passing).to be(false)
@@ -146,7 +146,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should set whether the test and result are active from the flags", rox: { key: 'ebdf4ab41229' } do
+    it "should set whether the test and result are active from the flags", probe_dock: { key: 'ebdf4ab41229' } do
       sample_data[:f] = TestInfo::INACTIVE
       process_new_test.tap do |p|
         expect(p.test.active).to be(false)
@@ -154,47 +154,47 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should set the tags of the test", rox: { key: '9264eca0583a' } do
+    it "should set the tags of the test", probe_dock: { key: '9264eca0583a' } do
       p, tags = nil, cache[:tags]
       expect{ p = process_new_test }.not_to change(Tag, :count)
       expect(p.test.tags).to match_array(tags)
     end
 
-    it "should merge duplicate tags", rox: { key: 'f2d582008cc5' } do
+    it "should merge duplicate tags", probe_dock: { key: 'f2d582008cc5' } do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] * 2).shuffle
       expect{ p = process_new_test }.not_to change(Tag, :count)
       expect(p.test.tags).to match_array(tags)
     end
 
-    it "should merge case-insensitive duplicate tags", rox: { key: '3d2813ba331d' } do
+    it "should merge case-insensitive duplicate tags", probe_dock: { key: '3d2813ba331d' } do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] + sample_data[:g].collect(&:capitalize)).shuffle
       expect{ p = process_new_test }.not_to change(Tag, :count)
       expect(p.test.tags).to match_array(tags)
     end
 
-    it "should set the tickets of the test", rox: { key: 'e7a4a9d94fe1' } do
+    it "should set the tickets of the test", probe_dock: { key: 'e7a4a9d94fe1' } do
       p, tickets = nil, cache[:tickets]
       expect{ p = process_new_test }.not_to change(Ticket, :count)
       expect(p.test.tickets).to match_array(tickets)
     end
 
-    it "should merge duplicate tickets", rox: { key: '16bfda0bc827' } do
+    it "should merge duplicate tickets", probe_dock: { key: '16bfda0bc827' } do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] * 2).shuffle
       expect{ p = process_new_test }.not_to change(Ticket, :count)
       expect(p.test.tickets).to match_array(tickets)
     end
 
-    it "should merge case-insensitive duplicate tickets", rox: { key: '5e9d3c81f217' } do
+    it "should merge case-insensitive duplicate tickets", probe_dock: { key: '5e9d3c81f217' } do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] + sample_data[:t].collect(&:downcase)).shuffle
       expect{ p = process_new_test }.not_to change(Ticket, :count)
       expect(p.test.tickets).to match_array(tickets)
     end
 
-    it "should add new custom values", rox: { key: 'df41161a8092' } do
+    it "should add new custom values", probe_dock: { key: 'df41161a8092' } do
       p = nil
       expect{ p = process_new_test }.to change(TestValue, :count).by(2)
       expect(p.test.custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo }).to eq(sample_data[:a])
@@ -216,7 +216,7 @@ describe TestPayloadProcessing::ProcessTest do
       existing_test.tickets = existing_tickets
     end
 
-    it "should update the test", rox: { key: '6cd74abdea9a' } do
+    it "should update the test", probe_dock: { key: '6cd74abdea9a' } do
 
       (processed = process_existing_test).test.tap do |test|
 
@@ -237,7 +237,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should create a new result for the test", rox: { key: '23489f3c5f0c' } do
+    it "should create a new result for the test", probe_dock: { key: '23489f3c5f0c' } do
 
       p = nil
       expect{ p = process_existing_test }.to change(TestResult, :count).by(1)
@@ -266,7 +266,7 @@ describe TestPayloadProcessing::ProcessTest do
       let(:new_runner){ create :other_user }
       let(:test_run){ create :run, runner: new_runner, ended_at: time_received }
 
-      it "should update the last runner", rox: { key: '924e24036053' } do
+      it "should update the last runner", probe_dock: { key: '924e24036053' } do
 
         (processed = process_existing_test).test.tap do |test|
 
@@ -288,7 +288,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should create a deprecated result if the test is deprecated", rox: { key: '760d40320462' } do
+    it "should create a deprecated result if the test is deprecated", probe_dock: { key: '760d40320462' } do
 
       existing_test.deprecation = create(:deprecation, test_info: existing_test, created_at: 1.day.ago)
 
@@ -315,12 +315,12 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should create a deprecated result if the test was deprecated while the payload was waiting for processing", rox: { key: 'b0b29e19f8e9' } do
+    it "should create a deprecated result if the test was deprecated while the payload was waiting for processing", probe_dock: { key: 'b0b29e19f8e9' } do
       cache[:deprecations] << create(:deprecation, test_info: existing_test, created_at: time_received + 1.minute)
       expect(process_existing_test.test_result.deprecated).to be(true)
     end
 
-    it "should create a non-deprecated result if the test was undeprecated while the payload was waiting for processing", rox: { key: '88cac9b42ffe' } do
+    it "should create a non-deprecated result if the test was undeprecated while the payload was waiting for processing", probe_dock: { key: '88cac9b42ffe' } do
       existing_test.deprecation = create(:deprecation, test_info: existing_test, created_at: 1.day.ago)
       cache[:deprecations] << create(:deprecation, deprecated: false, test_info: existing_test, created_at: time_received + 1.minute)
       expect(process_existing_test.test_result.deprecated).to be(false)
@@ -332,7 +332,7 @@ describe TestPayloadProcessing::ProcessTest do
       context "that is active and successful" do
         let(:existing_test_data){ super().merge passing: true, active: true }
 
-        it "should correctly set previous passed and previous active attributes", rox: { key: '425cf52e8d97' } do
+        it "should correctly set previous passed and previous active attributes", probe_dock: { key: '425cf52e8d97' } do
           expect(result.previous_passed).to be(true)
           expect(result.previous_active).to be(true)
         end
@@ -341,13 +341,13 @@ describe TestPayloadProcessing::ProcessTest do
       context "that has no category" do
         let(:existing_test_data){ super().merge category: nil }
 
-        it "should set the previous category to nil", rox: { key: '0fc984f8825d' } do
+        it "should set the previous category to nil", probe_dock: { key: '0fc984f8825d' } do
           expect(result.previous_category).to be_nil
         end
       end
     end
 
-    it "should not change the name if not set", rox: { key: 'acc2289031aa' } do
+    it "should not change the name if not set", probe_dock: { key: 'acc2289031aa' } do
       new_name = sample_data.delete :n
       process_existing_test.test.name.tap do |name|
         expect(name).not_to eq(new_name)
@@ -355,7 +355,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should set whether the test and result are passing from passed", rox: { key: '8252b6785dad' } do
+    it "should set whether the test and result are passing from passed", probe_dock: { key: '8252b6785dad' } do
       sample_data[:p] = false
       process_existing_test.tap do |p|
         expect(p.test.passing).to be(false)
@@ -363,7 +363,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should set whether the test and result are active from the flags", rox: { key: '527e2ee42826' } do
+    it "should set whether the test and result are active from the flags", probe_dock: { key: '527e2ee42826' } do
       sample_data[:f] = TestInfo::INACTIVE
       process_existing_test.tap do |p|
         expect(p.test.active).to be(false)
@@ -371,12 +371,12 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should not change whether the test is active if the flags are not set", rox: { key: '0f8679dba515' } do
+    it "should not change whether the test is active if the flags are not set", probe_dock: { key: '0f8679dba515' } do
       sample_data.delete :f
       expect(process_existing_test.test.active).to be(false)
     end
 
-    it "should not change the category if not set", rox: { key: '2dc39138d9d0' } do
+    it "should not change the category if not set", probe_dock: { key: '2dc39138d9d0' } do
       new_category = sample_data.delete :c
       process_existing_test.tap do |p|
         expect(p.test.category).not_to eq(new_category)
@@ -385,7 +385,7 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should remove the category if set to null", rox: { key: '7817f3d84427' } do
+    it "should remove the category if set to null", probe_dock: { key: '7817f3d84427' } do
       expect(existing_test.category).not_to be_nil
       sample_data[:c] = nil
       process_existing_test.tap do |p|
@@ -394,73 +394,73 @@ describe TestPayloadProcessing::ProcessTest do
       end
     end
 
-    it "should update the tags of the test", rox: { key: 'f1b7f24db0f2' } do
+    it "should update the tags of the test", probe_dock: { key: 'f1b7f24db0f2' } do
       p, tags = nil, cache[:tags]
       expect{ p = process_existing_test }.not_to change(Tag, :count)
       expect(p.test.tags).to match_array(tags)
     end
 
-    it "should not change the tags if not set", rox: { key: '64f8246d3bd5' } do
+    it "should not change the tags if not set", probe_dock: { key: '64f8246d3bd5' } do
       tags = existing_test.tags.dup
       expect(tags).not_to be_empty
       sample_data.delete :g
       expect(process_existing_test.test.tags).to match_array(tags)
     end
 
-    it "should empty the tags if given an empty array", rox: { key: '319e8d430e02' } do
+    it "should empty the tags if given an empty array", probe_dock: { key: '319e8d430e02' } do
       expect(existing_test.tags).not_to be_empty
       sample_data[:g] = []
       expect(process_existing_test.test.tags).to be_empty
     end
 
-    it "should merge duplicate tags", rox: { key: '261c76b19c7a' } do
+    it "should merge duplicate tags", probe_dock: { key: '261c76b19c7a' } do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] * 2).shuffle
       expect{ p = process_existing_test }.not_to change(Tag, :count)
       expect(p.test.tags).to match_array(tags)
     end
 
-    it "should merge case-insensitive duplicate tags", rox: { key: '42eac83058cb' } do
+    it "should merge case-insensitive duplicate tags", probe_dock: { key: '42eac83058cb' } do
       p, tags = nil, cache[:tags]
       sample_data[:g] = (sample_data[:g] + sample_data[:g].collect(&:capitalize)).shuffle
       expect{ p = process_existing_test }.not_to change(Tag, :count)
       expect(p.test.tags).to match_array(tags)
     end
 
-    it "should update the tickets of the test", rox: { key: '40bb4a98a77f' } do
+    it "should update the tickets of the test", probe_dock: { key: '40bb4a98a77f' } do
       p, tickets = nil, cache[:tickets]
       expect{ p = process_existing_test }.not_to change(Ticket, :count)
       expect(p.test.tickets).to match_array(tickets)
     end
 
-    it "should not change the tickets if not set", rox: { key: 'cf513fba9b09' } do
+    it "should not change the tickets if not set", probe_dock: { key: 'cf513fba9b09' } do
       tickets = existing_test.tickets.dup
       expect(tickets).not_to be_empty
       sample_data.delete :t
       expect(process_existing_test.test.tickets).to match_array(tickets)
     end
 
-    it "should empty the tickets if given an empty array", rox: { key: 'f30d148cd860' } do
+    it "should empty the tickets if given an empty array", probe_dock: { key: 'f30d148cd860' } do
       expect(existing_test.tickets).not_to be_empty
       sample_data[:t] = []
       expect(process_existing_test.test.tickets).to be_empty
     end
 
-    it "should merge duplicate tickets", rox: { key: 'a43d321f2bea' } do
+    it "should merge duplicate tickets", probe_dock: { key: 'a43d321f2bea' } do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] * 2).shuffle
       expect{ p = process_existing_test }.not_to change(Ticket, :count)
       expect(p.test.tickets).to match_array(tickets)
     end
 
-    it "should merge case-insensitive duplicate tickets", rox: { key: '0e5e6b8bb698' } do
+    it "should merge case-insensitive duplicate tickets", probe_dock: { key: '0e5e6b8bb698' } do
       p, tickets = nil, cache[:tickets]
       sample_data[:t] = (sample_data[:t] + sample_data[:t].collect(&:downcase)).shuffle
       expect{ p = process_existing_test }.not_to change(Ticket, :count)
       expect(p.test.tickets).to match_array(tickets)
     end
 
-    it "should add new custom values and modify existing ones", rox: { key: '077f7c1e5701' } do
+    it "should add new custom values and modify existing ones", probe_dock: { key: '077f7c1e5701' } do
       p, custom_values = nil, cache[:custom_values]
       expect{ p = process_existing_test }.to change(TestValue, :count).by(1)
       expect(p.test.custom_values.inject({}){ |memo,v| memo[v.name] = v.contents; memo }).to eq(sample_data[:a].stringify_keys)

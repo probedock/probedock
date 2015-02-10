@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe LatestProjectsData do
 
-  it "should clear the :latest_projects cache on the api:payload event", rox: { key: 'f8b75285898e' } do
+  it "should clear the :latest_projects cache on the api:payload event", probe_dock: { key: 'f8b75285898e' } do
     expect(JsonCache).to receive(:clear).with(:latest_projects)
     described_class.fire 'api:payload', double
   end

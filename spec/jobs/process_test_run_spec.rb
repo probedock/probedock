@@ -60,12 +60,12 @@ describe TestPayloadProcessing::ProcessTestRun do
     allow(Rails.application.events).to receive(:fire)
   end
 
-  it "should process all tests in the test run", rox: { key: 'b6e8e058ea28' } do
+  it "should process all tests in the test run", probe_dock: { key: 'b6e8e058ea28' } do
     expect(TestPayloadProcessing::ProcessTest).to receive(:new).exactly(3).times
     expect(process_test_run.processed_tests).to match_array(processed_tests)
   end
 
-  it "should enrich test data with project and version", rox: { key: '0c55f491f8e5' } do
+  it "should enrich test data with project and version", probe_dock: { key: '0c55f491f8e5' } do
 
     additional_test_data = sample_payload[:r][0].pick :j, :v
     expect(TestPayloadProcessing::ProcessTest).to receive(:new).ordered.with(sample_payload[:r][0][:t][0].merge(additional_test_data), kind_of(TestRun), cache)
@@ -77,7 +77,7 @@ describe TestPayloadProcessing::ProcessTestRun do
     process_test_run
   end
 
-  it "should create a test run", rox: { key: 'cd4aa66e9735' } do
+  it "should create a test run", probe_dock: { key: 'cd4aa66e9735' } do
     run = nil
     expect{ run = process_test_run.test_run }.to change(TestRun, :count).by(1)
     expect(run.runner).to eq(user)
@@ -87,7 +87,7 @@ describe TestPayloadProcessing::ProcessTestRun do
     expect(run.duration).to eq(sample_payload[:d].to_i)
   end
 
-  it "should create a test run without UID or group", rox: { key: '66f36d48f1f6' } do
+  it "should create a test run without UID or group", probe_dock: { key: '66f36d48f1f6' } do
     run = nil
     sample_payload.omit! :u, :g
     expect{ run = process_test_run.test_run }.to change(TestRun, :count).by(1)
@@ -98,17 +98,17 @@ describe TestPayloadProcessing::ProcessTestRun do
     expect(run.duration).to eq(sample_payload[:d].to_i)
   end
 
-  it "should trigger an api:test_run event on the application", rox: { key: '06493acd8c6a' } do
+  it "should trigger an api:test_run event on the application", probe_dock: { key: '06493acd8c6a' } do
     expect(Rails.application.events).to receive(:fire).with('api:test_run', kind_of(TestPayloadProcessing::ProcessTestRun))
     process_test_run
   end
 
-  it "should update the runner's last run", rox: { key: '62d2fe542535' } do
+  it "should update the runner's last run", probe_dock: { key: '62d2fe542535' } do
     run = process_test_run.test_run
     expect(user.last_run).to eq(run)
   end
 
-  it "should correctly set the run's cached counters", rox: { key: '5fdac6019cb7' } do
+  it "should correctly set the run's cached counters", probe_dock: { key: '5fdac6019cb7' } do
 
     # Add 3 tests for a total of 6.
     3.times{ sample_payload[:r][1][:t] << { k: fake_test_key } }
@@ -143,7 +143,7 @@ describe TestPayloadProcessing::ProcessTestRun do
       sample_payload.merge! u: existing_run.uid, g: existing_run.group
     end
 
-    it "should re-use the same test run", rox: { key: '3a2390905ed1' } do
+    it "should re-use the same test run", probe_dock: { key: '3a2390905ed1' } do
       run = nil
       expect{ run = process_test_run.test_run }.not_to change(TestRun, :count)
       expect(run).to eq(existing_run)
@@ -154,7 +154,7 @@ describe TestPayloadProcessing::ProcessTestRun do
       expect(run.duration).to eq(sample_payload[:d].to_i)
     end
 
-    it "should update the test run", rox: { key: 'f3d4792006ac' } do
+    it "should update the test run", probe_dock: { key: 'f3d4792006ac' } do
       sample_payload[:g] = 'Another group'
       sample_payload[:d] = sample_payload[:d] * 2
       process_test_run.test_run.tap do |run|
@@ -164,7 +164,7 @@ describe TestPayloadProcessing::ProcessTestRun do
       end
     end
 
-    it "should correctly set the run's cached counters", rox: { key: 'af6fdab108f9' } do
+    it "should correctly set the run's cached counters", probe_dock: { key: 'af6fdab108f9' } do
 
       existing_run.update_attribute :results_count, 4
       existing_run.update_attribute :passed_results_count, 3

@@ -39,27 +39,27 @@ describe("TestRun", function() {
   });
 
   it("should use its self link as its url", function() {
-    this.meta = { rox: { key: 'f4175d454c24' } };
+    this.meta = { probeDock: { key: 'f4175d454c24' } };
     expect(testRun.url()).toBe('http://example.com/runForrestRun');
   });
 
   it("should have a total count of 100", function() {
-    this.meta = { rox: { key: '88b9f44038c0' } };
+    this.meta = { probeDock: { key: '88b9f44038c0' } };
     expect(testRun.totalCount()).toBe(100);
   });
 
   it("should have a passed count of 64", function() {
-    this.meta = { rox: { key: 'f73d07f922a9' } };
+    this.meta = { probeDock: { key: 'f73d07f922a9' } };
     expect(testRun.passedCount()).toBe(64);
   });
 
   it("should have a failed count of 28", function() {
-    this.meta = { rox: { key: '8e2b359fc526' } };
+    this.meta = { probeDock: { key: '8e2b359fc526' } };
     expect(testRun.failedCount()).toBe(28);
   });
 
   it("should have an inactive count of 8", function() {
-    this.meta = { rox: { key: '5f5f977e7c54' } };
+    this.meta = { probeDock: { key: '5f5f977e7c54' } };
     expect(testRun.inactiveCount()).toBe(8);
   });
 });

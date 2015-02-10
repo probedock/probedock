@@ -24,11 +24,11 @@ describe RoxHook do
     ]
   }
 
-  it "should have all hooks registered", rox: { key: 'c0f472250ab4' } do
+  it "should have all hooks registered", probe_dock: { key: 'c0f472250ab4' } do
     expect(described_class.hooks).to match_array(hooks)
   end
 
-  it "should forward application events to all hooks", rox: { key: '5e0afd9d3056' } do
+  it "should forward application events to all hooks", probe_dock: { key: '5e0afd9d3056' } do
     hooks.each{ |hook| expect(hook).to receive(:fire).with('event', foo: 'bar') }
     Rails.application.events.fire 'event', foo: 'bar'
   end

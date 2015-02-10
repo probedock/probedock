@@ -16,14 +16,14 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe ProjectRepresenter, rox: { tags: :unit } do
+describe ProjectRepresenter, probe_dock: { tags: :unit } do
 
   let(:project){ create :project, tests_count: 3, deprecated_tests_count: 1 }
   subject{ ProjectRepresenter.new(project).serializable_hash }
 
-  it(nil, rox: { key: '927ffaa9b765' }){ should hyperlink_to('self', api_uri(:project, id: project.api_id)) }
+  it(nil, probe_dock: { key: '927ffaa9b765' }){ should hyperlink_to('self', api_uri(:project, id: project.api_id)) }
 
-  it(nil, rox: { key: 'ddaf8ad424d5' }) do
+  it(nil, probe_dock: { key: 'ddaf8ad424d5' }) do
     should have_only_properties({
       name: project.name,
       apiId: project.api_id,

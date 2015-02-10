@@ -21,7 +21,7 @@ describe AdminController do
 
   describe "#index" do
 
-    describe "access", rox: { key: '9a1956e600e6', grouped: true } do
+    describe "access", probe_dock: { key: '9a1956e600e6', grouped: true } do
       it_should_behave_like "an admin resource", ->(*args){ get :index }
     end
 
@@ -31,15 +31,15 @@ describe AdminController do
       before(:each){ get :index }
       subject{ assigns }
 
-      it "should set the window title", rox: { key: 'b3fdaf4c723a' } do
+      it "should set the window title", probe_dock: { key: 'b3fdaf4c723a' } do
         expect(subject[:window_title]).to eq([ t('common.title'), t('admin.index.title') ])
       end
 
-      it "should fetch status data", rox: { key: '1c2b01c71d98' } do
+      it "should fetch status data", probe_dock: { key: '1c2b01c71d98' } do
         expect(subject[:status_data]).to eq(StatusData.compute)
       end
 
-      it "should set the test counters configuration", rox: { key: '58b561514050' } do
+      it "should set the test counters configuration", probe_dock: { key: '58b561514050' } do
         expect(subject[:test_counters_config]).to eq(data: TestCountersData.compute)
       end
     end
@@ -47,7 +47,7 @@ describe AdminController do
 
   describe "#settings" do
     
-    describe "access", rox: { key: '7e1768638600', grouped: true } do
+    describe "access", probe_dock: { key: '7e1768638600', grouped: true } do
       it_should_behave_like "an admin resource", ->(*args){ get :settings }
     end
 
@@ -58,11 +58,11 @@ describe AdminController do
       before(:each){ get :settings }
       subject{ assigns }
 
-      it "should set the window title", rox: { key: '15975da9031a' } do
+      it "should set the window title", probe_dock: { key: '15975da9031a' } do
         expect(subject[:window_title]).to eq([ t('common.title'), t('admin.settings.title') ])
       end
 
-      it "should set the link templates configuration", rox: { key: '7c645e599730' } do
+      it "should set the link templates configuration", probe_dock: { key: '7c645e599730' } do
         expect(subject[:link_templates_config]).to eq(link_templates.sort_by(&:created_at))
       end
     end

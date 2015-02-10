@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe CurrentTestMetricsData do
 
-  it "should clear the :current_test_metrics_data cache on the test:counters event", rox: { key: '50c2224187f7' } do
+  it "should clear the :current_test_metrics_data cache on the test:counters event", probe_dock: { key: '50c2224187f7' } do
     expect(JsonCache).to receive(:clear).with(:current_test_metrics_data)
     described_class.fire 'test:counters'
   end

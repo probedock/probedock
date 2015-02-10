@@ -20,7 +20,7 @@ describe JsonCache do
   let(:contents){ 'bar' }
   let(:generator){ double fetch: contents }
 
-  it "should serialize contents as json", rox: { key: 'a0ebf9eac6c5' } do
+  it "should serialize contents as json", probe_dock: { key: 'a0ebf9eac6c5' } do
     expect(JsonCache.new(:foo){ 'bar' }.get.to_json).to eq(MultiJson.dump('bar', mode: :strict))
     expect(JsonCache.new(:fooo){ [ 'a', 'b' ] }.get.to_json).to eq(MultiJson.dump([ 'a', 'b' ], mode: :strict))
     expect(JsonCache.new(:foooo){ { 'a' => 'b' } }.get.to_json).to eq(MultiJson.dump({ 'a' => 'b' }, mode: :strict))
@@ -30,29 +30,29 @@ describe JsonCache do
 
     subject{ JsonCache.new(:foo){ generator.fetch } }
 
-    it "should call the block the first time", rox: { key: 'e8bc7aca3851' } do
+    it "should call the block the first time", probe_dock: { key: 'e8bc7aca3851' } do
       expect(generator).to receive(:fetch)
       subject.get
     end
 
-    it "should cache the value returned by the block", rox: { key: 'acf355a40ac0' } do
+    it "should cache the value returned by the block", probe_dock: { key: 'acf355a40ac0' } do
       subject.get
       expect(generator).not_to receive(:fetch)
       subject.get
     end
 
-    it "should call the block again after being cleared", rox: { key: '294e6b0f3152' } do
+    it "should call the block again after being cleared", probe_dock: { key: '294e6b0f3152' } do
       subject.get
       expect(generator).to receive(:fetch)
       subject.clear
       subject.get
     end
 
-    it "should return the contents as json", rox: { key: 'ca756ee7eeb4' } do
+    it "should return the contents as json", probe_dock: { key: 'ca756ee7eeb4' } do
       expect(subject.get.to_json).to eq(MultiJson.dump(contents, mode: :strict))
     end
 
-    it "should return the original contents", rox: { key: '18dcc69073ca' } do
+    it "should return the original contents", probe_dock: { key: '18dcc69073ca' } do
       expect(subject.get.contents).to eq(contents)
     end
   end
@@ -60,7 +60,7 @@ describe JsonCache do
   describe "with the expire option" do
     subject{ JsonCache.new(:foo, expire: 30.minutes){ generator.fetch } }
 
-    it "should expire the contents", rox: { key: 'f419086b27ec' } do
+    it "should expire the contents", probe_dock: { key: 'f419086b27ec' } do
       expect($redis).to receive(:expire).with('cache:json:foo', 30.minutes.to_i)
       subject.get
     end
@@ -69,7 +69,7 @@ describe JsonCache do
   describe "with the expire option set by the block" do
     subject{ JsonCache.new(:foo){ |options| options[:expire] = 42; generator.fetch } }
 
-    it "should expire the contents", rox: { key: 'bcdf5bab7b42' } do
+    it "should expire the contents", probe_dock: { key: 'bcdf5bab7b42' } do
       expect($redis).to receive(:expire).with('cache:json:foo', 42)
       subject.get
     end

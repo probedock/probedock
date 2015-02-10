@@ -17,41 +17,41 @@
 # encoding: UTF-8
 require 'spec_helper'
 
-describe Tag, rox: { tags: :unit } do
+describe Tag, probe_dock: { tags: :unit } do
 
   context "#to_param" do
 
-    it "should return the name", rox: { key: '2eed86e197e2' } do
+    it "should return the name", probe_dock: { key: '2eed86e197e2' } do
       tag = create :unit_tag
       expect(tag.to_param).to eq(tag.name)
     end
   end
 
   context "validations" do
-    it(nil, rox: { key: 'bd99f663c361' }){ should validate_presence_of(:name) }
-    it(nil, rox: { key: '48e4e5d511b8' }){ should ensure_length_of(:name).is_at_most(50) }
-    it(nil, rox: { key: '4d3ee76ace2c' }){ should allow_value('unit', 'integration', 'FLOW', '098', 'my-tag', 'under_scored').for(:name) }
-    it(nil, rox: { key: '70333ff9d379' }){ should_not allow_value('$$$', 'tag with space').for(:name) }
+    it(nil, probe_dock: { key: 'bd99f663c361' }){ should validate_presence_of(:name) }
+    it(nil, probe_dock: { key: '48e4e5d511b8' }){ should ensure_length_of(:name).is_at_most(50) }
+    it(nil, probe_dock: { key: '4d3ee76ace2c' }){ should allow_value('unit', 'integration', 'FLOW', '098', 'my-tag', 'under_scored').for(:name) }
+    it(nil, probe_dock: { key: '70333ff9d379' }){ should_not allow_value('$$$', 'tag with space').for(:name) }
 
     context "with an existing tag" do
 
       let!(:tag){ create :unit_tag }
 
-      it(nil, rox: { key: '193b8fba796c' }){ should validate_uniqueness_of(:name).case_insensitive }
+      it(nil, probe_dock: { key: '193b8fba796c' }){ should validate_uniqueness_of(:name).case_insensitive }
 
-      it "should not validate the uniqueness of name with quick validation", rox: { key: '5a54a294e171' } do
+      it "should not validate the uniqueness of name with quick validation", probe_dock: { key: '5a54a294e171' } do
         expect{ Tag.new.tap{ |t| t.name = tag.name; t.quick_validation = true }.save! }.to raise_unique_error
       end
     end
   end
 
   context "associations" do
-    it(nil, rox: { key: '37d108f64ecf' }){ should have_and_belong_to_many(:test_infos) }
+    it(nil, probe_dock: { key: '37d108f64ecf' }){ should have_and_belong_to_many(:test_infos) }
   end
 
   context "database table" do
-    it(nil, rox: { key: '9769e493bce9' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, rox: { key: '308268b6ab43' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
-    it(nil, rox: { key: 'e50992d6d9bc' }){ should have_db_index(:name).unique(true) }
+    it(nil, probe_dock: { key: '9769e493bce9' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
+    it(nil, probe_dock: { key: '308268b6ab43' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
+    it(nil, probe_dock: { key: 'e50992d6d9bc' }){ should have_db_index(:name).unique(true) }
   end
 end

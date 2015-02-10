@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe ApiKeysRepresenter, rox: { tags: :unit } do
+describe ApiKeysRepresenter, probe_dock: { tags: :unit } do
 
   let(:user){ create :user }
   let!(:additional_api_keys){ Array.new(2){ create :api_key, user: user } }
@@ -24,8 +24,8 @@ describe ApiKeysRepresenter, rox: { tags: :unit } do
   let(:options){ { total: api_keys.length, page: 1 } }
   subject{ ApiKeysRepresenter.new(OpenStruct.new(options.merge(data: api_keys))).serializable_hash }
 
-  it(nil, rox: { key: 'b663d63e7ae9' }){ should have_no_curie }
-  it(nil, rox: { key: '8d36660525ae' }){ should hyperlink_to('self', uri(:api_keys, locale: nil)) }
-  it(nil, rox: { key: '6eee4137f82f' }){ should have_only_properties(total: 3, page: 1) }
-  it(nil, rox: { key: '833b8ec53b7b' }){ should have_embedded('item', api_keys.collect{ |k| ApiKeyRepresenter.new(k).serializable_hash }) }
+  it(nil, probe_dock: { key: 'b663d63e7ae9' }){ should have_no_curie }
+  it(nil, probe_dock: { key: '8d36660525ae' }){ should hyperlink_to('self', uri(:api_keys, locale: nil)) }
+  it(nil, probe_dock: { key: '6eee4137f82f' }){ should have_only_properties(total: 3, page: 1) }
+  it(nil, probe_dock: { key: '833b8ec53b7b' }){ should have_embedded('item', api_keys.collect{ |k| ApiKeyRepresenter.new(k).serializable_hash }) }
 end

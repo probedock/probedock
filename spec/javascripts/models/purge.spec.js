@@ -39,19 +39,19 @@ describe("Purge", function() {
   });
 
   it("should use the v1:purges link as its url", function() {
-    this.meta = { rox: { key: 'e3d6febdfb09' } };
+    this.meta = { probeDock: { key: 'e3d6febdfb09' } };
     spyOn(App.apiRoot, 'fetchHalUrl').andReturn('http://example.com');
     expect(purge.url()).toBe('http://example.com');
     expect(App.apiRoot.fetchHalUrl).toHaveBeenCalledWith([ 'self', 'v1:purges' ]);
   });
 
   it("should return its translated name", function() {
-    this.meta = { rox: { key: '4f3c5fa94a84' } };
+    this.meta = { probeDock: { key: '4f3c5fa94a84' } };
     expect(purge.name()).toBe(I18n.t('jst.purge.info.tags.name'));
   });
 
   it("should indicate whether data can be purged", function() {
-    this.meta = { rox: { key: '6b0194ab8f6a' } };
+    this.meta = { probeDock: { key: '6b0194ab8f6a' } };
     purge.set({ numberRemaining: 0 });
     expect(purge.isPurgeable()).toBe(false);
     purge.set({ numberRemaining: 42 });
@@ -100,25 +100,25 @@ describe("Purges", function() {
   }
 
   it("should return its self link as its url", function() {
-    this.meta = { rox: { key: '1aa10398296e' } };
+    this.meta = { probeDock: { key: '1aa10398296e' } };
     purges.set(makePurges([]));
     expect(purges.url()).toBe('http://example.com');
   });
 
   it("should use the v1:purges link as its url when not saved", function() {
-    this.meta = { rox: { key: '46f50cdf5b32' } };
+    this.meta = { probeDock: { key: '46f50cdf5b32' } };
     spyOn(App.apiRoot, 'fetchHalUrl').andReturn('http://example.com/foo');
     expect(purges.url()).toBe('http://example.com/foo');
     expect(App.apiRoot.fetchHalUrl).toHaveBeenCalledWith([ 'self', 'v1:purges' ]);
   });
 
   it("should use the Purge model", function() {
-    this.meta = { rox: { key: '7a49f2b970ce' } };
+    this.meta = { probeDock: { key: '7a49f2b970ce' } };
     expect(getEmbeddedRelation(Purges, 'item').relatedModel).toBe(Purge);
   });
 
   it("should indicate whether data can be purged", function() {
-    this.meta = { rox: { key: '2177eaa0532d' } };
+    this.meta = { probeDock: { key: '2177eaa0532d' } };
 
     // no data
     expect(purges.isPurgeable()).toBe(false);

@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe LegacyTestKeysRepresenter, rox: { tags: :unit } do
+describe LegacyTestKeysRepresenter, probe_dock: { tags: :unit } do
 
   let(:user){ create :user }
   let(:projects){ Array.new(2){ create :project } }
@@ -24,14 +24,14 @@ describe LegacyTestKeysRepresenter, rox: { tags: :unit } do
   let(:options){ { total: 5, data: test_keys } }
   subject{ described_class.new(OpenStruct.new(options)).serializable_hash }
 
-  it(nil, rox: { key: '193150eaff1d' }){ should hyperlink_to('self', api_uri(:legacy_test_keys)) }
-  it(nil, rox: { key: '2f02fc1d10bb' }){ should have_embedded('v1:test-keys', test_keys.collect{ |k| TestKeyRepresenter.new(k).serializable_hash }) }
-  it(nil, rox: { key: '59187950847d' }){ should have_only_properties(total: 5) }
-  it(nil, rox: { key: 'a7edd65d01ab' }){ should have_curie(name: 'v1', templated: true, href: "#{uri(:doc_api_relation, name: 'v1')}:testKeys:{rel}") }
+  it(nil, probe_dock: { key: '193150eaff1d' }){ should hyperlink_to('self', api_uri(:legacy_test_keys)) }
+  it(nil, probe_dock: { key: '2f02fc1d10bb' }){ should have_embedded('v1:test-keys', test_keys.collect{ |k| TestKeyRepresenter.new(k).serializable_hash }) }
+  it(nil, probe_dock: { key: '59187950847d' }){ should have_only_properties(total: 5) }
+  it(nil, probe_dock: { key: 'a7edd65d01ab' }){ should have_curie(name: 'v1', templated: true, href: "#{uri(:doc_api_relation, name: 'v1')}:testKeys:{rel}") }
 
   context "with a page number" do
     let(:options){ super().merge page: 1 }
 
-    it(nil, rox: { key: 'a93a6f8ae6a4' }){ should have_only_properties(total: 5, page: 1) }
+    it(nil, probe_dock: { key: 'a93a6f8ae6a4' }){ should have_only_properties(total: 5, page: 1) }
   end
 end

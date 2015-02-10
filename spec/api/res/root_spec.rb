@@ -17,12 +17,12 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe "API root", rox: { tags: :unit } do
+describe "API root", probe_dock: { tags: :unit } do
 
   let(:user){ create :user }
   subject{ api_get user, api_path }
 
-  it "should have the correct representation", rox: { key: '2deae8e48068' } do
+  it "should have the correct representation", probe_dock: { key: '2deae8e48068' } do
     expect(subject).to eq(ApiRootRepresenter.new(Ability.new(user)).serializable_hash)
   end
 end

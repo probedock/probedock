@@ -16,9 +16,9 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TestPayloadRepresenter, rox: { tags: :unit } do
+describe TestPayloadRepresenter, probe_dock: { tags: :unit } do
 
-  it "should serialize basic properties", rox: { key: 'dcc6aef9a144' } do
+  it "should serialize basic properties", probe_dock: { key: 'dcc6aef9a144' } do
     payload = create :test_payload
     expect(representation(payload)).to hyperlink_to('self', api_uri(:test_payload, id: payload.id))
     expect(representation(payload)).to have_only_properties(common_properties(payload))
@@ -27,7 +27,7 @@ describe TestPayloadRepresenter, rox: { tags: :unit } do
     }))
   end
 
-  it "should serialize a payload in processing state", rox: { key: 'bcf30dec3ce9' } do
+  it "should serialize a payload in processing state", probe_dock: { key: 'bcf30dec3ce9' } do
     payload = create :processing_test_payload
     expect(representation(payload)).to hyperlink_to('self', api_uri(:test_payload, id: payload.id))
     expect(representation(payload)).to have_only_properties(common_properties(payload).merge(processingAt: payload.processing_at.to_ms))
@@ -37,7 +37,7 @@ describe TestPayloadRepresenter, rox: { tags: :unit } do
     }))
   end
 
-  it "should serialize a payload in processed state", rox: { key: '5be656752f67' } do
+  it "should serialize a payload in processed state", probe_dock: { key: '5be656752f67' } do
     payload = create :processed_test_payload
     expect(representation(payload)).to hyperlink_to('self', api_uri(:test_payload, id: payload.id))
     expect(representation(payload)).to have_only_properties(common_properties(payload).merge(processingAt: payload.processing_at.to_ms, processedAt: payload.processed_at.to_ms))

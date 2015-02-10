@@ -48,22 +48,22 @@ describe("Project", function() {
   });
 
   it("should use its API ID as the ID", function() {
-    this.meta = { rox: { key: '3fc6d0a5a965'} };
+    this.meta = { probeDock: { key: '3fc6d0a5a965'} };
     expect(project.id).toBe(projectBase.apiId);
   });
 
   it("should have many test keys", function() {
-    this.meta = { rox: { key: 'b40c06fb3d4a' } };
+    this.meta = { probeDock: { key: 'b40c06fb3d4a' } };
     expect(Project).toHaveBackboneRelation({ type: Backbone.HasMany, key: 'freeTestKeys', relatedModel: 'TestKey', includeInJSON: false });
   });
 
   it("should return its self link as its url", function() {
-    this.meta = { rox: { key: '0b348a2dd438' } };
+    this.meta = { probeDock: { key: '0b348a2dd438' } };
     expect(project.url()).toBe('http://example.com/project');
   });
 
   it("should build a link tag for its alternate path", function() {
-    this.meta = { rox: { key: '28f0306f5568' } };
+    this.meta = { probeDock: { key: '28f0306f5568' } };
     expect(project.linkTag()).toLinkTo('http://example.com/project.html', projectBase.name);
   });
 });
@@ -74,7 +74,7 @@ describe("Projects", function() {
       Projects = App.models.Projects;
 
   it("should use the Project model", function() {
-    this.meta = { rox: { key: 'd59a735a0cc6' } };
+    this.meta = { probeDock: { key: 'd59a735a0cc6' } };
     expect(getEmbeddedRelation(Projects, 'item').relatedModel).toBe(Project);
   });
 });

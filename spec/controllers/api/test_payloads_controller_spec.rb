@@ -19,7 +19,7 @@ require 'spec_helper'
 describe Api::TestPayloadsController do
   let(:user){ create :user }
 
-  it "should not authorize unauthenticated users", rox: { key: '752a7db0dc8b' } do
+  it "should not authorize unauthenticated users", probe_dock: { key: '752a7db0dc8b' } do
     get :show, id: 42
     expect(response.status).to eq(401)
   end
@@ -28,7 +28,7 @@ describe Api::TestPayloadsController do
     let(:test_payload){ create :test_payload, user: user, contents: MultiJson.dump(foo: 'bar') }
     before(:each){ sign_in user }
 
-    it "should serialize a test payload", rox: { key: 'bce644d4907e' } do
+    it "should serialize a test payload", probe_dock: { key: 'bce644d4907e' } do
       get :show, id: test_payload.id
       expect(response.status).to eq(200)
       expect(MultiJson.load(response.body)).to eq(TestPayloadRepresenter.new(test_payload, detailed: true).serializable_hash)

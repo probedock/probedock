@@ -31,7 +31,7 @@ describe("TestKeys", function() {
       TestKeys = App.models.TestKeys;
 
   it("should use the TestKey model", function() {
-    this.meta = { rox: { key: '48882a47a6a7' } };
+    this.meta = { probeDock: { key: '48882a47a6a7' } };
     expect(getEmbeddedRelation(TestKeys, 'item').relatedModel).toBe(TestKey);
   });
 });

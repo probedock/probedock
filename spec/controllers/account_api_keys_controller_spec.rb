@@ -16,10 +16,10 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe AccountApiKeysController, rox: { tags: :unit } do
+describe AccountApiKeysController, probe_dock: { tags: :unit } do
   let(:user){ create :user }
 
-  it "should not authenticate clients with api keys", rox: { key: '02331e558e38' } do
+  it "should not authenticate clients with api keys", probe_dock: { key: '02331e558e38' } do
     key = user.api_keys.first
     request.env['HTTP_AUTHORIZATION'] = %/RoxApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/
     get :index
@@ -31,7 +31,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
 
     describe "#create" do
 
-      it "should create an api key for the current user", rox: { key: 'e39606279c85' } do
+      it "should create an api key for the current user", probe_dock: { key: 'e39606279c85' } do
         existing_key = user.api_keys.first
         expect{ post :create }.to change(ApiKey, :count).by(1)
         expect(user.api_keys).to have(2).items
@@ -39,7 +39,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
         expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new((user.api_keys - [ existing_key ]).first).serializable_hash)
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: '72bb0bf723e4' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: '72bb0bf723e4' } do
         set_maintenance_mode
         expect{ post :create }.not_to change(ApiKey, :count)
         expect(response.status).to eq(503)
@@ -48,20 +48,20 @@ describe AccountApiKeysController, rox: { tags: :unit } do
 
     describe "#show" do
 
-      it "should show a detailed api key", rox: { key: '3c157dc6c596' } do
+      it "should show a detailed api key", probe_dock: { key: '3c157dc6c596' } do
         key = user.api_keys.first
         get :show, id: key.identifier
         expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new(key, detailed: true).serializable_hash)
       end
 
-      it "should work in maintenance mode", rox: { key: '7f71dcef0f27' } do
+      it "should work in maintenance mode", probe_dock: { key: '7f71dcef0f27' } do
         set_maintenance_mode
         get :show, id: user.api_keys.first.identifier
         expect(response.success?).to be(true)
       end
 
-      it "should not give access to other users' keys", rox: { key: '417d9239cbbe' } do
+      it "should not give access to other users' keys", probe_dock: { key: '417d9239cbbe' } do
         other_key = create(:other_user).api_keys.first
         get :show, id: other_key.identifier
         assert_response :not_found
@@ -70,7 +70,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
 
     describe "#update" do
 
-      it "should update an api key", rox: { key: '6444cd3c2e91' } do
+      it "should update an api key", probe_dock: { key: '6444cd3c2e91' } do
         key = user.api_keys.first
         put :update, id: key.identifier, account_api_key: { active: false }
         expect(response.success?).to be(true)
@@ -78,7 +78,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
         expect(MultiJson.load(response.body)).to eq(ApiKeyRepresenter.new(key).serializable_hash)
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: '8a7b243b8ddd' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: '8a7b243b8ddd' } do
         set_maintenance_mode
         key = user.api_keys.first
         put :update, id: key.identifier, account_api_key: { active: false }
@@ -89,14 +89,14 @@ describe AccountApiKeysController, rox: { tags: :unit } do
 
     describe "#destroy" do
 
-      it "should destroy an api key", rox: { key: '41cc158c1010' } do
+      it "should destroy an api key", probe_dock: { key: '41cc158c1010' } do
         key = user.api_keys.first
         expect{ delete :destroy, id: key.identifier }.to change(ApiKey, :count).by(-1)
         expect(response.status).to eq(204)
         expect(user.tap(&:reload).api_keys).to be_empty
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: '2f0c7d8849f7' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: '2f0c7d8849f7' } do
         set_maintenance_mode
         expect{ delete :destroy, id: user.api_keys.first.identifier }.not_to change(ApiKey, :count)
         expect(response.status).to eq(503)
@@ -126,7 +126,7 @@ describe AccountApiKeysController, rox: { tags: :unit } do
       let(:embedded_rel){ 'item' }
       let(:embedded_converter){ ->(k){ k[:id] } }
 
-      describe "table resource", rox: { key: '4caf4e56251a', grouped: true } do
+      describe "table resource", probe_dock: { key: '4caf4e56251a', grouped: true } do
         it_should_behave_like "a table resource", {
           representation: {
             sort: :id,

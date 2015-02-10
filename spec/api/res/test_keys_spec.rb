@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe Api::TestKeysController, rox: { tags: :unit } do
+describe Api::TestKeysController, probe_dock: { tags: :unit } do
   include MaintenanceHelpers
   
   let(:user){ create :user }
@@ -24,7 +24,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
 
   describe "#create" do
 
-    it "should create the requested number of keys for a project and user", rox: { key: 'aa411bcb252e' } do
+    it "should create the requested number of keys for a project and user", probe_dock: { key: 'aa411bcb252e' } do
 
       expect{ generate_keys n: 5 }.to change(TestKey, :count).by(5)
       expect(response.success?).to be(true)
@@ -34,35 +34,35 @@ describe Api::TestKeysController, rox: { tags: :unit } do
       expect(MultiJson.load(response.body)).to eq(TestKeysRepresenter.new(OpenStruct.new(total: 5, data: keys)).serializable_hash)
     end
 
-    it "should indicate the total number of keys for the user", rox: { key: '76a35139b094' } do
+    it "should indicate the total number of keys for the user", probe_dock: { key: '76a35139b094' } do
       other_project = create :project
       3.times{ create :test_key, user: user, project: other_project }
       expect{ generate_keys n: 5 }.to change(TestKey, :count).by(5)
       expect(MultiJson.load(response.body)['total']).to eq(8)
     end
 
-    it "should create one key if no number is specified", rox: { key: '2eac146513ce' } do
+    it "should create one key if no number is specified", probe_dock: { key: '2eac146513ce' } do
       expect{ generate_keys }.to change(TestKey, :count).by(1)
     end
 
-    it "should not accept a number of keys under 1 or over 25", rox: { key: '096562525cc1' } do
+    it "should not accept a number of keys under 1 or over 25", probe_dock: { key: '096562525cc1' } do
       [ -2, 0, 26, 100 ].each do |n|
         expect{ generate_keys n: n }.not_to change(TestKey, :count)
         check_api_errors [ { name: 'number_of_keys_invalid', message: Regexp.new("got #{n}") } ]
       end
     end
 
-    it "should not accept a request without a project API ID", rox: { key: 'f58497f7589d' } do
+    it "should not accept a request without a project API ID", probe_dock: { key: 'f58497f7589d' } do
       expect{ generate_keys({ n: 1 }, MultiJson.dump({})) }.not_to change(TestKey, :count)
       check_api_errors [ { name: 'project_api_id_missing', path: '/projectApiId', message: Regexp.new("API") } ]
     end
 
-    it "should not accept a request with an unknown project API ID", rox: { key: 'c89c530f4cf9' } do
+    it "should not accept a request with an unknown project API ID", probe_dock: { key: 'c89c530f4cf9' } do
       expect{ generate_keys({ n: 1 }, MultiJson.dump({ 'projectApiId' => '000000000000' })) }.not_to change(TestKey, :count)
       check_api_errors [ { name: 'project_api_id_unknown', path: '/projectApiId', message: Regexp.new('000000000000') } ]
     end
 
-    it "should save the last project and requested number of keys", rox: { key: '4f6ae80d86a1' } do
+    it "should save the last project and requested number of keys", probe_dock: { key: '4f6ae80d86a1' } do
 
       settings = user.settings
       expect(settings.last_test_key_project).to be_nil
@@ -83,7 +83,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
       expect(settings.last_test_key_number).to eq(3)
     end
 
-    it "should return a 503 response when in maintenance mode", rox: { key: 'e27209fb845a' } do
+    it "should return a 503 response when in maintenance mode", probe_dock: { key: 'e27209fb845a' } do
       set_maintenance_mode
       expect{ generate_keys n: 5 }.not_to change(TestKey, :count)
       expect(response.status).to eq(503)
@@ -94,7 +94,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
     let(:projects){ [ project, create(:project) ] }
     let!(:unfree_keys){ Array.new(3){ |i| create :test_key, user: user, project: projects[(i % 2 - 1).abs], free: false } }
 
-    it "should not do anything when the user has no free keys", rox: { key: 'b244b60361f4' } do
+    it "should not do anything when the user has no free keys", probe_dock: { key: 'b244b60361f4' } do
       expect{ release_keys }.not_to change(TestKey, :count)
       expect(response.status).to eq(204)
       expect(user.tap(&:reload).test_keys).to match_array(unfree_keys)
@@ -103,7 +103,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
     describe "with free keys" do
       let!(:free_keys){ Array.new(3){ |i| create :test_key, user: user, project: projects[i % 2], free: true } }
 
-      it "should delete free keys of the current user", rox: { key: '07a7dcc7c3b7' } do
+      it "should delete free keys of the current user", probe_dock: { key: '07a7dcc7c3b7' } do
         expect(user.test_keys).to have(6).items
         expect(user.free_test_keys).to have(3).items
         expect{ release_keys }.to change(TestKey, :count).by(-3)
@@ -111,7 +111,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
         expect(user.tap(&:reload).test_keys).to match_array(unfree_keys)
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: '4f967c31c27a' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: '4f967c31c27a' } do
         set_maintenance_mode
         expect{ release_keys }.not_to change(TestKey, :count)
         expect(response.status).to eq(503)
@@ -139,7 +139,7 @@ describe Api::TestKeysController, rox: { tags: :unit } do
     let(:embedded_rel){ 'v1:test-keys' }
     let(:embedded_converter){ ->(k){ k[:value] } }
 
-    describe "table resource", rox: { key: '691dee34def5', grouped: true } do
+    describe "table resource", probe_dock: { key: '691dee34def5', grouped: true } do
       it_should_behave_like "a table resource", {
         representation: {
           sort: :createdAt,

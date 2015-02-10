@@ -20,12 +20,12 @@ describe ApplicationHelper do
 
   describe "#meta_session" do
 
-    it "should generate meta data for the current user", rox: { key: '56d9618d23c8' } do
+    it "should generate meta data for the current user", probe_dock: { key: '56d9618d23c8' } do
       allow(helper).to receive(:current_user).and_return(user = create(:user))
       expect(helper.meta_session).to eq(cache: cache_key(user))
     end
 
-    it "should generate meta data for an admin user", rox: { key: 'fa2727d792bf' } do
+    it "should generate meta data for an admin user", probe_dock: { key: 'fa2727d792bf' } do
       allow(helper).to receive(:current_user).and_return(user = create(:admin))
       expect(helper.meta_session).to eq(admin: true, cache: cache_key(user))
     end
@@ -37,7 +37,7 @@ describe ApplicationHelper do
 
   describe "#meta_maintenance" do
 
-    it "should generate meta data for the maintenance mode", rox: { key: '2c169da2c7e9' } do
+    it "should generate meta data for the maintenance mode", probe_dock: { key: '2c169da2c7e9' } do
       @maintenance = { since: now = Time.now }
       expect(helper.meta_maintenance).to eq(since: now.to_ms)
     end

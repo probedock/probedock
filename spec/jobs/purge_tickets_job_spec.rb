@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe PurgeTicketsJob, rox: { tags: :unit } do
+describe PurgeTicketsJob, probe_dock: { tags: :unit } do
   PURGE_TICKETS_JOB_QUEUE = :purge
   subject{ described_class }
 
@@ -24,13 +24,13 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
     ResqueSpec.reset!
   end
 
-  it "should go in the #{PURGE_TICKETS_JOB_QUEUE} queue", rox: { key: '7b763ea9a4e2' } do
+  it "should go in the #{PURGE_TICKETS_JOB_QUEUE} queue", probe_dock: { key: '7b763ea9a4e2' } do
     expect(subject.instance_variable_get('@queue').to_sym).to eq(PURGE_TICKETS_JOB_QUEUE)
   end
 
   describe ".lock_workers" do
 
-    it "should use the same lock as the payload processing job", rox: { key: 'd71ce113b81f' } do
+    it "should use the same lock as the payload processing job", probe_dock: { key: 'd71ce113b81f' } do
       expect(subject.lock_workers).to eq(ProcessNextTestPayloadJob.name)
     end
   end
@@ -38,7 +38,7 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
   describe ".number_remaining" do
     let(:user){ create :user }
 
-    it "should count unused tickets", rox: { key: '6ff8978e1ab2' } do
+    it "should count unused tickets", probe_dock: { key: '6ff8978e1ab2' } do
       
       tickets = Array.new(5){ |i| create :ticket }
       tests = Array.new(3){ |i| create :test, key: create(:test_key, user: user), tickets: tickets[i % 2, 1] }
@@ -46,7 +46,7 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
       expect(subject.number_remaining).to eq(3)
     end
 
-    it "should indicate that there is nothing to purge", rox: { key: '68f742d42f71' } do
+    it "should indicate that there is nothing to purge", probe_dock: { key: '68f742d42f71' } do
       expect(subject.number_remaining).to eq(0)
     end
   end
@@ -63,16 +63,16 @@ describe PurgeTicketsJob, rox: { tags: :unit } do
       subject.perform purge_action.id
     end
 
-    it "should delete unused tickets", rox: { key: '0fa08cad2703' } do
+    it "should delete unused tickets", probe_dock: { key: '0fa08cad2703' } do
       expect(Ticket.all.to_a).to match_array(tickets[0, 2])
       expect_purge_completed purge_action, 3
     end
 
-    it "should log the number of purged tickets", rox: { key: '7326cf8ae42d' } do
+    it "should log the number of purged tickets", probe_dock: { key: '7326cf8ae42d' } do
       expect(Rails.logger).to have_received(:info).with(/\APurged 3 unused tickets in [0-9\.]+s\Z/)
     end
 
-    it "should fire the purged:tickets event", rox: { key: 'ba212612ce39' } do
+    it "should fire the purged:tickets event", probe_dock: { key: 'ba212612ce39' } do
       expect(Rails.application.events).to have_received(:fire).with('purged:tickets')
     end
   end

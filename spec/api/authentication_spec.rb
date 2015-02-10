@@ -16,28 +16,28 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe "API authentication", rox: { tags: :unit } do
+describe "API authentication", probe_dock: { tags: :unit } do
 
   let(:user){ create :user }
 
-  it "should not authenticate clients without credentials", rox: { key: '168e19242af3' } do
+  it "should not authenticate clients without credentials", probe_dock: { key: '168e19242af3' } do
     get api_path, {}, { 'HTTP_ACCEPT' => 'application/hal+json' }
     assert_response :unauthorized
   end
 
-  it "should authenticate clients with the RoxApiKey authorization scheme", rox: { key: 'f3c29dcf6302' } do
+  it "should authenticate clients with the RoxApiKey authorization scheme", probe_dock: { key: 'f3c29dcf6302' } do
     key = user.api_keys.first
     get api_path, {}, { 'HTTP_AUTHORIZATION' => %/RoxApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }
     assert_response :success
   end
 
-  it "should authenticate clients with an API key in url parameters", rox: { key: '333808c1cf65' } do
+  it "should authenticate clients with an API key in url parameters", probe_dock: { key: '333808c1cf65' } do
     key = user.api_keys.first
     get api_path, api_key_id: key.identifier, api_key_secret: key.shared_secret
     assert_response :success
   end
 
-  it "should not authenticate clients with an inactive API key", rox: { key: '42def337de2b' } do
+  it "should not authenticate clients with an inactive API key", probe_dock: { key: '42def337de2b' } do
     key = user.api_keys.first
     key.update_attribute :active, false
     get api_path, {}, { 'HTTP_AUTHORIZATION' => %/RoxApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }

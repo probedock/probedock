@@ -25,7 +25,7 @@ RSpec.describe Api::PurgesController, type: :controller do
 
   describe "#create" do
 
-    describe "access", rox: { key: 'a9a00a6c7494', grouped: true } do
+    describe "access", probe_dock: { key: 'a9a00a6c7494', grouped: true } do
       it_should_behave_like "an admin API resource", ->(*args){ get :index }
     end
 
@@ -33,7 +33,7 @@ RSpec.describe Api::PurgesController, type: :controller do
       let(:user){ create :admin_user }
       before(:each){ sign_in user }
 
-      it "should create a purge action", rox: { key: '909fd7651d00' } do
+      it "should create a purge action", probe_dock: { key: '909fd7651d00' } do
 
         now = Time.now
         allow(Time).to receive(:now).and_return(now)
@@ -46,14 +46,14 @@ RSpec.describe Api::PurgesController, type: :controller do
         expect(MultiJson.load(response.body)).to eq(PurgeActionRepresenter.new(PurgeAction.order('created_at desc').first).serializable_hash)
       end
 
-      it "should not allow to create a purge without a data type", rox: { key: '1cf56ddd97ce' } do
+      it "should not allow to create a purge without a data type", probe_dock: { key: '1cf56ddd97ce' } do
         expect do
           post :create, MultiJson.dump({})
         end.not_to change(PurgeAction, :count)
         expect(response.status).to eq(400)
       end
 
-      it "should work during maintenance mode", rox: { key: 'f8e23918e034' } do
+      it "should work during maintenance mode", probe_dock: { key: 'f8e23918e034' } do
         set_maintenance_mode
         post :create, MultiJson.dump(dataType: 'tags')
         expect(response.status).to eq(201)
@@ -63,7 +63,7 @@ RSpec.describe Api::PurgesController, type: :controller do
 
   describe "#index" do
 
-    describe "access", rox: { key: 'b682cbd05d18', grouped: true } do
+    describe "access", probe_dock: { key: 'b682cbd05d18', grouped: true } do
       it_should_behave_like "an admin API resource", ->(*args){ get :index }
     end
 
@@ -87,7 +87,7 @@ RSpec.describe Api::PurgesController, type: :controller do
         ]
       end
 
-      it "should return purge information", rox: { key: 'b0ffe4dd8166' } do
+      it "should return purge information", probe_dock: { key: 'b0ffe4dd8166' } do
 
         get :index, info: true
         expect(response.status).to eq(200)

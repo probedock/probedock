@@ -20,13 +20,13 @@ describe StatusData do
   subject{ described_class }
   STATUS_DATA_CACHE_KEY = 'cache:status'
 
-  it "should return cached dates", rox: { key: 'ea29408c00a8' } do
+  it "should return cached dates", probe_dock: { key: 'ea29408c00a8' } do
     t1, t2, t3, t4 = 1.day.ago.to_ms, 2.days.ago.to_ms, 3.days.ago.to_ms, 4.days.ago.to_ms
     $redis.hmset STATUS_DATA_CACHE_KEY, 'last_api_payload', t1, 'last_test_deprecation', t2, 'last_test_counters', t3, 'last_purge', t4
     expect(subject.compute).to include(lastApiPayload: t1, lastTestDeprecation: t2, lastTestCounters: t3, lastPurge: t4)
   end
 
-  it "should set missing dates to now", rox: { key: 'd406a39215b8' } do
+  it "should set missing dates to now", probe_dock: { key: 'd406a39215b8' } do
     $redis.hset STATUS_DATA_CACHE_KEY, 'last_api_payload', 123
     allow(Time).to receive(:now).and_return(now = Time.now)
     expect(subject.compute).to include(lastApiPayload: 123, lastTestDeprecation: now.to_ms, lastTestCounters: now.to_ms, lastPurge: now.to_ms)
@@ -44,29 +44,29 @@ describe StatusData do
       allow(Time).to receive(:now).and_return(now)
     end
 
-    it "should touch the last api payload time on the api:payload event", rox: { key: '9d1d4f8f598d' } do
+    it "should touch the last api payload time on the api:payload event", probe_dock: { key: '9d1d4f8f598d' } do
       subject.fire 'api:payload', double
       expect_dates lastApiPayload: now.to_ms
     end
 
-    it "should touch the last test deprecation date on the test:deprecated event", rox: { key: '85811805ed31' } do
+    it "should touch the last test deprecation date on the test:deprecated event", probe_dock: { key: '85811805ed31' } do
       subject.fire 'test:deprecated', double
       expect_dates lastTestDeprecation: now.to_ms
     end
 
-    it "should touch the last test deprecation date on the test:undeprecated event", rox: { key: 'd342219b1503' } do
+    it "should touch the last test deprecation date on the test:undeprecated event", probe_dock: { key: 'd342219b1503' } do
       subject.fire 'test:undeprecated', double
       expect_dates lastTestDeprecation: now.to_ms
     end
 
-    it "should touch the last test counters date on the test:counters event", rox: { key: '92818bf733e5' } do
+    it "should touch the last test counters date on the test:counters event", probe_dock: { key: '92818bf733e5' } do
       subject.fire 'test:counters'
       expect_dates lastTestCounters: now.to_ms
     end
 
     keys = %w(b2d41c805d17 46929ecafd3c a8c2fdad3669 70082515e647)
     %w(tags testPayloads testRuns tickets).each do |e|
-      it "should touch the last purge date on the purged:#{e} event", rox: { key: keys.shift } do
+      it "should touch the last purge date on the purged:#{e} event", probe_dock: { key: keys.shift } do
         subject.fire "purged:#{e}"
         expect_dates lastPurge: now.to_ms
       end

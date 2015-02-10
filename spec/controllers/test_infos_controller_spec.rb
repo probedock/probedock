@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TestInfosController, rox: { tags: :integration } do
+describe TestInfosController, probe_dock: { tags: :integration } do
   let(:user){ create :user }
   let(:author){ create :other_user }
   let(:project){ create :project }
@@ -25,7 +25,7 @@ describe TestInfosController, rox: { tags: :integration } do
   describe "#show" do
     let(:test){ create :test, key: create(:key, user: user) }
 
-    it "should redirect to the correct page when the id is only the test key and one test matches", rox: { key: 'adb58980cefd' } do
+    it "should redirect to the correct page when the id is only the test key and one test matches", probe_dock: { key: 'adb58980cefd' } do
       get :show, id: test.key.key, locale: I18n.default_locale
       expect(subject).to redirect_to(test)
     end

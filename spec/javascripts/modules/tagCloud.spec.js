@@ -34,12 +34,12 @@ describe("Tag cloud", function() {
   });
 
   it("should create three tag links", function() {
-    this.meta = { rox : { key : 'dac5601fe23e' } };
+    this.meta = { probeDock: { key : 'dac5601fe23e' } };
     expect($('#tagCloudFixture .tagCloud a').length).toBe(3);
   });
 
   it("should make bigger tag links for most used tags", function() {
-    this.meta = { rox : { key : '29d85ac15a03' } };
+    this.meta = { probeDock: { key : '29d85ac15a03' } };
     expect(cssFontSize($('#tagCloudFixture .tagCloud a:nth-child(2)'), true)).toBeGreaterThan(cssFontSize($('#tagCloudFixture .tagCloud a:nth-child(3)'), true));
     expect(cssFontSize($('#tagCloudFixture .tagCloud a:nth-child(3)'), true)).toBeGreaterThan(cssFontSize($('#tagCloudFixture .tagCloud a:nth-child(1)'), true));
   });
@@ -57,12 +57,12 @@ describe("Tag cloud with a max size", function() {
   });
 
   it("should create three tag links", function() {
-    this.meta = { rox : { key : '36fe9d98244c' } };
+    this.meta = { probeDock: { key : '36fe9d98244c' } };
     expect($('#tagCloudFixture .tagCloud a:not(.all)').length).toBe(3);
   });
 
   it("should add a link to the full tag cloud if there are more tags", function() {
-    this.meta = { rox : { key : '42fe6791d648' } };
+    this.meta = { probeDock: { key : '42fe6791d648' } };
     var allLink = $('#tagCloudFixture .tagCloud a.all');
     expect(allLink).toExist();
     expect(allLink.attr('href')).toBe('/tags');

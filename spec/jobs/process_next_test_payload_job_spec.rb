@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe ProcessNextTestPayloadJob, rox: { tags: :unit } do
+describe ProcessNextTestPayloadJob, probe_dock: { tags: :unit } do
   PROCESS_NEXT_TEST_PAYLOAD_JOB_QUEUE = :api
   ProcessPayload ||= TestPayloadProcessing::ProcessPayload
 
@@ -27,13 +27,13 @@ describe ProcessNextTestPayloadJob, rox: { tags: :unit } do
     allow(ProcessPayload).to receive(:new).and_return(nil)
   end
 
-  it "should go in the #{PROCESS_NEXT_TEST_PAYLOAD_JOB_QUEUE} queue", rox: { key: '406581eeba94' } do
+  it "should go in the #{PROCESS_NEXT_TEST_PAYLOAD_JOB_QUEUE} queue", probe_dock: { key: '406581eeba94' } do
     expect(described_class.instance_variable_get('@queue').to_sym).to eq(PROCESS_NEXT_TEST_PAYLOAD_JOB_QUEUE)
   end
 
   context ".lock_workers" do
 
-    it "should use the same lock for all workers", rox: { key: '77b2303d1a37' } do
+    it "should use the same lock for all workers", probe_dock: { key: '77b2303d1a37' } do
       expect(subject.lock_workers).to eq(subject.name)
       expect(subject.lock_workers(:foo, :bar, :baz)).to eq(subject.name)
     end
@@ -51,12 +51,12 @@ describe ProcessNextTestPayloadJob, rox: { tags: :unit } do
       ]
     end
 
-    it "should process the oldest test payload in created state", rox: { key: '1834f837c07f' } do
+    it "should process the oldest test payload in created state", probe_dock: { key: '1834f837c07f' } do
       expect(ProcessPayload).to receive(:new).with(payloads[3])
       described_class.perform
     end
 
-    it "should put the oldest test payload in processing state", rox: { key: 'dbe59378902e' } do
+    it "should put the oldest test payload in processing state", probe_dock: { key: 'dbe59378902e' } do
       described_class.perform
       expect(payloads.collect{ |p| p.tap(&:reload).state.to_sym }).to eq([ :processed, :processed, :processed, :processing, :created ])
     end

@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe 'projects/show', rox: { tags: :unit } do
+describe 'projects/show', probe_dock: { tags: :unit } do
 
   let(:project){ create :project }
   subject{ render; rendered }
@@ -26,11 +26,11 @@ describe 'projects/show', rox: { tags: :unit } do
     assign :project, project
   end
 
-  it "should not inject the projectEditor module for a non-admin user", rox: { key: '327704aec0ac' } do
+  it "should not inject the projectEditor module for a non-admin user", probe_dock: { key: '327704aec0ac' } do
     expect(subject).not_to have_selector('div[data-module="projectEditor"]')
   end
 
-  it "should inject the testsTable module", rox: { key: '5e5708265080' } do
+  it "should inject the testsTable module", probe_dock: { key: '5e5708265080' } do
     assign :tests_table_config, tests_table_config = { tests: 'table config' }
     sel = 'div[data-module="testsTable"]'
     expect(subject).to have_selector(sel)
@@ -40,7 +40,7 @@ describe 'projects/show', rox: { tags: :unit } do
   context "with a user who can manage projects" do
     fake_controller_current_ability :manage, Project
 
-    it "should inject the projectEditor module", rox: { key: '68f6e5519c49' } do
+    it "should inject the projectEditor module", probe_dock: { key: '68f6e5519c49' } do
       assign :project_editor_config, project_editor_config = { project: 'editor config' }
       sel = 'div[data-module="projectEditor"]'
       expect(subject).to have_selector(sel)

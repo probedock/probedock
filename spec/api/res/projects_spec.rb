@@ -16,14 +16,14 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe Api::ProjectsController, rox: { tags: :unit } do
+describe Api::ProjectsController, probe_dock: { tags: :unit } do
   include MaintenanceHelpers
   let(:user){ create :user }
 
   context "#create" do
     let(:creation_request){ { name: 'A project', urlToken: 'a_token' } }
 
-    it "should not allow a non-admin user to create a project", rox: { key: '1779ec3f5e10' } do
+    it "should not allow a non-admin user to create a project", probe_dock: { key: '1779ec3f5e10' } do
       expect{ create_project }.not_to change(Project, :count)
       expect(response.status).to eq(403)
     end
@@ -31,28 +31,28 @@ describe Api::ProjectsController, rox: { tags: :unit } do
     context "with an admin user" do
       let(:user){ create :admin }
 
-      it "should create a project", rox: { key: 'a98ac452a495' } do
+      it "should create a project", probe_dock: { key: 'a98ac452a495' } do
         expect{ create_project }.to change(Project, :count).by(1)
         expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(ProjectRepresenter.new(Project.first).serializable_hash)
       end
 
-      it "should not accept a blank name", rox: { key: '60fd9fb3e61d' } do
+      it "should not accept a blank name", probe_dock: { key: '60fd9fb3e61d' } do
         expect{ create_project creation_request.merge(name: '   ') }.not_to change(Project, :count)
         check_api_errors [ { message: Regexp.new("blank"), name: :blankValue, path: '/name' } ]
       end
 
-      it "should not accept a blank token", rox: { key: 'f7956243f7c2' } do
+      it "should not accept a blank token", probe_dock: { key: 'f7956243f7c2' } do
         expect{ create_project creation_request.merge(urlToken: '   ') }.not_to change(Project, :count)
         check_api_errors [ { message: Regexp.new("blank"), name: :blankValue, path: '/urlToken' } ]
       end
 
-      it "should not accept an invalid token", rox: { key: '4fac0cfae817' } do
+      it "should not accept an invalid token", probe_dock: { key: '4fac0cfae817' } do
         expect{ create_project creation_request.merge(urlToken: '/$') }.not_to change(Project, :count)
         check_api_errors [ { message: Regexp.new("invalid"), name: :invalidValue, path: '/urlToken' } ]
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: 'f1e7abbacbda' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: 'f1e7abbacbda' } do
         set_maintenance_mode
         expect{ create_project }.not_to change(Project, :count)
         expect(response.status).to eq(503)
@@ -64,7 +64,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
     let!(:project){ create :project, name: 'Old name', url_token: 'old_token' }
     let(:update_request){ { name: 'New name', urlToken: 'new_token' } }
 
-    it "should not allow a non-admin user to update a project", rox: { key: '92d674e02d5e' } do
+    it "should not allow a non-admin user to update a project", probe_dock: { key: '92d674e02d5e' } do
       expect{ update_project }.not_to change(Project, :count)
       expect(response.status).to eq(404)
     end
@@ -72,29 +72,29 @@ describe Api::ProjectsController, rox: { tags: :unit } do
     context "with an admin user" do
       let(:user){ create :admin }
 
-      it "should update a project", rox: { key: 'ac1bfa813761' } do
+      it "should update a project", probe_dock: { key: 'ac1bfa813761' } do
         update_project
         check_project_update
         expect(response.success?).to be(true)
         expect(MultiJson.load(response.body)).to eq(ProjectRepresenter.new(project).serializable_hash)
       end
 
-      it "should not accept a blank name", rox: { key: '9a575ebf3d5a' } do
+      it "should not accept a blank name", probe_dock: { key: '9a575ebf3d5a' } do
         update_project update_request.merge(name: '   ')
         check_api_errors [ { message: Regexp.new("blank"), name: :blankValue, path: '/name' } ]
       end
 
-      it "should not accept a blank token", rox: { key: '99e66e67a21d' } do
+      it "should not accept a blank token", probe_dock: { key: '99e66e67a21d' } do
         update_project update_request.merge(urlToken: '   ')
         check_api_errors [ { message: Regexp.new("blank"), name: :blankValue, path: '/urlToken' } ]
       end
 
-      it "should not accept an invalid token", rox: { key: '18aa3182833b' } do
+      it "should not accept an invalid token", probe_dock: { key: '18aa3182833b' } do
         update_project update_request.merge(urlToken: '/$')
         check_api_errors [ { message: Regexp.new("invalid"), name: :invalidValue, path: '/urlToken' } ]
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: 'ac25387fee6c' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: 'ac25387fee6c' } do
         old_values = project.to_json
         set_maintenance_mode
         update_project
@@ -120,7 +120,7 @@ describe Api::ProjectsController, rox: { tags: :unit } do
     let(:embedded_rel){ 'v1:projects' }
     let(:embedded_converter){ ->(r){ r[:apiId] } }
 
-    context "table resource", rox: { key: '9b8249c402fb', grouped: true } do
+    context "table resource", probe_dock: { key: '9b8249c402fb', grouped: true } do
       it_should_behave_like "a table resource", {
         representation: {
           sort: :name,

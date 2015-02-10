@@ -10,7 +10,7 @@ describe Api::TestsController do
     before(:each){ allow(ProbeDock::Application.events).to receive(:fire) }
     let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
 
-    it "should create a deprecation and link it to the test", rox: { key: 'd063686df8cc' } do
+    it "should create a deprecation and link it to the test", probe_dock: { key: 'd063686df8cc' } do
 
       event_deprecations = nil
       expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
@@ -39,7 +39,7 @@ describe Api::TestsController do
       end
     end
 
-    it "should not do anything if the test is already deprecated", rox: { key: '792cc36a37ff' } do
+    it "should not do anything if the test is already deprecated", probe_dock: { key: '792cc36a37ff' } do
 
       deprecation = create :deprecation, test_info: test
       test.deprecation = deprecation
@@ -60,7 +60,7 @@ describe Api::TestsController do
       expect(ProbeDock::Application.events).not_to receive(:fire)
     end
 
-    it "should return a 503 response when in maintenance mode", rox: { key: '4d3e5f8dbd75' } do
+    it "should return a 503 response when in maintenance mode", probe_dock: { key: '4d3e5f8dbd75' } do
 
       set_maintenance_mode
       expect do
@@ -87,7 +87,7 @@ describe Api::TestsController do
   describe "#undeprecate" do
     let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago, deprecated_at: 2.days.ago }
 
-    it "should create an undeprecation for the test and unlink the previous deprecation", rox: { key: '5d8b3f013d1a' } do
+    it "should create an undeprecation for the test and unlink the previous deprecation", probe_dock: { key: '5d8b3f013d1a' } do
 
       event_deprecations = nil
       expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
@@ -116,7 +116,7 @@ describe Api::TestsController do
       end
     end
 
-    it "should not do anything if the test is not deprecated", rox: { key: '9f21b0773073' } do
+    it "should not do anything if the test is not deprecated", probe_dock: { key: '9f21b0773073' } do
 
       create :deprecation, deprecated: false, test_info: test, user: user
       test.deprecation = nil
@@ -136,7 +136,7 @@ describe Api::TestsController do
       expect(ProbeDock::Application.events).not_to receive(:fire)
     end
 
-    it "should return a 503 response when in maintenance mode", rox: { key: '0e74dba7ae54' } do
+    it "should return a 503 response when in maintenance mode", probe_dock: { key: '0e74dba7ae54' } do
 
       set_maintenance_mode
       expect do
@@ -162,7 +162,7 @@ describe Api::TestsController do
     describe "deprecation" do
       let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
 
-      it "should create a deprecation and link it to the test", rox: { key: '1a5b6659902c' } do
+      it "should create a deprecation and link it to the test", probe_dock: { key: '1a5b6659902c' } do
 
         event_deprecations = nil
         expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
@@ -191,7 +191,7 @@ describe Api::TestsController do
         end
       end
 
-      it "should not do anything if the test is already deprecated", rox: { key: '3211c4ba7df1' } do
+      it "should not do anything if the test is already deprecated", probe_dock: { key: '3211c4ba7df1' } do
 
         deprecation = create :deprecation, test_info: test
         test.deprecation = deprecation
@@ -212,7 +212,7 @@ describe Api::TestsController do
         expect(ProbeDock::Application.events).not_to receive(:fire)
       end
 
-      it "should deprecate multiple tests", rox: { key: '4e1179154e31' } do
+      it "should deprecate multiple tests", probe_dock: { key: '4e1179154e31' } do
 
         tests = [
           create(:test, key: create(:test_key, project: project, user: user)),
@@ -245,7 +245,7 @@ describe Api::TestsController do
         expect(event_deprecations).to eq([ tests[0].deprecation, tests[2].deprecation, tests[3].deprecation ])
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: '201bbf1be414' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: '201bbf1be414' } do
 
         set_maintenance_mode
         expect do
@@ -268,7 +268,7 @@ describe Api::TestsController do
     describe "undeprecation" do
       let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago, deprecated_at: 2.days.ago }
 
-      it "should create an undeprecation for the test and unlink the previous deprecation", rox: { key: 'abf287432d75' } do
+      it "should create an undeprecation for the test and unlink the previous deprecation", probe_dock: { key: 'abf287432d75' } do
 
         event_deprecations = nil
         expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
@@ -298,7 +298,7 @@ describe Api::TestsController do
         end
       end
 
-      it "should not do anything if the test is not deprecated", rox: { key: '6be2da1a9a79' } do
+      it "should not do anything if the test is not deprecated", probe_dock: { key: '6be2da1a9a79' } do
 
         create :deprecation, deprecated: false, test_info: test, user: user
         test.deprecation = nil
@@ -319,7 +319,7 @@ describe Api::TestsController do
         expect(ProbeDock::Application.events).not_to receive(:fire)
       end
 
-      it "should undeprecate multiple tests", rox: { key: 'c431bdf629b6' } do
+      it "should undeprecate multiple tests", probe_dock: { key: 'c431bdf629b6' } do
 
         tests = [
           create(:test, key: create(:test_key, project: project, user: user), deprecated_at: 1.day.ago),
@@ -353,7 +353,7 @@ describe Api::TestsController do
         expect(event_deprecations.collect(&:test_info)).to match_array([ tests[0], tests[2] ])
       end
 
-      it "should return a 503 response when in maintenance mode", rox: { key: 'b61b4cf73149' } do
+      it "should return a 503 response when in maintenance mode", probe_dock: { key: 'b61b4cf73149' } do
 
         set_maintenance_mode
         expect do
@@ -373,7 +373,7 @@ describe Api::TestsController do
       end
     end
 
-    describe "validations", rox: { key: 'dcc9752e7c73', grouped: true } do
+    describe "validations", probe_dock: { key: 'dcc9752e7c73', grouped: true } do
       
       it "should not accept a request without a body" do
         expect do

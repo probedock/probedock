@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe "API sample payload", rox: { tags: :integration } do
+describe "API sample payload", probe_dock: { tags: :integration } do
 
   def users
     @users ||= [ create(:user), create(:other_user) ]
@@ -170,7 +170,7 @@ describe "API sample payload", rox: { tags: :integration } do
     })
   end
 
-  it "should be queued for processing", rox: { key: '8768a7792cf0' } do
+  it "should be queued for processing", probe_dock: { key: '8768a7792cf0' } do
     ResqueSpec.reset!
     existing_version = create :project_version, project: test_keys[3].project, name: '0.1.0'
     existing_test = create :test, key: test_keys[3], passing: false, active: false, run_at: 1.month.ago, run_duration: 50, project_version: existing_version
@@ -246,53 +246,53 @@ describe "API sample payload", rox: { tags: :integration } do
 
     after(:all){ DatabaseCleaner.clean }
 
-    it "should create the correct number of test payloads", rox: { key: 'cdc9d1e1b484' } do
+    it "should create the correct number of test payloads", probe_dock: { key: 'cdc9d1e1b484' } do
       expect(TestPayload.count).to eq(3)
     end
 
-    it "should create the correct number of test runs", rox: { key: '5d78f9cbaaf5' } do
+    it "should create the correct number of test runs", probe_dock: { key: '5d78f9cbaaf5' } do
       expect(TestRun.count).to eq(3)
     end
 
-    it "should create the correct number of project versions", rox: { key: '44b2f0c1e728' } do
+    it "should create the correct number of project versions", probe_dock: { key: '44b2f0c1e728' } do
       expect(ProjectVersion.count).to eq(4)
     end
 
-    it "should create the correct number of tests", rox: { key: 'c91c6fafc663' } do
+    it "should create the correct number of tests", probe_dock: { key: 'c91c6fafc663' } do
       expect(TestInfo.count).to eq(5)
     end
 
-    it "should create the correct number of test results", rox: { key: '6d1e906787fe' } do
+    it "should create the correct number of test results", probe_dock: { key: '6d1e906787fe' } do
       expect(TestResult.count).to eq(8)
     end
 
-    it "should create the correct number of categories", rox: { key: 'e176416288a3' } do
+    it "should create the correct number of categories", probe_dock: { key: 'e176416288a3' } do
       expect(Category.count).to eq(3)
     end
 
-    it "should create the correct number of tags", rox: { key: '1f598d7e3d2c' } do
+    it "should create the correct number of tags", probe_dock: { key: '1f598d7e3d2c' } do
       expect(Tag.count).to eq(5)
     end
 
-    it "should create the correct number of tickets", rox: { key: 'b63039c9b203' } do
+    it "should create the correct number of tickets", probe_dock: { key: 'b63039c9b203' } do
       expect(Ticket.count).to eq(4)
     end
 
-    it "should create the correct number of test values", rox: { key: 'da2fb254d1e2' } do
+    it "should create the correct number of test values", probe_dock: { key: 'da2fb254d1e2' } do
       expect(TestValue.count).to eq(4)
     end
 
-    it "should create the correct number of test counters", rox: { key: '4c3172646fc3' } do
+    it "should create the correct number of test counters", probe_dock: { key: '4c3172646fc3' } do
       expect(TestCounter.count).to eq(27)
     end
 
-    it "should correctly link tests to categories", rox: { key: '4be417cdc59c' } do
+    it "should correctly link tests to categories", probe_dock: { key: '4be417cdc59c' } do
       expect(category('junit').test_infos.collect(&:key)).to match_array([ test_keys[2] ])
       expect(category('soapui').test_infos.collect(&:key)).to match_array([ test_keys[0], test_keys[3] ])
       expect(category('selenium').test_infos.collect(&:key)).to match_array([ test_keys[1] ])
     end
 
-    it "should correctly link tests to tags", rox: { key: 'e63d2477177e' } do
+    it "should correctly link tests to tags", probe_dock: { key: 'e63d2477177e' } do
       expect(tag('unit').test_infos.collect(&:key)).to match_array([ test_keys[2] ])
       expect(tag('integration').test_infos.collect(&:key)).to match_array([ test_keys[0] ])
       expect(tag('performance').test_infos.collect(&:key)).to match_array([ test_keys[2] ])
@@ -300,19 +300,19 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(tag('slow').test_infos.collect(&:key)).to match_array([ test_keys[0], test_keys[2] ])
     end
 
-    it "should correctly link tests to tickets", rox: { key: '2ded4a9d395b' } do
+    it "should correctly link tests to tickets", probe_dock: { key: '2ded4a9d395b' } do
       expect(ticket('#12').test_infos.collect(&:key)).to match_array([ test_keys[0], test_keys[3] ])
       expect(ticket('#34').test_infos.collect(&:key)).to match_array([ test_keys[0] ])
       expect(ticket('#56').test_infos.collect(&:key)).to match_array([ test_keys[1] ])
       expect(ticket('#78').test_infos.collect(&:key)).to match_array([ test_keys[2] ])
     end
 
-    it "should correctly link tests to users", rox: { key: 'e885bcd54aa3' } do
+    it "should correctly link tests to users", probe_dock: { key: 'e885bcd54aa3' } do
       expect(users[0].test_infos.collect(&:key)).to match_array([ test_keys[0], test_keys[2], test_keys[4] ])
       expect(users[1].test_infos.collect(&:key)).to match_array([ test_keys[1], test_keys[3] ])
     end
 
-    it "should correctly link test payloads to test runs", rox: { key: '67c4391342c3' } do
+    it "should correctly link test payloads to test runs", probe_dock: { key: '67c4391342c3' } do
       ordered_payloads = TestPayload.order('received_at ASC').to_a
       ordered_runs = TestRun.order('ended_at ASC').offset(1).to_a
       expect(ordered_payloads[0].test_run).to eq(ordered_runs[0])
@@ -320,17 +320,17 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(ordered_payloads[2].test_run).to eq(ordered_runs[1])
     end
 
-    it "should correctly unlink test keys from test payloads", rox: { key: '4b662210c94c' } do
+    it "should correctly unlink test keys from test payloads", probe_dock: { key: '4b662210c94c' } do
       TestPayload.all.to_a.each do |payload|
         expect(payload.test_keys).to be_empty
       end
     end
 
-    it "should correctly mark all keys as used", rox: { key: '04b81846c673' } do
+    it "should correctly mark all keys as used", probe_dock: { key: '04b81846c673' } do
       expect(test_keys.each(&:reload).any?(&:free?)).to be(false)
     end
 
-    it "should correctly create test run 1", rox: { key: '4f82f5889ab0' } do
+    it "should correctly create test run 1", probe_dock: { key: '4f82f5889ab0' } do
 
       # The first payload posted above is the second one in the database
       # because there was one created earlier in before(:all).
@@ -354,7 +354,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(MultiJson.load(ordered_payloads[1].contents)).to eq(second_payload)
     end
 
-    it "should correctly create test run 2", rox: { key: 'b616d73d26d0' } do
+    it "should correctly create test run 2", probe_dock: { key: 'b616d73d26d0' } do
 
       # The second payload posted above is the third one in the database
       # because there was one created earlier in before(:all).
@@ -376,7 +376,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(MultiJson.load(run.test_payloads.first.contents)).to eq(third_payload)
     end
 
-    it "should correctly update test 1", rox: { key: 'f0648503ac56' } do
+    it "should correctly update test 1", probe_dock: { key: 'f0648503ac56' } do
 
       key = test_keys[0]
       test = key.test_info
@@ -428,7 +428,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(result.previous_active).to be(false)
     end
 
-    it "should correctly update test 2", rox: { key: '1d7ebcd9419e' } do
+    it "should correctly update test 2", probe_dock: { key: '1d7ebcd9419e' } do
 
       key = test_keys[1]
       test = key.test_info
@@ -465,7 +465,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(result.previous_active).to be_nil
     end
 
-    it "should correctly update test 3", rox: { key: '637b633ae087' } do
+    it "should correctly update test 3", probe_dock: { key: '637b633ae087' } do
 
       key = test_keys[2]
       test = key.test_info
@@ -517,7 +517,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(result.previous_active).to be(true)
     end
 
-    it "should correctly update test 4", rox: { key: 'ec54b3e2dd8b' } do
+    it "should correctly update test 4", probe_dock: { key: 'ec54b3e2dd8b' } do
 
       key = test_keys[3]
       test = key.test_info
@@ -567,7 +567,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(result.previous_active).to be(false)
     end
 
-    it "should correctly update test 5", rox: { key: '165123760e72' } do
+    it "should correctly update test 5", probe_dock: { key: '165123760e72' } do
 
       key = test_keys[4]
       test = key.test_info
@@ -604,7 +604,7 @@ describe "API sample payload", rox: { tags: :integration } do
       expect(result.previous_active).to be_nil
     end
 
-    it "should correctly count tests", rox: { key: '2052888f6d0f' } do
+    it "should correctly count tests", probe_dock: { key: '2052888f6d0f' } do
 
       # global (3)
       expect_counter mask: 0, written: 4, run: 7

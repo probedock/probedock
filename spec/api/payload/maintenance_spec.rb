@@ -25,7 +25,7 @@ describe "API payload controller" do
     ResqueSpec.reset!
   end
 
-  it "should return a 503 response when in maintenance mode", rox: { key: '1537ac0ebada' } do
+  it "should return a 503 response when in maintenance mode", probe_dock: { key: '1537ac0ebada' } do
     set_maintenance_mode
     post_api_payload sample_payload.to_json, user
     expect(response.status).to eq(503)

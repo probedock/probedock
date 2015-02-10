@@ -23,7 +23,7 @@ describe CountDeprecationJob do
     ResqueSpec.reset!
   end
   
-  it "should go in the #{COUNT_DEPRECATION_JOB_QUEUE} queue", rox: { key: '3a27ee39a081' } do
+  it "should go in the #{COUNT_DEPRECATION_JOB_QUEUE} queue", probe_dock: { key: '3a27ee39a081' } do
     expect(described_class.instance_variable_get('@queue')).to eq(COUNT_DEPRECATION_JOB_QUEUE)
   end
 
@@ -32,12 +32,12 @@ describe CountDeprecationJob do
     let(:timezones){ [ 'UTC', 'Bern' ] }
     before(:each){ allow(ProbeDock::Application).to receive(:metrics_timezones).and_return(timezones) }
 
-    it "should enqueue a job on the test:deprecated event", rox: { key: '490db0b2e66a' } do
+    it "should enqueue a job on the test:deprecated event", probe_dock: { key: '490db0b2e66a' } do
       expect(described_class).to receive(:enqueue_deprecations).with([ deprecation_double ], timezones: timezones)
       described_class.fire 'test:deprecated', deprecation_double
     end
 
-    it "should enqueue a job on the test:undeprecated event", rox: { key: 'fd13a157d54f' } do
+    it "should enqueue a job on the test:undeprecated event", probe_dock: { key: 'fd13a157d54f' } do
       expect(described_class).to receive(:enqueue_deprecations).with([ deprecation_double ], timezones: timezones)
       described_class.fire 'test:undeprecated', deprecation_double
     end
@@ -45,7 +45,7 @@ describe CountDeprecationJob do
 
   describe ".enqueue_deprecation" do
 
-    it "should enqueue a job with a deprecated test", rox: { key: '56f6f6191ca3' } do
+    it "should enqueue a job with a deprecated test", probe_dock: { key: '56f6f6191ca3' } do
       deprecated_at = 2.days.ago
       test = create :test, deprecated_at: deprecated_at
       described_class.enqueue_deprecations [ test.deprecation ], foo: 'bar'
@@ -53,7 +53,7 @@ describe CountDeprecationJob do
       expect(described_class).to have_queue_size_of(1)
     end
     
-    it "should enqueue a job with an undeprecated test", rox: { key: '73e4f5f519ff' } do
+    it "should enqueue a job with an undeprecated test", probe_dock: { key: '73e4f5f519ff' } do
       test = create :test
       deprecation = create :deprecation, deprecated: false, test_info: test
       described_class.enqueue_deprecations [ deprecation ], foo: 'bar'
@@ -61,7 +61,7 @@ describe CountDeprecationJob do
       expect(described_class).to have_queue_size_of(1)
     end
 
-    it "should enqueue a job with multiple deprecations", rox: { key: '1c163bec9352' } do
+    it "should enqueue a job with multiple deprecations", probe_dock: { key: '1c163bec9352' } do
       user = create :user
       tests = Array.new(3){ |i| create :test, key: create(:test_key, user: user), deprecated_at: i.days.ago }
       deprecations = tests.collect &:deprecation
@@ -70,7 +70,7 @@ describe CountDeprecationJob do
       expect(described_class).to have_queue_size_of(1)
     end
 
-    it "should log information about the test", rox: { key: 'de215dfad87f' } do
+    it "should log information about the test", probe_dock: { key: 'de215dfad87f' } do
       test = create :test, deprecated_at: 2.days.ago
       expect(Rails.logger).to receive(:debug).with(/updating test counters.*1 deprecation.*/i)
       described_class.enqueue_deprecations [ test.deprecation ], foo: 'bar'
@@ -82,7 +82,7 @@ describe CountDeprecationJob do
     let(:deprecated_at){ 3.days.ago }
     let(:deprecated_test){ create :test, key: create(:test_key, user: user), deprecated_at: deprecated_at }
 
-    it "should instantiate a job with loaded data", rox: { key: '45622943f63f' } do
+    it "should instantiate a job with loaded data", probe_dock: { key: '45622943f63f' } do
       allow(described_class).to receive(:new).and_return(nil)
       expect(described_class).to receive(:new) do |*args|
         expect(args[0]).to eq(deprecated_test.deprecation)
@@ -91,7 +91,7 @@ describe CountDeprecationJob do
       described_class.perform [ deprecated_test.deprecation_id ], foo: 'bar'
     end
 
-    it "should instantiate multiple jobs with loaded data", rox: { key: '40a201539841' } do
+    it "should instantiate multiple jobs with loaded data", probe_dock: { key: '40a201539841' } do
       deprecated_tests = [ deprecated_test ] + Array.new(2){ |i| create :test, key: create(:test_key, user: user), deprecated_at: i.days.ago }
       allow(described_class).to receive(:new).and_return(nil)
       deprecated_tests.each do |test|
@@ -103,7 +103,7 @@ describe CountDeprecationJob do
       described_class.perform deprecated_tests.collect{ |t| t.deprecation_id }, foo: 'bar'
     end
 
-    it "should trigger a test:counters event on the application", rox: { key: 'd311529e3b65' } do
+    it "should trigger a test:counters event on the application", probe_dock: { key: 'd311529e3b65' } do
       allow(described_class).to receive(:new).and_return(nil)
       test = deprecated_test # create test before so that user:created event is skipped
       expect(Rails.application.events).to receive(:fire).with('test:counters')
@@ -129,7 +129,7 @@ describe CountDeprecationJob do
       end
     end
   
-    it "should fail with no timezones", rox: { key: '4e12e642ba40' } do
+    it "should fail with no timezones", probe_dock: { key: '4e12e642ba40' } do
       expect{ described_class.new deprecation, {} }.to raise_error(StandardError, ":timezones option is missing")
     end
 
@@ -174,14 +174,14 @@ describe CountDeprecationJob do
       end
     end
 
-    describe "with no following result", rox: { key: '71f8deee8d93', grouped: true } do
+    describe "with no following result", probe_dock: { key: '71f8deee8d93', grouped: true } do
       let(:expected_project){ project }
       let(:expected_category){ category }
       let(:expected_user){ author }
       it_should_behave_like "a deprecation job"
     end
 
-    describe "with no category", rox: { key: '124751f0aba5', grouped: true } do
+    describe "with no category", probe_dock: { key: '124751f0aba5', grouped: true } do
       let(:category){ nil }
       let(:expected_project){ project }
       let(:expected_category){ nil }
@@ -189,7 +189,7 @@ describe CountDeprecationJob do
       it_should_behave_like "a deprecation job"
     end
 
-    describe "with a following result in another category", rox: { key: '4bcf621b7a31', grouped: true } do
+    describe "with a following result in another category", probe_dock: { key: '4bcf621b7a31', grouped: true } do
       let(:other_category){ create :category }
       let!(:following_result){ create :result, runner: runner, test_info: test, previous_category: other_category, category: category, run_at: time + 2.days }
       let!(:future_result){ create :result, runner: author, test_info: test, previous_category: category, category: other_category, run_at: time + 5.days }

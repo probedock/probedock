@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe AccountsController, rox: { tags: :unit } do
+describe AccountsController, probe_dock: { tags: :unit } do
   let(:user){ create :user }
   before(:each){ sign_in user }
 
@@ -28,31 +28,31 @@ describe AccountsController, rox: { tags: :unit } do
     before(:each){ get :show, locale: I18n.default_locale }
     subject{ assigns }
 
-    it "should set the window title", rox: { key: 'befd7e3ed5de' } do
+    it "should set the window title", probe_dock: { key: 'befd7e3ed5de' } do
       expect(subject[:window_title]).to eq([ t('common.title'), t('accounts.show.title') ])
     end
 
-    it "should set the test search configuration", rox: { key: 'ee865032290f' } do
+    it "should set the test search configuration", probe_dock: { key: 'ee865032290f' } do
       expect(subject[:tests_table_config][:search]).to eq(TestSearch.config({}, except: [ :authors, :current ]))
     end
 
     describe "@key_generator_config" do
       subject{ super()[:key_generator_config] }
 
-      it "should contain the path", rox: { key: 'ba6d661584cb' } do
+      it "should contain the path", probe_dock: { key: 'ba6d661584cb' } do
         expect(subject[:path]).to eq(api_test_keys_path)
       end
 
-      it "should contain representations of all projects", rox: { key: '47b3cd718a0a' } do
+      it "should contain representations of all projects", probe_dock: { key: '47b3cd718a0a' } do
         expect(subject[:projects]).to eq(projects.sort_by(&:name).collect{ |p| ProjectRepresenter.new(p).serializable_hash })
       end
 
-      it "should contain representations of free test keys for the current user", rox: { key: 'f11a527de199' } do
+      it "should contain representations of free test keys for the current user", probe_dock: { key: 'f11a527de199' } do
         keys = test_keys.select{ |k| k.free? and k.user == user }
         expect(subject[:freeKeys]).to eq(TestKeysRepresenter.new(OpenStruct.new(total: keys.length, data: keys)).serializable_hash)
       end
 
-      it "should not contain a last test key number and project api id", rox: { key: 'f9888a718fa2' } do
+      it "should not contain a last test key number and project api id", probe_dock: { key: 'f9888a718fa2' } do
         expect(subject).not_to have_key(:lastNumber)
         expect(subject).not_to have_key(:lastProjectApiId)
       end
@@ -62,7 +62,7 @@ describe AccountsController, rox: { tags: :unit } do
         let(:last_project){ projects.sample }
         let(:user){ super().tap{ |u| u.settings.update_attributes last_test_key_number: last_number, last_test_key_project_id: last_project.id } }
 
-        it "should contain the last test key number and project api id", rox: { key: 'b1bc3fcfd270' } do
+        it "should contain the last test key number and project api id", probe_dock: { key: 'b1bc3fcfd270' } do
           expect(subject[:lastNumber]).to eq(last_number)
           expect(subject[:lastProjectApiId]).to eq(last_project.api_id)
         end

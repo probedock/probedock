@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe PurgeTestRunsJob, rox: { tags: :unit } do
+describe PurgeTestRunsJob, probe_dock: { tags: :unit } do
   PURGE_TEST_RUNS_JOB_QUEUE = :purge
   let(:test_runs_lifespan){ 5 }
   subject{ described_class }
@@ -26,31 +26,31 @@ describe PurgeTestRunsJob, rox: { tags: :unit } do
     allow(Settings).to receive(:app).and_return(double(test_runs_lifespan: test_runs_lifespan))
   end
 
-  it "should go in the #{PURGE_TEST_RUNS_JOB_QUEUE} queue", rox: { key: 'dfc7369fafa4' } do
+  it "should go in the #{PURGE_TEST_RUNS_JOB_QUEUE} queue", probe_dock: { key: 'dfc7369fafa4' } do
     expect(described_class.instance_variable_get('@queue').to_sym).to eq(PURGE_TEST_RUNS_JOB_QUEUE)
   end
 
   describe ".lock_workers" do
 
-    it "should use the same lock as the payload processing job", rox: { key: 'e6e35312a6e9' } do
+    it "should use the same lock as the payload processing job", probe_dock: { key: 'e6e35312a6e9' } do
       expect(subject.lock_workers).to eq(ProcessNextTestPayloadJob.name)
     end
   end
 
   describe ".number_remaining" do
 
-    it "should count outdated test runs", rox: { key: 'ca1ec2d41ada' } do
+    it "should count outdated test runs", probe_dock: { key: 'ca1ec2d41ada' } do
       create_test_runs
       expect(described_class.number_remaining).to eq(3)
     end
 
-    it "should indicate that there is nothing to purge", rox: { key: '728bcf7564fa' } do
+    it "should indicate that there is nothing to purge", probe_dock: { key: '728bcf7564fa' } do
       expect(described_class.number_remaining).to eq(0)
     end
   end
 
   describe ".data_lifespan" do
-    it "should return the lifespan of test runs", rox: { key: '15752398d178' } do
+    it "should return the lifespan of test runs", probe_dock: { key: '15752398d178' } do
       expect(described_class.data_lifespan).to eq(5)
     end
   end
@@ -81,7 +81,7 @@ describe PurgeTestRunsJob, rox: { tags: :unit } do
       TestPayload.where(test_run_id: runs[0, 3]).delete_all
     end
 
-    it "should delete outdated test runs and related data", rox: { key: 'b0d44e50f658' } do
+    it "should delete outdated test runs and related data", probe_dock: { key: 'b0d44e50f658' } do
 
       # only the last 2 test runs should remain
       remaining_runs = TestRun.order('ended_at DESC').all.to_a
@@ -114,11 +114,11 @@ describe PurgeTestRunsJob, rox: { tags: :unit } do
       expect(users[2].last_run).not_to be_nil
     end
 
-    it "should log the number of purged runs", rox: { key: 'cc0ec4d0c89c' } do
+    it "should log the number of purged runs", probe_dock: { key: 'cc0ec4d0c89c' } do
       expect(Rails.logger).to have_received(:info).with(/\APurged 3 outdated test runs in [0-9\.]+s\Z/)
     end
 
-    it "should fire the purged:testRuns event", rox: { key: '0571ebaea31e' } do
+    it "should fire the purged:testRuns event", probe_dock: { key: '0571ebaea31e' } do
       expect(Rails.application.events).to have_received(:fire).with('purged:testRuns')
     end
   end

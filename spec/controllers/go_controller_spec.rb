@@ -16,19 +16,19 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe GoController, rox: { tags: :unit } do
+describe GoController, probe_dock: { tags: :unit } do
   let(:user){ create :user }
   before(:each){ sign_in user }
 
   describe "#test" do
     let(:test){ create :test, key: create(:test_key, user: user) }
 
-    it "should redirect to the test with the given project and key", rox: { key: '54490a6b392a' } do
+    it "should redirect to the test with the given project and key", probe_dock: { key: '54490a6b392a' } do
       get :test, project: test.project.api_id, key: test.key.key
       expect(subject).to redirect_to(test)
     end
 
-    it "should redirect an unknown test to the tests page", rox: { key: 'f1afb0d5c8fa' } do
+    it "should redirect an unknown test to the tests page", probe_dock: { key: 'f1afb0d5c8fa' } do
       get :test, project: 'foo', key: 'bar'
       expect(subject).to redirect_to(test_infos_path)
       expect(flash[:warning]).to eq(t('test_infos.go.not_found'))
@@ -38,17 +38,17 @@ describe GoController, rox: { tags: :unit } do
   describe "#project" do
     let(:project){ create :project }
 
-    it "should redirect to the project with the given api id", rox: { key: 'd3484e0ab4f6' } do
+    it "should redirect to the project with the given api id", probe_dock: { key: 'd3484e0ab4f6' } do
       get :project, apiId: project.api_id
       expect(subject).to redirect_to(project)
     end
 
-    it "should redirect to the projects index for unknown projects", rox: { key: '31f93b345ec1' } do
+    it "should redirect to the projects index for unknown projects", probe_dock: { key: '31f93b345ec1' } do
       get :project, apiId: 'foo'
       expect(subject).to redirect_to(projects_path)
     end
 
-    it "should redirect to the projects index with no arguments", rox: { key: 'd0465e806685' } do
+    it "should redirect to the projects index with no arguments", probe_dock: { key: 'd0465e806685' } do
       get :project, locale: I18n.default_locale
       expect(subject).to redirect_to(projects_path)
     end
@@ -67,37 +67,37 @@ describe GoController, rox: { tags: :unit } do
       end
     end
     
-    it "should redirect to the test run with the given uid", rox: { key: 'ba7287b32b4a' } do
+    it "should redirect to the test run with the given uid", probe_dock: { key: 'ba7287b32b4a' } do
       get :run, uid: runs.first.uid
       expect(subject).to redirect_to(runs.first)
     end
 
-    it "should redirect to the latest run", rox: { key: '3ba7b50d5f99' } do
+    it "should redirect to the latest run", probe_dock: { key: '3ba7b50d5f99' } do
       get :run, latest: ''
       expect(subject).to redirect_to(runs.last)
     end
 
-    it "should redirect to the latest run in the given group", rox: { key: 'f993cebf7b2f' } do
+    it "should redirect to the latest run in the given group", probe_dock: { key: 'f993cebf7b2f' } do
       get :run, latest: 'nightly'
       expect(subject).to redirect_to(runs[7])
     end
 
-    it "should redirect to the earliest run", rox: { key: 'f21ec8a028a6' } do
+    it "should redirect to the earliest run", probe_dock: { key: 'f21ec8a028a6' } do
       get :run, earliest: ''
       expect(subject).to redirect_to(runs.first)
     end
 
-    it "should redirect to the earliest run in the given group", rox: { key: 'a55d1d023092' } do
+    it "should redirect to the earliest run in the given group", probe_dock: { key: 'a55d1d023092' } do
       get :run, earliest: 'daily'
       expect(subject).to redirect_to(runs[2])
     end
 
-    it "should redirect to the test runs index for unknown uids", rox: { key: '844a80c87796' } do
+    it "should redirect to the test runs index for unknown uids", probe_dock: { key: '844a80c87796' } do
       get :run, uid: 'foo'
       expect(subject).to redirect_to(test_runs_path)
     end
 
-    it "should redirect to the test runs index with no arguments", rox: { key: '5ecf7a6d493b' } do
+    it "should redirect to the test runs index with no arguments", probe_dock: { key: '5ecf7a6d493b' } do
       get :run
       expect(subject).to redirect_to(test_runs_path)
     end

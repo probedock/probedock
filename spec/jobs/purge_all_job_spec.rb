@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-RSpec.describe PurgeAllJob, rox: { tags: :unit } do
+RSpec.describe PurgeAllJob, probe_dock: { tags: :unit } do
   PURGE_ALL_JOB_QUEUE = :purge
   subject{ described_class }
 
@@ -24,11 +24,11 @@ RSpec.describe PurgeAllJob, rox: { tags: :unit } do
     ResqueSpec.reset!
   end
 
-  it "should go in the #{PURGE_ALL_JOB_QUEUE} queue", rox: { key: 'd00976514f8f' } do
+  it "should go in the #{PURGE_ALL_JOB_QUEUE} queue", probe_dock: { key: 'd00976514f8f' } do
     expect(subject.instance_variable_get('@queue').to_sym).to eq(PURGE_ALL_JOB_QUEUE)
   end
 
-  it "should enqueue a job (with throttling) on the api:payload event", rox: { key: 'cfec249f35c3' } do
+  it "should enqueue a job (with throttling) on the api:payload event", probe_dock: { key: 'cfec249f35c3' } do
     allow(described_class).to receive(:enqueue_throttled)
     described_class.fire 'api:payload', double
     expect(described_class).to have_received(:enqueue_throttled).with(no_args)
@@ -36,14 +36,14 @@ RSpec.describe PurgeAllJob, rox: { tags: :unit } do
 
   describe ".enqueue_throttled" do
 
-    it "should enqueue the job and create a redis lock", rox: { key: 'a569aa3a61c2' } do
+    it "should enqueue the job and create a redis lock", probe_dock: { key: 'a569aa3a61c2' } do
       described_class.enqueue_throttled
       expect(PurgeAllJob).to have_queue_size_of(1)
       expect($redis.get('purge:lock')).not_to be_falsy
       expect($redis.ttl('purge:lock')).to be <= 86400
     end
 
-    it "should not enqueue the job if it is locked", rox: { key: '10016513ea62' } do
+    it "should not enqueue the job if it is locked", probe_dock: { key: '10016513ea62' } do
       $redis.set 'purge:lock', Time.now.to_i
       described_class.enqueue_throttled
       expect(PurgeAllJob).to have_queue_size_of(0)
@@ -53,14 +53,14 @@ RSpec.describe PurgeAllJob, rox: { tags: :unit } do
   describe ".perform" do
     let(:job_classes){ [ PurgeTagsJob, PurgeTestPayloadsJob, PurgeTestRunsJob, PurgeTicketsJob ] }
 
-    it "should not do anything if there is no data to purge", rox: { key: 'a674c8a0f2d1' } do
+    it "should not do anything if there is no data to purge", probe_dock: { key: 'a674c8a0f2d1' } do
       job_classes.each{ |job_class| allow(job_class).to receive(:number_remaining).and_return(0) }
       expect do
         subject.perform
       end.not_to change(PurgeAction, :count)
     end
 
-    it "should enqueue purge jobs for outdated data", rox: { key: 'd28af4ad61ad' } do
+    it "should enqueue purge jobs for outdated data", probe_dock: { key: 'd28af4ad61ad' } do
       job_classes.each.with_index{ |job_class,i| allow(job_class).to receive(:number_remaining).and_return(i) }
 
       expect do

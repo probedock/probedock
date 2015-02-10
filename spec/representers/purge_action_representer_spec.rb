@@ -16,13 +16,13 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe PurgeActionRepresenter, rox: { tags: :unit } do
+describe PurgeActionRepresenter, probe_dock: { tags: :unit } do
 
   let(:purge_action){ create :purge_action }
   let(:options){ {} }
   subject{ PurgeActionRepresenter.new(purge_action, options).serializable_hash }
 
-  it(nil, rox: { key: '69a8529dd239' }) do
+  it(nil, probe_dock: { key: '69a8529dd239' }) do
     should have_only_properties({
       dataType: purge_action.data_type,
       numberPurged: 0,
@@ -33,7 +33,7 @@ describe PurgeActionRepresenter, rox: { tags: :unit } do
   describe "with a completed purge action" do
     let(:purge_action){ create :completed_purge_action }
 
-    it(nil, rox: { key: 'ff25aceadb44' }) do
+    it(nil, probe_dock: { key: 'ff25aceadb44' }) do
       should have_only_properties({
         dataType: purge_action.data_type,
         numberPurged: purge_action.number_purged,
@@ -50,7 +50,7 @@ describe PurgeActionRepresenter, rox: { tags: :unit } do
       allow(purge_action).to receive(:number_remaining).and_return(42)
     end
 
-    it(nil, rox: { key: '488697498cdd' }) do
+    it(nil, probe_dock: { key: '488697498cdd' }) do
       should have_only_properties({
         dataType: purge_action.data_type,
         numberPurged: 0,
@@ -63,7 +63,7 @@ describe PurgeActionRepresenter, rox: { tags: :unit } do
     describe "with a new purge action" do
       let(:purge_action){ PurgeAction.new data_type: 'tags' }
 
-      it(nil, rox: { key: '5ee619f7aad2' }) do
+      it(nil, probe_dock: { key: '5ee619f7aad2' }) do
         should have_only_properties({
           dataType: purge_action.data_type,
           numberPurged: 0,
@@ -76,7 +76,7 @@ describe PurgeActionRepresenter, rox: { tags: :unit } do
     describe "with a completed purge action" do
       let(:purge_action){ create :completed_purge_action }
 
-      it(nil, rox: { key: '5e5fedf4a847' }) do
+      it(nil, probe_dock: { key: '5e5fedf4a847' }) do
         should have_only_properties({
           dataType: purge_action.data_type,
           numberPurged: purge_action.number_purged,

@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-RSpec.describe PurgeTagsJob, rox: { tags: :unit } do
+RSpec.describe PurgeTagsJob, probe_dock: { tags: :unit } do
   PURGE_TAGS_JOB_QUEUE = :purge
   subject{ described_class }
 
@@ -24,13 +24,13 @@ RSpec.describe PurgeTagsJob, rox: { tags: :unit } do
     ResqueSpec.reset!
   end
 
-  it "should go in the #{PURGE_TAGS_JOB_QUEUE} queue", rox: { key: '9a18c6ea32b4' } do
+  it "should go in the #{PURGE_TAGS_JOB_QUEUE} queue", probe_dock: { key: '9a18c6ea32b4' } do
     expect(subject.instance_variable_get('@queue').to_sym).to eq(PURGE_TAGS_JOB_QUEUE)
   end
 
   describe ".lock_workers" do
 
-    it "should use the same lock as the payload processing job", rox: { key: '30625a15f6a4' } do
+    it "should use the same lock as the payload processing job", probe_dock: { key: '30625a15f6a4' } do
       expect(subject.lock_workers).to eq(ProcessNextTestPayloadJob.name)
     end
   end
@@ -38,7 +38,7 @@ RSpec.describe PurgeTagsJob, rox: { tags: :unit } do
   describe ".number_remaining" do
     let(:user){ create :user }
 
-    it "should count unused tags", rox: { key: '407c7af39e87' } do
+    it "should count unused tags", probe_dock: { key: '407c7af39e87' } do
       
       tags = Array.new(5){ |i| create :tag }
       tests = Array.new(3){ |i| create :test, key: create(:test_key, user: user), tags: tags[i % 2, 1] }
@@ -46,7 +46,7 @@ RSpec.describe PurgeTagsJob, rox: { tags: :unit } do
       expect(subject.number_remaining).to eq(3)
     end
 
-    it "should indicate that there is nothing to purge", rox: { key: '9d95485a3f2a' } do
+    it "should indicate that there is nothing to purge", probe_dock: { key: '9d95485a3f2a' } do
       expect(subject.number_remaining).to eq(0)
     end
   end
@@ -63,16 +63,16 @@ RSpec.describe PurgeTagsJob, rox: { tags: :unit } do
       subject.perform purge_action.id
     end
 
-    it "should delete unused tags", rox: { key: '35180fbca993' } do
+    it "should delete unused tags", probe_dock: { key: '35180fbca993' } do
       expect(Tag.all.to_a).to match_array(tags[0, 2])
       expect_purge_completed purge_action, 3
     end
 
-    it "should log the number of purged tags", rox: { key: '698f34518430' } do
+    it "should log the number of purged tags", probe_dock: { key: '698f34518430' } do
       expect(Rails.logger).to have_received(:info).with(/\APurged 3 unused tags in [0-9\.]+s\Z/)
     end
 
-    it "should fire the purge:tags event", rox: { key: '385b5ca1a64a' } do
+    it "should fire the purge:tags event", probe_dock: { key: '385b5ca1a64a' } do
       expect(Rails.application.events).to have_received(:fire).with('purged:tags')
     end
   end

@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TestCountersData, rox: { tags: :unit } do
+describe TestCountersData, probe_dock: { tags: :unit } do
   subject{ described_class }
   let(:user){ create :user }
 
@@ -26,7 +26,7 @@ describe TestCountersData, rox: { tags: :unit } do
 
   describe ".queue_size" do
 
-    it "should return the size of the test counters queue", rox: { key: '1289a59187fc' } do
+    it "should return the size of the test counters queue", probe_dock: { key: '1289a59187fc' } do
 
       expect(TestCountersData.queue_size).to eq(0)
       expect(TestCountersData.queue_size).to eq(Resque.size(CountTestsJob.queue))
@@ -41,15 +41,15 @@ describe TestCountersData, rox: { tags: :unit } do
 
   describe ".compute" do
 
-    it "should make only one call to redis", rox: { key: '021b87f91735' } do
+    it "should make only one call to redis", probe_dock: { key: '021b87f91735' } do
       expect{ subject.compute }.to change{ number_of_redis_calls }.by(1)
     end
 
-    it "should return information about test counters processing when nothing is happening", rox: { key: 'e4601616e590' } do
+    it "should return information about test counters processing when nothing is happening", probe_dock: { key: 'e4601616e590' } do
       expect(subject.compute).to eq(jobs: 0, recomputing: false, remainingResults: 0, preparing: false, totalCounters: 0)
     end
 
-    it "should return information about test counters processing", rox: { key: '88378b19085a' } do
+    it "should return information about test counters processing", probe_dock: { key: '88378b19085a' } do
 
       fill_test_counters_queue 3
       $redis.set TestCounter.cache_key(:recomputing), true
@@ -65,26 +65,26 @@ describe TestCountersData, rox: { tags: :unit } do
     let!(:first_fingerprint){ described_class.fingerprint }
     subject{ first_fingerprint }
 
-    it "should not change across calls", rox: { key: 'e83ff91a23d9' } do
+    it "should not change across calls", probe_dock: { key: 'e83ff91a23d9' } do
       expect(subject).to eq(fingerprint)
     end
 
-    it "should change if the size of the test counters queue changes", rox: { key: 'b4ad75476ad1' } do
+    it "should change if the size of the test counters queue changes", probe_dock: { key: 'b4ad75476ad1' } do
       fill_test_counters_queue 3
       expect(subject).not_to eq(fingerprint)
     end
 
-    it "should change depending on whether test counters are recomputing", rox: { key: '4841e56f1574' } do
+    it "should change depending on whether test counters are recomputing", probe_dock: { key: '4841e56f1574' } do
       $redis.set TestCounter.cache_key(:recomputing), true
       expect(subject).not_to eq(fingerprint)
     end
 
-    it "should change depending on whether test counters are preparing", rox: { key: '782cb2ff295a' } do
+    it "should change depending on whether test counters are preparing", probe_dock: { key: '782cb2ff295a' } do
       $redis.set TestCounter.cache_key(:preparing), true
       expect(subject).not_to eq(fingerprint)
     end
 
-    it "should change if the number of remaining results changes", rox: { key: '6aaafadf4fab' } do
+    it "should change if the number of remaining results changes", probe_dock: { key: '6aaafadf4fab' } do
       $redis.set TestCounter.cache_key(:remaining_results), 42
       expect(subject).not_to eq(fingerprint)
     end

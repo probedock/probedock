@@ -28,7 +28,7 @@ describe DataController do
       allow(TestCountersData).to receive(:compute).and_return(test_counters_data)
     end
 
-    it "should not authorize normal users", rox: { key: '9511700d6221' } do
+    it "should not authorize normal users", probe_dock: { key: '9511700d6221' } do
       expect{ get :test_counters }.to raise_error(CanCan::AccessDenied)
       expect{ post :test_counters }.to raise_error(CanCan::AccessDenied)
     end
@@ -36,13 +36,13 @@ describe DataController do
     describe "for administrators" do
       let(:user){ create :admin }
 
-      it "should return the status of the test counters recomputing process", rox: { key: '32cc410f389a' } do
+      it "should return the status of the test counters recomputing process", probe_dock: { key: '32cc410f389a' } do
         get :test_counters
         expect(response.status).to eq(200)
         expect(MultiJson.load(response.body)).to eq({ 'foo' => 'bar' })
       end
 
-      it "should return a 503 response if maintenance mode is not enabled", rox: { key: '00d368f6a4b2' } do
+      it "should return a 503 response if maintenance mode is not enabled", probe_dock: { key: '00d368f6a4b2' } do
         post :test_counters
         expect(response.status).to eq(503)
         # FIXME: fix or remove test counter recomputing
@@ -51,7 +51,7 @@ describe DataController do
         expect(TestCounter).not_to receive(:recompute!)
       end
 
-      it "should return a 503 response if test counters are already recomputing", rox: { key: '4dde4abe9c27' } do
+      it "should return a 503 response if test counters are already recomputing", probe_dock: { key: '4dde4abe9c27' } do
         allow(TestCounter).to receive(:recompute!).and_return(false)
         post :test_counters
         expect(response.status).to eq(503)
@@ -60,7 +60,7 @@ describe DataController do
         expect(response.body).to eq('Feature temporarily disabled')
       end
 
-      it "should start recomputing test counters", rox: { key: '21b413472419' } do
+      it "should start recomputing test counters", probe_dock: { key: '21b413472419' } do
         set_maintenance_mode
         #expect(TestCounter).to receive(:recompute!)
         post :test_counters

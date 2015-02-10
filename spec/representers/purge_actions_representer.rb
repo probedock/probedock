@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe PurgeActionsRepresenter, rox: { tags: :unit } do
+describe PurgeActionsRepresenter, probe_dock: { tags: :unit } do
 
   before :each do
     allow(Resque).to receive(:size).and_return(42)
@@ -33,14 +33,14 @@ describe PurgeActionsRepresenter, rox: { tags: :unit } do
   let(:options){ {} }
   subject{ PurgeActionsRepresenter.new(OpenStruct.new(data.merge(data: purge_actions)), options).serializable_hash }
 
-  it(nil, rox: { key: '974d3e7f1d16' }){ should have_no_curie }
-  it(nil, rox: { key: '09d8b0f214f3' }){ should hyperlink_to('self', uri(:api_purges, locale: nil)) }
-  it(nil, rox: { key: '731863169800' }){ should have_only_properties(total: 3, page: 1) }
-  it(nil, rox: { key: 'a14c557251b5' }){ should have_embedded('item', purge_actions.collect{ |a| PurgeActionRepresenter.new(a).serializable_hash }) }
+  it(nil, probe_dock: { key: '974d3e7f1d16' }){ should have_no_curie }
+  it(nil, probe_dock: { key: '09d8b0f214f3' }){ should hyperlink_to('self', uri(:api_purges, locale: nil)) }
+  it(nil, probe_dock: { key: '731863169800' }){ should have_only_properties(total: 3, page: 1) }
+  it(nil, probe_dock: { key: 'a14c557251b5' }){ should have_embedded('item', purge_actions.collect{ |a| PurgeActionRepresenter.new(a).serializable_hash }) }
 
   describe "with the :info option" do
     let(:data){ super().merge page: nil }
     let(:options){ super().merge info: true }
-    it(nil, rox: { key: '354b5552da1b' }){ should have_only_properties(total: 3, jobs: 42) }
+    it(nil, probe_dock: { key: '354b5552da1b' }){ should have_only_properties(total: 3, jobs: 42) }
   end
 end

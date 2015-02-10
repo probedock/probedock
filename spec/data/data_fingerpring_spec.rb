@@ -20,11 +20,11 @@ describe DataFingerprint do
 
   describe "#to_s" do
 
-    it "should generate a hash of the data", rox: { key: '3c7b0ada75a5' } do
+    it "should generate a hash of the data", probe_dock: { key: '3c7b0ada75a5' } do
       %w(foo bar baz).each{ |data| expect(fingerprint(data).to_s).to eq(Digest::SHA1.hexdigest(data)) }
     end
 
-    it "should convert the data to a string", rox: { key: 'f8693e606a86' } do
+    it "should convert the data to a string", probe_dock: { key: 'f8693e606a86' } do
       data = { a: 1, b: 2, c: 3 }
       expect(fingerprint(data).to_s).to eq(Digest::SHA1.hexdigest(data.to_s))
     end
@@ -32,18 +32,18 @@ describe DataFingerprint do
 
   describe "#==" do
 
-    it "should return true for the same data", rox: { key: '4bcb85a68299' } do
+    it "should return true for the same data", probe_dock: { key: '4bcb85a68299' } do
       expect(fingerprint('foo')).to eq(fingerprint('foo'))
     end
 
-    it "should return false for different data", rox: { key: 'da9621ee4b23' } do
+    it "should return false for different data", probe_dock: { key: 'da9621ee4b23' } do
       expect(fingerprint('bar')).not_to eq(fingerprint('baz'))
     end
   end
 
   describe "#data" do
 
-    it "should return the internal data", rox: { key: 'f5039ef879e6' } do
+    it "should return the internal data", probe_dock: { key: 'f5039ef879e6' } do
       Array.new(3){ |i| Object.new }.each{ |data| expect(fingerprint(data).data).to be(data) }
     end
   end

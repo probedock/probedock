@@ -46,17 +46,17 @@ describe("Auto module", function() {
     });
 
     it("should be started", function() {
-      this.meta = { rox: { key: 'f317ee68a1b9' } };
+      this.meta = { probeDock: { key: 'f317ee68a1b9' } };
       expect(initializerCalls.length).toBe(1);
     });
 
     it("should be started with a region", function() {
-      this.meta = { rox: { key: '523eaca2ed26' } };
+      this.meta = { probeDock: { key: '523eaca2ed26' } };
       expect(initializerCalls[0].region instanceof Marionette.Region).toBe(true);
     });
 
     it("should be started with the configuration of the matching element", function() {
-      this.meta = { rox: { key: 'ced1072c771a' } };
+      this.meta = { probeDock: { key: 'ced1072c771a' } };
       expect(initializerCalls[0].config).toEqual({ n: 42 });
     });
   });
@@ -69,7 +69,7 @@ describe("Auto module", function() {
     });
 
     it("should be injected with a fade in region", function() {
-      this.meta = { rox: { key: '1d01a16aa294' } };
+      this.meta = { probeDock: { key: '1d01a16aa294' } };
       expect(initializerCalls[0].region instanceof Marionette.FadeInRegion).toBe(true);
     });
   });
@@ -82,12 +82,12 @@ describe("Auto module", function() {
     });
 
     it("should be started three times", function() {
-      this.meta = { rox: { key: 'd92c27f44218' } };
+      this.meta = { probeDock: { key: 'd92c27f44218' } };
       expect(initializerCalls.length).toBe(3);
     });
 
     it("should be started with the configuration of each matching element", function() {
-      this.meta = { rox: { key: 'c099990aa8f6' } };
+      this.meta = { probeDock: { key: 'c099990aa8f6' } };
       expect(initializerCalls[0].config).toEqual({ n: 1 });
       expect(initializerCalls[1].config).toEqual({ n: 2 });
       expect(initializerCalls[2].config).toEqual({ n: 3 });

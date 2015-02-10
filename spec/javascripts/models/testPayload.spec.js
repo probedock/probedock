@@ -47,14 +47,14 @@ describe("TestPayload", function() {
   });
 
   it("should use its self link as its url", function() {
-    this.meta = { rox: { key: '73171e8d6ec2' } };
+    this.meta = { probeDock: { key: '73171e8d6ec2' } };
     var payload = new TestPayload(baseTestPayload);
     expect(payload.url()).toBe('http://example.com/payloads/42');
     cleanRelational(payload);
   });
 
   it("should compute its queue time when available", function() {
-    this.meta = { rox: { key: '75c926db01a7' } };
+    this.meta = { probeDock: { key: '75c926db01a7' } };
     var payloads = {
       created: new TestPayload(baseTestPayload),
       processing: new TestPayload(processingTestPayload),
@@ -67,7 +67,7 @@ describe("TestPayload", function() {
   });
 
   it("should compute its processing time when available", function() {
-    this.meta = { rox: { key: '78f99ec226a5' } };
+    this.meta = { probeDock: { key: '78f99ec226a5' } };
     var payloads = {
       created: new TestPayload(baseTestPayload),
       processing: new TestPayload(processingTestPayload),
@@ -86,7 +86,7 @@ describe("TestPayloads", function() {
       TestPayloads = App.models.TestPayloads;
 
   it("should use the TestPayload model", function() {
-    this.meta = { rox: { key: '2c9d23afce24' } };
+    this.meta = { probeDock: { key: '2c9d23afce24' } };
     expect(getEmbeddedRelation(TestPayloads, 'item').relatedModel).toBe(TestPayload);
   });
 });

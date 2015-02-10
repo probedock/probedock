@@ -51,7 +51,7 @@ describe("ApiKey", function() {
   });
 
   it("should return its self link when links are given", function() {
-    this.meta = { rox: { key: 'c1feb59b4b03' } };
+    this.meta = { probeDock: { key: 'c1feb59b4b03' } };
     expect(apiKey.url()).toBe('http://example.com');
   });
 });
@@ -62,7 +62,7 @@ describe("ApiKeys", function() {
       ApiKeys = App.models.ApiKeys;
 
   it("should use the ApiKey model", function() {
-    this.meta = { rox: { key: '7ae87d0e9bc2' } };
+    this.meta = { probeDock: { key: '7ae87d0e9bc2' } };
     expect(getEmbeddedRelation(ApiKeys, 'item').relatedModel).toBe(ApiKey);
   });
 });

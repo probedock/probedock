@@ -23,7 +23,7 @@ describe CountTestsJob do
     ResqueSpec.reset!
   end
 
-  it "should go in the #{COUNT_TESTS_JOB_QUEUE} queue", rox: { key: 'c3033e4f9e76' } do
+  it "should go in the #{COUNT_TESTS_JOB_QUEUE} queue", probe_dock: { key: 'c3033e4f9e76' } do
     expect(described_class.queue).to eq(COUNT_TESTS_JOB_QUEUE)
     expect(described_class.instance_variable_get('@queue')).to eq(COUNT_TESTS_JOB_QUEUE)
   end
@@ -32,7 +32,7 @@ describe CountTestsJob do
     let(:timezones){ [ 'UTC', 'Bern' ] }
     before(:each){ allow(ProbeDock::Application).to receive(:metrics_timezones).and_return(timezones) }
 
-    it "should enqueue results on the api:payload event", rox: { key: '9b89f251da79' } do
+    it "should enqueue results on the api:payload event", probe_dock: { key: '9b89f251da79' } do
       result_doubles = Array.new(5){ |i| double id: i * 66 }
       expect(described_class).to receive(:enqueue_results).with(result_doubles, timezones: timezones)
       described_class.fire 'api:payload', double(processed_test_run: double(processed_tests: Array.new(5){ |i| double test_result: result_doubles[i] }))
@@ -43,13 +43,13 @@ describe CountTestsJob do
     let(:user){ create :user }
     let(:runs){ Array.new(3){ |i| create :test_run, runner: user, results_count: i + 1 } }
 
-    it "should enqueue a job with the run ids", rox: { key: '4565c3552fc6' } do
+    it "should enqueue a job with the run ids", probe_dock: { key: '4565c3552fc6' } do
       described_class.enqueue_runs runs, foo: 'bar'
       expect(described_class).to have_queued(run_ids: runs.collect(&:id), foo: 'bar')
       expect(described_class).to have_queue_size_of(1)
     end
 
-    it "should update remaining results by the number of results in the runs", rox: { key: '27676b77aed3' } do
+    it "should update remaining results by the number of results in the runs", probe_dock: { key: '27676b77aed3' } do
       expect(TestCounter).to receive(:update_remaining_results).with(6)
       described_class.enqueue_runs runs, foo: 'bar'
     end
@@ -61,18 +61,18 @@ describe CountTestsJob do
     let(:tests){ Array.new(3){ |i| create :test, key: test_keys[i], run_at: i.days.ago, runner: user } }
     let(:results){ tests.collect &:effective_result }
 
-    it "should enqueue a job with the result ids", rox: { key: 'e0aba7c4c98f' } do
+    it "should enqueue a job with the result ids", probe_dock: { key: 'e0aba7c4c98f' } do
       described_class.enqueue_results results, foo: 'bar'
       expect(described_class).to have_queued(result_ids: results.collect(&:id), foo: 'bar')
       expect(described_class).to have_queue_size_of(1)
     end
 
-    it "should update remaining results by the number of results", rox: { key: '632c5a5150cf' } do
+    it "should update remaining results by the number of results", probe_dock: { key: '632c5a5150cf' } do
       expect(TestCounter).to receive(:update_remaining_results).with(3)
       described_class.enqueue_results results, foo: 'bar'
     end
 
-    it "should log the number of results", rox: { key: '9a6b75bccea9' } do
+    it "should log the number of results", probe_dock: { key: '9a6b75bccea9' } do
       expect(Rails.logger).to receive(:debug).with(/updating test counters.*#{results.length}/i)
       described_class.enqueue_results results, foo: 'bar'
     end
@@ -97,11 +97,11 @@ describe CountTestsJob do
       end
     end
 
-    it "should raise an error without the :timezones option", rox: { key: '98b1ef1a0f84' } do
+    it "should raise an error without the :timezones option", probe_dock: { key: '98b1ef1a0f84' } do
       expect{ described_class.perform run_ids: test_runs.collect(&:id) }.to raise_error(StandardError, ":timezones option is missing")
     end
 
-    it "should instantiate a job for each loaded test results, with the timezone and an empty cache", rox: { key: '9eac8ec7751d' } do
+    it "should instantiate a job for each loaded test results, with the timezone and an empty cache", probe_dock: { key: '9eac8ec7751d' } do
 
       job_args = []
       allow(described_class).to receive(:new){ |*args| job_args << args }
@@ -116,13 +116,13 @@ describe CountTestsJob do
       job_args.first(5).each{ |args| expect(args[2]).to be(cache) }
     end
 
-    it "should decrease remaining results by the number of results", rox: { key: '8e29da39dd6e' } do
+    it "should decrease remaining results by the number of results", probe_dock: { key: '8e29da39dd6e' } do
       expect(test_counter_stub).to receive(:update_remaining_results).with(-test_results.length)
       allow(described_class).to receive(:new).and_return(nil)
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
     end
 
-    it "should instantiate a job with the results of each loaded test run, with the timezone and an empty cache", rox: { key: '52e5beac81b7' } do
+    it "should instantiate a job with the results of each loaded test run, with the timezone and an empty cache", probe_dock: { key: '52e5beac81b7' } do
 
       job_args = []
       allow(described_class).to receive(:new){ |*args| job_args << args }
@@ -137,13 +137,13 @@ describe CountTestsJob do
       job_args.first(5).each{ |args| expect(args[2]).to be(cache) }
     end
 
-    it "should decrease remaining results by the number of results in the loaded test runs", rox: { key: 'a9a9cdd3c4f0' } do
+    it "should decrease remaining results by the number of results in the loaded test runs", probe_dock: { key: 'a9a9cdd3c4f0' } do
       expect(test_counter_stub).to receive(:update_remaining_results).with(-test_results.length)
       allow(described_class).to receive(:new).and_return(nil)
       described_class.perform perform_options.merge(run_ids: test_runs.collect(&:id))
     end
 
-    it "should omit test run results after the :max_time option", rox: { key: 'aa1f0571d104' } do
+    it "should omit test run results after the :max_time option", probe_dock: { key: 'aa1f0571d104' } do
 
       now = Time.now
       test_runs.last.update_attribute :ended_at, now
@@ -164,7 +164,7 @@ describe CountTestsJob do
       job_args.first(5).each{ |args| expect(args[2]).to be(cache) }
     end
 
-    it "should decrease remaining results by the number of results in the loaded test runs that are before the :max_time option", rox: { key: '24ff101ac0cb' } do
+    it "should decrease remaining results by the number of results in the loaded test runs that are before the :max_time option", probe_dock: { key: '24ff101ac0cb' } do
 
       now = Time.now
       test_runs.last.update_attribute :ended_at, now
@@ -177,7 +177,7 @@ describe CountTestsJob do
       described_class.perform perform_options.merge(run_ids: test_runs.collect(&:id), max_time: max_time)
     end
 
-    it "should pass a counter cache to instantiated jobs", rox: { key: '937c52d98437' } do
+    it "should pass a counter cache to instantiated jobs", probe_dock: { key: '937c52d98437' } do
 
       caches = []
       allow(described_class).to receive(:new){ |*args| caches << args[2] }
@@ -195,7 +195,7 @@ describe CountTestsJob do
       expect(caches.first[{ timezone: 'Bern', time: yesterday }][:run]).to eq(42)
     end
 
-    it "should measure counter updates resulting from job instantiation", rox: { key: '84348e75d2cc' } do
+    it "should measure counter updates resulting from job instantiation", probe_dock: { key: '84348e75d2cc' } do
 
       two_days_ago, three_days_ago = 2.days.ago, 3.days.ago
       allow(described_class).to receive(:new) do |result,timezone,cache|
@@ -225,13 +225,13 @@ describe CountTestsJob do
       caches.first(6).each{ |c| expect(c).to be(caches.last) }
     end
 
-    it "should clean the token cache if not recomputing", rox: { key: '45dc83979e95' } do
+    it "should clean the token cache if not recomputing", probe_dock: { key: '45dc83979e95' } do
       allow(test_counter_stub).to receive(:recomputing?).and_return(false)
       expect(test_counter_stub).to receive(:clean_token_cache)
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
     end
 
-    it "should trigger a test:counters event on the application", rox: { key: '4c74c37fb77b' } do
+    it "should trigger a test:counters event on the application", probe_dock: { key: '4c74c37fb77b' } do
       expect(ProbeDock::Application.events).to receive(:fire).with('test:counters')
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
     end
@@ -243,13 +243,13 @@ describe CountTestsJob do
         allow(test_counter_stub).to receive(:clear_computing).and_return(nil)
       end
 
-      it "should not clean the token cache", rox: { key: 'c050382c580e' } do
+      it "should not clean the token cache", probe_dock: { key: 'c050382c580e' } do
         expect(test_counter_stub).not_to receive(:clean_token_cache)
         expect(test_counter_stub).not_to receive(:clear_computing)
         perform
       end
 
-      it "should clean the token cache and clear computing if there are no more remaining results", rox: { key: '11fd903d18b7' } do
+      it "should clean the token cache and clear computing if there are no more remaining results", probe_dock: { key: '11fd903d18b7' } do
         allow(test_counter_stub).to receive(:remaining_results).and_return(0)
         expect(test_counter_stub).to receive(:clean_token_cache)
         expect(test_counter_stub).to receive(:clear_computing)
@@ -273,7 +273,7 @@ describe CountTestsJob do
     let(:timezone){ 'Bern' }
     let(:cache){ Hash.new{ |h,k| h[k] = { written: 0, run: 0 } } }
 
-    it "should cache a new test with a category", rox: { key: 'ae4ea7090e99' } do
+    it "should cache a new test with a category", probe_dock: { key: 'ae4ea7090e99' } do
       result = process runner: runner, new_test: true, previous_category: nil, category: categories[0]
       expect(cache).to have(10).items
       expect_cached written: 1, run: 1
@@ -288,7 +288,7 @@ describe CountTestsJob do
       expect_cached user: result.test_info.author, written: 1
     end
 
-    it "should cache a new test whose runner is the same as the author", rox: { key: '41d0e9c1d181' } do
+    it "should cache a new test whose runner is the same as the author", probe_dock: { key: '41d0e9c1d181' } do
       result = process runner: author, new_test: true, previous_category: nil, category: categories[0]
       expect(cache).to have(7).items
       expect_cached written: 1, run: 1
@@ -300,7 +300,7 @@ describe CountTestsJob do
       expect_cached user: result.runner, written: 1, run: 1
     end
 
-    it "should cache a new test with no category", rox: { key: 'adaa8b309960' } do
+    it "should cache a new test with no category", probe_dock: { key: 'adaa8b309960' } do
       result = process runner: runner, new_test: true, previous_category: nil, category: nil
       expect(cache).to have(10).items
       expect_cached written: 1, run: 1
@@ -315,7 +315,7 @@ describe CountTestsJob do
       expect_cached user: result.test_info.author, written: 1
     end
 
-    it "should cache an existing test with a category", rox: { key: 'cd4ff7383149' } do
+    it "should cache an existing test with a category", probe_dock: { key: 'cd4ff7383149' } do
       result = process runner: runner, new_test: false, previous_category: categories[0], category: categories[0]
       expect(cache).to have(7).items
       expect_cached run: 1
@@ -327,7 +327,7 @@ describe CountTestsJob do
       expect_cached user: result.runner, run: 1
     end
 
-    it "should cache an existing test with no category", rox: { key: '535315ad4d31' } do
+    it "should cache an existing test with no category", probe_dock: { key: '535315ad4d31' } do
       result = process runner: runner, new_test: false, previous_category: nil, category: nil
       expect(cache).to have(7).items
       expect_cached run: 1
@@ -339,7 +339,7 @@ describe CountTestsJob do
       expect_cached user: result.runner, run: 1
     end
 
-    it "should cache an existing test with a changed category", rox: { key: 'f3b474090323' } do
+    it "should cache an existing test with a changed category", probe_dock: { key: 'f3b474090323' } do
       result = process runner: runner, new_test: false, previous_category: categories[0], category: categories[1]
       expect(cache).to have(11).items
       expect_cached run: 1
@@ -355,7 +355,7 @@ describe CountTestsJob do
       expect_cached category: result.previous_category, user: result.test_info.author, written: -1
     end
 
-    it "should cache an existing test with a changed category when it was nil before", rox: { key: 'fc7f9c943024' } do
+    it "should cache an existing test with a changed category when it was nil before", probe_dock: { key: 'fc7f9c943024' } do
       result = process runner: runner, new_test: false, previous_category: nil, category: categories[0]
       expect(cache).to have(11).items
       expect(result.category).not_to be_nil
@@ -373,7 +373,7 @@ describe CountTestsJob do
       expect_cached category: result.previous_category, user: result.test_info.author, written: -1
     end
 
-    it "should cache an existing test with a changed category when it's nil now", rox: { key: '607fdb0f7b4b' } do
+    it "should cache an existing test with a changed category when it's nil now", probe_dock: { key: '607fdb0f7b4b' } do
       result = process runner: runner, new_test: false, previous_category: categories[1], category: nil
       expect(cache).to have(11).items
       expect(result.category).to be_nil
@@ -391,7 +391,7 @@ describe CountTestsJob do
       expect_cached category: result.previous_category, user: result.test_info.author, written: -1
     end
 
-    it "should cache an existing deprecated test with a changed category", rox: { key: 'df3e915a2ee5' } do
+    it "should cache an existing deprecated test with a changed category", probe_dock: { key: 'df3e915a2ee5' } do
       result = process runner: runner, new_test: false, deprecated: true, previous_category: categories[0], category: categories[1]
       expect(cache).to have(7).items
       expect_cached run: 1
@@ -403,7 +403,7 @@ describe CountTestsJob do
       expect_cached user: result.runner, run: 1
     end
 
-    it "should cache an existing deprecated test with a changed category when it was nil before", rox: { key: 'ac9edc9d7511' } do
+    it "should cache an existing deprecated test with a changed category when it was nil before", probe_dock: { key: 'ac9edc9d7511' } do
       result = process runner: runner, new_test: false, deprecated: true, previous_category: nil, category: categories[0]
       expect(cache).to have(7).items
       expect(result.category).not_to be_nil
@@ -417,7 +417,7 @@ describe CountTestsJob do
       expect_cached user: result.runner, run: 1
     end
 
-    it "should cache an existing deprecated test with a changed category when it's nil now", rox: { key: 'fceda76d6d33' } do
+    it "should cache an existing deprecated test with a changed category when it's nil now", probe_dock: { key: 'fceda76d6d33' } do
       result = process runner: runner, new_test: false, deprecated: true, previous_category: categories[1], category: nil
       expect(cache).to have(7).items
       expect(result.category).to be_nil

@@ -21,7 +21,7 @@ RSpec.describe PurgesController, type: :controller do
 
   describe "#index" do
 
-    describe "access", rox: { key: 'd9bf9a3d6f76', grouped: true } do
+    describe "access", probe_dock: { key: 'd9bf9a3d6f76', grouped: true } do
       it_should_behave_like "an admin resource", ->(*args){ get :index }
     end
 
@@ -31,7 +31,7 @@ RSpec.describe PurgesController, type: :controller do
       before(:each){ get :index }
       subject{ assigns }
 
-      it "should set the window title", rox: { key: 'cecebcc91976' } do
+      it "should set the window title", probe_dock: { key: 'cecebcc91976' } do
         expect(subject[:window_title]).to eq([ t('common.title'), PurgeAction.model_name.human.pluralize.titleize ])
       end
     end

@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe TagsData do
 
-  it "should clear the :tag_cloud cache on the api:payload event", rox: { key: '7d1c6e0bacbf' } do
+  it "should clear the :tag_cloud cache on the api:payload event", probe_dock: { key: '7d1c6e0bacbf' } do
     expect(JsonCache).to receive(:clear).with(:tag_cloud)
     described_class.fire 'api:payload', double
   end

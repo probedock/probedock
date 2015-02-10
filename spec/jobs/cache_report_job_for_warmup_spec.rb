@@ -23,13 +23,13 @@ describe CacheReportJobForWarmup do
     ResqueSpec.reset!
   end
 
-  it "should go in the #{CACHE_REPORT_JOB_FOR_WARMUP_QUEUE} queue", rox: { key: '6ea675178596' } do
+  it "should go in the #{CACHE_REPORT_JOB_FOR_WARMUP_QUEUE} queue", probe_dock: { key: '6ea675178596' } do
     expect(described_class.instance_variable_get('@queue')).to eq(CACHE_REPORT_JOB_FOR_WARMUP_QUEUE)
   end
 
   describe ".enqueue" do
     
-    it "should enqueue a job for a test run", rox: { key: 'e5bcce4fa4fe' } do
+    it "should enqueue a job for a test run", probe_dock: { key: 'e5bcce4fa4fe' } do
       described_class.enqueue double(id: 42)
       expect(described_class).to have_queued(42, cache: :force).in(CACHE_REPORT_JOB_FOR_WARMUP_QUEUE)
       expect(described_class).to have_queue_size_of(1)
@@ -38,7 +38,7 @@ describe CacheReportJobForWarmup do
 
   describe ".perform" do
     
-    it "should get the report from the cache with the specified options", rox: { key: 'fcd92ec7970b' } do
+    it "should get the report from the cache with the specified options", probe_dock: { key: 'fcd92ec7970b' } do
       expect(TestRun.reports_cache).to receive(:get).with(42, HashWithIndifferentAccess.new(foo: 'bar'))
       described_class.perform 42, foo: 'bar'
     end

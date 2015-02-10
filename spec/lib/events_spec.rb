@@ -20,11 +20,11 @@ describe "ProbeDock::Application.events" do
 
   subject{ ProbeDock::Application }
 
-  it "should respond to #events", rox: { key: 'dc7ac63cdb50' } do
+  it "should respond to #events", probe_dock: { key: 'dc7ac63cdb50' } do
     expect(subject).to respond_to(:events)
   end
 
-  it "should listen to and fire events", rox: { key: '618e880b4142' } do
+  it "should listen to and fire events", probe_dock: { key: '618e880b4142' } do
     result = []
     subject.events.on(:fubar) do |*args|
       result.concat args

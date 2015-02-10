@@ -22,18 +22,18 @@ describe("Path", function() {
   });
 
   it("should join path segments", function() {
-    this.meta = { rox: { key: '51dea490bfe9' } };
+    this.meta = { probeDock: { key: '51dea490bfe9' } };
     expect(Path.join('a', 'b', 'c')).toBe('a/b/c');
     expect(Path.join('/a', '/b/', 'c')).toBe('/a/b/c');
   });
 
   it("should build a path from the root path", function() {
-    this.meta = { rox: { key: 'fb384ea17072' } };
+    this.meta = { probeDock: { key: 'fb384ea17072' } };
     expect(Path.build('a', 'b')).toBe('/root/a/b');
   });
 
   it("should return a builder", function() {
-    this.meta = { rox: { key: 'aecad84b2492' } };
+    this.meta = { probeDock: { key: 'aecad84b2492' } };
     expect(Path.builder('a', 'b')()).toBe('/root/a/b');
   });
 });
@@ -46,12 +46,12 @@ describe("ApiPath", function() {
   });
 
   it("should build a path from the root of the API", function() {
-    this.meta = { rox: { key: 'fc5c9d619cdc' } };
+    this.meta = { probeDock: { key: 'fc5c9d619cdc' } };
     expect(ApiPath.build('a', 'b')).toBe('/root/api/a/b');
   });
 
   it("should return a builder", function() {
-    this.meta = { rox: { key: '60e3a5a477b5' } };
+    this.meta = { probeDock: { key: '60e3a5a477b5' } };
     expect(ApiPath.builder('a', 'b')()).toBe('/root/api/a/b');
   });
 });

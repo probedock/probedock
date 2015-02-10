@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TagsController, rox: { tags: :unit } do
+describe TagsController, probe_dock: { tags: :unit } do
 
   before :each do
     @user = create :user
@@ -39,7 +39,7 @@ describe TagsController, rox: { tags: :unit } do
     ]
   end
 
-  it "should build the tag cloud", rox: { key: '2ccc7c7d13c6' } do
+  it "should build the tag cloud", probe_dock: { key: '2ccc7c7d13c6' } do
 
     get :cloud, locale: nil
 
@@ -51,7 +51,7 @@ describe TagsController, rox: { tags: :unit } do
     ])
   end
 
-  it "should build a sized tag cloud when the max size is given", rox: { key: 'f6bed6e51d52' } do
+  it "should build a sized tag cloud when the max size is given", probe_dock: { key: 'f6bed6e51d52' } do
 
     get :cloud, size: 2, locale: nil
 
@@ -61,7 +61,7 @@ describe TagsController, rox: { tags: :unit } do
     ])
   end
 
-  it "should build a full tag cloud when the max size is not an integer or zero or less", rox: { key: '9b63e29accb4' } do
+  it "should build a full tag cloud when the max size is not an integer or zero or less", probe_dock: { key: '9b63e29accb4' } do
 
     [ 0, -1, -100, 'asd', '' ].each do |n|
       get :cloud, size: n, locale: nil

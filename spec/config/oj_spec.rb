@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe MultiJson do
 
-  it "should use the oj adapter", rox: { key: '73fcc7cd949a' } do
+  it "should use the oj adapter", probe_dock: { key: '73fcc7cd949a' } do
     expect(MultiJson.adapter).to be(MultiJson::Adapters::Oj)
   end
 end

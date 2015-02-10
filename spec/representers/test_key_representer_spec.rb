@@ -16,12 +16,12 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TestKeyRepresenter, rox: { tags: :unit } do
+describe TestKeyRepresenter, probe_dock: { tags: :unit } do
 
   let(:test_key){ create :test_key }
   subject{ TestKeyRepresenter.new(test_key).serializable_hash }
 
-  it(nil, rox: { key: 'e6a141ffdc18' }) do
+  it(nil, probe_dock: { key: 'e6a141ffdc18' }) do
     should have_only_properties({
       value: test_key.key,
       projectApiId: test_key.project.api_id,

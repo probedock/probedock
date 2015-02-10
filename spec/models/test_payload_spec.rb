@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TestPayload, rox: { tags: :unit } do
+describe TestPayload, probe_dock: { tags: :unit } do
 
   describe ".waiting_for_processing" do
     let(:user){ create :user }
@@ -31,7 +31,7 @@ describe TestPayload, rox: { tags: :unit } do
       ]
     end
 
-    it "should return payloads that are in created state in ascending reception time", rox: { key: '39dfdebf0996' } do
+    it "should return payloads that are in created state in ascending reception time", probe_dock: { key: '39dfdebf0996' } do
       expect(described_class.waiting_for_processing.to_a).to eq(payloads[3, 3])
     end
   end
@@ -49,11 +49,11 @@ describe TestPayload, rox: { tags: :unit } do
     end
     subject{ described_class.for_listing.to_a }
 
-    it "should list payloads in the order they were received", rox: { key: '3411f7809e83' } do
+    it "should list payloads in the order they were received", probe_dock: { key: '3411f7809e83' } do
       expect(subject).to eq(payloads)
     end
 
-    it "should not load the contents", rox: { key: '3208cc65d6cc' } do
+    it "should not load the contents", probe_dock: { key: '3208cc65d6cc' } do
       subject.each_with_index do |payload,i|
         expect{ payload.contents }.to raise_error(ActiveModel::MissingAttributeError)
         expect(payload.contents_bytesize).to eq(payloads[i].contents.bytesize)
@@ -66,7 +66,7 @@ describe TestPayload, rox: { tags: :unit } do
     let(:test_keys){ Array.new(3){ create :test_key, user: user } }
     subject{ create :processing_test_payload, user: user, test_keys: test_keys }
 
-    it "should clear linked test keys", rox: { key: '440734fbe5f8' } do
+    it "should clear linked test keys", probe_dock: { key: '440734fbe5f8' } do
       subject.finish_processing!
       expect(subject.test_keys).to be_empty
     end
@@ -74,7 +74,7 @@ describe TestPayload, rox: { tags: :unit } do
 
   describe "#contents=" do
 
-    it "should set the contents bytesize", rox: { key: 'e0614d271d0d' } do
+    it "should set the contents bytesize", probe_dock: { key: 'e0614d271d0d' } do
 
       payload = build :test_payload, contents: nil
       expect(payload.contents).to be_nil
@@ -90,7 +90,7 @@ describe TestPayload, rox: { tags: :unit } do
   context "state" do
     subject{ create :test_payload, contents: MultiJson.dump(foo: 'bar') }
 
-    it "should go through the created, processing and processed states", rox: { key: '23096f233917' } do
+    it "should go through the created, processing and processed states", probe_dock: { key: '23096f233917' } do
       
       expect(subject.state.to_sym).to eq(:created)
       expect(subject.created?).to be(true)
@@ -128,13 +128,13 @@ describe TestPayload, rox: { tags: :unit } do
   end
 
   context "validations" do
-    it(nil, rox: { key: 'a61f47de36ef' }){ should validate_presence_of(:user) }
-    it(nil, rox: { key: 'b6af4595e273' }){ should validate_inclusion_of(:state).in_array([ :created, 'created', :processing, 'processing', :processed, 'processed' ]) }
-    it(nil, rox: { key: '885d0470ed8d' }){ should validate_presence_of(:received_at) }
-    it(nil, rox: { key: 'e31bb153e65e' }){ should validate_presence_of(:contents) }
-    it(nil, rox: { key: 'fd75001324d1' }){ should validate_presence_of(:contents_bytesize) }
+    it(nil, probe_dock: { key: 'a61f47de36ef' }){ should validate_presence_of(:user) }
+    it(nil, probe_dock: { key: 'b6af4595e273' }){ should validate_inclusion_of(:state).in_array([ :created, 'created', :processing, 'processing', :processed, 'processed' ]) }
+    it(nil, probe_dock: { key: '885d0470ed8d' }){ should validate_presence_of(:received_at) }
+    it(nil, probe_dock: { key: 'e31bb153e65e' }){ should validate_presence_of(:contents) }
+    it(nil, probe_dock: { key: 'fd75001324d1' }){ should validate_presence_of(:contents_bytesize) }
 
-    it "should ensure that the contents are not longer than 16777215 bytes", rox: { key: '8058cadefbaf' } do
+    it "should ensure that the contents are not longer than 16777215 bytes", probe_dock: { key: '8058cadefbaf' } do
       contents = "x" * 16777214
       payload = build :test_payload, contents: contents
       expect(payload.valid?).to be(true)
@@ -144,22 +144,22 @@ describe TestPayload, rox: { tags: :unit } do
   end
 
   context "associations" do
-    it(nil, rox: { key: 'ce9d6c2604ef' }){ should belong_to(:user) }
-    it(nil, rox: { key: 'dd735c4e26be' }){ should have_and_belong_to_many(:test_keys) }
+    it(nil, probe_dock: { key: 'ce9d6c2604ef' }){ should belong_to(:user) }
+    it(nil, probe_dock: { key: 'dd735c4e26be' }){ should have_and_belong_to_many(:test_keys) }
   end
 
   context "database table" do
-    it(nil, rox: { key: '38b8aaf117c3' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, rox: { key: '01022e014d7f' }){ should have_db_column(:contents).of_type(:text).with_options(null: false, limit: 16777215) }
-    it(nil, rox: { key: '83cbe7a2b2fe' }){ should have_db_column(:contents_bytesize).of_type(:integer).with_options(null: false) }
-    it(nil, rox: { key: '816a4253b966' }){ should have_db_column(:state).of_type(:string).with_options(null: false, limit: 12) }
-    it(nil, rox: { key: '793c1d58bc15' }){ should have_db_column(:user_id).of_type(:integer).with_options(null: false) }
-    it(nil, rox: { key: '372d88c913bb' }){ should have_db_column(:test_run_id).of_type(:integer).with_options(null: true) }
-    it(nil, rox: { key: '38c375f9570a' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
-    it(nil, rox: { key: 'b10bba5cf4c0' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
-    it(nil, rox: { key: '635cbda15dcd' }){ should have_db_column(:received_at).of_type(:datetime).with_options(null: false) }
-    it(nil, rox: { key: 'afd82eff3e03' }){ should have_db_column(:processing_at).of_type(:datetime).with_options(null: true) }
-    it(nil, rox: { key: 'ce373915d05f' }){ should have_db_column(:processed_at).of_type(:datetime).with_options(null: true) }
-    it(nil, rox: { key: '0b792708d003' }){ should have_db_index(:state) }
+    it(nil, probe_dock: { key: '38b8aaf117c3' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
+    it(nil, probe_dock: { key: '01022e014d7f' }){ should have_db_column(:contents).of_type(:text).with_options(null: false, limit: 16777215) }
+    it(nil, probe_dock: { key: '83cbe7a2b2fe' }){ should have_db_column(:contents_bytesize).of_type(:integer).with_options(null: false) }
+    it(nil, probe_dock: { key: '816a4253b966' }){ should have_db_column(:state).of_type(:string).with_options(null: false, limit: 12) }
+    it(nil, probe_dock: { key: '793c1d58bc15' }){ should have_db_column(:user_id).of_type(:integer).with_options(null: false) }
+    it(nil, probe_dock: { key: '372d88c913bb' }){ should have_db_column(:test_run_id).of_type(:integer).with_options(null: true) }
+    it(nil, probe_dock: { key: '38c375f9570a' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
+    it(nil, probe_dock: { key: 'b10bba5cf4c0' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
+    it(nil, probe_dock: { key: '635cbda15dcd' }){ should have_db_column(:received_at).of_type(:datetime).with_options(null: false) }
+    it(nil, probe_dock: { key: 'afd82eff3e03' }){ should have_db_column(:processing_at).of_type(:datetime).with_options(null: true) }
+    it(nil, probe_dock: { key: 'ce373915d05f' }){ should have_db_column(:processed_at).of_type(:datetime).with_options(null: true) }
+    it(nil, probe_dock: { key: '0b792708d003' }){ should have_db_index(:state) }
   end
 end

@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe TestRunsController, rox: { tags: :integration } do
+describe TestRunsController, probe_dock: { tags: :integration } do
   # TODO: spec #show
   let(:user){ create :user }
   before(:each){ sign_in user }
@@ -25,25 +25,25 @@ describe TestRunsController, rox: { tags: :integration } do
     subject{ assigns }
     before(:each){ get :index, locale: I18n.default_locale }
     
-    it "should set the window title", rox: { key: 'de241d901429' } do
+    it "should set the window title", probe_dock: { key: 'de241d901429' } do
       expect(subject[:window_title]).to eq([ t('.common.title'), TestRun.model_name.human.pluralize.titleize ])
     end
 
-    it "should set the test run search configuration", rox: { key: '21eff3f80c2e' } do
+    it "should set the test run search configuration", probe_dock: { key: '21eff3f80c2e' } do
       expect(subject[:test_run_search_config]).to eq(TestRunSearch.config({}))
     end
   end
 
   context "#previous" do
 
-    it "should redirect to the previous test run", rox: { key: '927fce5027d9' } do
+    it "should redirect to the previous test run", probe_dock: { key: '927fce5027d9' } do
       previous = create :run, runner: user, group: 'nightly', ended_at: 2.days.ago
       current = create :run, runner: user, group: 'nightly', ended_at: Time.now
       get :previous, id: current.id, locale: I18n.default_locale
       expect(subject).to redirect_to(previous)
     end
 
-    it "should redirect to the current test run if there is no earlier one", rox: { key: 'cae0d95dac2c' } do
+    it "should redirect to the current test run if there is no earlier one", probe_dock: { key: 'cae0d95dac2c' } do
       current = create :run, runner: user, group: 'nightly'
       get :previous, id: current.id, locale: I18n.default_locale
       expect(subject).to redirect_to(current)
@@ -52,14 +52,14 @@ describe TestRunsController, rox: { tags: :integration } do
 
   context "#next" do
 
-    it "should redirect to the next test run", rox: { key: '0f0d10206ce2' } do
+    it "should redirect to the next test run", probe_dock: { key: '0f0d10206ce2' } do
       next_run = create :run, runner: user, group: 'nightly', ended_at: Time.now
       current = create :run, runner: user, group: 'nightly', ended_at: 2.days.ago
       get :next, id: current.id, locale: I18n.default_locale
       expect(subject).to redirect_to(next_run)
     end
 
-    it "should redirect to the current test run if there is no earlier one", rox: { key: '5aa87c526c7f' } do
+    it "should redirect to the current test run if there is no earlier one", probe_dock: { key: '5aa87c526c7f' } do
       current = create :run, runner: user, group: 'nightly'
       get :next, id: current.id, locale: I18n.default_locale
       expect(subject).to redirect_to(current)
