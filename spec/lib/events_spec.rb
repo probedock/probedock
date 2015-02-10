@@ -16,9 +16,9 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe "ROXCenter::Application.events" do
+describe "ProbeDock::Application.events" do
 
-  subject{ ROXCenter::Application }
+  subject{ ProbeDock::Application }
 
   it "should respond to #events", rox: { key: 'dc7ac63cdb50' } do
     expect(subject).to respond_to(:events)

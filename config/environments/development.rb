@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-ROXCenter::Application.configure do
+ProbeDock::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on

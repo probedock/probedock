@@ -7,13 +7,13 @@ describe Api::TestsController do
   before(:each){ sign_in user }
 
   describe "#deprecate" do
-    before(:each){ allow(ROXCenter::Application.events).to receive(:fire) }
+    before(:each){ allow(ProbeDock::Application.events).to receive(:fire) }
     let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
 
     it "should create a deprecation and link it to the test", rox: { key: 'd063686df8cc' } do
 
       event_deprecations = nil
-      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+      expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
         expect(event).to eq('test:deprecated')
         event_deprecations = deprecations
       end
@@ -57,7 +57,7 @@ describe Api::TestsController do
       expect(test.deprecated?).to be(true)
       expect(test.deprecation).to eq(deprecation)
 
-      expect(ROXCenter::Application.events).not_to receive(:fire)
+      expect(ProbeDock::Application.events).not_to receive(:fire)
     end
 
     it "should return a 503 response when in maintenance mode", rox: { key: '4d3e5f8dbd75' } do
@@ -90,7 +90,7 @@ describe Api::TestsController do
     it "should create an undeprecation for the test and unlink the previous deprecation", rox: { key: '5d8b3f013d1a' } do
 
       event_deprecations = nil
-      expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+      expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
         expect(event).to eq('test:undeprecated')
         event_deprecations = deprecations
       end
@@ -133,7 +133,7 @@ describe Api::TestsController do
       expect(test.deprecated?).to be(false)
       expect(test.deprecation).to be_nil
 
-      expect(ROXCenter::Application.events).not_to receive(:fire)
+      expect(ProbeDock::Application.events).not_to receive(:fire)
     end
 
     it "should return a 503 response when in maintenance mode", rox: { key: '0e74dba7ae54' } do
@@ -157,7 +157,7 @@ describe Api::TestsController do
   end
 
   describe "#bulk_deprecations" do
-    before(:each){ allow(ROXCenter::Application.events).to receive(:fire) }
+    before(:each){ allow(ProbeDock::Application.events).to receive(:fire) }
 
     describe "deprecation" do
       let!(:test){ create :test, key: create(:key, project: project, user: author), run_at: 3.days.ago }
@@ -165,7 +165,7 @@ describe Api::TestsController do
       it "should create a deprecation and link it to the test", rox: { key: '1a5b6659902c' } do
 
         event_deprecations = nil
-        expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+        expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
           expect(event).to eq('test:deprecated')
           event_deprecations = deprecations
         end
@@ -209,7 +209,7 @@ describe Api::TestsController do
         expect(test.deprecated?).to be(true)
         expect(test.deprecation).to eq(deprecation)
 
-        expect(ROXCenter::Application.events).not_to receive(:fire)
+        expect(ProbeDock::Application.events).not_to receive(:fire)
       end
 
       it "should deprecate multiple tests", rox: { key: '4e1179154e31' } do
@@ -225,7 +225,7 @@ describe Api::TestsController do
         tests[2].update_attribute :deprecation_id, nil
 
         event_deprecations = nil
-        expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+        expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
           expect(event).to eq('test:deprecated')
           event_deprecations = deprecations
         end
@@ -271,7 +271,7 @@ describe Api::TestsController do
       it "should create an undeprecation for the test and unlink the previous deprecation", rox: { key: 'abf287432d75' } do
 
         event_deprecations = nil
-        expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+        expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
           expect(event).to eq('test:undeprecated')
           event_deprecations = deprecations
         end
@@ -316,7 +316,7 @@ describe Api::TestsController do
         expect(test.deprecated?).to be(false)
         expect(test.deprecation).to be_nil
 
-        expect(ROXCenter::Application.events).not_to receive(:fire)
+        expect(ProbeDock::Application.events).not_to receive(:fire)
       end
 
       it "should undeprecate multiple tests", rox: { key: 'c431bdf629b6' } do
@@ -332,7 +332,7 @@ describe Api::TestsController do
         tests[1].update_attribute :deprecation_id, nil
 
         event_deprecations = nil
-        expect(ROXCenter::Application.events).to receive(:fire) do |event,deprecations|
+        expect(ProbeDock::Application.events).to receive(:fire) do |event,deprecations|
           expect(event).to eq('test:undeprecated')
           event_deprecations = deprecations
         end

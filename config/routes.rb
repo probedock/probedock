@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'resque/server'
 
-ROXCenter::Application.routes.draw do
+ProbeDock::Application.routes.draw do
 
   if Rails.env == 'development'
     mount Resque::Server.new, at: '/resque'
@@ -24,7 +24,7 @@ ROXCenter::Application.routes.draw do
 
   get '/templates/:name', to: 'home#template'
 
-  mount ROXCenter::API => '/api'
+  mount ProbeDock::API => '/api'
 
   get '/*path', to: 'home#index'
   root to: 'home#index'

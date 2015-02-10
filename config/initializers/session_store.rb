@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 # Be sure to restart your server when you modify this file.
 
-ROXCenter::Application.config.session_store :cookie_store, key: '_ROX-CENTRAL_session'
+ProbeDock::Application.config.session_store :cookie_store, key: '_PROBE-DOCK_session'
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

@@ -30,7 +30,7 @@ describe CountTestsJob do
 
   describe "events" do
     let(:timezones){ [ 'UTC', 'Bern' ] }
-    before(:each){ allow(ROXCenter::Application).to receive(:metrics_timezones).and_return(timezones) }
+    before(:each){ allow(ProbeDock::Application).to receive(:metrics_timezones).and_return(timezones) }
 
     it "should enqueue results on the api:payload event", rox: { key: '9b89f251da79' } do
       result_doubles = Array.new(5){ |i| double id: i * 66 }
@@ -232,7 +232,7 @@ describe CountTestsJob do
     end
 
     it "should trigger a test:counters event on the application", rox: { key: '4c74c37fb77b' } do
-      expect(ROXCenter::Application.events).to receive(:fire).with('test:counters')
+      expect(ProbeDock::Application.events).to receive(:fire).with('test:counters')
       described_class.perform perform_options.merge(result_ids: test_results.collect(&:id))
     end
 

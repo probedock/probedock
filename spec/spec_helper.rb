@@ -111,7 +111,7 @@ RSpec.configure do |config|
 
       ping = nil
       ping_url = "http://localhost:#{config.test_server_port}/ping"
-      expected_version = "ROX Center v#{ROXCenter::Application::VERSION} test"
+      expected_version = "ROX Center v#{ProbeDock::Application::VERSION} test"
       puts Paint["Waiting #{wait} seconds for test server to start (no response from #{ping_url})...", :magenta]
       wait.times do |i|
 

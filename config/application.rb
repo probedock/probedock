@@ -24,7 +24,7 @@ require 'silencer/logger' if Rails.env == 'development'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module ROXCenter
+module ProbeDock
   class Application < Rails::Application
 
     class << self

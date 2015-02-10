@@ -14,22 +14,41 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-module ROXCenter
-  class TagsApi < Grape::API
+module ProbeDock
+  class ProjectsApi < Grape::API
 
-    namespace :tags do
+    namespace :projects do
 
       before do
         authenticate!
       end
 
+      helpers do
+        def parse_project
+          parse_object :name, :description
+        end
+      end
+
       get do
+        Project.tableling.process(params)
+      end
 
-        pageSize = params[:pageSize].to_i
-        pageSize = Settings.app.tag_cloud_size if pageSize < 1
+      post do
+        project = Project.new parse_project
+        ProjectValidations.validate project, validation_context, location_type: :json, raise_error: true
+        create_record project
+      end
 
-        Tag.select('tags.name, count(distinct project_tests.id) as tests_count').joins(test_descriptions: :test).group('tags.name').order('count(distinct project_tests.id) desc').limit(pageSize).having('count(distinct project_tests.id) > 0').to_a.collect do |tag|
-          { name: tag.name, testsCount: tag.tests_count }
+      namespace '/:id' do
+
+        helpers do
+          def current_project
+            Project.where(api_id: params[:id].to_s).first!
+          end
+        end
+
+        patch do
+          update_record current_project, parse_project
         end
       end
     end

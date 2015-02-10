@@ -31,7 +31,7 @@ describe ApiRootRepresenter, rox: { tags: :unit } do
   it(nil, rox: { key: 'c0ed17d1b681' }){ should hyperlink_to('v1:testPayloads', api_uri(:test_payloads), title: t('api.root.payloads'), type: media_type(:rox_payload_v1)) }
   it(nil, rox: { key: '171a470dc050' }){ should hyperlink_to('v1:testRuns', "#{api_uri(:test_runs)}{?latest,groups[]*,runners[]*}", title: t('api.root.test_runs'), templated: true) }
   it(nil, rox: { key: '823435b09a08' }){ should hyperlink_to('v1:users', api_uri(:users), title: t('api.root.users')) }
-  it(nil, rox: { key: '75c900a99394' }){ should have_only_properties(appVersion: ROXCenter::Application::VERSION) }
+  it(nil, rox: { key: '75c900a99394' }){ should have_only_properties(appVersion: ProbeDock::Application::VERSION) }
   it(nil, rox: { key: 'd94e0a55674a' }){ should have_curie(name: 'v1', templated: true, href: "#{uri(:doc_api_relation, name: 'v1')}:root:{rel}") }
 
   # legacy

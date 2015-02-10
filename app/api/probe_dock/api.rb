@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'json/jwt'
 
-module ROXCenter
+module ProbeDock
   class API < Grape::API
 
     format :json
@@ -35,7 +35,7 @@ module ROXCenter
       end
 
       code, message = case e
-      when ROXCenter::Errors::Unauthorized
+      when ProbeDock::Errors::Unauthorized
         [ 401, nil ]
       when ActiveRecord::RecordNotFound
         [ 404, 'No resource was found matching the request URI.' ]
@@ -59,7 +59,7 @@ module ROXCenter
       user = User.where(name: data[:username]).first
 
       # TODO: protect against timing attacks
-      raise ROXCenter::Errors::Unauthorized.new 'Invalid credentials' unless user && user.authenticate(data[:password])
+      raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials' unless user && user.authenticate(data[:password])
 
       {
         token: user.generate_auth_token,

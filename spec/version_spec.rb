@@ -19,6 +19,6 @@ require 'spec_helper'
 describe 'Version', rox: { tags: :unit } do
 
   it "should be correct", rox: { key: '80b899f3d494' } do
-    expect(ROXCenter::Application::VERSION).to eq(File.open(File.join(Rails.root, 'VERSION'), 'r').read)
+    expect(ProbeDock::Application::VERSION).to eq(File.open(File.join(Rails.root, 'VERSION'), 'r').read)
   end
 end

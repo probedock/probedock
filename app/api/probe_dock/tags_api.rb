@@ -14,26 +14,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-module ROXCenter
-  class MetricsApi < Grape::API
+module ProbeDock
+  class TagsApi < Grape::API
 
-    namespace :metrics do
+    namespace :tags do
 
       before do
         authenticate!
       end
 
-      get :newTests do
+      get do
 
-        rel = ProjectTest.select("count(project_tests.id) as project_tests_count, date_trunc('day', created_at) as project_tests_day")
-        rel = rel.where 'created_at >= ?', 30.days.ago
-        rel = rel.group('project_tests_day').order('project_tests_day').limit(7)
+        pageSize = params[:pageSize].to_i
+        pageSize = Settings.app.tag_cloud_size if pageSize < 1
 
-        rel.to_a.collect do |data|
-          {
-            date: data.project_tests_day.strftime('%Y-%m-%d'),
-            testsCount: data.project_tests_count
-          }
+        Tag.select('tags.name, count(distinct project_tests.id) as tests_count').joins(test_descriptions: :test).group('tags.name').order('count(distinct project_tests.id) desc').limit(pageSize).having('count(distinct project_tests.id) > 0').to_a.collect do |tag|
+          { name: tag.name, testsCount: tag.tests_count }
         end
       end
     end

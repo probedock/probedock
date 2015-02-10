@@ -16,7 +16,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-RSpec.describe ROXCenter::ProjectsApi do
+RSpec.describe ProbeDock::ProjectsApi do
   let(:user){ create :user }
 
   describe "POST /api/projects" do

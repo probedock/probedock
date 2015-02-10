@@ -14,41 +14,26 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-module ROXCenter
-  class ProjectsApi < Grape::API
+module ProbeDock
+  class MetricsApi < Grape::API
 
-    namespace :projects do
+    namespace :metrics do
 
       before do
         authenticate!
       end
 
-      helpers do
-        def parse_project
-          parse_object :name, :description
-        end
-      end
+      get :newTests do
 
-      get do
-        Project.tableling.process(params)
-      end
+        rel = ProjectTest.select("count(project_tests.id) as project_tests_count, date_trunc('day', created_at) as project_tests_day")
+        rel = rel.where 'created_at >= ?', 30.days.ago
+        rel = rel.group('project_tests_day').order('project_tests_day').limit(7)
 
-      post do
-        project = Project.new parse_project
-        ProjectValidations.validate project, validation_context, location_type: :json, raise_error: true
-        create_record project
-      end
-
-      namespace '/:id' do
-
-        helpers do
-          def current_project
-            Project.where(api_id: params[:id].to_s).first!
-          end
-        end
-
-        patch do
-          update_record current_project, parse_project
+        rel.to_a.collect do |data|
+          {
+            date: data.project_tests_day.strftime('%Y-%m-%d'),
+            testsCount: data.project_tests_count
+          }
         end
       end
     end

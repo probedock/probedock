@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-module ROXCenter
+module ProbeDock
   class ReportsApi < Grape::API
 
     namespace :reports do

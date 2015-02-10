@@ -30,7 +30,7 @@ describe CountDeprecationJob do
   describe "events" do
     let(:deprecation_double){ double }
     let(:timezones){ [ 'UTC', 'Bern' ] }
-    before(:each){ allow(ROXCenter::Application).to receive(:metrics_timezones).and_return(timezones) }
+    before(:each){ allow(ProbeDock::Application).to receive(:metrics_timezones).and_return(timezones) }
 
     it "should enqueue a job on the test:deprecated event", rox: { key: '490db0b2e66a' } do
       expect(described_class).to receive(:enqueue_deprecations).with([ deprecation_double ], timezones: timezones)

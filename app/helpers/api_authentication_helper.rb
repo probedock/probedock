@@ -31,13 +31,13 @@ module ApiAuthenticationHelper
   def authenticate!
 
     @auth_token = auth_token_from_header || auth_token_from_params
-    raise ROXCenter::Errors::Unauthorized.new 'Missing credentials' if @auth_token.blank?
+    raise ProbeDock::Errors::Unauthorized.new 'Missing credentials' if @auth_token.blank?
 
     # TODO: use another secret for signing auth tokens
     begin
       @auth_claims = JSON::JWT.decode(@auth_token, Rails.application.secrets.secret_key_base)
     rescue JSON::JWT::Exception
-      raise ROXCenter::Errors::Unauthorized.new 'Invalid credentials'
+      raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials'
     end
   end
 
