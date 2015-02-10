@@ -31,7 +31,7 @@ module TestServerHelper
     headers['ContentType'] ||= 'application/json'
 
     api_key = user.api_keys.where(active: true).first
-    headers['Authorization'] ||= %/RoxApiKey id="#{api_key.identifier}" secret="#{api_key.shared_secret}"/
+    headers['Authorization'] ||= %/ProbeDockApiKey id="#{api_key.identifier}" secret="#{api_key.shared_secret}"/
 
     HTTParty.post url, { body: body, headers: headers }
   end

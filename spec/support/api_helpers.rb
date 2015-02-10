@@ -16,9 +16,8 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module SpecApiHelper
   MEDIA_TYPES = {
-    errors: 'application/vnd.lotaris.rox.errors+json',
-    payload_v1: 'application/vnd.lotaris.rox.payload.v1+json',
-    rox_payload_v1: 'application/vnd.lotaris.rox.payload.v1+json',
+    payload_v1: 'application/vnd.42inside.probe-dock.payload.v1+json',
+    probe_dock_payload_v1: 'application/vnd.42inside.probe-dock.payload.v1+json',
     markdown: 'text/x-markdown'
   }
 
@@ -128,9 +127,9 @@ module SpecApiHelper
   end
 
   def uri name, options = {}
-    options[:protocol] = ROX_CONFIG['protocol'] || 'https'
-    options[:host] = ROX_CONFIG['host']
-    options[:port] = ROX_CONFIG['port'].to_i if ROX_CONFIG['port']
+    options[:protocol] = PROBE_DOCK_CONFIG['protocol'] || 'https'
+    options[:host] = PROBE_DOCK_CONFIG['host']
+    options[:port] = PROBE_DOCK_CONFIG['port'].to_i if PROBE_DOCK_CONFIG['port']
     Rails.application.routes.url_helpers.send "#{name}_url", {}.merge(options)
   end
 
@@ -139,12 +138,12 @@ module SpecApiHelper
   end
 
   def post_api_payload payload, user, headers = {}
-    post api_test_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.lotaris.rox.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
+    post api_test_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.42inside.probe-dock.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
   end
 
   def api_authentication_headers user
     key = user.api_keys.where(active: true).first
     raise "At least one active API key is required for API testing (user: #{user.name})" if key.blank?
-    { 'HTTP_AUTHORIZATION' => %/RoxApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }
+    { 'HTTP_AUTHORIZATION' => %/ProbeDockApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }
   end
 end

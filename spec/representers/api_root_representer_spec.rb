@@ -28,7 +28,7 @@ describe ApiRootRepresenter, probe_dock: { tags: :unit } do
   it(nil, probe_dock: { key: '3faa828ac00c' }){ should hyperlink_to('v2:projects', api_uri(:projects), title: t('api.root.projects')) }
   it(nil, probe_dock: { key: '3b9a095eee4d' }){ should hyperlink_to('v1:tests', "#{api_uri(:tests)}{?authors[]*,projects[]*}", templated: true) }
   it(nil, probe_dock: { key: '6acd0a937bfb' }){ should hyperlink_to('v1:testKeys', api_uri(:test_keys), title: t('api.root.test_keys')) }
-  it(nil, probe_dock: { key: 'c0ed17d1b681' }){ should hyperlink_to('v1:testPayloads', api_uri(:test_payloads), title: t('api.root.payloads'), type: media_type(:rox_payload_v1)) }
+  it(nil, probe_dock: { key: 'c0ed17d1b681' }){ should hyperlink_to('v1:testPayloads', api_uri(:test_payloads), title: t('api.root.payloads'), type: media_type(:probe_dock_payload_v1)) }
   it(nil, probe_dock: { key: '171a470dc050' }){ should hyperlink_to('v1:testRuns', "#{api_uri(:test_runs)}{?latest,groups[]*,runners[]*}", title: t('api.root.test_runs'), templated: true) }
   it(nil, probe_dock: { key: '823435b09a08' }){ should hyperlink_to('v1:users', api_uri(:users), title: t('api.root.users')) }
   it(nil, probe_dock: { key: '75c900a99394' }){ should have_only_properties(appVersion: ProbeDock::Application::VERSION) }

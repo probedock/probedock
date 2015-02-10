@@ -25,7 +25,7 @@ describe "Creating a project and submitting new results", type: :feature, probe_
     visit_test_server
 
     # log in
-    expect(page).to have_content('ROX Center')
+    expect(page).to have_content('Probe Dock')
 
     within 'form' do
       fill_in 'user_name', with: user.name

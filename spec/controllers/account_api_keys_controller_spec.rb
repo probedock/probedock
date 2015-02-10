@@ -21,7 +21,7 @@ describe AccountApiKeysController, probe_dock: { tags: :unit } do
 
   it "should not authenticate clients with api keys", probe_dock: { key: '02331e558e38' } do
     key = user.api_keys.first
-    request.env['HTTP_AUTHORIZATION'] = %/RoxApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/
+    request.env['HTTP_AUTHORIZATION'] = %/ProbeDockApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/
     get :index
     assert_response :redirect
   end

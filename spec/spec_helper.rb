@@ -24,7 +24,7 @@ require 'capybara/rails'
 require 'capybara/rspec'
 #require 'cancan/matchers' (upgraded for rspec 3 in spec/support/cancan_matchers.rb)
 
-RoxClient::RSpec.configure do |config|
+ProbeDockRSpec.configure do |config|
   config.project.category = 'RSpec'
 end
 
@@ -106,12 +106,12 @@ RSpec.configure do |config|
       wait = config.test_server_wait
       start_command = "bundle exec thin start -e test -p #{port} -d"
       puts Paint["Starting test server with `#{start_command}`...", :magenta]
-      ENV['ROX_CENTER_CONFIG'] = 'rox.test.yml'
+      ENV['PROBE_DOCK_CONFIG'] = 'probe-dock.test.yml'
       raise 'Could not start test server' unless system start_command
 
       ping = nil
       ping_url = "http://localhost:#{config.test_server_port}/ping"
-      expected_version = "ROX Center v#{ProbeDock::Application::VERSION} test"
+      expected_version = "Probe Dock v#{ProbeDock::Application::VERSION} test"
       puts Paint["Waiting #{wait} seconds for test server to start (no response from #{ping_url})...", :magenta]
       wait.times do |i|
 

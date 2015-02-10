@@ -23,5 +23,4 @@ Mime::Type.register "text/x-markdown", :md
 Mime::Type.register "application/hal+json", :hal_json
 
 # Custom media types
-Mime::Type.register "application/vnd.lotaris.rox.errors+json", :rox_errors
-Mime::Type.register "application/vnd.lotaris.rox.payload.v1+json", :rox_payload_v1
+Mime::Type.register "application/vnd.42inside.probe-dock.payload.v1+json", :probe_dock_payload_v1

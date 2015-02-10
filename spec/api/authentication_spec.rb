@@ -25,9 +25,9 @@ describe "API authentication", probe_dock: { tags: :unit } do
     assert_response :unauthorized
   end
 
-  it "should authenticate clients with the RoxApiKey authorization scheme", probe_dock: { key: 'f3c29dcf6302' } do
+  it "should authenticate clients with the ProbeDockApiKey authorization scheme", probe_dock: { key: 'f3c29dcf6302' } do
     key = user.api_keys.first
-    get api_path, {}, { 'HTTP_AUTHORIZATION' => %/RoxApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }
+    get api_path, {}, { 'HTTP_AUTHORIZATION' => %/ProbeDockApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }
     assert_response :success
   end
 
@@ -40,7 +40,7 @@ describe "API authentication", probe_dock: { tags: :unit } do
   it "should not authenticate clients with an inactive API key", probe_dock: { key: '42def337de2b' } do
     key = user.api_keys.first
     key.update_attribute :active, false
-    get api_path, {}, { 'HTTP_AUTHORIZATION' => %/RoxApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }
+    get api_path, {}, { 'HTTP_AUTHORIZATION' => %/ProbeDockApiKey id="#{key.identifier}" secret="#{key.shared_secret}"/ }
     assert_response :unauthorized
   end
 end

@@ -34,17 +34,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # start redis
     d.run 'redis'
     # build app image
-    d.build_image '/vagrant/docker/app', args: '-t rox-center'
+    d.build_image '/vagrant/docker/app', args: '-t probe-dock'
     # wipe and set up database
-    d.run 'rox-center-setup', image: 'rox-center', cmd: 'rake db:wipe', args: "--rm #{app_links}", daemonize: false
+    d.run 'probe-dock-setup', image: 'probe-dock', cmd: 'rake db:wipe', args: "--rm #{app_links}", daemonize: false
   end
 
   # start postgresql, redis and server
   config.vm.provision 'docker', run: 'always' do |d|
     d.run 'postgres'
     d.run 'redis'
-    d.run 'rox-center-server', image: 'rox-center', cmd: 'rails server', args: "#{app_links} -p 3000:3000"
-    d.run 'rox-center-resque', image: 'rox-center', cmd: 'guard start --no-interactions --force-polling --latency 0.5 -w app lib -g resque-pool', args: "#{app_links}"
+    d.run 'probe-dock-server', image: 'probe-dock', cmd: 'rails server', args: "#{app_links} -p 3000:3000"
+    d.run 'probe-dock-resque', image: 'probe-dock', cmd: 'guard start --no-interactions --force-polling --latency 0.5 -w app lib -g resque-pool', args: "#{app_links}"
   end
 
   config.vm.network 'private_network', ip: '192.168.50.4'
