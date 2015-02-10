@@ -46,7 +46,7 @@ The secret keys previously in `config/initializers/app_secrets.rb` must be moved
 
 * **NEW:** Deprecations are counted and displayed separately from new tests on the home page.
 
-* ROX Center is now compatible with PostgreSQL. See the [deployment documentation](doc/deploy.md).
+* Probe Dock is now compatible with PostgreSQL. See the [deployment documentation](doc/deploy.md).
 
 * Test payloads can be displayed at the bottom of test run reports.
 
@@ -84,7 +84,7 @@ The secret keys previously in `config/initializers/app_secrets.rb` must be moved
 
 ## v2.0.0 - December 23, 2013
 
-* **NEW:** Projects must now be created in ROX Center before test results can be submitted
+* **NEW:** Projects must now be created in Probe Dock before test results can be submitted
 
 * **NEW:** New test analytics; home page widget tracks the evolution of tests by day/week/month
 

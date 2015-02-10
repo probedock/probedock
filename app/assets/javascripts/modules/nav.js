@@ -1,4 +1,4 @@
-angular.module('rox.nav', [])
+angular.module('probe-dock.nav', [])
 
   .directive('spinner', [function() {
     return {

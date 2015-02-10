@@ -1,4 +1,4 @@
-angular.module('rox.auth', ['LocalStorageModule'])
+angular.module('probe-dock.auth', ['LocalStorageModule'])
 
   .factory('AuthService', ['$http', 'localStorageService', '$log', '$rootScope', function($http, $local, $log, $rootScope) {
 

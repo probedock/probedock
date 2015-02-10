@@ -1,4 +1,4 @@
-FROM alphahydrae/rox-center-dev:angular
+FROM alphahydrae/probe-dock-dev:angular
 
 EXPOSE 3000
 

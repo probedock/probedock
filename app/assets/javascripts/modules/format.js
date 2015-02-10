@@ -1,4 +1,4 @@
-angular.module('rox.format', [])
+angular.module('probe-dock.format', [])
 
   .filter('durationFormat', [function () {
 

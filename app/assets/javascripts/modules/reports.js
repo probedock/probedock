@@ -1,4 +1,4 @@
-angular.module('rox.reports', ['ngSanitize', 'rox.api', 'rox.state'])
+angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-dock.state'])
 
   .directive('reportHealthBar', [function() {
 

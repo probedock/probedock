@@ -15,18 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 
-angular.module('rox', [
-  'rox.auth',
-  'rox.dashboard',
-  'rox.format',
-  'rox.forms',
-  'rox.nav',
-  'rox.profile',
-  'rox.projects',
-  'rox.reports',
-  'rox.routes',
-  'rox.state',
-  'rox.users',
+angular.module('probe-dock', [
+  'probe-dock.auth',
+  'probe-dock.dashboard',
+  'probe-dock.format',
+  'probe-dock.forms',
+  'probe-dock.nav',
+  'probe-dock.profile',
+  'probe-dock.projects',
+  'probe-dock.reports',
+  'probe-dock.routes',
+  'probe-dock.state',
+  'probe-dock.users',
   'angularMoment',
   'angular-jqcloud',
   'infinite-scroll',
@@ -51,7 +51,7 @@ angular.module('rox', [
   }])
 
   .config(['localStorageServiceProvider', function(localStorageServiceProvider) {
-    localStorageServiceProvider.setPrefix('rox');
+    localStorageServiceProvider.setPrefix('probe-dock');
   }])
 
   .config(['ngClipProvider', 'zeroClipboardFlash', function(ngClipProvider, assetPath) {

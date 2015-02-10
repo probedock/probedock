@@ -137,16 +137,16 @@ namespace :samples do
     publish_samples_payload payload, runner
   end
 
-  desc %/Register ROX Center as a sample project/
+  desc %/Register Probe Dock as a sample project/
   task :project => :environment do
 
-    if Project.where(name: 'ROX Center').first
-      puts Paint["ROX Center project already exists", :yellow]
+    if Project.where(name: 'Probe Dock').first
+      puts Paint["Probe Dock project already exists", :yellow]
       next
     end
 
-    project = Project.new(name: 'ROX Center', description: 'Test tracking and analysis tool.').tap(&:save!)
-    puts Paint["ROX Center project created with API ID #{project.api_id}", :green]
+    project = Project.new(name: 'Probe Dock', description: 'Test tracking and analysis tool.').tap(&:save!)
+    puts Paint["Probe Dock project created with API ID #{project.api_id}", :green]
   end
 end
 
@@ -171,7 +171,7 @@ def publish_samples_payload payload, runner
 
   puts
   print "Publishing payload... "
-  res = HTTParty.post('http://rox-center-server:3000/api/publish', {
+  res = HTTParty.post('http://localhost:3000/api/publish', {
     body: payload.to_json,
     headers: {
       'Content-Type' => 'application/json',

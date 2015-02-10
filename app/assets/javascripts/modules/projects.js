@@ -1,4 +1,4 @@
-angular.module('rox.projects', ['rox.api'])
+angular.module('probe-dock.projects', ['probe-dock.api'])
 
   .controller('ProjectsCtrl', ['ApiService', '$scope', function($api, $scope) {
 

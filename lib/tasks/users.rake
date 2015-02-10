@@ -67,7 +67,7 @@ namespace :users do
     puts Paint["User #{name} with e-mail #{email} was successfully created", :green]
   end
 
-  desc %|Generate an authentication token for a user and export it as $ROX_TOKEN|
+  desc %|Generate an authentication token for a user|
   task :token, [ :name ] => :environment do |t,args|
 
     unless name = args[:name]

@@ -11,4 +11,4 @@ test:
 
 production:
   protocol: https
-  host: 'rox.example.com'
+  host: 'probe-dock.example.com'

@@ -23,4 +23,4 @@ options = { host: host, port: port, db: db.to_i, driver: :hiredis }
 options[:logger] = Rails.logger unless ENV['QUEUE'] or ENV['RESQUE'] or Rails.env != 'development'
 
 $redis_db = Redis.new options
-$redis = Redis::Namespace.new 'rox', redis: $redis_db
+$redis = Redis::Namespace.new 'probe-dock', redis: $redis_db

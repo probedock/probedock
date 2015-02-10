@@ -20,7 +20,7 @@ module ProbeDock
   class API < Grape::API
 
     format :json
-    version 'v1', using: :accept_version_header, vendor: 'lotaris-rox-center'
+    version 'v1', using: :accept_version_header
 
     cascade false
     rescue_from :all do |e|

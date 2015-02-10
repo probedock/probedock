@@ -1,7 +1,7 @@
 
 project:
-  name: ROX Center
-  version: 2.0.0
+  name: Probe Dock
+  version: 3.0.0
   apiId: 3d5d663b64e7
 
 payload:
@@ -9,5 +9,5 @@ payload:
   cache: true
   print: false
 
-workspace: tmp/rox
-server: rox.onlotaris.com
+workspace: tmp/probe-dock
+server: probe-dock.42inside.com

@@ -1,4 +1,4 @@
-angular.module('rox.api', ['rox.auth'])
+angular.module('probe-dock.api', ['probe-dock.auth'])
 
   .factory('ApiService', ['AuthService', '$http', function($auth, $http) {
     return {

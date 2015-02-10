@@ -1,4 +1,4 @@
-angular.module('rox.profile', ['rox.api', 'rox.auth'])
+angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
 
   .controller('ProfileAccessTokensCtrl', ['ApiService', '$scope', function($api, $scope) {
 

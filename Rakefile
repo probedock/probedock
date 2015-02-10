@@ -24,11 +24,11 @@ ProbeDock::Application.load_tasks
 
 require 'rake-version'
 RakeVersion::Tasks.new do |v|
-  v.copy 'bower.json', 'package.json', 'rox.json', 'spec/javascripts/version.spec.js'
+  v.copy 'bower.json', 'package.json', 'probe-dock.yml', 'spec/javascripts/version.spec.js'
 end
 
 if Rails.env != 'production'
-  require 'rox-client-rspec'
-  RoxClient::RSpec::Tasks.new
-  Rake::Task['spec'].prerequisites.unshift('spec:jasmine:fast').unshift('spec:rox:uid')
+  require 'probe_dock_rspec'
+  ProbeDockRSpec::Tasks.new
+  Rake::Task['spec'].prerequisites.unshift('spec:jasmine:fast').unshift('spec:probe-dock:uid')
 end

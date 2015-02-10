@@ -3,7 +3,7 @@
 
 en:
   common:
-    title: "ROX Center"
+    title: "Probe Dock"
     title_separator: " > "
     home: "Home"
     loading: "Loading..."
@@ -17,7 +17,7 @@ en:
   application:
     maintenance:
       title: "Maintenance Mode."
-      notice: "ROX Center is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
+      notice: "Probe Dock is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
 
   flash:
     warning: "Sorry."

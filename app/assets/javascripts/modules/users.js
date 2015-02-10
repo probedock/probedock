@@ -1,4 +1,4 @@
-angular.module('rox.users', ['rox.api', 'rox.state'])
+angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
   .factory('UserService', ['$window', function($window) {
 

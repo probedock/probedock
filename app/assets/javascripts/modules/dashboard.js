@@ -1,4 +1,4 @@
-angular.module('rox.dashboard', ['rox.reports'])
+angular.module('probe-dock.dashboard', ['probe-dock.reports'])
 
   .controller('DashboardNewTestMetricsCtrl', ['ApiService', '$scope', function($api, $scope) {
 

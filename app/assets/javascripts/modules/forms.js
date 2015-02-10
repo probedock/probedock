@@ -1,4 +1,4 @@
-angular.module('rox.forms', [])
+angular.module('probe-dock.forms', [])
 
   .directive('selectOnClick', function () {
     return {

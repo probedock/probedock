@@ -1,7 +1,7 @@
 {
-  "name": "rox-center",
+  "name": "probe-dock",
   "version": "3.0.0",
-  "homepage": "https://github.com/lotaris/rox-center",
+  "homepage": "https://github.com/42inside/probe-dock",
   "description": "Test tracking and analysis tool.",
   "authors": [
     "Simon Oulevay"

@@ -7,14 +7,14 @@ default: &default
 
 development:
   <<: *default
-  database: rox-center
+  database: probe-dock
 
 test:
   <<: *default
-  database: rox-center-test
+  database: probe-dock-test
 
 production:
   <<: *default
-  database: rox-center
-  username: rox-center
-  password: <%= ENV['ROX_CENTER_DATABASE_PASSWORD'] %>
+  database: probe-dock
+  username: probe-dock
+  password: <%= ENV['PROBE_DOCK_DATABASE_PASSWORD'] %>

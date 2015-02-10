@@ -1,4 +1,4 @@
-angular.module('rox.state', [ 'ui.router' ])
+angular.module('probe-dock.state', [ 'ui.router' ])
 
   .config(['$locationProvider', '$urlRouterProvider', function($locationProvider, $urlRouterProvider) {
     $locationProvider.html5Mode(true);

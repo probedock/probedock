@@ -1,4 +1,4 @@
-angular.module('rox.routes', [ 'ui.router' ])
+angular.module('probe-dock.routes', [ 'ui.router' ])
 
   .config(['$stateProvider', function($stateProvider) {
 

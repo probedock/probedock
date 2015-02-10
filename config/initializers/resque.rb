@@ -16,4 +16,4 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 # config/initializers/redis.rb must be loaded first
 Resque.redis = $redis_db
-Resque.redis.namespace = 'rox:resque'
+Resque.redis.namespace = 'probe-dock:resque'
