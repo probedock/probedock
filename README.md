@@ -1,14 +1,14 @@
-# ROX Center
+# Probe Dock
 
-**Test tracking and analysis tool by [Lotaris](http://www.lotaris.com).**
+**Test tracking and analysis tool.**
 
-ROX Center tracks the tests in your projects to show you the evolution of your test coverage and analyze the health of your projects.
+Probe Dock tracks the tests in your projects to show you the evolution of your test coverage and analyze the health of your projects.
 
-It has two main components: the ROX Center server and ROX clients.
-ROX clients run your tests and upload the results to your ROX Center server for analysis.
-The ROX Center server generates test run reports and day-to-day metrics on your tests.
+It has two main components: the Probe Dock server and clients.
+Clients run your tests and upload the results to your Probe Dock server for analysis.
+The Probe Dock server generates test run reports and day-to-day metrics on your tests.
 
-These are the existing ROX clients:
+These are the existing clients:
 
 * [RSpec client](https://github.com/lotaris/rox-client-rspec)
 * [Karma client](https://github.com/lotaris/rox-client-karma)
@@ -34,13 +34,13 @@ See [deploy.md](doc/deploy.md).
 
 ## Usage
 
-This quick tutorial explains how to track your project's tests with ROX Center.
+This quick tutorial explains how to track your project's tests with Probe Dock.
 
 To register as a new user, click the `Register` button in the login form and submit the registration form.
-Once you're logged in, you will need to add your project to ROX Center.
+Once you're logged in, you will need to add your project to Probe Dock.
 
 In the `Projects` page, click `Add a project`, fill and submit the form.
-ROX Center can now analyze test results for this project.
+Probe Dock can now analyze test results for this project.
 
 Back in the project list, take a note of the API identifier for your project.
 You will need this for the client configuration.
@@ -49,7 +49,7 @@ Take a note of its ID and shared secret.
 
 Follow the setup instructions from the [client integration guide](https://github.com/lotaris/rox-client#setup-procedure).
 
-Once your client is set up, run your tests and the data should appear in ROX Center!
+Once your client is set up, run your tests and the data should appear in Probe Dock!
 
 ## Contributing
 
@@ -62,5 +62,5 @@ Please add a changelog entry with your name for new features and bug fixes.
 
 ## License
 
-ROX Center is licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html).
+Probe Dock is licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html).
 See [LICENSE.txt](LICENSE.txt) for the full license.
