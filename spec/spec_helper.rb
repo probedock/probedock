@@ -23,11 +23,10 @@ require 'rspec/its'
 require 'rspec/collection_matchers'
 require 'capybara/rails'
 require 'capybara/rspec'
-#require 'cancan/matchers' (upgraded for rspec 3 in spec/support/cancan_matchers.rb)
 
-ProbeDockRSpec.configure do |config|
-  config.project.category = 'RSpec'
-end
+#ProbeDockRSpec.configure do |config|
+#  config.project.category = 'RSpec'
+#end
 
 Capybara.default_driver = :selenium
 
@@ -63,10 +62,6 @@ RSpec.configure do |config|
   config.include SpecHelpers
   config.include Capybara::DSL
   config.include RedisHelpers
-  config.include MaintenanceHelpers, type: :controller
-
-  config.include CanCanHelpers
-  config.extend CanCanHelpers::ClassMethods
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

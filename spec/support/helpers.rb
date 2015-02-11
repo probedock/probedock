@@ -15,12 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-
 module SpecHelpers
-
-  def test_password
-    "$2a$12$QPPUK39lqu68/rOZEL2N0Obwee2gI1uEffdnogGncY8tyGL3Umrcy"
-  end
 
   def translate *args
     I18n.translate *args

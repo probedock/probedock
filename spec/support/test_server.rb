@@ -15,7 +15,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-
 module TestServerHelper
 
   def visit_test_server *args
