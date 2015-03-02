@@ -1,7 +1,7 @@
 source $HOME/.screenrc
 
 screen -t task 0
-stuff "bundle exec guard start\012"
+stuff "bundle exec guard start -g resque-pool\012"
 screen -t redis 1
 stuff "redis-cli\012"
 screen -t db 2

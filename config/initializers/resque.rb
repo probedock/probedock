@@ -18,3 +18,5 @@
 # config/initializers/redis.rb must be loaded first
 Resque.redis = $redis_db
 Resque.redis.namespace = 'probe-dock:resque'
+Resque.logger = Logger.new Rails.root.join('log', "resque.#{Rails.env}.log")
+Resque.logger.level = Rails.env == 'production' ? Logger::WARN : Logger::INFO
