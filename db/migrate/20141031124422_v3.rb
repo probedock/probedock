@@ -55,9 +55,10 @@ class V3 < ActiveRecord::Migration
       t.integer :results_count, null: false, default: 0
       t.timestamps null: false
       t.index [ :project_id, :key_id ], unique: true
-      t.foreign_key :test_keys, column: :key_id
-      t.foreign_key :projects
     end
+
+    add_foreign_key :project_tests, :test_keys, column: :key_id
+    add_foreign_key :project_tests, :projects
 
     create_table :test_descriptions do |t|
       t.string :name, null: false
@@ -73,36 +74,40 @@ class V3 < ActiveRecord::Migration
       t.integer :results_count, null: false, default: 0
       t.timestamps null: false
       t.index [ :test_id, :project_version_id ], unique: true
-      t.foreign_key :project_tests, column: :test_id
-      t.foreign_key :project_versions
-      t.foreign_key :categories
-      t.foreign_key :users, column: :last_runner_id
-      t.foreign_key :test_results, column: :last_result_id
     end
+
+    add_foreign_key :test_descriptions, :project_tests, column: :test_id
+    add_foreign_key :test_descriptions, :project_versions
+    add_foreign_key :test_descriptions, :categories
+    add_foreign_key :test_descriptions, :users, column: :last_runner_id
+    add_foreign_key :test_descriptions, :test_results, column: :last_result_id
 
     create_table :tags_test_descriptions, id: false do |t|
       t.integer :test_description_id, null: false
       t.integer :tag_id, null: false
       t.index [ :test_description_id, :tag_id ], unique: true
-      t.foreign_key :test_descriptions
-      t.foreign_key :tags
     end
+
+    add_foreign_key :tags_test_descriptions, :test_descriptions
+    add_foreign_key :tags_test_descriptions, :tags
 
     create_table :test_descriptions_tickets, id: false do |t|
       t.integer :test_description_id, null: false
       t.integer :ticket_id, null: false
       t.index [ :test_description_id, :ticket_id ], unique: true, name: 'index_test_descriptions_on_description_and_ticket'
-      t.foreign_key :test_descriptions
-      t.foreign_key :tickets
     end
+
+    add_foreign_key :test_descriptions_tickets, :test_descriptions
+    add_foreign_key :test_descriptions_tickets, :tickets
 
     create_table :test_contributors, id: false do |t|
       t.integer :test_description_id
       t.integer :email_id
       t.index [ :test_description_id, :email_id ], unique: true, name: 'index_test_contributors_on_description_and_email'
-      t.foreign_key :test_descriptions
-      t.foreign_key :emails
     end
+
+    add_foreign_key :test_contributors, :test_descriptions
+    add_foreign_key :test_contributors, :emails
 
     change_column :test_keys, :user_id, :integer, null: true
     add_column :test_keys, :tracked, :boolean, null: false, default: true
@@ -128,24 +133,27 @@ class V3 < ActiveRecord::Migration
       t.string :api_id, null: false, limit: 12
       t.integer :runner_id, null: false
       t.timestamps null: false
-      t.foreign_key :users, column: :runner_id
     end
+
+    add_foreign_key :test_reports, :users, column: :runner_id
 
     create_table :test_reports_results, id: false do |t|
       t.integer :test_report_id, null: false
       t.integer :test_result_id, null: false
       t.index [ :test_report_id, :test_result_id ], unique: true
-      t.foreign_key :test_reports
-      t.foreign_key :test_results
     end
+
+    add_foreign_key :test_reports_results, :test_reports
+    add_foreign_key :test_reports_results, :test_results
 
     create_table :test_payloads_reports, id: false do |t|
       t.integer :test_payload_id, null: false
       t.integer :test_report_id, null: false
       t.index [ :test_payload_id, :test_report_id ], unique: true, name: 'index_test_payloads_reports_on_payload_and_report_id'
-      t.foreign_key :test_payloads
-      t.foreign_key :test_reports
     end
+
+    add_foreign_key :test_payloads_reports, :test_payloads
+    add_foreign_key :test_payloads_reports, :test_reports
 
     remove_index :test_results, [ :test_run_id, :test_info_id ]
     remove_column :test_results, :test_run_id
@@ -170,25 +178,28 @@ class V3 < ActiveRecord::Migration
       t.integer :test_result_id
       t.integer :email_id
       t.index [ :test_result_id, :email_id ], unique: true, name: 'index_test_contributors_on_result_and_email'
-      t.foreign_key :test_results
-      t.foreign_key :emails
     end
+
+    add_foreign_key :test_result_contributors, :test_results
+    add_foreign_key :test_result_contributors, :emails
 
     create_table :tags_test_results, id: false do |t|
       t.integer :test_result_id, null: false
       t.integer :tag_id, null: false
       t.index [ :test_result_id, :tag_id ], unique: true
-      t.foreign_key :test_results
-      t.foreign_key :tags
     end
+
+    add_foreign_key :tags_test_results, :test_results
+    add_foreign_key :tags_test_results, :tags
 
     create_table :test_results_tickets, id: false do |t|
       t.integer :test_result_id, null: false
       t.integer :ticket_id, null: false
       t.index [ :test_result_id, :ticket_id ], unique: true
-      t.foreign_key :test_results
-      t.foreign_key :tickets
     end
+
+    add_foreign_key :test_results_tickets, :test_results
+    add_foreign_key :test_results_tickets, :tickets
 
     create_table :test_custom_values do |t|
       t.string :name, null: false, limit: 50
@@ -200,17 +211,19 @@ class V3 < ActiveRecord::Migration
       t.integer :test_description_id, null: false
       t.integer :test_custom_value_id, null: false
       t.index [ :test_description_id, :test_custom_value_id ], unique: true, name: 'index_test_custom_values_descriptions_on_desc_and_value_ids'
-      t.foreign_key :test_descriptions
-      t.foreign_key :test_custom_values
     end
+
+    add_foreign_key :test_custom_values_descriptions, :test_descriptions
+    add_foreign_key :test_custom_values_descriptions, :test_custom_values
 
     create_table :test_custom_values_results, id: false do |t|
       t.integer :test_result_id, null: false
       t.integer :test_custom_value_id, null: false
       t.index [ :test_result_id, :test_custom_value_id ], unique: true, name: 'index_test_custom_values_results_on_result_and_value_id'
-      t.foreign_key :test_results
-      t.foreign_key :test_custom_values
     end
+
+    add_foreign_key :test_custom_values_results, :test_results
+    add_foreign_key :test_custom_values_results, :test_custom_values
 
     remove_column :users, :remember_token
     remove_column :users, :remember_created_at

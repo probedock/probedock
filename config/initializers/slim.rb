@@ -5,4 +5,4 @@ slim_options = {
 
 slim_options[:pretty] = true if Rails.env == 'development'
 
-Slim::Engine.set_default_options slim_options
+Slim::Engine.set_options slim_options

@@ -17,11 +17,9 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.7'
+gem 'rails', '~> 4.2'
 
 gem 'pg'
-
-gem 'foreigner'
 
 # Assets
 gem 'slim-rails'
@@ -75,6 +73,7 @@ group :development do
   gem 'hpricot'
   gem 'ruby_parser'
   gem 'forgery'
+  gem 'web-console', '~> 2.0'
 end
 
 group :development, :test do
