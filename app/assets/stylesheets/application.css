@@ -12,9 +12,11 @@
  *= require normalize
  *= require jqcloud2
  *= require nvd3
+ *= require angular-loading-bar
  *= require ./bootstrap
  *= require ./layout
  *= require ./generic
  *= require ./spinner
+ *= require ./loading-bar
  *= require_tree ./modules
  */

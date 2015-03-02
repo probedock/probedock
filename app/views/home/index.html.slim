@@ -28,6 +28,6 @@ script type='text/ng-template' id='/templates/main.html'
             a.btn.btn-default.btn-xs href='#' ng-click='showSignIn()' tooltip='Sign in' tooltip-placement='left'
               span.glyphicon.glyphicon-log-in
           li ng-show='currentUser'
-            a.btn.btn-default.btn-xs href='#' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'
+            button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'
               span.glyphicon.glyphicon-log-out
   div ui-view='content'

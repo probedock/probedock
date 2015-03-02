@@ -50,6 +50,7 @@
 //= require angular-jqcloud
 //= require angular-nvd3
 //= require angular-ng-clip
+//= require angular-loading-bar
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot
