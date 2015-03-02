@@ -14,8 +14,8 @@ script type='text/ng-template' id='/templates/main.html'
             a href='#' ui-sref='std.reports' Reports
           li ng-class='{active: isMenuActive("projects")}'
             a href='#' ui-sref='std.projects' Projects
-          li.dropdown ng-class='{active: isMenuActive("users")}' ng-show='currentUserIs("admin")'
-            a.dropdown-toggle href='#' data-toggle='dropdown'
+          li.dropdown dropdown=true ng-class='{active: isMenuActive("users")}' ng-show='currentUserIs("admin")'
+            a.dropdown-toggle href='#' dropdown-toggle=true
               | Admin
               span.caret
             ul.dropdown-menu role='menu'

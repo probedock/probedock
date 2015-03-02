@@ -40,13 +40,14 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-local-storage/dist/angular-local-storage.js', dest: 'vendor/assets/javascripts/angular-local-storage.js' },
           { nonull: true, src: 'bower_components/angular-moment/angular-moment.js', dest: 'vendor/assets/javascripts/angular-moment.js' },
           { nonull: true, src: 'bower_components/angular-base64/angular-base64.js', dest: 'vendor/assets/javascripts/angular-base64.js' }, // TODO: remove if unused
-          { nonull: true, src: 'bower_components/angular-smart-table/dist/smart-table.debug.js', dest: 'vendor/assets/javascripts/angular-smart-table.js' },
+          { nonull: true, src: 'bower_components/angular-smart-table/dist/smart-table.js', dest: 'vendor/assets/javascripts/angular-smart-table.js' },
           { nonull: true, src: 'bower_components/angular-gravatar/build/md5.js', dest: 'vendor/assets/javascripts/angular-md5.js' },
           { nonull: true, src: 'bower_components/angular-gravatar/build/angular-gravatar.js', dest: 'vendor/assets/javascripts/angular-gravatar.js' },
           { nonull: true, src: 'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js', dest: 'vendor/assets/javascripts/angular-ng-infinite-scroll.js' },
           { nonull: true, src: 'bower_components/angular-jqcloud/angular-jqcloud.js', dest: 'vendor/assets/javascripts/angular-jqcloud.js' },
           { nonull: true, src: 'bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js', dest: 'vendor/assets/javascripts/angular-nvd3.js' },
           { nonull: true, src: 'bower_components/ng-clip/src/ngClip.js', dest: 'vendor/assets/javascripts/angular-ng-clip.js' },
+          // TODO: remove if unused
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },
           // stylesheets

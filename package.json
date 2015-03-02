@@ -1,5 +1,5 @@
 {
-  "name": "Probe Dock",
+  "name": "probe-dock",
   "version": "3.0.0",
   "private": true,
   "devDependencies": {

@@ -28,7 +28,7 @@ angular.module('angular-jqcloud', []).directive('jqcloud', ['$parse', function($
       
       for (var i=0, l=jqcOptions.length; i<l; i++) {
         var opt = jqcOptions[i];
-        if ($attr[opt]!=undefined) {
+        if ($attr[opt] !== undefined) {
           options[opt] = $parse($attr[opt])();
         }
       }
@@ -37,7 +37,9 @@ angular.module('angular-jqcloud', []).directive('jqcloud', ['$parse', function($
       
       $scope.$watchCollection('words', function() {
         $scope.$evalAsync(function() {
-          $elem.jQCloud('update', $scope.words);
+          var words = [];
+          $.extend(words,$scope.words);
+          $elem.jQCloud('update', words);
         });
       });
     
