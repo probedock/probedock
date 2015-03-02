@@ -169,7 +169,6 @@ class V3 < ActiveRecord::Migration
     rename_column :test_results, :test_info_id, :test_id
     change_column :test_results, :new_test, :boolean, null: true, default: nil
     change_column :test_results, :test_id, :integer, null: true
-    add_index :test_results, [ :test_payload_id, :key_id ], unique: true
     add_foreign_key :test_results, :test_payloads
     add_foreign_key :test_results, :project_tests, column: :test_id
     add_foreign_key :test_results, :test_keys, column: :key_id

@@ -251,7 +251,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_results", ["project_version_id"], name: "test_results_project_version_id_fk", using: :btree
   add_index "test_results", ["runner_id"], name: "test_results_runner_id_fk", using: :btree
   add_index "test_results", ["test_id"], name: "test_results_test_info_id_fk", using: :btree
-  add_index "test_results", ["test_payload_id", "key_id"], name: "index_test_results_on_test_payload_id_and_key_id", unique: true, using: :btree
 
   create_table "test_results_tickets", id: false, force: :cascade do |t|
     t.integer "test_result_id", null: false
