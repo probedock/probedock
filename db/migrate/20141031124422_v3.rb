@@ -166,6 +166,7 @@ class V3 < ActiveRecord::Migration
     add_column :test_results, :name, :string
     add_column :test_results, :payload_properties_set, :integer, null: false, default: 0
     add_column :test_results, :processed, :boolean, null: false, default: false
+    add_column :test_results, :processed_at, :datetime
     rename_column :test_results, :test_info_id, :test_id
     change_column :test_results, :new_test, :boolean, null: true, default: nil
     change_column :test_results, :test_id, :integer, null: true

@@ -245,6 +245,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.string   "name"
     t.integer  "payload_properties_set", default: 0,     null: false
     t.boolean  "processed",              default: false, null: false
+    t.datetime "processed_at"
   end
 
   add_index "test_results", ["category_id"], name: "test_results_category_id_fk", using: :btree
