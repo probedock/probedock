@@ -30,7 +30,6 @@ module ApiAuthenticationHelper
   end
 
   def authenticate!
-
     @auth_token = auth_token_from_header || auth_token_from_params
     raise ProbeDock::Errors::Unauthorized.new 'Missing credentials' if @auth_token.blank?
 

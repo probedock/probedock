@@ -1,6 +1,6 @@
-angular.module('probe-dock.auth', ['LocalStorageModule'])
+angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
 
-  .factory('AuthService', ['$http', 'localStorageService', '$log', '$rootScope', function($http, $local, $log, $rootScope) {
+  .factory('AuthService', ['$base64', '$http', 'localStorageService', '$log', '$rootScope', function($base64, $http, $local, $log, $rootScope) {
 
     $rootScope.currentUser = null;
 
@@ -17,8 +17,10 @@ angular.module('probe-dock.auth', ['LocalStorageModule'])
       signIn: function(credentials) {
         return $http({
           method: 'POST',
-          url: '/api/authenticate',
-          data: _.pick(credentials, 'username', 'password')
+          url: '/api/authentication',
+          headers: {
+            Authorization: 'Basic ' + $base64.encode(credentials.username + ':' + credentials.password)
+          }
         }).then(onSignedIn);
       },
 

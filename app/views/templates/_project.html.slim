@@ -6,7 +6,7 @@ form.projectPanel.panel.panel-default ng-class='{"panel-primary": !editedProject
       input.form-control type='text' ng-model='editedProject.name' name='name' autofocus=true required=true maxlength=100
   .panel-body
     .btn-group.pull-right dropdown=true ng-hide='editedProject'
-      button.btn.btn-default.btn-sm.dropdown-toggle type='button' data-toggle='dropdown'
+      button.btn.btn-default.btn-sm.dropdown-toggle type='button' dropdown-toggle=true
         span.glyphicon.glyphicon-cog
       ul.dropdown-menu role='menu'
         li

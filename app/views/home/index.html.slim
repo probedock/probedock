@@ -25,7 +25,7 @@ script type='text/ng-template' id='/templates/main.html'
           li ng-show='currentUser'
             a href='#' ui-sref='std.profile' {{ currentUser.email }}
           li ng-hide='currentUser'
-            a.btn.btn-default.btn-xs href='#' ng-click='showSignIn()' tooltip='Sign in' tooltip-placement='left'
+            button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='showSignIn()' tooltip='Sign in' tooltip-placement='left'
               span.glyphicon.glyphicon-log-in
           li ng-show='currentUser'
             button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'

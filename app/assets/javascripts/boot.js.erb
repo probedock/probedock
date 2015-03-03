@@ -16,6 +16,16 @@
 // along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 
 angular.module('probe-dock', [
+  'angularMoment',
+  'angular-jqcloud',
+  'angular-loading-bar',
+  'infinite-scroll',
+  'ngClipboard',
+  'nvd3ChartDirectives',
+  'ngAnimate',
+  'smart-table',
+  'ui.gravatar',
+  'ui.bootstrap',
   'probe-dock.auth',
   'probe-dock.dashboard',
   'probe-dock.format',
@@ -26,17 +36,7 @@ angular.module('probe-dock', [
   'probe-dock.reports',
   'probe-dock.routes',
   'probe-dock.state',
-  'probe-dock.users',
-  'angularMoment',
-  'angular-jqcloud',
-  'angular-loading-bar',
-  'infinite-scroll',
-  'ngClipboard',
-  'nvd3ChartDirectives',
-  'ngAnimate',
-  'smart-table',
-  'ui.gravatar',
-  'ui.bootstrap'
+  'probe-dock.users'
 ])
 
   // FIXME: ui-bootstrap tooltip animation is broken using angular 1.3
