@@ -45,27 +45,22 @@ module TestPayloadProcessing
           @test_payload.results_count = data['r'].length
           @test_payload.duration = 0
 
+          @test_payload.duration = data['r'].inject(0){ |memo,r| memo + r['d'] }
+          @test_payload.passed_results_count = data['r'].count{ |r| r.fetch 'p', true }
+          @test_payload.inactive_results_count = data['r'].count{ |r| !r.fetch('p', true) }
+          @test_payload.inactive_passed_results_count = data['r'].count{ |r| r.fetch('p', true) && !r.fetch('v', true) }
+
           i = 0
           data['r'].each_slice 100 do |results|
-
             fill_cache results
             results.each do |result|
-
-              @test_payload.duration += result['d']
-
-              passed, active = result.fetch('p', true), result.fetch('v', true)
-              @test_payload.passed_results_count += 1 if passed
-              @test_payload.inactive_results_count += 1 unless active
-              @test_payload.inactive_passed_results_count += 1 if passed && !active
-
               @processed_results[i] = ProcessResult.new(result, @test_payload, @cache)
-
               i += 1
             end
           end
 
           @test_payload.duration = data['d'] if data.key? 'd'
-          @test_payload.save!
+          @test_payload.finish_results_processing!
 
           @test_payload.runner.update_attribute :last_test_payload_id, @test_payload.id
 

@@ -39,15 +39,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "emails", ["email"], name: "index_emails_on_email", unique: true, using: :btree
 
-  create_table "link_templates", force: :cascade do |t|
-    t.string   "name",       limit: 50,  null: false
-    t.string   "contents",   limit: 255, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  add_index "link_templates", ["name"], name: "index_link_templates_on_name", unique: true, using: :btree
-
   create_table "project_tests", force: :cascade do |t|
     t.string   "name",                      null: false
     t.integer  "key_id",                    null: false
@@ -176,7 +167,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "test_payloads", force: :cascade do |t|
     t.integer  "contents_bytesize",                                    null: false
-    t.string   "state",                         limit: 12,             null: false
+    t.string   "state",                         limit: 20,             null: false
     t.datetime "received_at",                                          null: false
     t.datetime "processing_at"
     t.datetime "processed_at"
@@ -194,6 +185,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.integer  "project_version_id"
     t.text     "backtrace"
     t.integer  "processed_results_count",                  default: 0, null: false
+    t.datetime "results_processed_at"
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree
@@ -213,13 +205,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
   end
-
-  create_table "test_reports_results", id: false, force: :cascade do |t|
-    t.integer "test_report_id", null: false
-    t.integer "test_result_id", null: false
-  end
-
-  add_index "test_reports_results", ["test_report_id", "test_result_id"], name: "index_test_reports_results_on_test_report_id_and_test_result_id", unique: true, using: :btree
 
   create_table "test_result_contributors", id: false, force: :cascade do |t|
     t.integer "test_result_id"
@@ -323,8 +308,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_payloads_reports", "test_payloads"
   add_foreign_key "test_payloads_reports", "test_reports"
   add_foreign_key "test_reports", "users", column: "runner_id"
-  add_foreign_key "test_reports_results", "test_reports"
-  add_foreign_key "test_reports_results", "test_results"
   add_foreign_key "test_result_contributors", "emails"
   add_foreign_key "test_result_contributors", "test_results"
   add_foreign_key "test_results", "categories", name: "test_results_category_id_fk"

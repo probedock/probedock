@@ -25,7 +25,6 @@ class TestReport < ActiveRecord::Base
 
   belongs_to :runner, class_name: 'User'
   has_and_belongs_to_many :test_payloads
-  has_and_belongs_to_many :results, class_name: 'TestResult'
 
   validates :runner, presence: { unless: :quick_validation }
 
@@ -55,9 +54,9 @@ class TestReport < ActiveRecord::Base
       json.projects projects.select('projects.id, projects.api_id, projects.name').to_a.collect{ |p| p.to_builder(link: true).attributes! }
 
       if options[:detailed]
-        json.categories Category.joins(test_results: :test_reports).where(test_reports: { id: id }).order('categories.name').pluck('distinct categories.name')
-        json.tags Tag.joins(test_results: :test_reports).where(test_reports: { id: id }).order('tags.name').pluck('distinct tags.name')
-        json.tickets Ticket.joins(test_results: :test_reports).where(test_reports: { id: id }).order('tickets.name').pluck('distinct tickets.name')
+        json.categories Category.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: id }).order('categories.name').pluck('distinct categories.name')
+        json.tags Tag.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: id }).order('tags.name').pluck('distinct tags.name')
+        json.tickets Ticket.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: id }).order('tickets.name').pluck('distinct tickets.name')
       end
     end
   end
@@ -66,8 +65,12 @@ class TestReport < ActiveRecord::Base
     define_method(method){ sum_payload_values method }
   end
 
+  def results
+    TestResult.joins(test_payload: :test_reports).where(test_reports: { id: id })
+  end
+
   def projects
-    Project.joins(versions: { test_results: :test_reports }).where(test_reports: { id: id }).group('projects.id').order('projects.name')
+    Project.joins(versions: { test_payloads: :test_reports }).where(test_reports: { id: id }).group('projects.id').order('projects.name')
   end
 
   private

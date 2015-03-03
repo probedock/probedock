@@ -23,11 +23,6 @@ module CompleteTestPayloadProcessingJob
   @queue = :api
 
   def self.perform test_payload_id
-
     TestPayload.find(test_payload_id).finish_processing!
-
-    TestReport.joins(:test_payloads).where(test_payloads: { id: test_payload_id }).to_a.each do |report|
-      Resque.enqueue FillTestReportJob, report.id, test_payload_id
-    end
   end
 end

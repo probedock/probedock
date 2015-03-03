@@ -26,6 +26,7 @@ class V3 < ActiveRecord::Migration
 
     drop_table :api_keys
     drop_table :links
+    drop_table :link_templates
     drop_table :purge_actions
     drop_table :test_counters
     drop_table :test_deprecations
@@ -116,6 +117,7 @@ class V3 < ActiveRecord::Migration
     add_column :test_payloads, :api_id, :string, null: false, limit: 36
     rename_column :test_payloads, :user_id, :runner_id
     remove_column :test_payloads, :contents
+    change_column :test_payloads, :state, :string, null: false, limit: 20
     add_column :test_payloads, :contents, :json, null: false
     add_column :test_payloads, :duration, :integer
     add_column :test_payloads, :run_ended_at, :datetime
@@ -126,6 +128,7 @@ class V3 < ActiveRecord::Migration
     add_column :test_payloads, :project_version_id, :integer
     add_column :test_payloads, :backtrace, :text
     add_column :test_payloads, :processed_results_count, :integer, null: false, default: 0
+    add_column :test_payloads, :results_processed_at, :datetime
     add_index :test_payloads, :api_id, unique: true
     add_foreign_key :test_payloads, :project_versions
 
@@ -136,15 +139,6 @@ class V3 < ActiveRecord::Migration
     end
 
     add_foreign_key :test_reports, :users, column: :runner_id
-
-    create_table :test_reports_results, id: false do |t|
-      t.integer :test_report_id, null: false
-      t.integer :test_result_id, null: false
-      t.index [ :test_report_id, :test_result_id ], unique: true
-    end
-
-    add_foreign_key :test_reports_results, :test_reports
-    add_foreign_key :test_reports_results, :test_results
 
     create_table :test_payloads_reports, id: false do |t|
       t.integer :test_payload_id, null: false

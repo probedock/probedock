@@ -22,6 +22,7 @@ class ProjectVersion < ActiveRecord::Base
   belongs_to :project
   has_many :test_results
   has_many :test_descriptions
+  has_many :test_payloads
 
   strip_attributes
   validates :name, presence: true, uniqueness: { scope: :project_id, case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }

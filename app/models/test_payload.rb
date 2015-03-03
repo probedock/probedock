@@ -23,13 +23,15 @@ class TestPayload < ActiveRecord::Base
   belongs_to :runner, class_name: 'User'
   has_many :results, class_name: 'TestResult'
   has_and_belongs_to_many :test_keys
+  has_and_belongs_to_many :test_reports
 
   scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
 
   include SimpleStates
   states :created, :processing, :processed, :failed
   event :start_processing, from: :created, to: :processing
-  event :finish_processing, from: :processing, to: :processed
+  event :finish_results_processing, from: :processing, to: :results_processed
+  event :finish_processing, from: :results_processed, to: :processed
   event :fail_processing, from: :processing, to: :failed
 
   validates :api_id, presence: true, length: { is: 36, allow_blank: true }
