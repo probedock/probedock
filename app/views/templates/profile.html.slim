@@ -29,9 +29,9 @@
           .alert.alert-danger ng-show='saveError'
             | Your profile could not be updated. Either the name or e-mail are already taken, or the password confirmation does not match the password.
       .panel-footer.text-center
-        .btn-group
-          button.btn.btn-default type='button' ng-click='edit()' tooltip='Edit profile or change password' tooltip-placement='right' ng-if='!editedProfile'
-            span.glyphicon.glyphicon-edit
+        button.btn.btn-default type='button' ng-click='edit()' tooltip='Edit profile or change password' tooltip-placement='right' ng-if='!editedProfile'
+          span.glyphicon.glyphicon-edit
+        .btn-group ng-if='editedProfile'
           button.btn.btn-default type='button' ng-click='cancel()' tooltip='Cancel' ng-if='editedProfile'
             span.glyphicon.glyphicon-remove
           button.btn.btn-primary type='submit' ng-click='save()' tooltip='Save' ng-if='editedProfile'
