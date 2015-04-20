@@ -36,7 +36,18 @@ module ProbeDock
       end
 
       get do
-        User.tableling.process(params)
+        rel = User.order 'name ASC'
+
+        rel = paginated rel do |rel|
+          if params[:search].present?
+            term = "%#{params[:search].downcase}%"
+            rel.where 'LOWER(users.name) LIKE ?', term
+          else
+            rel
+          end
+        end
+
+        rel.to_a.collect{ |u| u.to_builder.attributes! }
       end
 
       post do

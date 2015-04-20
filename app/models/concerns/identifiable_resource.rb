@@ -20,7 +20,7 @@ require_dependency 'random'
 module IdentifiableResource
   extend ActiveSupport::Concern
 
-  def set_identifier attr
+  def set_identifier attr = :api_id
     self[attr] = self.class.generate_new_identifier attr
   end
 

@@ -15,15 +15,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class Tag < ActiveRecord::Base
-  include QuickValidation
-  NAME_REGEXP = /\A[a-z0-9\-\_]+\Z/i
+FactoryGirl.define do
+  sequence :organization_name do |n|
+    "Organization #{n}"
+  end
 
-  belongs_to :organization
-  has_and_belongs_to_many :test_descriptions
-  has_and_belongs_to_many :test_results
-
-  strip_attributes
-  validates :name, presence: true, uniqueness: { scope: :organization_id, unless: :quick_validation }, length: { maximum: 50 }, format: { with: NAME_REGEXP }
-  validates :organization, presence: { unless: :quick_validation }
+  factory :organization do
+    name{ generate(:organization_name) }
+  end
 end

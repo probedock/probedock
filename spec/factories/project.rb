@@ -15,9 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-
 FactoryGirl.define do
-
   sequence :project_name do |n|
     "Project #{n}"
   end

@@ -17,7 +17,6 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class TestPayload < ActiveRecord::Base
   include JsonResource
-  include Tableling::Model
 
   belongs_to :project_version
   belongs_to :runner, class_name: 'User'
@@ -46,22 +45,6 @@ class TestPayload < ActiveRecord::Base
   validates :passed_results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :inactive_results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :inactive_passed_results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-
-  tableling do
-
-    default_view do
-
-      field :received_at, as: :receivedAt
-      field :contents_bytesize, as: :bytes
-      field :state
-      field :processing_at, as: :processingAt
-      field :processed_at, as: :processedAt
-
-      serialize_response do |res|
-        res[:data].collect{ |p| p.to_builder.attributes! }
-      end
-    end
-  end
 
   def finish_processing
     test_keys.clear

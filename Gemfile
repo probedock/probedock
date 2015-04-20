@@ -52,7 +52,6 @@ gem 'resque-workers-lock'
 gem 'simple_states' # state machines
 gem 'bitmask_attributes' # bitmasks
 gem 'strip_attributes' # trimming
-gem 'tableling-rails'
 
 # Fast JSON
 gem 'oj'

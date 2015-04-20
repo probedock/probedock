@@ -17,7 +17,6 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class TestKey < ActiveRecord::Base
   include QuickValidation
-  include Tableling::Model
   KEY_REGEXP = /\A[a-z0-9]{12}\Z/
 
   before_create :set_value
@@ -38,33 +37,6 @@ class TestKey < ActiveRecord::Base
     values = keys_by_project.inject([]){ |memo,(k,v)| memo << k << v }
     where_args = values.unshift conditions.join(' OR ')
     joins(:project).where *where_args
-  end
-
-  tableling do
-
-    default_view do
-
-      field :free, order: false
-      field :project, order: false, includes: :project
-      field :created_at, as: :createdAt
-
-      field :value, order: false do
-        value{ |o| o.key }
-      end
-      
-      quick_search do |q,t|
-        term = "%#{t.downcase}%"
-        q.where('LOWER(test_keys.key) LIKE ?', term)
-      end
-
-      serialize_response do |res|
-        if res[:legacy]
-          LegacyTestKeysRepresenter.new OpenStruct.new(res)
-        else
-          TestKeysRepresenter.new OpenStruct.new(res)
-        end
-      end
-    end
   end
 
   def free?

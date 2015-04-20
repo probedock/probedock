@@ -25,15 +25,18 @@ module ProbeDock
       end
 
       get do
+        rel = TestReport.order 'created_at ASC'
 
-        base = TestReport
-
-        if params[:after]
-          ref = TestReport.select('id, created_at').where(api_id: params[:after].to_s).first!
-          base = base.where 'created_at > ?', ref.created_at
+        rel = paginated rel do |rel|
+          if params[:after]
+            ref = TestReport.select('id, created_at').where(api_id: params[:after].to_s).first!
+            rel.where 'created_at > ?', ref.created_at
+          else
+            rel
+          end
         end
 
-        TestReport.tableling.process(params.merge(base: base))
+        rel.to_a.collect{ |r| r.to_builder.attributes! }
       end
 
       namespace '/:id' do

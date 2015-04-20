@@ -19,27 +19,15 @@ class TestReport < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
   include QuickValidation
-  include Tableling::Model
 
   before_create{ set_identifier :api_id }
 
+  belongs_to :organization
   belongs_to :runner, class_name: 'User'
   has_and_belongs_to_many :test_payloads
 
+  validates :organization, presence: true
   validates :runner, presence: { unless: :quick_validation }
-
-  tableling do
-
-    default_view do
-
-      field :api_id, as: :id
-      field :created_at, as: :createdAt
-
-      serialize_response do |res|
-        res[:data].collect{ |p| p.to_builder.attributes! }
-      end
-    end
-  end
 
   def to_builder options = {}
     Jbuilder.new do |json|

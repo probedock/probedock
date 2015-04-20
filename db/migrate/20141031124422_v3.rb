@@ -37,17 +37,41 @@ class V3 < ActiveRecord::Migration
     remove_foreign_key :test_results, :test_infos
     drop_table :test_infos
 
+    create_table :organizations do |t|
+      t.string :api_id, null: false, limit: 12
+      t.string :name, null: false, limit: 100
+      t.timestamps null: false
+      t.index :api_id, unique: true
+      t.index :name, unique: true
+    end
+
     create_table :emails do |t|
       t.string :email, null: false
       t.index :email, unique: true
     end
 
     remove_column :categories, :metric_key
+    add_column :categories, :organization_id, :integer, null: false
+    add_foreign_key :categories, :organizations
+
+    create_table :organization_members do |t|
+      t.string :api_id, null: false, limit: 12
+      t.integer :user_id, null: false
+      t.integer :email_id, null: false
+      t.integer :organization_id, null: false
+      t.timestamps null: false
+    end
+
+    add_foreign_key :organization_members, :users
+    add_foreign_key :organization_members, :organizations
+    add_foreign_key :organization_members, :emails
 
     remove_column :projects, :metric_key
     remove_column :projects, :url_token
     add_column :projects, :description, :text
     change_column :projects, :name, :string, limit: 100
+    add_column :projects, :organization_id, :integer, null: false
+    add_foreign_key :projects, :organizations
 
     create_table :project_tests do |t|
       t.string :name, null: false
@@ -60,6 +84,9 @@ class V3 < ActiveRecord::Migration
 
     add_foreign_key :project_tests, :test_keys, column: :key_id
     add_foreign_key :project_tests, :projects
+
+    add_column :tags, :organization_id, :integer, null: false
+    add_foreign_key :tags, :organizations
 
     create_table :test_descriptions do |t|
       t.string :name, null: false
@@ -134,10 +161,12 @@ class V3 < ActiveRecord::Migration
 
     create_table :test_reports do |t|
       t.string :api_id, null: false, limit: 12
+      t.integer :organization_id, null: false
       t.integer :runner_id, null: false
       t.timestamps null: false
     end
 
+    add_foreign_key :test_reports, :organizations
     add_foreign_key :test_reports, :users, column: :runner_id
 
     create_table :test_payloads_reports, id: false do |t|
@@ -218,6 +247,9 @@ class V3 < ActiveRecord::Migration
 
     add_foreign_key :test_custom_values_results, :test_results
     add_foreign_key :test_custom_values_results, :test_custom_values
+
+    add_column :tickets, :organization_id, :integer, null: false
+    add_foreign_key :tickets, :organizations
 
     remove_column :users, :remember_token
     remove_column :users, :remember_created_at

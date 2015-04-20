@@ -17,7 +17,6 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class ProjectVersion < ActiveRecord::Base
   include QuickValidation
-  include Tableling::Model
 
   belongs_to :project
   has_many :test_results
@@ -25,24 +24,6 @@ class ProjectVersion < ActiveRecord::Base
   has_many :test_payloads
 
   strip_attributes
-  validates :name, presence: true, uniqueness: { scope: :project_id, case_sensitive: false, unless: :quick_validation }, length: { maximum: 255 }
+  validates :name, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }, length: { maximum: 255 }
   validates :project, presence: { unless: :quick_validation }
-
-  tableling do
-
-    default_view do
-
-      field :name, includes: :project
-      field :created_at, as: :createdAt
-
-      quick_search do |q,t|
-        term = "%#{t.downcase}%"
-        q.where 'LOWER(name) LIKE ?', term
-      end
-
-      serialize_response do |res|
-        ProjectVersionsRepresenter.new OpenStruct.new(res)
-      end
-    end
-  end
 end

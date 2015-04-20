@@ -27,8 +27,9 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   end
 
   create_table "categories", force: :cascade do |t|
-    t.string   "name",       limit: 255, null: false
-    t.datetime "created_at",             null: false
+    t.string   "name",            limit: 255, null: false
+    t.datetime "created_at",                  null: false
+    t.integer  "organization_id",             null: false
   end
 
   add_index "categories", ["name"], name: "index_categories_on_name", unique: true, using: :btree
@@ -38,6 +39,25 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   end
 
   add_index "emails", ["email"], name: "index_emails_on_email", unique: true, using: :btree
+
+  create_table "organization_members", force: :cascade do |t|
+    t.string   "api_id",          limit: 12, null: false
+    t.integer  "user_id",                    null: false
+    t.integer  "email_id",                   null: false
+    t.integer  "organization_id",            null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string   "api_id",     limit: 12,  null: false
+    t.string   "name",       limit: 100, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "organizations", ["api_id"], name: "index_organizations_on_api_id", unique: true, using: :btree
+  add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
 
   create_table "project_tests", force: :cascade do |t|
     t.string   "name",                      null: false
@@ -66,12 +86,14 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.datetime "created_at",                                     null: false
     t.datetime "updated_at",                                     null: false
     t.text     "description"
+    t.integer  "organization_id",                                null: false
   end
 
   add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
 
   create_table "tags", force: :cascade do |t|
-    t.string "name", limit: 50, null: false
+    t.string  "name",            limit: 50, null: false
+    t.integer "organization_id",            null: false
   end
 
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
@@ -200,10 +222,11 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_payloads_reports", ["test_payload_id", "test_report_id"], name: "index_test_payloads_reports_on_payload_and_report_id", unique: true, using: :btree
 
   create_table "test_reports", force: :cascade do |t|
-    t.string   "api_id",     limit: 12, null: false
-    t.integer  "runner_id",             null: false
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+    t.string   "api_id",          limit: 12, null: false
+    t.integer  "organization_id",            null: false
+    t.integer  "runner_id",                  null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   create_table "test_result_contributors", id: false, force: :cascade do |t|
@@ -246,9 +269,10 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_results_tickets", ["test_result_id", "ticket_id"], name: "index_test_results_tickets_on_test_result_id_and_ticket_id", unique: true, using: :btree
 
   create_table "tickets", force: :cascade do |t|
-    t.string   "name",       limit: 255, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name",            limit: 255, null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "organization_id",             null: false
   end
 
   add_index "tickets", ["name"], name: "index_tickets_on_name", unique: true, using: :btree
@@ -279,9 +303,15 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "users", ["email_id"], name: "index_users_on_email_id", unique: true, using: :btree
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
 
+  add_foreign_key "categories", "organizations"
+  add_foreign_key "organization_members", "emails"
+  add_foreign_key "organization_members", "organizations"
+  add_foreign_key "organization_members", "users"
   add_foreign_key "project_tests", "projects"
   add_foreign_key "project_tests", "test_keys", column: "key_id"
   add_foreign_key "project_versions", "projects", name: "project_versions_project_id_fk"
+  add_foreign_key "projects", "organizations"
+  add_foreign_key "tags", "organizations"
   add_foreign_key "tags_test_descriptions", "tags"
   add_foreign_key "tags_test_descriptions", "test_descriptions"
   add_foreign_key "tags_test_results", "tags"
@@ -307,6 +337,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_payloads", "users", column: "runner_id", name: "test_payloads_user_id_fk"
   add_foreign_key "test_payloads_reports", "test_payloads"
   add_foreign_key "test_payloads_reports", "test_reports"
+  add_foreign_key "test_reports", "organizations"
   add_foreign_key "test_reports", "users", column: "runner_id"
   add_foreign_key "test_result_contributors", "emails"
   add_foreign_key "test_result_contributors", "test_results"
@@ -318,6 +349,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_results", "users", column: "runner_id", name: "test_results_runner_id_fk"
   add_foreign_key "test_results_tickets", "test_results"
   add_foreign_key "test_results_tickets", "tickets"
+  add_foreign_key "tickets", "organizations"
   add_foreign_key "user_settings", "projects", column: "last_test_key_project_id", name: "user_settings_last_test_key_project_id_fk"
   add_foreign_key "user_settings", "users"
   add_foreign_key "users", "emails"

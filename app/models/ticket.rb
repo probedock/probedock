@@ -18,11 +18,13 @@
 class Ticket < ActiveRecord::Base
   include QuickValidation
 
+  belongs_to :organization
   has_and_belongs_to_many :test_descriptions
   has_and_belongs_to_many :test_results
 
   strip_attributes
-  validates :name, presence: true, uniqueness: { unless: :quick_validation }, length: { maximum: 255 }
+  validates :name, presence: true, uniqueness: { scope: :organization_id, unless: :quick_validation }, length: { maximum: 255 }
+  validates :organization, presence: { unless: :quick_validation }
 
   def url
     return nil unless ticketing_system_url = Settings.app.ticketing_system_url

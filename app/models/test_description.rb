@@ -17,7 +17,6 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class TestDescription < ActiveRecord::Base
   include QuickValidation
-  include Tableling::Model
 
   # Flags
   INACTIVE = 1
@@ -52,50 +51,6 @@ class TestDescription < ActiveRecord::Base
 
   def self.count_by_author
     standard.select('author_id, count(id) AS tests_count').group('author_id').includes(:author).to_a.collect{ |t| { author: t.author, count: t.tests_count } }
-  end
-
-  tableling do
-
-    default_view do
-
-      field :name, includes: [ :tags, :tickets ]
-      field :created_at, as: :createdAt
-      field :last_run_at, as: :lastRunAt
-      field :last_run_duration, as: :lastRunDuration
-      field :passing, order: false
-      field :active, order: false
-
-      field :category, includes: :category do
-        order{ |q,d| q.joins(:category).order("LOWER(categories.name) ASC") }
-      end
-
-      field :deprecated_at, includes: :deprecation do
-        order{ |q,d| q.joins(:deprecation).order("test_deprecations.created_at #{d}") }
-      end
-
-      field :author, includes: :author do
-        order{ |q,d| q.joins(:author).order("users.name #{d}") }
-      end
-
-      field :project, includes: :project do
-        order{ |q,d| q.joins(:project).order("projects.name #{d}") }
-      end
-
-      field :key, includes: :key do
-        order{ |q,d| q.joins(:key).order("test_keys.key #{d}") }
-      end
-
-      field :effective_result, includes: { effective_result: [ :project_version, :runner, { test_run: [ :runner ] } ] }, as: :effectiveResult
-
-      quick_search do |query,term|
-        term = "%#{term.downcase}%"
-        query.joins(:key).joins(:author).joins(:project).where('LOWER(test_infos.name) LIKE ? OR LOWER(projects.name) LIKE ? OR LOWER(test_keys.key) LIKE ? OR LOWER(users.name) LIKE ?', term, term, term, term)
-      end
-
-      serialize_response do |res|
-        TestInfosRepresenter.new OpenStruct.new(res)
-      end
-    end
   end
 
   def self.standard

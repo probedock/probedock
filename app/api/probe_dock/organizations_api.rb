@@ -16,24 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
-  class ProjectsApi < Grape::API
+  class OrganizationsApi < Grape::API
 
-    namespace :projects do
+    namespace :organizations do
 
       before do
         authenticate!
       end
 
       helpers do
-        def parse_project
-          parse_object :name, :description
+        def parse_organization
+          parse_object :name
         end
       end
 
       get do
-        rel = Project.order 'name ASC'
+        rel = Organization.order 'name ASC'
 
-        rel = paginated Project do |rel|
+        rel = paginated Organization do |rel|
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
             rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
@@ -46,24 +46,37 @@ module ProbeDock
       end
 
       post do
-        project = Project.new parse_project
-        project.organization = Organization.where(api_id: params[:organizationId].to_s).first!
-
-        ProjectValidations.validate project, validation_context, location_type: :json, raise_error: true
-
-        create_record project
+        organization = Organization.new parse_organization
+        OrganizationValidations.validate organization, validation_context, location_type: :json, raise_error: true
+        create_record organization
       end
 
       namespace '/:id' do
 
         helpers do
-          def current_project
-            Project.where(api_id: params[:id].to_s).first!
+          def current_organization
+            Organization.where(api_id: params[:id].to_s).first!
           end
         end
 
         patch do
-          update_record current_project, parse_project
+          update_record current_organization, parse_organization
+        end
+
+        namespace '/members' do
+          helpers do
+            def parse_member
+              parse_object :userId, :email
+            end
+          end
+
+          post do
+            data = parse_member
+            user = User.where(api_id: data[:userId]).first!
+            email = user.email
+
+            member = OrganizationMember.new 
+          end
         end
       end
     end

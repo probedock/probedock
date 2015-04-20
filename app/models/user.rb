@@ -18,7 +18,6 @@
 class User < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
-  include Tableling::Model
 
   before_create{ set_identifier :api_id }
 
@@ -42,35 +41,12 @@ class User < ActiveRecord::Base
   has_many :test_reports, foreign_key: :runner_id, dependent: :restrict_with_exception
   belongs_to :last_test_payload, class_name: "TestPayload"
   has_one :settings, class_name: "Settings::User", dependent: :destroy
-  belongs_to :email # TODO: make email required
+  belongs_to :primary_email
+  has_and_belongs_to_many :emails
 
   strip_attributes except: :password_digest
   validates :name, presence: true, uniqueness: true
-  validates :email, presence: true
-  validates :email_id, uniqueness: true
-
-  tableling do
-
-    default_view do
-
-      field :name
-      field :created_at, as: :createdAt
-
-      field :email, includes: :email do
-        order{ |q,d| q.joins(:email).where("emails.email #{d}") }
-        value{ |o| o.email.email }
-      end
-
-      quick_search do |query,original_term|
-        term = "%#{original_term.downcase}%"
-        query.where 'LOWER(users.name) LIKE ?', term
-      end
-
-      serialize_response do |res|
-        res[:data].collect{ |p| p.to_builder.attributes! }
-      end
-    end
-  end
+  validates :primary_email, presence: true
 
   def to_builder options = {}
     Jbuilder.new do |json|

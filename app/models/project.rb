@@ -18,42 +18,22 @@
 class Project < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
-  include Tableling::Model
 
   before_create{ set_identifier :api_id }
 
+  belongs_to :organization
   has_many :test_keys
   has_many :tests, class_name: 'ProjectTest'
   has_many :versions, class_name: 'ProjectVersion'
 
   validates :name, presence: true, length: { maximum: 100 }
-
-  tableling do
-
-    default_view do
-
-      field :api_id, as: :id
-      field :name
-      field :description, order: false
-      field :tests_count, as: :testsCount
-      field :deprecated_tests_count, as: :deprecatedTestsCount
-      field :created_at, as: :createdAt
-
-      quick_search do |q,t|
-        term = "%#{t.downcase}%"
-        q.where 'LOWER(name) LIKE ? OR LOWER(api_id) LIKE ?', term, term
-      end
-
-      serialize_response do |res|
-        res[:data].collect{ |p| p.to_builder.attributes! }
-      end
-    end
-  end
+  validates :organization, presence: true
 
   def to_builder options = {}
     Jbuilder.new do |json|
       json.id api_id
       json.name name
+      json.organizationId organization.api_id
 
       unless options[:link]
         json.description description if description.present?

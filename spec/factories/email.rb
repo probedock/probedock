@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 FactoryGirl.define do
-
   sequence :email_address do |n|
     "email-#{n}@example.com"
   end

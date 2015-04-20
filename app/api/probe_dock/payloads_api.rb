@@ -64,8 +64,8 @@ module ProbeDock
       namespace :payloads do
 
         get do
-          # TODO: do not fetch payload contents from database
-          TestPayload.tableling.process(params)
+          rel = TestPayload.order 'received_at DESC'
+          paginated(rel).to_a.collect{ |p| p.to_builder.attributes! }
         end
       end
     end

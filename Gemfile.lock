@@ -320,8 +320,6 @@ GEM
       execjs
       stylus-source
     stylus-source (0.49.3)
-    tableling-rails (0.0.26)
-      rails (~> 4.0)
     temple (0.7.5)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
@@ -412,7 +410,6 @@ DEPENDENCIES
   sqlite3
   strip_attributes
   stylus
-  tableling-rails
   therubyracer
   thin
   uglifier (>= 1.3.0)

@@ -18,7 +18,6 @@
 class TestResult < ActiveRecord::Base
   include JsonResource
   include QuickValidation
-  include Tableling::Model
 
   belongs_to :test, class_name: 'ProjectTest'
   belongs_to :key, class_name: 'TestKey'
@@ -44,34 +43,6 @@ class TestResult < ActiveRecord::Base
   validates :test, presence: { unless: :quick_validation }
   validates :test_payload, presence: { unless: :quick_validation }
   validates :project_version, presence: { unless: :quick_validation }
-
-  tableling do
-
-    default_view do
-
-      field :id
-      field :duration
-      field :passed
-      field :run_at, as: :runAt, includes: :test_payload
-
-      field :runner, includes: :runner do
-        order{ |q,d| q.joins(:runner).order("users.name #{d}") }
-      end
-
-      field :version, includes: :project_version do
-        order{ |q,d| q.joins(:project_version).order("project_versions.name #{d}") }
-      end
-
-      quick_search do |query,term|
-        term = "%#{term.downcase}%"
-        query.where('LOWER(test_results.name) LIKE ?', term)
-      end
-
-      serialize_response do |res|
-        res[:data].collect{ |p| p.to_builder.attributes! }
-      end
-    end
-  end
 
   def to_builder options = {}
     Jbuilder.new do |json|

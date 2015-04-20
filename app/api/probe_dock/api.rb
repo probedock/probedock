@@ -48,6 +48,7 @@ module ProbeDock
     end
 
     helpers ApiAuthenticationHelper
+    helpers ApiPaginationHelper
     helpers ApiResourceHelper
 
     get :ping do
@@ -77,6 +78,7 @@ module ProbeDock
 
     mount AccessTokensApi
     mount MetricsApi
+    mount OrganizationsApi
     mount PayloadsApi
     mount ProjectsApi
     mount ReportsApi

@@ -15,15 +15,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class Tag < ActiveRecord::Base
-  include QuickValidation
-  NAME_REGEXP = /\A[a-z0-9\-\_]+\Z/i
+class Organization < ActiveRecord::Base
+  include JsonResource
+  include IdentifiableResource
 
-  belongs_to :organization
-  has_and_belongs_to_many :test_descriptions
-  has_and_belongs_to_many :test_results
+  before_create :set_identifier
 
-  strip_attributes
-  validates :name, presence: true, uniqueness: { scope: :organization_id, unless: :quick_validation }, length: { maximum: 50 }, format: { with: NAME_REGEXP }
-  validates :organization, presence: { unless: :quick_validation }
+  validates :name, presence: true, uniqueness: true, length: { maximum: 100 }
+
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.id api_id
+      json.name name
+    end
+  end
 end
