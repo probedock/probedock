@@ -81,7 +81,7 @@ describe Settings::App, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: 'd9d87ff57a05' }){ should validate_numericality_of(:test_outdated_days).only_integer }
     it(nil, probe_dock: { key: '0ff5756f4e59' }){ should allow_value(1, 10, 25, 50, 1000).for(:test_outdated_days) }
     it(nil, probe_dock: { key: '855a877b5e9d' }){ should_not allow_value(-1000, -42, -1, 0).for(:test_outdated_days) }
-    it(nil, probe_dock: { key: '87cce3001f23' }){ should ensure_length_of(:ticketing_system_url).is_at_most(255) }
+    it(nil, probe_dock: { key: '87cce3001f23' }){ should validate_length_of(:ticketing_system_url).is_at_most(255) }
     it(nil, probe_dock: { key: '03f3dde4d133' }){ should validate_numericality_of(:test_payloads_lifespan).only_integer.is_greater_than_or_equal_to(1) }
     it(nil, probe_dock: { key: 'f98c12a57041' }){ should validate_numericality_of(:test_runs_lifespan).only_integer.is_greater_than_or_equal_to(1) }
   end

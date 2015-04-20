@@ -30,7 +30,7 @@ describe Tag, probe_dock: { tags: :unit } do
 
   context "validations" do
     it(nil, probe_dock: { key: 'bd99f663c361' }){ should validate_presence_of(:name) }
-    it(nil, probe_dock: { key: '48e4e5d511b8' }){ should ensure_length_of(:name).is_at_most(50) }
+    it(nil, probe_dock: { key: '48e4e5d511b8' }){ should validate_length_of(:name).is_at_most(50) }
     it(nil, probe_dock: { key: '4d3ee76ace2c' }){ should allow_value('unit', 'integration', 'FLOW', '098', 'my-tag', 'under_scored').for(:name) }
     it(nil, probe_dock: { key: '70333ff9d379' }){ should_not allow_value('$$$', 'tag with space').for(:name) }
 

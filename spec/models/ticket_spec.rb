@@ -35,7 +35,7 @@ describe Ticket, probe_dock: { tags: :unit } do
 
   context "validations" do
     it(nil, probe_dock: { key: '81aea9cd1da7' }){ should validate_presence_of(:name) }
-    it(nil, probe_dock: { key: 'e416f98af1a8' }){ should ensure_length_of(:name).is_at_most(255) }
+    it(nil, probe_dock: { key: 'e416f98af1a8' }){ should validate_length_of(:name).is_at_most(255) }
 
     context "with an existing ticket" do
       let!(:ticket){ create :sample_ticket }

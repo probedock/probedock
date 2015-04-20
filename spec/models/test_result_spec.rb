@@ -67,7 +67,7 @@ describe TestResult, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '2c24629f7508' }){ should validate_numericality_of(:duration).only_integer }
     it(nil, probe_dock: { key: 'e30d02a9bf0b' }){ should allow_value(0, 10000, 3600000).for(:duration) }
     it(nil, probe_dock: { key: 'ad86f100aa50' }){ should_not allow_value(-1, -42, -66).for(:duration) }
-    it(nil, probe_dock: { key: '2acec8d868b3' }){ should ensure_length_of(:message).is_at_most(65535) }
+    it(nil, probe_dock: { key: '2acec8d868b3' }){ should validate_length_of(:message).is_at_most(65535) }
     it(nil, probe_dock: { key: 'eb74444c0250' }){ should validate_presence_of(:run_at) }
     it(nil, probe_dock: { key: '512d38de3e73' }){ should validate_presence_of(:runner) }
     it(nil, probe_dock: { key: 'ffa2bc12ab4a' }){ should validate_presence_of(:test_info) }

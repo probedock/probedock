@@ -22,7 +22,7 @@ describe TestCustomValue, probe_dock: { tags: :unit } do
   context "validations" do
     it(nil, probe_dock: { key: 'e92ef94be7cd' }){ should validate_presence_of(:test_info) }
     it(nil, probe_dock: { key: '5f97b421e2b2' }){ should validate_presence_of(:name) }
-    it(nil, probe_dock: { key: '3ce512bc0951' }){ should ensure_length_of(:name).is_at_most(50) }
+    it(nil, probe_dock: { key: '3ce512bc0951' }){ should validate_length_of(:name).is_at_most(50) }
     it(nil, probe_dock: { key: '15220b99b6c9' }){ should allow_value('').for(:contents) }
 
 #    it "should allow contents with 65535 bytes", probe_dock: { key: '16b77606693a' } do

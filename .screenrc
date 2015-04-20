@@ -15,6 +15,4 @@ screen -t spec 6
 stuff "bundle exec rake"
 screen -t console 7
 stuff "bundle exec rails console\012"
-screen -t ssh 8
-stuff "ssh lmetst1"
 select vim

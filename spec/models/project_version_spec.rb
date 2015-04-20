@@ -21,7 +21,7 @@ describe ProjectVersion do
 
   context "validations" do
     it(nil, probe_dock: { key: '2a51543c8f94' }){ should validate_presence_of(:name) }
-    it(nil, probe_dock: { key: '57f900fc8f42' }){ should ensure_length_of(:name).is_at_most(255) }
+    it(nil, probe_dock: { key: '57f900fc8f42' }){ should validate_length_of(:name).is_at_most(255) }
     it(nil, probe_dock: { key: '0e4c2027f0d9' }){ should validate_presence_of(:project) }
 
     context "with an existing version" do
