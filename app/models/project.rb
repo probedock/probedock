@@ -23,8 +23,10 @@ class Project < ActiveRecord::Base
   before_create{ set_identifier :api_id }
 
   has_many :test_keys
-  has_many :tests, class_name: 'TestInfo'
+  has_many :tests, class_name: 'ProjectTest'
   has_many :versions, class_name: 'ProjectVersion'
+
+  validates :name, presence: true, length: { maximum: 100 }
 
   tableling do
 

@@ -20,7 +20,7 @@ require 'spec_helper'
 describe TestKey, probe_dock: { tags: :unit } do
 
   context "#free?" do
-    
+
     it "should return the value of free", probe_dock: { key: 'f80dc7bba1b7' } do
       user = create :user
       expect(create(:test_key, user: user, free: false).free?).to be(false)
@@ -53,7 +53,7 @@ describe TestKey, probe_dock: { tags: :unit } do
 
       project = create :project
       create :test_key, key: '0123456789ab', user: create(:user), project: project
-      create :test_key, key: 'ab0123456789', user: create(:other_user), project: project
+      create :test_key, key: 'ab0123456789', user: create(:user), project: project
       expect(TestKey.new_random_key(project.id)).to eq('cd0123456789')
     end
 
@@ -63,29 +63,21 @@ describe TestKey, probe_dock: { tags: :unit } do
   end
 
   context "validations" do
-    it(nil, probe_dock: { key: '827ddace60ac' }){ should validate_presence_of(:user) }
     it(nil, probe_dock: { key: '2203deb2d4a7' }){ should validate_presence_of(:project) }
     it(nil, probe_dock: { key: '91bdf868399c' }){ should have_and_belong_to_many(:test_payloads) }
-
-    it "should not let a key linked to a test payload be deleted", probe_dock: { key: '1becf1174f92' } do
-      user = create :user
-      key = create :test_key, user: user
-      payload = create :test_payload, user: user, test_keys: [ key ]
-      expect{ key.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
-    end
   end
-  
+
   context "associations" do
     it(nil, probe_dock: { key: '426fc1e0e854' }){ should belong_to(:user) }
     it(nil, probe_dock: { key: '72a817a8e20e' }){ should belong_to(:project) }
-    it(nil, probe_dock: { key: 'f8253f179295' }){ should have_one(:test_info).with_foreign_key(:key_id) }
+    it(nil, probe_dock: { key: 'f8253f179295' }){ should have_one(:test).class_name('ProjectTest').with_foreign_key(:key_id) }
   end
 
   context "database table" do
     it(nil, probe_dock: { key: '2fc3e9920ebf' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: 'aeac4b7f7091' }){ should have_db_column(:key).of_type(:string).with_options(null: false, limit: 12) }
     it(nil, probe_dock: { key: 'b8348c80380a' }){ should have_db_column(:free).of_type(:boolean).with_options(null: false, default: true) }
-    it(nil, probe_dock: { key: 'ef12acb9b301' }){ should have_db_column(:user_id).of_type(:integer).with_options(null: false) }
+    it(nil, probe_dock: { key: 'ef12acb9b301' }){ should have_db_column(:user_id).of_type(:integer).with_options(null: true) }
     it(nil, probe_dock: { key: 'f839734b03ad' }){ should have_db_column(:project_id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: 'bb651aec1f4b' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probe_dock: { key: '114bc07dc8fe' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }

@@ -20,45 +20,6 @@ require 'spec_helper'
 
 describe TestResult, probe_dock: { tags: :unit } do
 
-  context "message byte length validation" do
-
-    let(:one_byte_char){ "\u0061" }
-    let(:two_byte_char){ "\u0233" }
-    let(:three_byte_char){ "\u3086" }
-
-    before :each do
-      user = create :user
-      key = create :key, user: user
-      @run = create :run, runner: user
-      @test = create :test, key: key, test_run: @run
-    end
-
-    it "should not allow more than 65535 one-byte characters", probe_dock: { key: '5e28426e7f22' } do
-      msg = one_byte_char * 65535
-      expect(build_result(msg).valid?).to be(true)
-      msg << one_byte_char
-      expect(build_result(msg).valid?).to be(false)
-    end
-
-    it "should not allow more than 32767 two-byte characters", probe_dock: { key: '5236fc0cb454' } do
-      msg = two_byte_char * 32767
-      expect(build_result(msg).valid?).to be(true)
-      msg << two_byte_char
-      expect(build_result(msg).valid?).to be(false)
-    end
-
-    it "should not allow more than 21845 three-byte characters", probe_dock: { key: '24588d82defd' } do
-      msg = three_byte_char * 21845
-      expect(build_result(msg).valid?).to be(true)
-      msg << three_byte_char
-      expect(build_result(msg).valid?).to be(false)
-    end
-
-    def build_result message
-      build :result, runner: @run.runner, test_info: @test, test_run: @run, message: message
-    end
-  end
-
   context "validations" do
     it(nil, probe_dock: { key: 'ab57dcb4d8c3' }){ should allow_value(true, false).for(:passed) }
     it(nil, probe_dock: { key: '9ba0a4f7cba9' }){ should_not allow_value(nil, 'abc', 123).for(:passed) }
@@ -70,18 +31,17 @@ describe TestResult, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '2acec8d868b3' }){ should validate_length_of(:message).is_at_most(65535) }
     it(nil, probe_dock: { key: 'eb74444c0250' }){ should validate_presence_of(:run_at) }
     it(nil, probe_dock: { key: '512d38de3e73' }){ should validate_presence_of(:runner) }
-    it(nil, probe_dock: { key: 'ffa2bc12ab4a' }){ should validate_presence_of(:test_info) }
-    it(nil, probe_dock: { key: '437888444049' }){ should validate_presence_of(:test_run) }
+    it(nil, probe_dock: { key: 'ffa2bc12ab4a' }){ should validate_presence_of(:test) }
+    it(nil, probe_dock: { key: '437888444049' }){ should validate_presence_of(:test_payload) }
     it(nil, probe_dock: { key: '655398ed00bc' }){ should allow_value(true, false).for(:active) }
     it(nil, probe_dock: { key: '3108c4643221' }){ should_not allow_value(nil, 'abc', 123).for(:active) }
   end
 
   context "associations" do
     it(nil, probe_dock: { key: 'a0f0857cf4a2' }){ should belong_to(:runner).class_name('User') }
-    it(nil, probe_dock: { key: 'ecb3ec9ae70a' }){ should belong_to(:test_info) }
-    it(nil, probe_dock: { key: 'd6c73fc4ea8c' }){ should belong_to(:test_run) }
+    it(nil, probe_dock: { key: 'ecb3ec9ae70a' }){ should belong_to(:test).class_name('ProjectTest') }
+    it(nil, probe_dock: { key: 'd6c73fc4ea8c' }){ should belong_to(:test_payload) }
     it(nil, probe_dock: { key: '98276100d0b6' }){ should belong_to(:category) }
-    it(nil, probe_dock: { key: 'ead8d81ff4aa' }){ should belong_to(:previous_category).class_name('Category') }
   end
 
   context "database table" do
@@ -90,17 +50,13 @@ describe TestResult, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '558aec64f22d' }){ should have_db_column(:duration).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '516ef9ba84ea' }){ should have_db_column(:message).of_type(:text) }
     it(nil, probe_dock: { key: 'e9f576c1cc45' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false, default: true) }
-    it(nil, probe_dock: { key: '0ffbb1a73cb7' }){ should have_db_column(:new_test).of_type(:boolean).with_options(null: false, default: false) }
-    it(nil, probe_dock: { key: '9710cf05abe6' }){ should have_db_column(:previous_passed).of_type(:boolean).with_options(null: true) }
-    it(nil, probe_dock: { key: '8a0071498fd5' }){ should have_db_column(:previous_active).of_type(:boolean).with_options(null: true) }
+    it(nil, probe_dock: { key: '0ffbb1a73cb7' }){ should have_db_column(:new_test).of_type(:boolean).with_options(null: true, default: nil) }
     it(nil, probe_dock: { key: 'f27560967967' }){ should have_db_column(:runner_id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: '93d491c4e31f' }){ should have_db_column(:test_info_id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: '556726a1c0cc' }){ should have_db_column(:test_run_id).of_type(:integer).with_options(null: false) }
+    it(nil, probe_dock: { key: '93d491c4e31f' }){ should have_db_column(:test_id).of_type(:integer).with_options(null: true) } # TODO: check why null is true
+    it(nil, probe_dock: { key: '556726a1c0cc' }){ should have_db_column(:test_payload_id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: 'c5fa090e339b' }){ should have_db_column(:project_version_id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '7c2f23a0d69f' }){ should have_db_column(:category_id).of_type(:integer).with_options(null: true) }
-    it(nil, probe_dock: { key: '256a05413800' }){ should have_db_column(:previous_category_id).of_type(:integer).with_options(null: true) }
     it(nil, probe_dock: { key: '8e2d652a897e' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probe_dock: { key: '9383fe626ffc' }){ should have_db_column(:run_at).of_type(:datetime).with_options(null: false) }
-    it(nil, probe_dock: { key: 'b77b7a9a99db' }){ should have_db_index([ :test_run_id, :test_info_id ]).unique(true) }
   end
 end

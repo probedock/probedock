@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe Settings, probe_dock: { tags: :unit } do
-  SETTINGS_CACHE_KEY = 'cache:json:settings:app'
 
   let(:sample_settings){
     {
@@ -30,26 +29,11 @@ describe Settings, probe_dock: { tags: :unit } do
       test_runs_lifespan: 77
     }
   }
-  
-  context ".app" do
 
+  context ".app" do
     it "should return the app settings", probe_dock: { key: 'd5fe308a81f7' } do
       Settings::App.first.update_attributes sample_settings
       expect(Settings.app).to eq(OpenStruct.new(sample_settings))
-    end
-
-    it "should cache the app settings", probe_dock: { key: 'e90799259d27' } do
-      expect($redis.exists(SETTINGS_CACHE_KEY)).to be(false)
-      expect(Settings).to query_the_database(1.times).when_calling(:app)
-      expect($redis.exists(SETTINGS_CACHE_KEY)).to be(true)
-      expect(Settings).not_to query_the_database.when_calling(:app)
-    end
-
-    it "should used the given cached settings", probe_dock: { key: '738c72ac035d' } do
-      cached = double contents: sample_settings
-      expect(Settings).not_to receive(:cache)
-      expect(Settings).not_to query_the_database.when_calling(:app).with(cached)
-      expect(Settings.app(cached)).to eq(OpenStruct.new(sample_settings))
     end
   end
 end

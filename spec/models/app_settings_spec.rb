@@ -19,16 +19,6 @@ require 'spec_helper'
 
 describe Settings::App, probe_dock: { tags: :unit } do
 
-  it "should clear the app settings cache when saved", probe_dock: { key: '887b487e1f79' } do
-    expect(JsonCache).to receive(:clear).with('settings:app')
-    described_class.fire 'settings:app:saved'
-  end
-
-  it "should fire the settings:app:saved event when saved", probe_dock: { key: '97e924c25dab' } do
-    expect(Rails.application.events).to receive(:fire).with('settings:app:saved')
-    Settings::App.first.save
-  end
-  
   context ".get" do
 
     it "should return the app settings", probe_dock: { key: 'b31e43aad6e5' } do

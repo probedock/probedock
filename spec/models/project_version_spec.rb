@@ -26,7 +26,7 @@ describe ProjectVersion do
 
     context "with an existing version" do
       let!(:project_version){ create :project_version }
-      it(nil, probe_dock: { key: 'a0a0897d511c' }){ should validate_uniqueness_of(:name).scoped_to(:project_id).case_insensitive }
+      it(nil, probe_dock: { key: 'a0a0897d511c' }){ should validate_uniqueness_of(:name).scoped_to(:project_id) }
 
       context "with quick validation" do
         before(:each){ subject.quick_validation = true }

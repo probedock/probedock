@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:AlphaHydrae/errapi.git
-  revision: 37bcff63a41e817d8ffb5a3d5630c9b93d2ee672
+  revision: c394f3081be0695bea7ef6bb66aad4f3c233518a
   specs:
     errapi (0.1.3)
 

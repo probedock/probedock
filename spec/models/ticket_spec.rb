@@ -39,7 +39,7 @@ describe Ticket, probe_dock: { tags: :unit } do
 
     context "with an existing ticket" do
       let!(:ticket){ create :sample_ticket }
-      it(nil, probe_dock: { key: 'a3aaa98b10f9' }){ should validate_uniqueness_of(:name).case_insensitive }
+      it(nil, probe_dock: { key: 'a3aaa98b10f9' }){ should validate_uniqueness_of(:name) }
 
       it "should not validate the uniqueness of name with quick validation", probe_dock: { key: '2ef1cf87a9f8' } do
         expect{ Ticket.new.tap{ |t| t.name = ticket.name; t.quick_validation = true }.save! }.to raise_unique_error
@@ -48,7 +48,7 @@ describe Ticket, probe_dock: { tags: :unit } do
   end
 
   context "associations" do
-    it(nil, probe_dock: { key: '59b817b426d6' }){ should have_and_belong_to_many(:test_infos) }
+    it(nil, probe_dock: { key: '59b817b426d6' }){ should have_and_belong_to_many(:test_descriptions) }
   end
 
   context "database table" do

@@ -38,7 +38,7 @@ describe Tag, probe_dock: { tags: :unit } do
 
       let!(:tag){ create :unit_tag }
 
-      it(nil, probe_dock: { key: '193b8fba796c' }){ should validate_uniqueness_of(:name).case_insensitive }
+      it(nil, probe_dock: { key: '193b8fba796c' }){ should validate_uniqueness_of(:name) }
 
       it "should not validate the uniqueness of name with quick validation", probe_dock: { key: '5a54a294e171' } do
         expect{ Tag.new.tap{ |t| t.name = tag.name; t.quick_validation = true }.save! }.to raise_unique_error
@@ -47,7 +47,7 @@ describe Tag, probe_dock: { tags: :unit } do
   end
 
   context "associations" do
-    it(nil, probe_dock: { key: '37d108f64ecf' }){ should have_and_belong_to_many(:test_infos) }
+    it(nil, probe_dock: { key: '37d108f64ecf' }){ should have_and_belong_to_many(:test_descriptions) }
   end
 
   context "database table" do

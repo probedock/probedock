@@ -19,100 +19,8 @@ require 'spec_helper'
 
 describe User, probe_dock: { tags: :unit } do
 
-  it "should create empty settings when created", probe_dock: { key: 'b57d46ce9fc4' } do
-    expect do
-      expect(create(:user).settings).not_to be_nil
-    end.to change(Settings::User, :count).by(1)
-  end
-
   context "default values", probe_dock: { key: 'fee0492b0511', grouped: true } do
     its(:roles_mask){ should eq(0) }
-  end
-
-  describe "metric key" do
-
-    it "should be automatically generated", probe_dock: { key: '76fe1ef9e520' } do
-      expect(create(:user).metric_key).to match(/\A[a-z0-9]{5}\Z/)
-    end
-  end
-
-  context "api keys" do
-
-    it "should contain one active key when a user is created", probe_dock: { key: 'e601c444711e' } do
-      create(:user).api_keys.tap do |keys|
-        expect(keys).to have(1).item
-        expect(keys.first.active).to be(true)
-      end
-    end
-  end
-
-  describe "#active_for_authentication?" do
-
-    it "should return the same as active", probe_dock: { key: 'da0d7472cda3' } do
-      expect(create(:user, active: true).active_for_authentication?).to be(true)
-      expect(create(:other_user, active: false).active_for_authentication?).to be(false)
-    end
-  end
-
-  describe "#deletable?" do
-
-    it "should return true for a user without tests, results or counters", probe_dock: { key: '2e4db3280f3f' } do
-      user = create :user
-      create :test_key, user: user
-      expect(user.deletable?).to be(true)
-    end
-
-    it "should return false for a user with tests", probe_dock: { key: 'f068c4276937' } do
-      user = create :user
-      key = create :test_key, user: user
-      create :test, key: key, runner: create(:another_user)
-      expect(user.deletable?).to be(false)
-    end
-
-    it "should return false for a user with test results", probe_dock: { key: 'f6d7aa711dd4' } do
-      user = create :user
-      key = create :test_key, user: create(:another_user)
-      create :test, key: key, runner: user
-      expect(user.deletable?).to be(false)
-    end
-
-    it "should return false for a user with test counters", probe_dock: { key: 'a70ed3065e37' } do
-      user = create :user
-      create :test_counter, user: user
-      expect(user.deletable?).to be(false)
-    end
-  end
-
-  context "#free_test_keys" do
-
-    it "should return only free test keys", probe_dock: { key: '5e5b331425a0' } do
-      user, project = create(:user), create(:project)
-      free_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: true }
-      unfree_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: false }
-      expect(user.free_test_keys).to match_array(free_keys)
-    end
-
-    it "should not return test keys linked to a test payload", probe_dock: { key: 'dcb5313b6072' } do
-      user, project = create(:user), create(:project)
-      free_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: true }
-      unfree_keys = Array.new(3){ |i| create :test_key, user: user, project: project, free: false }
-      payload = create :test_payload, user: user, test_keys: free_keys[0, 2]
-      expect(user.free_test_keys).to match_array(free_keys[2, 1])
-    end
-  end
-
-  context "cache" do
-
-    it "should clear the app_status JSON cache when created", probe_dock: { key: 'ec0d1dfc5e74' } do
-      expect(Rails.application.events).to receive(:fire).with('user:created')
-      build(:user).save!
-    end
-
-    it "should clear the app_status JSON cache when destroyed", probe_dock: { key: 'e13685956480' } do
-      user = create :user
-      expect(Rails.application.events).to receive(:fire).with('user:destroyed')
-      user.destroy
-    end
   end
 
   context "with an existing user" do
@@ -121,22 +29,7 @@ describe User, probe_dock: { tags: :unit } do
       create :user
     end
 
-    it(nil, probe_dock: { key: '1b4e57e85d2b' }){ should validate_uniqueness_of(:name).case_insensitive }
-  end
-
-  context "remember token" do
-
-    it "should be 16 characters long", probe_dock: { key: '24df4d561ba2' } do
-      10.times{ expect(User.generate_remember_token.length).to eq(16) }
-    end
-
-    it "should be unique", probe_dock: { key: '470a6dfa0776' } do
-      create(:user, remember_token: 'a')
-      create(:other_user, remember_token: 'b')
-      tokens = [ 'a', 'b', 'c' ]
-      allow(User).to receive(:generate_remember_token){ tokens.shift }
-      expect(User.remember_token).to eq('c')
-    end
+    it(nil, probe_dock: { key: '1b4e57e85d2b' }){ should validate_uniqueness_of(:name) }
   end
 
   context "validations" do
@@ -144,78 +37,25 @@ describe User, probe_dock: { tags: :unit } do
 
     context "with an existing user" do
       let!(:user){ create :user }
-      it(nil, probe_dock: { key: 'f9be952c7792' }){ should validate_uniqueness_of(:name).case_insensitive }
+      it(nil, probe_dock: { key: 'f9be952c7792' }){ should validate_uniqueness_of(:name) }
     end
   end
 
   context "associations" do
     it(nil, probe_dock: { key: '28a9398ebe26' }){ should have_many(:test_keys) }
     it(nil, probe_dock: { key: 'bc98127d768c' }){ should have_many(:free_test_keys).class_name('TestKey') }
-    it(nil, probe_dock: { key: '16f07fbf52a8' }){ should have_many(:test_infos).with_foreign_key(:author_id) }
-    it(nil, probe_dock: { key: '7a371e669906' }){ should have_many(:runs).class_name('TestRun') }
-    it(nil, probe_dock: { key: '786e3a4eeefa' }){ should belong_to(:last_run).class_name('TestRun') }
-    it(nil, probe_dock: { key: '3161ac222c11' }){ should have_many(:api_keys) }
-    it(nil, probe_dock: { key: 'a52d51d6455d' }){ should belong_to(:settings).class_name('Settings::User') }
+    it(nil, probe_dock: { key: '7a371e669906' }){ should have_many(:test_payloads).class_name('TestPayload') }
+    it(nil, probe_dock: { key: '786e3a4eeefa' }){ should belong_to(:last_test_payload).class_name('TestPayload') }
     it(nil, probe_dock: { key: 'a5dca889075c' }){ should have_many(:test_payloads) }
-
-    it "should delete a user's settings along with it", probe_dock: { key: 'e2ed746b0d27' } do
-      user = create :user
-      expect{ user.destroy }.to change(Settings::User, :count).by(-1)
-    end
-
-    it "should not let a user with tests be deleted", probe_dock: { key: 'f4d6ee32fef5' } do
-      user = create :user
-      key = create :test_key, user: user
-      create :test, key: key, runner: create(:another_user)
-      expect{ user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
-    end
-
-    it "should not let a user with test results be deleted", probe_dock: { key: '8426c36d61f0' } do
-      user = create :user
-      key = create :test_key, user: create(:another_user)
-      create :test, key: key, runner: user
-      expect{ user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
-    end
-
-    it "should not let a user with test counters be deleted", probe_dock: { key: '30870e4e3d0f' } do
-      user = create :user
-      create :test_counter, user: user
-      expect{ user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
-    end
-
-    it "should not let a user with test payloads be deleted", probe_dock: { key: '1d0517177497' } do
-      user = create :user
-      create :test_payload, user: user
-      expect{ user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
-    end
-
-    it "should let a user with no tests, results or counters be deleted", probe_dock: { key: 'ebeae61d4d62' } do
-      user = create :user
-      key = create :test_key, user: user
-      expect do
-        expect do
-          expect do
-            user.destroy
-          end.to change(User, :count).by(-1)
-        end.to change(ApiKey, :count).by(-1)
-      end.to change(TestKey, :count).by(-1)
-    end
   end
 
   context "database table" do
     it(nil, probe_dock: { key: '48b7f46ea463' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: 'edc6773569db' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
-    it(nil, probe_dock: { key: 'c73f8481bbd6' }){ should have_db_column(:email).of_type(:string).with_options(limit: 255) }
-    it(nil, probe_dock: { key: '48d53ed224c5' }){ should have_db_column(:encrypted_password).of_type(:string).with_options(limit: 255) }
-    it(nil, probe_dock: { key: 'e4b43f2c3c6d' }){ should have_db_column(:remember_token).of_type(:string).with_options(limit: 16) }
     it(nil, probe_dock: { key: '6e6d67322510' }){ should have_db_column(:roles_mask).of_type(:integer).with_options(null: false, default: 0) }
-    it(nil, probe_dock: { key: '7f4153e5aa72' }){ should have_db_column(:metric_key).of_type(:string).with_options(null: false, limit: 5) }
     it(nil, probe_dock: { key: 'ab9173bec164' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false, default: true) }
-    it(nil, probe_dock: { key: 'e1f27f0692ad' }){ should have_db_column(:settings_id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '19faaeaea1cf' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probe_dock: { key: 'd4502778d426' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
     it(nil, probe_dock: { key: '66d37b1e94bd' }){ should have_db_index(:name).unique(true) }
-    it(nil, probe_dock: { key: 'eb053d4f184d' }){ should have_db_index(:metric_key).unique(true) }
-    it(nil, probe_dock: { key: '251a37234127' }){ should have_db_index(:settings_id).unique(true) }
   end
 end

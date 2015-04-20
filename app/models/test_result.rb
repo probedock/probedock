@@ -41,6 +41,7 @@ class TestResult < ActiveRecord::Base
   validates :active, inclusion: [ true, false ]
   validates :run_at, presence: true
   validates :runner, presence: { unless: :quick_validation }
+  validates :test, presence: { unless: :quick_validation }
   validates :test_payload, presence: { unless: :quick_validation }
   validates :project_version, presence: { unless: :quick_validation }
 

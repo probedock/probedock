@@ -22,12 +22,7 @@ FactoryGirl.define do
     "Project #{n}"
   end
 
-  sequence :project_url_token do |n|
-    "project_#{n}"
-  end
-
   factory :project do
     name{ generate(:project_name) }
-    url_token{ generate(:project_url_token) }
   end
 end
