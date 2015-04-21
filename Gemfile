@@ -58,7 +58,7 @@ gem 'oj'
 
 # Tools
 gem 'rake-version'
-gem 'paint'
+gem 'paint' # TODO: udpate to 1.0 once rox-client-rspec has been updated
 gem 'highline'
 
 group :production do
@@ -93,7 +93,7 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'selenium-webdriver', '2.39.0'
+  gem 'selenium-webdriver', '2.45.0'
   gem 'sqlite3'
   gem 'factory_girl'
   gem 'shoulda'
