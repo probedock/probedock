@@ -1,6 +1,6 @@
 angular.module('probe-dock.projects', ['probe-dock.api'])
 
-  .controller('ProjectsCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('ProjectsCtrl', ['ApiService', '$scope', '$stateParams', function($api, $scope, $stateParams) {
 
     $scope.newProject = {};
 
@@ -8,8 +8,8 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
       method: 'GET',
       url: '/api/projects',
       params: {
-        pageSize: 25,
-        'sort[]': [ 'name asc' ]
+        organizationName: $stateParams.orgName,
+        pageSize: 25
       }
     }).then(showProjects);
 

@@ -48,8 +48,8 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     // TODO: recursively fetch all users
     fetchUsers().then(addUsers);
 
-    $stateService.onState({ name: [ 'std.users', 'std.users.details' ] }, $scope, function(state, params) {
-      if (state.name == 'std.users.details') {
+    $stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
+      if (state.name == 'users.details') {
         $scope.selectedUserId = params.userId;
       } else {
         delete $scope.selectedUserId;
@@ -100,8 +100,8 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     var userId;
     reset();
 
-    $stateService.onState({ name: [ 'std.users', 'std.users.details' ] }, $scope, function(state, params) {
-      if (state.name == 'std.users.details' && params.userId != userId) {
+    $stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
+      if (state.name == 'users.details' && params.userId != userId) {
         reset();
         userId = params.userId;
         fetchUser().then(showUser);
@@ -160,7 +160,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
     function onDeleted() {
       $userService.emit('deleted', { id: $scope.selectedUser.id });
-      $state.go('std.users');
+      $state.go('users');
     }
 
     function onDeleteError() {

@@ -28,12 +28,22 @@ module ProbeDock
         def parse_project
           parse_object :name, :description
         end
+
+        def current_organization
+          if params[:organizationId].present?
+            Organization.where(api_id: params[:organizationId].to_s).first!
+          elsif params[:organizationName].present?
+            Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
+          end
+        end
       end
 
       get do
-        rel = Project.order 'name ASC'
+        authorize! Project, :index
 
-        rel = paginated Project do |rel|
+        rel = policy_scope(Project).order 'name ASC'
+
+        rel = paginated rel do |rel|
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
             rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
@@ -48,6 +58,7 @@ module ProbeDock
       post do
         project = Project.new parse_project
         project.organization = Organization.where(api_id: params[:organizationId].to_s).first!
+        authorize! project, :create
 
         ProjectValidations.validate project, validation_context, location_type: :json, raise_error: true
 
@@ -58,11 +69,16 @@ module ProbeDock
 
         helpers do
           def current_project
-            Project.where(api_id: params[:id].to_s).first!
+            @current_project ||= Project.where(api_id: params[:id].to_s).first!
+          end
+
+          def current_organization
+            current_project.organization
           end
         end
 
         patch do
+          authorize! current_project, :update
           update_record current_project, parse_project
         end
       end

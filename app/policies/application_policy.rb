@@ -15,25 +15,58 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-require_dependency 'random'
+class ApplicationPolicy
+  attr_reader :user, :organization, :record
 
-module IdentifiableResource
-  extend ActiveSupport::Concern
+  def initialize user, record
+    @user = user
+    @record = record
 
-  def set_identifier attr = :api_id, options = {}, &block
-    block ||= ->{ SecureRandom.uuid } if options == :uuid
-    self[attr] = self.class.generate_new_identifier attr, options, &block
+    if user.kind_of? OrganizationUserContext
+      @user = user.user
+      @organization = user.organization
+    end
   end
 
-  module ClassMethods
+  def index?
+    false
+  end
 
-    def generate_new_identifier attr, options = {}, &block
-      next while exists?(attr => id = (block.try(:call) || generate_identifier(options)))
-      id
+  def show?
+    false
+  end
+
+  def create?
+    false
+  end
+
+  def update?
+    false
+  end
+
+  def destroy?
+    false
+  end
+
+  def scope
+    Pundit.policy_scope! user, record.class
+  end
+
+  class Scope
+    attr_reader :user, :organization, :scope
+
+    def initialize user, scope
+      @user = user
+      @scope = scope
+
+      if user.kind_of? OrganizationUserContext
+        @user = user.user
+        @organization = user.organization
+      end
     end
 
-    def generate_identifier options = {}
-      SecureRandom.random_alphanumeric options.fetch(:size, 12)
+    def resolve
+      scope
     end
   end
 end

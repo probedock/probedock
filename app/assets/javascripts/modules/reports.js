@@ -164,8 +164,8 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     };
     $scope.detailsTabReportId = null;
 
-    $stateService.onState({ name: [ 'std.reports', 'std.reports.details' ] }, $scope, function(state, params) {
-      if (state && state.name == 'std.reports.details') {
+    $stateService.onState({ name: [ 'org.reports', 'org.reports.details' ] }, $scope, function(state, params) {
+      if (state && state.name == 'org.reports.details') {
         showReportDetails(params.reportId);
       } else {
         $scope.activeTabs.latest = true;
@@ -183,7 +183,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
   .controller('ReportDetailsCtrl', ['ApiService', 'ReportService', '$scope', 'StateService', function($api, $reportService, $scope, $stateService) {
 
     var reportId;
-    $stateService.onState({ name: 'std.reports.details' }, $scope, function(state, params) {
+    $stateService.onState({ name: 'org.reports.details' }, $scope, function(state, params) {
       if (params.reportId != reportId) {
 
         delete $scope.report;
@@ -206,12 +206,12 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     }
   }])
 
-  .controller('LatestReportsCtrl', ['ApiService', 'ReportService', '$scope', 'StateService', '$timeout', function($api, $reportService, $scope, $stateService, $timeout) {
+  .controller('LatestReportsCtrl', ['ApiService', 'ReportService', '$scope', '$stateParams', 'StateService', '$timeout', function($api, $reportService, $scope, $stateParams, $stateService, $timeout) {
 
     var hideNoNewReportsPromise;
     $scope.fetchingReports = false;
 
-    $stateService.onState({ name: 'std.reports' }, $scope, function() {
+    $stateService.onState({ name: 'org.reports' }, $scope, function() {
       if ($scope.reports === undefined) {
         $scope.fetchLatestReports();
       }
@@ -220,8 +220,8 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     $scope.fetchLatestReports = function() {
 
       var params = {
-        pageSize: 15,
-        'sort[]': [ 'createdAt desc' ]
+        organizationName: $stateParams.orgName,
+        pageSize: 15
       };
 
       if ($scope.reports === undefined) {

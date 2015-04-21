@@ -19,13 +19,23 @@ module ProbeDock
   class ReportsApi < Grape::API
 
     namespace :reports do
-
       before do
         authenticate!
       end
 
+      helpers do
+        def current_organization
+          if params[:organizationId].present?
+            Organization.where(api_id: params[:organizationId].to_s).first!
+          elsif params[:organizationName].present?
+            Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
+          end
+        end
+      end
+
       get do
-        rel = TestReport.order 'created_at DESC'
+        authorize! TestReport, :index
+        rel = policy_scope(TestReport).order 'created_at DESC'
 
         rel = paginated rel do |rel|
           if params[:after]
@@ -43,7 +53,11 @@ module ProbeDock
 
         helpers do
           def current_report
-            TestReport.where(api_id: params[:id].to_s).first!
+            @current_report ||= TestReport.where(api_id: params[:id].to_s).first!
+          end
+
+          def current_organization
+            current_report.organization
           end
 
           def report_health_template
@@ -52,10 +66,14 @@ module ProbeDock
         end
 
         get do
-          current_report.to_builder(detailed: true).attributes!
+          report = current_report
+          authorize! report, :show
+          report.to_builder(detailed: true).attributes!
         end
 
         get :health do
+          report = current_report
+          authorize! report, :show
 
           html = ''
 
@@ -63,7 +81,7 @@ module ProbeDock
           limit = 100
 
           begin
-            current_results = current_report.results.order('name, id').offset(offset).limit(limit).to_a
+            current_results = report.results.order('name, id').offset(offset).limit(limit).to_a
             html << report_health_template.render(OpenStruct.new(results: current_results))
             offset += limit
           end while current_results.present?
@@ -74,8 +92,10 @@ module ProbeDock
         end
 
         get :results do
+          report = current_report
+          authorize! report, :show
 
-          results = current_report.results
+          results = report.results
           total = results.count
 
           limit = params[:pageSize].to_i

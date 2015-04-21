@@ -1,43 +1,7 @@
-.container-fluid
-  .col-xs-12.col-sm-6.col-lg-4
-    .dashboardLatestReports.panel.panel-default ng-controller='DashboardLatestReportsCtrl'
-      .panel-heading
-        h3.panel-title Latest Reports
-      .panel-body
-        table.table.table-hover
-          thead
-            tr
-              th.runs Run by
-              th.results Results
-          tbody
-            tr.loading ng-hide='reports'
-              td colspan=2
-                em Loading...
-            tr.empty ng-show='reports && !reports.length'
-              td colspan=2
-                em No tests have been run recently.
-            tr ng-repeat='report in reports' ng-show='reports.length'
-              td.runs
-                img gravatar-src='report.runner.emailMd5' gravatar-size=30 tooltip='{{ report.runner.email }}' tooltip-placement='right'
-                span.time.hidden-xs am-time-ago='report.createdAt'
-              td.results
-                a href='#' ui-sref='std.reports.details({ reportId: report.id })'
-                  report-health-bar report='report' click-for-details=true
-  .col-xs-12.col-sm-6.col-lg-4
-    .dashboardNewTestMetrics.panel.panel-default ng-controller='DashboardNewTestMetricsCtrl'
-      .panel-heading
-        h3.panel-title New Tests
-      .panel-body
-        spinner ng-hide='chartData'
-        nvd3-line-chart data='chartData' height=300 showXAxis='true' showYAxis='true' xAxisTickFormat='chartFormatX' interactive='true' tooltips='true' tooltipcontent='chartTooltip' interpolate='cardinal' ng-if='chartData.length'
-        .empty ng-show='chartData && !chartData.length'
-          em No tests have been run recently.
-  .col-xs-12.col-sm-6.col-lg-4
-    .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
-      .panel-heading
-        h3.panel-title Test Tags
-      .panel-body
-        spinner ng-hide='tags'
-        jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
-        .empty ng-show='tags && !tags.length'
-          em No tests have been tagged.
+.container
+  .page-header
+    h1 Organizations
+  p ng-if='!organizations.length' No organizations are docked here.
+  ul ng-if='organizations'
+    li ng-repeat='org in organizations'
+      a ui-sref='org.dashboard({ orgName: org.name })' {{ org.name }}

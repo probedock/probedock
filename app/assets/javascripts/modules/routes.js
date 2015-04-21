@@ -1,68 +1,58 @@
 angular.module('probe-dock.routes', [ 'ui.router' ])
 
-  .config(['$stateProvider', function($stateProvider) {
+  .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
 
     $stateProvider
 
-      .state('std', {
-        abstract: true,
-        templateUrl: '/templates/main.html'
+      .state('home', {
+        url: '/',
+        controller: 'HomeCtrl',
+        templateUrl: '/templates/home.html'
       })
 
-      .state('std.home', {
-        url: '^/',
-        views: {
-          'content@std': {
-            templateUrl: '/templates/home.html'
-          }
-        }
-      })
-
-      .state('std.profile', {
+      .state('profile', {
         url: '^/profile',
-        views: {
-          'content@std': {
-            templateUrl: '/templates/profile.html'
-          }
-        }
+        templateUrl: '/templates/profile.html'
       })
 
-      .state('std.projects', {
-        url: '^/projects',
-        views: {
-          'content@std': {
-            templateUrl: '/templates/projects.html'
-          }
-        }
+      .state('users', {
+        url: '^/users',
+        templateUrl: '/templates/users.html'
       })
 
-      .state('std.reports', {
-        url: '^/reports',
-        views: {
-          'content@std': {
-            templateUrl: '/templates/reports.html'
-          }
-        }
+      .state('users.details', {
+        url: '/:userId'
       })
 
-      .state('std.reports.details', {
+      .state('org', {
+        url: '/:orgName',
+        template: '<div ui-view />'
+      })
+
+      .state('org.dashboard', {
+        url: '/',
+        templateUrl: '/templates/dashboard.html'
+      })
+
+      .state('org.projects', {
+        url: '/projects',
+        templateUrl: '/templates/projects.html'
+      })
+
+      .state('org.reports', {
+        url: '/reports',
+        templateUrl: '/templates/reports.html'
+      })
+
+      .state('org.reports.details', {
         url: '/:reportId'
       })
 
-      .state('std.users', {
-        url: '^/users',
-        views: {
-          'content@std': {
-            templateUrl: '/templates/users.html'
-          }
-        }
-      })
-
-      .state('std.users.details', {
-        url: '/:userId'
-      })
-      
     ;
+
+    $urlRouterProvider.otherwise(function($injector) {
+      $injector.get('$state').go('home');
+    });
 
   }])
 

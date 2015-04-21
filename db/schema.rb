@@ -48,23 +48,27 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "emails_users", ["email_id"], name: "index_emails_users_on_email_id", unique: true, using: :btree
 
   create_table "memberships", force: :cascade do |t|
-    t.string   "api_id",                limit: 12, null: false
-    t.integer  "user_id",                          null: false
-    t.integer  "organization_email_id",            null: false
-    t.integer  "organization_id",                  null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.string   "api_id",                limit: 12,             null: false
+    t.integer  "user_id",                                      null: false
+    t.integer  "organization_email_id",                        null: false
+    t.integer  "organization_id",                              null: false
+    t.integer  "roles_mask",                       default: 0, null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.string   "api_id",     limit: 12,  null: false
-    t.string   "name",       limit: 100, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "api_id",          limit: 36,                null: false
+    t.string   "name",            limit: 50,                null: false
+    t.string   "normalized_name", limit: 50,                null: false
+    t.boolean  "private_access",             default: true, null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
   end
 
   add_index "organizations", ["api_id"], name: "index_organizations_on_api_id", unique: true, using: :btree
   add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
+  add_index "organizations", ["normalized_name"], name: "index_organizations_on_normalized_name", unique: true, using: :btree
 
   create_table "project_tests", force: :cascade do |t|
     t.string   "name",                      null: false
@@ -86,14 +90,14 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "project_versions", ["project_id", "name"], name: "index_project_versions_on_project_id_and_name", unique: true, using: :btree
 
   create_table "projects", force: :cascade do |t|
-    t.string   "name",                   limit: 100,             null: false
-    t.string   "api_id",                 limit: 12,              null: false
-    t.integer  "tests_count",                        default: 0, null: false
-    t.integer  "deprecated_tests_count",             default: 0, null: false
-    t.datetime "created_at",                                     null: false
-    t.datetime "updated_at",                                     null: false
+    t.string   "name",                   limit: 50,             null: false
+    t.string   "api_id",                 limit: 12,             null: false
+    t.integer  "tests_count",                       default: 0, null: false
+    t.integer  "deprecated_tests_count",            default: 0, null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.text     "description"
-    t.integer  "organization_id",                                null: false
+    t.integer  "organization_id",                               null: false
   end
 
   add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree

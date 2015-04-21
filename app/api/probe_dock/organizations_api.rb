@@ -34,10 +34,21 @@ module ProbeDock
         end
       end
 
-      get do
-        rel = Organization.order 'name ASC'
+      post do
+        authorize! Organization, :create
 
-        rel = paginated Organization do |rel|
+        organization = Organization.new parse_organization
+        OrganizationValidations.validate organization, validation_context, location_type: :json, raise_error: true
+
+        create_record organization
+      end
+
+      get do
+        authorize! Organization, :index
+
+        rel = policy_scope(Organization).order 'name ASC'
+
+        rel = paginated rel do |rel|
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
             rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
@@ -49,39 +60,41 @@ module ProbeDock
         rel.to_a.collect{ |p| p.to_builder.attributes! }
       end
 
-      post do
-        organization = Organization.new parse_organization
-        OrganizationValidations.validate organization, validation_context, location_type: :json, raise_error: true
-        create_record organization
-      end
-
       namespace '/:id' do
 
         helpers do
           def current_organization
-            Organization.where(api_id: params[:id].to_s).first!
+            if uuid? params[:id].to_s
+              Organization.where(api_id: params[:id].to_s).first!
+            else
+              Organization.where(normalized_name: params[:id].to_s.downcase).first!
+            end
           end
         end
 
         patch do
+          org = current_organization
+          authorize! org, :update
+
           update_record current_organization, parse_organization
         end
 
-        namespace '/members' do
+        namespace '/memberships' do
           helpers do
             def parse_member
-              parse_object :userId, :email
+              parse_object :userId, :email, :roles
             end
           end
 
           post do
             data = parse_member
+            membership = Membership.new organization: current_organization
+            authorize! membership, :create
 
             Membership.transaction do
-              email = Email.where(address: data[:email]).first_or_create
-              user = data[:userId].present? ? User.where(api_id: data[:userId]).first : nil
-
-              membership = Membership.new user: user, organization_email: email
+              membership.organization_email = Email.where(address: data[:email]).first_or_create
+              membership.user = data[:userId].present? ? User.where(api_id: data[:userId]).first : membership.organization_email.users.first
+              membership.roles = data[:roles] if data[:roles].kind_of?(Array) && data[:roles].all?{ |r| r.kind_of?(String) }
               create_record membership
             end
           end

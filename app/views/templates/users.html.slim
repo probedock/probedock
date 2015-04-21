@@ -20,9 +20,9 @@
             |  
             | ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
           td.actions
-            a.btn.btn-primary.btn-sm type='button' ui-sref='std.users.details({ userId: user.id })' ng-show='user.id !== selectedUserId'
+            a.btn.btn-primary.btn-sm type='button' ui-sref='users.details({ userId: user.id })' ng-show='user.id !== selectedUserId'
               span.glyphicon.glyphicon-info-sign
-            a.btn.btn-primary.btn-sm type='button' ui-sref='std.users' ng-show='user.id === selectedUserId'
+            a.btn.btn-primary.btn-sm type='button' ui-sref='users' ng-show='user.id === selectedUserId'
               span.glyphicon.glyphicon-remove-sign
   .col-xs-12.col-md-5.col-lg-4
     .userDetails.panel.panel-default ng-controller='UserDetailsCtrl'

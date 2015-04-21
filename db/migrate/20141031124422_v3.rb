@@ -38,11 +38,14 @@ class V3 < ActiveRecord::Migration
     drop_table :test_infos
 
     create_table :organizations do |t|
-      t.string :api_id, null: false, limit: 12
-      t.string :name, null: false, limit: 100
+      t.string :api_id, null: false, limit: 36
+      t.string :name, null: false, limit: 50
+      t.string :normalized_name, null: false, limit: 50
+      t.boolean :private_access, null: false, default: true
       t.timestamps null: false
       t.index :api_id, unique: true
       t.index :name, unique: true
+      t.index :normalized_name, unique: true
     end
 
     create_table :emails do |t|
@@ -68,6 +71,7 @@ class V3 < ActiveRecord::Migration
       t.integer :user_id, null: false
       t.integer :organization_email_id, null: false
       t.integer :organization_id, null: false
+      t.integer :roles_mask, null: false, default: 0
       t.timestamps null: false
     end
 
@@ -78,7 +82,7 @@ class V3 < ActiveRecord::Migration
     remove_column :projects, :metric_key
     remove_column :projects, :url_token
     add_column :projects, :description, :text
-    change_column :projects, :name, :string, limit: 100
+    change_column :projects, :name, :string, limit: 50
     add_column :projects, :organization_id, :integer, null: false
     add_foreign_key :projects, :organizations
 

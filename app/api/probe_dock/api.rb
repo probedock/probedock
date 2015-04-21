@@ -38,6 +38,8 @@ module ProbeDock
       code, message = case e
       when ProbeDock::Errors::Unauthorized
         [ 401, nil ]
+      when Pundit::NotAuthorizedError
+        [ 403, 'You are not authorized to perform this action.' ]
       when ActiveRecord::RecordNotFound
         [ 404, 'No resource was found matching the request URI.' ]
       else
@@ -48,6 +50,7 @@ module ProbeDock
     end
 
     helpers ApiAuthenticationHelper
+    helpers ApiAuthorizationHelper
     helpers ApiPaginationHelper
     helpers ApiResourceHelper
 

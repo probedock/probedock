@@ -1,33 +1,32 @@
-script type='text/ng-template' id='/templates/main.html'
-  nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavCtrl'
-    .container-fluid
-      .navbar-header
-        button.navbar-toggle.collapsed type='button' data-toggle='collapse' data-target='#menu' ng-click='navbarOpen = !navbarOpen'
-          span.sr-only Toggle navigation
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-        a.navbar-brand href='/' Probe Dock
-      #menu.collapse.navbar-collapse collapse='!navbarOpen'
-        ul.nav.navbar-nav
-          li ng-class='{active: isMenuActive("reports")}'
-            a href='#' ui-sref='std.reports' Reports
-          li ng-class='{active: isMenuActive("projects")}'
-            a href='#' ui-sref='std.projects' Projects
-          li.dropdown dropdown=true ng-class='{active: isMenuActive("users")}' ng-show='currentUserIs("admin")'
-            a.dropdown-toggle href='#' dropdown-toggle=true
-              | Admin
-              span.caret
-            ul.dropdown-menu role='menu'
-              li
-                a href='#' ui-sref='std.users' Users
-        ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
-          li ng-show='currentUser'
-            a href='#' ui-sref='std.profile' {{ currentUser.email }}
-          li ng-hide='currentUser'
-            button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='showSignIn()' tooltip='Sign in' tooltip-placement='left'
-              span.glyphicon.glyphicon-log-in
-          li ng-show='currentUser'
-            button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'
-              span.glyphicon.glyphicon-log-out
-  div ui-view='content'
+nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavCtrl'
+  .container-fluid
+    .navbar-header
+      button.navbar-toggle.collapsed type='button' data-toggle='collapse' data-target='#menu' ng-click='navbarOpen = !navbarOpen'
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand href='/' Probe Dock
+    #menu.collapse.navbar-collapse collapse='!navbarOpen'
+      ul.nav.navbar-nav
+        li ng-if='orgName' ng-class='{active: isMenuActive("reports")}'
+          a href='#' ui-sref='org.reports({ orgName: orgName })' Reports
+        li ng-if='orgName'  ng-class='{active: isMenuActive("projects")}'
+          a href='#' ui-sref='org.projects({ orgName: orgName })' Projects
+        li.dropdown dropdown=true ng-class='{active: isMenuActive("users")}' ng-show='currentUserIs("admin")'
+          a.dropdown-toggle href='#' dropdown-toggle=true
+            | Admin
+            span.caret
+          ul.dropdown-menu role='menu'
+            li
+              a href='#' ui-sref='users' Users
+      ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
+        li ng-show='currentUser'
+          a href='#' ui-sref='profile' {{ currentUser.email }}
+        li ng-hide='currentUser'
+          button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='showSignIn()' tooltip='Sign in' tooltip-placement='left'
+            span.glyphicon.glyphicon-log-in
+        li ng-show='currentUser'
+          button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'
+            span.glyphicon.glyphicon-log-out
+div ui-view=true

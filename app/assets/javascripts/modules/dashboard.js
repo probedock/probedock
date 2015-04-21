@@ -62,7 +62,7 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
     }
   }])
 
-  .controller('DashboardLatestReportsCtrl', ['ApiService', 'ReportService', '$scope', function($api, $reportService, $scope) {
+  .controller('DashboardLatestReportsCtrl', ['ApiService', 'ReportService', '$scope', '$stateParams', function($api, $reportService, $scope, $stateParams) {
 
     fetchLatestReports().then(showReports);
 
@@ -72,7 +72,7 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
         url: '/api/reports',
         params: {
           pageSize: 8,
-          'sort[]': [ 'createdAt desc' ]
+          organizationName: $stateParams.orgName
         }
       });
     }

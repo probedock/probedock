@@ -1,5 +1,7 @@
 ## Features
 
+* make ui router work without trailing slashes
+
 * manage access keys
 
 * ignore invalid data in submitted test payloads

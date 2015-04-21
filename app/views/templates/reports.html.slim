@@ -1,12 +1,11 @@
 .container-fluid ng-controller='ReportsCtrl'
   .col-xs-12
     tabset
-      tab ui-sref='std.reports' active='activeTabs.latest'
+      tab ui-sref='org.reports' active='activeTabs.latest'
         tab-heading
           a href='#' Latest Reports
         ng-include src="'/templates/latestReports.html'"
-      tab ui-sref='std.reports.details({ reportId: detailsTabReportId })' ng-show='detailsTabReportId' active='activeTabs.details'
+      tab ui-sref='org.reports.details({ reportId: detailsTabReportId })' ng-show='detailsTabReportId' active='activeTabs.details'
         tab-heading
           a href='#' Detailed Report
         ng-include src="'/templates/reportDetails.html'"
-        

@@ -15,28 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class Organization < ActiveRecord::Base
-  include JsonResource
-  include IdentifiableResource
+class OrganizationUserContext
+  attr_reader :user, :organization
 
-  before_create{ set_identifier :api_id, :uuid }
-  before_create :normalize_name
-
-  # TODO: do not accept UUIDs
-  validates :name, presence: true, uniqueness: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)\Z/i }
-  validates :private_access, inclusion: { in: [ true, false ] }
-
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.id api_id
-      json.name name
-      json.private private_access
-    end
-  end
-
-  private
-
-  def normalize_name
-    self.normalized_name = name.downcase
+  def initialize user, organization
+    @user = user
+    @organization = organization
   end
 end

@@ -15,30 +15,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class Membership < ActiveRecord::Base
-  include JsonResource
-  include IdentifiableResource
+class TestReportPolicy < ApplicationPolicy
+  def index?
+    organization && user.member_of?(organization)
+  end
 
-  before_create :set_identifier
+  def show?
+    organization && user.member_of?(record.organization)
+  end
 
-  # List of roles. DO NOT change the order of the roles, as they
-  # are stored in a bitmask. Only append new roles to the list.
-  include RoleModel
-  roles :admin
-
-  belongs_to :organization
-  belongs_to :organization_email, class_name: 'Email'
-  belongs_to :user
-
-  validates :organization, presence: true
-  validates :organization_email, presence: true
-  validates :user_id, uniqueness: { scope: :organization_id, if: :user_id }
-
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.userId user.api_id
-      json.organizationEmail organization_email.address
-      json.roles roles.collect(&:to_s)
+  class Scope < Scope
+    def resolve
+      scope.where organization: organization
     end
   end
 end

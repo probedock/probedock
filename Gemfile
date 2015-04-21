@@ -32,6 +32,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'bcrypt'
 gem 'role_model'
 gem 'json-jwt'
+gem 'pundit'
 
 # API
 gem 'grape'

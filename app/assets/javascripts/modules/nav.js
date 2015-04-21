@@ -10,12 +10,13 @@ angular.module('probe-dock.nav', [])
   .controller('NavCtrl', [ '$rootScope', '$scope', '$state', function($rootScope, $scope, $state) {
 
     var state = $state.current;
-    $rootScope.$on('$stateChangeSuccess', function(event, toState) {
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {
       state = toState;
+      $scope.orgName = toStateParams.orgName;
     });
 
     $scope.isMenuActive = function(stateName) {
-      return state && state.name && state.name.indexOf('std.' + stateName) === 0;
+      return state && state.name && state.name.indexOf('org.' + stateName) === 0;
     };
   }])
 
