@@ -25,7 +25,7 @@ module ProbeDock
       end
 
       get do
-        rel = TestReport.order 'created_at ASC'
+        rel = TestReport.order 'created_at DESC'
 
         rel = paginated rel do |rel|
           if params[:after]

@@ -33,15 +33,15 @@ class User < ActiveRecord::Base
   roles :admin
 
   has_many :test_keys, dependent: :destroy
-  has_many :free_test_keys, -> { select('test_keys.*').joins('LEFT OUTER JOIN test_keys_payloads ON (test_keys.id = test_keys_payloads.test_key_id)').where(free: true).where('test_keys_payloads.test_payload_id IS NULL').group('test_keys.id') }, class_name: "TestKey"
+  has_many :free_test_keys, -> { select('test_keys.*').joins('LEFT OUTER JOIN test_keys_payloads ON (test_keys.id = test_keys_payloads.test_key_id)').where(free: true).where('test_keys_payloads.test_payload_id IS NULL').group('test_keys.id') }, class_name: 'TestKey'
   # TODO: replace with contributions
   #has_many :test_infos, foreign_key: :author_id, dependent: :restrict_with_exception
   has_many :test_payloads, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_results, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_reports, foreign_key: :runner_id, dependent: :restrict_with_exception
-  belongs_to :last_test_payload, class_name: "TestPayload"
-  has_one :settings, class_name: "Settings::User", dependent: :destroy
-  belongs_to :primary_email
+  belongs_to :last_test_payload, class_name: 'TestPayload'
+  has_one :settings, class_name: 'Settings::User', dependent: :destroy
+  belongs_to :primary_email, class_name: 'Email'
   has_and_belongs_to_many :emails
 
   strip_attributes except: :password_digest
@@ -52,9 +52,9 @@ class User < ActiveRecord::Base
     Jbuilder.new do |json|
       json.id api_id
       # TODO: hide active, email and name if not logged in
-      json.email email.email if email.present?
+      json.email primary_email.address
       # TODO: cache email MD5
-      json.emailMd5 Digest::MD5.hexdigest(email.email) if email.present?
+      json.emailMd5 Digest::MD5.hexdigest(primary_email.address)
       json.name name
 
       unless options[:link]
@@ -67,10 +67,15 @@ class User < ActiveRecord::Base
 
   def generate_auth_token
     JSON::JWT.new({
-      iss: email.email,
+      iss: primary_email.address,
       exp: 1.week.from_now,
       nbf: Time.now
     }).sign(Rails.application.secrets.secret_key_base, 'HS512').to_s
+  end
+
+  def primary_email= email
+    super email
+    self.emails << email if email.present? && !emails.include?(email)
   end
 
   private

@@ -39,7 +39,7 @@ class TestReport < ActiveRecord::Base
       json.inactiveResultsCount inactive_results_count
       json.inactivePassedResultsCount inactive_passed_results_count
       json.createdAt created_at.iso8601(3)
-      json.projects projects.select('projects.id, projects.api_id, projects.name').to_a.collect{ |p| p.to_builder(link: true).attributes! }
+      json.projects projects.select('projects.id, projects.api_id, projects.organization_id, projects.name').to_a.collect{ |p| p.to_builder(link: true).attributes! }
 
       if options[:detailed]
         json.categories Category.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: id }).order('categories.name').pluck('distinct categories.name')

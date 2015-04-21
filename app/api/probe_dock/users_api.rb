@@ -56,10 +56,12 @@ module ProbeDock
         email = data.delete :email
         data[:password_confirmation] ||= ''
 
-        user = User.new data
-        user.email = Email.where(email: email).first || Email.new(email: email)
+        User.transaction do
+          user = User.new data
+          user.primary_email = Email.where(address: email).first_or_create
 
-        create_record user
+          create_record user
+        end
       end
 
       namespace '/:id' do
@@ -79,7 +81,7 @@ module ProbeDock
 
             user.name = updates[:name] if updates.key? :name
             user.active = !!updates[:active] if updates.key? :active
-            user.email = Email.where(email: updates[:email]).first || Email.new(email: updates[:email]) if updates[:email] != user.email.try(:email) if updates.key? :email
+            user.primary_email = Email.where(address: updates[:email]).first_or_create if updates[:email] != user.email.try(:address) if updates.key? :email
 
             if updates.key? :password
               user.password = updates[:password]

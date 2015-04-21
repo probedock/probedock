@@ -21,6 +21,6 @@ FactoryGirl.define do
   end
 
   factory :email do
-    email{ generate :email_address }
+    address{ generate :email_address }
   end
 end

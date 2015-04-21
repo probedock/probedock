@@ -16,7 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class Email < ActiveRecord::Base
-  has_one :user, foreign_key: :email_id
+  has_and_belongs_to_many :users
+  has_one :user, foreign_key: :primary_email_id
 
-  validates :email, presence: true, length: { maximum: 255, allow_blank: true }, uniqueness: true
+  # TODO: make sure e-mail address is in lowercase
+  validates :address, presence: true, length: { maximum: 255, allow_blank: true }, uniqueness: true
 end

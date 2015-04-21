@@ -38,6 +38,8 @@ module TestPayloadProcessing
           project_version ||= ProjectVersion.new(project_id: Project.where(api_id: data['p']).first!.id, name: data['v']).tap(&:save_quickly!)
           @test_payload.project_version = project_version
 
+          organization = project_version.project.organization
+
           @cache = build_cache
 
           @processed_results = Array.new data['r'].length
@@ -52,7 +54,7 @@ module TestPayloadProcessing
 
           i = 0
           data['r'].each_slice 100 do |results|
-            fill_cache results
+            fill_cache results, organization
             results.each do |result|
               @processed_results[i] = ProcessResult.new(result, @test_payload, @cache)
               i += 1
@@ -68,7 +70,7 @@ module TestPayloadProcessing
           free_keys = @cache[:test_keys].values.select &:free?
           TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
 
-          TestReport.new(runner: @test_payload.runner, test_payloads: [ @test_payload ]).save_quickly!
+          TestReport.new(organization: organization, runner: @test_payload.runner, test_payloads: [ @test_payload ]).save_quickly!
         end
 
         enqueue_result_jobs
@@ -98,13 +100,13 @@ module TestPayloadProcessing
       }
     end
 
-    def fill_cache results
+    def fill_cache results, organization
 
       time = Benchmark.realtime do
         cache_test_keys results
-        cache_records results, Category, 'c'
-        cache_records results, Tag, 'g'
-        cache_records results, Ticket, 't'
+        cache_organization_records results, organization, Category, 'c'
+        cache_organization_records results, organization, Tag, 'g'
+        cache_organization_records results, organization, Ticket, 't'
         cache_custom_values results
       end
 
@@ -138,7 +140,7 @@ module TestPayloadProcessing
       end
     end
 
-    def cache_records results, model, payload_property
+    def cache_organization_records results, organization, model, payload_property
 
       # convert model name to cache type
       # e.g. Tag => :tags
@@ -156,12 +158,12 @@ module TestPayloadProcessing
 
       # fetch the new records that already exist in the database
       # and build a hash of those records by name
-      existing_records = model.where('name IN (?)', names).to_a.inject({}){ |memo,record| memo[record.name] = record; memo }
+      existing_records = model.where(organization: organization).where('name IN (?)', names).to_a.inject({}){ |memo,record| memo[record.name] = record; memo }
 
       # add the new records to the cache
       names.each do |name|
         # create new active record objects for the records that are not yet persisted
-        @cache[type][name] = existing_records[name] || model.new.tap{ |t| t.name = name; t.quick_validation = true; t.save! }
+        @cache[type][name] = existing_records[name] || model.new.tap{ |t| t.name = name; t.organization = organization; t.quick_validation = true; t.save! }
       end
     end
   end

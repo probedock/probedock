@@ -18,6 +18,10 @@
 module ProbeDock
   class OrganizationsApi < Grape::API
 
+    before do
+      authenticate!
+    end
+
     namespace :organizations do
 
       before do
@@ -72,10 +76,14 @@ module ProbeDock
 
           post do
             data = parse_member
-            user = User.where(api_id: data[:userId]).first!
-            email = user.email
 
-            member = OrganizationMember.new 
+            Membership.transaction do
+              email = Email.where(address: data[:email]).first_or_create
+              user = data[:userId].present? ? User.where(api_id: data[:userId]).first : nil
+
+              membership = Membership.new user: user, organization_email: email
+              create_record membership
+            end
           end
         end
       end

@@ -46,25 +46,34 @@ class V3 < ActiveRecord::Migration
     end
 
     create_table :emails do |t|
-      t.string :email, null: false
-      t.index :email, unique: true
+      t.string :address, null: false
+      t.index :address, unique: true
     end
+
+    create_table :emails_users, id: false do |t|
+      t.integer :email_id, null: false
+      t.integer :user_id, null: false
+      t.index :email_id, unique: true
+    end
+
+    add_foreign_key :emails_users, :emails
+    add_foreign_key :emails_users, :users
 
     remove_column :categories, :metric_key
     add_column :categories, :organization_id, :integer, null: false
     add_foreign_key :categories, :organizations
 
-    create_table :organization_members do |t|
+    create_table :memberships do |t|
       t.string :api_id, null: false, limit: 12
       t.integer :user_id, null: false
-      t.integer :email_id, null: false
+      t.integer :organization_email_id, null: false
       t.integer :organization_id, null: false
       t.timestamps null: false
     end
 
-    add_foreign_key :organization_members, :users
-    add_foreign_key :organization_members, :organizations
-    add_foreign_key :organization_members, :emails
+    add_foreign_key :memberships, :users
+    add_foreign_key :memberships, :organizations
+    add_foreign_key :memberships, :emails, column: :organization_email_id
 
     remove_column :projects, :metric_key
     remove_column :projects, :url_token
@@ -262,12 +271,12 @@ class V3 < ActiveRecord::Migration
     remove_column :users, :email
     remove_column :users, :last_run_id
     remove_column :users, :settings_id
-    add_column :users, :email_id, :integer
+    add_column :users, :primary_email_id, :integer
     add_column :users, :password_digest, :string, null: false
     add_column :users, :last_test_payload_id, :integer
     add_column :users, :api_id, :string, null: false, limit: 12
-    add_index :users, :email_id, unique: true
-    add_foreign_key :users, :emails, column: :email_id
+    add_index :users, :primary_email_id, unique: true
+    add_foreign_key :users, :emails, column: :primary_email_id
     add_foreign_key :users, :test_payloads, column: :last_test_payload_id
 
     add_column :user_settings, :user_id, :integer

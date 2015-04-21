@@ -22,8 +22,9 @@ FactoryGirl.define do
 
   factory :user, aliases: [ :author, :runner ] do
     name{ generate :user_name }
-    email
     password 'test'
+
+    association :primary_email, factory: :email
 
     factory :admin_user, aliases: [ :admin ] do
       roles_mask User.mask_for(:admin)

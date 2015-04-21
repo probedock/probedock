@@ -51,7 +51,7 @@ namespace :users do
       next
     end
 
-    if user = User.joins(:email).where(emails: { email: email }).first
+    if user = User.joins(:emails).where(emails: { address: email }).first
       puts Paint["There is already a user with e-mail #{email}", :red]
       next
     end
@@ -62,7 +62,7 @@ namespace :users do
       next
     end
 
-    user = User.new name: name, email: Email.where(email: email).first || Email.new(email: email), password: password
+    user = User.new name: name, primary_email: Email.where(address: email).first_or_create, password: password
     user.save!
 
     puts Paint["User #{name} with e-mail #{email} was successfully created", :green]

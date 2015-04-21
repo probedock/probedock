@@ -15,21 +15,20 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class OrganizationMember < ActiveRecord::Base
+class Membership < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
 
   before_create :set_identifier
 
-  validates :email, presence: true
   validates :organization, presence: true
-  validates :user, presence: true
-  validates :user_id, uniqueness: { scope: :organization_id }
+  validates :organization_email, presence: true
+  validates :user_id, uniqueness: { scope: :organization_id, if: :user_id }
 
   def to_builder options = {}
     Jbuilder.new do |json|
       json.userId user.api_id
-      json.emailId email.email
+      json.organizationEmail email.address
     end
   end
 end
