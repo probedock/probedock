@@ -20,7 +20,7 @@ module ProbeDock
 
     namespace :reports do
       before do
-        authenticate!
+        authenticate
       end
 
       helpers do
@@ -54,10 +54,6 @@ module ProbeDock
         helpers do
           def current_report
             @current_report ||= TestReport.where(api_id: params[:id].to_s).first!
-          end
-
-          def current_organization
-            current_report.organization
           end
 
           def report_health_template

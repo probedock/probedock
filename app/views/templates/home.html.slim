@@ -1,7 +1,10 @@
 .container
-  .page-header
-    h1 Organizations
-  p ng-if='!organizations.length' No organizations are docked here.
-  ul ng-if='organizations'
-    li ng-repeat='org in organizations'
-      a ui-sref='org.dashboard({ orgName: org.name })' {{ org.name }}
+  .col-lg-offset-3.col-lg-6
+    .panel.panel-primary
+      .panel-heading Organizations
+      .panel-body
+        p ng-if='organizations.length' The following organizations are docked here.
+        p ng-if='!organizations.length' No organizations are docked here.
+      ul.list-group
+        li.list-group-item ng-repeat='org in organizations'
+          a ui-sref='org.dashboard({ orgName: org.name })' {{ org.name }}

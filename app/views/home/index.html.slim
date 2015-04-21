@@ -9,6 +9,8 @@ nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavC
       a.navbar-brand href='/' Probe Dock
     #menu.collapse.navbar-collapse collapse='!navbarOpen'
       ul.nav.navbar-nav
+        li ng-if='orgName' ng-class='{active: isMenuActive("dashboard")}'
+          a href='#' ui-sref='org.dashboard({ orgName: orgName })' Dashboard
         li ng-if='orgName' ng-class='{active: isMenuActive("reports")}'
           a href='#' ui-sref='org.reports({ orgName: orgName })' Reports
         li ng-if='orgName'  ng-class='{active: isMenuActive("projects")}'

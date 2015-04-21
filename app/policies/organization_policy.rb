@@ -24,16 +24,16 @@ class OrganizationPolicy < ApplicationPolicy
     true
   end
 
-  def show?
-    user.memberships.any?{ |m| m.organization == record }
+  def data?
+    organization.public? || user.member_of?(organization)
   end
 
   class Scope < Scope
     def resolve
-      if user.is? :admin
+      if user.try :is?, :admin
         scope
       else
-        scope.where private_access: false
+        scope.where public_access: true
       end
     end
   end

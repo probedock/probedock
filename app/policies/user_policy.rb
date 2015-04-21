@@ -15,26 +15,30 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class ProjectPolicy < ApplicationPolicy
+class UserPolicy < ApplicationPolicy
   def create?
-    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+    user.is? :admin
   end
 
   def index?
-    organization && (organization.public? || user.member_of?(organization))
+    user.is? :admin
+  end
+
+  def show?
+    user.is? :admin
   end
 
   def update?
-    user.membership_in(record.organization).try(:is?, :admin)
+    user.is? :admin
   end
 
-  def publish?
-    user.member_of? record.organization
+  def destroy?
+    user.is? :admin
   end
 
   class Scope < Scope
     def resolve
-      scope.where organization: organization
+      scope
     end
   end
 end

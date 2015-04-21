@@ -35,7 +35,24 @@ module ProbeDock
         end
       end
 
+      post do
+        authorize! User, :create
+
+        data = parse_user_for_creation
+        email = data.delete :email
+        data[:password_confirmation] ||= ''
+
+        User.transaction do
+          user = User.new data
+          user.primary_email = Email.where(address: email).first_or_create
+
+          create_record user
+        end
+      end
+
       get do
+        authorize! User, :index
+
         rel = User.order 'name ASC'
 
         rel = paginated rel do |rel|
@@ -50,34 +67,22 @@ module ProbeDock
         rel.to_a.collect{ |u| u.to_builder.attributes! }
       end
 
-      post do
-
-        data = parse_user_for_creation
-        email = data.delete :email
-        data[:password_confirmation] ||= ''
-
-        User.transaction do
-          user = User.new data
-          user.primary_email = Email.where(address: email).first_or_create
-
-          create_record user
-        end
-      end
-
       namespace '/:id' do
 
         helpers do
-          def current_user
-            User.where(api_id: params[:id].to_s).first!
+          def user_resource
+            @user_resource ||= User.where(api_id: params[:id].to_s).first!
           end
         end
 
         get do
-          current_user
+          authorize! user_resource, :show
+          user_resource
         end
 
         patch do
-          update_record current_user, parse_user_for_update do |user,updates|
+          authorize! user_resource, :update
+          update_record user_resource, parse_user_for_update do |user,updates|
 
             user.name = updates[:name] if updates.key? :name
             user.active = !!updates[:active] if updates.key? :active
@@ -93,7 +98,8 @@ module ProbeDock
         end
 
         delete do
-          current_user.destroy
+          authorize! user_resource, :destroy
+          user_resource.destroy
           status 204
         end
       end

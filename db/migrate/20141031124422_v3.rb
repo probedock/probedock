@@ -41,7 +41,7 @@ class V3 < ActiveRecord::Migration
       t.string :api_id, null: false, limit: 36
       t.string :name, null: false, limit: 50
       t.string :normalized_name, null: false, limit: 50
-      t.boolean :private_access, null: false, default: true
+      t.boolean :public_access, null: false, default: false
       t.timestamps null: false
       t.index :api_id, unique: true
       t.index :name, unique: true

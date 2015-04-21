@@ -26,14 +26,16 @@ module ProbeDock
 
       namespace do
 
-        parser :json, nil
-
         post :publish do
 
           received_at = Time.now
 
           body = env['api.request.input']
           json = MultiJson.load body
+
+          project = Project.where(api_id: json['p']).first
+          Pundit.authorize current_user, project, :publish?
+
           # TODO: validate test payload (format, byte size)
 
           # TODO: handle uuid conflict

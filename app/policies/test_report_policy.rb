@@ -17,11 +17,11 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class TestReportPolicy < ApplicationPolicy
   def index?
-    organization && user.member_of?(organization)
+    organization && (organization.public? || user.member_of?(organization))
   end
 
   def show?
-    organization && user.member_of?(record.organization)
+    record.organization.public? || user.member_of?(record.organization)
   end
 
   class Scope < Scope

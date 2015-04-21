@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class Organization < ActiveRecord::Base
+  RESERVED_NAMES = %w(organizations profile status users)
   include JsonResource
   include IdentifiableResource
 
@@ -24,17 +25,27 @@ class Organization < ActiveRecord::Base
 
   # TODO: do not accept UUIDs
   validates :name, presence: true, uniqueness: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)\Z/i }
-  validates :private_access, inclusion: { in: [ true, false ] }
+  validates :public_access, inclusion: { in: [ true, false ] }
+  validate :name_must_not_be_reserved
 
   def to_builder options = {}
     Jbuilder.new do |json|
       json.id api_id
       json.name name
-      json.private private_access
+      json.public public_access
     end
   end
 
+  def public?
+    public_access
+  end
+
   private
+
+  def name_must_not_be_reserved
+    # TODO: add missing translation
+    errors.add :name, :reserved if RESERVED_NAMES.include? name.to_s.downcase
+  end
 
   def normalize_name
     self.normalized_name = name.downcase

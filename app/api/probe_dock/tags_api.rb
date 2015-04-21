@@ -17,19 +17,28 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
   class TagsApi < Grape::API
-
     namespace :tags do
-
       before do
-        authenticate!
+        authenticate
+      end
+
+      helpers do
+        def current_organization
+          @current_organization ||= if params[:organizationId].present?
+            Organization.where(api_id: params[:organizationId].to_s).first!
+          elsif params[:organizationName].present?
+            Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
+          end
+        end
       end
 
       get do
+        authorize! :organization, :data
 
         pageSize = params[:pageSize].to_i
         pageSize = Settings.app.tag_cloud_size if pageSize < 1
 
-        Tag.select('tags.name, count(distinct project_tests.id) as tests_count').joins(test_descriptions: :test).group('tags.name').order('count(distinct project_tests.id) desc').limit(pageSize).having('count(distinct project_tests.id) > 0').to_a.collect do |tag|
+        Tag.where(organization_id: current_organization.id).select('tags.name, count(distinct project_tests.id) as tests_count').joins(test_descriptions: :test).group('tags.name').order('count(distinct project_tests.id) desc').limit(pageSize).having('count(distinct project_tests.id) > 0').to_a.collect do |tag|
           { name: tag.name, testsCount: tag.tests_count }
         end
       end

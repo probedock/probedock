@@ -18,32 +18,27 @@
 module ProbeDock
   class OrganizationsApi < Grape::API
 
-    before do
-      authenticate!
-    end
-
     namespace :organizations do
-
-      before do
-        authenticate!
-      end
 
       helpers do
         def parse_organization
-          parse_object :name
+          parse_object :name, :public
         end
       end
 
       post do
+        authenticate!
         authorize! Organization, :create
 
-        organization = Organization.new parse_organization
+        data = parse_organization
+        organization = Organization.new name: data[:name], public_access: data[:public] == true
         OrganizationValidations.validate organization, validation_context, location_type: :json, raise_error: true
 
         create_record organization
       end
 
       get do
+        authenticate
         authorize! Organization, :index
 
         rel = policy_scope(Organization).order 'name ASC'
@@ -61,6 +56,9 @@ module ProbeDock
       end
 
       namespace '/:id' do
+        before do
+          authenticate!
+        end
 
         helpers do
           def current_organization

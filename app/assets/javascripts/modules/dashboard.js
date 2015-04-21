@@ -1,6 +1,6 @@
 angular.module('probe-dock.dashboard', ['probe-dock.reports'])
 
-  .controller('DashboardNewTestMetricsCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('DashboardNewTestMetricsCtrl', ['ApiService', '$scope', '$stateParams', function($api, $scope, $stateParams) {
 
     fetchMetrics().then(showMetrics);
 
@@ -15,7 +15,10 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
     function fetchMetrics() {
       return $api.http({
         method: 'GET',
-        url: '/api/metrics/newTests'
+        url: '/api/metrics/newTests',
+        params: {
+          organizationName: $stateParams.orgName
+        }
       });
     }
 
@@ -38,14 +41,17 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
     }
   }])
 
-  .controller('DashboardTagCloudCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('DashboardTagCloudCtrl', ['ApiService', '$scope', '$stateParams', function($api, $scope, $stateParams) {
 
     fetchTags().then(showTags);
 
     function fetchTags() {
       return $api.http({
         method: 'GET',
-        url: '/api/tags'
+        url: '/api/tags',
+        params: {
+          organizationName: $stateParams.orgName
+        }
       });
     }
 

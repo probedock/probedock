@@ -17,13 +17,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
   class ProjectsApi < Grape::API
-
     namespace :projects do
-
-      before do
-        authenticate!
-      end
-
       helpers do
         def parse_project
           parse_object :name, :description
@@ -39,6 +33,7 @@ module ProbeDock
       end
 
       get do
+        authenticate
         authorize! Project, :index
 
         rel = policy_scope(Project).order 'name ASC'
@@ -56,6 +51,8 @@ module ProbeDock
       end
 
       post do
+        authenticate!
+
         project = Project.new parse_project
         project.organization = Organization.where(api_id: params[:organizationId].to_s).first!
         authorize! project, :create
@@ -66,6 +63,9 @@ module ProbeDock
       end
 
       namespace '/:id' do
+        before do
+          authenticate!
+        end
 
         helpers do
           def current_project

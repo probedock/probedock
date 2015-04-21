@@ -29,19 +29,27 @@ module ApiAuthenticationHelper
     end
   end
 
-  def authenticate!
+  def authenticate
     @auth_token = auth_token_from_header || auth_token_from_params
-    raise ProbeDock::Errors::Unauthorized.new 'Missing credentials' if @auth_token.blank?
+    return false if @auth_token.blank?
 
     # TODO: use another secret for signing auth tokens
     begin
       @auth_claims = JSON::JWT.decode(@auth_token, Rails.application.secrets.secret_key_base)
     rescue JSON::JWT::Exception
-      raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials'
+      false
     end
+
+    true
+  end
+
+  def authenticate!
+    authenticate
+    raise ProbeDock::Errors::Unauthorized.new 'Missing credentials' if @auth_token.blank?
+    raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials' if @auth_claims.blank?
   end
 
   def current_user
-    @current_user ||= User.joins(:emails).where(emails: { address: @auth_claims['iss'] }).includes(memberships: :organization).first!
+    @current_user ||= @auth_claims.blank? ? nil : User.joins(:emails).where(emails: { address: @auth_claims['iss'] }).includes(memberships: :organization).first!
   end
 end

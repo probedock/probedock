@@ -41,6 +41,7 @@ class User < ActiveRecord::Base
   belongs_to :last_test_payload, class_name: 'TestPayload'
   has_one :settings, class_name: 'Settings::User', dependent: :destroy
   belongs_to :primary_email, class_name: 'Email'
+  # TODO: purge emails if unused
   has_and_belongs_to_many :emails
 
   strip_attributes except: :password_digest
