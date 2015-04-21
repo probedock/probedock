@@ -27,6 +27,7 @@ gem 'less-rails'
 gem 'stylus'
 gem 'therubyracer'
 gem 'uglifier', '>= 1.3.0'
+gem 'ngannotate-rails'
 
 # Authentication & Authorization
 gem 'bcrypt'

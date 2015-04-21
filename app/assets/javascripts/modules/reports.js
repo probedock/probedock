@@ -1,6 +1,6 @@
 angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-dock.state'])
 
-  .directive('reportHealthBar', [function() {
+  .directive('reportHealthBar', function() {
 
     function tooltipText(report, clickForDetails) {
 
@@ -33,15 +33,15 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         report: '=',
         clickForDetails: '@'
       },
-      controller: ['$attrs', 'ReportService', '$scope', function($attrs, $reportService, $scope) {
-        $scope.percentages = $reportService.percentages($scope.report);
+      controller: function($attrs, reportService, $scope) {
+        $scope.percentages = reportService.percentages($scope.report);
         $scope.tooltipText = tooltipText($scope.report, $attrs.clickForDetails !== undefined);
-      }],
+      },
       templateUrl: '/templates/reportHealthBar.html'
     };
-  }])
+  })
 
-  .directive('healthTooltips', ['$compile', function ($compile) {
+  .directive('healthTooltips', function($compile) {
     return function(scope, element, attrs) {
 
       var titleTemplate = _.template('<strong class="<%= titleClass %>"><%- title %></strong>'),
@@ -74,9 +74,9 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         }
       });
     };
-  }])
+  })
 
-  .controller('ReportHealthCtrl', ['ApiService', '$sce', '$scope', function($api, $sce, $scope) {
+  .controller('ReportHealthCtrl', function(api, $sce, $scope) {
 
     var reportId;
     $scope.$on('report.init', init);
@@ -88,7 +88,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     }
 
     function fetchHealth() {
-      return $api.http({
+      return api.http({
         method: 'GET',
         url: '/api/reports/' + reportId + '/health'
       });
@@ -97,9 +97,9 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     function showHealth(response) {
       $scope.healthHtml = $sce.trustAsHtml(response.data.html);
     }
-  }])
+  })
 
-  .controller('ReportResultsCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('ReportResultsCtrl', function(api, $scope) {
 
     var page, pageSize, reportId;
     $scope.$on('report.init', init);
@@ -131,7 +131,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
 
       $scope.fetchingMoreResults = true;
 
-      return $api.http({
+      return api.http({
         method: 'GET',
         url: '/api/reports/' + reportId + '/results',
         params: {
@@ -154,9 +154,9 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
 
       $scope.noMoreResults = $scope.results.length >= $scope.total || !response.data.length;
     }
-  }])
+  })
 
-  .controller('ReportsCtrl', ['$scope', 'StateService', function($scope, $stateService) {
+  .controller('ReportsCtrl', function($scope, stateService) {
 
     $scope.activeTabs = {
       latest: true,
@@ -164,7 +164,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     };
     $scope.detailsTabReportId = null;
 
-    $stateService.onState({ name: [ 'org.reports', 'org.reports.details' ] }, $scope, function(state, params) {
+    stateService.onState({ name: [ 'org.reports', 'org.reports.details' ] }, $scope, function(state, params) {
       if (state && state.name == 'org.reports.details') {
         showReportDetails(params.reportId);
       } else {
@@ -178,12 +178,12 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
       $scope.activeTabs.details = true;
       $scope.detailsTabReportId = reportId;
     };
-  }])
+  })
 
-  .controller('ReportDetailsCtrl', ['ApiService', 'ReportService', '$scope', 'StateService', function($api, $reportService, $scope, $stateService) {
+  .controller('ReportDetailsCtrl', function(api, reportService, $scope, stateService) {
 
     var reportId;
-    $stateService.onState({ name: 'org.reports.details' }, $scope, function(state, params) {
+    stateService.onState({ name: 'org.reports.details' }, $scope, function(state, params) {
       if (params.reportId != reportId) {
 
         delete $scope.report;
@@ -195,7 +195,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     });
 
     function fetchReport() {
-      $api.http({
+      api.http({
         method: 'GET',
         url: '/api/reports/' + reportId
       }).then(showReport);
@@ -204,14 +204,14 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     function showReport(response) {
       $scope.report = response.data;
     }
-  }])
+  })
 
-  .controller('LatestReportsCtrl', ['ApiService', 'ReportService', '$scope', '$stateParams', 'StateService', '$timeout', function($api, $reportService, $scope, $stateParams, $stateService, $timeout) {
+  .controller('LatestReportsCtrl', function(api, reportService, $scope, $stateParams, stateService, $timeout) {
 
     var hideNoNewReportsPromise;
     $scope.fetchingReports = false;
 
-    $stateService.onState({ name: 'org.reports' }, $scope, function() {
+    stateService.onState({ name: 'org.reports' }, $scope, function() {
       if ($scope.reports === undefined) {
         $scope.fetchLatestReports();
       }
@@ -237,7 +237,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         $timeout.cancel(hideNoNewReportsPromise);
       }
 
-      $api.http({
+      api.http({
         method: 'GET',
         url: '/api/reports',
         params: params
@@ -259,9 +259,9 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         }, 5000);
       }
     }
-  }])
+  })
 
-  .factory('ReportService', [function() {
+  .factory('reportService', function() {
     return {
       percentages: function(report) {
 
@@ -279,6 +279,6 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         };
       }
     };
-  }])
+  })
 
 ;

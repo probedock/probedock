@@ -1,6 +1,6 @@
 angular.module('probe-dock.format', [])
 
-  .filter('durationFormat', [function () {
+  .filter('durationFormat', function () {
 
     var durations = [
       { name: 'd', value: 86400000 },
@@ -53,6 +53,6 @@ angular.module('probe-dock.format', [])
         return memo;
       }, []).join(' ');
     };
-  }]);
+  });
 
 ;

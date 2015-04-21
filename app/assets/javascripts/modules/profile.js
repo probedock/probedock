@@ -1,6 +1,6 @@
 angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
 
-  .controller('ProfileAccessTokensCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('ProfileAccessTokensCtrl', function(api, $scope) {
 
     $scope.busy = false;
 
@@ -9,7 +9,7 @@ angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
       $scope.busy = true;
       delete $scope.token;
 
-      $api.http({
+      api.http({
         method: 'POST',
         url: '/api/tokens'
       }).then(showToken, onGenerateError);
@@ -25,14 +25,14 @@ angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
       $scope.token = response.data.token;
       $scope.busy = false;
     }
-  }])
+  })
 
-  .controller('ProfileDetailsCtrl', ['ApiService', 'AuthService', '$scope', function($api, $auth, $scope) {
+  .controller('ProfileDetailsCtrl', function(api, auth, $scope) {
 
     var modal;
     $scope.edit = function() {
       delete $scope.saveError;
-      $scope.editedProfile = _.pick($auth.currentUser, 'name', 'email');
+      $scope.editedProfile = _.pick(auth.currentUser, 'name', 'email');
     };
 
     $scope.cancel = function() {
@@ -40,10 +40,10 @@ angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
     };
 
     $scope.save = function() {
-      $api.http({
+      api.http({
         method: 'PATCH',
-        url: '/api/users/' + $auth.currentUser.id,
-        data: $api.compact($scope.editedProfile)
+        url: '/api/users/' + auth.currentUser.id,
+        data: api.compact($scope.editedProfile)
       }).then(onSaved, onSaveError);
     };
 
@@ -53,8 +53,8 @@ angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
 
     function onSaved(response) {
       delete $scope.editedProfile;
-      _.extend($auth.currentUser, response.data);
+      _.extend(auth.currentUser, response.data);
     }
-  }])
+  })
 
 ;

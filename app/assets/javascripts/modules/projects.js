@@ -1,10 +1,10 @@
 angular.module('probe-dock.projects', ['probe-dock.api'])
 
-  .controller('ProjectsCtrl', ['ApiService', '$scope', '$stateParams', function($api, $scope, $stateParams) {
+  .controller('ProjectsCtrl', function(api, $scope, $stateParams) {
 
     $scope.newProject = {};
 
-    $api.http({
+    api.http({
       method: 'GET',
       url: '/api/projects',
       params: {
@@ -14,7 +14,7 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
     }).then(showProjects);
 
     $scope.createProject = function(form) {
-      $api.http({
+      api.http({
         method: 'POST',
         url: '/api/projects',
         data: $scope.newProject
@@ -31,9 +31,9 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
       $scope.projects.unshift(response.data);
       $scope.lastCreatedProject = response.data;
     };
-  }])
+  })
 
-  .controller('ProjectCtrl', ['ApiService', '$scope', function($api, $scope) {
+  .controller('ProjectCtrl', function(api, $scope) {
 
     $scope.edit = function() {
       $scope.editedProject = _.pick($scope.project, 'name', 'description');
@@ -45,7 +45,7 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
     };
 
     $scope.save = function() {
-      $api.http({
+      api.http({
         method: 'PATCH',
         url: '/api/projects/' + $scope.project.id,
         data: $scope.editedProject
@@ -57,6 +57,6 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
       _.extend($scope.project, $scope.editedProject);
       delete $scope.editedProject;
     };
-  }]);
+  });
 
 ;

@@ -48,21 +48,21 @@ angular.module('probe-dock', [
   .constant('zeroClipboardFlash', <%= JSON.dump asset_path('zero-clipboard.swf') %>)
 
   // enable debug log unless in production
-  .config(['environment', '$logProvider', function(env, $logProvider) {
-    $logProvider.debugEnabled(env !== 'production');
-  }])
+  .config(function(environment, $logProvider) {
+    $logProvider.debugEnabled(environment !== 'production');
+  })
 
-  .config(['localStorageServiceProvider', function(localStorageServiceProvider) {
+  .config(function(localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('probe-dock');
-  }])
+  })
 
-  .config(['ngClipProvider', 'zeroClipboardFlash', function(ngClipProvider, assetPath) {
-    ngClipProvider.setPath(assetPath);
-  }])
+  .config(function(ngClipProvider, zeroClipboardFlash) {
+    ngClipProvider.setPath(zeroClipboardFlash);
+  })
 
-  .run(['AuthService', function($auth) {
-    $auth.checkSignedIn();
-  }])
+  .run(function(auth) {
+    auth.checkSignedIn();
+  })
 
   .run(function() {
     nv.dev = false; // disable nvd3 graph generation time logs

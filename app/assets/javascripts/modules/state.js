@@ -1,11 +1,10 @@
 angular.module('probe-dock.state', [ 'ui.router' ])
 
-  .config(['$locationProvider', '$urlRouterProvider', function($locationProvider, $urlRouterProvider) {
+  .config(function($locationProvider, $urlRouterProvider) {
     $locationProvider.html5Mode(true);
-    $urlRouterProvider.otherwise("/");
-  }])
+  })
 
-  .factory('StateService', ['$rootScope', '$state', '$stateParams', '$timeout', function($rootScope, $state, $stateParams, $timeout) {
+  .factory('stateService', function($rootScope, $state, $stateParams, $timeout) {
 
     var onStateCallbacks = [];
 
@@ -46,6 +45,6 @@ angular.module('probe-dock.state', [ 'ui.router' ])
         });
       }
     };
-  }])
+  })
 
 ;

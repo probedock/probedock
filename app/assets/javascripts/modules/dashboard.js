@@ -1,6 +1,6 @@
 angular.module('probe-dock.dashboard', ['probe-dock.reports'])
 
-  .controller('DashboardNewTestMetricsCtrl', ['ApiService', '$scope', '$stateParams', function($api, $scope, $stateParams) {
+  .controller('DashboardNewTestMetricsCtrl', function(api, $scope, $stateParams) {
 
     fetchMetrics().then(showMetrics);
 
@@ -13,7 +13,7 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
     };
 
     function fetchMetrics() {
-      return $api.http({
+      return api.http({
         method: 'GET',
         url: '/api/metrics/newTests',
         params: {
@@ -39,14 +39,14 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
         }
       ];
     }
-  }])
+  })
 
-  .controller('DashboardTagCloudCtrl', ['ApiService', '$scope', '$stateParams', function($api, $scope, $stateParams) {
+  .controller('DashboardTagCloudCtrl', function(api, $scope, $stateParams) {
 
     fetchTags().then(showTags);
 
     function fetchTags() {
-      return $api.http({
+      return api.http({
         method: 'GET',
         url: '/api/tags',
         params: {
@@ -66,14 +66,14 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
         return memo;
       }, []);
     }
-  }])
+  })
 
-  .controller('DashboardLatestReportsCtrl', ['ApiService', 'ReportService', '$scope', '$stateParams', function($api, $reportService, $scope, $stateParams) {
+  .controller('DashboardLatestReportsCtrl', function(api, reportService, $scope, $stateParams) {
 
     fetchLatestReports().then(showReports);
 
     function fetchLatestReports() {
-      return $api.http({
+      return api.http({
         method: 'GET',
         url: '/api/reports',
         params: {
@@ -86,6 +86,6 @@ angular.module('probe-dock.dashboard', ['probe-dock.reports'])
     function showReports(response) {
       $scope.reports = response.data;
     }
-  }])
+  })
 
 ;

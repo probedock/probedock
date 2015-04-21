@@ -1,6 +1,6 @@
 angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
-  .factory('UserService', ['$window', function($window) {
+  .factory('userService', function($window) {
 
     var jvent = new $window.Jvent();
 
@@ -8,9 +8,9 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
       on: _.bind(jvent.on, jvent),
       emit: _.bind(jvent.emit, jvent)
     };
-  }])
+  })
 
-  .controller('NewUserCtrl', ['ApiService', '$scope', 'UserService', function($api, $scope, $userService) {
+  .controller('NewUserCtrl', function(api, $scope, userService) {
 
     $scope.addNewUser = function() {
       if ($scope.newUserForm) {
@@ -25,7 +25,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     };
 
     $scope.save = function() {
-      $api.http({
+      api.http({
         method: 'POST',
         url: '/api/users',
         data: $scope.newUser
@@ -37,18 +37,18 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     }
 
     function onSaved(response) {
-      $userService.emit('created', response.data);
+      userService.emit('created', response.data);
       delete $scope.newUser;
     }
-  }])
+  })
 
-  .controller('UsersListCtrl', ['ApiService', '$scope', 'StateService', 'UserService', function($api, $scope, $stateService, $userService) {
+  .controller('UsersListCtrl', function(api, $scope, stateService, userService) {
 
     var page = 1;
     // TODO: recursively fetch all users
     fetchUsers().then(addUsers);
 
-    $stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
+    stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
       if (state.name == 'users.details') {
         $scope.selectedUserId = params.userId;
       } else {
@@ -60,19 +60,19 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
       return new Date().getTime() - new Date(iso8601).getTime();
     };
 
-    $userService.on('created', function(user) {
+    userService.on('created', function(user) {
       $scope.users.unshift(user);
       $scope.lastCreatedUser = user;
     });
 
-    $userService.on('updated', function(user) {
+    userService.on('updated', function(user) {
       var updatedUser = _.findWhere($scope.users, { id: user.id });
       if (updatedUser) {
         _.extend(updatedUser, user);
       }
     });
 
-    $userService.on('deleted', function(user) {
+    userService.on('deleted', function(user) {
       var deletedUser = _.findWhere($scope.users, { id: user.id });
       if (deletedUser) {
         $scope.users.splice(_.indexOf($scope.users, deletedUser), 1);
@@ -80,7 +80,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     });
 
     function fetchUsers() {
-      return $api.http({
+      return api.http({
         method: 'GET',
         url: '/api/users',
         params: {
@@ -93,14 +93,14 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     function addUsers(response) {
       $scope.users = ($scope.users || []).concat(response.data);
     }
-  }])
+  })
 
-  .controller('UserDetailsCtrl', ['ApiService', 'AuthService', '$scope', '$state', 'StateService', 'UserService', '$window', function($api, $auth, $scope, $state, $stateService, $userService, $window) {
+  .controller('UserDetailsCtrl', function(api, auth, $scope, $state, stateService, userService, $window) {
 
     var userId;
     reset();
 
-    $stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
+    stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
       if (state.name == 'users.details' && params.userId != userId) {
         reset();
         userId = params.userId;
@@ -117,7 +117,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
       $scope.deleteError = false;
 
-      $api.http({
+      api.http({
         method: 'DELETE',
         url: '/api/users/' + $scope.selectedUser.id
       }).then(onDeleted, onDeleteError);
@@ -128,7 +128,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
       $scope.busy = true;
       var newActive = !$scope.selectedUser.active;
 
-      $api.http({
+      api.http({
         method: 'PATCH',
         url: '/api/users/' + $scope.selectedUser.id,
         data: {
@@ -151,15 +151,15 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
       $scope.busy = true;
       delete $scope.editError;
 
-      $api.http({
+      api.http({
         method: 'PATCH',
         url: '/api/users/' + $scope.selectedUser.id,
-        data: $api.compact($scope.editedUser)
+        data: api.compact($scope.editedUser)
       }).then(onSaved, onEditError);
     };
 
     function onDeleted() {
-      $userService.emit('deleted', { id: $scope.selectedUser.id });
+      userService.emit('deleted', { id: $scope.selectedUser.id });
       $state.go('users');
     }
 
@@ -170,10 +170,10 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     function onSaved(response) {
 
       $scope.selectedUser = response.data;
-      $userService.emit('updated', response.data);
+      userService.emit('updated', response.data);
 
-      if ($auth.currentUser.id === response.data.id) {
-        _.extend($auth.currentUser, response.data);
+      if (auth.currentUser.id === response.data.id) {
+        _.extend(auth.currentUser, response.data);
       }
 
       delete $scope.editedUser;
@@ -201,7 +201,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
     function fetchUser() {
       $scope.loadingSelectedUser = true;
-      return $api.http({
+      return api.http({
         method: 'GET',
         url: '/api/users/' + userId
       });
@@ -211,6 +211,6 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
       $scope.selectedUser = response.data;
       $scope.loadingSelectedUser = false;
     }
-  }])
+  })
 
 ;

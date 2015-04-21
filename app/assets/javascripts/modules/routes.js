@@ -1,6 +1,6 @@
 angular.module('probe-dock.routes', [ 'ui.router' ])
 
-  .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider
 
@@ -54,6 +54,6 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
       $injector.get('$state').go('home');
     });
 
-  }])
+  })
 
 ;

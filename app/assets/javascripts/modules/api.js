@@ -1,11 +1,11 @@
 angular.module('probe-dock.api', ['probe-dock.auth'])
 
-  .factory('ApiService', ['AuthService', '$http', function($auth, $http) {
+  .factory('api', function(auth, $http) {
     return {
       http: function(options) {
 
         options.headers = _.defaults({}, options.headers, {
-          Authorization: 'Bearer ' + $auth.token
+          Authorization: 'Bearer ' + auth.token
         });
 
         return $http(options);
@@ -22,6 +22,6 @@ angular.module('probe-dock.api', ['probe-dock.auth'])
         }, {});
       }
     };
-  }])
+  })
 
 ;

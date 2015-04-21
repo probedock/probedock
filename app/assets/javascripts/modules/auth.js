@@ -1,6 +1,6 @@
 angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
 
-  .factory('AuthService', ['$base64', '$http', 'localStorageService', '$log', '$rootScope', function($base64, $http, $local, $log, $rootScope) {
+  .factory('auth', function($base64, $http, localStorageService, $log, $rootScope) {
 
     $rootScope.currentUser = null;
 
@@ -28,12 +28,12 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
         delete service.token;
         delete service.currentUser;
         $rootScope.currentUser = null;
-        $local.remove('auth');
+        localStorageService.remove('auth');
       },
 
       checkSignedIn: function() {
 
-        var authData = $local.get('auth');
+        var authData = localStorageService.get('auth');
         if (authData) {
           authenticate(authData);
         }
@@ -42,7 +42,7 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
 
     function onSignedIn(response) {
       authenticate(response.data);
-      $local.set('auth', response.data);
+      localStorageService.set('auth', response.data);
     }
 
     function authenticate(authData) {
@@ -57,9 +57,9 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
     }
 
     return service;
-  }])
+  })
 
-  .controller('AuthCtrl', ['AuthService', '$modal', '$scope', function($auth, $modal, $scope) {
+  .controller('AuthCtrl', function(auth, $modal, $scope) {
 
     $scope.showSignIn = function() {
       $modal.open({
@@ -68,21 +68,21 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
       });
     };
 
-    $scope.signOut = $auth.signOut;
-  }])
+    $scope.signOut = auth.signOut;
+  })
 
-  .controller('LoginCtrl', ['AuthService', '$http', '$scope', function($auth, $http, $scope) {
+  .controller('LoginCtrl', function(auth, $http, $scope) {
 
     $scope.credentials = {};
 
     $scope.signIn = function() {
       delete $scope.error;
-      $auth.signIn($scope.credentials).then($scope.$close, showError);
+      auth.signIn($scope.credentials).then($scope.$close, showError);
     };
 
     function showError() {
       $scope.error = true;
     }
-  }])
+  })
 
 ;
