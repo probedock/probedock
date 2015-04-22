@@ -40,6 +40,7 @@ class V3 < ActiveRecord::Migration
     create_table :organizations do |t|
       t.string :api_id, null: false, limit: 36
       t.string :name, null: false, limit: 50
+      t.string :display_name, limit: 50
       t.string :normalized_name, null: false, limit: 50
       t.boolean :public_access, null: false, default: false
       t.timestamps null: false

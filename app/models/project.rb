@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class Project < ActiveRecord::Base
+  RESERVED_NAMES = %w(dashboard edit info members projects reports)
   include JsonResource
   include IdentifiableResource
 
@@ -28,6 +29,7 @@ class Project < ActiveRecord::Base
 
   validates :name, presence: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)\Z/i }
   validates :organization, presence: true
+  validate :name_must_not_be_reserved
 
   def to_builder options = {}
     Jbuilder.new do |json|
@@ -42,5 +44,12 @@ class Project < ActiveRecord::Base
         json.createdAt created_at.iso8601(3)
       end
     end
+  end
+
+  private
+
+  def name_must_not_be_reserved
+    # TODO: add missing translation
+    errors.add :name, :reserved if RESERVED_NAMES.include? name.to_s.downcase
   end
 end

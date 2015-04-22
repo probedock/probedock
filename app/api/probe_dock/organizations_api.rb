@@ -22,7 +22,7 @@ module ProbeDock
 
       helpers do
         def parse_organization
-          parse_object :name, :public
+          parse_object :name, :displayName, :public
         end
       end
 
@@ -62,7 +62,7 @@ module ProbeDock
 
         helpers do
           def current_organization
-            if uuid? params[:id].to_s
+            @current_organization ||= if uuid? params[:id].to_s
               Organization.where(api_id: params[:id].to_s).first!
             else
               Organization.where(normalized_name: params[:id].to_s.downcase).first!
@@ -70,11 +70,19 @@ module ProbeDock
           end
         end
 
+        get do
+          authorize! current_organization, :show
+          current_organization
+        end
+
         patch do
           org = current_organization
           authorize! org, :update
 
-          update_record current_organization, parse_organization
+          updates = parse_organization
+          updates[:public_access] = updates.delete :public if updates.key? :public
+
+          update_record current_organization, updates
         end
 
         namespace '/memberships' do

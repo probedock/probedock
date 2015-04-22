@@ -11,12 +11,12 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
       })
 
       .state('profile', {
-        url: '^/profile',
+        url: '/profile',
         templateUrl: '/templates/profile.html'
       })
 
       .state('users', {
-        url: '^/users',
+        url: '/users',
         templateUrl: '/templates/users.html'
       })
 
@@ -26,12 +26,34 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
 
       .state('org', {
         url: '/:orgName',
+        abstract: true,
         template: '<div ui-view />'
       })
 
       .state('org.dashboard', {
-        url: '/',
+        url: '',
+        abstract: true,
         templateUrl: '/templates/dashboard.html'
+      })
+
+      .state('org.dashboard.default', {
+        url: '',
+        templateUrl: '/templates/dashboard-default.html'
+      })
+
+      .state('org.dashboard.default.edit', {
+        url: '/edit'
+      })
+
+      .state('org.dashboard.members', {
+        url: '/members',
+        templateUrl: '/templates/dashboard-members.html'
+      })
+
+      .state('org.info', {
+        url: '/info',
+        controller: 'OrgCtrl',
+        templateUrl: '/templates/org.html'
       })
 
       .state('org.projects', {

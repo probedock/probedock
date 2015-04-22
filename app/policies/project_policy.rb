@@ -21,7 +21,7 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def index?
-    organization && (organization.public? || user.member_of?(organization))
+    organization && (organization.public? || user.is?(:admin) || user.member_of?(organization))
   end
 
   def update?

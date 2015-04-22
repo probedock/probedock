@@ -29,6 +29,7 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
         delete service.currentUser;
         $rootScope.currentUser = null;
         localStorageService.remove('auth');
+        $rootScope.$broadcast('auth.signOut');
       },
 
       checkSignedIn: function() {
@@ -43,6 +44,7 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
     function onSignedIn(response) {
       authenticate(response.data);
       localStorageService.set('auth', response.data);
+      $rootScope.$broadcast('auth.signIn', response.data.user);
     }
 
     function authenticate(authData) {

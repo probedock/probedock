@@ -7,7 +7,7 @@ angular.module('probe-dock.nav', [])
     };
   })
 
-  .controller('NavCtrl', function($rootScope, $scope, $state) {
+  .controller('NavCtrl', function(api, $rootScope, $scope, $state) {
 
     var state = $state.current;
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {
@@ -15,9 +15,29 @@ angular.module('probe-dock.nav', [])
       $scope.orgName = toStateParams.orgName;
     });
 
-    $scope.isMenuActive = function(stateName) {
-      return state && state.name && state.name.indexOf('org.' + stateName) === 0;
+    $scope.baseStateIs = function() {
+      var names = Array.prototype.slice.call(arguments);
+      return _.some(names, function(name) {
+        return state && state.name && state.name.indexOf(name) === 0;
+      });
     };
+
+    // TODO: extract this in org service
+    refreshOrgs();
+    $scope.$on('auth.signIn', refreshOrgs);
+    $scope.$on('auth.signOut', hidePrivateOrgs);
+
+    function hidePrivateOrgs() {
+      $scope.organizations = _.where($scope.organizations, { public: true });
+    }
+
+    function refreshOrgs() {
+      api.http({
+        url: '/api/organizations'
+      }).then(function(res) {
+        $scope.organizations = res.data;
+      });
+    }
   })
 
 ;

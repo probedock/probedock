@@ -5,6 +5,10 @@
       .panel-body
         p ng-if='organizations.length' The following organizations are docked here.
         p ng-if='!organizations.length' No organizations are docked here.
+        button.btn.btn-primary ng-if='currentUserIs("admin")' ng-click='addOrganization()' Add a new organization
       ul.list-group
-        li.list-group-item ng-repeat='org in organizations'
-          a ui-sref='org.dashboard({ orgName: org.name })' {{ org.name }}
+        li.list-group-item.clearfix ng-repeat='org in organizations'
+          a ui-sref='org.dashboard.default({ orgName: org.name })' {{ org.name }}
+          .btn-group.btn-group-xs.pull-right role='group' aria-label='controls' ng-if='currentUserIs("admin")'
+            button.btn.btn-warning tooltip='Edit' ui-sref='org.dashboard.default.edit({ orgName: org.name })'
+              span.glyphicon.glyphicon-pencil

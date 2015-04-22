@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   create_table "organizations", force: :cascade do |t|
     t.string   "api_id",          limit: 36,                 null: false
     t.string   "name",            limit: 50,                 null: false
+    t.string   "display_name",    limit: 50
     t.string   "normalized_name", limit: 50,                 null: false
     t.boolean  "public_access",              default: false, null: false
     t.datetime "created_at",                                 null: false
