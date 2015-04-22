@@ -4,7 +4,7 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
 
     $scope.newProject = {};
 
-    api.http({
+    api({
       method: 'GET',
       url: '/api/projects',
       params: {
@@ -14,7 +14,7 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
     }).then(showProjects);
 
     $scope.createProject = function(form) {
-      api.http({
+      api({
         method: 'POST',
         url: '/api/projects',
         data: $scope.newProject
@@ -45,7 +45,7 @@ angular.module('probe-dock.projects', ['probe-dock.api'])
     };
 
     $scope.save = function() {
-      api.http({
+      api({
         method: 'PATCH',
         url: '/api/projects/' + $scope.project.id,
         data: $scope.editedProject

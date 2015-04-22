@@ -9,7 +9,7 @@ angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
       $scope.busy = true;
       delete $scope.token;
 
-      api.http({
+      api({
         method: 'POST',
         url: '/api/tokens'
       }).then(showToken, onGenerateError);
@@ -40,7 +40,7 @@ angular.module('probe-dock.profile', ['probe-dock.api', 'probe-dock.auth'])
     };
 
     $scope.save = function() {
-      api.http({
+      api({
         method: 'PATCH',
         url: '/api/users/' + auth.currentUser.id,
         data: api.compact($scope.editedProfile)

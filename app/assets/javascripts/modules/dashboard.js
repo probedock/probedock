@@ -1,4 +1,4 @@
-angular.module('probe-dock.dashboard', [ 'probe-dock.orgs', 'probe-dock.reports' ])
+angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-dock.reports' ])
 
   .controller('DashboardHeaderCtrl', function(orgs, $scope, $state, $stateParams) {
 
@@ -39,7 +39,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.orgs', 'probe-dock.reports'
     };
 
     function fetchMetrics() {
-      return api.http({
+      return api({
         method: 'GET',
         url: '/api/metrics/newTests',
         params: {
@@ -72,7 +72,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.orgs', 'probe-dock.reports'
     fetchTags().then(showTags);
 
     function fetchTags() {
-      return api.http({
+      return api({
         method: 'GET',
         url: '/api/tags',
         params: {
@@ -99,7 +99,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.orgs', 'probe-dock.reports'
     fetchLatestReports().then(showReports);
 
     function fetchLatestReports() {
-      return api.http({
+      return api({
         method: 'GET',
         url: '/api/reports',
         params: {

@@ -73,7 +73,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
     function refreshOrgs() {
       if (auth.currentUser) {
-        api.http({
+        api({
           url: '/api/organizations'
         }).then(function(res) {
           setOrganizations(res.data);
@@ -105,7 +105,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
     $scope.editedOrg = {};
 
     if ($stateParams.orgName) {
-      api.http({
+      api({
         url: '/api/organizations/' + $stateParams.orgName
       }).then(function(res) {
         $scope.organization = res.data;
@@ -130,7 +130,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
         url += '/' + $scope.organization.id;
       }
 
-      api.http({
+      api({
         method: method,
         url: url,
         data: $scope.editedOrg

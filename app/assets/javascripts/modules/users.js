@@ -25,7 +25,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     };
 
     $scope.save = function() {
-      api.http({
+      api({
         method: 'POST',
         url: '/api/users',
         data: $scope.newUser
@@ -80,7 +80,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     });
 
     function fetchUsers() {
-      return api.http({
+      return api({
         method: 'GET',
         url: '/api/users',
         params: {
@@ -117,7 +117,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
       $scope.deleteError = false;
 
-      api.http({
+      api({
         method: 'DELETE',
         url: '/api/users/' + $scope.selectedUser.id
       }).then(onDeleted, onDeleteError);
@@ -128,7 +128,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
       $scope.busy = true;
       var newActive = !$scope.selectedUser.active;
 
-      api.http({
+      api({
         method: 'PATCH',
         url: '/api/users/' + $scope.selectedUser.id,
         data: {
@@ -151,7 +151,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
       $scope.busy = true;
       delete $scope.editError;
 
-      api.http({
+      api({
         method: 'PATCH',
         url: '/api/users/' + $scope.selectedUser.id,
         data: api.compact($scope.editedUser)
@@ -201,7 +201,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
     function fetchUser() {
       $scope.loadingSelectedUser = true;
-      return api.http({
+      return api({
         method: 'GET',
         url: '/api/users/' + userId
       });

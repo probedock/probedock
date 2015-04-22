@@ -1,6 +1,6 @@
-angular.module('probe-dock.home', [ 'probe-dock.api', 'probe-dock.orgs' ])
+angular.module('probe-dock.home', [ 'probe-dock.orgs' ])
 
-  .controller('HomeCtrl', function(api, orgs, $scope) {
+  .controller('HomeCtrl', function(orgs, $scope) {
 
     orgs.forwardData($scope);
 

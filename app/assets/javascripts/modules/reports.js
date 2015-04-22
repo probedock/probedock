@@ -88,7 +88,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     }
 
     function fetchHealth() {
-      return api.http({
+      return api({
         method: 'GET',
         url: '/api/reports/' + reportId + '/health'
       });
@@ -131,7 +131,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
 
       $scope.fetchingMoreResults = true;
 
-      return api.http({
+      return api({
         method: 'GET',
         url: '/api/reports/' + reportId + '/results',
         params: {
@@ -195,7 +195,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     });
 
     function fetchReport() {
-      api.http({
+      api({
         method: 'GET',
         url: '/api/reports/' + reportId
       }).then(showReport);
@@ -237,7 +237,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         $timeout.cancel(hideNoNewReportsPromise);
       }
 
-      api.http({
+      api({
         method: 'GET',
         url: '/api/reports',
         params: params
