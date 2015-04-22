@@ -31,7 +31,9 @@ module ProbeDock
         authorize! Organization, :create
 
         data = parse_organization
-        organization = Organization.new name: data[:name], public_access: data[:public] == true
+        data[:public_access] = data.delete :public if data.key? :public
+
+        organization = Organization.new data
         OrganizationValidations.validate organization, validation_context, location_type: :json, raise_error: true
 
         create_record organization

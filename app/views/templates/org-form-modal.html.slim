@@ -1,11 +1,11 @@
 form name='orgForm' ng-submit='save()'
   .modal-header
-    h3.modal-title ng-if='editedOrg.id' Edit {{ (editedOrg.displayName) || editedOrg.name }}
+    h3.modal-title ng-if='editedOrg.id' Edit {{ organization.displayName || organization.name }}
     h3.modal-title ng-if='!editedOrg.id' New Organization
   .modal-body
     .form-group
       label for='orgName' Name
-      input#orgName.form-control type='string' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)?$/i' ng-model='editedOrg.name'
+      input#orgName.form-control type='string' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)?$/i' autofocus=true ng-model='editedOrg.name'
       p.help-block
         | This is the identifier of the organization and is used in URLs.
         |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
@@ -23,5 +23,5 @@ form name='orgForm' ng-submit='save()'
   .modal-footer.clearfix
     .btn-group.pull-right
       button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
-      button.btn.btn-warning type='button' ng-if='organization.id' ng-click='reset()' Reset
+      button.btn.btn-warning type='button' ng-if='organization.id' ng-click='reset()' ng-disabled='!changed()' Reset
       button.btn.btn-primary type='submit' ng-disabled='orgForm.$invalid' Save

@@ -24,7 +24,7 @@ class Organization < ActiveRecord::Base
   before_create :normalize_name
 
   # TODO: do not accept UUIDs
-  validates :name, presence: true, uniqueness: true, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)\Z/i }
+  validates :name, presence: true, uniqueness: true, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)?\Z/i }
   validates :display_name, length: { maximum: 50, allow_blank: true }
   validates :public_access, inclusion: { in: [ true, false ] }
   validate :name_must_not_be_reserved

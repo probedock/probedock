@@ -14,21 +14,13 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.orgs', 'probe-dock.reports'
       if (toState.name.match(/\.edit$/)) {
         modal = orgs.openForm($scope);
 
-        // FIXME: this parent state transition doesn't work when going back to the home page
         modal.result.then(function() {
-          modal = null;
-          $state.go('^', {}, { inherit: true, replace: true });
+          $state.go('^', {}, { inherit: true });
         }, function(reason) {
-          modal = null;
-          if (reason != 'back') {
-            $state.go('^', {}, { inherit: true, replace: true });
+          if (reason != 'stateChange') {
+            $state.go('^', {}, { inherit: true });
           }
         });
-      } else {
-        if (modal) {
-          modal.dismiss('back');
-          modal = null;
-        }
       }
     });
   })

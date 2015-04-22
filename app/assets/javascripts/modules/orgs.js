@@ -1,4 +1,4 @@
-angular.module('probe-dock.orgs', [ 'probe-dock.api' ])
+angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.forms' ])
 
   .factory('orgs', function($modal) {
 
@@ -11,6 +11,13 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api' ])
           scope: $scope
         });
 
+        var deregister = $scope.$on('$stateChangeStart', function() {
+          modal.dismiss('stateChange');
+          deregister();
+        });
+
+        $scope.$on('$destroy', deregister);
+
         return modal;
       }
     };
@@ -18,9 +25,10 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api' ])
     return service;
   })
 
-  .controller('OrgFormCtrl', function(api, $modalInstance, $scope, $stateParams) {
+  .controller('OrgFormCtrl', function(api, forms, $modalInstance, $scope, $stateParams) {
 
     $scope.organization = {};
+    $scope.editedOrg = {};
 
     if ($stateParams.orgName) {
       api.http({
@@ -34,6 +42,9 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api' ])
     }
 
     $scope.reset = reset;
+    $scope.changed = function() {
+      return !forms.dataEquals($scope.organization, $scope.editedOrg);
+    };
 
     $scope.save = function() {
 

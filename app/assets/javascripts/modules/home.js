@@ -20,7 +20,12 @@ angular.module('probe-dock.home', [ 'probe-dock.api', 'probe-dock.orgs' ])
     }
 
     $scope.addOrganization = function() {
-      orgs.openForm($scope);
+      var modal = orgs.openForm($scope);
+
+      modal.result.then(function(org) {
+        $scope.createdOrg = org;
+        $scope.organizations.push(org);
+      });
     };
   })
 
