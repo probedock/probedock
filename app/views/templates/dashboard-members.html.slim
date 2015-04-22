@@ -1,1 +1,20 @@
-h1 Members
+table.orgMembers.table.table-striped.table-hover
+  thead
+    tr
+      th colspan=2 User
+      th Roles
+      th Since
+      th.add.clearfix
+        / TODO: add currentMemberIs role function to show this button only to org admins
+        button.btn.btn-success.btn-xs.pull-right type='button' tooltip='Add a member' tooltip-placement='left'
+          span.glyphicon.glyphicon-plus
+  tbody
+    tr ng-repeat='membership in memberships'
+      td.avatar
+        img gravatar-src='membership.user.emailMd5' gravatar-size=30
+      td {{ membership.user.name }}
+      td
+        / TODO: membership roles directive
+        span ng-if='!membership.roles.length' -
+        span ng-if='membership.roles.length' {{ membership.roles.sort().join(', ') }}
+      td colspan=2 {{ membership.createdAt | amDateFormat: 'LL' }}

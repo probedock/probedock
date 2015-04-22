@@ -52,6 +52,7 @@ module ProbeDock
     helpers ApiAuthenticationHelper
     helpers ApiAuthorizationHelper
     helpers ApiPaginationHelper
+    helpers ApiParamsHelper
     helpers ApiResourceHelper
 
     get :ping do

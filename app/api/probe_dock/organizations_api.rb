@@ -106,6 +106,21 @@ module ProbeDock
               create_record membership
             end
           end
+
+          get do
+            authenticate
+            authorize! Membership, :index
+
+            rel = policy_scope(Membership.includes(:organization_email)).order 'created_at ASC'
+
+            options = {
+              with_user: true_flag?(:withUser)
+            }
+
+            rel = rel.includes user: :primary_email if options[:with_user]
+
+            paginated(rel).to_a.collect{ |m| m.to_builder(options).attributes! }
+          end
         end
       end
     end

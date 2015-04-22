@@ -37,8 +37,12 @@ class Membership < ActiveRecord::Base
   def to_builder options = {}
     Jbuilder.new do |json|
       json.userId user.api_id
+      json.user user.to_builder.attributes! if options[:with_user]
+      # TODO: only show organization email for org admins
       json.organizationEmail organization_email.address
       json.roles roles.collect(&:to_s)
+      json.createdAt created_at.iso8601(3)
+      json.updatedAt updated_at.iso8601(3)
     end
   end
 end

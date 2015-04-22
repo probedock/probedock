@@ -20,6 +20,10 @@ class MembershipPolicy < ApplicationPolicy
     user.is?(:admin) || user.membership_in(organization).try(:is?, :admin)
   end
 
+  def index?
+    user.is?(:admin) || user.member_of?(organization)
+  end
+
   class Scope < Scope
     def resolve
       scope

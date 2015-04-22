@@ -47,6 +47,7 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
 
       .state('org.dashboard.members', {
         url: '/members',
+        controller: 'OrgMembersCtrl',
         templateUrl: '/templates/dashboard-members.html'
       })
 

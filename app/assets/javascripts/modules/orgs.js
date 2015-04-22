@@ -94,6 +94,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
     function setOrganizations(orgs) {
       service.organizations = orgs;
       service.emit('refresh', orgs);
+      // TODO: update current org with latest data
     }
 
     return service;
