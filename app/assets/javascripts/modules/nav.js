@@ -1,4 +1,4 @@
-angular.module('probe-dock.nav', [])
+angular.module('probe-dock.nav', [ 'probe-dock.orgs' ])
 
   .directive('spinner', function() {
     return {
@@ -7,7 +7,7 @@ angular.module('probe-dock.nav', [])
     };
   })
 
-  .controller('NavCtrl', function(api, $rootScope, $scope, $state) {
+  .controller('NavCtrl', function(api, orgs, $rootScope, $scope, $state) {
 
     var state = $state.current;
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {
@@ -22,22 +22,7 @@ angular.module('probe-dock.nav', [])
       });
     };
 
-    // TODO: extract this in org service
-    refreshOrgs();
-    $scope.$on('auth.signIn', refreshOrgs);
-    $scope.$on('auth.signOut', hidePrivateOrgs);
-
-    function hidePrivateOrgs() {
-      $scope.organizations = _.where($scope.organizations, { public: true });
-    }
-
-    function refreshOrgs() {
-      api.http({
-        url: '/api/organizations'
-      }).then(function(res) {
-        $scope.organizations = res.data;
-      });
-    }
+    orgs.forwardData($scope);
   })
 
 ;

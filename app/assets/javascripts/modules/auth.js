@@ -1,6 +1,6 @@
-angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
+angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
 
-  .factory('auth', function($base64, $http, localStorageService, $log, $rootScope) {
+  .factory('auth', function(appStore, $base64, $http, $log, $rootScope) {
 
     $rootScope.currentUser = null;
 
@@ -28,13 +28,13 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
         delete service.token;
         delete service.currentUser;
         $rootScope.currentUser = null;
-        localStorageService.remove('auth');
+        appStore.remove('auth');
         $rootScope.$broadcast('auth.signOut');
       },
 
       checkSignedIn: function() {
 
-        var authData = localStorageService.get('auth');
+        var authData = appStore.get('auth');
         if (authData) {
           authenticate(authData);
         }
@@ -43,7 +43,7 @@ angular.module('probe-dock.auth', ['base64', 'LocalStorageModule'])
 
     function onSignedIn(response) {
       authenticate(response.data);
-      localStorageService.set('auth', response.data);
+      appStore.set('auth', response.data);
       $rootScope.$broadcast('auth.signIn', response.data.user);
     }
 

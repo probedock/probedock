@@ -37,7 +37,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-sanitize/angular-sanitize.js', dest: 'vendor/assets/javascripts/angular-sanitize.js' },
           { nonull: true, src: 'bower_components/angular-ui-router/release/angular-ui-router.js', dest: 'vendor/assets/javascripts/angular-ui-router.js' },
           { nonull: true, src: 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js', dest: 'vendor/assets/javascripts/angular-ui-bootstrap-tpls.js' },
-          { nonull: true, src: 'bower_components/angular-local-storage/dist/angular-local-storage.js', dest: 'vendor/assets/javascripts/angular-local-storage.js' },
+          { nonull: true, src: 'bower_components/a0-angular-storage/dist/angular-storage.js', dest: 'vendor/assets/javascripts/angular-local-storage.js' },
           { nonull: true, src: 'bower_components/angular-moment/angular-moment.js', dest: 'vendor/assets/javascripts/angular-moment.js' },
           { nonull: true, src: 'bower_components/angular-base64/angular-base64.js', dest: 'vendor/assets/javascripts/angular-base64.js' }, // TODO: remove if unused
           { nonull: true, src: 'bower_components/angular-smart-table/dist/smart-table.js', dest: 'vendor/assets/javascripts/angular-smart-table.js' },

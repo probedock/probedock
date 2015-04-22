@@ -21,7 +21,7 @@ class Organization < ActiveRecord::Base
   include IdentifiableResource
 
   before_create{ set_identifier :api_id, :uuid }
-  before_create :normalize_name
+  before_save :normalize_name
 
   # TODO: do not accept UUIDs
   validates :name, presence: true, uniqueness: true, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)?\Z/i }

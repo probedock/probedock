@@ -8,5 +8,5 @@
       button.btn.btn-warning tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.default.edit({ orgName: orgName })' ng-class='{active: currentState == "org.dashboard.default.edit"}'
         span.glyphicon.glyphicon-pencil
     .page-header
-      h1 {{ orgName }}
+      h1 {{ currentOrganization.displayName || currentOrganization.name }}
   div ui-view=true

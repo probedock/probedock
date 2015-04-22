@@ -53,10 +53,6 @@ angular.module('probe-dock', [
     $logProvider.debugEnabled(environment !== 'production');
   })
 
-  .config(function(localStorageServiceProvider) {
-    localStorageServiceProvider.setPrefix('probe-dock');
-  })
-
   .config(function(ngClipProvider, zeroClipboardFlash) {
     ngClipProvider.setPath(zeroClipboardFlash);
   })

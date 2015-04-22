@@ -2,6 +2,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.orgs', 'probe-dock.reports'
 
   .controller('DashboardHeaderCtrl', function(orgs, $scope, $state, $stateParams) {
 
+    orgs.forwardData($scope);
     $scope.orgName = $stateParams.orgName;
 
     var modal;
