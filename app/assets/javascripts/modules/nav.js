@@ -1,4 +1,4 @@
-angular.module('probe-dock.nav', [ 'probe-dock.orgs' ])
+angular.module('probe-dock.nav', [ 'probe-dock.orgs', 'probe-dock.profile' ])
 
   .directive('spinner', function() {
     return {
@@ -7,7 +7,7 @@ angular.module('probe-dock.nav', [ 'probe-dock.orgs' ])
     };
   })
 
-  .controller('NavCtrl', function(api, orgs, $rootScope, $scope, $state) {
+  .controller('NavCtrl', function(api, orgs, profile, $rootScope, $scope, $state) {
 
     var state = $state.current;
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {
@@ -22,6 +22,7 @@ angular.module('probe-dock.nav', [ 'probe-dock.orgs' ])
       });
     };
 
+    profile.forwardData($scope);
     orgs.forwardData($scope);
   })
 

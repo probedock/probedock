@@ -1,6 +1,6 @@
 .container-fluid
   h1.text-center Profile
-  .col-md-offset-1.col-lg-offset-2.col-xs-12.col-sm-6.col-md-5.col-lg-4
+  .col-lg-4.col-md-5.col-sm-6.col-xs-12
     .profileUserDetails.panel.panel-default ng-controller='ProfileDetailsCtrl'
       .panel-heading
         h3.panel-title User Details
@@ -36,7 +36,28 @@
             span.glyphicon.glyphicon-remove
           button.btn.btn-primary type='submit' ng-click='save()' tooltip='Save' ng-if='editedProfile'
             span.glyphicon.glyphicon-ok
-  .col-xs-12.col-sm-6.col-md-5.col-lg-4
+  .col-lg-4.col-md-5.col-sm-6.col-xs-12
+    .profileMemberships.panel.panel-default ng-controller='ProfileMembershipsCtrl'
+      .panel-heading
+        h3.panel-title Memberships
+      .panel-body
+        p.empty ng-if='!memberships.length && !pendingMemberships.length' You are not in any organization.
+        div ng-if='pendingMemberships.length'
+          p.text-success You have been invited to join the following organizations:
+          ul.list-group
+            li.list-group-item.list-group-item-success.clearfix ng-repeat='membership in pendingMemberships'
+              button.btn.btn-success.btn-xs.pull-right tooltip='Accept' ng-click='accept(membership)'
+                span.glyphicon.glyphicon-thumbs-up
+              a href='#' ng-if='membership.organization.public' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
+                | {{ membership.organization.displayName || membership.organization.name }}
+              span ng-if='!membership.organization.public' {{ membership.organization.displayName || membership.organization.name }}
+        div ng-if='memberships.length'
+          p You are part of the following organizations:
+          ul.list-group
+            li.list-group-item ng-repeat='membership in memberships | orderBy: "acceptedAt"'
+              a href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
+                | {{ membership.organization.displayName || membership.organization.name }}
+  .col-lg-4.col-md-5.col-sm-6.col-xs-12
     .profileAccessTokens.panel.panel-default ng-controller='ProfileAccessTokensCtrl'
       .panel-heading
         h3.panel-title API Access Tokens

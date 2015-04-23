@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class Organization < ActiveRecord::Base
-  RESERVED_NAMES = %w(new organizations profile status users)
+  RESERVED_NAMES = %w(emails new organizations profile status users)
   include JsonResource
   include IdentifiableResource
 
@@ -35,6 +35,8 @@ class Organization < ActiveRecord::Base
       json.name name
       json.displayName display_name if display_name.present?
       json.public public_access
+      json.projectsCount projects_count
+      json.membershipsCount memberships_count
       json.createdAt created_at.iso8601(3)
       json.updatedAt updated_at.iso8601(3)
 

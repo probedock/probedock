@@ -1,6 +1,10 @@
 ## Features
 
-* make ui router work without trailing slashes
+* directive for org name (display name or name)
+
+* save and validate emails as lowercase
+
+* increase z-index of bootstrap modals so that the loading bar isn't over them
 
 * manage access keys
 

@@ -1,26 +1,32 @@
-table.orgMembers.table.table-striped.table-hover
-  thead
-    tr
-      th colspan=2 User
-      th Roles
-      th Since
-      th.controls.clearfix
-        / TODO: add currentMemberIs role function to show this button only to org admins
-        button.btn.btn-success.btn-xs.pull-right type='button' tooltip='Add a member' tooltip-placement='left' ui-sref='org.dashboard.members.new' ng-if='currentMemberIs("admin")'
-          span.glyphicon.glyphicon-plus
-  tbody
-    tr ng-repeat='membership in memberships'
-      td.avatar
-        img gravatar-src='membership.user.emailMd5' gravatar-size=30
-      td {{ membership.user.name }}
-      td
-        / TODO: membership roles directive
-        span ng-if='!membership.roles.length' -
-        span ng-if='membership.roles.length' {{ membership.roles.sort().join(', ') }}
-      td {{ membership.createdAt | amDateFormat: 'LL' }}
-      td.controls.clearfix
-        .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
-          button.btn.btn-warning type='button' tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.members.edit({ id: membership.id })'
-            span.glyphicon.glyphicon-pencil
-          button.btn.btn-danger type='button' tooltip='Remove Member' tooltip-append-to-body='true'
-            span.glyphicon.glyphicon-remove
+.row
+  .col-lg-3.col-md-4.col-xs-12
+    .well
+      h1 Members
+      p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi. Ut non nulla nulla. Nam et auctor ipsum, vitae pharetra dolor. In quis nisl finibus ex semper blandit. Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis. Sed vel vehicula arcu. Pellentesque orci ligula, placerat non porta a, eleifend quis turpis. Quisque ultrices, erat nec cursus euismod, lorem diam mollis purus, id ultrices est mauris sit amet quam. Sed eget iaculis magna. Nullam nisi diam, eleifend vitae egestas placerat, ornare quis magna. Phasellus commodo, arcu sit amet luctus sagittis, eros lorem lobortis eros, a aliquam dolor lacus non sem. Quisque in turpis non tellus suscipit dignissim sed vitae ex.
+      button.btn.btn-success ui-sref='org.dashboard.members.new'
+        span.glyphicon.glyphicon-plus
+        |  Add a member
+  .col-lg-9.col-md-8.col-xs-12
+    #orgMembers.col-lg-4.col-sm-6.col-xs-12 ng-repeat='membership in memberships'
+      .panel.panel-default
+        .panel-heading.clearfix
+          strong ng-if='membership.user' {{ membership.user.name }}
+          em ng-if='!membership.user' Waiting for user to accept...
+          .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
+            button.btn.btn-warning type='button' tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.members.edit({ id: membership.id })'
+              span.glyphicon.glyphicon-pencil
+            button.btn.btn-danger type='button' tooltip='Remove Member' tooltip-append-to-body='true' ng-click='remove(membership)'
+              span.glyphicon.glyphicon-remove
+        .panel-body
+          .media
+            .media-left
+              a href='#'
+                img.avatar.media-object gravatar-src='membership.user.emailMd5' gravatar-size=64
+            .media-body
+              .label.label-info.pull-right ng-if='!membership.roles.length' user
+              .label.pull-right ng-repeat='role in membership.roles.sort()' ng-class='{"label-primary": role == "admin", "label-info": role != "admin"}' {{ role }}
+              dl
+                dt E-mail
+                dd {{ membership.organizationEmail }}
+                dt ng-if='membership.acceptedAt' Member since
+                dd ng-if='membership.acceptedAt' {{ membership.acceptedAt | amDateFormat: 'LL' }}

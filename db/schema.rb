@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "categories", ["name"], name: "index_categories_on_name", unique: true, using: :btree
 
   create_table "emails", force: :cascade do |t|
-    t.string "address", null: false
+    t.string "address", limit: 255, null: false
   end
 
   add_index "emails", ["address"], name: "index_emails_on_address", unique: true, using: :btree
@@ -48,25 +48,28 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "emails_users", ["email_id"], name: "index_emails_users_on_email_id", unique: true, using: :btree
 
   create_table "memberships", force: :cascade do |t|
-    t.string   "api_id",                limit: 5,             null: false
-    t.integer  "user_id",                                     null: false
-    t.integer  "organization_email_id",                       null: false
-    t.integer  "organization_id",                             null: false
-    t.integer  "roles_mask",                      default: 0, null: false
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
+    t.string   "api_id",                limit: 12,             null: false
+    t.integer  "user_id"
+    t.integer  "organization_email_id",                        null: false
+    t.integer  "organization_id",                              null: false
+    t.integer  "roles_mask",                       default: 0, null: false
+    t.datetime "accepted_at"
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
   end
 
   add_index "memberships", ["api_id"], name: "index_memberships_on_api_id", unique: true, using: :btree
 
   create_table "organizations", force: :cascade do |t|
-    t.string   "api_id",          limit: 5,                  null: false
-    t.string   "name",            limit: 50,                 null: false
-    t.string   "display_name",    limit: 50
-    t.string   "normalized_name", limit: 50,                 null: false
-    t.boolean  "public_access",              default: false, null: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.string   "api_id",            limit: 5,                  null: false
+    t.string   "name",              limit: 50,                 null: false
+    t.string   "display_name",      limit: 50
+    t.string   "normalized_name",   limit: 50,                 null: false
+    t.boolean  "public_access",                default: false, null: false
+    t.integer  "memberships_count",            default: 0,     null: false
+    t.integer  "projects_count",               default: 0,     null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
   end
 
   add_index "organizations", ["api_id"], name: "index_organizations_on_api_id", unique: true, using: :btree
@@ -304,16 +307,16 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "user_settings", ["user_id"], name: "index_user_settings_on_user_id", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "name",                 limit: 255,                null: false
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
-    t.integer  "sign_in_count",                    default: 0
-    t.integer  "roles_mask",                       default: 0,    null: false
-    t.boolean  "active",                           default: true, null: false
+    t.string   "name",                 limit: 25,                null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.integer  "sign_in_count",                   default: 0
+    t.integer  "roles_mask",                      default: 0,    null: false
+    t.boolean  "active",                          default: true, null: false
     t.integer  "primary_email_id"
-    t.string   "password_digest",                                 null: false
+    t.string   "password_digest",                                null: false
     t.integer  "last_test_payload_id"
-    t.string   "api_id",               limit: 5,                  null: false
+    t.string   "api_id",               limit: 5,                 null: false
   end
 
   add_index "users", ["api_id"], name: "index_users_on_api_id", unique: true, using: :btree

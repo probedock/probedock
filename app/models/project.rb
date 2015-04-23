@@ -20,9 +20,9 @@ class Project < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
 
-  before_create{ set_identifier :api_id }
+  before_create{ set_identifier :api_id, size: 12 }
 
-  belongs_to :organization
+  belongs_to :organization, counter_cache: true
   has_many :test_keys
   has_many :tests, class_name: 'ProjectTest'
   has_many :versions, class_name: 'ProjectVersion'

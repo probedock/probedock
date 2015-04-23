@@ -21,6 +21,10 @@ class MembershipPolicy < ApplicationPolicy
   end
 
   def index?
+    true
+  end
+
+  def index_organization?
     organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
   end
 
@@ -29,12 +33,36 @@ class MembershipPolicy < ApplicationPolicy
   end
 
   def update?
+    set_roles? || set_user? || accept?
+  end
+
+  def set_roles?
+    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+  end
+
+  def set_user?
+    user.is?(:admin)
+  end
+
+  def accept?
+    user.emails.include?(record.organization_email)
+  end
+
+  def destroy?
     user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   class Scope < Scope
     def resolve
-      scope
+      if organization.present?
+        scope.where organization: organization
+      elsif user.try :is?, :admin
+        scope
+      elsif user.present?
+        scope.joins(organization_email: :users).where('users.id IN (?)', [ user.id ])
+      else
+        scope.none
+      end
     end
   end
 end

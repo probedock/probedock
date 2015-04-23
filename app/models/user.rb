@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :emails
 
   strip_attributes except: :password_digest
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: true, length: { maximum: 25 }
   validates :primary_email, presence: true
 
   def to_builder options = {}

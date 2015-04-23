@@ -32,6 +32,9 @@ nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavC
             li
               a href='#' ui-sref='users' Users
       ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
+        li ng-if='pendingMemberships.length'
+          button.btn.btn-success.navbar-btn.btn-sm tooltip='You have been invited to join an organization!' tooltip-append-to-body='true' tooltip-placement='bottom' ui-sref='profile'
+            span.glyphicon.glyphicon-exclamation-sign
         li ng-if='currentUser' ng-class='{active: baseStateIs("profile")}'
           a href='#' ui-sref='profile' {{ currentUser.email }}
         li ng-if='!currentUser'

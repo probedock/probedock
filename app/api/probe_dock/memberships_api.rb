@@ -40,19 +40,47 @@ module ProbeDock
         authorize! membership, :create
 
         Membership.transaction do
+
           membership.organization_email = Email.where(address: data[:organization_email]).first_or_create
-          membership.user = data[:userId].present? ? User.where(api_id: data[:userId]).first : membership.organization_email.users.first
           membership.roles = data[:roles] if data[:roles].kind_of?(Array) && data[:roles].all?{ |r| r.kind_of?(String) }
+
+          if data[:user_id].present?
+            authorize! membership, :set_user
+            membership.user = User.where(api_id: data[:user_id]).first!
+          end
+
           create_record membership
         end
       end
 
       get do
         authenticate
-        authorize! Membership, :index
 
-        rel = policy_scope(Membership.includes(:organization, :organization_email)).order 'created_at ASC'
-        rel = rel.where organization: current_organization if current_organization.present?
+        if current_organization
+          authorize! Membership, :index_organization
+        else
+          authorize! Membership, :index
+        end
+
+        rel = Membership.includes :organization, :organization_email
+        rel = policy_scope(rel).order 'created_at ASC'
+
+        rel = paginated rel do |rel|
+          if params.key? :accepted
+            rel = rel.where true_flag?(:accepted) ? 'memberships.user_id IS NOT NULL' : 'memberships.user_id IS NULL'
+          end
+
+          if params.key? :mine
+            if current_organization.present? || current_user.try(:is?, :admin)
+              condition = true_flag?(:mine) ? 'IN' : 'NOT IN'
+              rel = rel.joins(organization_email: :users).where("users.id #{condition} (?)", [ current_user.id ])
+            else
+              rel = rel.none unless true_flag?(:mine)
+            end
+          end
+
+          rel
+        end
 
         options = {
           with_organization: true_flag?(:withOrganization),
@@ -65,7 +93,7 @@ module ProbeDock
           rel = rel.includes :user
         end
 
-        paginated(rel).to_a.collect{ |m| m.to_builder(options).attributes! }
+        rel.to_a.collect{ |m| m.to_builder(options).attributes! }
       end
 
       namespace '/:id' do
@@ -93,13 +121,34 @@ module ProbeDock
         patch do
           authorize! record, :update
 
-          updates = parse_membership.slice :organization_email, :roles
+          updates = parse_membership.slice :organization_email, :roles, :user_id
 
           # FIXME: update organization email but only if user already has that email
           updates.delete :organization_email
-          updates.delete :roles unless data[:roles].kind_of?(Array) && data[:roles].all?{ |r| r.kind_of?(String) }
+
+          if updates[:roles].present?
+            authorize! record, :set_roles
+            updates.delete :roles unless updates[:roles].kind_of?(Array) && updates[:roles].all?{ |r| r.kind_of?(String) }
+          end
+
+          if updates[:user_id].present?
+            if updates[:user_id] != current_user.api_id
+              authorize! record, :set_user
+            else
+              authorize! record, :accept
+            end
+
+            updates[:user] = User.where(api_id: updates[:user_id]).first!
+          end
 
           update_record record, updates
+        end
+
+        delete do
+          authorize! record, :destroy
+          record.destroy
+          status 204
+          nil
         end
       end
     end

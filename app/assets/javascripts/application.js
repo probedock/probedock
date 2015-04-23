@@ -40,11 +40,11 @@
 //= require angular-sanitize
 //= require angular-ui-router
 //= require angular-ui-bootstrap-tpls
+//= require angular-ui-select
 //= require angular-local-storage
 //= require angular-moment
 //= require angular-base64
 //= require angular-smart-table
-//= require angular-md5
 //= require angular-gravatar
 //= require angular-ng-infinite-scroll
 //= require angular-jqcloud

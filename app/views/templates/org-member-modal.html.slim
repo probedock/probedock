@@ -1,9 +1,23 @@
 form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && save()'
   .modal-header
-    h3.modal-title ng-if='editedMembership.id' Edit {{ editedMembership.user.name }}'s Membership
+    h3.modal-title ng-if='editedMembership.id && editedMembership.user' Edit {{ editedMembership.user.name }}'s Membership
+    h3.modal-title ng-if='editedMembership.id && !editedMembership.user' Edit Membership
     h3.modal-title ng-if='!editedMembership.id' New Member
   .modal-body
-    p Not yet implemented
+    .form-group ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
+      label for='membershipOrgEmail' E-mail
+      input#membershipOrgEmail.form-control type='email' name='orgEmail' placeholder='E-mail of the member within the organization' required=true maxlength=255 autofocus=true ng-model='editedMembership.organizationEmail' ng-disabled='editedMembership.id'
+      p.help-block
+        | This e-mail is used to contact the member about activity regarding the organization.
+      p.help-block ng-if='!editedMembership.id'
+        | It will also be used to send a registration e-mail if the member doesn't have a registered account.
+    .form-group
+      label for='membershipRoles' Roles
+      ui-select#membershipRoles.form-control multiple=true ng-model='editedMembership.roles'
+        ui-select-match placeholder='Select a role...' {{ $item }}
+        ui-select-choices repeat='role in organizationRoles | filter: $select.search' {{ role }}
+      p.help-block
+        | Roles give a member additional privileges within the organization.
   .modal-footer.clearfix
     .btn-group.pull-right
       button.btn.btn-default type='button' ng-click='$dismiss()' Cancel

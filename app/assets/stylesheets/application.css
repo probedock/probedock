@@ -13,6 +13,7 @@
  *= require jqcloud2
  *= require nvd3
  *= require angular-loading-bar
+ *= require angular-ui-select
  *= require ./bootstrap
  *= require ./layout
  *= require ./generic

@@ -19,14 +19,15 @@ class Membership < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
 
-  before_create{ set_identifier :api_id }
+  before_create{ set_identifier :api_id, size: 12 }
+  before_save :set_accepted_at
 
   # List of roles. DO NOT change the order of the roles, as they
   # are stored in a bitmask. Only append new roles to the list.
   include RoleModel
   roles :admin
 
-  belongs_to :organization
+  belongs_to :organization, counter_cache: true
   belongs_to :organization_email, class_name: 'Email'
   belongs_to :user
 
@@ -37,15 +38,25 @@ class Membership < ActiveRecord::Base
   def to_builder options = {}
     Jbuilder.new do |json|
       json.id api_id
-      json.userId user.api_id
-      json.user user.to_builder.attributes! if options[:with_user]
       json.organizationId organization.api_id
       json.organization organization.to_builder.attributes! if options[:with_organization]
       # TODO: only show organization email for org admins
       json.organizationEmail organization_email.address
       json.roles roles.collect(&:to_s)
       json.createdAt created_at.iso8601(3)
+      json.acceptedAt accepted_at.iso8601(3) if accepted_at.present?
       json.updatedAt updated_at.iso8601(3)
+
+      if user.present?
+        json.userId user.api_id
+        json.user user.to_builder.attributes! if options[:with_user]
+      end
     end
+  end
+
+  private
+
+  def set_accepted_at
+    self.accepted_at ||= Time.now if user.present?
   end
 end

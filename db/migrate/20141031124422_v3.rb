@@ -43,6 +43,8 @@ class V3 < ActiveRecord::Migration
       t.string :display_name, limit: 50
       t.string :normalized_name, null: false, limit: 50
       t.boolean :public_access, null: false, default: false
+      t.integer :memberships_count, null: false, default: 0
+      t.integer :projects_count, null: false, default: 0
       t.timestamps null: false
       t.index :api_id, unique: true
       t.index :name, unique: true
@@ -50,7 +52,7 @@ class V3 < ActiveRecord::Migration
     end
 
     create_table :emails do |t|
-      t.string :address, null: false
+      t.string :address, null: false, limit: 255
       t.index :address, unique: true
     end
 
@@ -68,11 +70,12 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :categories, :organizations
 
     create_table :memberships do |t|
-      t.string :api_id, null: false, limit: 5
-      t.integer :user_id, null: false
+      t.string :api_id, null: false, limit: 12
+      t.integer :user_id
       t.integer :organization_email_id, null: false
       t.integer :organization_id, null: false
       t.integer :roles_mask, null: false, default: 0
+      t.datetime :accepted_at
       t.timestamps null: false
       t.index :api_id, unique: true
     end
@@ -282,6 +285,7 @@ class V3 < ActiveRecord::Migration
     add_column :users, :password_digest, :string, null: false
     add_column :users, :last_test_payload_id, :integer
     add_column :users, :api_id, :string, null: false, limit: 5
+    change_column :users, :name, :string, null: false, limit: 25
     add_index :users, :api_id, unique: true
     add_index :users, :primary_email_id, unique: true
     add_foreign_key :users, :emails, column: :primary_email_id

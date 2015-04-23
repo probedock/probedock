@@ -21,8 +21,12 @@ module ApiAuthorizationHelper
     Pundit.authorize pundit_user, record, query
   end
 
+  def policy record
+    Pundit.policy! pundit_user, record
+  end
+
   def policy_scope scope
-    Pundit.policy_scope pundit_user, scope
+    Pundit.policy_scope! pundit_user, scope
   end
 
   def pundit_user
