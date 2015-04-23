@@ -19,7 +19,7 @@ class Membership < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
 
-  before_create :set_identifier
+  before_create{ set_identifier :api_id }
 
   # List of roles. DO NOT change the order of the roles, as they
   # are stored in a bitmask. Only append new roles to the list.
@@ -36,8 +36,11 @@ class Membership < ActiveRecord::Base
 
   def to_builder options = {}
     Jbuilder.new do |json|
+      json.id api_id
       json.userId user.api_id
       json.user user.to_builder.attributes! if options[:with_user]
+      json.organizationId organization.api_id
+      json.organization organization.to_builder.attributes! if options[:with_organization]
       # TODO: only show organization email for org admins
       json.organizationEmail organization_email.address
       json.roles roles.collect(&:to_s)

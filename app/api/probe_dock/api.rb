@@ -81,6 +81,7 @@ module ProbeDock
     end
 
     mount AccessTokensApi
+    mount MembershipsApi
     mount MetricsApi
     mount OrganizationsApi
     mount PayloadsApi

@@ -17,11 +17,19 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class MembershipPolicy < ApplicationPolicy
   def create?
-    user.is?(:admin) || user.membership_in(organization).try(:is?, :admin)
+    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   def index?
+    organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
+  end
+
+  def show?
     user.is?(:admin) || user.member_of?(organization)
+  end
+
+  def update?
+    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   class Scope < Scope

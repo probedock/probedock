@@ -4,9 +4,9 @@ table.orgMembers.table.table-striped.table-hover
       th colspan=2 User
       th Roles
       th Since
-      th.add.clearfix
+      th.controls.clearfix
         / TODO: add currentMemberIs role function to show this button only to org admins
-        button.btn.btn-success.btn-xs.pull-right type='button' tooltip='Add a member' tooltip-placement='left'
+        button.btn.btn-success.btn-xs.pull-right type='button' tooltip='Add a member' tooltip-placement='left' ui-sref='org.dashboard.members.new' ng-if='currentMemberIs("admin")'
           span.glyphicon.glyphicon-plus
   tbody
     tr ng-repeat='membership in memberships'
@@ -17,4 +17,10 @@ table.orgMembers.table.table-striped.table-hover
         / TODO: membership roles directive
         span ng-if='!membership.roles.length' -
         span ng-if='membership.roles.length' {{ membership.roles.sort().join(', ') }}
-      td colspan=2 {{ membership.createdAt | amDateFormat: 'LL' }}
+      td {{ membership.createdAt | amDateFormat: 'LL' }}
+      td.controls.clearfix
+        .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
+          button.btn.btn-warning type='button' tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.members.edit({ id: membership.id })'
+            span.glyphicon.glyphicon-pencil
+          button.btn.btn-danger type='button' tooltip='Remove Member' tooltip-append-to-body='true'
+            span.glyphicon.glyphicon-remove

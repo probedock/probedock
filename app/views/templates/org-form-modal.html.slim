@@ -1,14 +1,16 @@
-form name='orgForm' ng-submit='save()'
+form novalidate=true name='orgForm' ng-submit='orgForm.$valid && save()'
   .modal-header
     h3.modal-title ng-if='editedOrg.id' Edit {{ organization.displayName || organization.name }}
     h3.modal-title ng-if='!editedOrg.id' New Organization
   .modal-body
-    .form-group
+    .form-group ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
       label for='orgName' Name
-      input#orgName.form-control type='string' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)?$/i' autofocus=true ng-model='editedOrg.name'
+      input#orgName.form-control type='string' name='name' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)?$/i' unique-org-name=true autofocus=true ng-model='editedOrg.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
         | This is the identifier of the organization and is used in URLs.
         |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
+      .alert.alert-danger ng-if='orgForm.name.$error.uniqueOrgName'
+        strong An organization with this name already exists.
     .form-group
       label for='orgDisplayName' Display Name
       input#orgDisplayName.form-control type='string' placeholder='{{ editedOrg.name }}' maxlength=50 ng-model='editedOrg.displayName'

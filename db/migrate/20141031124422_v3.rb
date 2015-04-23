@@ -38,7 +38,7 @@ class V3 < ActiveRecord::Migration
     drop_table :test_infos
 
     create_table :organizations do |t|
-      t.string :api_id, null: false, limit: 36
+      t.string :api_id, null: false, limit: 5
       t.string :name, null: false, limit: 50
       t.string :display_name, limit: 50
       t.string :normalized_name, null: false, limit: 50
@@ -68,12 +68,13 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :categories, :organizations
 
     create_table :memberships do |t|
-      t.string :api_id, null: false, limit: 12
+      t.string :api_id, null: false, limit: 5
       t.integer :user_id, null: false
       t.integer :organization_email_id, null: false
       t.integer :organization_id, null: false
       t.integer :roles_mask, null: false, default: 0
       t.timestamps null: false
+      t.index :api_id, unique: true
     end
 
     add_foreign_key :memberships, :users
@@ -174,10 +175,11 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :test_payloads, :project_versions
 
     create_table :test_reports do |t|
-      t.string :api_id, null: false, limit: 12
+      t.string :api_id, null: false, limit: 5
       t.integer :organization_id, null: false
       t.integer :runner_id, null: false
       t.timestamps null: false
+      t.index :api_id, unique: true
     end
 
     add_foreign_key :test_reports, :organizations
@@ -279,7 +281,8 @@ class V3 < ActiveRecord::Migration
     add_column :users, :primary_email_id, :integer
     add_column :users, :password_digest, :string, null: false
     add_column :users, :last_test_payload_id, :integer
-    add_column :users, :api_id, :string, null: false, limit: 12
+    add_column :users, :api_id, :string, null: false, limit: 5
+    add_index :users, :api_id, unique: true
     add_index :users, :primary_email_id, unique: true
     add_foreign_key :users, :emails, column: :primary_email_id
     add_foreign_key :users, :test_payloads, column: :last_test_payload_id

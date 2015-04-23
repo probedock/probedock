@@ -48,17 +48,19 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "emails_users", ["email_id"], name: "index_emails_users_on_email_id", unique: true, using: :btree
 
   create_table "memberships", force: :cascade do |t|
-    t.string   "api_id",                limit: 12,             null: false
-    t.integer  "user_id",                                      null: false
-    t.integer  "organization_email_id",                        null: false
-    t.integer  "organization_id",                              null: false
-    t.integer  "roles_mask",                       default: 0, null: false
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.string   "api_id",                limit: 5,             null: false
+    t.integer  "user_id",                                     null: false
+    t.integer  "organization_email_id",                       null: false
+    t.integer  "organization_id",                             null: false
+    t.integer  "roles_mask",                      default: 0, null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
   end
 
+  add_index "memberships", ["api_id"], name: "index_memberships_on_api_id", unique: true, using: :btree
+
   create_table "organizations", force: :cascade do |t|
-    t.string   "api_id",          limit: 36,                 null: false
+    t.string   "api_id",          limit: 5,                  null: false
     t.string   "name",            limit: 50,                 null: false
     t.string   "display_name",    limit: 50
     t.string   "normalized_name", limit: 50,                 null: false
@@ -234,12 +236,14 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_payloads_reports", ["test_payload_id", "test_report_id"], name: "index_test_payloads_reports_on_payload_and_report_id", unique: true, using: :btree
 
   create_table "test_reports", force: :cascade do |t|
-    t.string   "api_id",          limit: 12, null: false
-    t.integer  "organization_id",            null: false
-    t.integer  "runner_id",                  null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.string   "api_id",          limit: 5, null: false
+    t.integer  "organization_id",           null: false
+    t.integer  "runner_id",                 null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
+
+  add_index "test_reports", ["api_id"], name: "index_test_reports_on_api_id", unique: true, using: :btree
 
   create_table "test_result_contributors", id: false, force: :cascade do |t|
     t.integer "test_result_id"
@@ -309,9 +313,10 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.integer  "primary_email_id"
     t.string   "password_digest",                                 null: false
     t.integer  "last_test_payload_id"
-    t.string   "api_id",               limit: 12,                 null: false
+    t.string   "api_id",               limit: 5,                  null: false
   end
 
+  add_index "users", ["api_id"], name: "index_users_on_api_id", unique: true, using: :btree
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
   add_index "users", ["primary_email_id"], name: "index_users_on_primary_email_id", unique: true, using: :btree
 

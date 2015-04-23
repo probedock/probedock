@@ -20,7 +20,7 @@ class Organization < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
 
-  before_create{ set_identifier :api_id, :uuid }
+  before_create{ set_identifier :api_id }
   before_save :normalize_name
 
   # TODO: do not accept UUIDs
@@ -35,6 +35,12 @@ class Organization < ActiveRecord::Base
       json.name name
       json.displayName display_name if display_name.present?
       json.public public_access
+      json.createdAt created_at.iso8601(3)
+      json.updatedAt updated_at.iso8601(3)
+
+      if options[:with_roles]
+        json.roles options[:memberships].find{ |m| m.organization == self }.try(:roles) || []
+      end
     end
   end
 

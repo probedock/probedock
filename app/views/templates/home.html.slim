@@ -2,14 +2,14 @@
   .col-lg-offset-3.col-lg-6
     .panel.panel-primary
       .panel-heading.clearfix
-        a.btn.btn-success.btn-xs.pull-right ng-if='currentUserIs("admin")' href='#' ng-click='addOrganization()' tooltip='Add a new organization' tooltip-placement='left'
+        a.btn.btn-success.btn-xs.pull-right ng-if='currentUserIs("admin")' href='#' ui-sref='home.newOrg' tooltip='Add a new organization' tooltip-placement='left'
           span.glyphicon.glyphicon-plus
         | Organizations
       .panel-body
         p ng-if='organizations.length' The following organizations are docked here.
         p ng-if='!organizations.length' No organizations are docked here.
       ul.list-group
-        li.list-group-item.clearfix ng-repeat='org in organizations | orderBy: "name.toLowerCase()"' ng-class='{"list-group-item-success": org == createdOrg}'
+        li.list-group-item.clearfix ng-repeat='org in organizations | orderBy: "name.toLowerCase()"'
           a ui-sref='org.dashboard.default({ orgName: org.name })' {{ org.displayName || org.name }}
           .btn-group.btn-group-xs.pull-right role='group' aria-label='controls' ng-if='currentUserIs("admin")'
             a.btn.btn-warning href='#' tooltip='Edit {{ org.displayName || org.name }}' tooltip-placement='left' tooltip-append-to-body='true' ui-sref='org.dashboard.default.edit({ orgName: org.name })'

@@ -42,6 +42,7 @@ class Project < ActiveRecord::Base
         json.testsCount tests_count
         json.deprecatedTestsCount deprecated_tests_count
         json.createdAt created_at.iso8601(3)
+        json.updatedAt updated_at.iso8601(3)
       end
     end
   end

@@ -12,7 +12,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
 
       $scope.currentState = toState.name;
 
-      if (toState.name.match(/\.edit$/)) {
+      if (toState.name == 'org.dashboard.default.edit') {
         modal = orgs.openForm($scope);
 
         modal.result.then(function() {

@@ -1,0 +1,11 @@
+form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && save()'
+  .modal-header
+    h3.modal-title ng-if='editedMembership.id' Edit {{ editedMembership.user.name }}'s Membership
+    h3.modal-title ng-if='!editedMembership.id' New Member
+  .modal-body
+    p Not yet implemented
+  .modal-footer.clearfix
+    .btn-group.pull-right
+      button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
+      button.btn.btn-warning type='button' ng-if='editedMembership.id' ng-click='reset()' ng-disabled='!changed()' Reset
+      button.btn.btn-primary type='submit' ng-disabled='membershipForm.$invalid' Save

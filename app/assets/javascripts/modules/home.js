@@ -1,16 +1,22 @@
 angular.module('probe-dock.home', [ 'probe-dock.orgs' ])
 
-  .controller('HomeCtrl', function(orgs, $scope) {
+  .controller('HomeCtrl', function(orgs, $scope, $state) {
 
     orgs.forwardData($scope);
 
-    $scope.addOrganization = function() {
-      var modal = orgs.openForm($scope);
+    $scope.$on('$stateChangeSuccess', function(even, toState) {
+      if (toState.name == 'home.newOrg') {
+        var modal = orgs.openForm($scope);
 
-      modal.result.then(function(org) {
-        $scope.createdOrg = org;
-      });
-    };
+        modal.result.then(function(org) {
+          $state.go('org.dashboard.members', { orgName: org.name });
+        }, function(reason) {
+          if (reason != 'stateChange') {
+            $state.go('^', {}, { inherit: true });
+          }
+        });
+      }
+    });
   })
 
 ;

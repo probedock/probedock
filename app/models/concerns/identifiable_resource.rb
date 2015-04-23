@@ -33,7 +33,7 @@ module IdentifiableResource
     end
 
     def generate_identifier options = {}
-      SecureRandom.random_alphanumeric options.fetch(:size, 12)
+      SecureRandom.random_alphanumeric options.fetch(:size, 5)
     end
   end
 end

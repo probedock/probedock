@@ -48,13 +48,27 @@ module ProbeDock
         rel = paginated rel do |rel|
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
-          else
-            rel
+            rel = rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
           end
+
+          if params[:name].present?
+            rel = rel.where normalized_name: params[:name].to_s.downcase
+          end
+
+          rel
         end
 
-        rel.to_a.collect{ |p| p.to_builder.attributes! }
+        result = rel.to_a
+
+        options = {
+          with_roles: true_flag?(:withRoles)
+        }
+
+        if options[:with_roles]
+          options[:memberships] = current_user.present? ? current_user.memberships.where(organization_id: result.collect(&:id)).to_a : []
+        end
+
+        result.collect{ |p| p.to_builder(options).attributes! }
       end
 
       namespace '/:id' do
@@ -85,42 +99,6 @@ module ProbeDock
           updates[:public_access] = updates.delete :public if updates.key? :public
 
           update_record current_organization, updates
-        end
-
-        namespace '/memberships' do
-          helpers do
-            def parse_member
-              parse_object :userId, :email, :roles
-            end
-          end
-
-          post do
-            data = parse_member
-            membership = Membership.new organization: current_organization
-            authorize! membership, :create
-
-            Membership.transaction do
-              membership.organization_email = Email.where(address: data[:email]).first_or_create
-              membership.user = data[:userId].present? ? User.where(api_id: data[:userId]).first : membership.organization_email.users.first
-              membership.roles = data[:roles] if data[:roles].kind_of?(Array) && data[:roles].all?{ |r| r.kind_of?(String) }
-              create_record membership
-            end
-          end
-
-          get do
-            authenticate
-            authorize! Membership, :index
-
-            rel = policy_scope(Membership.includes(:organization_email)).order 'created_at ASC'
-
-            options = {
-              with_user: true_flag?(:withUser)
-            }
-
-            rel = rel.includes user: :primary_email if options[:with_user]
-
-            paginated(rel).to_a.collect{ |m| m.to_builder(options).attributes! }
-          end
         end
       end
     end

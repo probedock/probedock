@@ -54,4 +54,5 @@
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot
+//= require_tree ./initializers
 //= require_tree ./modules

@@ -10,6 +10,10 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         templateUrl: '/templates/home.html'
       })
 
+      .state('home.newOrg', {
+        url: 'new'
+      })
+
       .state('profile', {
         url: '/profile',
         templateUrl: '/templates/profile.html'
@@ -49,6 +53,14 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         url: '/members',
         controller: 'OrgMembersCtrl',
         templateUrl: '/templates/dashboard-members.html'
+      })
+
+      .state('org.dashboard.members.new', {
+        url: '/new'
+      })
+
+      .state('org.dashboard.members.edit', {
+        url: '/:id/edit'
       })
 
       .state('org.info', {
