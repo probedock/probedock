@@ -49,7 +49,9 @@ module ProbeDock
             membership.user = User.where(api_id: data[:user_id]).first!
           end
 
-          create_record membership
+          create_record membership do
+            UserMailer.new_membership_email(membership).deliver_later
+          end
         end
       end
 

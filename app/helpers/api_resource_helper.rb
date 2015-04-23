@@ -23,6 +23,7 @@ module ApiResourceHelper
 
   def create_record record
     if record.errors.empty? && record.save
+      yield if block_given?
       record
     else
       status 422
@@ -32,11 +33,19 @@ module ApiResourceHelper
 
   def update_record record, updates, &block
     if record.errors.empty? && (block ? block.call(record, updates) && record.valid? : record.update_attributes(updates))
+      yield if block_given?
       record
     else
       status 422
       record_errors record
     end
+  end
+
+  # TODO: use this
+  def destroy_record record
+    record.destroy
+    status 204
+    nil
   end
 
   def validation_context

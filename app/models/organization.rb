@@ -50,6 +50,10 @@ class Organization < ActiveRecord::Base
     public_access
   end
 
+  def effective_name
+    display_name || name
+  end
+
   private
 
   def name_must_not_be_reserved

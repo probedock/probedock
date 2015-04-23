@@ -78,6 +78,22 @@ module ProbeDock
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
+    config.action_mailer.delivery_method = :smtp
+
+    config.action_mailer.smtp_settings = {
+      address: 'smtp.gmail.com',
+      port: 587,
+      domain: config_for(:'probe-dock')['host'],
+      user_name: secrets.mail_user,
+      password: secrets.mail_password,
+      authentication: 'plain',
+      enable_starttls_auto: true
+    }
+
+    config.action_mailer.default_options = {
+      from: config_for(:'probe-dock')['mail_from']
+    }
+
     config.assets.precompile << '*.swf'
     config.assets.paths << Rails.root.join('vendor', 'assets', 'flash')
 
