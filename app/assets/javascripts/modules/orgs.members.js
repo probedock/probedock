@@ -137,4 +137,18 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     }
   })
 
+  .controller('NewMembershipCtrl', function(api, $scope, $stateParams) {
+
+    api({
+      url: '/api/memberships',
+      params: {
+        otp: $stateParams.otp,
+        withOrganization: 1
+      }
+    }).then(function(res) {
+      $scope.membership = res.data.length ? res.data[0] : null;
+      $scope.invalidOtp = !res.data.length;
+    });
+  })
+
 ;

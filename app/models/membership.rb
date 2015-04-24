@@ -20,7 +20,9 @@ class Membership < ActiveRecord::Base
   include IdentifiableResource
 
   before_create{ set_identifier :api_id, size: 12 }
+  before_create :set_otp
   before_save :set_accepted_at
+  before_save :remove_otp
 
   # List of roles. DO NOT change the order of the roles, as they
   # are stored in a bitmask. Only append new roles to the list.
@@ -58,5 +60,20 @@ class Membership < ActiveRecord::Base
 
   def set_accepted_at
     self.accepted_at ||= Time.now if user.present?
+  end
+
+  def set_otp
+    unless user.present?
+      # TODO: use set_identifier
+      self.otp = SecureRandom.base64 150
+      self.expires_at = 1.week.from_now
+    end
+  end
+
+  def remove_otp
+    if user.present?
+      self.otp = nil
+      self.expires_at = nil
+    end
   end
 end

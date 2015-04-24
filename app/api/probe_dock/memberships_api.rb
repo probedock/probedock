@@ -30,6 +30,34 @@ module ProbeDock
             Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
           end
         end
+
+        def serialization_options
+          @serialization_options ||= {
+            with_organization: true_flag?(:withOrganization),
+            with_user: true_flag?(:withUser)
+          }
+        end
+
+        def with_serialization_includes rel
+
+          rel = rel.includes :organization
+
+          if serialization_options[:with_user]
+            rel = rel.includes user: :primary_email
+          else
+            rel = rel.includes :user
+          end
+
+          rel
+        end
+
+        def serialize records
+          if records.kind_of? Array
+            records.to_a.collect{ |r| r.to_builder(serialization_options).attributes! }
+          else
+            records.to_builder(serialization_options).attributes!
+          end
+        end
       end
 
       post do
@@ -58,6 +86,15 @@ module ProbeDock
       get do
         authenticate
 
+        if params.key? :otp
+
+          rel = Membership.where(otp: params[:otp].to_s).where('expires_at > ?', Time.now)
+          rel = with_serialization_includes rel
+          record = rel.first
+
+          return record.present? ? serialize([ record ]) : []
+        end
+
         if current_organization
           authorize! Membership, :index_organization
         else
@@ -72,7 +109,7 @@ module ProbeDock
             rel = rel.where true_flag?(:accepted) ? 'memberships.user_id IS NOT NULL' : 'memberships.user_id IS NULL'
           end
 
-          if params.key? :mine
+          if current_user && params.key?(:mine)
             if current_organization.present? || current_user.try(:is?, :admin)
               condition = true_flag?(:mine) ? 'IN' : 'NOT IN'
               rel = rel.joins(organization_email: :users).where("users.id #{condition} (?)", [ current_user.id ])

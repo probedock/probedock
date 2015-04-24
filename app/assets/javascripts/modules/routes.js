@@ -14,6 +14,12 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         url: 'new'
       })
 
+      .state('newMembership', {
+        url: '/new-member?otp',
+        controller: 'NewMembershipCtrl',
+        templateUrl: '/templates/new-membership.html'
+      })
+
       .state('profile', {
         url: '/profile',
         templateUrl: '/templates/profile.html'

@@ -1,0 +1,23 @@
+.container
+  .jumbotron ng-if='membership'
+    h1 Welcome!
+    p
+      | You have been invited to join the 
+      a ng-if='membership.organization.public' href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })' {{ membership.organization.displayName || membership.organization.name }}
+      span ng-if='!membership.organization.public' {{ membership.organization.displayName || membership.organization.name }}
+      |  organization.
+    .btn-group
+      button.btn.btn-primary
+        span.glyphicon.glyphicon-user
+        |  I already have an account
+      button.btn.btn-success
+        span.glyphicon.glyphicon-plus
+        |  I'm new here
+  .row ng-if='invalidOtp'
+    .col-md-offset-2.col-md-8.col-xs-12
+      .alert.alert-danger.clearfix ng-if='invalidOtp'
+        a.btn.btn-default.btn-xs.pull-right href='#' ui-sref='home'
+          span.glyphicon.glyphicon-home
+          |  Get me out of here!
+        strong Oops!
+        |  The link you have followed is invalid or has expired.

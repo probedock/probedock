@@ -75,9 +75,12 @@ class V3 < ActiveRecord::Migration
       t.integer :organization_email_id, null: false
       t.integer :organization_id, null: false
       t.integer :roles_mask, null: false, default: 0
+      t.string :otp, limit: 255
+      t.datetime :expires_at
       t.datetime :accepted_at
       t.timestamps null: false
       t.index :api_id, unique: true
+      t.index :otp, unique: true
     end
 
     add_foreign_key :memberships, :users

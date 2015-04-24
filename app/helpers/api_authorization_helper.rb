@@ -30,10 +30,10 @@ module ApiAuthorizationHelper
   end
 
   def pundit_user
-    if respond_to? :current_organization
-      OrganizationUserContext.new current_user, current_organization
-    else
-      current_user
-    end
+
+    user = current_user
+    org = respond_to?(:current_organization) ? current_organization : nil
+
+    UserContext.new user, org
   end
 end

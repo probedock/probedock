@@ -8,3 +8,5 @@ html
     p
       | You have been invited to join the following organization: 
       = @membership.organization.effective_name
+    p
+      a href=@otp_url Click here!

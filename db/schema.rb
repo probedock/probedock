@@ -48,17 +48,20 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "emails_users", ["email_id"], name: "index_emails_users_on_email_id", unique: true, using: :btree
 
   create_table "memberships", force: :cascade do |t|
-    t.string   "api_id",                limit: 12,             null: false
+    t.string   "api_id",                limit: 12,              null: false
     t.integer  "user_id"
-    t.integer  "organization_email_id",                        null: false
-    t.integer  "organization_id",                              null: false
-    t.integer  "roles_mask",                       default: 0, null: false
+    t.integer  "organization_email_id",                         null: false
+    t.integer  "organization_id",                               null: false
+    t.integer  "roles_mask",                        default: 0, null: false
+    t.string   "otp",                   limit: 255
+    t.datetime "expires_at"
     t.datetime "accepted_at"
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
   end
 
   add_index "memberships", ["api_id"], name: "index_memberships_on_api_id", unique: true, using: :btree
+  add_index "memberships", ["otp"], name: "index_memberships_on_otp", unique: true, using: :btree
 
   create_table "organizations", force: :cascade do |t|
     t.string   "api_id",            limit: 5,                  null: false

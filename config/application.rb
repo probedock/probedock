@@ -94,6 +94,12 @@ module ProbeDock
       from: config_for(:'probe-dock')['mail_from']
     }
 
+    config.action_mailer.default_url_options = {
+      protocol: config_for(:'probe-dock')['protocol'],
+      host: config_for(:'probe-dock')['host'],
+      port: config_for(:'probe-dock')['port']
+    }
+
     config.assets.precompile << '*.swf'
     config.assets.paths << Rails.root.join('vendor', 'assets', 'flash')
 

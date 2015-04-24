@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class OrganizationUserContext
+class UserContext
   attr_reader :user, :organization
 
   def initialize user, organization

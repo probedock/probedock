@@ -22,7 +22,7 @@ class ApplicationPolicy
     @user = user
     @record = record
 
-    if user.kind_of? OrganizationUserContext
+    if user.kind_of? UserContext
       @user = user.user
       @organization = user.organization
     end
@@ -59,7 +59,7 @@ class ApplicationPolicy
       @user = user
       @scope = scope
 
-      if user.kind_of? OrganizationUserContext
+      if user.kind_of? UserContext
         @user = user.user
         @organization = user.organization
       end

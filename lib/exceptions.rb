@@ -16,11 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
-
   module Errors
-
     class Error < StandardError; end
     class XHRRequired < Error; end
     class Unauthorized < Error; end
+    class Forbidden < Error; end
   end
 end
