@@ -145,6 +145,12 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
     }
   })
 
+  .filter('orgName', function() {
+    return function(input) {
+      return input.displayName || input.name;
+    };
+  })
+
   .directive('uniqueOrgName', function(api, $q) {
     return {
       require: 'ngModel',
@@ -174,6 +180,6 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
         };
       }
     };
-  });
+  })
 
 ;

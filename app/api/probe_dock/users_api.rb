@@ -20,37 +20,55 @@ module ProbeDock
 
     namespace :users do
 
-      before do
-        authenticate!
-      end
-
       helpers do
-
         def parse_user_for_creation
-          parse_object :name, :email, :password, :passwordConfirmation
+          parse_object :name, :primaryEmail, :password, :passwordConfirmation
         end
 
         def parse_user_for_update
-          parse_object :name, :email, :active, :password, :passwordConfirmation
+          parse_object :name, :primaryEmail, :active, :password, :passwordConfirmation
+        end
+
+        def current_otp_record
+          @current_otp_record ||= if params.key? :membershipOtp
+            Membership.where('otp IS NOT NULL').where(otp: params[:membershipOtp].to_s).where('expires_at > ?', Time.now).first
+          end
         end
       end
 
       post do
+        authenticate
         authorize! User, :create
 
         data = parse_user_for_creation
-        email = data.delete :email
+        email = data.delete(:primary_email).try(:to_s).try(:downcase)
         data[:password_confirmation] ||= ''
 
         User.transaction do
           user = User.new data
-          user.primary_email = Email.where(address: email).first_or_create
 
-          create_record user
+          if email.present? && email != current_otp_record.try(:organization_email).try(:address)
+            authorize! user, :set_email
+            user.primary_email = Email.where(address: email).first_or_initialize
+            user.primary_email.user = user
+          elsif current_otp_record.kind_of? Membership
+            user.primary_email = current_otp_record.organization_email
+            user.primary_email.user = user
+            user.primary_email.active = true
+          end
+
+          create_record user do
+            if current_otp_record.kind_of? Membership
+              current_otp_record.user = user
+              current_otp_record.save!
+            end
+          end
+          # TODO: send registration e-mail
         end
       end
 
       get do
+        authenticate
         authorize! User, :index
 
         rel = User.order 'name ASC'
@@ -58,16 +76,23 @@ module ProbeDock
         rel = paginated rel do |rel|
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            rel.where 'LOWER(users.name) LIKE ?', term
-          else
-            rel
+            rel = rel.where 'LOWER(users.name) LIKE ?', term
           end
+
+          if params[:name].present?
+            rel = rel.where 'users.name = ?', params[:name].to_s
+          end
+
+          rel
         end
 
         rel.to_a.collect{ |u| u.to_builder.attributes! }
       end
 
       namespace '/:id' do
+        before do
+          authenticate!
+        end
 
         helpers do
           def user_resource
@@ -86,7 +111,8 @@ module ProbeDock
 
             user.name = updates[:name] if updates.key? :name
             user.active = !!updates[:active] if updates.key? :active
-            user.primary_email = Email.where(address: updates[:email]).first_or_create if updates[:email] != user.email.try(:address) if updates.key? :email
+            user.primary_email = Email.where(address: updates[:primary_email]).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != user.primary_email.try(:address)
+            user.primary_email.user = user
 
             if updates.key? :password
               user.password = updates[:password]

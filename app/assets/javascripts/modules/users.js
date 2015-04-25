@@ -213,4 +213,48 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     }
   })
 
+  .directive('confirmationFor', function() {
+    return {
+      require: 'ngModel',
+      scope: {
+        confirmationFor: '='
+      },
+      link: function(scope, element, attrs, ctrl) {
+        ctrl.$validators.confirmationFor = function(modelValue) {
+          return (modelValue || false) == (scope.confirmationFor || false);
+        };
+      }
+    };
+  })
+
+  .directive('uniqueUserName', function(api, $q) {
+    return {
+      require: 'ngModel',
+      link: function(scope, element, attrs, ctrl) {
+        ctrl.$asyncValidators.uniqueUserName = function(modelValue) {
+
+          // If the name is blank or is the same as the previous name,
+          // then there can be no name conflict with another user.
+          if (_.isBlank(modelValue) || (_.isPresent(scope.user.name) && modelValue == scope.user.name)) {
+            return $q.when();
+          }
+
+          return api({
+            url: '/api/users',
+            params: {
+              name: modelValue,
+              pageSize: 1
+            }
+          }).then(function(res) {
+            // value is invalid if a matching user is found (length is 1)
+            return $q[res.data.length ? 'reject' : 'when']();
+          }, function() {
+            // consider value valid if uniqueness cannot be verified
+            return $q.when();
+          });
+        };
+      }
+    };
+  })
+
 ;

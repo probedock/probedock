@@ -8,7 +8,7 @@
         .panel-heading
           h3.panel-title Summary
         .panel-body
-          img.gravatar.pull-right gravatar-src="report.runner.emailMd5" gravatar-size="40" tooltip="{{ report.runner.email }}"
+          img.gravatar.pull-right gravatar-src="report.runner.primaryEmailMd5" gravatar-size="40" tooltip="{{ report.runner.name }}"
           ul
             li {{ report.resultsCount | number }} test results
             li Run in {{ report.duration | durationFormat }}

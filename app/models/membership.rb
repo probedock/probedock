@@ -23,6 +23,7 @@ class Membership < ActiveRecord::Base
   before_create :set_otp
   before_save :set_accepted_at
   before_save :remove_otp
+  after_save :add_organization_email_to_user
 
   # List of roles. DO NOT change the order of the roles, as they
   # are stored in a bitmask. Only append new roles to the list.
@@ -36,6 +37,7 @@ class Membership < ActiveRecord::Base
   validates :organization, presence: true
   validates :organization_email, presence: true
   validates :user_id, uniqueness: { scope: :organization_id, if: :user_id }
+  validate :organization_email_must_be_free_or_owned_by_user
 
   def to_builder options = {}
     Jbuilder.new do |json|
@@ -57,6 +59,18 @@ class Membership < ActiveRecord::Base
   end
 
   private
+
+  def organization_email_must_be_free_or_owned_by_user
+    errors.add :organization_email, :must_be_owned_by_user if organization_email.present? && user.present? && !user.emails.include?(organization_email) && organization_email.user.present?
+  end
+
+  def add_organization_email_to_user
+    if user.present? && organization_email.user.blank?
+      organization_email.user = user
+      organization_email.active = true
+      organization_email.save!
+    end
+  end
 
   def set_accepted_at
     self.accepted_at ||= Time.now if user.present?

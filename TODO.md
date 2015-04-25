@@ -1,5 +1,7 @@
 ## Features
 
+* display toast message if template cannot be loaded
+
 * directive for org name (display name or name)
 
 * save and validate emails as lowercase

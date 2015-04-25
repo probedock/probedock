@@ -33,7 +33,8 @@ module ApiAuthorizationHelper
 
     user = current_user
     org = respond_to?(:current_organization) ? current_organization : nil
+    otp_record = respond_to?(:current_otp_record) ? current_otp_record : nil
 
-    UserContext.new user, org
+    UserContext.new user, org, otp_record, params
   end
 end

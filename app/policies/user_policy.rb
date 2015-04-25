@@ -17,11 +17,11 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class UserPolicy < ApplicationPolicy
   def create?
-    user.is? :admin
+    user.try(:is?, :admin) || otp_record.present?
   end
 
   def index?
-    user.is? :admin
+    user.try(:is?, :admin) || params[:name].present?
   end
 
   def show?
@@ -33,6 +33,10 @@ class UserPolicy < ApplicationPolicy
   end
 
   def destroy?
+    user.is? :admin
+  end
+
+  def set_email?
     user.is? :admin
   end
 

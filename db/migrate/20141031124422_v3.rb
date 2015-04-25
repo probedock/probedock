@@ -53,17 +53,12 @@ class V3 < ActiveRecord::Migration
 
     create_table :emails do |t|
       t.string :address, null: false, limit: 255
+      t.boolean :active, null: false, default: false
+      t.integer :user_id
       t.index :address, unique: true
     end
 
-    create_table :emails_users, id: false do |t|
-      t.integer :email_id, null: false
-      t.integer :user_id, null: false
-      t.index :email_id, unique: true
-    end
-
-    add_foreign_key :emails_users, :emails
-    add_foreign_key :emails_users, :users
+    add_foreign_key :emails, :users
 
     remove_column :categories, :metric_key
     add_column :categories, :organization_id, :integer, null: false
@@ -81,6 +76,7 @@ class V3 < ActiveRecord::Migration
       t.timestamps null: false
       t.index :api_id, unique: true
       t.index :otp, unique: true
+      t.index [ :user_id, :organization_id ], unique: true
     end
 
     add_foreign_key :memberships, :users

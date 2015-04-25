@@ -21,11 +21,11 @@ class MembershipPolicy < ApplicationPolicy
   end
 
   def index?
-    true
-  end
-
-  def index_organization?
-    organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
+    if organization.present?
+      organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
+    else
+      user.present? || otp_record.present?
+    end
   end
 
   def show?
@@ -45,7 +45,7 @@ class MembershipPolicy < ApplicationPolicy
   end
 
   def accept?
-    user.emails.include?(record.organization_email)
+    user.emails.include?(record.organization_email) || record == otp_record
   end
 
   def destroy?
@@ -59,7 +59,7 @@ class MembershipPolicy < ApplicationPolicy
       elsif user.try :is?, :admin
         scope
       elsif user.present?
-        scope.joins(organization_email: :users).where('users.id IN (?)', [ user.id ])
+        scope.joins(organization_email: :user).where(user: user)
       else
         scope.none
       end

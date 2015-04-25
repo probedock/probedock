@@ -11,12 +11,9 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
           scope: $scope
         });
 
-        var deregister = $scope.$on('$stateChangeStart', function() {
+        $scope.$on('$stateChangeSuccess', function() {
           modal.dismiss('stateChange');
-          deregister();
         });
-
-        $scope.$on('$destroy', deregister);
 
         return modal;
       }
@@ -86,6 +83,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     }
   })
 
+  // TODO: display message if user is aleady a member
   .controller('OrgMemberModalCtrl', function(api, forms, $modalInstance, orgs, $scope, $stateParams) {
 
     orgs.forwardData($scope);
@@ -137,7 +135,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     }
   })
 
-  .controller('NewMembershipCtrl', function(api, $scope, $stateParams) {
+  .controller('NewMembershipCtrl', function(api, auth, $modal, $scope, $state, $stateParams) {
 
     api({
       url: '/api/memberships',
@@ -148,7 +146,80 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     }).then(function(res) {
       $scope.membership = res.data.length ? res.data[0] : null;
       $scope.invalidOtp = !res.data.length;
+    }, function(err) {
+      if (err.status == 403) {
+        $scope.invalidOtp = true;
+      }
     });
+
+    $scope.openSignInDialog = auth.openSignInDialog;
+
+    $scope.emailisNew = function() {
+      return !_.some(auth.currentUser.emails, function(email) {
+        return email.address == $scope.membership.organizationEmail;
+      });
+    };
+
+    $scope.openRegistrationDialog = function() {
+      $modal.open({
+        scope: $scope,
+        controller: 'NewMembershipRegistrationCtrl',
+        templateUrl: '/templates/new-membership-register-modal.html'
+      });
+    };
+
+    $scope.accept = function() {
+      api({
+        method: 'PATCH',
+        url: '/api/memberships/' + $scope.membership.id,
+        params: {
+          otp: $stateParams.otp
+        },
+        data: {
+          userId: auth.currentUser.id
+        }
+      }).then(function() {
+        $state.go('org.dashboard.default', { orgName: $scope.membership.organization.name });
+      });
+    };
+  })
+
+  .controller('NewMembershipRegistrationCtrl', function(api, auth, $modalInstance, $scope, $state, $stateParams) {
+
+    $scope.user = {
+      primaryEmail: $scope.membership.organizationEmail
+    };
+
+    $scope.newUser = angular.copy($scope.user);
+
+    $scope.register = function() {
+      register().then(autoSignIn).then(function() {
+        $modalInstance.dismiss();
+        $state.go('org.dashboard.default', { orgName: $scope.membership.organization.name });
+      });
+    };
+
+    $scope.$on('$stateChangeSuccess', function() {
+      $modalInstance.dismiss('stateChange');
+    });
+
+    function register() {
+      return api({
+        method: 'POST',
+        url: '/api/users',
+        params: {
+          membershipOtp: $stateParams.otp
+        },
+        data: $scope.newUser
+      });
+    }
+
+    function autoSignIn() {
+      return auth.signIn({
+        username: $scope.newUser.name,
+        password: $scope.newUser.password
+      });
+    }
   })
 
 ;

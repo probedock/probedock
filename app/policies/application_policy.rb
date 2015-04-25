@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class ApplicationPolicy
-  attr_reader :user, :organization, :record
+  attr_reader :user, :organization, :otp_record, :params, :record
 
   def initialize user, record
     @user = user
@@ -25,6 +25,8 @@ class ApplicationPolicy
     if user.kind_of? UserContext
       @user = user.user
       @organization = user.organization
+      @otp_record = user.otp_record
+      @params = user.params
     end
   end
 
@@ -53,7 +55,7 @@ class ApplicationPolicy
   end
 
   class Scope
-    attr_reader :user, :organization, :scope
+    attr_reader :user, :organization, :otp_record, :params, :scope
 
     def initialize user, scope
       @user = user
@@ -62,6 +64,8 @@ class ApplicationPolicy
       if user.kind_of? UserContext
         @user = user.user
         @organization = user.organization
+        @otp_record = user.otp_record
+        @params = user.params
       end
     end
 

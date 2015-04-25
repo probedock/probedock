@@ -16,9 +16,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class Email < ActiveRecord::Base
-  has_and_belongs_to_many :users
-  has_one :user, foreign_key: :primary_email_id
+  before_validation :ensure_lowercase_address
 
-  # TODO: make sure e-mail address is in lowercase
-  validates :address, presence: true, length: { maximum: 255, allow_blank: true }, uniqueness: true
+  belongs_to :user
+  has_one :primary_user, foreign_key: :primary_email_id
+
+  validates :address, presence: true, uniqueness: true, length: { maximum: 255, allow_blank: true }
+
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.address address
+      json.active active
+    end
+  end
+
+  private
+
+  def ensure_lowercase_address
+    self.address = address.try(:downcase)
+  end
 end

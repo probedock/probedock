@@ -59,28 +59,8 @@ module ProbeDock
       'pong'
     end
 
-    post :authentication do
-
-      authorization = request.headers['Authorization']
-      raise ProbeDock::Errors::Unauthorized.new 'Missing credentials' unless authorization.present?
-      raise ProbeDock::Errors::Unauthorized.new 'Malformed HTTP Basic Authorization header' unless m = authorization.match(/\ABasic (.*)\Z/)
-
-      credentials = Base64.decode64 m[1]
-      parts = credentials.split ':'
-      raise ProbeDock::Errors::Unauthorized.new 'Malformed HTTP Basic credentials' unless parts.length == 2
-
-      user = User.where(name: parts[0]).first
-
-      # TODO: protect against timing attacks
-      raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials' unless user && user.authenticate(parts[1])
-
-      {
-        token: user.generate_auth_token,
-        user: user.to_builder.attributes!
-      }
-    end
-
     mount AccessTokensApi
+    mount AuthenticationApi
     mount MembershipsApi
     mount MetricsApi
     mount OrganizationsApi

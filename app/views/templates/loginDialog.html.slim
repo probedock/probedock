@@ -1,14 +1,14 @@
 .modal-header
   h4.modal-title Sign in
-form role='form'
+form role='form' name='loginForm'
   .modal-body
     .form-group ng-class='{"has-error": error, "has-feedback": error}'
-      input#username.form-control type='text' ng-model='credentials.username' placeholder='Your username' autofocus=true
+      input#username.form-control type='text' ng-model='credentials.username' placeholder='Your username or e-mail' autofocus=true required=true
       span.glyphicon.glyphicon-remove.form-control-feedback ng-show='error'
     .form-group ng-class='{"has-error": error, "has-feedback": error}'
-      input#password.form-control type='password' ng-model='credentials.password' placeholder='Your password'
+      input#password.form-control type='password' ng-model='credentials.password' placeholder='Your password' required=true
       span.glyphicon.glyphicon-remove.form-control-feedback ng-show='error'
-    p.text-danger.text-center ng-show='error' Your e-mail or password are incorrect.
+    p.text-danger.text-center ng-show='error' Your username, e-mail or password is incorrect.
   .modal-footer
     button.btn.btn-default type='button' ng-click='$close()' Close
-    button.btn.btn-primary type='submit' ng-click='signIn()' Submit
+    button.btn.btn-primary type='submit' ng-click='signIn()' ng-disabled='loginForm.$invalid' Submit

@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class User < ActiveRecord::Base
+  # TODO: make sure "active" is used
   include JsonResource
   include IdentifiableResource
 
@@ -40,26 +41,30 @@ class User < ActiveRecord::Base
   has_many :memberships
   belongs_to :last_test_payload, class_name: 'TestPayload'
   has_one :settings, class_name: 'Settings::User', dependent: :destroy
-  belongs_to :primary_email, class_name: 'Email'
+  belongs_to :primary_email, class_name: 'Email', autosave: true
   # TODO: purge emails if unused
-  has_and_belongs_to_many :emails
+  has_many :emails
 
   strip_attributes except: :password_digest
-  validates :name, presence: true, uniqueness: true, length: { maximum: 25 }
+  validates :name, presence: true, uniqueness: true, length: { maximum: 25 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)?\Z/i, allow_blank: true }
+  # TODO: validate min password length
   validates :primary_email, presence: true
+  validate :primary_email_must_be_among_emails
 
   def to_builder options = {}
     Jbuilder.new do |json|
+      # TODO: only show id and name if not logged in
       json.id api_id
       # TODO: hide active, email and name if not logged in
-      json.email primary_email.address
+      json.primaryEmail primary_email.address
       # TODO: cache email MD5
-      json.emailMd5 Digest::MD5.hexdigest(primary_email.address)
+      json.primaryEmailMd5 Digest::MD5.hexdigest(primary_email.address)
       json.name name
 
       unless options[:link]
         json.active active
         json.roles roles.collect(&:to_s)
+        json.emails emails.collect{ |e| e.to_builder.attributes! }
         json.createdAt created_at.iso8601(3)
       end
     end
@@ -67,6 +72,7 @@ class User < ActiveRecord::Base
 
   def generate_auth_token
     JSON::JWT.new({
+      # FIXME: use user id
       iss: primary_email.address,
       exp: 1.week.from_now,
       nbf: Time.now
@@ -74,8 +80,8 @@ class User < ActiveRecord::Base
   end
 
   def primary_email= email
+    self.emails << email if primary_email.blank? && emails.blank?
     super email
-    self.emails << email if email.present? && !emails.include?(email)
   end
 
   def member_of? organization
@@ -90,5 +96,9 @@ class User < ActiveRecord::Base
 
   def create_settings
     self.settings = Settings::User.new(user: self).tap(&:save!)
+  end
+
+  def primary_email_must_be_among_emails
+    errors.add :primary_email, :must_be_among_emails unless emails.include? primary_email
   end
 end

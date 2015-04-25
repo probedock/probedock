@@ -1,7 +1,8 @@
 angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
 
-  .factory('auth', function(appStore, $base64, $http, $log, $rootScope) {
+  .factory('auth', function(appStore, $base64, $http, $log, $modal, $rootScope) {
 
+    // TODO: move this to run block with forwardData function
     $rootScope.currentUser = null;
 
     $rootScope.currentUserIs = function() {
@@ -32,14 +33,18 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
         $rootScope.$broadcast('auth.signOut');
       },
 
-      checkSignedIn: function() {
-
-        var authData = appStore.get('auth');
-        if (authData) {
-          authenticate(authData);
-        }
+      openSignInDialog: function() {
+        $modal.open({
+          templateUrl: '/templates/loginDialog.html',
+          controller: 'LoginCtrl'
+        });
       }
     };
+
+    var authData = appStore.get('auth');
+    if (authData) {
+      authenticate(authData);
+    }
 
     function onSignedIn(response) {
       authenticate(response.data);
@@ -55,25 +60,18 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
       var roles = authData.user.roles,
           rolesDescription = _.isArray(roles) && roles.length ? roles.join(', ') : 'none';
 
-      $log.debug(authData.user.email + ' logged in (roles: ' + rolesDescription + ')');
+      $log.debug(authData.user.primaryEmail + ' logged in (roles: ' + rolesDescription + ')');
     }
 
     return service;
   })
 
   .controller('AuthCtrl', function(auth, $modal, $scope) {
-
-    $scope.showSignIn = function() {
-      $modal.open({
-        templateUrl: '/templates/loginDialog.html',
-        controller: 'LoginCtrl'
-      });
-    };
-
+    $scope.openSignInDialog = auth.openSignInDialog;
     $scope.signOut = auth.signOut;
   })
 
-  .controller('LoginCtrl', function(auth, $http, $scope) {
+  .controller('LoginCtrl', function(auth, $http, $modalInstance, $scope) {
 
     $scope.credentials = {};
 
@@ -81,6 +79,10 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
       delete $scope.error;
       auth.signIn($scope.credentials).then($scope.$close, showError);
     };
+
+    $scope.$on('$stateChangeSuccess', function() {
+      $modalInstance.dismiss('stateChange');
+    });
 
     function showError() {
       $scope.error = true;

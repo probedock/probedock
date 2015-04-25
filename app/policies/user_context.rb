@@ -16,10 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class UserContext
-  attr_reader :user, :organization
+  attr_reader :user, :organization, :otp_record, :params
 
-  def initialize user, organization
+  def initialize user, organization, otp_record, params
     @user = user
     @organization = organization
+    @otp_record = otp_record
+    @params = params
   end
 end

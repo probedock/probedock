@@ -10,7 +10,7 @@
         p ng-if='!organizations.length' No organizations are docked here.
       ul.list-group
         li.list-group-item.clearfix ng-repeat='org in organizations | orderBy: "name.toLowerCase()"'
-          a ui-sref='org.dashboard.default({ orgName: org.name })' {{ org.displayName || org.name }}
+          a ui-sref='org.dashboard.default({ orgName: org.name })' {{ org | orgName }}
           .btn-group.btn-group-xs.pull-right role='group' aria-label='controls' ng-if='currentUserIs("admin")'
-            a.btn.btn-warning href='#' tooltip='Edit {{ org.displayName || org.name }}' tooltip-placement='left' tooltip-append-to-body='true' ui-sref='org.dashboard.default.edit({ orgName: org.name })'
+            a.btn.btn-warning href='#' tooltip='Edit {{ org | orgName }}' tooltip-placement='left' tooltip-append-to-body='true' ui-sref='org.dashboard.default.edit({ orgName: org.name })'
               span.glyphicon.glyphicon-pencil

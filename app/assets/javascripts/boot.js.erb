@@ -60,10 +60,6 @@ angular.module('probe-dock', [
     ngClipProvider.setPath(zeroClipboardFlash);
   })
 
-  .run(function(auth) {
-    auth.checkSignedIn();
-  })
-
   .run(function() {
     nv.dev = false; // disable nvd3 graph generation time logs
   })

@@ -41,7 +41,7 @@ namespace :users do
       next
     end
 
-    unless email = args[:email]
+    unless email_address = args[:email]
       puts Paint[%/An e-mail must be given as second argument/, :red]
       next
     end
@@ -51,8 +51,8 @@ namespace :users do
       next
     end
 
-    if user = User.joins(:emails).where(emails: { address: email }).first
-      puts Paint["There is already a user with e-mail #{email}", :red]
+    if user = User.joins(:emails).where(emails: { address: email_address }).first
+      puts Paint["There is already a user with e-mail #{email_address}", :red]
       next
     end
 
@@ -62,10 +62,13 @@ namespace :users do
       next
     end
 
-    user = User.new name: name, primary_email: Email.where(address: email).first_or_create, password: password
+    email = Email.where(address: email_address).first_or_create active: true
+    user = User.new name: name, primary_email: email, password: password
+    user.primary_email.user = user
+
     user.save!
 
-    puts Paint["User #{name} with e-mail #{email} was successfully created", :green]
+    puts Paint["User #{name} with e-mail #{email_address} was successfully created", :green]
   end
 
   desc %|Generate an authentication token for a user|

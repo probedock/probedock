@@ -35,17 +35,12 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "categories", ["name"], name: "index_categories_on_name", unique: true, using: :btree
 
   create_table "emails", force: :cascade do |t|
-    t.string "address", limit: 255, null: false
+    t.string  "address", limit: 255,                 null: false
+    t.boolean "active",              default: false, null: false
+    t.integer "user_id"
   end
 
   add_index "emails", ["address"], name: "index_emails_on_address", unique: true, using: :btree
-
-  create_table "emails_users", id: false, force: :cascade do |t|
-    t.integer "email_id", null: false
-    t.integer "user_id",  null: false
-  end
-
-  add_index "emails_users", ["email_id"], name: "index_emails_users_on_email_id", unique: true, using: :btree
 
   create_table "memberships", force: :cascade do |t|
     t.string   "api_id",                limit: 12,              null: false
@@ -62,6 +57,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   add_index "memberships", ["api_id"], name: "index_memberships_on_api_id", unique: true, using: :btree
   add_index "memberships", ["otp"], name: "index_memberships_on_otp", unique: true, using: :btree
+  add_index "memberships", ["user_id", "organization_id"], name: "index_memberships_on_user_id_and_organization_id", unique: true, using: :btree
 
   create_table "organizations", force: :cascade do |t|
     t.string   "api_id",            limit: 5,                  null: false
@@ -327,8 +323,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "users", ["primary_email_id"], name: "index_users_on_primary_email_id", unique: true, using: :btree
 
   add_foreign_key "categories", "organizations"
-  add_foreign_key "emails_users", "emails"
-  add_foreign_key "emails_users", "users"
+  add_foreign_key "emails", "users"
   add_foreign_key "memberships", "emails", column: "organization_email_id"
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"

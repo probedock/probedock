@@ -1,0 +1,27 @@
+.modal-header
+  h4.modal-title Register
+form role='form' name='registrationForm' ng-submit='registrationForm.$valid && register()'
+  .modal-body
+    .form-group
+      label for='userPrimaryEmail' E-mail
+      input#userPrimaryEmail.form-control type='text' ng-model='newUser.primaryEmail' ng-disabled='true'
+      p.help-block
+        | This is the e-mail you were invited with and will be your primary e-mail.
+    .form-group ng-class='{"has-error": registrationForm.name.$dirty && registrationForm.name.$invalid}'
+      label for='userName' Name
+      input#userName.form-control type='text' name='name' ng-model='newUser.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' placeholder='Your username' required=true maxlength=25 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)?$/i' unique-user-name=true autofocus=true
+      p.help-block
+        | This will be your main identifier in Probe Dock.
+        |  You can also use it to sign in.
+        |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
+      .alert.alert-danger ng-if='registrationForm.name.$error.uniqueUserName'
+        strong A user with this name already exists.
+    .form-group ng-class='{"has-error": registrationForm.password.$dirty && registrationForm.password.$invalid}'
+      label for='userPassword' Password
+      input#userPassword.form-control type='password' name='password' ng-model='newUser.password' placeholder='Your password' required=true
+    .form-group ng-class='{"has-error": registrationForm.passwordConfirmation.$dirty && registrationForm.passwordConfirmation.$invalid}'
+      label for='userPasswordConfirmation' Password confirmation
+      input#userPasswordConfirmation.form-control type='password' name='passwordConfirmation' ng-model='newUser.passwordConfirmation' required=true confirmation-for='newUser.password' placeholder='Re-type your password'
+  .modal-footer
+    button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
+    button.btn.btn-primary type='submit' ng-disabled='registrationForm.$invalid' Submit

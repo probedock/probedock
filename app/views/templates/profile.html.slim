@@ -5,21 +5,21 @@
       .panel-heading
         h3.panel-title User Details
       .panel-body
-        img.pull-right gravatar-src='currentUser.emailMd5' gravatar-size=100 ng-hide='editedProfile'
+        img.pull-right gravatar-src='currentUser.primaryEmailMd5' gravatar-size=100 ng-hide='editedProfile'
         dl ng-hide='editedProfile'
           dt Username
           dd {{ currentUser.name }}
           dt E-mail
-          dd {{ currentUser.email }}
+          dd {{ currentUser.primaryEmail }}
           dt Registered since
           dd {{ currentUser.createdAt | amDateFormat:'ll' }}
         form role='form' name='profileForm' ng-show='editedProfile'
           .form-group ng-class='{"has-error": profileForm.name.$dirty && profileForm.name.$invalid}'
             label for='profileName' Username
             input#profileName.form-control type='text' name='name' required=true maxlength=255 autofocus=true ng-model='editedProfile.name'
-          .form-group ng-class='{"has-error": profileForm.email.$dirty && profileForm.email.$invalid}'
+          .form-group ng-class='{"has-error": profileForm.primaryEmail.$dirty && profileForm.primaryEmail.$invalid}'
             label for='profileEmail' E-mail
-            input#profileEmail.form-control type='email' name='email' required=true maxlength=255 ng-model='editedProfile.email'
+            input#profileEmail.form-control type='email' name='primaryEmail' required=true maxlength=255 ng-model='editedProfile.primaryEmail'
           .form-group ng-class='{"has-error": profileForm.password.$dirty && profileForm.password.$invalid}'
             label for='profilePassword' Password
             input#profilePassword.form-control type='password' name='password' placeholder='Leave blank for no change' maxlength=255 ng-model='editedProfile.password'
@@ -46,17 +46,17 @@
           p.text-success You have been invited to join the following organizations:
           ul.list-group
             li.list-group-item.list-group-item-success.clearfix ng-repeat='membership in pendingMemberships'
-              button.btn.btn-success.btn-xs.pull-right tooltip='Accept' ng-click='accept(membership)'
-                span.glyphicon.glyphicon-thumbs-up
+              button.btn.btn-success.btn-xs.pull-right tooltip='Join' ng-click='accept(membership)'
+                span.glyphicon.glyphicon-ok
               a href='#' ng-if='membership.organization.public' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
-                | {{ membership.organization.displayName || membership.organization.name }}
-              span ng-if='!membership.organization.public' {{ membership.organization.displayName || membership.organization.name }}
+                | {{ membership.organization | orgName }}
+              span ng-if='!membership.organization.public' {{ membership.organization | orgName }}
         div ng-if='memberships.length'
           p You are part of the following organizations:
           ul.list-group
             li.list-group-item ng-repeat='membership in memberships | orderBy: "acceptedAt"'
               a href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
-                | {{ membership.organization.displayName || membership.organization.name }}
+                | {{ membership.organization | orgName }}
   .col-lg-4.col-md-5.col-sm-6.col-xs-12
     .profileAccessTokens.panel.panel-default ng-controller='ProfileAccessTokensCtrl'
       .panel-heading

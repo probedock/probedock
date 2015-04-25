@@ -1,18 +1,24 @@
 .container
   .jumbotron ng-if='membership'
-    h1 Welcome!
+    h1 Welcome to Probe Dock!
     p
       | You have been invited to join the 
-      a ng-if='membership.organization.public' href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })' {{ membership.organization.displayName || membership.organization.name }}
-      span ng-if='!membership.organization.public' {{ membership.organization.displayName || membership.organization.name }}
+      a ng-if='membership.organization.public' href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })' {{ membership.organization | orgName }}
+      span ng-if='!membership.organization.public' {{ membership.organization | orgName }}
       |  organization.
+    p ng-if='currentUser && membership && emailisNew()'
+      | Accepting will add the following e-mail to your profile: 
+      strong {{ membership.organizationEmail }}
     .btn-group
-      button.btn.btn-primary
+      button.btn.btn-primary ng-if='!currentUser' ng-click='openSignInDialog()'
         span.glyphicon.glyphicon-user
         |  I already have an account
-      button.btn.btn-success
+      button.btn.btn-success ng-if='!currentUser' ng-click='openRegistrationDialog()'
         span.glyphicon.glyphicon-plus
         |  I'm new here
+      button.btn.btn-success ng-if='currentUser' ng-click='accept()'
+        span.glyphicon.glyphicon-ok
+        |  Join
   .row ng-if='invalidOtp'
     .col-md-offset-2.col-md-8.col-xs-12
       .alert.alert-danger.clearfix ng-if='invalidOtp'

@@ -12,9 +12,9 @@
       tbody
         tr ng-repeat='user in users' ng-class='{info: user.id === selectedUserId, success: user.id === lastCreatedUser.id && user.id !== selectedUserId}'
           td.avatar
-            img gravatar-src='user.emailMd5' gravatar-size=30
+            img gravatar-src='user.primaryEmailMd5' gravatar-size=30
           td.name {{ user.name }}
-          td.email.hidden-xs.hidden-sm.hidden-md {{ user.email }}
+          td.email.hidden-xs.hidden-sm.hidden-md {{ user.primaryEmail }}
           td.registeredAt.hidden-xs
             | {{ user.createdAt | amDateFormat:'ll' }}
             |  
@@ -34,12 +34,12 @@
         em.text-muted ng-hide='loadingSelectedUser || selectedUser' Select a user from the list to see more details and edit.
         spinner ng-show='loadingSelectedUser'
         div ng-show='selectedUser'
-          img.pull-right gravatar-src='selectedUser.emailMd5' gravatar-size=100 ng-hide='editedUser'
+          img.pull-right gravatar-src='selectedUser.primaryEmailMd5' gravatar-size=100 ng-hide='editedUser'
           dl ng-hide='editedUser'
             dt Username
             dd {{ selectedUser.name }}
             dt E-mail
-            dd {{ selectedUser.email }}
+            dd {{ selectedUser.primaryEmail }}
           .alert.alert-warning.clear ng-show='!editedUser && !selectedUser.active'
             | This user is not active; it cannot log in or use the API.
           .alert.alert-danger.clear ng-show='!editedUser && deleteError'
@@ -48,9 +48,9 @@
             .form-group ng-class='{"has-error": editUserForm.name.$dirty && editUserForm.name.$invalid}'
               label for='userName' Username
               input#userName.form-control type='text' name='name' required=true maxlength=255 autofocus=true ng-model='editedUser.name'
-            .form-group ng-class='{"has-error": editUserForm.email.$dirty && editUserForm.email.$invalid}'
+            .form-group ng-class='{"has-error": editUserForm.primaryEmail.$dirty && editUserForm.primaryEmail.$invalid}'
               label for='userEmail' E-mail
-              input#userEmail.form-control type='email' name='email' required=true maxlength=255 ng-model='editedUser.email'
+              input#userEmail.form-control type='email' name='primaryEmail' required=true maxlength=255 ng-model='editedUser.primaryEmail'
             .form-group ng-class='{"has-error": editUserForm.password.$dirty && editUserForm.password.$invalid}'
               label for='userPassword' Password
               input#userPassword.form-control type='password' name='password' placeholder='Leave blank for no change' maxlength=255 ng-model='editedUser.password'
@@ -81,9 +81,9 @@
             .form-group ng-class='{"has-error": newUserForm.name.$dirty && newUserForm.name.$invalid}'
               label for='newUserName' Username
               input#newUserName.form-control type='text' name='name' placeholder='Unique username' required=true maxlength=255 autofocus=true ng-model='newUser.name'
-            .form-group ng-class='{"has-error": newUserForm.email.$dirty && newUserForm.email.$invalid}'
+            .form-group ng-class='{"has-error": newUserForm.primaryEmail.$dirty && newUserForm.primaryEmail.$invalid}'
               label for='newUserEmail' E-mail
-              input#newUserEmail.form-control type='email' name='email' placeholder='E-mail address' required=true maxlength=255 ng-model='newUser.email'
+              input#newUserEmail.form-control type='email' name='primaryEmail' placeholder='E-mail address' required=true maxlength=255 ng-model='newUser.primaryEmail'
             .form-group ng-class='{"has-error": newUserForm.password.$dirty && newUserForm.password.$invalid}'
               label for='newUserPassword' Password
               input#newUserPassword.form-control type='password' name='password' placeholder='Password' required=true maxlength=255 ng-model='newUser.password'

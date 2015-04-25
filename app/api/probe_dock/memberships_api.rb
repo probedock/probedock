@@ -31,6 +31,16 @@ module ProbeDock
           end
         end
 
+        def current_otp_record
+          @current_otp_record ||= if params[:otp].present?
+            rel = Membership.where('otp IS NOT NULL').where(otp: params[:otp].to_s).where('expires_at > ?', Time.now)
+            rel = with_serialization_includes rel
+            rel.first
+          else
+            nil
+          end
+        end
+
         def serialization_options
           @serialization_options ||= {
             with_organization: true_flag?(:withOrganization),
@@ -85,21 +95,9 @@ module ProbeDock
 
       get do
         authenticate
+        authorize! Membership, :index
 
-        if params.key? :otp
-
-          rel = Membership.where(otp: params[:otp].to_s).where('expires_at > ?', Time.now)
-          rel = with_serialization_includes rel
-          record = rel.first
-
-          return record.present? ? serialize([ record ]) : []
-        end
-
-        if current_organization
-          authorize! Membership, :index_organization
-        else
-          authorize! Membership, :index
-        end
+        return serialize([ current_otp_record ].compact) if params.key? :otp
 
         rel = Membership.includes :organization, :organization_email
         rel = policy_scope(rel).order 'created_at ASC'
@@ -111,8 +109,8 @@ module ProbeDock
 
           if current_user && params.key?(:mine)
             if current_organization.present? || current_user.try(:is?, :admin)
-              condition = true_flag?(:mine) ? 'IN' : 'NOT IN'
-              rel = rel.joins(organization_email: :users).where("users.id #{condition} (?)", [ current_user.id ])
+              condition = true_flag?(:mine) ? '=' : '!='
+              rel = rel.joins(organization_email: :user).where("users.id #{condition} (?)", current_user.id)
             else
               rel = rel.none unless true_flag?(:mine)
             end
@@ -170,11 +168,11 @@ module ProbeDock
             updates.delete :roles unless updates[:roles].kind_of?(Array) && updates[:roles].all?{ |r| r.kind_of?(String) }
           end
 
-          if updates[:user_id].present?
-            if updates[:user_id] != current_user.api_id
-              authorize! record, :set_user
-            else
+          if updates[:user_id].present? && updates[:user_id] != record.user.try(:api_id)
+            if record.user.blank? && updates[:user_id] == current_user.api_id
               authorize! record, :accept
+            else
+              authorize! record, :set_user
             end
 
             updates[:user] = User.where(api_id: updates[:user_id]).first!

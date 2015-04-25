@@ -21,12 +21,12 @@
           .media
             .media-left
               a href='#'
-                img.avatar.media-object gravatar-src='membership.user.emailMd5' gravatar-size=64
+                img.avatar.media-object gravatar-src='membership.user.primaryEmailMd5' gravatar-size=64
             .media-body
               .label.label-info.pull-right ng-if='!membership.roles.length' user
               .label.pull-right ng-repeat='role in membership.roles.sort()' ng-class='{"label-primary": role == "admin", "label-info": role != "admin"}' {{ role }}
               dl
-                dt E-mail
+                dt Organization e-mail
                 dd {{ membership.organizationEmail }}
                 dt ng-if='membership.acceptedAt' Member since
                 dd ng-if='membership.acceptedAt' {{ membership.acceptedAt | amDateFormat: 'LL' }}
