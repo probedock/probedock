@@ -27,9 +27,8 @@
     .panel-heading
       h3.panel-title New Tests
     .panel-body
-      spinner ng-hide='chartData'
-      nvd3-line-chart data='chartData' height=300 showXAxis='true' showYAxis='true' xAxisTickFormat='chartFormatX' interactive='true' tooltips='true' tooltipcontent='chartTooltip' interpolate='cardinal' ng-if='chartData.length'
-      .empty ng-show='chartData && !chartData.length'
+      canvas.chart.chart-bar data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
+      .empty ng-show='chart.data && !chart.data.length'
         em No tests have been run recently.
 .col-xs-12.col-sm-6.col-lg-4
   .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'

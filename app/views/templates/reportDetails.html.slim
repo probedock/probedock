@@ -12,7 +12,7 @@
           ul
             li {{ report.resultsCount | number }} test results
             li Run in {{ report.duration | durationFormat }}
-          report-health-bar.clear report='report' ng-if='report'
+          canvas.chart.chart-doughnut data='healthChart.data' labels='healthChart.labels' colours='healthChart.colors' ng-if='healthChart'
     .col-md-7.col-lg-8
       .health.panel.panel-default ng-controller='ReportHealthCtrl'
         .panel-heading

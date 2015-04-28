@@ -202,7 +202,20 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     }
 
     function showReport(response) {
-      $scope.report = response.data;
+
+      var report = $scope.report = response.data;
+
+      var numberPassed = report.passedResultsCount - report.inactivePassedResultsCount,
+          numberInactive = report.inactiveResultsCount,
+          numberFailed = report.resultsCount - numberPassed - numberInactive;
+
+      $scope.healthChart = {
+        labels: [ 'passed', 'failed', 'inactive' ],
+        data: [ numberPassed, numberFailed, numberInactive ],
+        colors: [ '#62c462', '#ee5f5b', '#fbb450' ]
+      };
+
+      console.log($scope.healthChart);
     }
   })
 

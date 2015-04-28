@@ -35,7 +35,7 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
 
       openSignInDialog: function() {
         $modal.open({
-          templateUrl: '/templates/loginDialog.html',
+          templateUrl: '/templates/login-modal.html',
           controller: 'LoginCtrl'
         });
       }

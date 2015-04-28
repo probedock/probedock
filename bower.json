@@ -21,7 +21,6 @@
     "angular-sanitize": "~1.3",
     "angular-animate": "~1.3",
     "angular-jqcloud": "~1.0.0",
-    "angularjs-nvd3-directives": "~0.0.7",
     "jvent": "~0.2.0",
     "ng-clip": "~0.2.4",
     "angular-smart-table": "~1.4.12",
@@ -29,10 +28,10 @@
     "ngInfiniteScroll": "~1.2.0",
     "angular-loading-bar": "~0.7.1",
     "a0-angular-storage": "~0.0.10",
-    "angular-ui-select": "~0.11.2"
+    "angular-ui-select": "~0.11.2",
+    "angular-chart.js": "~0.7.0"
   },
   "resolutions": {
-    "angular": "~1.3",
-    "d3": "~3.4.1"
+    "angular": "~1.3"
   }
 }

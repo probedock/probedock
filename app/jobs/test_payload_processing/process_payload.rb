@@ -54,7 +54,7 @@ module TestPayloadProcessing
             @test_payload.duration += results.inject(0){ |memo,r| memo + r['d'] }
             @test_payload.results_count += results.length
             @test_payload.passed_results_count += results.count{ |r| r.fetch 'p', true }
-            @test_payload.inactive_results_count += results.count{ |r| !r.fetch('p', true) }
+            @test_payload.inactive_results_count += results.count{ |r| !r.fetch('v', true) }
             @test_payload.inactive_passed_results_count += results.count{ |r| r.fetch('p', true) && !r.fetch('v', true) }
 
             @cache.prefill results

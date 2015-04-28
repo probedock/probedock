@@ -19,10 +19,10 @@ angular.module('probe-dock', [
   'angularMoment',
   'angular-jqcloud',
   'angular-loading-bar',
+  'chart.js',
   'infinite-scroll',
   'ngClipboard',
   'ngSanitize',
-  'nvd3ChartDirectives',
   'ngAnimate',
   'smart-table',
   'ui.gravatar',
@@ -58,10 +58,6 @@ angular.module('probe-dock', [
 
   .config(function(ngClipProvider, zeroClipboardFlash) {
     ngClipProvider.setPath(zeroClipboardFlash);
-  })
-
-  .run(function() {
-    nv.dev = false; // disable nvd3 graph generation time logs
   })
 
 ;

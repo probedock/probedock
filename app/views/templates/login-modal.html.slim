@@ -10,5 +10,6 @@ form role='form' name='loginForm'
       span.glyphicon.glyphicon-remove.form-control-feedback ng-show='error'
     p.text-danger.text-center ng-show='error' Your username, e-mail or password is incorrect.
   .modal-footer
-    button.btn.btn-default type='button' ng-click='$close()' Close
-    button.btn.btn-primary type='submit' ng-click='signIn()' ng-disabled='loginForm.$invalid' Submit
+    .btn-group
+      button.btn.btn-default type='button' ng-click='$close()' Close
+      button.btn.btn-primary type='submit' ng-click='signIn()' ng-disabled='loginForm.$invalid' Submit

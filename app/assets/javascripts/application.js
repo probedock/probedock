@@ -32,8 +32,7 @@
 //= require moment
 //= require jvent
 //= require jqcloud2
-//= require d3
-//= require nvd3
+//= require chart
 //= require zero-clipboard
 //= require angular
 //= require angular-animate
@@ -48,9 +47,9 @@
 //= require angular-gravatar
 //= require angular-ng-infinite-scroll
 //= require angular-jqcloud
-//= require angular-nvd3
 //= require angular-ng-clip
 //= require angular-loading-bar
+//= require angular-chart
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot

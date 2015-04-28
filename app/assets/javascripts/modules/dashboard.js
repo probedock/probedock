@@ -30,6 +30,14 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
 
     fetchMetrics().then(showMetrics);
 
+    $scope.chart = {
+      data: [],
+      labels: [],
+      options: {
+        tooltipTemplate: '<%= value %> new tests on <%= label %>'
+      }
+    };
+
     $scope.chartFormatX = function(timestamp) {
       return moment(timestamp).format('ll');
     };
@@ -49,21 +57,19 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
     }
 
     function showMetrics(response) {
-
       if (!response.data.length) {
-        $scope.chartData = [];
         return;
       }
 
-      $scope.chartData = [
-        {
-          key: 'New Tests',
-          values: _.reduce(response.data, function(memo, data) {
-            memo.push([ new Date(data.date).getTime(), data.testsCount ]);
-            return memo;
-          }, [])
-        }
-      ];
+      var series = [];
+      $scope.chart.data = [ series ];
+
+      _.each(response.data, function(data) {
+        $scope.chart.labels.push(moment(data.date).format('ddd'));
+        series.push(data.testsCount);
+      });
+
+      console.log($scope.chart);
     }
   })
 

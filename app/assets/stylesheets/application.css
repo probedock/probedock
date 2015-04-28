@@ -11,7 +11,7 @@
  *= require_self
  *= require normalize
  *= require jqcloud2
- *= require nvd3
+ *= require angular-chart
  *= require angular-loading-bar
  *= require angular-ui-select
  *= require ./bootstrap
