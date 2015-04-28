@@ -67,20 +67,20 @@ module TestPayloadProcessing
     end
 
     def test_key data, cache
-      cache[:test_keys][data['k']].tap do |test_key|
+      cache.test_key(data['k']).tap do |test_key|
         raise "Expected to find test key '#{data['k']}' in cache" if data.key?('k') && test_key.blank?
       end
     end
 
     def category data, cache
-      cache[:categories][data['c']].tap do |category|
+      cache.category(data['c']).tap do |category|
         raise "Expected to find category '#{data['c']}' in cache" if data.key?('c') && category.blank?
       end
     end
 
     def tags data, cache
       data['g'].uniq.collect do |name|
-        cache[:tags][name].tap do |tag|
+        cache.tag(name).tap do |tag|
           raise "Expected to find tag '#{name}' in cache" if tag.blank?
         end
       end
@@ -88,7 +88,7 @@ module TestPayloadProcessing
 
     def tickets data, cache
       data['t'].uniq.collect do |name|
-        cache[:tickets][name].tap do |ticket|
+        cache.ticket(name).tap do |ticket|
           raise "Expected to find ticket '#{name}' in cache" if ticket.blank?
         end
       end

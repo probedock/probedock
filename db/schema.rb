@@ -228,22 +228,22 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_result_contributors", ["test_result_id", "email_id"], name: "index_test_contributors_on_result_and_email", unique: true, using: :btree
 
   create_table "test_results", force: :cascade do |t|
-    t.string   "name",                   limit: 255
-    t.boolean  "passed",                                            null: false
-    t.integer  "duration",                                          null: false
+    t.string   "name",                   limit: 255,             null: false
+    t.boolean  "passed",                                         null: false
+    t.integer  "duration",                                       null: false
     t.text     "message"
-    t.boolean  "active",                             default: true, null: false
-    t.boolean  "new_test"
-    t.integer  "payload_properties_set",             default: 0,    null: false
+    t.boolean  "active",                                         null: false
+    t.boolean  "new_test",                                       null: false
+    t.integer  "payload_properties_set",             default: 0, null: false
     t.json     "custom_values"
-    t.integer  "runner_id",                                         null: false
+    t.integer  "runner_id",                                      null: false
     t.integer  "test_id"
-    t.integer  "project_version_id",                                null: false
-    t.integer  "test_payload_id",                                   null: false
+    t.integer  "project_version_id",                             null: false
+    t.integer  "test_payload_id",                                null: false
     t.integer  "key_id"
     t.integer  "category_id"
-    t.datetime "run_at",                                            null: false
-    t.datetime "created_at",                                        null: false
+    t.datetime "run_at",                                         null: false
+    t.datetime "created_at",                                     null: false
   end
 
   create_table "test_results_tickets", id: false, force: :cascade do |t|

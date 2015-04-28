@@ -24,7 +24,7 @@ class TestPayload < ActiveRecord::Base
   has_and_belongs_to_many :test_keys
   has_and_belongs_to_many :test_reports
 
-  scope :waiting_for_processing, -> { where(state: :created).order('received_at ASC') }
+  scope :waiting_for_processing, -> { select(column_names - %w(contents)).where(state: :created).order('received_at ASC') }
 
   include SimpleStates
   states :created, :processing, :processed, :failed
@@ -35,7 +35,6 @@ class TestPayload < ActiveRecord::Base
   validates :api_id, presence: true, length: { is: 36, allow_blank: true }
   validates :runner, presence: true
   validates :project_version, presence: { if: :processed? }
-  validates :contents, presence: true
   validates :contents_bytesize, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
