@@ -27,7 +27,6 @@ class TestResult < ActiveRecord::Base
   belongs_to :category
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
-  has_and_belongs_to_many :custom_values, class_name: 'TestCustomValue'
   has_and_belongs_to_many :test_reports
 
   bitmask :payload_properties_set, as: [ :key, :name, :category, :tags, :tickets, :custom_values ], null: false
@@ -54,12 +53,6 @@ class TestResult < ActiveRecord::Base
     end
   end
 
-  def enqueue_processing_job
-    lock = processing_lock
-    $redis.rpush "processing:results:#{lock}", id
-    Resque.enqueue ProcessNextTestResultJob, lock
-  end
-
   def passed?
     passed
   end
@@ -68,34 +61,7 @@ class TestResult < ActiveRecord::Base
     active
   end
 
-  def to_client_hash options = {}
-    { id: id, passed: passed, active: active, duration: duration }.tap do |h|
-
-      h[:version] = project_version.name if project_version.present? and options[:type] != :chart
-      h[:message] = message if message.present? and ![ :chart, :test ].include?(options[:type])
-
-      if [ :chart, :test ].include?(options[:type])
-        h[:run_at] = run_at.to_ms
-      end
-
-      if options[:type] == :test
-        h[:runner] = runner.to_client_hash
-        h[:test_run_id] = test_run_id
-      end
-
-      if options[:type] == :details
-        h[:test_run_id] = test_run_id
-      end
-
-      if options[:type] == :test_run
-        h[:test] = test_info.to_client_hash options
-      end
-    end
-  end
-
-  private
-
-  def processing_lock
-    "key:#{Digest::SHA1.hexdigest(key.key)}"
+  def custom_values
+    read_attribute(:custom_values) || {}
   end
 end

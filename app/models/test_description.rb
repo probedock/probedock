@@ -28,7 +28,6 @@ class TestDescription < ActiveRecord::Base
   belongs_to :category
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
-  has_and_belongs_to_many :custom_values, class_name: 'TestCustomValue'
   has_many :results, class_name: 'TestResult'
 
   strip_attributes
@@ -90,5 +89,9 @@ class TestDescription < ActiveRecord::Base
     find_by_project_and_key(project_and_key).tap do |rel|
       raise ActiveRecord::RecordNotFound unless rel
     end
+  end
+
+  def custom_values
+    read_attribute(:custom_values) || {}
   end
 end

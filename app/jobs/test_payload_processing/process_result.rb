@@ -16,19 +16,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module TestPayloadProcessing
-
   class ProcessResult
-    attr_reader :test_result
+    attr_reader :test, :test_result
 
     def initialize data, test_payload, cache
 
       @test_result = TestResult.new
 
       @test_result.key = test_key data, cache
-      @test_result.name = data['n'] if data.key? 'n'
+      @test_result.name = data['n']
       # TODO: cache untracked test keys to reuse them across results
       @test_result.key ||= TestKey.joins(:test_results).where(test_keys: { tracked: false }, test_results: { name: @test_result.name }).first
       @test_result.key ||= TestKey.new(project: test_payload.project_version.project, free: false, tracked: false).tap(&:save_quickly!)
+
+      @test_result.new_test = @test_result.key.test.present?
+      @test_result.test = @test_result.key.test
 
       @test_result.test_payload = test_payload
       @test_result.runner = test_payload.runner
@@ -38,13 +40,13 @@ module TestPayloadProcessing
       @test_result.active = data.fetch 'v', true
       @test_result.duration = data['d'].to_i
       @test_result.message = data['m'].to_s if data['m'].present?
-      @test_result.run_at = test_payload.run_ended_at
+      @test_result.run_at = test_payload.received_at
 
       @test_result.category = category data, cache if data.key? 'c'
       @test_result.tags = tags data, cache if data.key? 'g'
       @test_result.tickets = tickets data, cache if data.key? 't'
 
-      @test_result.custom_values = custom_values data, cache if data.key? 'a'
+      @test_result.custom_values = data['a'] if data.key? 'a'
 
       # TODO: save contributors
 
@@ -89,14 +91,6 @@ module TestPayloadProcessing
         cache[:tickets][name].tap do |ticket|
           raise "Expected to find ticket '#{name}' in cache" if ticket.blank?
         end
-      end
-    end
-
-    def custom_values data, cache
-      @test_result.custom_values = data['a'].inject [] do |memo,(name,contents)|
-        custom_value = cache[:custom_values][name].try :[], contents
-        raise "Expected to find custom value '#{name}' with the correct contents in cache" if custom_value.blank?
-        memo << custom_value
       end
     end
   end

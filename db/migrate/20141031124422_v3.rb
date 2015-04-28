@@ -18,12 +18,15 @@
 class V3 < ActiveRecord::Migration
 
   def up
-
     remove_foreign_key :test_infos, :deprecation
     remove_foreign_key :test_payloads, :test_run
     remove_foreign_key :test_results, :test_run
     remove_foreign_key :users, :last_run
+    remove_foreign_key :users, column: :settings_id
+    remove_foreign_key :test_results, :test_infos
 
+    drop_table :app_settings
+    drop_table :user_settings
     drop_table :api_keys
     drop_table :links
     drop_table :link_templates
@@ -34,8 +37,27 @@ class V3 < ActiveRecord::Migration
     drop_table :test_infos_tickets
     drop_table :test_runs
     drop_table :test_values
-    remove_foreign_key :test_results, :test_infos
     drop_table :test_infos
+    drop_table :test_results
+    drop_table :test_keys_payloads
+    drop_table :test_payloads
+    drop_table :test_keys
+    drop_table :project_versions
+    drop_table :projects
+    drop_table :categories
+    drop_table :tags
+    drop_table :tickets
+    drop_table :users
+
+    create_table :app_settings do |t|
+      t.string :ticketing_system_url, limit: 255
+      t.integer :reports_cache_size, null: false
+      t.integer :tag_cloud_size, null: false
+      t.integer :test_outdated_days, null: false
+      t.integer :test_payloads_lifespan, null: false
+      t.integer :test_runs_lifespan, null: false
+      t.datetime :updated_at, null: false
+    end
 
     create_table :organizations do |t|
       t.string :api_id, null: false, limit: 5
@@ -51,6 +73,18 @@ class V3 < ActiveRecord::Migration
       t.index :normalized_name, unique: true
     end
 
+    create_table :users do |t|
+      t.string :api_id, null: false, limit: 5
+      t.string :name, null: false, limit: 25
+      t.boolean :active, null: false, default: true
+      t.string :password_digest, null: false, limit: 255
+      t.integer :roles_mask, null: false, default: 0
+      t.integer :primary_email_id
+      t.timestamps null: false
+      t.index :api_id, unique: true
+      t.index :primary_email_id, unique: true
+    end
+
     create_table :emails do |t|
       t.string :address, null: false, limit: 255
       t.boolean :active, null: false, default: false
@@ -60,9 +94,7 @@ class V3 < ActiveRecord::Migration
 
     add_foreign_key :emails, :users
 
-    remove_column :categories, :metric_key
-    add_column :categories, :organization_id, :integer, null: false
-    add_foreign_key :categories, :organizations
+    add_foreign_key :users, :emails, column: :primary_email_id
 
     create_table :memberships do |t|
       t.string :api_id, null: false, limit: 12
@@ -83,12 +115,40 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :memberships, :organizations
     add_foreign_key :memberships, :emails, column: :organization_email_id
 
-    remove_column :projects, :metric_key
-    remove_column :projects, :url_token
-    add_column :projects, :description, :text
-    change_column :projects, :name, :string, limit: 50
-    add_column :projects, :organization_id, :integer, null: false
+    create_table :projects do |t|
+      t.string :api_id, null: false, limit: 12
+      t.string :name, null: false, limit: 50
+      t.text :description
+      t.integer :organization_id, null: false
+      t.integer :tests_count, null: false, default: 0
+      t.integer :deprecated_tests_count, null: false, default: 0
+      t.timestamps null: false
+      t.index :api_id, unique: true
+    end
+
     add_foreign_key :projects, :organizations
+
+    create_table :project_versions do |t|
+      t.string :name, null: false, limit: 255
+      t.integer :project_id, null: false
+      t.datetime :created_at, null: false
+      t.index [ :name, :project_id ], unique: true
+    end
+
+    add_foreign_key :project_versions, :projects
+
+    create_table :test_keys do |t|
+      t.string :key, null: false, limit: 12
+      t.boolean :free, null: false, default: true
+      t.boolean :tracked, null: false, default: true
+      t.integer :project_id, null: false
+      t.integer :user_id
+      t.timestamps null: false
+      t.index [ :key, :project_id ], unique: true
+    end
+
+    add_foreign_key :test_keys, :projects
+    add_foreign_key :test_keys, :users
 
     create_table :project_tests do |t|
       t.string :name, null: false
@@ -102,8 +162,90 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :project_tests, :test_keys, column: :key_id
     add_foreign_key :project_tests, :projects
 
-    add_column :tags, :organization_id, :integer, null: false
+    create_table :categories do |t|
+      t.string :name, null: false, limit: 255
+      t.integer :organization_id, null: false
+      t.datetime :created_at, null: false
+      t.index [ :name, :organization_id ], unique: true
+    end
+
+    add_foreign_key :categories, :organizations
+
+    create_table :tags do |t|
+      t.string :name, null: false, limit: 50
+      t.integer :organization_id, null: false
+      t.datetime :created_at, null: false
+      t.index [ :name, :organization_id ], unique: true
+    end
+
     add_foreign_key :tags, :organizations
+
+    create_table :tickets do |t|
+      t.string :name, null: false, limit: 255
+      t.integer :organization_id, null: false
+      t.datetime :created_at, null: false
+      t.index [ :name, :organization_id ], unique: true
+    end
+
+    add_foreign_key :tickets, :organizations
+
+    create_table :test_payloads do |t|
+      t.string :api_id, null: false, limit: 36
+      t.string :state, null: false, limit: 20
+      t.json :contents, null: false
+      t.integer :contents_bytesize, null: false
+      t.integer :duration
+      t.integer :results_count, null: false, default: 0
+      t.integer :passed_results_count, null: false, default: 0
+      t.integer :inactive_results_count, null: false, default: 0
+      t.integer :inactive_passed_results_count, null: false, default: 0
+      t.text :backtrace
+      t.integer :runner_id, null: false
+      t.integer :project_version_id
+      t.datetime :received_at, null: false
+      t.datetime :processing_at
+      t.datetime :processed_at
+      t.timestamps null: false
+      t.index :api_id, unique: true
+    end
+
+    add_foreign_key :test_payloads, :project_versions
+    add_foreign_key :test_payloads, :users, column: :runner_id
+
+    create_table :test_keys_payloads, id: false do |t|
+      t.integer :test_key_id, null: false
+      t.integer :test_payload_id, null: false
+      t.index [ :test_key_id, :test_payload_id ], unique: true
+    end
+
+    add_foreign_key :test_keys_payloads, :test_keys
+    add_foreign_key :test_keys_payloads, :test_payloads
+
+    create_table :test_results do |t|
+      t.string :name, null: false, limit: 255
+      t.boolean :passed, null: false
+      t.integer :duration, null: false
+      t.text :message
+      t.boolean :active, null: false
+      t.boolean :new_test, null: false
+      t.integer :payload_properties_set, null: false, default: 0
+      t.json :custom_values
+      t.integer :runner_id, null: false
+      t.integer :test_id
+      t.integer :project_version_id, null: false
+      t.integer :test_payload_id, null: false
+      t.integer :key_id
+      t.integer :category_id
+      t.datetime :run_at, null: false
+      t.datetime :created_at, null: false
+    end
+
+    add_foreign_key :test_results, :categories
+    add_foreign_key :test_results, :project_tests, column: :test_id
+    add_foreign_key :test_results, :project_versions
+    add_foreign_key :test_results, :test_keys, column: :key_id
+    add_foreign_key :test_results, :test_payloads
+    add_foreign_key :test_results, :users, column: :runner_id
 
     create_table :test_descriptions do |t|
       t.string :name, null: false
@@ -117,6 +259,7 @@ class V3 < ActiveRecord::Migration
       t.integer :last_runner_id, null: false
       t.integer :last_result_id
       t.integer :results_count, null: false, default: 0
+      t.json :custom_values
       t.timestamps null: false
       t.index [ :test_id, :project_version_id ], unique: true
     end
@@ -146,35 +289,13 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :test_descriptions_tickets, :tickets
 
     create_table :test_contributors, id: false do |t|
-      t.integer :test_description_id
-      t.integer :email_id
+      t.integer :test_description_id, null: false
+      t.integer :email_id, null: false
       t.index [ :test_description_id, :email_id ], unique: true, name: 'index_test_contributors_on_description_and_email'
     end
 
     add_foreign_key :test_contributors, :test_descriptions
     add_foreign_key :test_contributors, :emails
-
-    change_column :test_keys, :user_id, :integer, null: true
-    add_column :test_keys, :tracked, :boolean, null: false, default: true
-
-    remove_column :test_payloads, :test_run_id
-    add_column :test_payloads, :api_id, :string, null: false, limit: 36
-    rename_column :test_payloads, :user_id, :runner_id
-    remove_column :test_payloads, :contents
-    change_column :test_payloads, :state, :string, null: false, limit: 20
-    add_column :test_payloads, :contents, :json, null: false
-    add_column :test_payloads, :duration, :integer
-    add_column :test_payloads, :run_ended_at, :datetime
-    add_column :test_payloads, :results_count, :integer, null: false, default: 0
-    add_column :test_payloads, :passed_results_count, :integer, null: false, default: 0
-    add_column :test_payloads, :inactive_results_count, :integer, null: false, default: 0
-    add_column :test_payloads, :inactive_passed_results_count, :integer, null: false, default: 0
-    add_column :test_payloads, :project_version_id, :integer
-    add_column :test_payloads, :backtrace, :text
-    add_column :test_payloads, :processed_results_count, :integer, null: false, default: 0
-    add_column :test_payloads, :results_processed_at, :datetime
-    add_index :test_payloads, :api_id, unique: true
-    add_foreign_key :test_payloads, :project_versions
 
     create_table :test_reports do |t|
       t.string :api_id, null: false, limit: 5
@@ -196,28 +317,9 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :test_payloads_reports, :test_payloads
     add_foreign_key :test_payloads_reports, :test_reports
 
-    remove_index :test_results, [ :test_run_id, :test_info_id ]
-    remove_column :test_results, :test_run_id
-    remove_column :test_results, :previous_passed
-    remove_column :test_results, :previous_active
-    remove_column :test_results, :previous_category_id
-    remove_column :test_results, :deprecated
-    add_column :test_results, :test_payload_id, :integer, null: false
-    add_column :test_results, :key_id, :integer
-    add_column :test_results, :name, :string
-    add_column :test_results, :payload_properties_set, :integer, null: false, default: 0
-    add_column :test_results, :processed, :boolean, null: false, default: false
-    add_column :test_results, :processed_at, :datetime
-    rename_column :test_results, :test_info_id, :test_id
-    change_column :test_results, :new_test, :boolean, null: true, default: nil
-    change_column :test_results, :test_id, :integer, null: true
-    add_foreign_key :test_results, :test_payloads
-    add_foreign_key :test_results, :project_tests, column: :test_id
-    add_foreign_key :test_results, :test_keys, column: :key_id
-
     create_table :test_result_contributors, id: false do |t|
-      t.integer :test_result_id
-      t.integer :email_id
+      t.integer :test_result_id, null: false
+      t.integer :email_id, null: false
       t.index [ :test_result_id, :email_id ], unique: true, name: 'index_test_contributors_on_result_and_email'
     end
 
@@ -241,58 +343,6 @@ class V3 < ActiveRecord::Migration
 
     add_foreign_key :test_results_tickets, :test_results
     add_foreign_key :test_results_tickets, :tickets
-
-    create_table :test_custom_values do |t|
-      t.string :name, null: false, limit: 50
-      t.text :contents, null: false
-      t.index [ :name, :contents ], unique: true
-    end
-
-    create_table :test_custom_values_descriptions, id: false do |t|
-      t.integer :test_description_id, null: false
-      t.integer :test_custom_value_id, null: false
-      t.index [ :test_description_id, :test_custom_value_id ], unique: true, name: 'index_test_custom_values_descriptions_on_desc_and_value_ids'
-    end
-
-    add_foreign_key :test_custom_values_descriptions, :test_descriptions
-    add_foreign_key :test_custom_values_descriptions, :test_custom_values
-
-    create_table :test_custom_values_results, id: false do |t|
-      t.integer :test_result_id, null: false
-      t.integer :test_custom_value_id, null: false
-      t.index [ :test_result_id, :test_custom_value_id ], unique: true, name: 'index_test_custom_values_results_on_result_and_value_id'
-    end
-
-    add_foreign_key :test_custom_values_results, :test_results
-    add_foreign_key :test_custom_values_results, :test_custom_values
-
-    add_column :tickets, :organization_id, :integer, null: false
-    add_foreign_key :tickets, :organizations
-
-    remove_column :users, :remember_token
-    remove_column :users, :remember_created_at
-    remove_column :users, :current_sign_in_at
-    remove_column :users, :last_sign_in_at
-    remove_column :users, :current_sign_in_ip
-    remove_column :users, :last_sign_in_ip
-    remove_column :users, :encrypted_password
-    remove_column :users, :metric_key
-    remove_column :users, :email
-    remove_column :users, :last_run_id
-    remove_column :users, :settings_id
-    add_column :users, :primary_email_id, :integer
-    add_column :users, :password_digest, :string, null: false
-    add_column :users, :last_test_payload_id, :integer
-    add_column :users, :api_id, :string, null: false, limit: 5
-    change_column :users, :name, :string, null: false, limit: 25
-    add_index :users, :api_id, unique: true
-    add_index :users, :primary_email_id, unique: true
-    add_foreign_key :users, :emails, column: :primary_email_id
-    add_foreign_key :users, :test_payloads, column: :last_test_payload_id
-
-    add_column :user_settings, :user_id, :integer
-    add_index :user_settings, :user_id, unique: true
-    add_foreign_key :user_settings, :users
   end
 
   def down

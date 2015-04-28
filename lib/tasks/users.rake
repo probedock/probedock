@@ -71,6 +71,22 @@ namespace :users do
     puts Paint["User #{name} with e-mail #{email_address} was successfully created", :green]
   end
 
+  desc %|Retrieve a user's ID|
+  task :id, [ :name ] => :environment do |t,args|
+
+    unless name = args[:name]
+      puts Paint[%/A username must be given as first argument/, :red]
+      next
+    end
+
+    unless user = User.where(name: name).first
+      puts Paint[%/No user found with name #{name}/, :red]
+      next
+    end
+
+    puts user.api_id
+  end
+
   desc %|Generate an authentication token for a user|
   task :token, [ :name ] => :environment do |t,args|
 

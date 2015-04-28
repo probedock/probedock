@@ -29,8 +29,7 @@ class TestPayload < ActiveRecord::Base
   include SimpleStates
   states :created, :processing, :processed, :failed
   event :start_processing, from: :created, to: :processing
-  event :finish_results_processing, from: :processing, to: :results_processed
-  event :finish_processing, from: :results_processed, to: :processed
+  event :finish_processing, from: :processing, to: :processed
   event :fail_processing, from: :processing, to: :failed
 
   validates :api_id, presence: true, length: { is: 36, allow_blank: true }
@@ -40,7 +39,6 @@ class TestPayload < ActiveRecord::Base
   validates :contents_bytesize, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :state, inclusion: { in: state_names.inject([]){ |memo,name| memo << name << name.to_s } }
   validates :received_at, presence: true
-  validates :run_ended_at, presence: true
   validates :results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :passed_results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :inactive_results_count, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

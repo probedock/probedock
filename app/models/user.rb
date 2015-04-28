@@ -24,8 +24,6 @@ class User < ActiveRecord::Base
 
   has_secure_password
 
-  after_create :create_settings
-
   # List of roles. DO NOT change the order of the roles, as they
   # are stored in a bitmask. Only append new roles to the list.
   include RoleModel
@@ -39,8 +37,6 @@ class User < ActiveRecord::Base
   has_many :test_results, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_reports, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :memberships
-  belongs_to :last_test_payload, class_name: 'TestPayload'
-  has_one :settings, class_name: 'Settings::User', dependent: :destroy
   belongs_to :primary_email, class_name: 'Email', autosave: true
   # TODO: purge emails if unused
   has_many :emails
@@ -93,10 +89,6 @@ class User < ActiveRecord::Base
   end
 
   private
-
-  def create_settings
-    self.settings = Settings::User.new(user: self).tap(&:save!)
-  end
 
   def primary_email_must_be_among_emails
     errors.add :primary_email, :must_be_among_emails unless emails.include? primary_email

@@ -88,7 +88,7 @@ module ProbeDock
           end
 
           create_record membership do
-            UserMailer.new_membership_email(membership).deliver_later
+            UserMailer.new_membership_email(membership).deliver_later if data[:user_id].blank?
           end
         end
       end

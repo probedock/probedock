@@ -18,9 +18,8 @@
 require 'benchmark'
 
 module TestPayloadProcessing
-
   class ProcessPayload
-    attr_reader :test_payload, :processed_results, :cache
+    attr_reader :test_payload, :cache
 
     def initialize test_payload
 
@@ -42,29 +41,23 @@ module TestPayloadProcessing
 
           @cache = build_cache
 
-          @processed_results = Array.new data['r'].length
-
           @test_payload.results_count = data['r'].length
           @test_payload.duration = 0
 
-          @test_payload.duration = data['r'].inject(0){ |memo,r| memo + r['d'] }
+          @test_payload.duration = data.key?('d') ? data['d'] : data['r'].inject(0){ |memo,r| memo + r['d'] }
           @test_payload.passed_results_count = data['r'].count{ |r| r.fetch 'p', true }
           @test_payload.inactive_results_count = data['r'].count{ |r| !r.fetch('p', true) }
           @test_payload.inactive_passed_results_count = data['r'].count{ |r| r.fetch('p', true) && !r.fetch('v', true) }
 
-          i = 0
           data['r'].each_slice 100 do |results|
             fill_cache results, organization
             results.each do |result|
-              @processed_results[i] = ProcessResult.new(result, @test_payload, @cache)
-              i += 1
+              test_result = ProcessResult.new(result, @test_payload, @cache).test_result
+              ProcessTest.new test_result
             end
           end
 
-          @test_payload.duration = data['d'] if data.key? 'd'
-          @test_payload.finish_results_processing!
-
-          @test_payload.runner.update_attribute :last_test_payload_id, @test_payload.id
+          @test_payload.finish_processing!
 
           # Mark test keys as used.
           free_keys = @cache[:test_keys].values.select &:free?
@@ -72,8 +65,6 @@ module TestPayloadProcessing
 
           TestReport.new(organization: organization, runner: @test_payload.runner, test_payloads: [ @test_payload ]).save_quickly!
         end
-
-        enqueue_result_jobs
       end
 
       duration = (time * 1000).round 1
@@ -84,19 +75,12 @@ module TestPayloadProcessing
 
     private
 
-    def enqueue_result_jobs
-      @processed_results.each do |r|
-        r.test_result.enqueue_processing_job
-      end
-    end
-
     def build_cache
       {
         test_keys: {},
         categories: {},
         tags: {},
-        tickets: {},
-        custom_values: {}
+        tickets: {}
       }
     end
 
@@ -107,7 +91,6 @@ module TestPayloadProcessing
         cache_organization_records results, organization, Category, 'c'
         cache_organization_records results, organization, Tag, 'g'
         cache_organization_records results, organization, Ticket, 't'
-        cache_custom_values results
       end
 
       Rails.logger.info "Cached data for #{results.length} results in #{(time * 1000).round 1}ms"
@@ -123,19 +106,6 @@ module TestPayloadProcessing
 
         new_keys.each do |key|
           @cache[:test_keys][key] = existing_keys[key] || TestKey.new(key: key, free: false, project_id: @test_payload.project_version.project_id).tap(&:save_quickly!)
-        end
-      end
-    end
-
-    def cache_custom_values results
-      results.each do |r|
-        next unless r['a'].present?
-
-        r['a'].each_pair do |name,contents|
-          @cache[:custom_values][name] ||= {}
-          # FIXME: retrieve existing custom values with 1 query instead of 100
-          @cache[:custom_values][name][contents] ||= TestCustomValue.where(name: name, contents: contents).first
-          @cache[:custom_values][name][contents] ||= TestCustomValue.new(name: name, contents: contents).tap(&:save_quickly!)
         end
       end
     end
