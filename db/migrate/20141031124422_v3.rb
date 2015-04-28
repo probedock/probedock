@@ -118,6 +118,8 @@ class V3 < ActiveRecord::Migration
     create_table :projects do |t|
       t.string :api_id, null: false, limit: 12
       t.string :name, null: false, limit: 50
+      t.string :display_name, limit: 50
+      t.string :normalized_name, null: false, limit: 50
       t.text :description
       t.integer :organization_id, null: false
       t.integer :tests_count, null: false, default: 0

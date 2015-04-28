@@ -12,8 +12,5 @@ div ng-controller='ProjectsCtrl'
         p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi.
         = render partial: 'templates/newProject'
     .col-xs-12.col-sm-8.col-md-9
-      div ng-repeat='project in projects'
-        .visible-md-block.clearfix ng-if='$index % 2 === 0'
-        .visible-lg-block.clearfix ng-if='$index % 3 === 0'
-        .col-xs-12.col-sm-12.col-md-6.col-lg-4 ng-controller='ProjectCtrl'
-          = render partial: 'templates/project'
+      .col-xs-12 ng-repeat='project in projects' ng-controller='ProjectCtrl'
+        = render partial: 'templates/project'

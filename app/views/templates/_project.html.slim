@@ -1,27 +1,15 @@
-form.projectPanel.panel.panel-default ng-class='{"panel-primary": !editedProject && lastCreatedProject !== project, "panel-warning": editedProject, "panel-success": lastCreatedProject === project}' role='form' name='editProjectForm'
+.projectPanel.panel.panel-default
   .panel-heading.clearfix
-    .label.label-info.apiId.pull-right ng-hide='editedProject' tooltip='Project ID' {{ project.id }}
-    h3.panel-title ng-hide='editedProject' {{ project.name }}
-    .form-group ng-show='editedProject' ng-class='{"has-error": editProjectForm.name.$dirty && editProjectForm.name.$invalid}'
-      input.form-control type='text' ng-model='editedProject.name' name='name' autofocus=true required=true maxlength=100
+    .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
+      a.btn.btn-warning ui-sref='org.projects.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
+        span.glyphicon.glyphicon-pencil
+    h3.panel-title {{ project | projectName }}
   .panel-body
-    .btn-group.pull-right dropdown=true ng-hide='editedProject'
-      button.btn.btn-default.btn-sm.dropdown-toggle type='button' dropdown-toggle=true
-        span.glyphicon.glyphicon-cog
-      ul.dropdown-menu role='menu'
-        li
-          a href='#' ng-click='edit()' Edit
-    p ng-show='project.description && !editedProject' {{ project.description }}
-    p.text-muted ng-hide='project.description || editedProject'
-      em No description.
-    dl.dl-horizontal ng-hide='editedProject'
+    .label.label-info.apiId.pull-right tooltip='Project ID' {{ project.id }}
+    p ng-show='project.description' {{ project.description }}
+    p.empty ng-hide='project.description' No description
+    dl.dl-horizontal
       dt Number of Tests
       dd {{ project.testsCount - project.deprecatedTestsCount }}
       dt Creation Date
       dd {{ project.createdAt | amDateFormat:'llll' }}
-    .form-group ng-show='editedProject' ng-class='{"has-error": newProjectForm.description.$dirty && newProjectForm.description.$invalid}'
-      label for='project{{ project.id }}Description' Description
-      textarea.form-control ng-attr-id='project{{ project.id }}Description' ng-model='editedProject.description' name='description' rows=3 maxlength=1000
-    .btn-group.pull-right ng-show='editedProject'
-      button.btn.btn-default type='button' ng-click='cancelEdit()' ng-show='editedProject' Cancel
-      button.btn.btn-primary type='submit' ng-click='save()' ng-show='editedProject' Save

@@ -20,7 +20,7 @@ module ProbeDock
     namespace :projects do
       helpers do
         def parse_project
-          parse_object :name, :description
+          parse_object :name, :displayName, :description
         end
 
         def current_organization
@@ -30,24 +30,6 @@ module ProbeDock
             Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
           end
         end
-      end
-
-      get do
-        authenticate
-        authorize! Project, :index
-
-        rel = policy_scope(Project).order 'name ASC'
-
-        rel = paginated rel do |rel|
-          if params[:search].present?
-            term = "%#{params[:search].downcase}%"
-            rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
-          else
-            rel
-          end
-        end
-
-        rel.to_a.collect{ |p| p.to_builder.attributes! }
       end
 
       post do
@@ -60,6 +42,29 @@ module ProbeDock
         ProjectValidations.validate project, validation_context, location_type: :json, raise_error: true
 
         create_record project
+      end
+
+      get do
+        authenticate
+        authorize! Project, :index
+
+        rel = policy_scope(Project).order 'name ASC'
+
+        rel = paginated rel do |rel|
+
+          if params[:search].present?
+            term = "%#{params[:search].downcase}%"
+            rel = rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
+          end
+
+          if params[:name].present?
+            rel = rel.where name: params[:name].to_s.downcase
+          end
+
+          rel
+        end
+
+        rel.to_a.collect{ |p| p.to_builder.attributes! }
       end
 
       namespace '/:id' do
@@ -75,6 +80,11 @@ module ProbeDock
           def current_organization
             current_project.organization
           end
+        end
+
+        get do
+          authorize! current_project, :show
+          current_project
         end
 
         patch do

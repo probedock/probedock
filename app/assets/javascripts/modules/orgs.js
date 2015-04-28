@@ -52,12 +52,9 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
           scope: $scope
         });
 
-        var deregister = $scope.$on('$stateChangeStart', function() {
+        $scope.$on('$stateChangeStart', function() {
           modal.dismiss('stateChange');
-          deregister();
         });
-
-        $scope.$on('$destroy', deregister);
 
         return modal;
       }

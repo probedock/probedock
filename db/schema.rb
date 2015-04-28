@@ -97,6 +97,8 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   create_table "projects", force: :cascade do |t|
     t.string   "api_id",                 limit: 12,             null: false
     t.string   "name",                   limit: 50,             null: false
+    t.string   "display_name",           limit: 50
+    t.string   "normalized_name",        limit: 50,             null: false
     t.text     "description"
     t.integer  "organization_id",                               null: false
     t.integer  "tests_count",                       default: 0, null: false

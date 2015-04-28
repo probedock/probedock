@@ -24,8 +24,12 @@ class ProjectPolicy < ApplicationPolicy
     organization && (organization.public? || user.is?(:admin) || user.member_of?(organization))
   end
 
+  def show?
+    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+  end
+
   def update?
-    user.membership_in(record.organization).try(:is?, :admin)
+    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   def publish?

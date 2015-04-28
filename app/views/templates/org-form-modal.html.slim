@@ -5,7 +5,7 @@ form novalidate=true name='orgForm' ng-submit='orgForm.$valid && save()'
   .modal-body
     .form-group ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
       label for='orgName' Name
-      input#orgName.form-control type='string' name='name' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)?$/i' unique-org-name=true autofocus=true ng-model='editedOrg.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
+      input#orgName.form-control type='string' name='name' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-org-name=true autofocus=true ng-model='editedOrg.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
         | This is the identifier of the organization and is used in URLs.
         |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
@@ -25,5 +25,5 @@ form novalidate=true name='orgForm' ng-submit='orgForm.$valid && save()'
   .modal-footer.clearfix
     .btn-group.pull-right
       button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
-      button.btn.btn-warning type='button' ng-if='organization.id' ng-click='reset()' ng-disabled='!changed()' Reset
+      button.btn.btn-warning type='button' ng-if='editedOrg.id' ng-click='reset()' ng-disabled='!changed()' Reset
       button.btn.btn-primary type='submit' ng-disabled='orgForm.$invalid' Save

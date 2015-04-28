@@ -21,13 +21,15 @@ class Project < ActiveRecord::Base
   include IdentifiableResource
 
   before_create{ set_identifier :api_id, size: 12 }
+  before_save :normalize_name
 
   belongs_to :organization, counter_cache: true
   has_many :test_keys
   has_many :tests, class_name: 'ProjectTest'
   has_many :versions, class_name: 'ProjectVersion'
 
-  validates :name, presence: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)\Z/i }
+  validates :name, presence: true, uniqueness: true, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)*\Z/i }
+  validates :display_name, length: { maximum: 50, allow_blank: true }
   validates :organization, presence: true
   validate :name_must_not_be_reserved
 
@@ -35,6 +37,7 @@ class Project < ActiveRecord::Base
     Jbuilder.new do |json|
       json.id api_id
       json.name name
+      json.displayName display_name if display_name.present?
       json.organizationId organization.api_id
 
       unless options[:link]
@@ -52,5 +55,9 @@ class Project < ActiveRecord::Base
   def name_must_not_be_reserved
     # TODO: add missing translation
     errors.add :name, :reserved if RESERVED_NAMES.include? name.to_s.downcase
+  end
+
+  def normalize_name
+    self.normalized_name = name.downcase
   end
 end
