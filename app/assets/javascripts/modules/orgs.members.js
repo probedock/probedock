@@ -34,7 +34,8 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
 
         var modal = orgMembers.openForm($scope);
 
-        modal.result.then(function() {
+        modal.result.then(function(data) {
+          $scope.memberships.push(data);
           $state.go('^', {}, { inherit: true });
         }, function(reason) {
           if (reason != 'stateChange') {
@@ -144,17 +145,32 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
         withOrganization: 1
       }
     }).then(function(res) {
+
       $scope.membership = res.data.length ? res.data[0] : null;
       $scope.invalidOtp = !res.data.length;
+
+      if (!$scope.membership) {
+        return;
+      }
+
+      if (auth.currentUser) {
+        checkExistingMembership();
+      } else {
+        $scope.$on('auth.signIn', checkExistingMembership);
+      }
     }, function(err) {
       if (err.status == 403) {
         $scope.invalidOtp = true;
       }
     });
 
+    $scope.$on('auth.signOut', function() {
+      delete $scope.existingMembership;
+    });
+
     $scope.openSignInDialog = auth.openSignInDialog;
 
-    $scope.emailisNew = function() {
+    $scope.emailIsNew = function() {
       return !_.some(auth.currentUser.emails, function(email) {
         return email.address == $scope.membership.organizationEmail;
       });
@@ -182,6 +198,18 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
         $state.go('org.dashboard.default', { orgName: $scope.membership.organization.name });
       });
     };
+
+    function checkExistingMembership() {
+      api({
+        url: '/api/memberships',
+        params: {
+          mine: 1,
+          organizationId: $scope.membership.organizationId
+        }
+      }).then(function(res) {
+        $scope.existingMembership = res.data.length ? res.data[0] : null;
+      });
+    }
   })
 
   .controller('NewMembershipRegistrationCtrl', function(api, auth, $modalInstance, $scope, $state, $stateParams) {

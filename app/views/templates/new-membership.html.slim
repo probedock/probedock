@@ -6,9 +6,12 @@
       a ng-if='membership.organization.public' href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })' {{ membership.organization | orgName }}
       span ng-if='!membership.organization.public' {{ membership.organization | orgName }}
       |  organization.
-    p ng-if='currentUser && membership && emailisNew()'
+    p ng-if='!existingMembership && currentUser && membership && emailIsNew()'
       | Accepting will add the following e-mail to your profile: 
       strong {{ membership.organizationEmail }}
+    p ng-if='existingMembership'
+      | You are already a member of this organization with the following e-mail: 
+      strong {{ existingMembership.organizationEmail }}
     .btn-group
       button.btn.btn-primary ng-if='!currentUser' ng-click='openSignInDialog()'
         span.glyphicon.glyphicon-user
@@ -16,9 +19,12 @@
       button.btn.btn-success ng-if='!currentUser' ng-click='openRegistrationDialog()'
         span.glyphicon.glyphicon-plus
         |  I'm new here
-      button.btn.btn-success ng-if='currentUser' ng-click='accept()'
+      button.btn.btn-success ng-if='currentUser && !existingMembership' ng-click='accept()'
         span.glyphicon.glyphicon-ok
         |  Join
+      button.btn.btn-success ng-if='existingMembership' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
+        span.glyphicon.glyphicon-stats
+        |  Dashboard
   .row ng-if='invalidOtp'
     .col-md-offset-2.col-md-8.col-xs-12
       .alert.alert-danger.clearfix ng-if='invalidOtp'

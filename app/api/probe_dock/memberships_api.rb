@@ -107,6 +107,7 @@ module ProbeDock
             rel = rel.where true_flag?(:accepted) ? 'memberships.user_id IS NOT NULL' : 'memberships.user_id IS NULL'
           end
 
+          # TODO: 403 with "mine" param if not logged in
           if current_user && params.key?(:mine)
             if current_organization.present? || current_user.try(:is?, :admin)
               condition = true_flag?(:mine) ? '=' : '!='

@@ -3,11 +3,11 @@
     .well
       h1 Members
       p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi. Ut non nulla nulla. Nam et auctor ipsum, vitae pharetra dolor. In quis nisl finibus ex semper blandit. Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis. Sed vel vehicula arcu. Pellentesque orci ligula, placerat non porta a, eleifend quis turpis. Quisque ultrices, erat nec cursus euismod, lorem diam mollis purus, id ultrices est mauris sit amet quam. Sed eget iaculis magna. Nullam nisi diam, eleifend vitae egestas placerat, ornare quis magna. Phasellus commodo, arcu sit amet luctus sagittis, eros lorem lobortis eros, a aliquam dolor lacus non sem. Quisque in turpis non tellus suscipit dignissim sed vitae ex.
-      button.btn.btn-success ui-sref='org.dashboard.members.new'
+      button.btn.btn-success ui-sref='org.dashboard.members.new' ng-if='currentMemberIs("admin")'
         span.glyphicon.glyphicon-plus
         |  Add a member
   .col-lg-9.col-md-8.col-xs-12
-    #orgMembers.col-lg-4.col-sm-6.col-xs-12 ng-repeat='membership in memberships'
+    #orgMembers.col-sm-6.col-xs-12 ng-repeat='membership in memberships | orderBy: "-createdAt"'
       .panel.panel-default
         .panel-heading.clearfix
           strong ng-if='membership.user' {{ membership.user.name }}
