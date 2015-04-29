@@ -1,98 +1,29 @@
-.container-fluid
+.container ng-controller='UsersListCtrl'
   h1 User Management
-  .col-xs-12.col-md-7.col-lg-8 ng-controller='UsersListCtrl'
-    spinner ng-hide='users'
-    table.usersList.table.table-hover.table-bordered ng-show='users.length'
-      thead
-        tr
-          th colspan=2 User
-          th.hidden-xs.hidden-sm.hidden-md E-mail
-          th.hidden-xs Registered since
-          th
-      tbody
-        tr ng-repeat='user in users' ng-class='{info: user.id === selectedUserId, success: user.id === lastCreatedUser.id && user.id !== selectedUserId}'
-          td.avatar
-            img gravatar-src='user.primaryEmailMd5' gravatar-size=30
-          td.name {{ user.name }}
-          td.email.hidden-xs.hidden-sm.hidden-md {{ user.primaryEmail }}
-          td.registeredAt.hidden-xs
-            | {{ user.createdAt | amDateFormat:'ll' }}
-            |  
-            | ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
-          td.actions
-            a.btn.btn-primary.btn-sm type='button' ui-sref='users.details({ userId: user.id })' ng-show='user.id !== selectedUserId'
-              span.glyphicon.glyphicon-info-sign
-            a.btn.btn-primary.btn-sm type='button' ui-sref='users' ng-show='user.id === selectedUserId'
-              span.glyphicon.glyphicon-remove-sign
-  .col-xs-12.col-md-5.col-lg-4
-    .userDetails.panel.panel-default ng-controller='UserDetailsCtrl'
-      .panel-heading
-        h3.panel-title ng-hide='loadingSelectedUser || selectedUser' No user selected 
-        h3.panel-title ng-show='loadingSelectedUser' Loading user...
-        h3.panel-title ng-show='selectedUser' User Details
-      .panel-body
-        em.text-muted ng-hide='loadingSelectedUser || selectedUser' Select a user from the list to see more details and edit.
-        spinner ng-show='loadingSelectedUser'
-        div ng-show='selectedUser'
-          img.pull-right gravatar-src='selectedUser.primaryEmailMd5' gravatar-size=100 ng-hide='editedUser'
-          dl ng-hide='editedUser'
-            dt Username
-            dd {{ selectedUser.name }}
-            dt E-mail
-            dd {{ selectedUser.primaryEmail }}
-          .alert.alert-warning.clear ng-show='!editedUser && !selectedUser.active'
-            | This user is not active; it cannot log in or use the API.
-          .alert.alert-danger.clear ng-show='!editedUser && deleteError'
-            | This user cannot be deleted because it is still linked to other resources.
-          form role='form' name='editUserForm' ng-show='editedUser'
-            .form-group ng-class='{"has-error": editUserForm.name.$dirty && editUserForm.name.$invalid}'
-              label for='userName' Username
-              input#userName.form-control type='text' name='name' required=true maxlength=255 autofocus=true ng-model='editedUser.name'
-            .form-group ng-class='{"has-error": editUserForm.primaryEmail.$dirty && editUserForm.primaryEmail.$invalid}'
-              label for='userEmail' E-mail
-              input#userEmail.form-control type='email' name='primaryEmail' required=true maxlength=255 ng-model='editedUser.primaryEmail'
-            .form-group ng-class='{"has-error": editUserForm.password.$dirty && editUserForm.password.$invalid}'
-              label for='userPassword' Password
-              input#userPassword.form-control type='password' name='password' placeholder='Leave blank for no change' maxlength=255 ng-model='editedUser.password'
-            .form-group ng-class='{"has-error": editUserForm.passwordConfirmation.$dirty && editUserForm.passwordConfirmation.$invalid}'
-              label for='userPasswordConfirmation' Password confirmation
-              input#userPasswordConfirmation.form-control type='password' name='passwordConfirmation' placeholder='Leave blank for no change' maxlength=255 ng-model='editedUser.passwordConfirmation'
-            .alert.alert-danger.clear ng-show='editError'
-              | The user could not be saved. The username or e-mail may already be taken, or the password confirmation does not match the password.
-            .controls
-              .btn-group
-                button.btn.btn-default type='button' ng-click='cancelEdit()' ng-disabled='busy' Cancel
-                button.btn.btn-primary type='submit' ng-click='save()' ng-disabled='busy || editUserForm.$invalid' Save
-          .controls.clear ng-show='!editedUser'
-            .btn-group
-              button.btn.btn-default type='button' ng-click='edit()' ng-disabled='busy' Edit
-              button.btn.btn-warning type='button' ng-click='toggleActive()' ng-disabled='busy'
-                span ng-show='selectedUser.active' Deactivate
-                span ng-hide='selectedUser.active' Activate
-              button.btn.btn-danger type='button' ng-click='delete()' ng-disabled='busy || currentUser.id === selectedUser.id' Delete
-    .userCreation ng-controller='NewUserCtrl'
-      .controls ng-hide='newUser'
-        button.btn.btn-primary.btn-lg ng-click='addNewUser()' Add a new user
-      .panel.panel-default ng-show='newUser'
-        .panel-heading
-          h3.panel-title New user
-        .panel-body
-          form role='form' name='newUserForm'
-            .form-group ng-class='{"has-error": newUserForm.name.$dirty && newUserForm.name.$invalid}'
-              label for='newUserName' Username
-              input#newUserName.form-control type='text' name='name' placeholder='Unique username' required=true maxlength=255 autofocus=true ng-model='newUser.name'
-            .form-group ng-class='{"has-error": newUserForm.primaryEmail.$dirty && newUserForm.primaryEmail.$invalid}'
-              label for='newUserEmail' E-mail
-              input#newUserEmail.form-control type='email' name='primaryEmail' placeholder='E-mail address' required=true maxlength=255 ng-model='newUser.primaryEmail'
-            .form-group ng-class='{"has-error": newUserForm.password.$dirty && newUserForm.password.$invalid}'
-              label for='newUserPassword' Password
-              input#newUserPassword.form-control type='password' name='password' placeholder='Password' required=true maxlength=255 ng-model='newUser.password'
-            .form-group ng-class='{"has-error": newUserForm.passwordConfirmation.$dirty && newUserForm.passwordConfirmation.$invalid}'
-              label for='newUserPasswordConfirmation' Password confirmation
-              input#newUserPasswordConfirmation.form-control type='password' name='passwordConfirmation' placeholder='Password' required=true maxlength=255 ng-model='newUser.passwordConfirmation'
-            .alert.alert-danger ng-show='saveError'
-              | The user could not be created. Either the name or e-mail are already taken or the password confirmation does not match the password.
-            .controls
-              .btn-group
-                button.btn.btn-default type='button' ng-click='cancel()' ng-disabled='busy' Cancel
-                button.btn.btn-primary type='submit' ng-click='save()' ng-disabled='busy || newUserForm.$invalid' Save
+  tabset type='pills'
+    tab ui-sref='admin.users' active='activeTabs.list'
+      tab-heading User List
+      table.usersList.table.table-hover st-pipe='usersList.refresh' st-table='usersList.records'
+        thead
+          tr
+            th colspan=2 User
+            th.hidden-xs.hidden-sm.hidden-md E-mail
+            th.hidden-xs Registered since
+            th
+        tbody
+          tr ng-repeat='user in usersList.records'
+            td.avatar
+              img gravatar-src='user.primaryEmailMd5' gravatar-size=30
+            td.name {{ user.name }}
+            td.email.hidden-xs.hidden-sm.hidden-md {{ user.primaryEmail }}
+            td.registeredAt.hidden-xs
+              | {{ user.createdAt | amDateFormat:'ll' }}
+              |  
+              | ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
+            td.actions
+              .btn-group.btn-group-sm
+                a.btn.btn-primary ui-sref='admin.users.show({ id: user.id })' tooltip='Show User' tooltip-append-to-body='true'
+                  span.glyphicon.glyphicon-info-sign
+    tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
+      tab-heading {{ userTab.user.name }}
+      p Hello World

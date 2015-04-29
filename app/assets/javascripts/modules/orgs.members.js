@@ -34,8 +34,8 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
 
         var modal = orgMembers.openForm($scope);
 
-        modal.result.then(function(data) {
-          $scope.memberships.push(data);
+        modal.result.then(function(membership) {
+          api.pushOrUpdate($scope.memberships, membership);
           $state.go('^', {}, { inherit: true });
         }, function(reason) {
           if (reason != 'stateChange') {

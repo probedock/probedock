@@ -12,7 +12,7 @@ form novalidate=true name='orgForm' ng-submit='orgForm.$valid && save()'
       .alert.alert-danger ng-if='orgForm.name.$error.uniqueOrgName'
         strong An organization with this name already exists.
     .form-group
-      label for='orgDisplayName' Display Name
+      label for='orgDisplayName' Display name
       input#orgDisplayName.form-control type='string' placeholder='{{ editedOrg.name }}' maxlength=50 ng-model='editedOrg.displayName'
       p.help-block
         | The is the name of the organization as shown in Probe Dock.

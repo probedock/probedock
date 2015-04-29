@@ -24,13 +24,13 @@ nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavC
           a href='#' ui-sref='org.reports({ orgName: currentOrganization.name })' Reports
         li ng-if='currentOrganization'  ng-class='{active: baseStateIs("org.projects")}'
           a href='#' ui-sref='org.projects({ orgName: currentOrganization.name })' Projects
-        li.dropdown dropdown=true ng-class='{active: baseStateIs("organizations", "users")}' ng-show='currentUserIs("admin")'
+        li.dropdown dropdown=true ng-class='{active: baseStateIs("admin")}' ng-show='currentUserIs("admin")'
           a.dropdown-toggle href='#' dropdown-toggle=true
             | Admin 
             span.caret
           ul.dropdown-menu role='menu'
             li
-              a href='#' ui-sref='users' Users
+              a href='#' ui-sref='admin.users' Users
       ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
         li ng-if='pendingMemberships.length'
           button.btn.btn-success.navbar-btn.btn-sm tooltip='You have been invited to join an organization!' tooltip-append-to-body='true' tooltip-placement='bottom' ui-sref='profile'

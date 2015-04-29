@@ -7,8 +7,8 @@
   .alert.alert-danger ng-if='projectForm.name.$error.uniqueProjectName'
     strong A project with this name already exists within the organization.
 .form-group
-  label for='projectDisplayName' Display Name
-  input#projectDisplayName.form-control type='string' placeholder='{{ editedProject.name }}' maxlength=50 ng-model='editedProject.displayName'
+  label for='projectDisplayName' Display name
+  input#projectDisplayName.form-control type='string' placeholder='{{ editedProject.name || "The same as the name by default" }}' maxlength=50 ng-model='editedProject.displayName'
   p.help-block
     | The is the name of the project as shown in Probe Dock.
 .form-group

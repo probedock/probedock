@@ -33,9 +33,9 @@ angular.module('probe-dock.tables', [])
           }
 
           function updateRecords(res) {
-            list.initialized = true;
             list.records = res.data;
-            $scope.$broadcast(name + '.refreshed', res.data, table);
+            $scope.$broadcast(name + '.refreshed', list, table);
+            list.initialized = true;
           }
         };
 

@@ -29,13 +29,19 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         url: '/edit'
       })
 
-      .state('users', {
+      .state('admin', {
+        url: '/admin',
+        abstract: true,
+        template: '<div ui-view />'
+      })
+
+      .state('admin.users', {
         url: '/users',
         templateUrl: '/templates/users.html'
       })
 
-      .state('users.details', {
-        url: '/:userId'
+      .state('admin.users.show', {
+        url: '/:id'
       })
 
       .state('org', {

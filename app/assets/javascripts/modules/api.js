@@ -30,6 +30,17 @@ angular.module('probe-dock.api', ['probe-dock.auth'])
       }, {});
     };
 
+    api.pushOrUpdate = function(list, item) {
+
+      var existingItem = _.findWhere(list, { id: item.id });
+
+      if (existingItem) {
+        list[list.indexOf(existingItem)] = item;
+      } else {
+        list.push(item);
+      }
+    };
+
     return api;
   })
 

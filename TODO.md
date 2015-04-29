@@ -1,12 +1,14 @@
 ## Features
 
-* display toast message if template cannot be loaded
+* send mails in resque jobs
 
-* directive for org name (display name or name)
+* remove spinner
 
 * save and validate emails as lowercase
 
 * increase z-index of bootstrap modals so that the loading bar isn't over them
+
+* display toast message if template cannot be loaded
 
 * manage access keys
 

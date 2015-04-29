@@ -238,7 +238,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
 
     tables.create($scope, 'reportsList', {
       url: '/reports',
-      pageSize: 2,
+      pageSize: 15,
       params: {
         organizationName: $stateParams.orgName
       }
@@ -254,8 +254,12 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
       }
     });
 
-    $scope.$on('reportsList.refreshed', function(event, records, table) {
-      if (latestReport && records.length && records[0].id == latestReport.id) {
+    $scope.$on('reportsList.refreshed', function(event, list, table) {
+
+      var records = list.records,
+          initialized = list.initialized;
+
+      if ((initialized && !records.length) || (latestReport && records.length && records[0].id == latestReport.id)) {
         $scope.noNewReports = true;
         hideNoNewReportsPromise = $timeout(function() {
           $scope.noNewReports = false;

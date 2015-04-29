@@ -42,19 +42,60 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     }
   })
 
-  .controller('UsersListCtrl', function(api, $scope, stateService, userService) {
+  .controller('UsersListCtrl', function(api, $q, $scope, $stateParams, stateService, tables, userService) {
 
-    var page = 1;
-    // TODO: recursively fetch all users
-    fetchUsers().then(addUsers);
+    $scope.userTabs = [];
 
-    stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
-      if (state.name == 'users.details') {
-        $scope.selectedUserId = params.userId;
-      } else {
-        delete $scope.selectedUserId;
+    $scope.activeTabs = {
+      list: true
+    };
+
+    tables.create($scope, 'usersList', {
+      url: '/users',
+      pageSize: 15
+    });
+
+    $scope.$on('$stateChangeSuccess', function(event, toState) {
+      if (toState.name == 'admin.users.show') {
+        addOrOpenUserTab();
       }
     });
+
+    function addOrOpenUserTab() {
+
+      var existingTab = _.findWhere($scope.userTabs, { id: $stateParams.id });
+
+      if (!existingTab) {
+        return api({
+          url: '/users/' + $stateParams.id
+        }).then(getUserData).then(addUserTab).then(openUserTab);
+      } else {
+        return $q.when(existingTab.user).then(openUserTab);
+      }
+    }
+
+    function getUserData(res) {
+      return res.data;
+    }
+
+    function addUserTab(user) {
+
+      $scope.userTabs.push({
+        id: user.id,
+        user: user
+      });
+
+      return user;
+    }
+
+    function openUserTab(user) {
+
+      _.each($scope.activeTabs, function(value, key) {
+        $scope.activeTabs[key] = false;
+      });
+
+      $scope.activeTabs[user.id] = true;
+    }
 
     $scope.timeFromNow = function(iso8601) {
       return new Date().getTime() - new Date(iso8601).getTime();

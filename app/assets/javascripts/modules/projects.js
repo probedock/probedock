@@ -76,6 +76,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
 
     reset();
 
+    // FIXME: recursively fetch all projects
     api({
       url: '/projects',
       params: {
@@ -89,7 +90,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
         modal = projects.openForm($scope);
 
         modal.result.then(function(project) {
-          $scope.projects.push(project);
+          api.pushOrUpdate($scope.projects, project);
           $state.go('^', {}, { inherit: true });
         }, function(reason) {
           if (reason != 'stateChange') {
