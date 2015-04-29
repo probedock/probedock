@@ -9,7 +9,7 @@
         p ng-if='organizations.length' The following organizations are docked here.
         p ng-if='!organizations.length' No organizations are docked here.
       ul.list-group
-        li.list-group-item.clearfix ng-repeat='org in organizations | orderBy: "name.toLowerCase()"'
+        li.list-group-item.clearfix ng-repeat='org in organizations | orderBy: orderOrganization'
           a ui-sref='org.dashboard.default({ orgName: org.name })' {{ org | orgName }}
           .btn-group.btn-group-xs.pull-right role='group' aria-label='controls' ng-if='currentUserIs("admin")'
             a.btn.btn-warning href='#' tooltip='Edit {{ org | orgName }}' tooltip-placement='left' tooltip-append-to-body='true' ui-sref='org.dashboard.default.edit({ orgName: org.name })'

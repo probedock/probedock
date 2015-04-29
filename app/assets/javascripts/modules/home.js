@@ -17,6 +17,10 @@ angular.module('probe-dock.home', [ 'probe-dock.orgs' ])
         });
       }
     });
+
+    $scope.orderOrganization = function(org) {
+      return (org.displayName || org.name).toLowerCase();
+    };
   })
 
 ;

@@ -78,11 +78,8 @@ module ProbeDock
 
         helpers do
           def current_organization
-            @current_organization ||= if uuid? params[:id].to_s
-              Organization.where(api_id: params[:id].to_s).first!
-            else
-              Organization.where(normalized_name: params[:id].to_s.downcase).first!
-            end
+            # FIXME: only allow by id, use collection resource for name
+            @current_organization = Organization.where(api_id: params[:id].to_s).first || Organization.where(normalized_name: params[:id].to_s.downcase).first!
           end
         end
 
