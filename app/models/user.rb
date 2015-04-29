@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
   has_many :emails
 
   strip_attributes except: :password_digest
-  validates :name, presence: true, uniqueness: true, length: { maximum: 25 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)?\Z/i, allow_blank: true }
+  validates :name, presence: true, uniqueness: true, length: { maximum: 25 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
   # TODO: validate min password length
   validates :primary_email, presence: true
   validate :primary_email_must_be_among_emails

@@ -21,11 +21,7 @@ module ProbeDock
     namespace :users do
 
       helpers do
-        def parse_user_for_creation
-          parse_object :name, :primaryEmail, :password, :passwordConfirmation
-        end
-
-        def parse_user_for_update
+        def parse_user
           parse_object :name, :primaryEmail, :active, :password, :passwordConfirmation
         end
 
@@ -40,7 +36,7 @@ module ProbeDock
         authenticate
         authorize! User, :create
 
-        data = parse_user_for_creation
+        data = parse_user
         email = data.delete(:primary_email).try(:to_s).try(:downcase)
         data[:password_confirmation] ||= ''
 
@@ -107,19 +103,23 @@ module ProbeDock
 
         patch do
           authorize! user_resource, :update
-          update_record user_resource, parse_user_for_update do |user,updates|
 
-            user.name = updates[:name] if updates.key? :name
-            user.active = !!updates[:active] if updates.key? :active
-            user.primary_email = Email.where(address: updates[:primary_email]).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != user.primary_email.try(:address)
-            user.primary_email.user = user
+          User.transaction do
+
+            updates = parse_user
+
+            user_resource.name = updates[:name] if updates.key? :name
+            user_resource.active = !!updates[:active] if updates.key? :active
+            # FIXME: only allow to set primary email if among existing emails
+            user_resource.primary_email = Email.where(address: updates[:primary_email]).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != user_resource.primary_email.try(:address)
+            user_resource.primary_email.user = user_resource
 
             if updates.key? :password
-              user.password = updates[:password]
-              user.password_confirmation = updates[:password_confirmation] || ''
+              user_resource.password = updates[:password]
+              user_resource.password_confirmation = updates[:password_confirmation] || ''
             end
 
-            user.save
+            update_record user_resource
           end
         end
 

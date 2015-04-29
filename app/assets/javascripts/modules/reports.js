@@ -214,8 +214,6 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         data: [ numberPassed, numberFailed, numberInactive ],
         colors: [ '#62c462', '#ee5f5b', '#fbb450' ]
       };
-
-      console.log($scope.healthChart);
     }
   })
 

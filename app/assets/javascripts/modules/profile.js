@@ -1,8 +1,23 @@
 angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'probe-dock.utils' ])
 
-  .factory('profile', function(api, auth, eventUtils, $rootScope) {
+  .factory('profile', function(api, auth, eventUtils, $modal, $rootScope) {
 
     var service = eventUtils.service({
+
+      openForm: function($scope) {
+
+        var modal = $modal.open({
+          templateUrl: '/templates/profile-modal.html',
+          controller: 'ProfileFormCtrl',
+          scope: $scope
+        });
+
+        $scope.$on('$stateChangeStart', function() {
+          modal.dismiss('stateChange');
+        });
+
+        return modal;
+      },
 
       pendingMemberships: [],
 
@@ -60,6 +75,26 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
     return service;
   })
 
+  .controller('ProfileFormCtrl', function(api, auth, forms, $modalInstance, $scope) {
+
+    $scope.user = auth.currentUser;
+    $scope.editedUser = angular.copy($scope.user);
+
+    $scope.changed = function() {
+      return !forms.dataEquals($scope.user, $scope.editedUser);
+    };
+
+    $scope.save = function() {
+      api({
+        method: 'PATCH',
+        url: '/api/users/' + $scope.user.id,
+        data: $scope.editedUser
+      }).then(function(res) {
+        $modalInstance.close(res.data);
+      });
+    };
+  })
+
   .controller('ProfileAccessTokensCtrl', function(api, $scope) {
 
     $scope.busy = false;
@@ -87,34 +122,23 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
     }
   })
 
-  .controller('ProfileDetailsCtrl', function(api, auth, $scope) {
+  .controller('ProfileDetailsCtrl', function(api, auth, profile, $scope, $state) {
 
-    var modal;
-    $scope.edit = function() {
-      delete $scope.saveError;
-      $scope.editedProfile = _.pick(auth.currentUser, 'name', 'email');
-    };
+    $scope.$on('$stateChangeSuccess', function(event, toState) {
+      if (toState.name == 'profile.edit') {
+        modal = profile.openForm($scope);
 
-    $scope.cancel = function() {
-      delete $scope.editedProfile;
-    };
-
-    $scope.save = function() {
-      api({
-        method: 'PATCH',
-        url: '/api/users/' + auth.currentUser.id,
-        data: api.compact($scope.editedProfile)
-      }).then(onSaved, onSaveError);
-    };
-
-    function onSaveError() {
-      $scope.saveError = true;
-    }
-
-    function onSaved(response) {
-      delete $scope.editedProfile;
-      _.extend(auth.currentUser, response.data);
-    }
+        modal.result.then(function(user) {
+          // FIXME: use profile service
+          _.extend(auth.currentUser, user);
+          $state.go('^', {}, { inherit: true });
+        }, function(reason) {
+          if (reason != 'stateChange') {
+            $state.go('^', {}, { inherit: true });
+          }
+        });
+      }
+    });
   })
 
   .controller('ProfileMembershipsCtrl', function(api, auth, profile, $scope) {

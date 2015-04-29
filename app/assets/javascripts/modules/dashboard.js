@@ -68,8 +68,6 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
         $scope.chart.labels.push(moment(data.date).format('ddd'));
         series.push(data.testsCount);
       });
-
-      console.log($scope.chart);
     }
   })
 

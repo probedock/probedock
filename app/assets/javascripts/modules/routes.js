@@ -25,6 +25,10 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         templateUrl: '/templates/profile.html'
       })
 
+      .state('profile.edit', {
+        url: '/edit'
+      })
+
       .state('users', {
         url: '/users',
         templateUrl: '/templates/users.html'
