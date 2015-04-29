@@ -52,7 +52,7 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
 
     function refreshPendingMemberships() {
       api({
-        url: '/api/memberships',
+        url: '/memberships',
         params: {
           mine: 1,
           accepted: 0,
@@ -87,7 +87,7 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
     $scope.save = function() {
       api({
         method: 'PATCH',
-        url: '/api/users/' + $scope.user.id,
+        url: '/users/' + $scope.user.id,
         data: $scope.editedUser
       }).then(function(res) {
         $modalInstance.close(res.data);
@@ -106,7 +106,7 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
 
       api({
         method: 'POST',
-        url: '/api/tokens'
+        url: '/tokens'
       }).then(showToken, onGenerateError);
     };
 
@@ -146,7 +146,7 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
     $scope.memberships = [];
 
     api({
-      url: '/api/memberships',
+      url: '/memberships',
       params: {
         mine: 1,
         accepted: 1,
@@ -161,7 +161,7 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
     $scope.accept = function(membership) {
       api({
         method: 'PATCH',
-        url: '/api/memberships/' + membership.id,
+        url: '/memberships/' + membership.id,
         data: {
           userId: auth.currentUser.id
         }

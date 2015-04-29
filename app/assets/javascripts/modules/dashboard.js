@@ -48,8 +48,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
 
     function fetchMetrics() {
       return api({
-        method: 'GET',
-        url: '/api/metrics/newTests',
+        url: '/metrics/newTests',
         params: {
           organizationName: $stateParams.orgName
         }
@@ -77,8 +76,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
 
     function fetchTags() {
       return api({
-        method: 'GET',
-        url: '/api/tags',
+        url: '/tags',
         params: {
           organizationName: $stateParams.orgName
         }
@@ -104,8 +102,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
 
     function fetchLatestReports() {
       return api({
-        method: 'GET',
-        url: '/api/reports',
+        url: '/reports',
         params: {
           pageSize: 8,
           organizationName: $stateParams.orgName

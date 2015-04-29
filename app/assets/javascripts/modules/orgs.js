@@ -72,7 +72,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
     function refreshOrgs() {
       api({
-        url: '/api/organizations',
+        url: '/organizations',
         params: {
           withRoles: 1
         }
@@ -107,7 +107,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
     if ($stateParams.orgName) {
       api({
-        url: '/api/organizations',
+        url: '/organizations',
         params: {
           name: $stateParams.orgName
         }
@@ -126,7 +126,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
     $scope.save = function() {
 
       var method = 'POST',
-          url = '/api/organizations';
+          url = '/organizations';
 
       if ($scope.organization.id) {
         method = 'PATCH';
@@ -168,7 +168,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
           }
 
           return api({
-            url: '/api/organizations',
+            url: '/organizations',
             params: {
               name: modelValue,
               pageSize: 1

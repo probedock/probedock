@@ -6,6 +6,10 @@ angular.module('probe-dock.api', ['probe-dock.auth'])
 
       options = _.extend({}, options);
 
+      if (!options.url.match(/^https?:\/\//)) {
+        options.url = '/api/' + options.url.replace(/^\//, '');
+      }
+
       if (auth.token) {
         options.headers = _.defaults({}, options.headers, {
           Authorization: 'Bearer ' + auth.token

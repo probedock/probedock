@@ -89,8 +89,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
 
     function fetchHealth() {
       return api({
-        method: 'GET',
-        url: '/api/reports/' + reportId + '/health'
+        url: '/reports/' + reportId + '/health'
       });
     }
 
@@ -132,8 +131,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
       $scope.fetchingMoreResults = true;
 
       return api({
-        method: 'GET',
-        url: '/api/reports/' + reportId + '/results',
+        url: '/reports/' + reportId + '/results',
         params: {
           page: page,
           pageSize: 30
@@ -196,8 +194,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
 
     function fetchReport() {
       api({
-        method: 'GET',
-        url: '/api/reports/' + reportId
+        url: '/reports/' + reportId
       }).then(showReport);
     }
 
@@ -249,8 +246,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
       }
 
       api({
-        method: 'GET',
-        url: '/api/reports',
+        url: '/reports',
         params: params
       }).then(showReports);
     };

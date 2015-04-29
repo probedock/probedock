@@ -27,7 +27,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     $scope.save = function() {
       api({
         method: 'POST',
-        url: '/api/users',
+        url: '/users',
         data: $scope.newUser
       }).then(onSaved, onSaveError);
     };
@@ -81,8 +81,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
     function fetchUsers() {
       return api({
-        method: 'GET',
-        url: '/api/users',
+        url: '/users',
         params: {
           pageSize: 50,
           'sort[]': [ 'name asc' ]
@@ -119,7 +118,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
       api({
         method: 'DELETE',
-        url: '/api/users/' + $scope.selectedUser.id
+        url: '/users/' + $scope.selectedUser.id
       }).then(onDeleted, onDeleteError);
     };
 
@@ -130,7 +129,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
       api({
         method: 'PATCH',
-        url: '/api/users/' + $scope.selectedUser.id,
+        url: '/users/' + $scope.selectedUser.id,
         data: {
           active: newActive
         }
@@ -153,7 +152,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
 
       api({
         method: 'PATCH',
-        url: '/api/users/' + $scope.selectedUser.id,
+        url: '/users/' + $scope.selectedUser.id,
         data: api.compact($scope.editedUser)
       }).then(onSaved, onEditError);
     };
@@ -202,8 +201,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
     function fetchUser() {
       $scope.loadingSelectedUser = true;
       return api({
-        method: 'GET',
-        url: '/api/users/' + userId
+        url: '/users/' + userId
       });
     }
 
@@ -240,7 +238,7 @@ angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
           }
 
           return api({
-            url: '/api/users',
+            url: '/users',
             params: {
               name: modelValue,
               pageSize: 1

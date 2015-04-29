@@ -57,7 +57,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
 
       api({
         method: 'DELETE',
-        url: '/api/memberships/' + membership.id
+        url: '/memberships/' + membership.id
       }).then(function() {
         $scope.memberships.splice($scope.memberships.indexOf(membership), 1);
       });
@@ -67,7 +67,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
       page = page || 1;
 
       api({
-        url: '/api/memberships',
+        url: '/memberships',
         params: {
           organizationName: $stateParams.orgName,
           withUser: 1,
@@ -97,7 +97,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
 
     if ($stateParams.id) {
       api({
-        url: '/api/memberships/' + $stateParams.id,
+        url: '/memberships/' + $stateParams.id,
         params: {
           withUser: 1
         }
@@ -115,7 +115,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     $scope.save = function() {
 
       var method = 'POST',
-          url = '/api/memberships';
+          url = '/memberships';
 
       if ($scope.membership.id) {
         method = 'PATCH';
@@ -139,7 +139,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
   .controller('NewMembershipCtrl', function(api, auth, $modal, $scope, $state, $stateParams) {
 
     api({
-      url: '/api/memberships',
+      url: '/memberships',
       params: {
         otp: $stateParams.otp,
         withOrganization: 1
@@ -187,7 +187,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     $scope.accept = function() {
       api({
         method: 'PATCH',
-        url: '/api/memberships/' + $scope.membership.id,
+        url: '/memberships/' + $scope.membership.id,
         params: {
           otp: $stateParams.otp
         },
@@ -201,7 +201,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
 
     function checkExistingMembership() {
       api({
-        url: '/api/memberships',
+        url: '/memberships',
         params: {
           mine: 1,
           organizationId: $scope.membership.organizationId
@@ -234,7 +234,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     function register() {
       return api({
         method: 'POST',
-        url: '/api/users',
+        url: '/users',
         params: {
           membershipOtp: $stateParams.otp
         },

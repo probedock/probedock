@@ -29,7 +29,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
 
     if ($stateParams.id) {
       api({
-        url: '/api/projects/' + $stateParams.id
+        url: '/projects/' + $stateParams.id
       }).then(function(res) {
         $scope.project = res.data;
         reset();
@@ -47,7 +47,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
     $scope.save = function() {
 
       var method = 'POST',
-          url = '/api/projects';
+          url = '/projects';
 
       if ($scope.project.id) {
         method = 'PATCH';
@@ -77,8 +77,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
     reset();
 
     api({
-      method: 'GET',
-      url: '/api/projects',
+      url: '/projects',
       params: {
         organizationName: $stateParams.orgName,
         pageSize: 25
@@ -108,7 +107,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
     $scope.save = function() {
       api({
         method: 'POST',
-        url: '/api/projects',
+        url: '/projects',
         data: $scope.editedProject
       }).then(onProjectCreated);
     };
@@ -153,7 +152,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
           }
 
           return api({
-            url: '/api/projects',
+            url: '/projects',
             params: {
               name: modelValue,
               organizationId: scope.project.organizationId,
