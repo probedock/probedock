@@ -47,7 +47,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
       openForm: function($scope) {
 
         var modal = $modal.open({
-          templateUrl: '/templates/org-form-modal.html',
+          templateUrl: '/templates/org-modal.html',
           controller: 'OrgFormCtrl',
           scope: $scope
         });

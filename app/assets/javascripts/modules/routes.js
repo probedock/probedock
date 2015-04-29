@@ -73,12 +73,6 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         url: '/:id/edit'
       })
 
-      .state('org.info', {
-        url: '/info',
-        controller: 'OrgCtrl',
-        templateUrl: '/templates/org.html'
-      })
-
       .state('org.projects', {
         url: '/projects',
         templateUrl: '/templates/projects.html'

@@ -37,7 +37,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         $scope.percentages = reportService.percentages($scope.report);
         $scope.tooltipText = tooltipText($scope.report, $attrs.clickForDetails !== undefined);
       },
-      templateUrl: '/templates/reportHealthBar.html'
+      templateUrl: '/templates/report-health-bar.html'
     };
   })
 
