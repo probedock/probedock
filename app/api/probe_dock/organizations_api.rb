@@ -78,8 +78,7 @@ module ProbeDock
 
         helpers do
           def current_organization
-            # FIXME: only allow by id, use collection resource for name
-            @current_organization = Organization.where(api_id: params[:id].to_s).first || Organization.where(normalized_name: params[:id].to_s.downcase).first!
+            @current_organization = Organization.where(api_id: params[:id].to_s).first!
           end
         end
 

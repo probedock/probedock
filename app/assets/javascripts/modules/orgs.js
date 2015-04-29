@@ -107,9 +107,13 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
     if ($stateParams.orgName) {
       api({
-        url: '/api/organizations/' + $stateParams.orgName
+        url: '/api/organizations',
+        params: {
+          name: $stateParams.orgName
+        }
       }).then(function(res) {
-        $scope.organization = res.data;
+        // TODO: handle not found
+        $scope.organization = res.data.length ? res.data[0] : null;
         reset();
       });
     }
