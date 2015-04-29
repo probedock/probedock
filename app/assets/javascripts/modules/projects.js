@@ -111,7 +111,11 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
         url: '/api/projects',
         data: $scope.editedProject
       }).then(onProjectCreated);
-    }
+    };
+
+    $scope.orderProject = function(project) {
+      return (project.displayName || project.name).toLowerCase();
+    };
 
     function showProjects(response) {
       $scope.projects = response.data;

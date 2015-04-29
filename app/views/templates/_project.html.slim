@@ -7,7 +7,6 @@
   .panel-body
     .label.label-info.apiId.pull-right tooltip='Project ID' {{ project.id }}
     p ng-show='project.description' {{ project.description }}
-    p.empty ng-hide='project.description' No description
     dl.dl-horizontal
       dt Number of Tests
       dd {{ project.testsCount - project.deprecatedTestsCount }}

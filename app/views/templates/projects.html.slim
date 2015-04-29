@@ -18,5 +18,5 @@ div ng-controller='ProjectsCtrl'
           span.glyphicon.glyphicon-plus
           |  Add a new project
     .col-xs-12.col-sm-8.col-md-9
-      .col-xs-12 ng-repeat='project in projects'
+      .col-xs-12 ng-repeat='project in projects | orderBy: orderProject'
         = render partial: 'templates/project'
