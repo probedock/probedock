@@ -1,4 +1,24 @@
-angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-dock.state'])
+angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-dock.state', 'probe-dock.tables' ])
+
+  .factory('reports', function() {
+    return {
+      percentages: function(report) {
+
+        var passed = Math.round((report.passedResultsCount - report.inactivePassedResultsCount) * 100 / report.resultsCount),
+            inactive = Math.round(report.inactiveResultsCount * 100 / report.resultsCount);
+
+        if (passed + inactive > 100) {
+          inactive = 100 - passed;
+        }
+
+        return percentages = {
+          passed: passed,
+          inactive: inactive,
+          failed: 100 - passed - inactive
+        };
+      }
+    };
+  })
 
   .directive('reportHealthBar', function() {
 
@@ -33,8 +53,8 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
         report: '=',
         clickForDetails: '@'
       },
-      controller: function($attrs, reportService, $scope) {
-        $scope.percentages = reportService.percentages($scope.report);
+      controller: function($attrs, reports, $scope) {
+        $scope.percentages = reports.percentages($scope.report);
         $scope.tooltipText = tooltipText($scope.report, $attrs.clickForDetails !== undefined);
       },
       templateUrl: '/templates/report-health-bar.html'
@@ -178,7 +198,7 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     };
   })
 
-  .controller('ReportDetailsCtrl', function(api, reportService, $scope, stateService) {
+  .controller('ReportDetailsCtrl', function(api, $scope, stateService) {
 
     var reportId;
     stateService.onState({ name: 'org.reports.details' }, $scope, function(state, params) {
@@ -214,78 +234,36 @@ angular.module('probe-dock.reports', ['ngSanitize', 'probe-dock.api', 'probe-doc
     }
   })
 
-  .controller('LatestReportsCtrl', function(api, reportService, $scope, $stateParams, stateService, $timeout) {
+  .controller('LatestReportsCtrl', function(api, reports, $scope, $stateParams, stateService, tables, $timeout) {
 
-    var hideNoNewReportsPromise;
-    $scope.fetchingReports = false;
-
-    stateService.onState({ name: 'org.reports' }, $scope, function() {
-      if ($scope.reports === undefined) {
-        $scope.fetchLatestReports();
+    tables.create($scope, 'reportsList', {
+      url: '/reports',
+      pageSize: 2,
+      params: {
+        organizationName: $stateParams.orgName
       }
     });
 
-    $scope.fetchLatestReports = function() {
+    var hideNoNewReportsPromise,
+        latestReport;
 
-      var params = {
-        organizationName: $stateParams.orgName,
-        pageSize: 15
-      };
-
-      if ($scope.reports === undefined) {
-        $scope.reports = false;
-      } else if ($scope.reports && $scope.reports.length) {
-        params.after = $scope.reports[0].id;
-      }
-
-      $scope.fetchingReports = true;
-
+    $scope.$on('reportsList.refresh', function() {
       $scope.noNewReports = false;
       if (hideNoNewReportsPromise) {
         $timeout.cancel(hideNoNewReportsPromise);
       }
+    });
 
-      api({
-        url: '/reports',
-        params: params
-      }).then(showReports);
-    };
-
-    function showReports(response) {
-
-      $scope.fetchingReports = false;
-
-      if (response.data.length) {
-        $scope.reports = response.data.concat($scope.reports || []);
-      } else if (!$scope.reports) {
-        $scope.reports = [];
-      } else {
+    $scope.$on('reportsList.refreshed', function(event, records, table) {
+      if (latestReport && records.length && records[0].id == latestReport.id) {
         $scope.noNewReports = true;
         hideNoNewReportsPromise = $timeout(function() {
           $scope.noNewReports = false;
         }, 5000);
+      } else if (table.pagination.start === 0) {
+        latestReport = _.first(records);
       }
-    }
-  })
-
-  .factory('reportService', function() {
-    return {
-      percentages: function(report) {
-
-        var passed = Math.round((report.passedResultsCount - report.inactivePassedResultsCount) * 100 / report.resultsCount),
-            inactive = Math.round(report.inactiveResultsCount * 100 / report.resultsCount);
-
-        if (passed + inactive > 100) {
-          inactive = 100 - passed;
-        }
-
-        return percentages = {
-          passed: passed,
-          inactive: inactive,
-          failed: 100 - passed - inactive
-        };
-      }
-    };
+    });
   })
 
 ;

@@ -17,6 +17,7 @@
  *= require ./bootstrap
  *= require ./layout
  *= require ./generic
+ *= require ./transitions
  *= require ./spinner
  *= require ./loading-bar
  *= require_tree ./modules

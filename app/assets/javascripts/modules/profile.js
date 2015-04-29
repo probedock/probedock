@@ -129,7 +129,7 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
         modal = profile.openForm($scope);
 
         modal.result.then(function(user) {
-          // FIXME: use profile service
+          // FIXME: use profile service and update local storage
           _.extend(auth.currentUser, user);
           $state.go('^', {}, { inherit: true });
         }, function(reason) {

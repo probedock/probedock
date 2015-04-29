@@ -96,19 +96,15 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
     }
   })
 
-  .controller('DashboardLatestReportsCtrl', function(api, reportService, $scope, $stateParams) {
+  .controller('DashboardLatestReportsCtrl', function(api, $scope, $stateParams) {
 
-    fetchLatestReports().then(showReports);
-
-    function fetchLatestReports() {
-      return api({
-        url: '/reports',
-        params: {
-          pageSize: 8,
-          organizationName: $stateParams.orgName
-        }
-      });
-    }
+    api({
+      url: '/reports',
+      params: {
+        pageSize: 8,
+        organizationName: $stateParams.orgName
+      }
+    }).then(showReports);
 
     function showReports(response) {
       $scope.reports = response.data;

@@ -1,23 +1,23 @@
 div ng-controller='LatestReportsCtrl'
-  spinner ng-hide='reports'
-  table.latestReports.table.table-striped.table-bordered.table-hover ng-show='reports'
+  table.latestReports.table.table-striped.table-hover st-pipe='reportsList.refresh' st-table='reportsList.records'
     thead
       tr
-        th.results
+        th.results.clearfix
           | Results
           .pull-right
             span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
-            button.btn.btn-primary.btn-xs ng-click='fetchLatestReports()' ng-disabled='fetchingReports' tooltip='Refresh'
-              span.glyphicon.glyphicon-refresh
+            refresh-table
         th.runner Runner
         th.duration.hidden-xs.hidden-sm Duration
         th.date.hidden-xs.hidden-sm.hidden-md Date
         th.projects.hidden-xs Projects
     tbody
-      tr.empty ng-show='reports && !reports.length'
+      tr.empty ng-show='!reportsList.initialized'
+        td colspan=5 Loading...
+      tr.empty ng-show='!reportsList.records.length && reportsList.initialized'
         td colspan=5
           em No tests have been run recently.
-      tr ng-repeat='report in reports'
+      tr ng-repeat='report in reportsList.records'
         td.results
           a href='#' ui-sref='org.reports.details({ reportId: report.id })'
             report-health-bar report='report' click-for-details=true
@@ -27,3 +27,6 @@ div ng-controller='LatestReportsCtrl'
         td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
         td.projects.hidden-xs
           .label.label-primary ng-repeat='project in report.projects' {{ project.name }}
+    tfoot
+      tr
+        td.clearfix colspan=5 st-pagination=true st-items-by-page=2 st-template='/templates/pagination.html'

@@ -1,0 +1,10 @@
+nav.fade-in-out.ng-hide ng-show='numPages >= 2'
+  ul.pagination ng-controller='PaginationCtrl'
+    li ng-class='{disabled: currentPage == 1}'
+      a ng-click='selectPage(1)'
+        span.glyphicon.glyphicon-step-backward
+    li ng-repeat='p in directPageLinks' ng-class='{active: p == currentPage}'
+      a ng-click='selectPage(p)' {{ p }}
+    li ng-class='{disabled: currentPage == numPages}'
+      a ng-click='selectPage(numPages)'
+        span.glyphicon.glyphicon-step-forward
