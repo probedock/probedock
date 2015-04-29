@@ -4,13 +4,19 @@ div ng-controller='ProjectsCtrl'
     .jumbotron ng-show='projects && !projects.length'
       h1 Projects
       p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi. Ut non nulla nulla. Nam et auctor ipsum, vitae pharetra dolor. In quis nisl finibus ex semper blandit. Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis. Sed vel vehicula arcu. Pellentesque orci ligula, placerat non porta a, eleifend quis turpis. Quisque ultrices, erat nec cursus euismod, lorem diam mollis purus, id ultrices est mauris sit amet quam. Sed eget iaculis magna. Nullam nisi diam, eleifend vitae egestas placerat, ornare quis magna. Phasellus commodo, arcu sit amet luctus sagittis, eros lorem lobortis eros, a aliquam dolor lacus non sem. Quisque in turpis non tellus suscipit dignissim sed vitae ex.
-      = render partial: 'templates/firstProject'
+      form.clearfix novalidate=true role='form' name='projectForm' ng-submit='projectForm.$valid && save()'
+        = render partial: 'templates/project_form'
+        .btn-group.pull-right
+          button.btn.btn-default type='button' ng-click='reset()' ng-disabled='!changed()' Cancel
+          button.btn.btn-primary type='submit' ng-disabled='projectForm.$invalid' Save
   .container-fluid ng-show='projects.length'
     .col-xs-12.col-sm-4.col-md-3
       .well
         h1 Projects
         p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi.
-        = render partial: 'templates/newProject'
+        a.btn.btn-success ui-sref='org.projects.new'
+          span.glyphicon.glyphicon-plus
+          |  Add a new project
     .col-xs-12.col-sm-8.col-md-9
-      .col-xs-12 ng-repeat='project in projects' ng-controller='ProjectCtrl'
+      .col-xs-12 ng-repeat='project in projects'
         = render partial: 'templates/project'

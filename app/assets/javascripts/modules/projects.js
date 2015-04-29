@@ -22,7 +22,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
     return service;
   })
 
-  .controller('ProjectFormCtrl', function(api, forms, $modalInstance, projects, $scope, $stateParams) {
+  .controller('ProjectFormCtrl', function(api, forms, $modalInstance, orgs, projects, $scope, $stateParams) {
 
     $scope.project = {};
     $scope.editedProject = {};
@@ -34,6 +34,9 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
         $scope.project = res.data;
         reset();
       });
+    } else {
+      $scope.project.organizationId = orgs.currentOrganization.id
+      reset();
     }
 
     $scope.reset = reset;
@@ -65,9 +68,13 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
     }
   })
 
-  .controller('ProjectsCtrl', function(api, projects, $scope, $state, $stateParams) {
+  .controller('ProjectsCtrl', function(api, forms, orgs, projects, $scope, $state, $stateParams) {
 
-    $scope.newProject = {};
+    $scope.project = {
+      organizationId: orgs.currentOrganization.id
+    };
+
+    reset();
 
     api({
       method: 'GET',
@@ -79,10 +86,11 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
     }).then(showProjects);
 
     $scope.$on('$stateChangeSuccess', function(event, toState) {
-      if (toState.name == 'org.projects.edit') {
+      if (toState.name.match(/^org.projects.(?:new|edit)$/)) {
         modal = projects.openForm($scope);
 
-        modal.result.then(function() {
+        modal.result.then(function(project) {
+          $scope.projects.push(project);
           $state.go('^', {}, { inherit: true });
         }, function(reason) {
           if (reason != 'stateChange') {
@@ -92,50 +100,33 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
       }
     });
 
-    $scope.createProject = function(form) {
+    $scope.reset = reset;
+    $scope.changed = function() {
+      return !forms.dataEquals($scope.project, $scope.editedProject);
+    };
+
+    $scope.save = function() {
       api({
         method: 'POST',
         url: '/api/projects',
-        data: $scope.newProject
-      }).then(_.partial(onProjectCreated, form));
+        data: $scope.editedProject
+      }).then(onProjectCreated);
     }
 
     function showProjects(response) {
       $scope.projects = response.data;
     }
 
-    function onProjectCreated(form, response) {
-      form.$setPristine();
-      $scope.newProject = {};
-      $scope.projects.unshift(response.data);
-      $scope.lastCreatedProject = response.data;
-    };
-  })
-
-  .controller('ProjectCtrl', function(api, $scope) {
-
-    $scope.edit = function() {
-      $scope.editedProject = _.pick($scope.project, 'name', 'description');
+    function onProjectCreated(res) {
+      $scope.projects.push(res.data);
     };
 
-    $scope.cancelEdit = function() {
-      delete $scope.editedProject;
-      $scope.editProjectForm.$setPristine();
-    };
-
-    $scope.save = function() {
-      api({
-        method: 'PATCH',
-        url: '/api/projects/' + $scope.project.id,
-        data: $scope.editedProject
-      }).then(onProjectSaved);
+    function reset() {
+      $scope.editedProject = angular.copy($scope.project);
+      if ($scope.projectForm) {
+        $scope.projectForm.$setPristine();
+      }
     }
-
-    function onProjectSaved(response) {
-      $scope.editProjectForm.$setPristine();
-      _.extend($scope.project, $scope.editedProject);
-      delete $scope.editedProject;
-    };
   })
 
   .filter('projectName', function() {

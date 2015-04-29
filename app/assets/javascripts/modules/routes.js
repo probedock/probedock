@@ -80,6 +80,10 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         templateUrl: '/templates/projects.html'
       })
 
+      .state('org.projects.new', {
+        url: '/new'
+      })
+
       .state('org.projects.edit', {
         url: '/edit?id'
       })
