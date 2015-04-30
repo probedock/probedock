@@ -1,3 +1,7 @@
+## Critical
+
+* validate payloads
+
 ## Features
 
 * show multiple report tabs from reports list
