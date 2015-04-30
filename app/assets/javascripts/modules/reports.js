@@ -162,7 +162,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
     function addResults(response) {
 
       $scope.fetchingMoreResults = false;
-      $scope.total = response.headers('X-Pagination').match(/total=(\d+)/)[1];
+      $scope.total = response.pagination().total;
 
       if (!$scope.results) {
         $scope.results = response.data;

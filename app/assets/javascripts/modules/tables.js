@@ -28,7 +28,7 @@ angular.module('probe-dock.tables', [])
           }).then(updatePagination).then(updateRecords);
 
           function updatePagination(res) {
-            table.pagination.numberOfPages = Math.ceil(res.headers('X-Pagination-Total') / res.headers('X-Pagination-PageSize'));
+            table.pagination.numberOfPages = res.pagination().numberOfPages;
             return res;
           }
 

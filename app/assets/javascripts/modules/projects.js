@@ -1,8 +1,13 @@
 angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'probe-dock.utils' ])
 
-  .factory('projects', function(api, eventUtils, $modal) {
+  .factory('projects', function(api, eventUtils, $modal, $q) {
+
+    var currentOrg = null;
 
     var service = eventUtils.service({
+
+      projects: [],
+
       openForm: function($scope) {
 
         var modal = $modal.open({
@@ -16,6 +21,51 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
         });
 
         return modal;
+      },
+
+      forwardProjects: function($scope) {
+
+        setScopeProjects();
+
+        service.forward($scope, 'refresh', { prefix: 'projects.' });
+        $scope.$on('projects.refresh', setScopeProjects);
+
+        function setScopeProjects() {
+          $scope.projects = service.projects;
+        }
+      },
+
+      fetchProjects: function(orgId) {
+        if (orgId != currentOrg) {
+          currentOrg = orgId;
+          service.projects = [];
+          return fetchProjectsRecursive();
+        } else {
+          return $q.when(service.projects);
+        }
+
+        function fetchProjectsRecursive(page) {
+          page = page || 1;
+
+          return api({
+            url: '/projects',
+            params: {
+              organizationId: orgId,
+              page: page,
+              pageSize: 25
+            }
+          }).then(function(res) {
+
+            service.projects = service.projects.concat(res.data);
+
+            if (res.pagination().hasMorePages) {
+              return fetchProjectsRecursive(++page);
+            } else {
+              service.emit('refresh', service.projects);
+              return service.projects;
+            }
+          });
+        }
       }
     });
 
@@ -135,7 +185,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
 
   .filter('projectName', function() {
     return function(input) {
-      return input.displayName || input.name;
+      return input ? input.displayName || input.name : '';
     };
   })
 

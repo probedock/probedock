@@ -49,6 +49,7 @@ class TestResult < ActiveRecord::Base
       json.name name
       json.passed passed
       json.active active
+      json.message message
       json.key key.key if key.present? && payload_properties_set?(:key)
     end
   end

@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class TestKey < ActiveRecord::Base
+  include JsonResource
   include QuickValidation
-  KEY_REGEXP = /\A[a-z0-9]{12}\Z/
 
   before_create :set_value
   before_destroy :ensure_no_test_payloads
@@ -29,7 +29,7 @@ class TestKey < ActiveRecord::Base
   has_and_belongs_to_many :test_payloads
 
   strip_attributes
-  validates :key, uniqueness: { scope: :project_id, if: :key }, format: { with: /\A[a-z0-9]{12}\Z/, allow_blank: true }
+  validates :key, uniqueness: { scope: :project_id, allow_blank: true }, length: { maximum: 50 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/, allow_blank: true }
   validates :project, presence: { unless: :quick_validation }
 
   def self.for_projects_and_keys keys_by_project
@@ -47,6 +47,17 @@ class TestKey < ActiveRecord::Base
     key
   end
 
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.key key
+      json.free free
+      json.projectId project.api_id
+      json.userId user.api_id if user.present?
+      json.createdAt created_at.iso8601(3)
+      json.updatedAt updated_at.iso8601(3)
+    end
+  end
+
   private
 
   def ensure_no_test_payloads
@@ -59,11 +70,12 @@ class TestKey < ActiveRecord::Base
 
   # Generates a random test key that does not yet exist in the database.
   def self.new_random_key project_id
-    next while exists?(key: (key = generate_random_key), project_id: project_id)
+    tries = -1
+    next while exists?(key: (key = generate_random_key(tries += 1)), project_id: project_id)
     key
   end
 
-  def self.generate_random_key
-    SecureRandom.random_alphanumeric 12
+  def self.generate_random_key tries
+    SecureRandom.random_alphanumeric 4 + (tries / 2).floor
   end
 end

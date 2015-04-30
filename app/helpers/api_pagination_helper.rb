@@ -11,7 +11,7 @@ module ApiPaginationHelper
     end
 
     header 'X-Pagination-Page', page.to_s
-    header 'X-Pagination-PageSize', limit.to_s
+    header 'X-Pagination-Page-Size', limit.to_s
     header 'X-Pagination-Total', rel.count.to_s
 
     filtered_rel = if block_given?
@@ -20,7 +20,7 @@ module ApiPaginationHelper
       rel
     end
 
-    header 'X-Pagination-FilteredTotal', filtered_rel.count.to_s if filtered_rel != rel
+    header 'X-Pagination-Filtered-Total', filtered_rel.count.to_s if filtered_rel != rel
 
     filtered_rel.offset(offset).limit(limit)
   end

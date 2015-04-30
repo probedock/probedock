@@ -68,11 +68,19 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
       p: passed,
       d: rand(2500)
     }.tap do |h|
+
       h[:k] = test_keys.random.unextend if rand(5) == 0
       h[:v] = false unless active
       h[:c] = test_categories.random.unextend if rand(4) > 0
-      h[:m] = Forgery(:lorem_ipsum).words(50).humanize unless passed
       h[:a] = {}.tap{ |h| (rand(3) + 1).times{ h[Forgery(:lorem_ipsum).words(3).split(' ').join('.')] = Forgery(:lorem_ipsum).words(rand(5) + 1) } } if rand(2) == 0
+
+      unless passed
+        message = 'Error at:'
+        (rand(20) + 1).times do |i|
+          message << "\n" + ((i + 1).to_s + '.').rjust(5) + Forgery(:lorem_ipsum).words(rand(30) + 5).humanize
+        end
+        h[:m] = message
+      end
     end
 
     payload[:r] << result

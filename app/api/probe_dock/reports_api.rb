@@ -91,18 +91,9 @@ module ProbeDock
           report = current_report
           authorize! report, :show
 
-          results = report.results
-          total = results.count
+          rel = report.results.order('active desc, passed, name, id')
 
-          limit = params[:pageSize].to_i
-          limit = 100 if limit <= 0 || limit > 100
-
-          page = params[:page].to_i
-          page = 1 if page < 1
-          offset = (page - 1) * limit
-
-          header 'X-Pagination', "page=#{page} pageSize=#{limit} total=#{total}"
-          results.order('active desc, passed, name, id').offset(offset).limit(limit).to_a.collect{ |r| r.to_builder.attributes! }
+          paginated(rel).to_a.collect{ |r| r.to_builder.attributes! }
         end
       end
     end

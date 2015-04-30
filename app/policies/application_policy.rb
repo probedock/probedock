@@ -30,24 +30,32 @@ class ApplicationPolicy
     end
   end
 
-  def index?
+  def default?
     false
+  end
+
+  def collection_default?
+    false
+  end
+
+  def index?
+    collection_default?
   end
 
   def show?
-    false
+    default?
   end
 
   def create?
-    false
+    collection_default?
   end
 
   def update?
-    false
+    default?
   end
 
   def destroy?
-    false
+    default?
   end
 
   def scope

@@ -27,10 +27,12 @@
     .panel-heading
       h3.panel-title New Tests
     .panel-body
-      canvas.chart.chart-bar data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
+      canvas.chart.chart-bar height='100' data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
       .empty ng-show='chart.data && !chart.data.length'
         em No tests have been run recently.
-.col-md-offset-6.col-md-6.col-xs-12
+.col-md-6.col-xs-12 ng-if='currentUser'
+  test-key-generator
+.col-md-6.col-xs-12
   .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
     .panel-heading
       h3.panel-title Test Tags

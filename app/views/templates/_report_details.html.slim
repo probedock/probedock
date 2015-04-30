@@ -21,8 +21,11 @@
           .clearfix
   .results ng-controller='ReportResultsCtrl'
     h3 List of results
-    .col-xs-12.col-sm-6.col-lg-4 ng-repeat='result in results' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
+    .result.col-xs-12.col-lg-6 ng-repeat-start='result in results' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
       .panel ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
         .panel-body
-          strong ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}' {{ result.name }}
+          test-key-label.pull-right ng-if='result.key' key='result.key'
+          h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}' {{ result.name }}
+          pre ng-if='result.message' {{ result.message }}
     button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()' Show {{ total - results.length }} more results
+    .clearfix.visible-lg-block ng-if='$index % 2 == 1' ng-repeat-end=true

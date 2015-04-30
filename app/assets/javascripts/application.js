@@ -50,6 +50,7 @@
 //= require angular-ng-clip
 //= require angular-loading-bar
 //= require angular-chart
+//= require angular-truncate
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot

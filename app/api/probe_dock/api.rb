@@ -68,6 +68,7 @@ module ProbeDock
     mount ProjectsApi
     mount ReportsApi
     mount TagsApi
+    mount TestKeysApi
     mount UsersApi
   end
 end

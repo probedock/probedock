@@ -1,13 +1,14 @@
-angular.module('probe-dock.api', ['probe-dock.auth'])
+angular.module('probe-dock.api', [ 'probe-dock.auth', 'probe-dock.utils' ])
 
-  .factory('api', function(auth, $http) {
+  .factory('api', function(apiPagination, auth, $http, $log, urls) {
+
+    var counter = 0;
 
     var api = function(options) {
-
       options = _.extend({}, options);
 
-      if (!options.url.match(/^https?:\/\//)) {
-        options.url = '/api/' + options.url.replace(/^\//, '');
+      if (!options.url.match(/^https?:\/\//) && !options.url.match(/^\/\//)) {
+        options.url = urls.join('/api', options.url);
       }
 
       if (auth.token) {
@@ -16,7 +17,26 @@ angular.module('probe-dock.api', ['probe-dock.auth'])
         });
       }
 
-      return $http(options);
+      var n = ++counter;
+
+      var logMessage = 'api ' + n + ' ' + (options.method || 'GET') + ' ' + options.url;
+      logMessage += (options.params ? '?' + urls.queryString(options.params) : '');
+      logMessage += (options.data ? ' ' + JSON.stringify(options.data) : '');
+      $log.debug(logMessage);
+
+      return $http(options).then(function(res) {
+
+        res.pagination = function() {
+          if (!res._pagination) {
+            res._pagination = apiPagination(res);
+            $log.debug('api ' + n + ' pagination: ' + JSON.stringify(res._pagination));
+          }
+
+          return res._pagination;
+        };
+
+        return res;
+      });
     };
 
     api.getResource = function(id, basePath) {
@@ -65,6 +85,42 @@ angular.module('probe-dock.api', ['probe-dock.auth'])
     };
 
     return api;
+  })
+
+  .factory('apiPagination', function($log) {
+    return function(res) {
+
+      var pagination = {
+        page: parsePaginationHeader(res, 'X-Pagination-Page', true),
+        pageSize: parsePaginationHeader(res, 'X-Pagination-Page-Size', true),
+        total: parsePaginationHeader(res, 'X-Pagination-Total', true),
+        filteredTotal: parsePaginationHeader(res, 'X-Pagination-Filtered-Total', false)
+      };
+
+      pagination.numberOfPages = Math.ceil((pagination.filteredTotal || pagination.total) / pagination.pageSize);
+      pagination.hasMorePages = pagination.page * pagination.pageSize < (pagination.filteredTotal !== undefined ? pagination.filteredTotal : pagination.total);
+
+      return pagination;
+    };
+
+    function parsePaginationHeader(res, header, required) {
+
+      var value = res.headers(header);
+      if (!value) {
+        if (required) {
+          throw new Error('Exected response to have the ' + header + ' header');
+        } else {
+          return undefined;
+        }
+      }
+
+      var number = parseInt(value, 10);
+      if (isNaN(number)) {
+        throw new Error('Expected response header ' + header + ' to contain an integer, got "' + value + '" (' + typeof(value) + ')');
+      }
+
+      return number;
+    }
   })
 
 ;

@@ -141,7 +141,7 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :project_versions, :projects
 
     create_table :test_keys do |t|
-      t.string :key, null: false, limit: 12
+      t.string :key, null: false, limit: 50
       t.boolean :free, null: false, default: true
       t.integer :project_id, null: false
       t.integer :user_id

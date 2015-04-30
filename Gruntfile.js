@@ -47,6 +47,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-loading-bar/build/loading-bar.js', dest: 'vendor/assets/javascripts/angular-loading-bar.js' },
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.js', dest: 'vendor/assets/javascripts/angular-ui-select.js' },
           { nonull: true, src: 'bower_components/angular-chart.js/dist/angular-chart.js', dest: 'vendor/assets/javascripts/angular-chart.js' },
+          { nonull: true, src: 'bower_components/angular-truncate/src/truncate.js', dest: 'vendor/assets/javascripts/angular-truncate.js' },
           // TODO: remove if unused
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },

@@ -1,8 +1,12 @@
 ## Critical
 
+* move entire smtp settings to configuration
+
 * validate payloads
 
 ## Features
+
+* option to display test keys as text
 
 * show multiple report tabs from reports list
 
