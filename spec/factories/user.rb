@@ -21,6 +21,11 @@ FactoryGirl.define do
   end
 
   factory :user, aliases: [ :author, :runner ] do
+    transient do
+      organization nil
+      organization_roles []
+    end
+
     name{ generate :user_name }
     password 'test'
 
@@ -28,6 +33,20 @@ FactoryGirl.define do
 
     factory :admin_user, aliases: [ :admin ] do
       roles_mask User.mask_for(:admin)
+    end
+
+    factory :org_member, aliases: [ :member ] do
+      after :create do |user,evaluator|
+        m = Membership.new user: user, organization: evaluator.organization, organization_email: user.primary_email
+        m.roles = evaluator.organization_roles
+        m.save!
+      end
+
+      factory :org_admin do
+        transient do
+          organization_roles [ :admin ]
+        end
+      end
     end
   end
 end

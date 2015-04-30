@@ -15,25 +15,21 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-module ErrorMatchers
-
-  def raise_unique_error
-    UniqueErrorMatcher.new
+RSpec::Matchers.define :raise_unique_error do
+  match do |actual|
+    begin
+      actual.call
+      false
+    rescue StandardError => e
+      e.class == ActiveRecord::RecordNotUnique || (e.class == ActiveRecord::StatementInvalid && e.original_exception.try(:class) == SQLite3::ConstraintException)
+    end
   end
 
-  class UniqueErrorMatcher
+  failure_message do
+    "expected that a unique error would be raised"
+  end
 
-    def matches? subject
-      begin
-        subject.call
-        false
-      rescue StandardError => e
-        e.class == ActiveRecord::RecordNotUnique || (e.class == ActiveRecord::StatementInvalid && e.original_exception.try(:class) == SQLite3::ConstraintException)
-      end
-    end
-
-    def supports_block_expectations?
-      true
-    end
+  def supports_block_expectations?
+    true
   end
 end

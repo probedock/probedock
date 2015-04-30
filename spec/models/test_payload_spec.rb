@@ -28,7 +28,7 @@ describe TestPayload, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '38b8aaf117c3' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '01022e014d7f' }){ should have_db_column(:contents).of_type(:json).with_options(null: false) }
     it(nil, probe_dock: { key: '83cbe7a2b2fe' }){ should have_db_column(:contents_bytesize).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: '816a4253b966' }){ should have_db_column(:state).of_type(:string).with_options(null: false, limit: 12) }
+    it(nil, probe_dock: { key: '816a4253b966' }){ should have_db_column(:state).of_type(:string).with_options(null: false, limit: 20) }
     it(nil, probe_dock: { key: '793c1d58bc15' }){ should have_db_column(:runner_id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '38c375f9570a' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probe_dock: { key: 'b10bba5cf4c0' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }

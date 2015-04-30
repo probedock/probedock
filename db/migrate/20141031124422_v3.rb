@@ -82,6 +82,7 @@ class V3 < ActiveRecord::Migration
       t.integer :primary_email_id
       t.timestamps null: false
       t.index :api_id, unique: true
+      t.index :name, unique: true
       t.index :primary_email_id, unique: true
     end
 
@@ -209,6 +210,7 @@ class V3 < ActiveRecord::Migration
       t.datetime :processed_at
       t.timestamps null: false
       t.index :api_id, unique: true
+      t.index :state
     end
 
     add_foreign_key :test_payloads, :project_versions

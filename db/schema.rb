@@ -204,6 +204,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree
+  add_index "test_payloads", ["state"], name: "index_test_payloads_on_state", using: :btree
 
   create_table "test_payloads_reports", id: false, force: :cascade do |t|
     t.integer "test_payload_id", null: false
@@ -275,6 +276,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   end
 
   add_index "users", ["api_id"], name: "index_users_on_api_id", unique: true, using: :btree
+  add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
   add_index "users", ["primary_email_id"], name: "index_users_on_primary_email_id", unique: true, using: :btree
 
   add_foreign_key "categories", "organizations"

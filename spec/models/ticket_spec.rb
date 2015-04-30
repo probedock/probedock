@@ -20,7 +20,7 @@ require 'spec_helper'
 describe Ticket, probe_dock: { tags: :unit } do
 
   context "#url" do
-    let(:ticket){ create :sample_ticket }
+    let(:ticket){ create :ticket }
 
     it "should not return an URL if the ticketing system URL is not set", probe_dock: { key: '55c7ff71779e' } do
       allow(Settings).to receive(:app).and_return(OpenStruct.new(ticketing_system_url: nil))
@@ -38,11 +38,11 @@ describe Ticket, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: 'e416f98af1a8' }){ should validate_length_of(:name).is_at_most(255) }
 
     context "with an existing ticket" do
-      let!(:ticket){ create :sample_ticket }
-      it(nil, probe_dock: { key: 'a3aaa98b10f9' }){ should validate_uniqueness_of(:name) }
+      let!(:ticket){ create :ticket }
+      it(nil, probe_dock: { key: 'a3aaa98b10f9' }){ should validate_uniqueness_of(:name).scoped_to(:organization_id) }
 
       it "should not validate the uniqueness of name with quick validation", probe_dock: { key: '2ef1cf87a9f8' } do
-        expect{ Ticket.new.tap{ |t| t.name = ticket.name; t.quick_validation = true }.save! }.to raise_unique_error
+        expect{ Ticket.new.tap{ |t| t.name = ticket.name; t.organization = ticket.organization; t.quick_validation = true }.save! }.to raise_unique_error
       end
     end
   end
@@ -55,6 +55,5 @@ describe Ticket, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '83a5605a055e' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '6e9ad64aaa9e' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
     it(nil, probe_dock: { key: '0a41edc50d67' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
-    it(nil, probe_dock: { key: '93a028d21cf0' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
   end
 end

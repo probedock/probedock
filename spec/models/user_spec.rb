@@ -24,11 +24,7 @@ describe User, probe_dock: { tags: :unit } do
   end
 
   context "with an existing user" do
-
-    before :each do
-      create :user
-    end
-
+    before(:each){ create :user }
     it(nil, probe_dock: { key: '1b4e57e85d2b' }){ should validate_uniqueness_of(:name) }
   end
 
@@ -45,13 +41,12 @@ describe User, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '28a9398ebe26' }){ should have_many(:test_keys) }
     it(nil, probe_dock: { key: 'bc98127d768c' }){ should have_many(:free_test_keys).class_name('TestKey') }
     it(nil, probe_dock: { key: '7a371e669906' }){ should have_many(:test_payloads).class_name('TestPayload') }
-    it(nil, probe_dock: { key: '786e3a4eeefa' }){ should belong_to(:last_test_payload).class_name('TestPayload') }
     it(nil, probe_dock: { key: 'a5dca889075c' }){ should have_many(:test_payloads) }
   end
 
   context "database table" do
     it(nil, probe_dock: { key: '48b7f46ea463' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: 'edc6773569db' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
+    it(nil, probe_dock: { key: 'edc6773569db' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 25) }
     it(nil, probe_dock: { key: '6e6d67322510' }){ should have_db_column(:roles_mask).of_type(:integer).with_options(null: false, default: 0) }
     it(nil, probe_dock: { key: 'ab9173bec164' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false, default: true) }
     it(nil, probe_dock: { key: '19faaeaea1cf' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }

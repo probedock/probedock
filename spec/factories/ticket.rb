@@ -15,22 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-
 FactoryGirl.define do
-
   sequence :ticket_name do |n|
-    "ticket-#{n}"
+    "JIRA-#{n}"
   end
 
   factory :ticket do
     name{ generate :ticket_name }
-  end
-
-  factory :sample_ticket, class: Ticket do
-    name 'JIRA-1337'
-
-    factory :other_ticket do
-      name 'JIRA-66'
-    end
+    organization
   end
 end

@@ -20,14 +20,6 @@ require 'spec_helper'
 
 describe Tag, probe_dock: { tags: :unit } do
 
-  context "#to_param" do
-
-    it "should return the name", probe_dock: { key: '2eed86e197e2' } do
-      tag = create :unit_tag
-      expect(tag.to_param).to eq(tag.name)
-    end
-  end
-
   context "validations" do
     it(nil, probe_dock: { key: 'bd99f663c361' }){ should validate_presence_of(:name) }
     it(nil, probe_dock: { key: '48e4e5d511b8' }){ should validate_length_of(:name).is_at_most(50) }
@@ -35,13 +27,12 @@ describe Tag, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '70333ff9d379' }){ should_not allow_value('$$$', 'tag with space').for(:name) }
 
     context "with an existing tag" do
-
       let!(:tag){ create :unit_tag }
 
-      it(nil, probe_dock: { key: '193b8fba796c' }){ should validate_uniqueness_of(:name) }
+      it(nil, probe_dock: { key: '193b8fba796c' }){ should validate_uniqueness_of(:name).scoped_to(:organization_id) }
 
       it "should not validate the uniqueness of name with quick validation", probe_dock: { key: '5a54a294e171' } do
-        expect{ Tag.new.tap{ |t| t.name = tag.name; t.quick_validation = true }.save! }.to raise_unique_error
+        expect{ Tag.new.tap{ |t| t.name = tag.name; t.organization = tag.organization; t.quick_validation = true }.save! }.to raise_unique_error
       end
     end
   end
@@ -53,6 +44,6 @@ describe Tag, probe_dock: { tags: :unit } do
   context "database table" do
     it(nil, probe_dock: { key: '9769e493bce9' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '308268b6ab43' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
-    it(nil, probe_dock: { key: 'e50992d6d9bc' }){ should have_db_index(:name).unique(true) }
+    it(nil, probe_dock: { key: 'e50992d6d9bc' }){ should have_db_index([ :name, :organization_id ]).unique(true) }
   end
 end

@@ -37,7 +37,7 @@ describe Project do
 
   describe "validations" do
     it(nil, probe_dock: { key: '439478e8b142' }){ should validate_presence_of(:name) }
-    it(nil, probe_dock: { key: '38a831c819f7' }){ should validate_length_of(:name).is_at_most(100) }
+    it(nil, probe_dock: { key: '38a831c819f7' }){ should validate_length_of(:name).is_at_most(50) }
   end
 
   describe "associations" do
@@ -46,7 +46,7 @@ describe Project do
 
   describe "database table" do
     it(nil, probe_dock: { key: '354227570c24' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: '66b088f28c76' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 100) }
+    it(nil, probe_dock: { key: '66b088f28c76' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probe_dock: { key: 'df86a430816f' }){ should have_db_column(:api_id).of_type(:string).with_options(null: false, limit: 12) }
     it(nil, probe_dock: { key: '89de5255730b' }){ should have_db_column(:tests_count).of_type(:integer).with_options(null: false, default: 0) }
     it(nil, probe_dock: { key: 'eba1a511e15f' }){ should have_db_column(:deprecated_tests_count).of_type(:integer).with_options(null: false, default: 0) }

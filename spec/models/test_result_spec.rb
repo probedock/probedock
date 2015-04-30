@@ -49,8 +49,8 @@ describe TestResult, probe_dock: { tags: :unit } do
     it(nil, probe_dock: { key: '099c43427c69' }){ should have_db_column(:passed).of_type(:boolean).with_options(null: false) }
     it(nil, probe_dock: { key: '558aec64f22d' }){ should have_db_column(:duration).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '516ef9ba84ea' }){ should have_db_column(:message).of_type(:text) }
-    it(nil, probe_dock: { key: 'e9f576c1cc45' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false, default: true) }
-    it(nil, probe_dock: { key: '0ffbb1a73cb7' }){ should have_db_column(:new_test).of_type(:boolean).with_options(null: true, default: nil) }
+    it(nil, probe_dock: { key: 'e9f576c1cc45' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false) }
+    it(nil, probe_dock: { key: '0ffbb1a73cb7' }){ should have_db_column(:new_test).of_type(:boolean).with_options(null: false) }
     it(nil, probe_dock: { key: 'f27560967967' }){ should have_db_column(:runner_id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '93d491c4e31f' }){ should have_db_column(:test_id).of_type(:integer).with_options(null: true) } # TODO: check why null is true
     it(nil, probe_dock: { key: '556726a1c0cc' }){ should have_db_column(:test_payload_id).of_type(:integer).with_options(null: false) }

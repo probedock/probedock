@@ -17,10 +17,11 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 FactoryGirl.define do
   sequence :project_name do |n|
-    "Project #{n}"
+    "project-#{n}"
   end
 
   factory :project do
     name{ generate(:project_name) }
+    organization
   end
 end

@@ -15,14 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-
 FactoryGirl.define do
-
   sequence :category_name do |n|
     "Category #{n}"
   end
 
   factory :category do
     name{ generate(:category_name) }
+    organization
   end
 end

@@ -15,30 +15,29 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-
 FactoryGirl.define do
-
   sequence :tag_name do |n|
     "tag-#{n}"
   end
 
   factory :tag do
     name{ generate :tag_name }
-  end
+    organization
 
-  factory :unit_tag, class: Tag do
-    name 'unit'
+    factory :unit_tag do
+      name 'unit'
 
-    factory :integration_tag do
-      name 'integration'
-    end
+      factory :integration_tag do
+        name 'integration'
+      end
 
-    factory :slow_tag do
-      name 'slow'
-    end
+      factory :slow_tag do
+        name 'slow'
+      end
 
-    factory :performance_tag do
-      name 'performance'
+      factory :performance_tag do
+        name 'performance'
+      end
     end
   end
 end

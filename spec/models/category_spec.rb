@@ -25,13 +25,15 @@ describe Category do
 
     context "with an existing category" do
       let!(:category){ create :category }
-      it(nil, probe_dock: { key: '4fe83eacb8be' }){ should validate_uniqueness_of(:name) }
+
+      it(nil, probe_dock: { key: '4fe83eacb8be' }){ should validate_uniqueness_of(:name).scoped_to(:organization_id) }
 
       context "with quick validation" do
         before(:each){ subject.quick_validation = true }
 
         it "should not validate the uniqueness of name", probe_dock: { key: 'dd74d78ce79b' } do
           subject.name = category.name
+          subject.organization = category.organization
           expect{ subject.save! }.to raise_unique_error
         end
       end
@@ -46,6 +48,6 @@ describe Category do
     it(nil, probe_dock: { key: '4c2d12b4392b' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '36105d8b309b' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
     it(nil, probe_dock: { key: '45ec9284a110' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
-    it(nil, probe_dock: { key: '542503b7d3f5' }){ should have_db_index(:name).unique(true) }
+    it(nil, probe_dock: { key: '542503b7d3f5' }){ should have_db_index([ :name, :organization_id ]).unique(true) }
   end
 end

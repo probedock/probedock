@@ -30,11 +30,4 @@ class Ticket < ActiveRecord::Base
     return nil unless ticketing_system_url = Settings.app.ticketing_system_url
     ticketing_system_url.sub /\%\{name\}/, name
   end
-
-  def to_client_hash options = {}
-    { id: id, name: name }.tap do |h|
-      u = url
-      h[:url] = u if u.present?
-    end
-  end
 end

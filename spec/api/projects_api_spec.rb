@@ -18,14 +18,15 @@
 require 'spec_helper'
 
 RSpec.describe ProbeDock::ProjectsApi do
-  let(:user){ create :user }
+  let(:organization){ create :organization }
+  let(:user){ create :org_admin, organization: organization }
 
   describe "POST /api/projects" do
 
     it "should create a project" do
 
       expect do
-        api_post '/api/projects', { name: 'Probe Dock' }.to_json, user: user
+        api_post '/api/projects', { name: 'probe-dock', organizationId: organization.api_id }.to_json, user: user
       end.to change(Project, :count).by(1)
 
       expect(response.status).to eq(201)
@@ -33,17 +34,19 @@ RSpec.describe ProbeDock::ProjectsApi do
 
       expect(MultiJson.load(response.body)).to eq({
         'id' => created_project.api_id,
-        'name' => 'Probe Dock',
+        'name' => 'probe-dock',
+        'organizationId' => organization.api_id,
         'testsCount' => created_project.tests_count,
         'deprecatedTestsCount' => created_project.deprecated_tests_count,
-        'createdAt' => created_project.created_at.iso8601(3)
+        'createdAt' => created_project.created_at.iso8601(3),
+        'updatedAt' => created_project.updated_at.iso8601(3)
       })
     end
 
     it "should not create an invalid project" do
 
       expect do
-        api_post '/api/projects', { description: 's' * 1001 }.to_json, user: user
+        api_post '/api/projects', { organizationId: organization.api_id, description: 's' * 1001 }.to_json, user: user
       end.not_to change(Project, :count)
 
       expect(response.status).to eq(422)

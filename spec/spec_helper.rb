@@ -58,7 +58,6 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Shoulda::Matchers::ActionController
   config.include DatabaseMatchers
-  config.include ErrorMatchers
   config.include SpecApiHelper
   config.include SpecHelpers
   config.include Capybara::DSL

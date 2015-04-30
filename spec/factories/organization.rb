@@ -17,7 +17,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 FactoryGirl.define do
   sequence :organization_name do |n|
-    "Organization #{n}"
+    "org-#{n}"
   end
 
   factory :organization do
