@@ -4,7 +4,7 @@ angular.module('probe-dock.state', [ 'ui.router' ])
     $locationProvider.html5Mode(true);
   })
 
-  .factory('stateService', function($rootScope, $state, $stateParams, $timeout) {
+  .factory('states', function($rootScope, $state, $stateParams, $timeout) {
 
     var onStateCallbacks = [];
 
@@ -12,35 +12,52 @@ angular.module('probe-dock.state', [ 'ui.router' ])
 
     function checkState(event, toState, toParams, fromState, fromParams) {
 
-      _.each(onStateCallbacks, function(onStateCallback) {
+      _.each(onStateCallbacks, function(callback) {
 
-        if (_.isString(onStateCallback.options.name) && toState.name !== onStateCallback.options.name) {
+        var matcher = callback.matcher,
+            options = callback.options,
+            func = callback.func;
+
+        if (_.isRegExp(matcher) && !toState.name.match(matcher)) {
           return;
-        } else if (_.isArray(onStateCallback.options.name) && !_.contains(onStateCallback.options.name, toState.name)) {
+        } else if (_.isString(matcher) && toState.name !== matcher) {
+          return;
+        } else if (_.isArray(matcher) && !_.contains(matcher, toState.name)) {
           return;
         }
 
-        if (onStateCallback.options.params && _.some(onStateCallback.options.params, function(value, name) {
+        if (options.params && _.some(options.params, function(value, name) {
           return toParams[name] !== value;
         })) {
           return;
         }
 
-        onStateCallback.callback(toState, toParams, fromState, fromParams);
+        callback.func(toState, toParams, fromState, fromParams);
       });
     }
 
     return {
-      onState: function(stateOptions, scope, callback) {
+      onState: function($scope, matcher, options, func) {
 
-        var callback = { options: stateOptions, callback: callback };
+        var callback = {
+          matcher: matcher
+        };
+
+        if (typeof(options) == 'function') {
+          callback.options = {};
+          callback.func = options;
+        } else {
+          callback.options = options || {};
+          callback.func = callback;
+        }
+
         onStateCallbacks.push(callback);
 
         $timeout(function() {
           checkState(undefined, $state.current, $stateParams);
         });
 
-        scope.$on('$destroy', function() {
+        $scope.$on('$destroy', function() {
           onStateCallbacks.splice(onStateCallbacks.indexOf(callback), 1);
         });
       }

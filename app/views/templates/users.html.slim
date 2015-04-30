@@ -1,6 +1,7 @@
-.container ng-controller='UsersListCtrl'
-  h1 User Management
-  tabset type='pills'
+.container ng-controller='UserManagementCtrl'
+  .page-header
+    h1 User Management
+  tabset.usersList type='pills'
     tab ui-sref='admin.users' active='activeTabs.list'
       tab-heading User List
       table.usersList.table.table-hover st-pipe='usersList.refresh' st-table='usersList.records'
@@ -13,8 +14,10 @@
         tbody
           tr ng-repeat='user in usersList.records'
             td.avatar
-              img gravatar-src='user.primaryEmailMd5' gravatar-size=30
-            td.name {{ user.name }}
+              a ui-sref='admin.users.show({ id: user.id })'
+                img gravatar-src='user.primaryEmailMd5' gravatar-size=30
+            td.name
+              a ui-sref='admin.users.show({ id: user.id })' {{ user.name }}
             td.email.hidden-xs.hidden-sm.hidden-md {{ user.primaryEmail }}
             td.registeredAt.hidden-xs
               | {{ user.createdAt | amDateFormat:'ll' }}
@@ -22,8 +25,14 @@
               | ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
             td.actions
               .btn-group.btn-group-sm
-                a.btn.btn-primary ui-sref='admin.users.show({ id: user.id })' tooltip='Show User' tooltip-append-to-body='true'
-                  span.glyphicon.glyphicon-info-sign
+                a.btn.btn-danger ng-click='delete(user)' tooltip='Delete User' tooltip-append-to-body='true'
+                  span.glyphicon.glyphicon-remove
     tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
-      tab-heading {{ userTab.user.name }}
-      p Hello World
+      tab-heading
+        | {{ userTab.user.name }} 
+        a ng-click='removeTab(userTab)'
+          span.glyphicon.glyphicon-remove
+      .col-md-6.col-xs-12
+        user-details user='userTab.user'
+    li.instructions ng-if='!userTabs.length'
+      .message Select a user from the list to show more information

@@ -1,0 +1,15 @@
+.userDetails.panel.panel-default
+  .panel-heading.clearfix
+    .btn-group.btn-group-xs.pull-right
+      a.btn.btn-warning ng-click='edit()' tooltip='Edit' tooltip-append-to-body='true'
+        span.glyphicon.glyphicon-pencil
+    h3.panel-title User Details
+  .panel-body
+    img.pull-right gravatar-src='user.primaryEmailMd5' gravatar-size=100
+    dl
+      dt Username
+      dd {{ user.name }}
+      dt Primary e-mail
+      dd {{ user.primaryEmail }}
+      dt Registered since
+      dd {{ user.createdAt | amDateFormat:'ll' }}

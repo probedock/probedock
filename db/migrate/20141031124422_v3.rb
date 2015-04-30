@@ -92,7 +92,7 @@ class V3 < ActiveRecord::Migration
       t.index :address, unique: true
     end
 
-    add_foreign_key :emails, :users
+    add_foreign_key :emails, :users, on_delete: :nullify
 
     add_foreign_key :users, :emails, column: :primary_email_id
 

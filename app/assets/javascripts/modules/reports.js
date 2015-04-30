@@ -174,7 +174,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
     }
   })
 
-  .controller('ReportsCtrl', function($scope, stateService) {
+  .controller('ReportsCtrl', function($scope, states) {
 
     $scope.activeTabs = {
       latest: true,
@@ -182,7 +182,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
     };
     $scope.detailsTabReportId = null;
 
-    stateService.onState({ name: [ 'org.reports', 'org.reports.details' ] }, $scope, function(state, params) {
+    states.onState($scope, [ 'org.reports', 'org.reports.details' ], function(state, params) {
       if (state && state.name == 'org.reports.details') {
         showReportDetails(params.reportId);
       } else {
@@ -198,10 +198,10 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
     };
   })
 
-  .controller('ReportDetailsCtrl', function(api, $scope, stateService) {
+  .controller('ReportDetailsCtrl', function(api, $scope, states) {
 
     var reportId;
-    stateService.onState({ name: 'org.reports.details' }, $scope, function(state, params) {
+    states.onState($scope, 'org.reports.details', function(state, params) {
       if (params.reportId != reportId) {
 
         delete $scope.report;
@@ -234,7 +234,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
     }
   })
 
-  .controller('LatestReportsCtrl', function(api, reports, $scope, $stateParams, stateService, tables, $timeout) {
+  .controller('LatestReportsCtrl', function(api, reports, $scope, $stateParams, tables, $timeout) {
 
     tables.create($scope, 'reportsList', {
       url: '/reports',

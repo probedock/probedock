@@ -1,23 +1,8 @@
 angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'probe-dock.utils' ])
 
-  .factory('profile', function(api, auth, eventUtils, $modal, $rootScope) {
+  .factory('profile', function(api, auth, eventUtils, $rootScope) {
 
     var service = eventUtils.service({
-
-      openForm: function($scope) {
-
-        var modal = $modal.open({
-          templateUrl: '/templates/profile-modal.html',
-          controller: 'ProfileFormCtrl',
-          scope: $scope
-        });
-
-        $scope.$on('$stateChangeStart', function() {
-          modal.dismiss('stateChange');
-        });
-
-        return modal;
-      },
 
       pendingMemberships: [],
 
@@ -75,26 +60,6 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
     return service;
   })
 
-  .controller('ProfileFormCtrl', function(api, auth, forms, $modalInstance, $scope) {
-
-    $scope.user = auth.currentUser;
-    $scope.editedUser = angular.copy($scope.user);
-
-    $scope.changed = function() {
-      return !forms.dataEquals($scope.user, $scope.editedUser);
-    };
-
-    $scope.save = function() {
-      api({
-        method: 'PATCH',
-        url: '/users/' + $scope.user.id,
-        data: $scope.editedUser
-      }).then(function(res) {
-        $modalInstance.close(res.data);
-      });
-    };
-  })
-
   .controller('ProfileAccessTokensCtrl', function(api, $scope) {
 
     $scope.busy = false;
@@ -120,25 +85,6 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
       $scope.token = response.data.token;
       $scope.busy = false;
     }
-  })
-
-  .controller('ProfileDetailsCtrl', function(api, auth, profile, $scope, $state) {
-
-    $scope.$on('$stateChangeSuccess', function(event, toState) {
-      if (toState.name == 'profile.edit') {
-        modal = profile.openForm($scope);
-
-        modal.result.then(function(user) {
-          // FIXME: use profile service and update local storage
-          _.extend(auth.currentUser, user);
-          $state.go('^', {}, { inherit: true });
-        }, function(reason) {
-          if (reason != 'stateChange') {
-            $state.go('^', {}, { inherit: true });
-          }
-        });
-      }
-    });
   })
 
   .controller('ProfileMembershipsCtrl', function(api, auth, profile, $scope) {

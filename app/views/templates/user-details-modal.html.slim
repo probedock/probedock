@@ -1,0 +1,21 @@
+form novalidate=true role='form' name='userDetailsForm' ng-submit='userDetailsForm.$valid && save()'
+  .modal-header
+    h3.modal-title
+      span ng-if='mode == "profile"' Edit Profile
+      span ng-if='mode != "profile"' Edit User {{ user.name }}
+  .modal-body
+    .form-group ng-class='{"has-error": userDetailsForm.name.$dirty && userDetailsForm.name.$invalid}'
+      label for='userName' Username
+      input#userName.form-control type='text' name='name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' placeholder='Your username' required=true maxlength=255 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-user-name=true autofocus=true ng-model='editedUser.name'
+      p.alert.alert-danger ng-if='userDetailsForm.name.$error.uniqueUserName'
+        strong Another user with this name already exists.
+    .form-group ng-class='{"has-error": userDetailsForm.password.$dirty && userDetailsForm.password.$invalid}'
+      label for='userPassword' Password
+      input#userPassword.form-control type='password' name='password' placeholder='Leave blank for no change' maxlength=255 ng-model='editedUser.password'
+    .form-group ng-class='{"has-error": userDetailsForm.passwordConfirmation.$dirty && userDetailsForm.passwordConfirmation.$invalid}'
+      label for='userPasswordConfirmation' Password confirmation
+      input#userPasswordConfirmation.form-control type='password' name='passwordConfirmation' placeholder='Leave blank for no change' maxlength=255 confirmation-for='editedUser.password' ng-model='editedUser.passwordConfirmation'
+  .modal-footer.clearfix
+    .btn-group.pull-right
+      button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
+      button.btn.btn-primary type='submit' ng-disabled='userDetailsForm.$invalid' Save

@@ -19,6 +19,29 @@ angular.module('probe-dock.api', ['probe-dock.auth'])
       return $http(options);
     };
 
+    api.getResource = function(id, basePath) {
+      return api({
+        url: basePath + '/' + id
+      });
+    };
+
+    api.patchResource = function(resource, basePath) {
+      return api({
+        method: 'PATCH',
+        url: basePath + '/' + resource.id,
+        data: resource
+      }).then(function(res) {
+        return res.data;
+      });
+    };
+
+    api.deleteResource = function(resource, basePath) {
+      return api({
+        method: 'DELETE',
+        url: basePath + '/' + resource.id
+      });
+    };
+
     api.compact = function(data) {
       return _.reduce(data, function(memo, value, attr) {
 

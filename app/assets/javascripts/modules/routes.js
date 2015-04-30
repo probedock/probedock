@@ -44,6 +44,10 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         url: '/:id'
       })
 
+      .state('admin.users.show.edit', {
+        url: '/edit'
+      })
+
       .state('org', {
         url: '/:orgName',
         abstract: true,

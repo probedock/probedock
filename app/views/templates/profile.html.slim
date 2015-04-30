@@ -1,21 +1,7 @@
 .container-fluid
   h1.text-center Profile
   .col-lg-4.col-md-5.col-sm-6.col-xs-12
-    .profileUserDetails.panel.panel-default ng-controller='ProfileDetailsCtrl'
-      .panel-heading.clearfix
-        .btn-group.btn-group-xs.pull-right
-          a.btn.btn-warning ui-sref='profile.edit' tooltip='Edit Profile' tooltip-append-to-body='true'
-            span.glyphicon.glyphicon-pencil
-        h3.panel-title User Details
-      .panel-body
-        img.pull-right gravatar-src='currentUser.primaryEmailMd5' gravatar-size=100
-        dl
-          dt Username
-          dd {{ currentUser.name }}
-          dt Primary e-mail
-          dd {{ currentUser.primaryEmail }}
-          dt Registered since
-          dd {{ currentUser.createdAt | amDateFormat:'ll' }}
+    user-details.profileUserDetails user='currentUser' mode='profile'
   .col-lg-4.col-md-5.col-sm-6.col-xs-12
     .profileMemberships.panel.panel-default ng-controller='ProfileMembershipsCtrl'
       .panel-heading

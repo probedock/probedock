@@ -1,267 +1,208 @@
-angular.module('probe-dock.users', ['probe-dock.api', 'probe-dock.state'])
+angular.module('probe-dock.users', [ 'probe-dock.api', 'probe-dock.state', 'probe-dock.utils' ])
 
-  .factory('userService', function($window) {
+  .factory('users', function(api, auth, eventUtils, $modal, $rootScope) {
 
-    var jvent = new $window.Jvent();
+    var service = eventUtils.service({
 
-    return {
-      on: _.bind(jvent.on, jvent),
-      emit: _.bind(jvent.emit, jvent)
-    };
+      openDetailsForm: function($scope) {
+
+        var modal = $modal.open({
+          templateUrl: '/templates/user-details-modal.html',
+          controller: 'UserDetailsFormCtrl',
+          scope: $scope
+        });
+
+        $scope.$on('$stateChangeStart', function() {
+          modal.dismiss('stateChange');
+        });
+
+        return modal;
+      },
+
+      getUser: function(id) {
+        return api.getResource(id, '/users').then(function(res) {
+          return res.data;
+        });
+      },
+
+      updateUser: function(user) {
+        return api.patchResource(user, '/users').then(function(updatedUser) {
+
+          if (auth.currentUser && updatedUser.id == auth.currentUser.id) {
+            auth.updateCurrentUser(updatedUser);
+          }
+
+          service.emit('update', updatedUser);
+
+          return updatedUser;
+        });
+      },
+
+      deleteUser: function(user) {
+        return api.deleteResource(user, '/users');
+      }
+    });
+
+    return service;
   })
 
-  .controller('NewUserCtrl', function(api, $scope, userService) {
+  .controller('UserDetailsFormCtrl', function(forms, $modalInstance, $scope, users) {
 
-    $scope.addNewUser = function() {
-      if ($scope.newUserForm) {
-        $scope.newUserForm.$setPristine();
-      }
+    $scope.editedUser = angular.copy($scope.user);
 
-      $scope.newUser = {};
-    };
-
-    $scope.cancel = function() {
-      delete $scope.newUser;
+    $scope.changed = function() {
+      return !forms.dataEquals($scope.user, $scope.editedUser);
     };
 
     $scope.save = function() {
-      api({
-        method: 'POST',
-        url: '/users',
-        data: $scope.newUser
-      }).then(onSaved, onSaveError);
+      users.updateUser($scope.editedUser).then($modalInstance.close);
     };
-
-    function onSaveError() {
-      $scope.saveError = true;
-    }
-
-    function onSaved(response) {
-      userService.emit('created', response.data);
-      delete $scope.newUser;
-    }
   })
 
-  .controller('UsersListCtrl', function(api, $q, $scope, $stateParams, stateService, tables, userService) {
+  .controller('UserManagementCtrl', function($q, $scope, $state, $stateParams, states, tables, users) {
 
     $scope.userTabs = [];
-
-    $scope.activeTabs = {
-      list: true
-    };
+    $scope.activeTabs = {};
 
     tables.create($scope, 'usersList', {
       url: '/users',
       pageSize: 15
     });
 
-    $scope.$on('$stateChangeSuccess', function(event, toState) {
-      if (toState.name == 'admin.users.show') {
-        addOrOpenUserTab();
+    users.forward($scope, 'update', { prefix: 'users.' });
+
+    $scope.$on('users.update', function(event, user) {
+
+      // update user if present in list
+      var listUser = _.findWhere($scope.usersList.records, { id: user.id });
+      if (listUser) {
+        $scope.usersList.records[$scope.usersList.records.indexOf(listUser)] = user;
+      }
+
+      // update user in open tab
+      var userTab = _.findWhere($scope.userTabs, { id: user.id });
+      if (userTab) {
+        userTab.user = user;
       }
     });
 
-    function addOrOpenUserTab() {
+    states.onState($scope, 'admin.users', function() {
+      selectTab('list');
+    });
 
-      var existingTab = _.findWhere($scope.userTabs, { id: $stateParams.id });
+    states.onState($scope, /^admin.users.show\.?/, function(toState, toParams) {
+      openUserTab(toParams.id);
+    });
 
-      if (!existingTab) {
-        return api({
-          url: '/users/' + $stateParams.id
-        }).then(getUserData).then(addUserTab).then(openUserTab);
-      } else {
-        return $q.when(existingTab.user).then(openUserTab);
+    $scope.delete = function(user) {
+      if (!confirm('Are you sure you want to delete user "' + user.name + '"?')) {
+        return;
       }
-    }
 
-    function getUserData(res) {
-      return res.data;
-    }
+      users.deleteUser(user).then(function() {
 
-    function addUserTab(user) {
+        // remove user from list if present
+        var listUser = _.findWhere($scope.usersList.records, { id: user.id });
+        if (listUser) {
+          $scope.usersList.records.splice($scope.usersList.records.indexOf(listUser), 1);
+        }
 
-      $scope.userTabs.push({
-        id: user.id,
-        user: user
+        // close user tab if open
+        var userTab = _.findWhere($scope.userTabs, { id: user.id });
+        if (userTab) {
+          $scope.removeTab(userTab);
+        }
       });
+    };
 
-      return user;
-    }
+    $scope.removeTab = function(tab) {
 
-    function openUserTab(user) {
+      delete $scope.activeTabs[tab.id];
+      $scope.userTabs.splice($scope.userTabs.indexOf(tab), 1);
 
-      _.each($scope.activeTabs, function(value, key) {
-        $scope.activeTabs[key] = false;
-      });
-
-      $scope.activeTabs[user.id] = true;
-    }
+      if ($stateParams.id == tab.id) {
+        $state.go('admin.users');
+      }
+    };
 
     $scope.timeFromNow = function(iso8601) {
       return new Date().getTime() - new Date(iso8601).getTime();
     };
 
-    userService.on('created', function(user) {
-      $scope.users.unshift(user);
-      $scope.lastCreatedUser = user;
-    });
+    function openUserTab(userId) {
 
-    userService.on('updated', function(user) {
-      var updatedUser = _.findWhere($scope.users, { id: user.id });
-      if (updatedUser) {
-        _.extend(updatedUser, user);
+      var tab = _.findWhere($scope.userTabs, { id: userId });
+      if (!tab) {
+        tab = { id: userId };
+        $scope.userTabs.push(tab);
       }
-    });
 
-    userService.on('deleted', function(user) {
-      var deletedUser = _.findWhere($scope.users, { id: user.id });
-      if (deletedUser) {
-        $scope.users.splice(_.indexOf($scope.users, deletedUser), 1);
-      }
-    });
+      selectTab(userId);
 
-    function fetchUsers() {
-      return api({
-        url: '/users',
-        params: {
-          pageSize: 50,
-          'sort[]': [ 'name asc' ]
+      if (!tab.user) {
+        if (tab.loading) {
+          return;
         }
-      });
+
+        tab.loading = true;
+
+        getTabUser($stateParams.id).then(function(user) {
+          tab.loading = false;
+          tab.user = user;
+        });
+      }
     }
 
-    function addUsers(response) {
-      $scope.users = ($scope.users || []).concat(response.data);
-    }
-  })
+    function getTabUser(id) {
 
-  .controller('UserDetailsCtrl', function(api, auth, $scope, $state, stateService, userService, $window) {
+      var user = _.findWhere($scope.usersList.records, { id: id });
 
-    var userId;
-    reset();
-
-    stateService.onState({ name: [ 'users', 'users.details' ] }, $scope, function(state, params) {
-      if (state.name == 'users.details' && params.userId != userId) {
-        reset();
-        userId = params.userId;
-        fetchUser().then(showUser);
+      if (user) {
+        return $q.when(user);
       } else {
-        reset();
+        return users.getUser(id);
       }
-    });
-
-    $scope.delete = function() {
-      if (!$window.confirm('Are you sure you want to delete user ' + $scope.selectedUser.name + '?')) {
-        return;
-      }
-
-      $scope.deleteError = false;
-
-      api({
-        method: 'DELETE',
-        url: '/users/' + $scope.selectedUser.id
-      }).then(onDeleted, onDeleteError);
-    };
-
-    $scope.toggleActive = function() {
-
-      $scope.busy = true;
-      var newActive = !$scope.selectedUser.active;
-
-      api({
-        method: 'PATCH',
-        url: '/users/' + $scope.selectedUser.id,
-        data: {
-          active: newActive
-        }
-      }).then(onActiveToggled);
-    };
-
-    $scope.edit = function() {
-      $scope.editedUser = _.pick($scope.selectedUser, 'name', 'email');
-    };
-
-    $scope.cancelEdit = function() {
-      delete $scope.editedUser;
-      delete $scope.editError;
-    };
-
-    $scope.save = function() {
-
-      $scope.busy = true;
-      delete $scope.editError;
-
-      api({
-        method: 'PATCH',
-        url: '/users/' + $scope.selectedUser.id,
-        data: api.compact($scope.editedUser)
-      }).then(onSaved, onEditError);
-    };
-
-    function onDeleted() {
-      userService.emit('deleted', { id: $scope.selectedUser.id });
-      $state.go('users');
     }
 
-    function onDeleteError() {
-      $scope.deleteError = true;
-    }
+    function selectTab(id) {
 
-    function onSaved(response) {
-
-      $scope.selectedUser = response.data;
-      userService.emit('updated', response.data);
-
-      if (auth.currentUser.id === response.data.id) {
-        _.extend(auth.currentUser, response.data);
-      }
-
-      delete $scope.editedUser;
-      $scope.busy = false;
-    }
-
-    function onEditError() {
-      $scope.editError = true;
-      $scope.busy = false;
-    }
-
-    function onActiveToggled(response) {
-      $scope.selectedUser.active = response.data.active;
-      $scope.busy = false;
-    }
-
-    function reset() {
-      userId = null;
-      delete $scope.selectedUser;
-      delete $scope.editedUser;
-      delete $scope.editError;
-      delete $scope.deleteError;
-      $scope.busy = false;
-    }
-
-    function fetchUser() {
-      $scope.loadingSelectedUser = true;
-      return api({
-        url: '/users/' + userId
+      _.each($scope.activeTabs, function(value, key) {
+        $scope.activeTabs[key] = false;
       });
-    }
 
-    function showUser(response) {
-      $scope.selectedUser = response.data;
-      $scope.loadingSelectedUser = false;
+      $scope.activeTabs[id] = true;
     }
   })
 
-  .directive('confirmationFor', function() {
+  .directive('userDetails', function() {
     return {
-      require: 'ngModel',
+      restrict: 'E',
       scope: {
-        confirmationFor: '='
+        user: '=',
+        mode: '@'
       },
-      link: function(scope, element, attrs, ctrl) {
-        ctrl.$validators.confirmationFor = function(modelValue) {
-          return (modelValue || false) == (scope.confirmationFor || false);
+      templateUrl: '/templates/user-details.html',
+      controller: function(auth, $scope, $state, $stateParams, states, users) {
+
+        $scope.edit = function() {
+          if ($scope.mode == 'profile') {
+            $state.go('profile.edit');
+          } else {
+            $state.go('admin.users.show.edit', { id: $stateParams.id });
+          }
         };
+
+        states.onState($scope, /\.edit$/, function() {
+          modal = users.openDetailsForm($scope);
+
+          modal.result.then(function(user) {
+            $state.go('^', {}, { inherit: true });
+          }, function(reason) {
+            if (reason != 'stateChange') {
+              $state.go('^', {}, { inherit: true });
+            }
+          });
+        });
       }
     };
   })

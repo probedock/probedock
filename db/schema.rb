@@ -278,7 +278,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "users", ["primary_email_id"], name: "index_users_on_primary_email_id", unique: true, using: :btree
 
   add_foreign_key "categories", "organizations"
-  add_foreign_key "emails", "users"
+  add_foreign_key "emails", "users", on_delete: :nullify
   add_foreign_key "memberships", "emails", column: "organization_email_id"
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"

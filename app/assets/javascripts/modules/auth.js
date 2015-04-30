@@ -2,7 +2,6 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
 
   .factory('auth', function(appStore, $base64, $http, $log, $modal, $rootScope) {
 
-    // TODO: move this to run block with forwardData function
     $rootScope.currentUser = null;
 
     $rootScope.currentUserIs = function() {
@@ -29,7 +28,8 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
         delete service.token;
         delete service.currentUser;
         $rootScope.currentUser = null;
-        appStore.remove('auth');
+        appStore.remove('auth.token');
+        appStore.remove('auth.user');
         $rootScope.$broadcast('auth.signOut');
       },
 
@@ -38,29 +38,42 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
           templateUrl: '/templates/login-modal.html',
           controller: 'LoginCtrl'
         });
+      },
+
+      updateCurrentUser: function(user) {
+        setUser(user);
+        appStore.set('auth.user', user);
       }
     };
 
-    var authData = appStore.get('auth');
-    if (authData) {
-      authenticate(authData);
+    var storedToken = appStore.get('auth.token'),
+        storedUser = appStore.get('auth.user');
+
+    if (storedToken && storedUser) {
+      authenticate(storedToken, storedUser);
     }
 
-    function onSignedIn(response) {
-      authenticate(response.data);
-      appStore.set('auth', response.data);
-      $rootScope.$broadcast('auth.signIn', response.data.user);
+    function onSignedIn(res) {
+      authenticate(res.data.token, res.data.user);
+      appStore.set('auth.token', res.data.token);
+      appStore.set('auth.user', res.data.user);
+      $rootScope.$broadcast('auth.signIn', res.data.user);
     }
 
-    function authenticate(authData) {
-      service.token = authData.token;
-      service.currentUser = authData.user;
-      $rootScope.currentUser = authData.user;
+    function authenticate(token, user) {
 
-      var roles = authData.user.roles,
+      service.token = token;
+      setUser(user);
+
+      var roles = user.roles,
           rolesDescription = _.isArray(roles) && roles.length ? roles.join(', ') : 'none';
 
-      $log.debug(authData.user.primaryEmail + ' logged in (roles: ' + rolesDescription + ')');
+      $log.debug(user.primaryEmail + ' logged in (roles: ' + rolesDescription + ')');
+    }
+
+    function setUser(user) {
+      service.currentUser = user;
+      $rootScope.currentUser = user;
     }
 
     return service;
