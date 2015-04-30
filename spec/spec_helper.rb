@@ -16,13 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../../config/environment", __FILE__)
+ENV['RAILS_ENV'] ||= 'test'
+require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'rspec/its'
 require 'rspec/collection_matchers'
 require 'capybara/rails'
 require 'capybara/rspec'
+require 'pundit/rspec'
 
 #ProbeDockRSpec.configure do |config|
 #  config.project.category = 'RSpec'
@@ -36,7 +37,7 @@ DatabaseCleaner.strategy = :truncation, { except: %w(app_settings) }
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 # Seed test database once before all specs.
 load "#{Rails.root}/db/seeds.rb"

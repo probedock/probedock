@@ -24,7 +24,7 @@ class TestPayload < ActiveRecord::Base
   has_and_belongs_to_many :test_keys
   has_and_belongs_to_many :test_reports
 
-  scope :waiting_for_processing, -> { select(column_names - %w(contents)).where(state: :created).order('received_at ASC') }
+  scope :waiting_for_processing, -> { select((column_names - %w(contents) + [ "contents->'p' as raw_project", "contents->'v' as raw_project_version", "contents->'d' as raw_duration", "contents->'o' as raw_reports" ])).where(state: :created).order('received_at ASC') }
 
   include SimpleStates
   states :created, :processing, :processed, :failed

@@ -32,10 +32,9 @@ module TestPayloadProcessing
 
         TestPayload.transaction do
 
-          payload_with_contents = TestPayload.select("id, state, contents->'p' as raw_project, contents->'v' as raw_project_version, contents->'d' as raw_duration").where(id: test_payload.id).first
-          project_api_id = payload_with_contents.raw_project
-          project_version_name = payload_with_contents.raw_project_version
-          duration = payload_with_contents.raw_duration
+          project_api_id = @test_payload.raw_project
+          project_version_name = @test_payload.raw_project_version
+          duration = @test_payload.raw_duration
 
           project_version = ProjectVersion.joins(:project).where('projects.api_id = ? AND project_versions.name = ?', project_api_id, project_version_name).includes(:project).first
           project_version ||= ProjectVersion.new(project_id: Project.where(api_id: project_api_id).first!.id, name: project_version_name).tap(&:save_quickly!)
@@ -76,7 +75,7 @@ module TestPayloadProcessing
           free_keys = @cache.test_keys.values.select &:free?
           TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
 
-          TestReport.new(organization: organization, runner: @test_payload.runner, test_payloads: [ @test_payload ]).save_quickly!
+          ProcessReports.new @test_payload
         end
       end
 

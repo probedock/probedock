@@ -22,7 +22,7 @@ module IdentifiableResource
 
   def set_identifier attr = :api_id, options = {}, &block
     block ||= ->{ SecureRandom.uuid } if options == :uuid
-    self[attr] = self.class.generate_new_identifier attr, options, &block
+    self[attr] ||= self.class.generate_new_identifier attr, options, &block
   end
 
   module ClassMethods

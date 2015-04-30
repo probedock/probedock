@@ -45,6 +45,12 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
     r: []
   }
 
+  if ENV['PROBE_DOCK_SAMPLES_REPORT'].present?
+    payload[:o] = [
+      { id: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
+    ]
+  end
+
   test_tags = Forgery.dictionaries[:test_tags]
   test_categories = Forgery.dictionaries[:test_categories]
 

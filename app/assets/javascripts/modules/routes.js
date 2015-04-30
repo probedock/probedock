@@ -91,6 +91,7 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
 
       .state('org.projects', {
         url: '/projects',
+        controller: 'ProjectsCtrl',
         templateUrl: '/templates/projects.html'
       })
 
