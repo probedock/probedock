@@ -2,8 +2,6 @@
 
 * send mails in resque jobs
 
-* remove spinner
-
 * save and validate emails as lowercase
 
 * increase z-index of bootstrap modals so that the loading bar isn't over them

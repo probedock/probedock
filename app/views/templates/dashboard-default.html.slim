@@ -1,4 +1,4 @@
-.col-xs-12.col-sm-6.col-lg-4
+.col-md-6.col-xs-12
   .dashboardLatestReports.panel.panel-default ng-controller='DashboardLatestReportsCtrl'
     .panel-heading
       h3.panel-title Latest Reports
@@ -22,7 +22,7 @@
             td.results
               a href='#' ui-sref='org.reports.show({ reportId: report.id })'
                 report-health-bar report='report' click-for-details=true
-.col-xs-12.col-sm-6.col-lg-4
+.col-md-6.col-xs-12
   .dashboardNewTestMetrics.panel.panel-default ng-controller='DashboardNewTestMetricsCtrl'
     .panel-heading
       h3.panel-title New Tests
@@ -30,12 +30,11 @@
       canvas.chart.chart-bar data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
       .empty ng-show='chart.data && !chart.data.length'
         em No tests have been run recently.
-.col-xs-12.col-sm-6.col-lg-4
+.col-md-offset-6.col-md-6.col-xs-12
   .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
     .panel-heading
       h3.panel-title Test Tags
     .panel-body
-      spinner ng-hide='tags'
       jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
       .empty ng-show='tags && !tags.length'
         em No tests have been tagged.
