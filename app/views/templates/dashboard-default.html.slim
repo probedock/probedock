@@ -20,7 +20,7 @@
               img gravatar-src='report.runner.primaryEmailMd5' gravatar-size=30 tooltip='{{ report.runner.name }}' tooltip-placement='right'
               span.time.hidden-xs am-time-ago='report.createdAt'
             td.results
-              a href='#' ui-sref='org.reports.details({ reportId: report.id })'
+              a href='#' ui-sref='org.reports.show({ reportId: report.id })'
                 report-health-bar report='report' click-for-details=true
 .col-xs-12.col-sm-6.col-lg-4
   .dashboardNewTestMetrics.panel.panel-default ng-controller='DashboardNewTestMetricsCtrl'

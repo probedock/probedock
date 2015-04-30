@@ -46,10 +46,10 @@ module ApiAuthenticationHelper
   def authenticate!
     authenticate
     raise ProbeDock::Errors::Unauthorized.new 'Missing credentials' if @auth_token.blank?
-    raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials' if @auth_claims.blank?
+    raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials' if @auth_claims.blank? || current_user.blank?
   end
 
   def current_user
-    @current_user ||= @auth_claims.blank? ? nil : User.joins(:emails).where(emails: { address: @auth_claims['iss'] }).includes(memberships: :organization).first!
+    @current_user ||= @auth_claims.blank? ? nil : User.where(api_id: @auth_claims['iss']).includes(memberships: :organization).first
   end
 end

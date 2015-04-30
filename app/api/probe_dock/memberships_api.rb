@@ -95,6 +95,8 @@ module ProbeDock
 
       get do
         authenticate
+        # FIXME: include authentication check in authorization
+        authenticate! unless current_organization || current_otp_record
         authorize! Membership, :index
 
         return serialize([ current_otp_record ].compact) if params.key? :otp

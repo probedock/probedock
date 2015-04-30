@@ -68,8 +68,7 @@ class User < ActiveRecord::Base
 
   def generate_auth_token
     JSON::JWT.new({
-      # FIXME: use user id
-      iss: primary_email.address,
+      iss: api_id,
       exp: 1.week.from_now,
       nbf: Time.now
     }).sign(Rails.application.secrets.secret_key_base, 'HS512').to_s

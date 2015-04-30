@@ -42,6 +42,9 @@ angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'pro
           mine: 1,
           accepted: 0,
           withOrganization: 1
+        },
+        custom: {
+          ignoreUnauthorized: true
         }
       }).then(function(res) {
         setPendingMemberships(res.data);

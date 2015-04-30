@@ -25,11 +25,11 @@ class OrganizationPolicy < ApplicationPolicy
   end
 
   def show?
-    organization.public? || user.is?(:admin) || user.member_of?(organization)
+    organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
   end
 
   def data?
-    organization.public? || user.is?(:admin) || user.member_of?(organization)
+    organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
   end
 
   def update?

@@ -121,6 +121,7 @@ angular.module('probe-dock.users', [ 'probe-dock.api', 'probe-dock.state', 'prob
       $scope.userTabs.splice($scope.userTabs.indexOf(tab), 1);
 
       if ($stateParams.id == tab.id) {
+        // FIXME: does not work
         $state.go('admin.users');
       }
     };

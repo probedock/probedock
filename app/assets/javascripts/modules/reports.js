@@ -182,8 +182,8 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
     };
     $scope.detailsTabReportId = null;
 
-    states.onState($scope, [ 'org.reports', 'org.reports.details' ], function(state, params) {
-      if (state && state.name == 'org.reports.details') {
+    states.onState($scope, [ 'org.reports', 'org.reports.show' ], function(state, params) {
+      if (state && state.name == 'org.reports.show') {
         showReportDetails(params.reportId);
       } else {
         $scope.activeTabs.latest = true;
@@ -201,7 +201,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
   .controller('ReportDetailsCtrl', function(api, $scope, states) {
 
     var reportId;
-    states.onState($scope, 'org.reports.details', function(state, params) {
+    states.onState($scope, 'org.reports.show', function(state, params) {
       if (params.reportId != reportId) {
 
         delete $scope.report;

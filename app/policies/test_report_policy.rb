@@ -17,7 +17,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class TestReportPolicy < ApplicationPolicy
   def index?
-    organization && (organization.public? || user.is?(:admin) || user.member_of?(organization))
+    organization && (organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization))
   end
 
   def show?

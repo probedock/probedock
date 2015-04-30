@@ -150,7 +150,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
   .filter('orgName', function() {
     return function(input) {
-      return input.displayName || input.name;
+      return input ? input.displayName || input.name : '';
     };
   })
 

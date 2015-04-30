@@ -14,6 +14,12 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         url: 'new'
       })
 
+      .state('error', {
+        url: '/error/:type',
+        controller: 'ErrorPageCtrl',
+        templateUrl: '/templates/error.html'
+      })
+
       .state('newMembership', {
         url: '/new-member?otp',
         controller: 'NewMembershipCtrl',
@@ -101,7 +107,7 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         templateUrl: '/templates/reports.html'
       })
 
-      .state('org.reports.details', {
+      .state('org.reports.show', {
         url: '/:reportId'
       })
 

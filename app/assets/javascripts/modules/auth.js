@@ -20,6 +20,9 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
           url: '/api/authentication',
           headers: {
             Authorization: 'Basic ' + $base64.encode(credentials.username + ':' + credentials.password)
+          },
+          custom: {
+            ignoreUnauthorized: true
           }
         }).then(onSignedIn);
       },
@@ -77,6 +80,40 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
     }
 
     return service;
+  })
+
+  .run(function(auth, $rootScope, $state) {
+
+    $rootScope.$on('auth.unauthorized', function(event, err) {
+      auth.signOut();
+      if (!err.config.custom || !err.config.custom.ignoreUnauthorized) {
+        $state.go('error', { type: 'unauthorized' });
+      }
+    });
+
+    // TODO: better authorization
+    $rootScope.$on('auth.forbidden', function() {
+      $state.go('error', { type: 'forbidden' });
+    });
+  })
+
+  .factory('authInterceptor', function($q, $rootScope) {
+    return {
+      responseError: function(err) {
+
+        if (err.status == 401) {
+          $rootScope.$broadcast('auth.unauthorized', err);
+        } if (err.status == 403) {
+          $rootScope.$broadcast('auth.forbidden', err);
+        }
+
+        return $q.reject(err);
+      }
+    };
+  })
+
+  .config(function($httpProvider) {
+    $httpProvider.interceptors.push('authInterceptor');
   })
 
   .controller('AuthCtrl', function(auth, $modal, $scope) {
