@@ -143,7 +143,6 @@ class V3 < ActiveRecord::Migration
     create_table :test_keys do |t|
       t.string :key, null: false, limit: 12
       t.boolean :free, null: false, default: true
-      t.boolean :tracked, null: false, default: true
       t.integer :project_id, null: false
       t.integer :user_id
       t.timestamps null: false
@@ -155,7 +154,7 @@ class V3 < ActiveRecord::Migration
 
     create_table :project_tests do |t|
       t.string :name, null: false
-      t.integer :key_id, null: false
+      t.integer :key_id
       t.integer :project_id, null: false
       t.integer :results_count, null: false, default: 0
       t.timestamps null: false

@@ -17,13 +17,14 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module TestPayloadProcessing
   class Cache
-    attr_reader :test_keys, :categories, :tags, :tickets
+    attr_reader :tests, :test_keys, :categories, :tags, :tickets
 
     def initialize project
 
       @project = project
       @organization = project.organization
 
+      @tests = {}
       @test_keys = {}
       @categories = {}
       @tags = {}
@@ -33,6 +34,7 @@ module TestPayloadProcessing
     def prefill results
 
       time = Benchmark.realtime do
+        cache_tests results
         cache_test_keys results
         cache_organization_records results, Category, 'c'
         cache_organization_records results, Tag, 'g'
@@ -40,6 +42,10 @@ module TestPayloadProcessing
       end
 
       Rails.logger.info "Cached data for #{results.length} results in #{(time * 1000).round 1}ms"
+    end
+
+    def test name
+      @tests[name]
     end
 
     def test_key key
@@ -60,13 +66,19 @@ module TestPayloadProcessing
 
     private
 
-    def cache_test_keys results
+    def cache_tests results
+      new_names = results.inject([]){ |memo,result| memo << result['n'] if result.key?('n') && !result.key?('k'); memo }.reject{ |n| @tests.key? n }
 
-      new_keys = results.inject([]){ |memo,result| memo << result['k'] if result.key? 'k'; memo }.reject{ |k| @test_keys.key? k }
+      if new_names.present?
+        @tests.merge! @project.tests.where(name: new_names).to_a.inject({}){ |memo,test| memo[test.name] = test; memo }
+      end
+    end
+
+    def cache_test_keys results
+      new_keys = results.collect{ |r| r['k'] }.compact.uniq.reject{ |k| @test_keys.key? k }
 
       if new_keys.present?
-        @project.test_keys.where(key: new_keys).update_all tracked: true
-        existing_keys = @project.test_keys.where(key: new_keys).to_a.inject({}){ |memo,test_key| memo[test_key.key] = test_key; memo }
+        existing_keys = @project.test_keys.where(key: new_keys).includes(:test).to_a.inject({}){ |memo,test_key| memo[test_key.key] = test_key; memo }
 
         new_keys.each do |key|
           @test_keys[key] = existing_keys[key] || TestKey.new(key: key, free: false, project_id: @project.id).tap(&:save_quickly!)

@@ -1,5 +1,7 @@
 ## Features
 
+* show multiple report tabs from reports list
+
 * send mails in resque jobs
 
 * save and validate emails as lowercase

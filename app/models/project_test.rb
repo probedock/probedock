@@ -25,6 +25,5 @@ class ProjectTest < ActiveRecord::Base
 
   validates :name, presence: true, length: { maximum: 255, allow_blank: true }
   validates :project, presence: true
-  validates :key, presence: { unless: :quick_validation }
-  validates :key_id, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }
+  validates :key_id, uniqueness: { scope: :project_id, if: ->(t){ t.key_id && !t.quick_validation } }
 end

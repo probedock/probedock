@@ -51,6 +51,7 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
     ]
   end
 
+  test_keys = Forgery.dictionaries[:test_keys]
   test_tags = Forgery.dictionaries[:test_tags]
   test_categories = Forgery.dictionaries[:test_categories]
 
@@ -67,6 +68,7 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
       p: passed,
       d: rand(2500)
     }.tap do |h|
+      h[:k] = test_keys.random.unextend if rand(5) == 0
       h[:v] = false unless active
       h[:c] = test_categories.random.unextend if rand(4) > 0
       h[:m] = Forgery(:lorem_ipsum).words(50).humanize unless passed

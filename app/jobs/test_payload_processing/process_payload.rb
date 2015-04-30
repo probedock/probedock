@@ -60,7 +60,7 @@ module TestPayloadProcessing
 
             results.each do |result|
               test_result = ProcessResult.new(result, @test_payload, @cache).test_result
-              ProcessTest.new test_result
+              ProcessTest.new test_result, @cache
             end
 
             break if results.blank?

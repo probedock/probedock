@@ -19,16 +19,17 @@ module TestPayloadProcessing
   class ProcessTest
     attr_reader :test
 
-    def initialize test_result
+    def initialize test_result, cache
 
-      project = test_result.project_version.project
+      new_test = test_result.test_id.blank?
 
-      key = test_result.key
-      test = key.test
-      new_test = test.blank?
-
-      if new_test
-        test = ProjectTest.new(key: key, project: project, name: test_result.name, results_count: 1).tap(&:save_quickly!)
+      test = if new_test
+        created_test = ProjectTest.new(key: test_result.key, project: test_result.project_version.project, name: test_result.name).tap(&:save_quickly!)
+        test_result.key.test = created_test if test_result.key
+        cache.tests[test_result.name] = created_test unless test_result.key
+        created_test
+      else
+        test_result.test
       end
 
       description = new_test ? nil : test.descriptions.where(project_version_id: test_result.project_version_id).first
@@ -54,14 +55,14 @@ module TestPayloadProcessing
       description.results_count += 1
       description.save!
 
-      unless new_test
-        # FIXME: change name only if project version is the latest
-        test.name = test_result.name
-        test.results_count += 1
-        test.save!
-      end
+      # FIXME: change name only if project version is the latest
+      test.name = test_result.name
+      # TODO: only increment results count once per test
+      test.results_count += 1
+      test.save_quickly!
 
       if new_test
+        # TODO: only do this once for each test
         TestResult.where(id: test_result.id).update_all test_id: test.id
         # TODO: increment counter once
         Project.increment_counter :tests_count, test_result.project_version.project_id

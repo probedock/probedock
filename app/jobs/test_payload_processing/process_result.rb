@@ -22,15 +22,17 @@ module TestPayloadProcessing
     def initialize data, test_payload, cache
 
       @test_result = TestResult.new
+      @test_result.name = data['n']
 
       @test_result.key = test_key data, cache
-      @test_result.name = data['n']
-      # TODO: cache untracked test keys to reuse them across results
-      @test_result.key ||= TestKey.joins(:test_results).where(test_keys: { tracked: false }, test_results: { name: @test_result.name }).first
-      @test_result.key ||= TestKey.new(project: test_payload.project_version.project, free: false, tracked: false).tap(&:save_quickly!)
 
-      @test_result.new_test = @test_result.key.test.present?
-      @test_result.test = @test_result.key.test
+      @test_result.test = if @test_result.key_id
+        @test_result.key.test
+      else
+        cache.test @test_result.name
+      end
+
+      @test_result.new_test = @test_result.test_id.blank?
 
       @test_result.test_payload = test_payload
       @test_result.runner = test_payload.runner

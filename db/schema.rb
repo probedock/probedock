@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
 
   create_table "project_tests", force: :cascade do |t|
     t.string   "name",                      null: false
-    t.integer  "key_id",                    null: false
+    t.integer  "key_id"
     t.integer  "project_id",                null: false
     t.integer  "results_count", default: 0, null: false
     t.datetime "created_at",                null: false
@@ -167,7 +167,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   create_table "test_keys", force: :cascade do |t|
     t.string   "key",        limit: 12,                null: false
     t.boolean  "free",                  default: true, null: false
-    t.boolean  "tracked",               default: true, null: false
     t.integer  "project_id",                           null: false
     t.integer  "user_id"
     t.datetime "created_at",                           null: false
