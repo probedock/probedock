@@ -17,6 +17,7 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
   class PayloadsApi < Grape::API
+    content_type :payload_v1, 'application/vnd.probe-dock.payload.v1+json'
 
     namespace do
 

@@ -20,7 +20,9 @@ require 'json/jwt'
 module ProbeDock
   class API < Grape::API
 
-    format :json
+    content_type :json, 'application/json'
+    default_format :json
+
     version 'v1', using: :accept_version_header
 
     cascade false

@@ -1,13 +1,12 @@
-
 project:
-  name: Probe Dock
+  apiId: eme89mha78og
   version: 3.0.0
-  apiId: 3d5d663b64e7
 
 payload:
   save: true
-  cache: true
+  cache: false
   print: false
 
 workspace: tmp/probe-dock
-server: probe-dock.42inside.com
+server: localhost
+publish: true

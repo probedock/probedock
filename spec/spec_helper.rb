@@ -42,6 +42,10 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 # Seed test database once before all specs.
 load "#{Rails.root}/db/seeds.rb"
 
+ProbeDockRSpec.configure do |config|
+  config.project.category = 'RSpec'
+end
+
 RSpec.configure do |config|
 
   # Flush Redis test database before each test

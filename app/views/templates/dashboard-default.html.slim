@@ -6,7 +6,7 @@
       table.table.table-hover
         thead
           tr
-            th.runs Run by
+            th.runs Run
             th.results Results
         tbody
           tr.loading ng-hide='reports'
@@ -17,7 +17,7 @@
               em No tests have been run recently.
           tr ng-repeat='report in reports' ng-show='reports.length'
             td.runs
-              img gravatar-src='report.runner.primaryEmailMd5' gravatar-size=30 tooltip='{{ report.runner.name }}' tooltip-placement='right'
+              img ng-if='report.runners.length == 1' gravatar-src='report.runners[0].primaryEmailMd5' gravatar-size=30 tooltip='{{ report.runners[0].name }}' tooltip-placement='right'
               span.time.hidden-xs am-time-ago='report.createdAt'
             td.results
               a href='#' ui-sref='org.reports.show({ reportId: report.id })'

@@ -92,6 +92,8 @@ group :development, :test do
   gem 'guard'
   gem 'guard-shell'
   gem 'guard-process'
+
+  gem 'probe_dock_rspec', path: "#{ENV['HOME']}/Projects/probe-dock-rspec"
 end
 
 group :test do

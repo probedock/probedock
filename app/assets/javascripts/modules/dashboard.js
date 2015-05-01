@@ -102,7 +102,8 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
       url: '/reports',
       params: {
         pageSize: 8,
-        organizationName: $stateParams.orgName
+        organizationName: $stateParams.orgName,
+        withRunners: 1
       }
     }).then(showReports);
 
