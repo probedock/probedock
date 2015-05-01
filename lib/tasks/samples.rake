@@ -77,7 +77,7 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
       unless passed
         message = 'Error at:'
         (rand(20) + 1).times do |i|
-          message << "\n" + ((i + 1).to_s + '.').rjust(5) + Forgery(:lorem_ipsum).words(rand(30) + 5).humanize
+          message << "\n" + ((i + 1).to_s + '.').rjust(5) + ' ' + Forgery(:lorem_ipsum).words(rand(30) + 5).humanize
         end
         h[:m] = message
       end

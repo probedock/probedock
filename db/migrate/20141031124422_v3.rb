@@ -303,13 +303,11 @@ class V3 < ActiveRecord::Migration
     create_table :test_reports do |t|
       t.string :api_id, null: false, limit: 5
       t.integer :organization_id, null: false
-      t.integer :runner_id, null: false
       t.timestamps null: false
       t.index :api_id, unique: true
     end
 
     add_foreign_key :test_reports, :organizations
-    add_foreign_key :test_reports, :users, column: :runner_id
 
     create_table :test_payloads_reports, id: false do |t|
       t.integer :test_payload_id, null: false

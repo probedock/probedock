@@ -1,16 +1,22 @@
-#testReportDetails ng-controller='ReportDetailsCtrl'
-  h2 ng-show='report' Report generated at {{ report.createdAt | amDateFormat:'llll' }}
-  .label.label-primary ng-repeat='project in report.projects' {{ project.name }}
+#test-report ng-controller='ReportDetailsCtrl'
+  h2
+    span ng-if='report' Report generated at {{ report.createdAt | amDateFormat:'llll' }}
+    span ng-if='!report' Loading report data...
+  .project-version-labels
+    .label.label-primary ng-if='!report' Loading...
+    div ng-repeat='project in report.projects'
+      .label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project.name }} {{ version.name }}
   .row style='margin-top: 2em;'
     .col-md-5.col-lg-4
       .summary.panel.panel-default
         .panel-heading
           h3.panel-title Summary
         .panel-body
-          img.gravatar.pull-right gravatar-src="report.runner.primaryEmailMd5" gravatar-size="40" tooltip="{{ report.runner.name }}"
           ul
             li {{ report.resultsCount | number }} test results
             li Run in {{ report.duration | durationFormat }}
+          .text-center
+            img.gravatar ng-repeat='runner in report.runners' gravatar-src="runner.primaryEmailMd5" gravatar-size="40" tooltip="{{ runner.name }}"
           canvas.chart.chart-doughnut data='healthChart.data' labels='healthChart.labels' colours='healthChart.colors' ng-if='healthChart'
     .col-md-7.col-lg-8
       .health.panel.panel-default ng-controller='ReportHealthCtrl'
@@ -21,11 +27,30 @@
           .clearfix
   .results ng-controller='ReportResultsCtrl'
     h3 List of results
+    p.empty ng-if='!report' Loading...
     .result.col-xs-12.col-lg-6 ng-repeat-start='result in results' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
       .panel ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
         .panel-body
           test-key-label.pull-right ng-if='result.key' key='result.key'
           h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}' {{ result.name }}
+          .labels.clearfix
+            |  <div class='label label-primary'>{{ result.project | projectName }} {{ result.projectVersion }}</div>
+            |  <div class='label label-info' ng-if='result.category'>{{ result.category }}</div>
+            |  <div class='label label-default' ng-repeat='tag in result.tags'>{{ tag }}</div>
+            |  <div class='label label-warning' ng-repeat='ticket in result.tickets'>{{ ticket }}</div>
+          ul.list-inline.details
+            li
+              strong Run:
+              |  {{ result.runAt | amDateFormat: 'lll' }}
+            li
+              strong By:
+              |  
+              img gravatar-src='result.runner.primaryEmailMd5' gravatar-size=30 tooltip='{{ result.runner.name }}'
+            li
+              strong Duration:
+              |  {{ result.duration | durationFormat }}
           pre ng-if='result.message' {{ result.message }}
     .clearfix.visible-lg-block ng-if='$index % 2 == 1' ng-repeat-end=true
-    button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()' Show {{ total - results.length }} more results
+    button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()'
+      span.glyphicon.glyphicon-eye-open
+      |  Show {{ total - results.length }} more results

@@ -7,7 +7,7 @@ div ng-controller='LatestReportsCtrl'
           .pull-right
             span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
             refresh-table
-        th.runner Runner
+        th.runners Runner(s)
         th.duration.hidden-xs.hidden-sm Duration
         th.date.hidden-xs.hidden-sm.hidden-md Date
         th.projects.hidden-xs Projects
@@ -21,8 +21,8 @@ div ng-controller='LatestReportsCtrl'
         td.results
           a href='#' ui-sref='org.reports.show({ reportId: report.id })'
             report-health-bar report='report' click-for-details=true
-        td.runner
-          img.gravatar gravatar-src="report.runner.primaryEmailMd5" gravatar-size="30" tooltip="{{ report.runner.name }}"
+        td.runners
+          img.gravatar ng-repeat='runner in report.runners.slice(0, 3)' gravatar-src='runner.primaryEmailMd5' gravatar-size='30' tooltip='{{ runner.name }}'
         td.duration.hidden-xs.hidden-sm {{ report.duration | durationFormat }}
         td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
         td.projects.hidden-xs

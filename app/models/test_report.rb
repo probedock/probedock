@@ -23,25 +23,31 @@ class TestReport < ActiveRecord::Base
   before_create{ set_identifier :api_id }
 
   belongs_to :organization
-  belongs_to :runner, class_name: 'User'
   has_and_belongs_to_many :test_payloads
 
   validates :organization, presence: true
-  validates :runner, presence: { unless: :quick_validation }
 
   def to_builder options = {}
     Jbuilder.new do |json|
       json.id api_id
-      json.runner runner.to_builder(link: true)
       json.duration duration
       json.resultsCount results_count
       json.passedResultsCount passed_results_count
       json.inactiveResultsCount inactive_results_count
       json.inactivePassedResultsCount inactive_passed_results_count
       json.createdAt created_at.iso8601(3)
-      json.projects projects.select('projects.id, projects.api_id, projects.organization_id, projects.name, projects.display_name').to_a.collect{ |p| p.to_builder(link: true).attributes! }
 
+      if options[:detailed] || options[:with_runners]
+        json.runners runners.collect{ |r| r.to_builder(link: true).attributes! }
+      end
+
+      if options[:detailed] || options[:with_projects]
+        json.projects projects.select('projects.id, projects.api_id, projects.organization_id, projects.name, projects.display_name').to_a.collect{ |p| p.to_builder(link: true).attributes! }
+      end
+
+      # TODO: use separate flags
       if options[:detailed]
+        json.projectVersions project_versions.collect{ |v| v.to_builder.attributes! }
         json.categories Category.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: id }).order('categories.name').pluck('distinct categories.name')
         json.tags Tag.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: id }).order('tags.name').pluck('distinct tags.name')
         json.tickets Ticket.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: id }).order('tickets.name').pluck('distinct tickets.name')
@@ -53,12 +59,20 @@ class TestReport < ActiveRecord::Base
     define_method(method){ sum_payload_values method }
   end
 
+  def projects
+    Project.joins(versions: { test_payloads: :test_reports }).where(test_reports: { id: id }).group('projects.id').order('projects.name')
+  end
+
+  def project_versions
+    ProjectVersion.joins(test_payloads: :test_reports).where(test_reports: { id: id }).includes(:project)
+  end
+
   def results
     TestResult.joins(test_payload: :test_reports).where(test_reports: { id: id })
   end
 
-  def projects
-    Project.joins(versions: { test_payloads: :test_reports }).where(test_reports: { id: id }).group('projects.id').order('projects.name')
+  def runners
+    User.joins(test_payloads: :test_reports).where(test_reports: { id: id })
   end
 
   private

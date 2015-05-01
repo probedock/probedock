@@ -240,7 +240,9 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
       url: '/reports',
       pageSize: 15,
       params: {
-        organizationName: $stateParams.orgName
+        organizationName: $stateParams.orgName,
+        withProjects: 1,
+        withRunners: 1
       }
     });
 

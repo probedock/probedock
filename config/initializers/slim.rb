@@ -3,6 +3,6 @@ slim_options = {
   attr_list_delims: { '(' => ')', '[' => ']' }
 }
 
-slim_options[:pretty] = true if Rails.env == 'development'
+slim_options[:pretty] = Rails.env == 'development'
 
 Slim::Engine.set_options slim_options

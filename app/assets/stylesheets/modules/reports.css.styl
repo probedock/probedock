@@ -16,8 +16,12 @@ large-progress-bar()
       font-size 12px
       line-height 20px
 
-#testReportDetails
+#test-report
   large-progress-bar()
+  .project-version-labels
+    margin-top 1em
+    .label
+      font-size 1em
   .summary
     .gravatar
       margin 0 0 10px 10px
@@ -50,6 +54,16 @@ large-progress-bar()
       h4
         margin 0
         font-weight bold
+      .labels
+        margin-top 0.4em
+        font-size 1.2em
+        .label
+          float left
+          margin-top 0.2em
+          margin-right 0.4em
+          padding 0.4em 0.6em
+      .details
+        margin-top 1em
       pre
         margin 1em 0 0 0
         max-height 20em
@@ -59,9 +73,11 @@ table.latestReports
   th, td
     &.projects
       width 35%
-    &.runner
-      width 7em
+    &.runners
+      width 126px
       text-align center
+      img
+        margin 0 3px
     &.duration
       width 10em
       text-align center

@@ -46,7 +46,12 @@ module ProbeDock
           end
         end
 
-        rel.to_a.collect{ |r| r.to_builder.attributes! }
+        options = {
+          with_projects: true_flag?(:withProjects),
+          with_runners: true_flag?(:withRunners)
+        }
+
+        rel.to_a.collect{ |r| r.to_builder(options).attributes! }
       end
 
       namespace '/:id' do

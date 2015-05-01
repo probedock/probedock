@@ -26,4 +26,12 @@ class ProjectVersion < ActiveRecord::Base
   strip_attributes
   validates :name, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }, length: { maximum: 255 }
   validates :project, presence: { unless: :quick_validation }
+
+  def to_builder options = {}
+    Jbuilder.new do |json|
+      json.name name
+      json.projectId project.api_id
+      json.createdAt created_at.iso8601(3)
+    end
+  end
 end

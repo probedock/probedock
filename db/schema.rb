@@ -165,7 +165,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_descriptions_tickets", ["test_description_id", "ticket_id"], name: "index_test_descriptions_on_description_and_ticket", unique: true, using: :btree
 
   create_table "test_keys", force: :cascade do |t|
-    t.string   "key",        limit: 12,                null: false
+    t.string   "key",        limit: 50,                null: false
     t.boolean  "free",                  default: true, null: false
     t.integer  "project_id",                           null: false
     t.integer  "user_id"
@@ -215,7 +215,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   create_table "test_reports", force: :cascade do |t|
     t.string   "api_id",          limit: 5, null: false
     t.integer  "organization_id",           null: false
-    t.integer  "runner_id",                 null: false
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
@@ -310,7 +309,6 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "test_payloads_reports", "test_payloads"
   add_foreign_key "test_payloads_reports", "test_reports"
   add_foreign_key "test_reports", "organizations"
-  add_foreign_key "test_reports", "users", column: "runner_id"
   add_foreign_key "test_result_contributors", "emails"
   add_foreign_key "test_result_contributors", "test_results"
   add_foreign_key "test_results", "categories"

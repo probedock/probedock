@@ -40,7 +40,7 @@ module TestPayloadProcessing
     private
 
     def create_report api_id = nil
-      TestReport.new(api_id: api_id, organization: @payload.project_version.project.organization, runner: @payload.runner, test_payloads: [ @payload ]).save_quickly!
+      TestReport.new(api_id: api_id, organization: @payload.project_version.project.organization, test_payloads: [ @payload ]).save_quickly!
     end
   end
 end

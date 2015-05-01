@@ -154,7 +154,7 @@ angular.module('probe-dock.keys', [ 'probe-dock.storage' ])
         copied: '=',
         onCopied: '&'
       },
-      template: '<div class="label test-key-label" ng-class="{\'label-primary\': !copied, \'label-info\': copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
+      template: '<div class="test-key-label" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
     };
   })
 

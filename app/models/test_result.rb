@@ -50,7 +50,16 @@ class TestResult < ActiveRecord::Base
       json.passed passed
       json.active active
       json.message message
+      json.duration duration
       json.key key.key if key.present? && payload_properties_set?(:key)
+      json.category category.name if category.present?
+      json.tags tags.collect(&:name)
+      json.tickets tickets.collect(&:name)
+      json.customData custom_values
+      json.runner runner.to_builder(link: true).attributes!
+      json.project project_version.project.to_builder(link: true).attributes!
+      json.projectVersion project_version.name
+      json.runAt run_at.iso8601(3)
     end
   end
 
