@@ -155,9 +155,11 @@ class V3 < ActiveRecord::Migration
     create_table :project_tests do |t|
       t.string :name, null: false
       t.integer :key_id
+      t.integer :description_id
       t.integer :project_id, null: false
       t.integer :results_count, null: false, default: 0
       t.timestamps null: false
+      t.index :description_id, unique: true
       t.index [ :project_id, :key_id ], unique: true
     end
 
@@ -272,6 +274,8 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :test_descriptions, :categories
     add_foreign_key :test_descriptions, :users, column: :last_runner_id
     add_foreign_key :test_descriptions, :test_results, column: :last_result_id
+
+    add_foreign_key :project_tests, :test_descriptions, column: :description_id
 
     create_table :tags_test_descriptions, id: false do |t|
       t.integer :test_description_id, null: false

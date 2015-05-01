@@ -32,7 +32,7 @@ module TestPayloadProcessing
         test_result.test
       end
 
-      description = new_test ? nil : test.descriptions.where(project_version_id: test_result.project_version_id).first
+      description = new_test ? nil : test.descriptions.where(project_version_id: test_result.project_version_id).includes(:project_version).first
       new_description = description.blank?
 
       if new_description
@@ -55,8 +55,12 @@ module TestPayloadProcessing
       description.results_count += 1
       description.save!
 
-      # FIXME: change name only if project version is the latest
-      test.name = test_result.name
+      # TODO: use semver gem to compare versions
+      if !test.description_id || test_result.project_version.name > test.description.project_version.name
+        test.description = description
+        test.name = description.name
+      end
+
       # TODO: only increment results count once per test
       test.results_count += 1
       test.save_quickly!

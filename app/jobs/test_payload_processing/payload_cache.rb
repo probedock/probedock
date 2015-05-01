@@ -70,7 +70,7 @@ module TestPayloadProcessing
       new_names = results.inject([]){ |memo,result| memo << result['n'] if result.key?('n') && !result.key?('k'); memo }.reject{ |n| @tests.key? n }
 
       if new_names.present?
-        @tests.merge! @project.tests.where(name: new_names).to_a.inject({}){ |memo,test| memo[test.name] = test; memo }
+        @tests.merge! @project.tests.where(key_id: nil, name: new_names).to_a.inject({}){ |memo,test| memo[test.name] = test; memo }
       end
     end
 

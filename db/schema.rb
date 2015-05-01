@@ -76,14 +76,16 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "organizations", ["normalized_name"], name: "index_organizations_on_normalized_name", unique: true, using: :btree
 
   create_table "project_tests", force: :cascade do |t|
-    t.string   "name",                      null: false
+    t.string   "name",                       null: false
     t.integer  "key_id"
-    t.integer  "project_id",                null: false
-    t.integer  "results_count", default: 0, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.integer  "description_id"
+    t.integer  "project_id",                 null: false
+    t.integer  "results_count",  default: 0, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
+  add_index "project_tests", ["description_id"], name: "index_project_tests_on_description_id", unique: true, using: :btree
   add_index "project_tests", ["project_id", "key_id"], name: "index_project_tests_on_project_id_and_key_id", unique: true, using: :btree
 
   create_table "project_versions", force: :cascade do |t|
@@ -283,6 +285,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"
   add_foreign_key "project_tests", "projects"
+  add_foreign_key "project_tests", "test_descriptions", column: "description_id"
   add_foreign_key "project_tests", "test_keys", column: "key_id"
   add_foreign_key "project_versions", "projects"
   add_foreign_key "projects", "organizations"
