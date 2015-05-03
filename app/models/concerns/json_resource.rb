@@ -21,4 +21,8 @@ module JsonResource
   def to_json options = {}
     to_builder(options).attributes!.to_json
   end
+
+  def serializable_hash options = {}
+    to_builder(options).attributes!
+  end
 end

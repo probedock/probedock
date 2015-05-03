@@ -64,7 +64,7 @@ module ProbeDock
           rel
         end
 
-        rel.to_a.collect{ |p| p.to_builder.attributes! }
+        rel.to_a
       end
 
       namespace '/:id' do

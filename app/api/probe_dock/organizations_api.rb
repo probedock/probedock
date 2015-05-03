@@ -68,7 +68,7 @@ module ProbeDock
           options[:memberships] = current_user.present? ? current_user.memberships.where(organization_id: result.collect(&:id)).to_a : []
         end
 
-        result.collect{ |p| p.to_builder(options).attributes! }
+        result.collect{ |p| p.serializable_hash options }
       end
 
       namespace '/:id' do
