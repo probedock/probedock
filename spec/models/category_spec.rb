@@ -21,7 +21,7 @@ describe Category do
 
   context "validations" do
     it(nil, probe_dock: { key: 'ba6a34e19289' }){ should validate_presence_of(:name) }
-    it(nil, probe_dock: { key: '5e7b05650570' }){ should validate_length_of(:name).is_at_most(255) }
+    it(nil, probe_dock: { key: '5e7b05650570' }){ should validate_length_of(:name).is_at_most(50) }
 
     context "with an existing category" do
       let!(:category){ create :category }

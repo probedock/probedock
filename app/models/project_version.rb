@@ -24,7 +24,7 @@ class ProjectVersion < ActiveRecord::Base
   has_many :test_payloads
 
   strip_attributes
-  validates :name, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }, length: { maximum: 255 }
+  validates :name, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }, length: { maximum: 100 }
   validates :project, presence: { unless: :quick_validation }
 
   def to_builder options = {}

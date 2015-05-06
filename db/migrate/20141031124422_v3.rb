@@ -132,7 +132,7 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :projects, :organizations
 
     create_table :project_versions do |t|
-      t.string :name, null: false, limit: 255
+      t.string :name, null: false, limit: 100
       t.integer :project_id, null: false
       t.datetime :created_at, null: false
       t.index [ :name, :project_id ], unique: true
@@ -167,7 +167,7 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :project_tests, :projects
 
     create_table :categories do |t|
-      t.string :name, null: false, limit: 255
+      t.string :name, null: false, limit: 50
       t.integer :organization_id, null: false
       t.datetime :created_at, null: false
       t.index [ :name, :organization_id ], unique: true
@@ -185,7 +185,7 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :tags, :organizations
 
     create_table :tickets do |t|
-      t.string :name, null: false, limit: 255
+      t.string :name, null: false, limit: 50
       t.integer :organization_id, null: false
       t.datetime :created_at, null: false
       t.index [ :name, :organization_id ], unique: true
@@ -305,10 +305,12 @@ class V3 < ActiveRecord::Migration
     add_foreign_key :test_contributors, :emails
 
     create_table :test_reports do |t|
-      t.string :api_id, null: false, limit: 5
+      t.string :api_id, null: false, limit: 12
+      t.string :uid, limit: 100
       t.integer :organization_id, null: false
       t.timestamps null: false
       t.index :api_id, unique: true
+      t.index [ :uid, :organization_id ], unique: true
     end
 
     add_foreign_key :test_reports, :organizations

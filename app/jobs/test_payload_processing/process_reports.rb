@@ -23,13 +23,13 @@ module TestPayloadProcessing
       @payload = payload
 
       if payload.raw_reports.present?
-        existing_reports = TestReport.where(api_id: payload.raw_reports.collect{ |r| r['id'] }).to_a
+        existing_reports = TestReport.where(uid: payload.raw_reports.collect{ |r| r['uid'] }).to_a
 
         payload.raw_reports.each do |raw_report|
-          if existing_report = existing_reports.find{ |r| r.api_id == raw_report['id'] }
+          if existing_report = existing_reports.find{ |r| r.uid == raw_report['uid'] }
             existing_report.test_payloads << @payload
           else
-            create_report raw_report['id']
+            create_report raw_report['uid']
           end
         end
       else
@@ -39,8 +39,8 @@ module TestPayloadProcessing
 
     private
 
-    def create_report api_id = nil
-      TestReport.new(api_id: api_id, organization: @payload.project_version.project.organization, test_payloads: [ @payload ]).save_quickly!
+    def create_report uid = nil
+      TestReport.new(uid: uid, organization: @payload.project_version.project.organization, test_payloads: [ @payload ]).save_quickly!
     end
   end
 end

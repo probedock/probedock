@@ -130,7 +130,6 @@ angular.module('probe-dock.keys', [ 'probe-dock.storage' ])
     }
 
     function cleanCopiedKeys() {
-      console.log($scope.copiedKeysByProject);
       $scope.copiedKeysByProject = _.reduce($scope.copiedKeysByProject, function(memo, keys, projectId) {
         if (_.findWhere($scope.projects, { id: projectId })) {
           memo[projectId] = _.filter(keys, function(key) {
@@ -142,7 +141,6 @@ angular.module('probe-dock.keys', [ 'probe-dock.storage' ])
 
         return memo;
       }, {});
-      console.log($scope.copiedKeysByProject);
     }
   })
 

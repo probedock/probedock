@@ -34,6 +34,8 @@ module ProbeDock
           body = env['api.request.input']
           json = MultiJson.load body
 
+          TestPayloadValidations.validate json, validation_context, location_type: :json, raise_error: true
+
           project = Project.where(api_id: json['p']).first
           Pundit.authorize current_user, project, :publish?
 

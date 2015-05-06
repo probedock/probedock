@@ -42,8 +42,9 @@ describe TestKey, probe_dock: { tags: :unit } do
 
   context "key" do
 
+    # TODO: test automatic increase of key size
     it "should be 12 characters long", probe_dock: { key: '9a8335194eb5' } do
-      10.times{ expect(TestKey.generate_random_key.length).to eq(12) }
+      10.times{ expect(TestKey.generate_random_key(1).length).to eq(4) }
     end
 
     it "should be unique", probe_dock: { key: '0fe5f1cf41d3' } do

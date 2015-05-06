@@ -47,7 +47,7 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
 
   if ENV['PROBE_DOCK_SAMPLES_REPORT'].present?
     payload[:o] = [
-      { id: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
+      { uid: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
     ]
   end
 
@@ -143,12 +143,20 @@ namespace :samples do
 
       result[:p] = passed.call
       result[:d] = rand(2500)
+      result.delete :n if result[:k] && rand(2) == 0
 
       if !result[:p]
         result[:m] = Forgery(:lorem_ipsum).words(rand(40) + 11).humanize
       elsif result.key? :m
         result.delete :m
       end
+    end
+
+    payload.delete :o
+    if ENV['PROBE_DOCK_SAMPLES_REPORT'].present?
+      payload[:o] = [
+        { uid: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
+      ]
     end
 
     publish_samples_payload payload, runner

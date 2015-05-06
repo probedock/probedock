@@ -32,6 +32,8 @@ module TestPayloadProcessing
         cache.test @test_result.name
       end
 
+      @test_result.name ||= @test_result.test.try(:name)
+
       @test_result.new_test = @test_result.test_id.blank?
 
       @test_result.test_payload = test_payload
@@ -44,6 +46,7 @@ module TestPayloadProcessing
       @test_result.message = data['m'].to_s if data['m'].present?
       @test_result.run_at = test_payload.received_at
 
+      # TODO: support caching
       @test_result.category = category data, cache if data.key? 'c'
       @test_result.tags = tags data, cache if data.key? 'g'
       @test_result.tickets = tickets data, cache if data.key? 't'

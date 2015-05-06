@@ -27,9 +27,9 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   end
 
   create_table "categories", force: :cascade do |t|
-    t.string   "name",            limit: 255, null: false
-    t.integer  "organization_id",             null: false
-    t.datetime "created_at",                  null: false
+    t.string   "name",            limit: 50, null: false
+    t.integer  "organization_id",            null: false
+    t.datetime "created_at",                 null: false
   end
 
   add_index "categories", ["name", "organization_id"], name: "index_categories_on_name_and_organization_id", unique: true, using: :btree
@@ -89,7 +89,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "project_tests", ["project_id", "key_id"], name: "index_project_tests_on_project_id_and_key_id", unique: true, using: :btree
 
   create_table "project_versions", force: :cascade do |t|
-    t.string   "name",       limit: 255, null: false
+    t.string   "name",       limit: 100, null: false
     t.integer  "project_id",             null: false
     t.datetime "created_at",             null: false
   end
@@ -215,13 +215,15 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_payloads_reports", ["test_payload_id", "test_report_id"], name: "index_test_payloads_reports_on_payload_and_report_id", unique: true, using: :btree
 
   create_table "test_reports", force: :cascade do |t|
-    t.string   "api_id",          limit: 5, null: false
-    t.integer  "organization_id",           null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.string   "api_id",          limit: 12,  null: false
+    t.string   "uid",             limit: 100
+    t.integer  "organization_id",             null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   add_index "test_reports", ["api_id"], name: "index_test_reports_on_api_id", unique: true, using: :btree
+  add_index "test_reports", ["uid", "organization_id"], name: "index_test_reports_on_uid_and_organization_id", unique: true, using: :btree
 
   create_table "test_result_contributors", id: false, force: :cascade do |t|
     t.integer "test_result_id", null: false
@@ -257,9 +259,9 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   add_index "test_results_tickets", ["test_result_id", "ticket_id"], name: "index_test_results_tickets_on_test_result_id_and_ticket_id", unique: true, using: :btree
 
   create_table "tickets", force: :cascade do |t|
-    t.string   "name",            limit: 255, null: false
-    t.integer  "organization_id",             null: false
-    t.datetime "created_at",                  null: false
+    t.string   "name",            limit: 50, null: false
+    t.integer  "organization_id",            null: false
+    t.datetime "created_at",                 null: false
   end
 
   add_index "tickets", ["name", "organization_id"], name: "index_tickets_on_name_and_organization_id", unique: true, using: :btree

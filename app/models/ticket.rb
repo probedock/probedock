@@ -23,7 +23,7 @@ class Ticket < ActiveRecord::Base
   has_and_belongs_to_many :test_results
 
   strip_attributes
-  validates :name, presence: true, uniqueness: { scope: :organization_id, unless: :quick_validation }, length: { maximum: 255 }
+  validates :name, presence: true, uniqueness: { scope: :organization_id, unless: :quick_validation }, length: { maximum: 50 }
   validates :organization, presence: { unless: :quick_validation }
 
   def url

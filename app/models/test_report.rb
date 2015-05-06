@@ -20,16 +20,18 @@ class TestReport < ActiveRecord::Base
   include IdentifiableResource
   include QuickValidation
 
-  before_create{ set_identifier :api_id }
+  before_create{ set_identifier :api_id, size: 12 }
 
   belongs_to :organization
   has_and_belongs_to_many :test_payloads
 
+  validates :uid, length: { maximum: 100, allow_blank: true }
   validates :organization, presence: true
 
   def to_builder options = {}
     Jbuilder.new do |json|
       json.id api_id
+      json.uid uid if uid.present?
       json.duration duration
       json.resultsCount results_count
       json.passedResultsCount passed_results_count
