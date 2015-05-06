@@ -40,7 +40,7 @@ gem 'pundit'
 gem 'grape'
 gem 'jbuilder'
 #gem 'errapi', path: "#{ENV['HOME']}/Projects/errapi"
-gem 'errapi', git: 'git@github.com:AlphaHydrae/errapi.git'
+gem 'errapi', git: 'https://github.com/AlphaHydrae/errapi.git'
 
 # Memory Database
 gem 'redis'
@@ -97,7 +97,7 @@ group :development, :test do
   gem 'guard-process'
 
   #gem 'probe-dock-rspec', path: "#{ENV['HOME']}/Projects/probe-dock-rspec"
-  gem 'probe-dock-rspec', git: 'git@github.com:probe-dock/probe-dock-rspec.git'
+  gem 'probe-dock-rspec', git: 'https://github.com/probe-dock/probe-dock-rspec.git'
 end
 
 group :test do

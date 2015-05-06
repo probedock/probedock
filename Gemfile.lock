@@ -1,11 +1,11 @@
 GIT
-  remote: git@github.com:AlphaHydrae/errapi.git
+  remote: https://github.com/AlphaHydrae/errapi.git
   revision: 8bf02124079f7fbb505ae837cc828a20b277dcc6
   specs:
     errapi (0.1.3)
 
 GIT
-  remote: git@github.com:probe-dock/probe-dock-rspec.git
+  remote: https://github.com/probe-dock/probe-dock-rspec.git
   revision: bcae470bf7500f02c63f7cc8f733c60928e29674
   specs:
     probe-dock-rspec (0.4.1)
