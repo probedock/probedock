@@ -36,13 +36,10 @@ module ProbeDock
 
           TestPayloadValidations.validate json, validation_context, location_type: :json, raise_error: true
 
-          project = Project.where(api_id: json['p']).first
+          project = Project.where(api_id: json['projectId']).first
           Pundit.authorize current_user, project, :publish?
 
-          # TODO: validate test payload (format, byte size)
-
-          # TODO: handle uuid conflict
-          payload = TestPayload.new api_id: SecureRandom.uuid, runner: current_user, received_at: received_at
+          payload = TestPayload.new runner: current_user, received_at: received_at
           payload.contents = json
           payload.contents_bytesize = body.bytesize
 

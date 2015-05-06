@@ -17,6 +17,9 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class TestPayload < ActiveRecord::Base
   include JsonResource
+  include IdentifiableResource
+
+  before_create{ set_identifier :api_id, :uuid }
 
   belongs_to :project_version
   belongs_to :runner, class_name: 'User'
@@ -24,7 +27,7 @@ class TestPayload < ActiveRecord::Base
   has_and_belongs_to_many :test_keys
   has_and_belongs_to_many :test_reports
 
-  scope :waiting_for_processing, -> { select((column_names - %w(contents) + [ "contents->'p' as raw_project", "contents->'v' as raw_project_version", "contents->'d' as raw_duration", "contents->'o' as raw_reports" ])).where(state: :created).order('received_at ASC') }
+  scope :waiting_for_processing, -> { select((column_names - %w(contents) + [ "contents->'projectId' as raw_project", "contents->'version' as raw_project_version", "contents->'duration' as raw_duration", "contents->'reports' as raw_reports" ])).where(state: :created).order('received_at ASC') }
 
   include SimpleStates
   states :created, :processing, :processed, :failed
@@ -32,7 +35,6 @@ class TestPayload < ActiveRecord::Base
   event :finish_processing, from: :processing, to: :processed
   event :fail_processing, from: :processing, to: :failed
 
-  validates :api_id, presence: true, length: { is: 36, allow_blank: true }
   validates :runner, presence: true
   validates :project_version, presence: { if: :processed? }
   validates :contents_bytesize, presence: true, numericality: { only_integer: true, greater_than: 0 }

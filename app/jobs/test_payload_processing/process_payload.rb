@@ -48,7 +48,7 @@ module TestPayloadProcessing
           offset = 0
 
           loop do
-            results = TestPayload.select('id, state, element').from("test_payloads, json_array_elements(test_payloads.contents->'r') element").where(id: test_payload.id).limit(100).offset(offset).to_a.collect(&:element)
+            results = TestPayload.select('id, state, element').from("test_payloads, json_array_elements(test_payloads.contents->'results') element").where(id: test_payload.id).limit(100).offset(offset).to_a.collect(&:element)
 
             @test_payload.duration += results.inject(0){ |memo,r| memo + r['d'] }
             @test_payload.results_count += results.length

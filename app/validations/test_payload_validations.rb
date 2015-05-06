@@ -1,20 +1,19 @@
 class TestPayloadValidations < Errapi::SingleValidator
   configure do
-
     validates type: :object
 
     # project API ID
-    validates 'p', presence: true, type: :string, trim: true
+    validates 'projectId', presence: true, type: :string, trim: true
 
     # project version
-    validates 'v', presence: true, type: :string, trim: true, length: 100
+    validates 'version', presence: true, type: :string, trim: true, length: 100
 
     # test run duration
-    validates 'd', presence: true, type: :integer, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates 'duration', presence: true, type: :integer, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
     # results
-    validates 'r', presence: true, type: :array
-    validates_each 'r' do
+    validates 'results', presence: true, type: :array
+    validates_each 'results' do
       validates type: :object
 
       # test key
@@ -55,8 +54,8 @@ class TestPayloadValidations < Errapi::SingleValidator
     end
 
     # report definitions
-    validates 'o', type: :array
-    validates_each 'o' do
+    validates 'reports', type: :array
+    validates_each 'reports' do
       validates type: :object
 
       # unique report identifier within the organization

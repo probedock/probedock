@@ -40,13 +40,13 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
   puts Paint[project.name, :green]
 
   payload = {
-    p: project.api_id,
-    v: "#{rand(3)}.#{rand(20)}.#{rand(10)}",
-    r: []
+    projectId: project.api_id,
+    version: "#{rand(3)}.#{rand(20)}.#{rand(10)}",
+    results: []
   }
 
   if ENV['PROBE_DOCK_SAMPLES_REPORT'].present?
-    payload[:o] = [
+    payload[:reports] = [
       { uid: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
     ]
   end
@@ -83,10 +83,10 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
       end
     end
 
-    payload[:r] << result
+    payload[:results] << result
   end
 
-  payload[:d] = rand(60000) + payload[:r].inject(0){ |memo,result| memo + result[:d] }
+  payload[:duration] = rand(60000) + payload[:results].inject(0){ |memo,result| memo + result[:d] }
   puts Paint['done', :green]
 
   print "Saving payload... "
@@ -115,7 +115,7 @@ namespace :samples do
     puts Paint['done', :green]
 
     print "Fetching project... "
-    project_api_id = payload[:p]
+    project_api_id = payload[:projectId]
     project = Project.where(api_id: project_api_id).first
     if project.blank?
       puts Paint["Project API ID #{project_api_id} used in last samples payload not found in database", :red]
@@ -125,7 +125,7 @@ namespace :samples do
 
     next unless runner = fetch_samples_runner(args[:runner])
 
-    n = payload[:r].length
+    n = payload[:results].length
 
     passed = case args[:passed]
     when /true/i
@@ -139,7 +139,7 @@ namespace :samples do
       lambda{ rand(2) == 1 }
     end
 
-    payload[:r].each do |result|
+    payload[:results].each do |result|
 
       result[:p] = passed.call
       result[:d] = rand(2500)
@@ -152,9 +152,9 @@ namespace :samples do
       end
     end
 
-    payload.delete :o
+    payload.delete :reports
     if ENV['PROBE_DOCK_SAMPLES_REPORT'].present?
-      payload[:o] = [
+      payload[:reports] = [
         { uid: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
       ]
     end
