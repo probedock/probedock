@@ -7,14 +7,14 @@ default: &default
 
 development:
   <<: *default
-  database: probe-dock
+  database: <%= ENV['PROBE_DOCK_DATABASE_NAME'] %>
 
 test:
   <<: *default
-  database: probe-dock-test
+  database: <%= ENV['PROBE_DOCK_TEST_DATABASE_NAME'] %>
 
 production:
   <<: *default
-  database: probe-dock
-  username: probe-dock
+  database: <%= ENV['PROBE_DOCK_DATABASE_NAME'] %>
+  username: <%= ENV['PROBE_DOCK_DATABASE_USERNAME'] %>
   password: <%= ENV['PROBE_DOCK_DATABASE_PASSWORD'] %>

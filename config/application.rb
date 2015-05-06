@@ -81,23 +81,23 @@ module ProbeDock
     config.action_mailer.delivery_method = :smtp
 
     config.action_mailer.smtp_settings = {
-      address: 'smtp.gmail.com',
-      port: 587,
-      domain: config_for(:'probe-dock')['host'],
-      user_name: secrets.mail_user,
+      address: secrets.mail_address,
+      port: secrets.mail_port,
+      domain: config_for(:application)['host'],
+      user_name: secrets.mail_username,
       password: secrets.mail_password,
-      authentication: 'plain',
+      authentication: secrets.mail_authentication,
       enable_starttls_auto: true
     }
 
     config.action_mailer.default_options = {
-      from: config_for(:'probe-dock')['mail_from']
+      from: config_for(:application)['mail_from']
     }
 
     config.action_mailer.default_url_options = {
-      protocol: config_for(:'probe-dock')['protocol'],
-      host: config_for(:'probe-dock')['host'],
-      port: config_for(:'probe-dock')['port']
+      protocol: config_for(:application)['protocol'],
+      host: config_for(:application)['host'],
+      port: config_for(:application)['port']
     }
 
     config.assets.precompile << '*.swf'

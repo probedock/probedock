@@ -1,2 +1,0 @@
-development: redis:6379:0
-test: redis:6379:1

@@ -65,7 +65,7 @@ gem 'paint' # TODO: udpate to 1.0 once rox-client-rspec has been updated
 gem 'highline'
 
 group :production do
-  gem 'unicorn'
+  gem 'unicorn-rails'
 end
 
 group :development do
@@ -79,6 +79,9 @@ group :development do
 end
 
 group :development, :test do
+
+  gem 'dotenv-rails'
+
   gem 'thin'
   gem 'httparty'
   gem 'rox-client-rspec', '~> 0.4.1'
@@ -93,8 +96,8 @@ group :development, :test do
   gem 'guard-shell'
   gem 'guard-process'
 
-  #gem 'probe_dock_rspec', path: "#{ENV['HOME']}/Projects/probe-dock-rspec"
-  gem 'probe_dock_rspec', git: 'git@github.com:probe-dock/probe-dock-rspec.git'
+  #gem 'probe-dock-rspec', path: "#{ENV['HOME']}/Projects/probe-dock-rspec"
+  gem 'probe-dock-rspec', git: 'git@github.com:probe-dock/probe-dock-rspec.git'
 end
 
 group :test do

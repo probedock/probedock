@@ -1,14 +1,9 @@
 /.bundle
+/.env
 /.grunt
 /.vagrant
 /_SpecRunner.html
 /bower_components
-/config/database.yml
-/config/initializers/ldap.rb
-/config/redis.yml
-/config/ldap.yml
-/config/probe-dock.yml
-/config/secrets.yml
 /db/test.*
 /doc/app
 /docker/app/Gem*

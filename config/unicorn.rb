@@ -8,12 +8,12 @@
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.
 
-APP_PATH = '/path/to/probe-dock'
+APP_PATH = File.expand_path File.join(File.dirname(__FILE__), '..')
 
 # Use at least one worker per core if you're on a dedicated server,
 # more will usually help for _short_ waits on databases/caches.
-worker_processes 3
-user 'probe-dock'
+worker_processes ENV['UNICORN_WORKERS'] || 3
+user ENV['UNICORN_USER'] || 'probe-dock'
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
@@ -29,7 +29,6 @@ timeout 30
 
 # feel free to point this anywhere accessible on the filesystem
 #pid "#{APP_PATH}/tmp/pids/unicorn.pid"
-pid "#{APP_PATH}/tmp/pids/unicorn.pid"
 
 # By default, the Unicorn logger will write to stderr.
 # Additionally, ome applications/frameworks log to stderr or stdout,
@@ -58,14 +57,14 @@ before_fork do |server, worker|
   # thundering herd (especially in the "preload_app false" case)
   # when doing a transparent upgrade.  The last worker spawned
   # will then kill off the old master process with a SIGQUIT.
-   old_pid = "#{server.config[:pid]}.oldbin"
-   if old_pid != server.pid
-     begin
-       sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
-       Process.kill(sig, File.read(old_pid).to_i)
-     rescue Errno::ENOENT, Errno::ESRCH
-     end
-   end
+  #old_pid = "#{server.config[:pid]}.oldbin"
+  #if old_pid != server.pid
+  #  begin
+  #    sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
+  #    Process.kill(sig, File.read(old_pid).to_i)
+  #  rescue Errno::ENOENT, Errno::ESRCH
+  #  end
+  #end
   #
   # Throttle the master from forking too quickly by sleeping.  Due
   # to the implementation of standard Unix signal handlers, this
@@ -88,5 +87,6 @@ after_fork do |server, worker|
   # and Redis.  TokyoCabinet file handles are safe to reuse
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
+  $redis.disconnect!
 end
 
