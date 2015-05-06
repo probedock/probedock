@@ -74,7 +74,7 @@ class TestReport < ActiveRecord::Base
   end
 
   def runners
-    User.joins(test_payloads: :test_reports).where(test_reports: { id: id })
+    User.joins(test_payloads: :test_reports).where(test_reports: { id: id }).distinct
   end
 
   private
