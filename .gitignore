@@ -1,5 +1,5 @@
 /.bundle
-/.env
+/.env*
 /.grunt
 /.vagrant
 /_SpecRunner.html
