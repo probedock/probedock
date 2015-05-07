@@ -83,7 +83,7 @@ module ProbeDock
     config.action_mailer.smtp_settings = {
       address: secrets.mail_address,
       port: secrets.mail_port,
-      domain: config_for(:application)['host'],
+      domain: secrets.mail_domain,
       user_name: secrets.mail_username,
       password: secrets.mail_password,
       authentication: secrets.mail_authentication,
