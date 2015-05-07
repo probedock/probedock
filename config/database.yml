@@ -15,7 +15,7 @@ test:
 
 production:
   <<: *default
-  host: <%= ENV['PROBE_DOCK_TEST_APP_HOST'] %>
+  host: <%= ENV['PROBE_DOCK_DATABASE_HOST'] %>
   database: <%= ENV['PROBE_DOCK_DATABASE_NAME'] %>
   username: <%= ENV['PROBE_DOCK_DATABASE_USERNAME'] %>
   password: <%= ENV['PROBE_DOCK_DATABASE_PASSWORD'] %>
