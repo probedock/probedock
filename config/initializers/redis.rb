@@ -15,9 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-config = YAML.load_file(Rails.root.to_s + '/config/redis.yml')
-config = config[Rails.env]
-
+config = Rails.application.config_for :redis
 host, port, db = config.split /:/
 
 options = { host: host, port: port, db: db.to_i, driver: :hiredis }
