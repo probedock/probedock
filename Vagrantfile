@@ -9,6 +9,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = 'ubuntu/trusty64'
 
+  config.vm.network 'private_network', ip: '192.168.50.4'
+
   config.vm.provider 'virtualbox' do |v|
     v.memory = 2048
     v.cpus = 2
@@ -19,35 +21,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # stop and remove all docker containers
   config.vm.provision 'shell', inline: 'if [ $(docker ps -a -q|wc -l) -gt -0 ]; then docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); fi'
-  # remove any leftover pid file
-  config.vm.provision 'shell', inline: 'rm -f /vagrant/tmp/pids/server.pid'
-  # copy vagrant configuration files
-  config.vm.provision 'shell', inline: 'cp /vagrant/config/samples/vagrant/* /vagrant/config/'
-  # update Gemfile and Gemfile.lock for app image
-  config.vm.provision 'shell', inline: 'cp /vagrant/Gemfile /vagrant/Gemfile.lock /vagrant/docker/app/'
 
-  app_links = '--link postgres:postgres --link redis:redis --volume /vagrant:/app'
+  # remove all data
+  config.vm.provision 'shell', inline: 'sudo rm -fr /var/lib/probe-dock'
 
-  config.vm.provision 'docker' do |d|
-    # start postgresql
-    d.run 'postgres'
-    # start redis
-    d.run 'redis'
-    # build app image
-    d.build_image '/vagrant/docker/app', args: '-t probe-dock'
-    # wipe and set up database
-    d.run 'probe-dock-setup', image: 'probe-dock', cmd: 'rake db:wipe', args: "--rm #{app_links}", daemonize: false
-  end
+  # install docker compose
+  config.vm.provision 'shell', inline: 'curl -L https://github.com/docker/compose/releases/download/1.2.0/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose'
+  config.vm.provision 'shell', inline: 'chmod +x /usr/local/bin/docker-compose'
 
-  # start postgresql, redis and server
-  config.vm.provision 'docker', run: 'always' do |d|
-    d.run 'postgres'
-    d.run 'redis'
-    d.run 'probe-dock-server', image: 'probe-dock', cmd: 'rails server', args: "#{app_links} -p 3000:3000"
-    d.run 'probe-dock-resque', image: 'probe-dock', cmd: 'guard start --no-interactions --force-polling --latency 0.5 -w app lib -g resque-pool', args: "#{app_links}"
-  end
+  # launch database & redis cache
+  config.vm.provision 'shell', inline: 'cd /vagrant && docker-compose -p probedock up -d db'
+  config.vm.provision 'shell', inline: 'cd /vagrant && docker-compose -p probedock up -d cache'
 
-  config.vm.network 'private_network', ip: '192.168.50.4'
-  config.vm.network 'forwarded_port', guest: 3000, host: 3000
-  config.vm.synced_folder '.', '/vagrant', type: 'nfs'
+  # set up database & precompile assets
+  config.vm.provision 'shell', inline: 'cd /vagrant && sleep 5 && docker-compose -p probedock run --rm task rake db:schema:load db:seed assets:precompile'
+
+  # run application
+  config.vm.provision 'shell', inline: 'cd /vagrant && docker-compose -p probedock up -d web'
 end

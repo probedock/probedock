@@ -1,0 +1,58 @@
+# Nginx web server.
+web:
+  image: nginx
+  links:
+    - app
+  ports:
+    - "80:80"
+  volumes:
+    - "docker/web/nginx.conf:/etc/nginx/nginx.conf:ro"
+    - "/var/lib/probe-dock/public:/var/lib/probe-dock/public"
+  restart: always
+
+# Application in production mode
+# The application will not serve assets.
+app:
+  image: probedock/probe-dock
+  links:
+    - db
+    - cache
+  ports:
+    - "3000:3000"
+  volumes:
+    - "/var/lib/probe-dock/public/assets:/usr/src/app/public/assets"
+  env_file:
+    - .env.production
+  restart: always
+
+# PostgreSQL database.
+db:
+  image: postgres:9.4
+  volumes:
+    - "docker/db-init-scripts:/docker-entrypoint-initdb.d"
+    - "/var/lib/probe-dock/db/data:/var/lib/postgresql/data"
+  env_file:
+    - .env.production
+  restart: always
+
+# Redis in-memory database.
+cache:
+  image: redis:2.8
+  volumes:
+    - "/var/lib/probe-dock/cache/data:/data"
+  command: redis-server --appendonly yes
+  restart: always
+
+# Pre-compile application assets.
+# This is meant to be run as a one-off task (with "run" instead of "up").
+task:
+  image: probedock/probe-dock
+  links:
+    - db
+    - cache
+  volumes:
+    - "/var/lib/probe-dock/public/assets:/usr/src/app/public/assets"
+  env_file:
+    - .env.production
+  command: rake -T
+  restart: no
