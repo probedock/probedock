@@ -1,5 +1,5 @@
 .ackrc
-.env
+.env*
 .git
 .rspec
 .screenrc

@@ -100,8 +100,8 @@ module ProbeDock
       port: config_for(:application)['port']
     }
 
-    %w(eot svg swf ttf woff woff2).each{ |ext| config.assets.precompile << "*.#{ext}" }
     %w(flash).each{ |dir| config.assets.paths << Rails.root.join('vendor', 'assets', dir) }
+    %w(eot svg swf ttf woff woff2).each{ |ext| config.assets.precompile << "*.#{ext}" }
 
     config.generators.assets = false
     config.generators.helper = false

@@ -10,7 +10,7 @@ web:
     - "/var/lib/probe-dock/public:/var/lib/probe-dock/public"
   restart: always
 
-# Application in production mode
+# Application in production mode.
 # The application will not serve assets.
 app:
   image: probedock/probe-dock
@@ -21,6 +21,21 @@ app:
     - "3000:3000"
   volumes:
     - "/var/lib/probe-dock/public/assets:/usr/src/app/public/assets"
+  env_file:
+    - .env.production
+  restart: always
+
+# Background job processing task.
+job:
+  image: probedock/probe-dock
+  command: rake resque:work
+  links:
+    - db
+    - cache
+  environment:
+    QUEUE: "*"
+    INTERVAL: "2"
+    TERM_CHILD: "1"
   env_file:
     - .env.production
   restart: always
@@ -38,15 +53,16 @@ db:
 # Redis in-memory database.
 cache:
   image: redis:2.8
+  command: redis-server --appendonly yes
   volumes:
     - "/var/lib/probe-dock/cache/data:/data"
-  command: redis-server --appendonly yes
   restart: always
 
 # Pre-compile application assets.
 # This is meant to be run as a one-off task (with "run" instead of "up").
 task:
   image: probedock/probe-dock
+  command: rake -T
   links:
     - db
     - cache
@@ -54,5 +70,4 @@ task:
     - "/var/lib/probe-dock/public/assets:/usr/src/app/public/assets"
   env_file:
     - .env.production
-  command: rake -T
   restart: no

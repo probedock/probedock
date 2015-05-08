@@ -79,8 +79,7 @@ group :development do
 end
 
 group :development, :test do
-
-  gem 'sshkit'
+  gem 'capistrano'
   gem 'dotenv-rails'
 
   gem 'thin'
