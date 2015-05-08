@@ -18,7 +18,7 @@
 namespace :vagrant do
 
   desc 'Deploy the application in a vagrant environment (erase previous application if running)'
-  task deploy: [ 'vagrant:up', 'vagrant:env', 'deploy:cold' ]
+  task deploy: [ 'vagrant:up', 'vagrant:env', 'deploy:clean', 'deploy:cold' ]
 
   task :env do
     ssh_config = `vagrant ssh-config`

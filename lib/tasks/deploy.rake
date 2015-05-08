@@ -30,6 +30,22 @@ servers = []
 SSHKit.config.command_map[:docker_compose] = "/usr/bin/env docker-compose -p #{docker_prefix}"
 SSHKit.config.command_map[:rake] = "/usr/bin/env docker-compose -p #{docker_prefix} run --rm task rake"
 
+class DeployUtils
+  def initialize options = {}
+    @docker_prefix = options[:docker_prefix]
+  end
+
+  def container_ids context
+    prefix = @docker_prefix
+    context.instance_eval do
+      containers = capture "docker ps -a"
+      containers.split("\n").reject{ |c| c.strip.empty? }.select{ |c| c[prefix] }.collect{ |c| c.sub(/ .*/, '') }
+    end
+  end
+end
+
+utils = DeployUtils.new docker_prefix: docker_prefix
+
 # deploy tasks
 namespace :deploy do
 
@@ -53,7 +69,16 @@ namespace :deploy do
   end
 
   desc 'Deploy for the first time (erase previous application if running)'
-  task cold: [ 'deploy:config', 'deploy:clean', 'deploy:setup', 'deploy:schema', 'deploy:precompile', 'deploy:start' ]
+  task cold: [ 'deploy:config', 'deploy:cold:check', 'deploy:setup', 'deploy:schema', 'deploy:precompile', 'deploy:start' ]
+
+  namespace :cold do
+    task :check do
+      on servers do
+        container_ids = utils.container_ids self
+        raise "Cold deployment can only be done the first time. The following containers are already running: #{container_ids.join ', '}" unless container_ids.empty?
+      end
+    end
+  end
 
   desc 'Start the web server (and dependencies)'
   task :start do
@@ -67,8 +92,7 @@ namespace :deploy do
   desc 'Erase the running application and all stored data'
   task :clean do
     on servers do
-      containers = capture "docker ps -a"
-      container_ids = containers.split("\n").reject{ |c| c.strip.empty? }.select{ |c| c[docker_prefix] }.collect{ |c| c.sub(/ .*/, '') }
+      container_ids = utils.container_ids self
       execute "docker rm -f #{container_ids.join(' ')}" unless container_ids.empty?
       execute 'sudo rm -fr /var/lib/probe-dock'
     end
