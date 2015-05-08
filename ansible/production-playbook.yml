@@ -1,0 +1,7 @@
+---
+- hosts: all
+  remote_user: root
+  vars_files:
+    - versions.yml
+  roles:
+    - role: docker-compose

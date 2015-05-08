@@ -1,0 +1,10 @@
+---
+- apt: name=wget state=latest
+- name: check docker version
+  shell: docker --version|sed 's/[^0-9]*\([0-9]\)/\1/'|sed 's/, build.*//'
+  register: result
+  failed_when: false
+  changed_when: result.rc != 0 or result.stdout != docker_version
+- name: install docker
+  shell: wget -qO- https://get.docker.com/ | sh
+  when: result|changed
