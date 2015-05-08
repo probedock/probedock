@@ -3,6 +3,7 @@
 .git
 .rspec
 .screenrc
+ansible
 bower.json
 bower_components
 doc
