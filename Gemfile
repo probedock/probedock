@@ -80,6 +80,7 @@ end
 
 group :development, :test do
 
+  gem 'sshkit'
   gem 'dotenv-rails'
 
   gem 'thin'

@@ -4,6 +4,12 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+home_public_key = File.join ENV['HOME'], '.ssh', 'id_rsa.pub'
+public_key_file = ENV['PUBLIC_KEY_FILE'] || home_public_key
+raise "A public SSH key is required to set up root access (you should have a public key in #{home_public_key} or specify a custom path with $PUBLIC_KEY_FILE)" unless File.exists? public_key_file
+
+public_key = File.read(public_key_file).strip
+
 # Online documentation at vagrantup.com.
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -17,25 +23,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # install docker
-  config.vm.provision 'docker'
-
-  # stop and remove all docker containers
-  config.vm.provision 'shell', inline: 'if [ $(docker ps -a -q|wc -l) -gt -0 ]; then docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); fi'
-
-  # remove all data
-  config.vm.provision 'shell', inline: 'sudo rm -fr /var/lib/probe-dock'
+  config.vm.provision 'shell', inline: 'curl -sSL https://get.docker.com/ | sh'
+  config.vm.provision 'shell', inline: 'sudo usermod -aG docker vagrant'
 
   # install docker compose
   config.vm.provision 'shell', inline: 'curl -L https://github.com/docker/compose/releases/download/1.2.0/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose'
   config.vm.provision 'shell', inline: 'chmod +x /usr/local/bin/docker-compose'
 
-  # launch database & redis cache
-  config.vm.provision 'shell', inline: 'cd /vagrant && docker-compose -p probedock up -d db'
-  config.vm.provision 'shell', inline: 'cd /vagrant && docker-compose -p probedock up -d cache'
-
-  # set up database & precompile assets
-  config.vm.provision 'shell', inline: 'cd /vagrant && sleep 5 && docker-compose -p probedock run --rm task rake db:schema:load db:seed assets:precompile'
-
-  # run application
-  config.vm.provision 'shell', inline: 'cd /vagrant && docker-compose -p probedock up -d web'
+  # set up root access
+  config.vm.provision 'shell', inline: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh && touch /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys'
+  config.vm.provision 'shell', inline: "echo #{public_key} > /root/.ssh/authorized_keys"
 end
