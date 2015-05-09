@@ -55,7 +55,7 @@ end
 namespace :deploy do
 
   desc 'Deploy the application for the first time'
-  task cold: [ 'deploy:cold:check', 'deploy:setup', 'deploy:schema', 'deploy:precompile', 'deploy:jobs', 'deploy:start', 'deploy:admin' ]
+  task cold: %w(deploy:cold:check deploy:setup deploy:schema deploy:precompile deploy:static deploy:jobs deploy:start deploy:admin)
 
   namespace :cold do
     task check: %w(docker:list_containers) do
@@ -95,7 +95,7 @@ namespace :deploy do
   end
 
   desc 'Load the database schema and seed data'
-  task schema: [ 'deploy:run_db', 'deploy:run_cache', 'deploy:wait_db', 'deploy:wait_cache' ] do
+  task schema: %w(deploy:run_db deploy:run_cache deploy:wait_db deploy:wait_cache) do
     on roles(:app) do
       within fetch(:repo_path) do
         execute :rake, 'db:schema:load db:seed'
@@ -104,10 +104,25 @@ namespace :deploy do
   end
 
   desc 'Precompile production assets'
-  task :precompile do
+  task precompile: %w(precompile:assets precompile:templates)
+
+  namespace :precompile do
+    %w(assets templates).each do |name|
+      task name.to_sym do
+        on roles(:app) do
+          within fetch(:repo_path) do
+            execute :rake, "#{name}:precompile"
+          end
+        end
+      end
+    end
+  end
+
+  desc 'Copy static files to the public directory'
+  task :static do
     on roles(:app) do
       within fetch(:repo_path) do
-        execute :rake, 'assets:precompile'
+        execute :rake, 'static:copy'
       end
     end
   end

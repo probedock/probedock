@@ -12,5 +12,6 @@
 /local
 /log
 /node_modules
-/public/assets
+/public/*
+!/public/.keep
 /tmp

@@ -20,7 +20,7 @@ app:
   ports:
     - "3000:3000"
   volumes:
-    - "/var/lib/probe-dock/public/assets:/usr/src/app/public/assets"
+    - "/var/lib/probe-dock/public:/usr/src/app/public"
   env_file:
     - .env.production
   restart: always
@@ -67,7 +67,7 @@ task:
     - db
     - cache
   volumes:
-    - "/var/lib/probe-dock/public/assets:/usr/src/app/public/assets"
+    - "/var/lib/probe-dock/public:/usr/src/app/public"
   env_file:
     - .env.production
   restart: no

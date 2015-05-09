@@ -15,20 +15,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-require 'resque/server'
+namespace :static do
 
-ProbeDock::Application.routes.draw do
+  desc 'Copy all static assets in static to public'
+  task :copy do
 
-  if Rails.env == 'development'
-    mount Resque::Server.new, at: '/resque'
+    target = Rails.root.join 'public'
+
+    Dir.chdir Rails.root.join('static')
+
+    Dir.glob('**/*').reject{ |f| f.match /^\./ }.each do |file|
+      source = Rails.root.join 'static', file
+      FileUtils.cp_r source, target
+      puts Paint["#{Pathname.new(source).relative_path_from Rails.root} -> #{File.join 'public', file}", :green]
+    end
   end
-
-  if Rails.env != 'production'
-    get '/templates/:name', to: 'home#template'
-  end
-
-  mount ProbeDock::API => '/api'
-
-  get '/*path', to: 'home#index'
-  root to: 'home#index'
 end

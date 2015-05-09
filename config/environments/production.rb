@@ -97,4 +97,7 @@ ProbeDock::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  # Directory to store cached pages.
+  config.action_controller.page_cache_directory = Rails.root.join 'public'
 end

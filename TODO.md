@@ -36,6 +36,7 @@
 
 # Improvements
 
+* use dash syntax for css
 * use foreigner-matcher to test foreign keys (including dependent option)
 * allow to configure test run purge throttling delay
 * list of test payloads with processing time for admins

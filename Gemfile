@@ -29,6 +29,7 @@ gem 'therubyracer'
 gem 'uglifier', '>= 1.3.0'
 gem 'ngannotate-rails'
 gem 'autoprefixer-rails'
+gem 'actionpack-page_caching'
 
 # Authentication & Authorization
 gem 'bcrypt'
