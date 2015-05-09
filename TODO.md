@@ -1,8 +1,6 @@
 ## Critical
 
-* move entire smtp settings to configuration
-
-* validate payloads
+* redirect 404 to home page
 
 ## Features
 

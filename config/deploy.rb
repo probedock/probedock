@@ -55,13 +55,24 @@ end
 namespace :deploy do
 
   desc 'Deploy the application for the first time'
-  task cold: [ 'deploy:setup', 'deploy:schema', 'deploy:precompile', 'deploy:jobs', 'deploy:start', 'deploy:wait_app', 'deploy:admin' ]
+  task cold: [ 'deploy:cold:check', 'deploy:setup', 'deploy:schema', 'deploy:precompile', 'deploy:jobs', 'deploy:start', 'deploy:admin' ]
 
-  desc 'Start the web server (and dependencies)'
+  namespace :cold do
+    task check: %w(docker:list_containers) do
+      on roles(:app) do |host|
+        host_containers = fetch(:containers)[host]
+        raise %/Cold deployment aborted; the following containers are already running:\n#{host_containers.collect{ |c| "- #{c[:name]} (#{c[:id]})" }.join("\n")}/ unless host_containers.empty?
+      end
+    end
+  end
+
+  desc 'Start the application and web server'
   task :start do
     on roles(:app) do
       within fetch(:repo_path) do
-        execute :compose_up, '-d', 'web'
+        execute :compose_up, '--no-deps', '-d', 'app'
+        invoke 'deploy:wait_app'
+        execute :compose_up, '--no-deps', '-d', 'web'
       end
     end
   end
@@ -70,7 +81,7 @@ namespace :deploy do
   task :jobs do
     on roles(:app) do
       within fetch(:repo_path) do
-        execute :compose_up, '-d', 'job'
+        execute :compose_up, '--no-deps', '-d', 'job'
         execute :compose_scale, 'job=3'
       end
     end
@@ -84,7 +95,7 @@ namespace :deploy do
   end
 
   desc 'Load the database schema and seed data'
-  task schema: [ 'deploy:run_db', 'deploy:wait_db' ] do
+  task schema: [ 'deploy:run_db', 'deploy:run_cache', 'deploy:wait_db', 'deploy:wait_cache' ] do
     on roles(:app) do
       within fetch(:repo_path) do
         execute :rake, 'db:schema:load db:seed'
@@ -118,15 +129,19 @@ namespace :deploy do
     end
   end
 
-  task :wait_db do
+  task :run_cache do
     on roles(:app) do
-      execute :docker_run, '--link', "#{fetch(:docker_prefix)}_db_1:db", 'aanand/wait'
+      within repo_path do
+        execute :compose_up, '--no-recreate', '-d', 'cache'
+      end
     end
   end
 
-  task :wait_app do
-    on roles(:app) do
-      execute :docker_run, '--link', "#{fetch(:docker_prefix)}_app_1:app", 'aanand/wait'
+  %w(app cache db web).each do |name|
+    task "wait_#{name}".to_sym do
+      on roles(:app) do
+        execute :docker_run, '--link', "#{fetch(:docker_prefix)}_#{name}_1:#{name}", 'aanand/wait'
+      end
     end
   end
 end
@@ -164,17 +179,17 @@ end
 
 desc 'Stop the running application and erase all data'
 task implode: 'docker:list_containers' do
+
+  unless fetch(:stage).to_s == 'vagrant'
+    ask :confirmation, %/Are you sure you want to remove the application containers and erase all data? You are in #{fetch(:stage).to_s.upcase} mode. Type "yes" to proceed./
+    raise 'Task aborted by user' unless fetch(:confirmation).match(/^yes$/i)
+  end
+
   on roles(:app) do |host|
+
     host_containers = fetch(:containers)[host]
-
-    unless host_containers.empty?
-      unless fetch(:stage).to_s == 'vagrant'
-        ask :confirmation, %/Are you sure you want to erase all data? You are in #{fetch(:stage).to_s.upcase} mode. Type "yes" to proceed./
-        raise 'Task aborted by user' unless fetch(:confirmation).match(/^yes$/i)
-      end
-
-      execute "docker rm -f #{host_containers.collect{ |c| c[:id] }.join(' ')}"
-    end
+    execute "docker rm -f #{host_containers.collect{ |c| c[:id] }.join(' ')}" unless host_containers.empty?
+    fetch(:containers)[host].clear
 
     execute 'sudo rm -fr /var/lib/probe-dock'
   end
@@ -189,17 +204,10 @@ task :samples do
   end
 end
 
-desc 'Provisions the vagrant machine (if the application is running, it is stopped, erased, and redeployed from scratch)'
-task provision: %w(vagrant:provision implode vagrant:docker_build deploy:cold)
+desc 'Remove any running application containers, erase all data, and perform a cold deploy'
+task reset: %w(implode vagrant:docker_build deploy:cold)
 
 namespace :vagrant do
-
-  task :provision do
-    raise 'This task can only be used with the "vagrant" stage; use `cap vagrant provision`' unless fetch(:stage).to_s == 'vagrant'
-    system 'vagrant up --no-provision'
-    system 'vagrant provision'
-  end
-
   task :docker_build do
     on roles(:app) do
       within fetch(:repo_path) do
