@@ -3,7 +3,7 @@ form novalidate=true role='form' name='projectForm' ng-submit='projectForm.$vali
     h3.modal-title ng-if='editedProject.id' Edit {{ project | projectName }}
     h3.modal-title ng-if='!editedProject.id' New Project
   .modal-body
-    = render partial: 'templates/project_form'
+    include _project_form.html
   .modal-footer.clearfix
     .btn-group.pull-right
       button.btn.btn-default type='button' ng-click='$dismiss()' Cancel

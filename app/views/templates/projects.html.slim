@@ -3,7 +3,7 @@
     h1 Projects
     p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi. Ut non nulla nulla. Nam et auctor ipsum, vitae pharetra dolor. In quis nisl finibus ex semper blandit. Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis. Sed vel vehicula arcu. Pellentesque orci ligula, placerat non porta a, eleifend quis turpis. Quisque ultrices, erat nec cursus euismod, lorem diam mollis purus, id ultrices est mauris sit amet quam. Sed eget iaculis magna. Nullam nisi diam, eleifend vitae egestas placerat, ornare quis magna. Phasellus commodo, arcu sit amet luctus sagittis, eros lorem lobortis eros, a aliquam dolor lacus non sem. Quisque in turpis non tellus suscipit dignissim sed vitae ex.
     form.clearfix novalidate=true role='form' name='projectForm' ng-if='currentMemberIs("admin")' ng-submit='projectForm.$valid && save()'
-      = render partial: 'templates/project_form'
+      include _project_form.html
       .btn-group.pull-right
         button.btn.btn-default type='button' ng-click='reset()' ng-disabled='!changed()' Cancel
         button.btn.btn-primary type='submit' ng-disabled='projectForm.$invalid' Save
@@ -17,4 +17,4 @@
         |  Add a new project
   .col-xs-12.col-sm-8.col-md-9
     .col-xs-12 ng-repeat='project in projects | orderBy: orderProject'
-      = render partial: 'templates/project'
+      include _project.html

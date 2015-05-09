@@ -1,3 +1,5 @@
+require 'slim/include'
+
 slim_options = {
   # Disable {} attributes to play nice with angular
   attr_list_delims: { '(' => ')', '[' => ']' }
