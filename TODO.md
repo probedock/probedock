@@ -1,9 +1,8 @@
-## Critical
-
-* redirect 404 to home page
-* check 404 for orgs
+* remove unused app settings
 
 ## Features
+
+* integrate with travis
 
 * share org header among dashboard, reports and projects page
 
@@ -14,6 +13,8 @@
 * show number of payloads being processed in projects page (status)
 
 * show multiple report tabs from reports list
+
+* payload analysis (indicate duplicate results)
 
 * option to display test keys as text
 
@@ -32,7 +33,7 @@
 
 * display a graph of test counters
 
-* purge remaining data
+* purge data
   * action to purge all data in purge control panel
   * purge outdated tests
   * purge test deprecations

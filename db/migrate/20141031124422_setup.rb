@@ -15,40 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class V3 < ActiveRecord::Migration
+class Setup < ActiveRecord::Migration
 
   def up
-    remove_foreign_key :test_infos, :deprecation
-    remove_foreign_key :test_payloads, :test_run
-    remove_foreign_key :test_results, :test_run
-    remove_foreign_key :users, :last_run
-    remove_foreign_key :users, column: :settings_id
-    remove_foreign_key :test_results, :test_infos
-
-    drop_table :app_settings
-    drop_table :user_settings
-    drop_table :api_keys
-    drop_table :links
-    drop_table :link_templates
-    drop_table :purge_actions
-    drop_table :test_counters
-    drop_table :test_deprecations
-    drop_table :tags_test_infos
-    drop_table :test_infos_tickets
-    drop_table :test_runs
-    drop_table :test_values
-    drop_table :test_infos
-    drop_table :test_results
-    drop_table :test_keys_payloads
-    drop_table :test_payloads
-    drop_table :test_keys
-    drop_table :project_versions
-    drop_table :projects
-    drop_table :categories
-    drop_table :tags
-    drop_table :tickets
-    drop_table :users
-
     create_table :app_settings do |t|
       t.string :ticketing_system_url, limit: 255
       t.integer :reports_cache_size, null: false

@@ -95,6 +95,12 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
     $rootScope.$on('auth.forbidden', function() {
       $state.go('error', { type: 'forbidden' });
     });
+
+    $rootScope.$on('auth.notFound', function(event, err) {
+      if (!err.config.custom || !err.config.custom.ignoreNotFound) {
+        $state.go('error', { type: 'notFound' });
+      }
+    });
   })
 
   .factory('authInterceptor', function($q, $rootScope) {
@@ -105,6 +111,8 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
           $rootScope.$broadcast('auth.unauthorized', err);
         } if (err.status == 403) {
           $rootScope.$broadcast('auth.forbidden', err);
+        } if (err.status == 404) {
+          $rootScope.$broadcast('auth.notFound', err);
         }
 
         return $q.reject(err);

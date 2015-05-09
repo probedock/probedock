@@ -36,6 +36,7 @@ module ProbeDock
 
           TestPayloadValidations.validate json, validation_context, location_type: :json, raise_error: true
 
+          # FIXME: foreign key validation
           project = Project.where(api_id: json['projectId']).first
           Pundit.authorize current_user, project, :publish?
 

@@ -63,7 +63,7 @@ gem 'oj'
 
 # Tools
 gem 'rake-version'
-gem 'paint' # TODO: udpate to 1.0 once rox-client-rspec has been updated
+gem 'paint'
 gem 'highline'
 
 group :production do
@@ -86,7 +86,6 @@ group :development, :test do
 
   gem 'thin'
   gem 'httparty'
-  gem 'rox-client-rspec', '~> 0.4.1'
   gem 'rspec-rails', '~> 3.1'
   gem 'rspec-its'
   gem 'rspec-collection_matchers'
@@ -98,8 +97,8 @@ group :development, :test do
   gem 'guard-shell'
   gem 'guard-process'
 
+  gem 'probe-dock-rspec'
   #gem 'probe-dock-rspec', path: "#{ENV['HOME']}/Projects/probe-dock-rspec"
-  gem 'probe-dock-rspec', git: 'https://github.com/probe-dock/probe-dock-rspec.git'
 end
 
 group :test do

@@ -62,11 +62,11 @@ class TestReport < ActiveRecord::Base
   end
 
   def projects
-    Project.joins(versions: { test_payloads: :test_reports }).where(test_reports: { id: id }).group('projects.id').order('projects.name')
+    Project.joins(versions: { test_payloads: :test_reports }).where(test_reports: { id: id }).group('projects.id').order('projects.name').distinct
   end
 
   def project_versions
-    ProjectVersion.joins(test_payloads: :test_reports).where(test_reports: { id: id }).includes(:project)
+    ProjectVersion.joins(test_payloads: :test_reports).where(test_reports: { id: id }).includes(:project).distinct
   end
 
   def results
