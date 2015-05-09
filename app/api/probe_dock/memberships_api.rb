@@ -181,6 +181,8 @@ module ProbeDock
             updates[:user] = User.where(api_id: updates[:user_id]).first!
           end
 
+          updates.delete :user_id
+
           update_record record, updates
         end
 

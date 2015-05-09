@@ -19,4 +19,8 @@ angular.module('probe-dock.nav', [ 'probe-dock.orgs', 'probe-dock.profile' ])
     orgs.forwardData($scope);
   })
 
+  .controller('FooterCtrl', function($scope, version) {
+    $scope.version = version;
+  })
+
 ;

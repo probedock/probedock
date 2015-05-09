@@ -2,16 +2,6 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
 
   .factory('auth', function(appStore, $base64, $http, $log, $modal, $rootScope) {
 
-    $rootScope.currentUser = null;
-
-    $rootScope.currentUserIs = function() {
-
-      var currentUser = $rootScope.currentUser,
-          roles = Array.prototype.slice.call(arguments);
-
-      return currentUser && _.isArray(currentUser.roles) && _.intersection(currentUser.roles, roles).length == roles.length;
-    };
-
     var service = {
 
       signIn: function(credentials) {
@@ -80,6 +70,16 @@ angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
     }
 
     return service;
+  })
+
+  .run(function(auth, $rootScope) {
+    $rootScope.currentUserIs = function() {
+
+      var currentUser = $rootScope.currentUser,
+          roles = Array.prototype.slice.call(arguments);
+
+      return currentUser && _.isArray(currentUser.roles) && _.intersection(currentUser.roles, roles).length == roles.length;
+    };
   })
 
   .run(function(auth, $rootScope, $state) {

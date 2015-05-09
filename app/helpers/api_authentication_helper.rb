@@ -35,7 +35,7 @@ module ApiAuthenticationHelper
 
     # TODO: use another secret for signing auth tokens
     begin
-      @auth_claims = JSON::JWT.decode(@auth_token, Rails.application.secrets.secret_key_base)
+      @auth_claims = JSON::JWT.decode(@auth_token, Rails.application.secrets.jwt_secret)
     rescue JSON::JWT::Exception
       false
     end

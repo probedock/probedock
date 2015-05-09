@@ -244,6 +244,7 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
+    redcarpet (3.2.3)
     redis (3.2.1)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
@@ -433,6 +434,7 @@ DEPENDENCIES
   quiet_assets
   rails (~> 4.2)
   rake-version
+  redcarpet
   redis
   redis-namespace
   resque

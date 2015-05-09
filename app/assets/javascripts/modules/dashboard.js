@@ -1,9 +1,29 @@
 angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-dock.reports' ])
 
-  .controller('DashboardHeaderCtrl', function(orgs, $scope, $state, $stateParams) {
+  .controller('DashboardCtrl', function(api, orgs, $scope) {
 
     orgs.forwardData($scope);
-    $scope.orgName = $stateParams.orgName;
+
+    $scope.orgIsActive = function() {
+      return $scope.currentOrganization && $scope.currentOrganization.projectsCount && $scope.currentOrganization.membershipsCount;
+    };
+
+    $scope.gettingStarted = false;
+
+    api({
+      url: '/reports',
+      params: {
+        pageSize: 1,
+        organizationName: $scope.currentOrganization.name
+      }
+    }).then(function(res) {
+      if (!res.pagination().total) {
+        $scope.gettingStarted = true;
+      }
+    });
+  })
+
+  .controller('DashboardHeaderCtrl', function(orgs, $scope, $state, $stateParams) {
 
     var modal;
     $scope.currentState = $state.current.name;

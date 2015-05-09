@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 class Organization < ActiveRecord::Base
-  RESERVED_NAMES = %w(admin emails error new new-member organizations profile status users)
+  RESERVED_NAMES = %w(admin emails help error new new-member organizations profile status users)
   include JsonResource
   include IdentifiableResource
 
@@ -41,7 +41,9 @@ class Organization < ActiveRecord::Base
       json.updatedAt updated_at.iso8601(3)
 
       if options[:with_roles]
-        json.roles options[:memberships].find{ |m| m.organization == self }.try(:roles) || []
+        membership = options[:memberships].find{ |m| m.organization == self }
+        json.member !!membership
+        json.roles membership.try(:roles) || []
       end
     end
   end

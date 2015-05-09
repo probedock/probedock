@@ -1,8 +1,18 @@
-.row
+.container ng-if='!currentOrganization.membershipsCount'
+  .jumbotron ng-show='!currentOrganization.membershipsCount'
+    h1 Members
+    markdown:
+      **{{ currentOrganization | orgName }}** has no members yet.
+    p ng-if='currentMemberIs("admin")' Only members can publish test results for the organization's projects.
+    button.btn.btn-success.btn-lg ng-if='currentMemberIs("admin")' ui-sref='org.dashboard.members.new({ orgName: currentOrganization.name })'
+      span.glyphicon.glyphicon-plus
+      |  Invite them!
+.container-fluid ng-if='memberships.length'
   .col-lg-3.col-md-4.col-xs-12
     .well
       h1 Members
-      p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu dignissim felis, et hendrerit lectus. Ut quis sapien porttitor, elementum turpis id, imperdiet mi. Ut non nulla nulla. Nam et auctor ipsum, vitae pharetra dolor. In quis nisl finibus ex semper blandit. Pellentesque accumsan condimentum nibh a mollis. Sed sed tempus turpis. Sed vel vehicula arcu. Pellentesque orci ligula, placerat non porta a, eleifend quis turpis. Quisque ultrices, erat nec cursus euismod, lorem diam mollis purus, id ultrices est mauris sit amet quam. Sed eget iaculis magna. Nullam nisi diam, eleifend vitae egestas placerat, ornare quis magna. Phasellus commodo, arcu sit amet luctus sagittis, eros lorem lobortis eros, a aliquam dolor lacus non sem. Quisque in turpis non tellus suscipit dignissim sed vitae ex.
+      markdown:
+        This page lists the members of **{{ currentOrganization | orgName }}** and their role within the organization.
       button.btn.btn-success ui-sref='org.dashboard.members.new' ng-if='currentMemberIs("admin")'
         span.glyphicon.glyphicon-plus
         |  Add a member

@@ -23,6 +23,7 @@ gem 'pg'
 
 # Assets
 gem 'slim-rails'
+gem 'redcarpet'
 gem 'less-rails'
 gem 'stylus'
 gem 'therubyracer'

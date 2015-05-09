@@ -1,11 +1,11 @@
 #test-report ng-controller='ReportDetailsCtrl'
   h2
-    span ng-if='report' Report generated at {{ report.createdAt | amDateFormat:'llll' }}
-    span ng-if='!report' Loading report data...
-  .project-version-labels
+    span ng-if='report' Test Run Report - {{ report.createdAt | amDateFormat:'llll' }}
+    span ng-if='!report' Test Run Report - Loading report data...
+  .project-version-labels.clearfix
     .label.label-primary ng-if='!report' Loading...
     div ng-repeat='project in report.projects'
-      .label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project.name }} {{ version.name }}
+      .label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project | projectName }} {{ version.name }}
   .row style='margin-top: 2em;'
     .col-md-5.col-lg-4
       .summary.panel.panel-default

@@ -1,8 +1,15 @@
 ## Critical
 
 * redirect 404 to home page
+* check 404 for orgs
 
 ## Features
+
+* mount resque server in production
+
+* list of tests & test details page
+
+* show number of payloads being processed in projects page (status)
 
 * option to display test keys as text
 
@@ -36,6 +43,7 @@
 
 # Improvements
 
+* refactor authorization
 * use dash syntax for css
 * use foreigner-matcher to test foreign keys (including dependent option)
 * allow to configure test run purge throttling delay

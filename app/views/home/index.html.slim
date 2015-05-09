@@ -24,6 +24,13 @@ nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavC
           a href='#' ui-sref='org.reports({ orgName: currentOrganization.name })' Reports
         li ng-if='currentOrganization'  ng-class='{active: baseStateIs("org.projects")}'
           a href='#' ui-sref='org.projects({ orgName: currentOrganization.name })' Projects
+        li.dropdown dropdown=true ng-class='{active: baseStateIs("help")}' ng-show='currentUser'
+          a.dropdown-toggle href='#' dropdown-toggle=true
+            | Help 
+            span.caret
+          ul.dropdown-menu role='menu'
+            li
+              a href='#' ui-sref='help.gettingStarted' Getting Started
         li.dropdown dropdown=true ng-class='{active: baseStateIs("admin")}' ng-show='currentUserIs("admin")'
           a.dropdown-toggle href='#' dropdown-toggle=true
             | Admin 
@@ -44,3 +51,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavC
           button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'
             span.glyphicon.glyphicon-log-out
 div ui-view=true
+nav#footer.navbar.navbar-default.navbar-fixed-bottom ng-controller='FooterCtrl'
+  .container.text-center
+    p.navbar-text.col-xs-12
+      a href='https://github.com/probe-dock/probe-dock' Probe Dock v{{ version }}

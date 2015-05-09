@@ -1,42 +1,74 @@
-.col-md-6.col-xs-12
-  .dashboardLatestReports.panel.panel-default ng-controller='DashboardLatestReportsCtrl'
-    .panel-heading
-      h3.panel-title Latest Reports
-    .panel-body
-      table.table.table-hover
-        thead
-          tr
-            th.runs Run
-            th.results Results
-        tbody
-          tr.loading ng-hide='reports'
-            td colspan=2
-              em Loading...
-          tr.empty ng-show='reports && !reports.length'
-            td colspan=2
-              em No tests have been run recently.
-          tr ng-repeat='report in reports' ng-show='reports.length'
-            td.runs
-              img ng-if='report.runners.length == 1' gravatar-src='report.runners[0].primaryEmailMd5' gravatar-size=30 tooltip='{{ report.runners[0].name }}' tooltip-placement='right'
-              span.time.hidden-xs am-time-ago='report.createdAt'
-            td.results
-              a href='#' ui-sref='org.reports.show({ reportId: report.id })'
-                report-health-bar report='report' click-for-details=true
-.col-md-6.col-xs-12
-  .dashboardNewTestMetrics.panel.panel-default ng-controller='DashboardNewTestMetricsCtrl'
-    .panel-heading
-      h3.panel-title New Tests
-    .panel-body
-      canvas.chart.chart-bar height='100' data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
-      .empty ng-show='chart.data && !chart.data.length'
-        em No tests have been run recently.
-.col-md-6.col-xs-12 ng-if='currentUser'
-  test-key-generator
-.col-md-6.col-xs-12
-  .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
-    .panel-heading
-      h3.panel-title Test Tags
-    .panel-body
-      jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
-      .empty ng-show='tags && !tags.length'
-        em No tests have been tagged.
+.container ng-if='!orgIsActive()'
+  .jumbotron
+    h1 Welcome!
+    p
+      markdown:
+        This is the dashboard for **{{ currentOrganization | orgName }}**, where a summary of the latest test runs and other useful widgets will be displayed.
+        No test results have yet been published.
+    div ng-if='currentMemberIs("admin")'
+      div ng-if='!currentOrganization.projectsCount'
+        markdown:
+          The organization has no **projects** yet.
+          Each project must be registered in Probe Dock before you can publish the results of their test suites.
+      p ng-if='!currentOrganization.projectsCount'
+        button.btn.btn-success.btn-lg ui-sref='org.projects.new({ orgName: currentOrganization.name })'
+          span.glyphicon.glyphicon-plus
+          |  Add a project
+      div ng-if='!currentOrganization.membershipsCount'
+        markdown:
+          The organization has no **members** yet.
+          Register the organization's members here so that they can publish test run results from their computer.
+      p ng-if='!currentOrganization.membershipsCount'
+        button.btn.btn-success.btn-lg ui-sref='org.dashboard.members.new({ orgName: currentOrganization.name })'
+          span.glyphicon.glyphicon-plus
+          |  Add a member
+.container ng-if='orgIsActive() && gettingStarted && currentUser'
+  .jumbotron
+    h1 Now run some tests!
+    p.lead
+      ' Head over to the
+      a ui-sref='help.gettingStarted({ organizationId: currentOrganization.id })' Getting Started
+      '  guide to find out how to publish test results for your projects.
+.container-fluid ng-if='orgIsActive()'
+  .col-md-6.col-xs-12
+    .dashboardLatestReports.panel.panel-default ng-controller='DashboardLatestReportsCtrl'
+      .panel-heading
+        h3.panel-title Latest Reports
+      .panel-body
+        table.table.table-hover
+          thead
+            tr
+              th.runs Run
+              th.results Results
+          tbody
+            tr.loading ng-hide='reports'
+              td colspan=2
+                em Loading...
+            tr.empty ng-show='reports && !reports.length'
+              td colspan=2
+                em No tests have been run recently.
+            tr ng-repeat='report in reports' ng-show='reports.length'
+              td.runs
+                img ng-if='report.runners.length == 1' gravatar-src='report.runners[0].primaryEmailMd5' gravatar-size=30 tooltip='{{ report.runners[0].name }}' tooltip-placement='right'
+                span.time.hidden-xs am-time-ago='report.createdAt'
+              td.results
+                a href='#' ui-sref='org.reports.show({ reportId: report.id })'
+                  report-health-bar report='report' click-for-details=true
+  .col-md-6.col-xs-12 ng-if='orgIsActive()'
+    .dashboardNewTestMetrics.panel.panel-default ng-controller='DashboardNewTestMetricsCtrl'
+      .panel-heading
+        h3.panel-title New Tests
+      .panel-body
+        canvas.chart.chart-bar height='100' data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
+        .empty ng-show='chart.data && !chart.data.length'
+          em No tests have been added recently.
+  .col-md-6.col-xs-12 ng-if='currentUser && orgIsActive()'
+    test-key-generator
+  .col-md-6.col-xs-12 ng-if='orgIsActive()'
+    .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
+      .panel-heading
+        h3.panel-title Test Tags
+      .panel-body
+        jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
+        .empty ng-show='tags && !tags.length'
+          em No tests have been tagged.

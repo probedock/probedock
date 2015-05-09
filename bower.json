@@ -30,7 +30,9 @@
     "a0-angular-storage": "~0.0.10",
     "angular-ui-select": "~0.11.2",
     "angular-chart.js": "~0.7.0",
-    "angular-truncate": "*"
+    "angular-truncate": "*",
+    "js-yaml": "~3.3.0",
+    "angular-scroll": "~0.7.0"
   },
   "resolutions": {
     "angular": "~1.3"

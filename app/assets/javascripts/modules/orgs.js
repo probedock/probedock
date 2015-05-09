@@ -1,6 +1,6 @@
 angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-dock.forms', 'probe-dock.storage', 'probe-dock.utils' ])
 
-  .factory('orgs', function(api, appStore, auth, eventUtils, $modal, $rootScope, $stateParams) {
+  .factory('orgs', function(api, appStore, auth, eventUtils, $modal, $rootScope, $state, $stateParams) {
 
     var service = eventUtils.service({
 
@@ -62,7 +62,7 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
     refreshOrgs();
     $rootScope.$on('auth.signIn', refreshOrgs);
-    $rootScope.$on('auth.signOut', hidePrivateOrgs);
+    $rootScope.$on('auth.signOut', forgetPrivateData);
 
     $rootScope.$on('$stateChangeSuccess', function(event, toState) {
       if (toState.name.indexOf('org.') === 0) {
@@ -81,8 +81,15 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
       });
     }
 
-    function hidePrivateOrgs() {
-      setOrganizations(_.where(service.organizations, { public: true }));
+    function forgetPrivateData() {
+      if (service.currentOrganization && !service.currentOrganization.public) {
+        setCurrentOrganization(null);
+        $state.go('home');
+      }
+
+      setOrganizations(_.map(_.where(service.organizations, { public: true }), function(org) {
+        return _.omit(org, 'roles');
+      }));
     }
 
     function setCurrentOrganization(org) {
@@ -94,7 +101,10 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
     function setOrganizations(orgs) {
       service.organizations = orgs;
       service.emit('refresh', orgs);
-      // TODO: update current org with latest data
+
+      if (service.currentOrganization) {
+        setCurrentOrganization(_.findWhere(orgs, { id: service.currentOrganization.id }));
+      }
     }
 
     return service;

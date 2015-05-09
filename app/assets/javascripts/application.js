@@ -34,6 +34,7 @@
 //= require jqcloud2
 //= require chart
 //= require zero-clipboard
+//= require js-yaml
 //= require angular
 //= require angular-animate
 //= require angular-sanitize
@@ -51,6 +52,7 @@
 //= require angular-loading-bar
 //= require angular-chart
 //= require angular-truncate
+//= require angular-scroll
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot

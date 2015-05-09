@@ -3,12 +3,18 @@
     .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
       a.btn.btn-warning ui-sref='org.projects.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
         span.glyphicon.glyphicon-pencil
+    .label.label-info.apiId.pull-right tooltip='Project ID' {{ project.id }}
     h3.panel-title {{ project | projectName }}
   .panel-body
-    .label.label-info.apiId.pull-right tooltip='Project ID' {{ project.id }}
     p ng-show='project.description' {{ project.description }}
     dl.dl-horizontal
       dt Number of Tests
       dd {{ project.testsCount - project.deprecatedTestsCount }}
       dt Creation Date
       dd {{ project.createdAt | amDateFormat:'llll' }}
+    p.text-info.text-center ng-if='!project.testsCount'
+      ' No test results have been published for this project.
+      ' Follow the
+      a ui-sref='help.gettingStarted({ organizationId: project.organizationId, projectId: project.id })'
+        strong Getting Started
+      '  guide to set it up.

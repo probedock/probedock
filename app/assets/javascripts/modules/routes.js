@@ -20,6 +20,18 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
         templateUrl: '/templates/error.html'
       })
 
+      .state('help', {
+        url: '/help',
+        abstract: true,
+        template: '<div ui-view />'
+      })
+
+      .state('help.gettingStarted', {
+        url: '/getting-started?organizationId&projectId',
+        controller: 'GettingStartedCtrl',
+        templateUrl: '/templates/getting-started.html'
+      })
+
       .state('newMembership', {
         url: '/new-member?otp',
         controller: 'NewMembershipCtrl',
@@ -63,6 +75,7 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
       .state('org.dashboard', {
         url: '',
         abstract: true,
+        controller: 'DashboardCtrl',
         templateUrl: '/templates/dashboard.html'
       })
 

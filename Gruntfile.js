@@ -28,6 +28,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/jquery/dist/jquery.js', dest: 'vendor/assets/javascripts/jquery.js' },
           { nonull: true, src: 'bower_components/moment/moment.js', dest: 'vendor/assets/javascripts/moment.js' },
           { nonull: true, src: 'bower_components/jvent/dist/jvent.js', dest: 'vendor/assets/javascripts/jvent.js' },
+          { nonull: true, src: 'bower_components/js-yaml/dist/js-yaml.js', dest: 'vendor/assets/javascripts/js-yaml.js' },
           { nonull: true, src: 'bower_components/jqcloud2/dist/jqcloud.js', dest: 'vendor/assets/javascripts/jqcloud2.js' },
           { nonull: true, src: 'bower_components/Chart.js/Chart.js', dest: 'vendor/assets/javascripts/chart.js' },
           { nonull: true, src: 'bower_components/zeroclipboard/dist/ZeroClipboard.js', dest: 'vendor/assets/javascripts/zero-clipboard.js' },
@@ -48,6 +49,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.js', dest: 'vendor/assets/javascripts/angular-ui-select.js' },
           { nonull: true, src: 'bower_components/angular-chart.js/dist/angular-chart.js', dest: 'vendor/assets/javascripts/angular-chart.js' },
           { nonull: true, src: 'bower_components/angular-truncate/src/truncate.js', dest: 'vendor/assets/javascripts/angular-truncate.js' },
+          { nonull: true, src: 'bower_components/angular-scroll/angular-scroll.js', dest: 'vendor/assets/javascripts/angular-scroll.js' },
           // TODO: remove if unused
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },

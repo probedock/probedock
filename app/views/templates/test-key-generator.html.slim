@@ -6,11 +6,13 @@
         |  Release unused keys
     h3.panel-title Test Keys
   .panel-body
-    p
-      | Test keys are used to track tests more reliably than by their name.
-      |  If a test result is submitted with a test key, it will be linked to the correct test even if the test is renamed.
-    p
-      | You can define your own test keys or generate random ones here.
+    markdown:
+      Test keys are used to track tests more reliably than by their name.
+      If a test result is submitted with a test key, it will be linked to the correct test even if the test is renamed.
+
+      You can define your own test keys or generate random ones here.
+
+      Read the documentation of each [Probe Dock client](https://github.com/probe-dock/probe-dock-clients) to find out how to assign keys to tests.
     form.form-inline name='generatorForm' novalidate=true ng-submit='generate()'
       button.btn.btn-success type='submit' ng-disabled='generatorForm.$invalid'
         span.glyphicon.glyphicon-plus

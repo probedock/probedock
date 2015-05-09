@@ -120,11 +120,7 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
 
   .controller('ProjectsCtrl', function(api, forms, orgs, projects, $scope, $state, $stateParams) {
 
-    $scope.project = {
-      organizationId: orgs.currentOrganization.id
-    };
-
-    reset();
+    orgs.forwardData($scope);
 
     // FIXME: recursively fetch all projects
     api({
@@ -150,36 +146,12 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
       }
     });
 
-    $scope.reset = reset;
-    $scope.changed = function() {
-      return !forms.dataEquals($scope.project, $scope.editedProject);
-    };
-
-    $scope.save = function() {
-      api({
-        method: 'POST',
-        url: '/projects',
-        data: $scope.editedProject
-      }).then(onProjectCreated);
-    };
-
     $scope.orderProject = function(project) {
       return (project.displayName || project.name).toLowerCase();
     };
 
     function showProjects(response) {
       $scope.projects = response.data;
-    }
-
-    function onProjectCreated(res) {
-      $scope.projects.push(res.data);
-    };
-
-    function reset() {
-      $scope.editedProject = angular.copy($scope.project);
-      if ($scope.projectForm) {
-        $scope.projectForm.$setPristine();
-      }
     }
   })
 

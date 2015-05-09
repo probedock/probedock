@@ -1,6 +1,6 @@
 angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
 
-  .factory('orgMembers', function(api, $modal) {
+  .factory('orgMembers', function(api, $modal, $rootScope) {
 
     var service = {
       openForm: function($scope) {
@@ -11,7 +11,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
           scope: $scope
         });
 
-        $scope.$on('$stateChangeSuccess', function() {
+        $rootScope.$on('$stateChangeSuccess', function() {
           modal.dismiss('stateChange');
         });
 
@@ -22,7 +22,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
     return service;
   })
 
-  .controller('OrgMembersCtrl', function(api, orgMembers, $scope, $state, $stateParams) {
+  .controller('OrgMembersCtrl', function(api, orgMembers, orgs, $scope, $state, $stateParams) {
 
     $scope.memberships = [];
     fetchMemberships();
@@ -36,6 +36,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
 
         modal.result.then(function(membership) {
           api.pushOrUpdate($scope.memberships, membership);
+          orgs.updateOrganization(_.extend(orgs.currentOrganization, { membershipsCount: orgs.currentOrganization.membershipsCount + 1 }));
           $state.go('^', {}, { inherit: true });
         }, function(reason) {
           if (reason != 'stateChange') {
@@ -60,6 +61,7 @@ angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
         url: '/memberships/' + membership.id
       }).then(function() {
         $scope.memberships.splice($scope.memberships.indexOf(membership), 1);
+        orgs.updateOrganization(_.extend(orgs.currentOrganization, { membershipsCount: orgs.currentOrganization.membershipsCount - 1 }));
       });
     };
 
