@@ -5,15 +5,17 @@
 
 ## Features
 
+* share org header among dashboard, reports and projects page
+
 * mount resque server in production
 
 * list of tests & test details page
 
 * show number of payloads being processed in projects page (status)
 
-* option to display test keys as text
-
 * show multiple report tabs from reports list
+
+* option to display test keys as text
 
 * send mails in resque jobs
 

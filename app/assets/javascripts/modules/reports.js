@@ -1,4 +1,4 @@
-angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-dock.state', 'probe-dock.tables' ])
+angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-dock.orgs', 'probe-dock.state', 'probe-dock.tables' ])
 
   .factory('reports', function() {
     return {
@@ -174,7 +174,9 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
     }
   })
 
-  .controller('ReportsCtrl', function($scope, states) {
+  .controller('ReportsCtrl', function(orgs, $scope, states) {
+
+    orgs.forwardData($scope);
 
     $scope.activeTabs = {
       latest: true,

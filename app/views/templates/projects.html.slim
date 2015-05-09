@@ -1,3 +1,6 @@
+.container-fluid
+  .page-header
+    h1 {{ currentOrganization | orgName }}
 .container ng-hide='projects.length'
   .jumbotron ng-show='!currentOrganization.projectsCount'
     h1 Projects
