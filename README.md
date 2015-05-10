@@ -2,6 +2,8 @@
 
 **Test tracking and analysis tool.**
 
+[![License](https://img.shields.io/github/license/probe-dock/probe-dock.svg)](LICENSE.txt)
+
 Probe Dock tracks the tests in your projects to show you the evolution of your test coverage and analyze the health of your projects.
 
 It has two main components: the Probe Dock server and clients.
