@@ -19,7 +19,7 @@ div ng-controller='LatestReportsCtrl'
           em No tests have been run recently.
       tr ng-repeat='report in reportsList.records'
         td.results
-          a href='#' ui-sref='org.reports.show({ reportId: report.id })'
+          a href='#' ui-sref='org.reports.show({ id: report.id })'
             report-health-bar report='report' click-for-details=true
         td.runners
           img.gravatar ng-repeat='runner in report.runners.slice(0, 3)' gravatar-src='runner.primaryEmailMd5' gravatar-size='30' tooltip='{{ runner.name }}'

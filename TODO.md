@@ -4,6 +4,8 @@
 
 * integrate with travis
 
+* allow to close report tabs
+
 * share org header among dashboard, reports and projects page
 
 * mount resque server in production
@@ -11,8 +13,6 @@
 * list of tests & test details page
 
 * show number of payloads being processed in projects page (status)
-
-* show multiple report tabs from reports list
 
 * payload analysis (indicate duplicate results)
 

@@ -7,6 +7,6 @@
       tab ui-sref='org.reports' active='activeTabs.latest'
         tab-heading Latest Reports
         include _latest_reports.html
-      tab ui-sref='org.reports.show({ reportId: detailsTabReportId })' ng-show='detailsTabReportId' active='activeTabs.details'
-        tab-heading Detailed Report
+      tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' active='activeTabs[reportTab.id]' ng-controller='ReportDetailsCtrl'
+        tab-heading {{ reportTime() }}
         include _report_details.html

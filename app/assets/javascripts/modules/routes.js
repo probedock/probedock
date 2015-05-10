@@ -123,7 +123,7 @@ angular.module('probe-dock.routes', [ 'ui.router' ])
       })
 
       .state('org.reports.show', {
-        url: '/:reportId'
+        url: '/:id'
       })
 
     ;

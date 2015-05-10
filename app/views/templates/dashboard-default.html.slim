@@ -52,7 +52,7 @@
                 img ng-if='report.runners.length == 1' gravatar-src='report.runners[0].primaryEmailMd5' gravatar-size=30 tooltip='{{ report.runners[0].name }}' tooltip-placement='right'
                 span.time.hidden-xs am-time-ago='report.createdAt'
               td.results
-                a href='#' ui-sref='org.reports.show({ reportId: report.id })'
+                a href='#' ui-sref='org.reports.show({ id: report.id })'
                   report-health-bar report='report' click-for-details=true
   .col-md-6.col-xs-12 ng-if='orgIsActive()'
     .dashboardNewTestMetrics.panel.panel-default ng-controller='DashboardNewTestMetricsCtrl'
