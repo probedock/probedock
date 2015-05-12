@@ -8,9 +8,10 @@
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 
 require 'dotenv'
-Dotenv.load '.env.vagrant'
+Dotenv.load! '.env.vagrant'
 
 # get SSH config from vagrant
+system 'vagrant up'
 ssh_config = `vagrant ssh-config`
 raise 'Could not execute `vagrant ssh-config`' unless $?.success?
 

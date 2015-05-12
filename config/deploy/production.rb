@@ -8,7 +8,7 @@
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 
 require 'dotenv'
-Dotenv.load '.env.production'
+Dotenv.load! '.env.production'
 
 raise '$PROBE_DOCK_SSH_HOST must be set to deploy in production' unless ENV['PROBE_DOCK_SSH_HOST']
 
