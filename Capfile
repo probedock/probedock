@@ -23,9 +23,5 @@ require 'capistrano/deploy'
 # require 'capistrano/rails/migrations'
 # require 'capistrano/passenger'
 
-# clear default capistrano tasks
-keep = stages + %w(load:defaults)
-Rake::Task.tasks.reject{ |t| keep.include? t.name }.each &:clear
-
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
 Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }

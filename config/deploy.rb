@@ -2,13 +2,14 @@
 lock '3.4.0'
 
 set :application, 'probe-dock'
-set :repo_url, 'git@github.com:probe-dock/probe-dock.git'
+set :repo_url, 'https://github.com/probe-dock/probe-dock.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+set :branch, 'deploy'
 
 # Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, '/var/www/my_app_name'
+set :deploy_to, '/var/lib/probe-dock'
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -26,7 +27,7 @@ set :log_level, ENV['DEBUG'] ? :debug : :info
 # set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
 
 # Default value for linked_dirs is []
-# set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
+set :linked_dirs, fetch(:linked_dirs, []).push('tmp/cache')
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -34,8 +35,8 @@ set :log_level, ENV['DEBUG'] ? :debug : :info
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-set :base_path, '/var/lib/probe-dock'
-set :repo_path, ->{ File.join fetch(:base_path), 'repo' }
+set :root, File.expand_path('..', File.dirname(__FILE__))
+set :repo_path, ->{ File.join fetch(:deploy_to), 'repo' }
 
 set :docker_prefix, 'probedock'
 
@@ -52,7 +53,7 @@ SSHKit.config.command_map[:rake] = "/usr/bin/env docker-compose -p #{fetch(:dock
   SSHKit.config.command_map["compose_#{command}"] = "/usr/bin/env docker-compose -p #{fetch(:docker_prefix)} #{command}"
 end
 
-namespace :deploy do
+namespace :compose do
 
   desc 'Deploy the application for the first time'
   task cold: %w(deploy:cold:check deploy:setup deploy:schema deploy:precompile deploy:static deploy:jobs deploy:start deploy:admin)
@@ -71,7 +72,7 @@ namespace :deploy do
     on roles(:app) do
       within fetch(:repo_path) do
         execute :compose_up, '--no-deps', '-d', 'app'
-        invoke 'deploy:wait_app'
+        invoke 'compose:wait_app'
         execute :compose_up, '--no-deps', '-d', 'web'
       end
     end
@@ -90,7 +91,7 @@ namespace :deploy do
   desc 'Create the application directory structure'
   task :setup do
     on roles(:app) do
-      execute :mkdir, '-p', fetch(:base_path)
+      execute :mkdir, '-p', fetch(:deploy_to)
     end
   end
 
@@ -99,15 +100,36 @@ namespace :deploy do
 
     require 'handlebars'
     handlebars = Handlebars::Context.new
-    template = handlebars.compile File.read('docker-compose.handlebars')
-    puts template.call(base_path: fetch(:base_path), repo_path: fetch(:repo_path))
+
+    docker_compose_template = handlebars.compile File.read('docker-compose.handlebars')
+    docker_compose = docker_compose_template.call deploy_to: fetch(:deploy_to), repo_path: fetch(:repo_path)
+
+    env_template = handlebars.compile File.read('env.handlebars')
+    env = env_template.call ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }
+
+    tmp = File.join fetch(:root), 'capistrano'
+    FileUtils.mkdir_p tmp
+
+    Dir.mktmpdir nil, tmp do |dir|
+
+      docker_compose_file = File.join dir, 'docker-compose.yml'
+      File.open(docker_compose_file, 'w'){ |f| f.write docker_compose }
+
+      env_file = File.join dir, '.env'
+      File.open(env_file, 'w'){ |f| f.write env }
+
+      on roles(:app) do
+        upload! docker_compose_file, File.join(release_path, 'docker-compose.yml'), mode: 0400
+        upload! env_file, File.join(release_path, '.env'), mode: 0400
+      end
+    end
   end
 
   desc 'Load the database schema and seed data'
-  task schema: %w(deploy:run_db deploy:run_cache deploy:wait_db deploy:wait_cache) do
+  task migrate: %w(compose:run_db compose:run_cache compose:wait_db compose:wait_cache) do
     on roles(:app) do
-      within fetch(:repo_path) do
-        execute :rake, 'db:schema:load db:seed'
+      within release_path do
+        execute :rake, 'db:migrate db:seed'
       end
     end
   end
@@ -147,7 +169,7 @@ namespace :deploy do
 
   task :run_db do
     on roles(:app) do
-      within repo_path do
+      within release_path do
         execute :compose_up, '--no-recreate', '-d', 'db'
       end
     end
@@ -155,7 +177,7 @@ namespace :deploy do
 
   task :run_cache do
     on roles(:app) do
-      within repo_path do
+      within release_path do
         execute :compose_up, '--no-recreate', '-d', 'cache'
       end
     end
@@ -168,9 +190,6 @@ namespace :deploy do
       end
     end
   end
-end
-
-namespace :docker do
 
   desc 'Print the list of running containers'
   task :ps do
@@ -240,3 +259,6 @@ namespace :vagrant do
     end
   end
 end
+
+after 'deploy:updated', 'compose:config'
+after 'deploy:updated', 'compose:migrate'

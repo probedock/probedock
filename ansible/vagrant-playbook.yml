@@ -7,5 +7,8 @@
     - role: docker-compose
     - role: docker-user
       user_name: vagrant
+    - role: github
+      user_name: root
+      user_home: /root
   tasks:
     - authorized_key: user=root key="{{ lookup('file', public_key_file) }}"
