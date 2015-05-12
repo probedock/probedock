@@ -44,7 +44,7 @@ module TestPayloadProcessing
       @test_result.active = data.fetch 'v', true
       @test_result.duration = data['d'].to_i
       @test_result.message = data['m'].to_s if data['m'].present?
-      @test_result.run_at = test_payload.received_at
+      @test_result.run_at = test_payload.ended_at
 
       # TODO: support caching
       @test_result.category = category data, cache if data.key? 'c'

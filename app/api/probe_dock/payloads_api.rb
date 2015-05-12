@@ -36,11 +36,14 @@ module ProbeDock
 
           TestPayloadValidations.validate json, validation_context, location_type: :json, raise_error: true
 
+          # FIXME: do not accept payloads in the future
+          ended_at = json.key?('endedAt') ? Time.parse(json['endedAt']) : received_at
+
           # FIXME: foreign key validation
           project = Project.where(api_id: json['projectId']).first
           Pundit.authorize current_user, project, :publish?
 
-          payload = TestPayload.new runner: current_user, received_at: received_at
+          payload = TestPayload.new runner: current_user, received_at: received_at, ended_at: ended_at
           payload.contents = json
           payload.contents_bytesize = body.bytesize
 
@@ -67,7 +70,7 @@ module ProbeDock
       namespace :payloads do
 
         get do
-          rel = TestPayload.order 'received_at DESC'
+          rel = TestPayload.order 'ended_at DESC'
           paginated(rel).to_a.collect{ |p| p.to_builder.attributes! }
         end
       end

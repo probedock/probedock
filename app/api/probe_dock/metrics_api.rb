@@ -32,11 +32,11 @@ module ProbeDock
         end
       end
 
-      get :newTests do
+      get :'new-tests' do
         authorize! :organization, :data
 
-        rel = ProjectTest.joins(:project).where(projects: { organization_id: current_organization.id }).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.created_at) as project_tests_day")
-        rel = rel.where 'project_tests.created_at >= ?', 30.days.ago
+        rel = ProjectTest.joins(:project).where(projects: { organization_id: current_organization.id }).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.first_run_at) as project_tests_day")
+        rel = rel.where 'project_tests.first_run_at >= ?', 30.days.ago
         rel = rel.group('project_tests_day').order('project_tests_day').limit(7)
 
         rel.to_a.collect do |data|

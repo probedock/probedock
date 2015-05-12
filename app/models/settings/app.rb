@@ -19,6 +19,7 @@ class Settings::App < ActiveRecord::Base
   self.table_name = 'app_settings'
 
   strip_attributes
+  # TODO: add max time during which a report remains editable
   validates :ticketing_system_url, length: { maximum: 255 }
   validates :reports_cache_size, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :tag_cloud_size, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }

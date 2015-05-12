@@ -11,6 +11,9 @@ class TestPayloadValidations < Errapi::SingleValidator
     # test run duration
     validates 'duration', presence: true, type: :integer, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
+    # the time the test run ended at
+    validates 'endedAt', type: :string # TODO: validate iso8601
+
     # results
     validates 'results', presence: true, type: :array
     validates_each 'results' do

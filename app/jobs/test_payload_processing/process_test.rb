@@ -24,7 +24,7 @@ module TestPayloadProcessing
       new_test = test_result.test_id.blank?
 
       test = if new_test
-        created_test = ProjectTest.new(key: test_result.key, project: test_result.project_version.project, name: test_result.name).tap(&:save_quickly!)
+        created_test = ProjectTest.new(key: test_result.key, project: test_result.project_version.project, name: test_result.name, first_run_at: test_result.run_at).tap(&:save_quickly!)
         test_result.key.test = created_test if test_result.key
         cache.tests[test_result.name] = created_test unless test_result.key
         created_test
@@ -55,11 +55,12 @@ module TestPayloadProcessing
       description.results_count += 1
       description.save!
 
-      # TODO: use semver gem to compare versions
-      if !test.description_id || test_result.project_version.name > test.description.project_version.name
-        test.description = description
-        test.name = description.name
-      end
+      # for now, always update test to latest received information
+      test.description = description
+      test.name = description.name
+
+      # support past results
+      test.first_run_at = test_result.run_at if test_result.run_at < test.first_run_at
 
       # TODO: only increment results count once per test
       test.results_count += 1

@@ -68,7 +68,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
 
     function fetchMetrics() {
       return api({
-        url: '/metrics/newTests',
+        url: '/metrics/new-tests',
         params: {
           organizationName: $stateParams.orgName
         }

@@ -149,7 +149,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
         return 'Loading...';
       }
 
-      var reportTime = moment($scope.report.createdAt);
+      var reportTime = moment($scope.report.startedAt);
 
       if (reportTime.isAfter(moment().startOf('day'))) {
         reportTime = reportTime.format('HH:mm');

@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.integer  "description_id"
     t.integer  "project_id",                 null: false
     t.integer  "results_count",  default: 0, null: false
+    t.datetime "first_run_at",               null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
   end
@@ -197,6 +198,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.text     "backtrace"
     t.integer  "runner_id",                                            null: false
     t.integer  "project_version_id"
+    t.datetime "ended_at",                                             null: false
     t.datetime "received_at",                                          null: false
     t.datetime "processing_at"
     t.datetime "processed_at"
@@ -218,6 +220,8 @@ ActiveRecord::Schema.define(version: 20141031124422) do
     t.string   "api_id",          limit: 12,  null: false
     t.string   "uid",             limit: 100
     t.integer  "organization_id",             null: false
+    t.datetime "started_at",                  null: false
+    t.datetime "ended_at",                    null: false
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
   end

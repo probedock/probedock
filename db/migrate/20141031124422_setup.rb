@@ -127,6 +127,7 @@ class Setup < ActiveRecord::Migration
       t.integer :description_id
       t.integer :project_id, null: false
       t.integer :results_count, null: false, default: 0
+      t.datetime :first_run_at, null: false
       t.timestamps null: false
       t.index :description_id, unique: true
       t.index [ :project_id, :key_id ], unique: true
@@ -175,6 +176,7 @@ class Setup < ActiveRecord::Migration
       t.text :backtrace
       t.integer :runner_id, null: false
       t.integer :project_version_id
+      t.datetime :ended_at, null: false
       t.datetime :received_at, null: false
       t.datetime :processing_at
       t.datetime :processed_at
@@ -277,6 +279,8 @@ class Setup < ActiveRecord::Migration
       t.string :api_id, null: false, limit: 12
       t.string :uid, limit: 100
       t.integer :organization_id, null: false
+      t.datetime :started_at, null: false
+      t.datetime :ended_at, null: false
       t.timestamps null: false
       t.index :api_id, unique: true
       t.index [ :uid, :organization_id ], unique: true

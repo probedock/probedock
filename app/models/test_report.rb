@@ -37,6 +37,8 @@ class TestReport < ActiveRecord::Base
       json.passedResultsCount passed_results_count
       json.inactiveResultsCount inactive_results_count
       json.inactivePassedResultsCount inactive_passed_results_count
+      json.startedAt started_at.iso8601(3)
+      json.endedAt ended_at.iso8601(3)
       json.createdAt created_at.iso8601(3)
 
       if options[:detailed] || options[:with_runners]

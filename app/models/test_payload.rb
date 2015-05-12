@@ -54,6 +54,7 @@ class TestPayload < ActiveRecord::Base
       json.id api_id
       json.bytes contents_bytesize
       json.state state
+      json.endedAt ended_at.iso8601(3)
       json.receivedAt received_at.iso8601(3)
       json.processingAt processing_at.iso8601(3) if processing_at
       json.processedAt processed_at.iso8601(3) if processed_at

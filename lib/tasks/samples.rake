@@ -51,6 +51,12 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
     ]
   end
 
+  if ENV['PROBE_DOCK_SAMPLES_ENDED_AT'].present?
+    payload[:endedAt] = ENV['PROBE_DOCK_SAMPLES_ENDED_AT']
+  end
+
+  random_keys = ENV['PROBE_DOCK_SAMPLES_RANDOM_KEYS'].present?
+
   test_keys = Forgery.dictionaries[:test_keys]
   test_tags = Forgery.dictionaries[:test_tags]
   test_categories = Forgery.dictionaries[:test_categories]
@@ -81,6 +87,10 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
         end
         h[:m] = message
       end
+    end
+
+    if random_keys && rand(10) > 2
+      result[:k] = SecureRandom.random_alphanumeric 2
     end
 
     payload[:results] << result
@@ -157,6 +167,11 @@ namespace :samples do
       payload[:reports] = [
         { uid: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
       ]
+    end
+
+    payload.delete :endedAt
+    if ENV['PROBE_DOCK_SAMPLES_ENDED_AT'].present?
+      payload[:endedAt] = ENV['PROBE_DOCK_SAMPLES_ENDED_AT']
     end
 
     publish_samples_payload payload, runner
