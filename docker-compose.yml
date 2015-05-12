@@ -1,6 +1,7 @@
 # Nginx web server.
 web:
   image: nginx
+  command: nginx
   links:
     - app
   ports:
