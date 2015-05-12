@@ -94,6 +94,15 @@ namespace :deploy do
     end
   end
 
+  desc 'Generate the configuration files and upload them to the server'
+  task :config do
+
+    require 'handlebars'
+    handlebars = Handlebars::Context.new
+    template = handlebars.compile File.read('docker-compose.handlebars')
+    puts template.call(base_path: fetch(:base_path), repo_path: fetch(:repo_path))
+  end
+
   desc 'Load the database schema and seed data'
   task schema: %w(deploy:run_db deploy:run_cache deploy:wait_db deploy:wait_cache) do
     on roles(:app) do

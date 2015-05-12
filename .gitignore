@@ -9,6 +9,7 @@
 /doc/app
 /docker/app/Gem*
 /docker/dev/Gem*
+/docker-compose.yml
 /local
 /log
 /node_modules

@@ -124,6 +124,10 @@ GEM
     guard-shell (0.7.1)
       guard (>= 2.0.0)
       guard-compat (~> 1.0)
+    handlebars (0.7.0)
+      handlebars-source (~> 3.0.0)
+      therubyracer (~> 0.12.1)
+    handlebars-source (3.0.3)
     hashie (3.4.1)
     hashr (0.0.22)
     highline (1.7.2)
@@ -406,6 +410,7 @@ DEPENDENCIES
   guard
   guard-process
   guard-shell
+  handlebars
   highline
   hiredis
   hpricot
