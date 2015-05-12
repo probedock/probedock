@@ -105,7 +105,7 @@ namespace :compose do
     docker_compose = docker_compose_template.call deploy_to: fetch(:deploy_to), repo_path: fetch(:repo_path)
 
     env_template = handlebars.compile File.read('env.handlebars')
-    env = env_template.call ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }
+    env = env_template.call ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }.merge('RAILS_ENV' => ENV['RAILS_ENV'])
 
     tmp = File.join fetch(:root), 'capistrano'
     FileUtils.mkdir_p tmp
