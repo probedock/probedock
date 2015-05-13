@@ -22,6 +22,8 @@ app:
     - "{{ release_path }}/public:/usr/src/app/public"
   env_file:
     - .env
+  environment:
+    PROBE_DOCK_LOG_TO_STDOUT: "1"
   restart: always
 
 # Background job processing task.
@@ -35,6 +37,7 @@ job:
     QUEUE: "*"
     INTERVAL: "2"
     TERM_CHILD: "1"
+    PROBE_DOCK_LOG_TO_STDOUT: "1"
   env_file:
     - .env
   restart: always

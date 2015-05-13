@@ -11,7 +11,7 @@
 /docker/dev/Gem*
 /docker-compose.yml
 /local
-/log
+/log/*.log
 /node_modules
 /public/*
 !/public/.keep
