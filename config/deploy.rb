@@ -83,7 +83,7 @@ namespace :compose do
     handlebars = Handlebars::Context.new
 
     docker_compose_template = handlebars.compile File.read('docker-compose.handlebars')
-    docker_compose = docker_compose_template.call deploy_to: fetch(:deploy_to)
+    docker_compose = docker_compose_template.call deploy_to: fetch(:deploy_to), release_path: release_path.to_s
 
     env_template = handlebars.compile File.read('env.handlebars')
     env = env_template.call ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }.merge('RAILS_ENV' => ENV['RAILS_ENV'])
