@@ -46,6 +46,17 @@ module ProbeDock
       self.started_at = Time.now
     end
 
+    def self.full_mail_from
+
+      address, name = config_for(:application)['mail_from'], config_for(:application)['mail_from_name']
+
+      if name.present?
+        %/"#{name}" <#{address}>/
+      else
+        address
+      end
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -91,7 +102,7 @@ module ProbeDock
     }
 
     config.action_mailer.default_options = {
-      from: config_for(:application)['mail_from']
+      from: full_mail_from
     }
 
     config.action_mailer.default_url_options = {

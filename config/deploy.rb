@@ -1,3 +1,5 @@
+require 'paint'
+
 # config valid only for current version of Capistrano
 lock '3.4.0'
 
@@ -39,10 +41,6 @@ set :root, File.expand_path('..', File.dirname(__FILE__))
 set :repo_path, ->{ File.join fetch(:deploy_to), 'repo' }
 
 set :docker_prefix, 'probedock'
-
-set :admin_username, ->{ ENV['PROBE_DOCK_ADMIN_USERNAME'] }
-set :admin_email, ->{ ENV['PROBE_DOCK_ADMIN_EMAIL'] }
-set :admin_password, ->{ ENV['PROBE_DOCK_ADMIN_PASSWORD'] }
 
 # command shortcuts
 SSHKit.config.command_map[:docker_build] = "/usr/bin/env docker build"
@@ -86,7 +84,7 @@ namespace :compose do
     docker_compose = docker_compose_template.call deploy_to: fetch(:deploy_to), release_path: release_path.to_s
 
     env_template = handlebars.compile File.read('env.handlebars')
-    env = env_template.call ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }.merge('RAILS_ENV' => ENV['RAILS_ENV'])
+    env = env_template.call ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }.merge('RAILS_ENV' => ENV['RAILS_ENV']).inject({}){ |memo,(k,v)| memo[k] = ->{ Handlebars::SafeString.new(v) }; memo }
 
     tmp = File.join fetch(:root), 'capistrano'
     FileUtils.mkdir_p tmp
@@ -141,6 +139,7 @@ namespace :compose do
 
   desc 'Register an admin user'
   task :admin do
+    raise 'bug' # FIXME: ask for username, email and password
     on roles(:app) do
       within release_path do
         execute :rake, "users:register[#{fetch(:admin_username)},#{fetch(:admin_email)},#{fetch(:admin_password)}]", "users:admin[#{fetch(:admin_username)}]"
@@ -204,10 +203,8 @@ end
 desc 'Stop the running application and erase all data'
 task implode: 'compose:list_containers' do
 
-  unless fetch(:stage).to_s == 'vagrant'
-    ask :confirmation, %/Are you sure you want to remove the application containers and erase all data? You are in #{fetch(:stage).to_s.upcase} mode. Type "yes" to proceed./
-    raise 'Task aborted by user' unless fetch(:confirmation).match(/^yes$/i)
-  end
+  ask :confirmation, %/are you #{Paint["ABSOLUTELY 100% POSITIVE", :bold, :red]} you want to #{Paint["remove all probe-dock containers and erase all data", :underline]}? You are in #{Paint[fetch(:stage).to_s.upcase, :magenta]} mode; type #{Paint["yes", :bold]} to proceed/
+  raise 'Task aborted by user' unless fetch(:confirmation).match(/^yes$/i)
 
   on roles(:app) do |host|
 

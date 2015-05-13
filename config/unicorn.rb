@@ -12,8 +12,8 @@ APP_PATH = File.expand_path File.join(File.dirname(__FILE__), '..')
 
 # Use at least one worker per core if you're on a dedicated server,
 # more will usually help for _short_ waits on databases/caches.
-worker_processes ENV['UNICORN_WORKERS'] ? ENV['UNICORN_WORKERS'].to_i : 3
-user ENV['UNICORN_USER'] || 'root'
+worker_processes ENV['PROBE_DOCK_UNICORN_WORKERS'] ? ENV['PROBE_DOCK_UNICORN_WORKERS'].to_i : 3
+user ENV['PROBE_DOCK_UNICORN_USER'] || 'root'
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
@@ -33,8 +33,8 @@ timeout 30
 # By default, the Unicorn logger will write to stderr.
 # Additionally, ome applications/frameworks log to stderr or stdout,
 # so prevent them from going to /dev/null when daemonized here:
-stderr_path File.expand_path(ENV['UNICORN_STDERR_PATH'], APP_PATH) if ENV['UNICORN_STDERR_PATH']
-stderr_path File.expand_path(ENV['UNICORN_STDOUT_PATH'], APP_PATH) if ENV['UNICORN_STDOUT_PATH']
+stderr_path File.expand_path(ENV['PROBE_DOCK_UNICORN_STDERR_PATH'], APP_PATH) if ENV['PROBE_DOCK_UNICORN_STDERR_PATH']
+stderr_path File.expand_path(ENV['PROBE_DOCK_UNICORN_STDOUT_PATH'], APP_PATH) if ENV['PROBE_DOCK_UNICORN_STDOUT_PATH']
 
 # combine REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
