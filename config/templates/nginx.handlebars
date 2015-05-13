@@ -2,13 +2,13 @@
 #   * Official English Documentation: http://nginx.org/en/docs/
 
 user nginx;
-worker_processes 5;
+worker_processes {{#if PROBE_DOCK_NGINX_WORKER_PROCESSES}}{{ PROBE_DOCK_NGINX_WORKER_PROCESSES }}{{else}}5{{/if}};
 daemon off;
 
 error_log /dev/stderr info;
 
 events {
-  worker_connections 1024;
+  worker_connections {{#if PROBE_DOCK_NGINX_WORKER_CONNECTIONS}}{{ PROBE_DOCK_NGINX_WORKER_CONNECTIONS }}{{else}}1024{{/if}};
 }
 
 http {
@@ -29,13 +29,15 @@ http {
   gzip on;
 
   upstream probe_dock_cluster {
-    server app:3000;
+    {{#each app_containers}}
+    server app_{{this.number}}:3000;
+    {{/each}}
   }
 
   server {
-    listen 80;
+    listen 80 default_server;
+    server_name _;
 
-    server_name probe-dock.docker;
     root /var/lib/probe-dock/public;
 
     location / {

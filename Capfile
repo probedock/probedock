@@ -2,7 +2,12 @@
 require 'capistrano/setup'
 
 # Include default deployment tasks
-require 'capistrano/deploy'
+# require 'capistrano/deploy'
+
+# Include minimal deployment flow tasks
+require 'capistrano/setup'
+require 'capistrano/install'
+require 'capistrano/framework'
 
 # Include tasks from other gems included in your Gemfile
 #

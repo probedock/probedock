@@ -7,7 +7,7 @@ web:
   ports:
     - "3001:80"
   volumes:
-    - "{{ release_path }}/docker/web/nginx.conf:/etc/nginx/nginx.conf:ro"
+    - "{{ release_path }}/nginx.conf:/etc/nginx/nginx.conf:ro"
     - "{{ release_path }}/public:/var/lib/probe-dock/public"
   restart: always
 
@@ -43,10 +43,13 @@ job:
 db:
   image: postgres:9.4
   volumes:
-    - "{{ release_path }}/docker/db-init-scripts:/docker-entrypoint-initdb.d"
+    - "{{ release_path }}/db-init-scripts:/docker-entrypoint-initdb.d"
     - "{{ deploy_to }}/postgresql/data:/var/lib/postgresql/data"
-  env_file:
-    - .env
+  environment:
+    POSTGRES_PASSWORD: {{ PROBE_DOCK_POSTGRES_PASSWORD }}
+    PROBE_DOCK_DATABASE_NAME: {{ PROBE_DOCK_DATABASE_NAME }}
+    PROBE_DOCK_DATABASE_USERNAME: {{ PROBE_DOCK_DATABASE_USERNAME }}
+    PROBE_DOCK_DATABASE_PASSWORD: {{ PROBE_DOCK_DATABASE_PASSWORD }}
   restart: always
 
 # Redis in-memory database.
@@ -67,7 +70,6 @@ task:
     - cache
   volumes:
     - "{{ release_path }}/public:/usr/src/app/public"
-    - "{{ release_path }}/tmp/cache:/usr/src/app/tmp/cache"
   env_file:
     - .env
   restart: no
