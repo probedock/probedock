@@ -30,7 +30,7 @@ http {
 
   upstream probe_dock_cluster {
     {{#each app_containers}}
-    server app_{{this.number}}:3000;
+    server {{this.name}}:3000;
     {{/each}}
   }
 

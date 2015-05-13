@@ -1,0 +1,7 @@
+---
+dependencies:
+  - role: docker-compose
+  - role: github
+    user_name: root
+    user_home: /root
+  - role: rsync

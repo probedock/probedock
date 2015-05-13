@@ -70,6 +70,7 @@ task:
     - cache
   volumes:
     - "{{ release_path }}/public:/usr/src/app/public"
+    - "{{ release_path }}/tmp:/usr/src/app/tmp"
   env_file:
     - .env
   restart: no

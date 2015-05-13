@@ -1,3 +1,5 @@
+# Minimal release directories
+# Inspired by https://github.com/capistrano/capistrano/blob/v3.4.0/lib/capistrano/tasks/deploy.rake
 namespace :deploy do
 
   task :starting do
@@ -6,7 +8,6 @@ namespace :deploy do
 
   task :updating => :new_release_path do
     invoke "deploy:create_release"
-    invoke 'deploy:symlink:shared'
   end
 
   task :reverting do
@@ -28,7 +29,6 @@ namespace :deploy do
   desc 'Check required files and directories exist'
   task :check do
     invoke 'deploy:check:directories'
-    invoke 'deploy:check:linked_dirs'
   end
 
   namespace :check do
@@ -36,14 +36,6 @@ namespace :deploy do
     task :directories do
       on release_roles :all do
         execute :mkdir, '-p', shared_path, releases_path
-      end
-    end
-
-    desc 'Check directories to be linked exist in shared'
-    task :linked_dirs do
-      next unless any? :linked_dirs
-      on release_roles :all do
-        execute :mkdir, '-p', linked_dirs(shared_path)
       end
     end
   end
@@ -55,30 +47,6 @@ namespace :deploy do
         tmp_current_path = release_path.parent.join(current_path.basename)
         execute :ln, '-s', release_path, tmp_current_path
         execute :mv, tmp_current_path, current_path.parent
-      end
-    end
-
-    desc 'Symlink files and directories from shared to release'
-    task :shared do
-      invoke 'deploy:symlink:linked_dirs'
-    end
-
-    desc 'Symlink linked directories'
-    task :linked_dirs do
-      next unless any? :linked_dirs
-      on release_roles :all do
-        execute :mkdir, '-p', linked_dir_parents(release_path)
-
-        fetch(:linked_dirs).each do |dir|
-          target = release_path.join(dir)
-          source = shared_path.join(dir)
-          unless test "[ -L #{target} ]"
-            if test "[ -d #{target} ]"
-              execute :rm, '-rf', target
-            end
-            execute :ln, '-s', source, target
-          end
-        end
       end
     end
   end

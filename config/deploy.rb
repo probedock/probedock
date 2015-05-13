@@ -26,9 +26,6 @@ set :log_level, ENV['DEBUG'] ? :debug : :info
 # Default value for :pty is false
 # set :pty, true
 
-# Default value for :linked_files is []
-# set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
-
 # Default value for linked_dirs is []
 # set :linked_dirs, fetch(:linked_dirs, []).push('tmp/cache')
 
@@ -51,10 +48,16 @@ SSHKit.config.command_map[:compose_rake] = "/usr/bin/env docker-compose -p #{fet
   SSHKit.config.command_map["compose_#{command}"] = "/usr/bin/env docker-compose -p #{fetch(:docker_prefix)} #{command}"
 end
 
+# other command shortcuts
+SSHKit.config.command_map[:rsync] = '/usr/bin/env rsync -a --delete'
+
 # hook into standard capistrano flow
+after 'deploy:starting', 'shared:setup'
+after 'deploy:updated', 'shared:setup_release'
 after 'deploy:updated', 'config:upload'
 after 'deploy:publishing', 'compose:migrate'
 after 'deploy:publishing', 'compose:precompile'
 after 'deploy:publishing', 'compose:static'
 after 'deploy:publishing', 'compose:jobs'
-after 'deploy:publishing', 'compose:start'
+after 'deploy:publishing', 'compose:app:start'
+after 'deploy:publishing', 'compose:web:start'

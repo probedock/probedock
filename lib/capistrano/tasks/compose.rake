@@ -1,18 +1,30 @@
 namespace :compose do
 
-  desc 'Start the application and web server'
-  task :start do
-    on roles(:app) do
-      within release_path do
+  namespace :app do
 
-        execute :compose_up, '--no-deps', '-d', 'app'
+    desc 'Start the application server'
+    task :start do
+      on roles(:app) do
+        within release_path do
 
-        app_containers_count = ENV['PROBE_DOCK_DOCKER_APP_CONTAINERS'].to_i
-        app_containers_count = 1 if app_containers_count <= 0
-        execute :compose_scale, "app=#{app_containers_count}"
+          execute :compose_up, '--no-deps', '-d', 'app'
 
-        invoke 'compose:wait_app'
-        execute :compose_up, '--no-deps', '-d', 'web'
+          app_containers_count = ENV['PROBE_DOCK_DOCKER_APP_CONTAINERS'].to_i
+          app_containers_count = 1 if app_containers_count <= 0
+          execute :compose_scale, "app=#{app_containers_count}"
+        end
+      end
+    end
+  end
+
+  namespace :web do
+
+    desc 'Start the web server'
+    task start: %w(compose:list_app_containers config:upload_nginx compose:wait_app) do
+      on roles(:app) do
+        within release_path do
+          execute :compose_up, '--no-deps', '-d', 'web'
+        end
       end
     end
   end
@@ -36,6 +48,7 @@ namespace :compose do
     on roles(:app) do
       within release_path do
         execute :compose_rake, 'db:migrate db:seed'
+        invoke 'compose:save_db_version'
       end
     end
   end
@@ -46,16 +59,34 @@ namespace :compose do
     end
   end
 
+  task :save_db_version do
+    on roles(:app) do
+      within release_path do
+        db_version_output = capture :compose_rake, 'db:version'
+        db_version = db_version_output.match(/Current version: (\d+)/)[1]
+        raise 'Could not determine database version' unless db_version && !db_version.strip.empty?
+        execute "echo #{db_version} > #{File.join(release_path, 'DB_VERSION')}"
+      end
+    end
+  end
+
   desc 'Precompile production assets'
-  task precompile: %w(precompile:assets precompile:templates)
+  task precompile: %w(shared:copy_assets precompile:assets precompile:templates shared:update_assets)
 
   namespace :precompile do
-    %w(assets templates).each do |name|
-      task name.to_sym do
-        on roles(:app) do
-          within release_path do
-            execute :compose_rake, "#{name}:precompile"
-          end
+
+    task :assets do
+      on roles(:app) do
+        within release_path do
+          execute :compose_rake, 'assets:precompile assets:clean'
+        end
+      end
+    end
+
+    task :templates do
+      on roles(:app) do
+        within release_path do
+          execute :compose_rake, 'templates:precompile'
         end
       end
     end
@@ -100,7 +131,15 @@ namespace :compose do
     end
   end
 
-  %w(app cache db web).each do |name|
+  task wait_app: %w(compose:list_app_containers) do
+    on roles(:app) do |host|
+      fetch(:app_containers)[host].each do |container|
+        execute :docker_run, '--link', "#{container[:name]}:app", 'aanand/wait'
+      end
+    end
+  end
+
+  %w(cache db web).each do |name|
     task "wait_#{name}".to_sym do
       on roles(:app) do
         execute :docker_run, '--link', "#{fetch(:docker_prefix)}_#{name}_1:#{name}", 'aanand/wait'
@@ -124,7 +163,7 @@ namespace :compose do
     on roles(:app) do |host|
       containers[host] = []
 
-      container_list = capture "docker ps -a"
+      container_list = capture "docker ps"
       container_list.split("\n").reject{ |c| c.strip.empty? }.select{ |c| c[fetch(:docker_prefix)] }.collect(&:strip).each do |container|
         containers[host] << {
           id: container.sub(/ .*/, ''),
@@ -134,5 +173,24 @@ namespace :compose do
     end
 
     set :containers, containers
+  end
+
+  task :list_app_containers do
+
+    app_containers = {}
+
+    on roles(:app) do |host|
+      app_containers[host] = []
+
+      container_list = capture "docker ps"
+      container_list.split("\n").reject{ |c| c.strip.empty? }.select{ |c| c["#{fetch(:docker_prefix)}_app"] }.collect(&:strip).each do |container|
+        app_containers[host] << {
+          id: container.sub(/ .*/, ''),
+          name: container.sub(/.* /, '')
+        }
+      end
+    end
+
+    set :app_containers, app_containers
   end
 end
