@@ -29,7 +29,19 @@ namespace :compose do
           app_containers_count = ENV['PROBE_DOCK_DOCKER_APP_CONTAINERS'].to_i
           app_containers_count = 1 if app_containers_count <= 0
           execute :compose_scale, "app=#{app_containers_count}"
+
+          invoke 'compose:app:save_image_version'
         end
+      end
+    end
+
+    task save_image_version: %w(compose:list_app_containers) do
+
+      app_containers = fetch(:app_containers)
+
+      on roles(:app) do |host|
+        image_version = capture %/docker inspect -f "{{.Image}}" #{app_containers[host].first[:name]}/
+        execute "echo #{image_version.strip} > #{File.join(release_path, 'APP_IMAGE_VERSION')}"
       end
     end
   end
