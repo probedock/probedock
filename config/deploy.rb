@@ -55,22 +55,10 @@ end
 
 namespace :compose do
 
-  desc 'Deploy the application for the first time'
-  task cold: %w(deploy:cold:check deploy:setup deploy:schema deploy:precompile deploy:static deploy:jobs deploy:start deploy:admin)
-
-  namespace :cold do
-    task check: %w(docker:list_containers) do
-      on roles(:app) do |host|
-        host_containers = fetch(:containers)[host]
-        raise %/Cold deployment aborted; the following containers are already running:\n#{host_containers.collect{ |c| "- #{c[:name]} (#{c[:id]})" }.join("\n")}/ unless host_containers.empty?
-      end
-    end
-  end
-
   desc 'Start the application and web server'
   task :start do
     on roles(:app) do
-      within fetch(:repo_path) do
+      within release_path do
         execute :compose_up, '--no-deps', '-d', 'app'
         invoke 'compose:wait_app'
         execute :compose_up, '--no-deps', '-d', 'web'
@@ -81,17 +69,10 @@ namespace :compose do
   desc 'Start background job processing tasks'
   task :jobs do
     on roles(:app) do
-      within fetch(:repo_path) do
+      within release_path do
         execute :compose_up, '--no-deps', '-d', 'job'
         execute :compose_scale, 'job=3'
       end
-    end
-  end
-
-  desc 'Create the application directory structure'
-  task :setup do
-    on roles(:app) do
-      execute :mkdir, '-p', fetch(:deploy_to)
     end
   end
 
@@ -102,7 +83,7 @@ namespace :compose do
     handlebars = Handlebars::Context.new
 
     docker_compose_template = handlebars.compile File.read('docker-compose.handlebars')
-    docker_compose = docker_compose_template.call deploy_to: fetch(:deploy_to), repo_path: fetch(:repo_path)
+    docker_compose = docker_compose_template.call deploy_to: fetch(:deploy_to)
 
     env_template = handlebars.compile File.read('env.handlebars')
     env = env_template.call ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }.merge('RAILS_ENV' => ENV['RAILS_ENV'])
@@ -141,7 +122,7 @@ namespace :compose do
     %w(assets templates).each do |name|
       task name.to_sym do
         on roles(:app) do
-          within fetch(:repo_path) do
+          within release_path do
             execute :rake, "#{name}:precompile"
           end
         end
@@ -152,7 +133,7 @@ namespace :compose do
   desc 'Copy static files to the public directory'
   task :static do
     on roles(:app) do
-      within fetch(:repo_path) do
+      within release_path do
         execute :rake, 'static:copy'
       end
     end
@@ -161,7 +142,7 @@ namespace :compose do
   desc 'Register an admin user'
   task :admin do
     on roles(:app) do
-      within fetch(:repo_path) do
+      within release_path do
         execute :rake, "users:register[#{fetch(:admin_username)},#{fetch(:admin_email)},#{fetch(:admin_password)}]", "users:admin[#{fetch(:admin_username)}]"
       end
     end
@@ -194,7 +175,7 @@ namespace :compose do
   desc 'Print the list of running containers'
   task :ps do
     on roles(:app) do
-      within fetch(:repo_path) do
+      within release_path do
         puts capture(:compose_ps)
       end
     end
@@ -221,7 +202,7 @@ namespace :compose do
 end
 
 desc 'Stop the running application and erase all data'
-task implode: 'docker:list_containers' do
+task implode: 'compose:list_containers' do
 
   unless fetch(:stage).to_s == 'vagrant'
     ask :confirmation, %/Are you sure you want to remove the application containers and erase all data? You are in #{fetch(:stage).to_s.upcase} mode. Type "yes" to proceed./
@@ -234,26 +215,26 @@ task implode: 'docker:list_containers' do
     execute "docker rm -f #{host_containers.collect{ |c| c[:id] }.join(' ')}" unless host_containers.empty?
     fetch(:containers)[host].clear
 
-    execute 'sudo rm -fr /var/lib/probe-dock'
+    execute "sudo rm -fr #{fetch(:deploy_to)}"
   end
 end
 
 desc 'Send a sample payload to the application'
 task :samples do
   on roles(:app) do |host|
-    within fetch(:repo_path) do
+    within release_path do
       execute :rake, 'samples'
     end
   end
 end
 
 desc 'Remove any running application containers, erase all data, and perform a cold deploy'
-task reset: %w(implode vagrant:docker_build deploy:cold)
+task reset: %w(implode vagrant:docker_build deploy)
 
 namespace :vagrant do
   task :docker_build do
     on roles(:app) do
-      within fetch(:repo_path) do
+      within '/vagrant' do
         execute :docker_build, '-t', 'probedock/probe-dock', '.'
       end
     end
@@ -261,4 +242,8 @@ namespace :vagrant do
 end
 
 after 'deploy:updated', 'compose:config'
-after 'deploy:updated', 'compose:migrate'
+after 'deploy:publishing', 'compose:migrate'
+after 'deploy:publishing', 'compose:precompile'
+after 'deploy:publishing', 'compose:static'
+after 'deploy:publishing', 'compose:jobs'
+after 'deploy:publishing', 'compose:start'
