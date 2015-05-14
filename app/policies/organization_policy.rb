@@ -40,6 +40,8 @@ class OrganizationPolicy < ApplicationPolicy
     def resolve
       if user.try :is?, :admin
         scope
+      elsif user
+        scope.joins('LEFT OUTER JOIN memberships ON organizations.id = memberships.organization_id').where('organizations.public_access = ? OR memberships.id IS NOT NULL', true)
       else
         scope.where public_access: true
       end

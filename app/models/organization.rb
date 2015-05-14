@@ -23,6 +23,8 @@ class Organization < ActiveRecord::Base
   before_create{ set_identifier :api_id }
   before_save :normalize_name
 
+  has_many :memberships
+
   # TODO: do not accept UUIDs
   validates :name, presence: true, uniqueness: true, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i }
   validates :display_name, length: { maximum: 50, allow_blank: true }
