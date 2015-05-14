@@ -40,6 +40,11 @@ module ProbeDock
         next Rack::Response.new([ JSON.dump(e.context.serialize) ], 422, { "Content-Type" => "application/json" }).finish
       end
 
+      if Rails.env != 'production'
+        puts e.message
+        puts e.backtrace
+      end
+
       code, message = case e
       when ProbeDock::Errors::Unauthorized
         [ 401, nil ]
