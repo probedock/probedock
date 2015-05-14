@@ -65,4 +65,27 @@ class MembershipPolicy < ApplicationPolicy
       end
     end
   end
+
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.id record.api_id
+        json.organizationId record.organization.api_id
+        json.organization record.organization.to_builder.attributes! if options[:with_organization]
+        json.roles record.roles.collect(&:to_s)
+        json.createdAt record.created_at.iso8601(3)
+        json.acceptedAt record.accepted_at.iso8601(3) if record.accepted_at.present?
+        json.updatedAt record.updated_at.iso8601(3)
+
+        if user.try(:is?, :admin) || user.try(:member_of?, organization)
+          json.organizationEmail record.organization_email.address
+        end
+
+        if record.user.present?
+          json.userId record.user.api_id
+          json.user serialize(record.user, link: true) if options[:with_user]
+        end
+      end
+    end
+  end
 end

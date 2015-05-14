@@ -24,6 +24,22 @@ module ProbeDock
         def parse_organization
           parse_object :name, :displayName, :public
         end
+
+        def serialization_options orgs
+
+          unless @serialization_options
+            @serialization_options = {
+              with_roles: true_flag?(:withRoles)
+            }
+
+            if @serialization_options[:with_roles]
+              organization_ids = Array.wrap(orgs).collect &:id
+              @serialization_options[:current_user_memberships] = current_user.present? ? current_user.memberships.where(organization_id: organization_ids).to_a : []
+            end
+          end
+
+          @serialization_options
+        end
       end
 
       post do
@@ -58,17 +74,7 @@ module ProbeDock
           rel
         end
 
-        result = rel.to_a
-
-        options = {
-          with_roles: true_flag?(:withRoles)
-        }
-
-        if options[:with_roles]
-          options[:memberships] = current_user.present? ? current_user.memberships.where(organization_id: result.collect(&:id)).to_a : []
-        end
-
-        result.collect{ |p| p.serializable_hash options }
+        serialize load_resources(rel)
       end
 
       namespace '/:id' do
@@ -77,24 +83,23 @@ module ProbeDock
         end
 
         helpers do
-          def current_organization
-            @current_organization = Organization.where(api_id: params[:id].to_s).first!
+          def record
+            @record = Organization.where(api_id: params[:id].to_s).first!
           end
         end
 
         get do
-          authorize! current_organization, :show
-          current_organization
+          authorize! record, :show
+          serialize record
         end
 
         patch do
-          org = current_organization
-          authorize! org, :update
+          authorize! record, :update
 
           updates = parse_organization
           updates[:public_access] = updates.delete :public if updates.key? :public
 
-          update_record current_organization, updates
+          update_record record, updates
         end
       end
     end

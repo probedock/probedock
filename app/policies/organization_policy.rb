@@ -25,7 +25,7 @@ class OrganizationPolicy < ApplicationPolicy
   end
 
   def show?
-    organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
+    record.public? || user.try(:is?, :admin) || user.try(:member_of?, record)
   end
 
   def data?
@@ -33,7 +33,7 @@ class OrganizationPolicy < ApplicationPolicy
   end
 
   def update?
-    user.is?(:admin) || user.membership_in(organization).try(:is?, :admin)
+    user.is?(:admin) || user.membership_in(record).try(:is?, :admin)
   end
 
   class Scope < Scope
@@ -44,6 +44,27 @@ class OrganizationPolicy < ApplicationPolicy
         scope.joins('LEFT OUTER JOIN memberships ON organizations.id = memberships.organization_id').where('organizations.public_access = ? OR memberships.id IS NOT NULL', true)
       else
         scope.where public_access: true
+      end
+    end
+  end
+
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.id record.api_id
+        json.name record.name
+        json.displayName record.display_name if record.display_name.present?
+        json.public record.public_access
+        json.projectsCount record.projects_count
+        json.membershipsCount record.memberships_count
+        json.createdAt record.created_at.iso8601(3)
+        json.updatedAt record.updated_at.iso8601(3)
+
+        if options[:with_roles]
+          membership = options[:current_user_memberships].find{ |m| m.organization_id == record.id }
+          json.member !!membership
+          json.roles membership.try(:roles) || []
+        end
       end
     end
   end

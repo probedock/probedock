@@ -41,7 +41,7 @@ module ProbeDock
           end
         end
 
-        def serialization_options
+        def serialization_options memberships
           @serialization_options ||= {
             with_organization: true_flag?(:withOrganization),
             with_user: true_flag?(:withUser)
@@ -52,21 +52,13 @@ module ProbeDock
 
           rel = rel.includes :organization
 
-          if serialization_options[:with_user]
-            rel = rel.includes user: :primary_email
+          if true_flag? :withUser
+            rel = rel.includes user: [ :organizations, :primary_email ]
           else
             rel = rel.includes :user
           end
 
           rel
-        end
-
-        def serialize records
-          if records.kind_of? Array
-            records.to_a.collect{ |r| r.to_builder(serialization_options).attributes! }
-          else
-            records.to_builder(serialization_options).attributes!
-          end
         end
       end
 
@@ -122,18 +114,7 @@ module ProbeDock
           rel
         end
 
-        options = {
-          with_organization: true_flag?(:withOrganization),
-          with_user: true_flag?(:withUser)
-        }
-
-        if options[:with_user]
-          rel = rel.includes user: :primary_email
-        else
-          rel = rel.includes :user
-        end
-
-        rel.to_a.collect{ |m| m.to_builder(options).attributes! }
+        serialize load_resources(rel)
       end
 
       namespace '/:id' do
@@ -149,13 +130,7 @@ module ProbeDock
 
         get do
           authorize! record, :show
-
-          options = {
-            with_organization: true_flag?(:withOrganization),
-            with_user: true_flag?(:withUser)
-          }
-
-          record.to_builder(options).attributes!
+          serialize record
         end
 
         patch do

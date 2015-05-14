@@ -21,21 +21,45 @@ module ApiResourceHelper
     HashWithIndifferentAccess.new params.pick(*attrs.collect(&:to_s)).inject({}){ |memo,(k,v)| memo[k.underscore] = v; memo }
   end
 
-  def create_record record, attributes = nil
+  def load_resource rel
+    rel = with_serialization_includes rel if respond_to? :with_serialization_includes
+    rel.first
+  end
+
+  def load_resources rel
+    rel = with_serialization_includes rel if respond_to? :with_serialization_includes
+    rel.to_a
+  end
+
+  def serialize records, options = {}
+
+    custom_user = options.delete :current_user
+    options.reverse_merge! respond_to?(:serialization_options) ? serialization_options(records) : {}
+
+    if records.kind_of? Array
+      records.to_a.collect{ |r| policy_serializer(r).serialize(options) }
+    else
+      policy_serializer(records, custom_user).serialize(options)
+    end
+  end
+
+  def create_record record, attributes = nil, options = {}
+
     record.attributes = attributes if attributes
+
     if record.errors.empty? && record.save
       yield if block_given?
-      record
+      serialize record, options
     else
       status 422
       record_errors record
     end
   end
 
-  def update_record record, updates = nil
+  def update_record record, updates = nil, options = {}
     if record.errors.empty? && (updates ? record.update_attributes(updates) : record.save)
       yield if block_given?
-      record
+      serialize record, options
     else
       status 422
       record_errors record

@@ -36,7 +36,7 @@
               .label.label-info.pull-right ng-if='!membership.roles.length' user
               .label.pull-right ng-repeat='role in membership.roles.sort()' ng-class='{"label-primary": role == "admin", "label-info": role != "admin"}' {{ role }}
               dl
-                dt Organization e-mail
-                dd {{ membership.organizationEmail }}
+                dt ng-if='membership.organizationEmail' Organization e-mail
+                dd ng-if='membership.organizationEmail' {{ membership.organizationEmail }}
                 dt ng-if='membership.acceptedAt' Member since
                 dd ng-if='membership.acceptedAt' {{ membership.acceptedAt | amDateFormat: 'LL' }}

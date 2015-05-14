@@ -38,7 +38,7 @@ module ProbeDock
 
       {
         token: user.generate_auth_token,
-        user: user.to_builder.attributes!
+        user: serialize(user, current_user: user)
       }
     end
   end

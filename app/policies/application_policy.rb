@@ -23,6 +23,7 @@ class ApplicationPolicy
     @record = record
 
     if user.kind_of? UserContext
+      @user_context = user
       @user = user.user
       @organization = user.organization
       @otp_record = user.otp_record
@@ -62,6 +63,12 @@ class ApplicationPolicy
     Pundit.policy_scope! user, record.class
   end
 
+  def serializer
+    serializer_class = self.class::Serializer
+    raise NotDefinedError, "unable to find serializer `#{self.class}::Serializer`" unless serializer_class
+    serializer_class.new @user_context || @user, @record
+  end
+
   class Scope
     attr_reader :user, :organization, :otp_record, :params, :scope
 
@@ -79,6 +86,36 @@ class ApplicationPolicy
 
     def resolve
       scope
+    end
+  end
+
+  class Serializer
+    attr_reader :user, :record, :organization, :otp_record, :params
+
+    def initialize user, record
+      @user = user
+      @record = record
+
+      if user.kind_of? UserContext
+        @user_context = user
+        @user = user.user
+        @organization = user.organization
+        @otp_record = user.otp_record
+        @params = user.params
+      end
+    end
+
+    def serialize *args
+      options = args.extract_options!
+      if other_record = args.shift
+        Pundit.policy!(@user_context || @user, other_record).serializer.serialize options
+      else
+        to_builder(options).attributes!
+      end
+    end
+
+    def to_builder options = {}
+      Jbuilder.new{}
     end
   end
 end

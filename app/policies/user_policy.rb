@@ -45,4 +45,30 @@ class UserPolicy < ApplicationPolicy
       scope
     end
   end
+
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.id record.api_id
+        json.name record.name
+
+        # TODO: cache email MD5
+        json.primaryEmailMd5 Digest::MD5.hexdigest(record.primary_email.address)
+
+        if user == record || user.try(:is?, :admin) || ((user.try(:organizations) || []) & record.organizations).present?
+          json.primaryEmail record.primary_email.address
+
+          unless options[:link]
+            json.emails record.emails.collect{ |e| e.to_builder.attributes! }
+          end
+        end
+
+        unless options[:link]
+          json.active record.active
+          json.roles record.roles.collect(&:to_s)
+          json.createdAt record.created_at.iso8601(3)
+        end
+      end
+    end
+  end
 end

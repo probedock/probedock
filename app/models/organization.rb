@@ -31,25 +31,6 @@ class Organization < ActiveRecord::Base
   validates :public_access, inclusion: { in: [ true, false ] }
   validate :name_must_not_be_reserved
 
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.id api_id
-      json.name name
-      json.displayName display_name if display_name.present?
-      json.public public_access
-      json.projectsCount projects_count
-      json.membershipsCount memberships_count
-      json.createdAt created_at.iso8601(3)
-      json.updatedAt updated_at.iso8601(3)
-
-      if options[:with_roles]
-        membership = options[:memberships].find{ |m| m.organization == self }
-        json.member !!membership
-        json.roles membership.try(:roles) || []
-      end
-    end
-  end
-
   def public?
     public_access
   end

@@ -39,25 +39,6 @@ class Membership < ActiveRecord::Base
   validates :user_id, uniqueness: { scope: :organization_id, if: :user_id }
   validate :organization_email_must_be_free_or_owned_by_user
 
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.id api_id
-      json.organizationId organization.api_id
-      json.organization organization.to_builder.attributes! if options[:with_organization]
-      # TODO: only show organization email for org admins
-      json.organizationEmail organization_email.address
-      json.roles roles.collect(&:to_s)
-      json.createdAt created_at.iso8601(3)
-      json.acceptedAt accepted_at.iso8601(3) if accepted_at.present?
-      json.updatedAt updated_at.iso8601(3)
-
-      if user.present?
-        json.userId user.api_id
-        json.user user.to_builder.attributes! if options[:with_user]
-      end
-    end
-  end
-
   private
 
   def organization_email_must_be_free_or_owned_by_user

@@ -48,16 +48,4 @@ class TestPayload < ActiveRecord::Base
   def finish_processing
     test_keys.clear
   end
-
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.id api_id
-      json.bytes contents_bytesize
-      json.state state
-      json.endedAt ended_at.iso8601(3)
-      json.receivedAt received_at.iso8601(3)
-      json.processingAt processing_at.iso8601(3) if processing_at
-      json.processedAt processed_at.iso8601(3) if processed_at
-    end
-  end
 end

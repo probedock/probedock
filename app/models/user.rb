@@ -37,6 +37,7 @@ class User < ActiveRecord::Base
   has_many :test_results, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_reports, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :memberships
+  has_many :organizations, through: :memberships
   belongs_to :primary_email, class_name: 'Email', autosave: true
   # TODO: purge emails if unused
   has_many :emails
@@ -46,25 +47,6 @@ class User < ActiveRecord::Base
   # TODO: validate min password length
   validates :primary_email, presence: true
   validate :primary_email_must_be_among_emails
-
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      # TODO: only show id and name if not logged in
-      json.id api_id
-      # TODO: hide active, email and name if not logged in
-      json.primaryEmail primary_email.address
-      # TODO: cache email MD5
-      json.primaryEmailMd5 Digest::MD5.hexdigest(primary_email.address)
-      json.name name
-
-      unless options[:link]
-        json.active active
-        json.roles roles.collect(&:to_s)
-        json.emails emails.collect{ |e| e.to_builder.attributes! }
-        json.createdAt created_at.iso8601(3)
-      end
-    end
-  end
 
   def generate_auth_token
     JSON::JWT.new({

@@ -69,9 +69,27 @@ module ProbeDock
 
       namespace :payloads do
 
+        before do
+          authenticate!
+        end
+
+        helpers do
+          def current_organization
+            if params[:organizationId].present?
+              Organization.where(api_id: params[:organizationId].to_s).first!
+            elsif params[:organizationName].present?
+              Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
+            end
+          end
+        end
+
         get do
-          rel = TestPayload.order 'ended_at DESC'
-          paginated(rel).to_a.collect{ |p| p.to_builder.attributes! }
+          authorize! TestPayload, :index
+
+          rel = policy_scope(TestPayload).order 'ended_at DESC'
+          rel = paginated rel
+
+          serialize load_resources(rel)
         end
       end
     end
