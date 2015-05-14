@@ -70,7 +70,10 @@ ProbeDock::Application.configure do
 
   # Use a different logger for distributed setups.
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
-  config.logger = Logger.new STDOUT if ENV['PROBE_DOCK_LOG_TO_STDOUT']
+  if ENV['PROBE_DOCK_LOG_TO_STDOUT']
+    config.logger = Logger.new STDOUT
+    config.logger.level = :warn
+  end
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
