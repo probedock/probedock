@@ -1,6 +1,6 @@
 angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-dock.reports' ])
 
-  .controller('DashboardCtrl', function(api, orgs, $scope) {
+  .controller('DashboardCtrl', function(api, orgs, $scope, $stateParams) {
 
     orgs.forwardData($scope);
 
@@ -14,7 +14,7 @@ angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'p
       url: '/reports',
       params: {
         pageSize: 1,
-        organizationName: $scope.currentOrganization.name
+        organizationName: $stateParams.orgName
       }
     }).then(function(res) {
       if (!res.pagination().total) {
