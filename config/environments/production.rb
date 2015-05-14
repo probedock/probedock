@@ -63,7 +63,7 @@ ProbeDock::Application.configure do
   # config.force_ssl = true
 
   # Set to :debug to see everything in the log.
-  config.log_level = :warn
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :subdomain, :uuid ]
@@ -72,7 +72,7 @@ ProbeDock::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
   if ENV['PROBE_DOCK_LOG_TO_STDOUT']
     config.logger = Logger.new STDOUT
-    config.logger.level = :warn
+    config.logger.level = :info
   end
 
   # Use a different cache store in production.
