@@ -1,6 +1,11 @@
 angular.module('probe-dock')
 
   .run(function(orgs, $rootScope) {
+
+    $rootScope.currentMember = function() {
+      return orgs.currentOrganization && orgs.currentOrganization.member;
+    };
+
     $rootScope.currentMemberIs = function() {
       if ($rootScope.currentUserIs('admin')) {
         return true;

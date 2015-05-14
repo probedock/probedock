@@ -62,7 +62,7 @@
         canvas.chart.chart-bar height='100' data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
         .empty ng-show='chart.data && !chart.data.length'
           em No tests have been added recently.
-  .col-md-6.col-xs-12 ng-if='currentUser && orgIsActive()'
+  .col-md-6.col-xs-12 ng-if='currentUser && orgIsActive() && currentMember()'
     test-key-generator
   .col-md-6.col-xs-12 ng-if='orgIsActive()'
     .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
