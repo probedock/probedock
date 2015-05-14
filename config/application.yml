@@ -1,13 +1,13 @@
 development:
   protocol: <%= ENV['PROBE_DOCK_APP_PROTOCOL'] %>
-  host: <%= ENV['PROBE_DOCK_TEST_APP_HOST'] %>
+  host: <%= ENV['PROBE_DOCK_APP_HOST'] %>
   port: <%= ENV['PROBE_DOCK_APP_PORT'] %>
   mail_from: <%= ENV['PROBE_DOCK_MAIL_FROM'] %>
   mail_from_name: <%= ENV['PROBE_DOCK_MAIL_FROM_NAME'] %>
 
 test:
   protocol: <%= ENV['PROBE_DOCK_TEST_APP_PROTOCOL'] %>
-  host: <%= ENV['PROBE_DOCK_TEST_TEST_APP_HOST'] %>
+  host: <%= ENV['PROBE_DOCK_TEST_APP_HOST'] %>
   port: <%= ENV['PROBE_DOCK_TEST_APP_PORT'] %>
   mail_from: <%= ENV['PROBE_DOCK_TEST_MAIL_FROM'] %>
   mail_from_name: <%= ENV['PROBE_DOCK_TEST_MAIL_FROM_NAME'] %>
