@@ -5,7 +5,7 @@ angular.module('probe-dock.help', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-
     orgs.forwardData($scope);
 
     var apiUrl = window.location.protocol + '//' + window.location.hostname;
-    if (window.location.port != '80' && window.location.port != '443') {
+    if (window.location.port && window.location.port != '80' && window.location.port != '443') {
       apiUrl += ':' + window.location.port;
     }
 
