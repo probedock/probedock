@@ -104,6 +104,8 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
       if (service.currentOrganization) {
         setCurrentOrganization(_.findWhere(orgs, { id: service.currentOrganization.id }));
+      } else if ($stateParams.orgName) {
+        setCurrentOrganization(_.findWhere(orgs, { name: $stateParams.orgName }));
       }
     }
 
