@@ -77,7 +77,7 @@ class MembershipPolicy < ApplicationPolicy
         json.acceptedAt record.accepted_at.iso8601(3) if record.accepted_at.present?
         json.updatedAt record.updated_at.iso8601(3)
 
-        if user.try(:is?, :admin) || user.try(:member_of?, organization)
+        if user.try(:is?, :admin) || user.try(:member_of?, organization) || otp_record
           json.organizationEmail record.organization_email.address
         end
 

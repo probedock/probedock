@@ -77,6 +77,7 @@ class ApplicationPolicy
       @scope = scope
 
       if user.kind_of? UserContext
+        @user_context = user
         @user = user.user
         @organization = user.organization
         @otp_record = user.otp_record
