@@ -47,7 +47,7 @@ task :samples do
 end
 
 desc 'Remove any running application containers, erase all data, and perform a cold deploy'
-task reset: %w(implode vagrant:build deploy)
+task reset: %w(implode deploy)
 
 desc 'Print the result of running the `uname` command on the server'
 task :uname do

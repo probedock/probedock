@@ -47,6 +47,7 @@ server '127.0.0.1', user: 'root', roles: %w(app), ssh_options: {
 # For available Capistrano configuration variables see the documentation page.
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
+set :docker_build_path, '/vagrant'
 
 
 

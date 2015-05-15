@@ -15,12 +15,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-namespace :vagrant do
+namespace :docker do
 
-  desc 'Build the probedock/probe-dock image from the current source mounted in the vagrant machine'
+  desc 'Build an up-to-date docker image from the checked out release'
   task :build do
     on roles(:app) do
-      execute 'cd /vagrant && docker build -t probedock/probe-dock .'
+      within fetch(:docker_build_path) do
+        execute :docker_build, '-t', fetch(:docker_image), '.'
+      end
     end
   end
 end

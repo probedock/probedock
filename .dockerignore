@@ -7,10 +7,12 @@ ansible
 bower.json
 bower_components
 doc
+docker-compose.yml
 Gruntfile.js
 Guardfile
 local
 log
+nginx.conf
 node_modules
 package.json
 spec
