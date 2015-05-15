@@ -1,0 +1,8 @@
+---
+- user: name={{ user_name }} createhome=yes
+  when: user_name != 'root'
+- file: dest={{ user_home | default("/home/" + user_name) }}/.ssh owner={{ user_name }} group={{ user_group | default(user_name) }} mode=0700 state=directory
+- template: src=id_rsa.j2 dest={{ user_home | default("/home/" + user_name) }}/.ssh/id_rsa owner={{ user_name }} group={{ user_group | default(user_name) }} mode=0600
+  when: user_private_key is defined
+- template: src=id_rsa.pub.j2 dest={{ user_home | default("/home/" + user_name) }}/.ssh/id_rsa.pub owner={{ user_name }} group={{ user_group | default(user_name) }} mode=0644
+  when: user_public_key is defined

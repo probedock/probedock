@@ -3,6 +3,7 @@
 /.grunt
 /.vagrant
 /_SpecRunner.html
+/ansible/deploy*
 /ansible/production-inventory
 /bower_components
 /db/test.*

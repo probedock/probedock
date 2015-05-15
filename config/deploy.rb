@@ -4,7 +4,7 @@ require 'paint'
 lock '3.4.0'
 
 set :application, 'probe-dock'
-set :repo_url, 'https://github.com/probe-dock/probe-dock.git'
+set :repo_url, 'git@github.com:probe-dock/probe-dock.git'
 set :root, File.expand_path('..', File.dirname(__FILE__))
 
 # Default branch is :master
