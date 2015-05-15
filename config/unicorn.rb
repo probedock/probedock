@@ -28,7 +28,7 @@ listen 3000, :tcp_nopush => true
 timeout 30
 
 # feel free to point this anywhere accessible on the filesystem
-#pid "#{APP_PATH}/tmp/pids/unicorn.pid"
+pid ENV['PROBE_DOCK_UNICORN_PID_PATH'] || '/dev/null'
 
 # By default, the Unicorn logger will write to stderr.
 # Additionally, ome applications/frameworks log to stderr or stdout,
