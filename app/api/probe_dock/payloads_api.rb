@@ -75,7 +75,7 @@ module ProbeDock
 
         helpers do
           def current_organization
-            if params[:organizationId].present?
+            @current_organization ||= if params[:organizationId].present?
               Organization.where(api_id: params[:organizationId].to_s).first!
             elsif params[:organizationName].present?
               Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!

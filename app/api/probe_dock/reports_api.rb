@@ -25,40 +25,52 @@ module ProbeDock
 
       helpers do
         def current_organization
-          if params[:organizationId].present?
+          @current_organization ||= if params[:organizationId].present?
             Organization.where(api_id: params[:organizationId].to_s).first!
           elsif params[:organizationName].present?
             Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
           end
         end
+
+        def with_serialization_includes rel
+          rel = rel.includes :projects if true_flag? :withProjects
+          rel = rel.includes :project_versions if true_flag? :withProjectVersions
+          rel = rel.includes :runners if true_flag? :withRunners
+          rel
+        end
+
+        def serialization_options reports
+          @serialization_options ||= {
+            with_projects: true_flag?(:withProjects),
+            with_project_versions: true_flag?(:withProjectVersions),
+            with_runners: true_flag?(:withRunners)
+          }
+        end
       end
 
       get do
         authorize! TestReport, :index
+
         rel = policy_scope(TestReport).order 'created_at DESC'
 
         rel = paginated rel do |rel|
+
           if params[:after]
             ref = TestReport.select('id, created_at').where(api_id: params[:after].to_s).first!
-            rel.where 'created_at > ?', ref.created_at
-          else
-            rel
+            rel = rel.where 'created_at > ?', ref.created_at
           end
+
+          rel
         end
 
-        options = {
-          with_projects: true_flag?(:withProjects),
-          with_runners: true_flag?(:withRunners)
-        }
-
-        rel.to_a.collect{ |r| r.to_builder(options).attributes! }
+        serialize load_resources(rel)
       end
 
       namespace '/:id' do
 
         helpers do
-          def current_report
-            @current_report ||= TestReport.where(api_id: params[:id].to_s).first!
+          def record
+            @record ||= TestReport.where(api_id: params[:id].to_s).first!
           end
 
           def report_health_template
@@ -67,14 +79,12 @@ module ProbeDock
         end
 
         get do
-          report = current_report
-          authorize! report, :show
-          report.to_builder(detailed: true).attributes!
+          authorize! record, :show
+          serialize record, detailed: true
         end
 
         get :health do
-          report = current_report
-          authorize! report, :show
+          authorize! record, :show
 
           html = ''
 
@@ -82,7 +92,7 @@ module ProbeDock
           limit = 100
 
           begin
-            current_results = report.results.order('name, id').offset(offset).limit(limit).to_a
+            current_results = record.results.order('name, id').offset(offset).limit(limit).to_a
             html << report_health_template.render(OpenStruct.new(results: current_results))
             offset += limit
           end while current_results.present?
@@ -93,12 +103,12 @@ module ProbeDock
         end
 
         get :results do
-          report = current_report
-          authorize! report, :show
+          authorize! record, :show
 
-          rel = report.results.order('active desc, passed, name, id')
+          rel = record.results.order('active desc, passed, name, id').includes(:key, :category, :tags, :tickets, :runner, { project_version: :project })
+          rel = paginated rel
 
-          paginated(rel).to_a.collect{ |r| r.to_builder.attributes! }
+          serialize load_resources(rel)
         end
       end
     end

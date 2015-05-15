@@ -35,12 +35,17 @@ module ProbeDock
       get do
         authorize! :organization, :data
 
-        pageSize = params[:pageSize].to_i
-        pageSize = Settings.app.tag_cloud_size if pageSize < 1
+        rel = Tag
 
-        Tag.where(organization_id: current_organization.id).select('tags.name, count(distinct project_tests.id) as tests_count').joins(test_descriptions: :test).group('tags.name').order('count(distinct project_tests.id) desc').limit(pageSize).having('count(distinct project_tests.id) > 0').to_a.collect do |tag|
-          { name: tag.name, testsCount: tag.tests_count }
+        rel = paginated rel do |rel|
+          rel = rel.where organization_id: current_organization.id if current_organization
+          rel
         end
+
+        rel = rel.joins(:test_descriptions).group('tags.name, tags.organization_id, tags.created_at').order('count(distinct test_descriptions.test_id) desc').having('count(distinct test_descriptions.test_id) > 0')
+        rel = rel.select('tags.name, tags.organization_id, tags.created_at, count(distinct test_descriptions.test_id) as tests_count')
+
+        serialize load_resources(rel)
       end
     end
   end

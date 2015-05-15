@@ -108,7 +108,13 @@ class ApplicationPolicy
     def serialize *args
       options = args.extract_options!
       if other_record = args.shift
-        Pundit.policy!(@user_context || @user, other_record).serializer.serialize options
+        if other_record.kind_of? Array
+          other_record.collect do |r|
+            Pundit.policy!(@user_context || @user, r).serializer.serialize options
+          end
+        else
+          Pundit.policy!(@user_context || @user, other_record).serializer.serialize options
+        end
       else
         to_builder(options).attributes!
       end

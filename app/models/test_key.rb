@@ -47,17 +47,6 @@ class TestKey < ActiveRecord::Base
     key
   end
 
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.key key
-      json.free free
-      json.projectId project.api_id
-      json.userId user.api_id if user.present?
-      json.createdAt created_at.iso8601(3)
-      json.updatedAt updated_at.iso8601(3)
-    end
-  end
-
   private
 
   def ensure_no_test_payloads

@@ -71,7 +71,7 @@ class MembershipPolicy < ApplicationPolicy
       Jbuilder.new do |json|
         json.id record.api_id
         json.organizationId record.organization.api_id
-        json.organization record.organization.to_builder.attributes! if options[:with_organization]
+        json.organization serialize(record.organization) if options[:with_organization]
         json.roles record.roles.collect(&:to_s)
         json.createdAt record.created_at.iso8601(3)
         json.acceptedAt record.accepted_at.iso8601(3) if record.accepted_at.present?

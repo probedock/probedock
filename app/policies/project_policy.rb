@@ -21,11 +21,11 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def index?
-    organization && (organization.public? || user.is?(:admin) || user.member_of?(organization))
+    user.try(:is?, :admin) || organization.try(:public?) || user.try(:member_of?, organization)
   end
 
   def show?
-    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+    user.try(:is?, :admin) || organization.try(:public?) || user.try(:member_of?, organization)
   end
 
   def update?
@@ -38,7 +38,30 @@ class ProjectPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      scope.where organization: organization
+      if user.try :is?, :admin
+        scope
+      else
+        scope.where organization: organization
+      end
+    end
+  end
+
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.id record.api_id
+        json.name record.name
+        json.displayName record.display_name if record.display_name.present?
+        json.organizationId record.organization.api_id
+
+        unless options[:link]
+          json.description record.description if record.description.present?
+          json.testsCount record.tests_count
+          json.deprecatedTestsCount record.deprecated_tests_count
+          json.createdAt record.created_at.iso8601(3)
+          json.updatedAt record.updated_at.iso8601(3)
+        end
+      end
     end
   end
 end

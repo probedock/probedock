@@ -187,6 +187,7 @@ angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-do
       params: {
         organizationName: $stateParams.orgName,
         withProjects: 1,
+        withProjectVersions: 1,
         withRunners: 1
       }
     });

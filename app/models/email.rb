@@ -23,13 +23,6 @@ class Email < ActiveRecord::Base
 
   validates :address, presence: true, uniqueness: true, length: { maximum: 255, allow_blank: true }
 
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.address address
-      json.active active
-    end
-  end
-
   private
 
   def ensure_lowercase_address

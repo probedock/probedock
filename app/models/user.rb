@@ -35,8 +35,7 @@ class User < ActiveRecord::Base
   #has_many :test_infos, foreign_key: :author_id, dependent: :restrict_with_exception
   has_many :test_payloads, foreign_key: :runner_id, dependent: :restrict_with_exception
   has_many :test_results, foreign_key: :runner_id, dependent: :restrict_with_exception
-  has_many :test_reports, foreign_key: :runner_id, dependent: :restrict_with_exception
-  has_many :memberships
+  has_many :memberships, dependent: :destroy # TODO: cascade in database
   has_many :organizations, through: :memberships
   belongs_to :primary_email, class_name: 'Email', autosave: true
   # TODO: purge emails if unused

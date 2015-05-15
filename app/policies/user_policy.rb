@@ -59,7 +59,7 @@ class UserPolicy < ApplicationPolicy
           json.primaryEmail record.primary_email.address
 
           unless options[:link]
-            json.emails record.emails.collect{ |e| e.to_builder.attributes! }
+            json.emails serialize(record.emails.to_a)
           end
         end
 

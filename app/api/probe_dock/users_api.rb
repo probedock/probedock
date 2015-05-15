@@ -75,14 +75,11 @@ module ProbeDock
             rel = rel.where 'LOWER(users.name) LIKE ?', term
           end
 
-          if params[:name].present?
-            rel = rel.where 'users.name = ?', params[:name].to_s
-          end
-
+          rel = rel.where 'users.name = ?', params[:name].to_s if params[:name].present?
           rel
         end
 
-        rel.to_a.collect{ |u| u.to_builder.attributes! }
+        serialize load_resources(rel)
       end
 
       namespace '/:id' do
@@ -91,42 +88,43 @@ module ProbeDock
         end
 
         helpers do
-          def user_resource
-            @user_resource ||= User.where(api_id: params[:id].to_s).first!
+          def record
+            @record ||= User.where(api_id: params[:id].to_s).first!
           end
         end
 
         get do
-          authorize! user_resource, :show
-          user_resource
+          authorize! record, :show
+          serialize record
         end
 
         patch do
-          authorize! user_resource, :update
+          authorize! record, :update
 
           User.transaction do
 
             updates = parse_user
 
-            user_resource.name = updates[:name] if updates.key? :name
-            user_resource.active = !!updates[:active] if updates.key? :active
+            record.name = updates[:name] if updates.key? :name
+            record.active = !!updates[:active] if updates.key? :active
             # FIXME: only allow to set primary email if among existing emails
-            user_resource.primary_email = Email.where(address: updates[:primary_email]).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != user_resource.primary_email.try(:address)
-            user_resource.primary_email.user = user_resource
+            record.primary_email = Email.where(address: updates[:primary_email]).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.try(:address)
+            record.primary_email.user = record
 
             if updates.key? :password
-              user_resource.password = updates[:password]
-              user_resource.password_confirmation = updates[:password_confirmation] || ''
+              record.password = updates[:password]
+              record.password_confirmation = updates[:password_confirmation] || ''
             end
 
-            update_record user_resource
+            update_record record
           end
         end
 
         delete do
-          authorize! user_resource, :destroy
-          user_resource.destroy
+          authorize! record, :destroy
+          record.destroy
           status 204
+          nil
         end
       end
     end

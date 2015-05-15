@@ -47,7 +47,7 @@ module ProbeDock
           authorize! key, :create
 
           Array.new(params[:n].to_s.to_i) do
-            TestKey.new(user: current_user, project: project).tap(&:save!).to_builder.attributes!
+            serialize TestKey.new(user: current_user, project: project).tap(&:save!)
           end
         else
           key = TestKey.new key: data[:key], user: current_user
@@ -66,23 +66,13 @@ module ProbeDock
         rel = policy_scope(TestKey).joins(:project).includes(:project, :user).order('projects.normalized_name ASC, test_keys.created_at ASC, test_keys.key ASC')
 
         rel = paginated rel do |rel|
-
-          if current_organization
-            rel = rel.where projects: { organization_id: current_organization.id }
-          end
-
-          if params.key? :free
-            rel = rel.where free: true_flag?(:free)
-          end
-
-          if params.key? :userId
-            rel = rel.joins(:user).where 'users.api_id = ?', params[:userId].to_s
-          end
-
+          rel = rel.where projects: { organization_id: current_organization.id } if current_organization
+          rel = rel.where free: true_flag?(:free) if params.key? :free
+          rel = rel.joins(:user).where 'users.api_id = ?', params[:userId].to_s if params.key? :userId
           rel
         end
 
-        rel.to_a.collect{ |k| k.to_builder.attributes! }
+        serialize load_resources(rel)
       end
 
       delete do

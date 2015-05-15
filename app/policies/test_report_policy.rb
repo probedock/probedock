@@ -29,4 +29,40 @@ class TestReportPolicy < ApplicationPolicy
       scope.where organization: organization
     end
   end
+
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.id record.api_id
+        json.uid record.uid if record.uid.present?
+        json.duration record.duration
+        json.resultsCount record.results_count
+        json.passedResultsCount record.passed_results_count
+        json.inactiveResultsCount record.inactive_results_count
+        json.inactivePassedResultsCount record.inactive_passed_results_count
+        json.startedAt record.started_at.iso8601(3)
+        json.endedAt record.ended_at.iso8601(3)
+        json.createdAt record.created_at.iso8601(3)
+
+        if options[:detailed] || options[:with_projects]
+          json.projects record.projects.collect{ |p| serialize p, link: true }
+        end
+
+        if options[:detailed] || options[:with_project_versions]
+          json.projectVersions record.project_versions.collect{ |v| serialize v, link: true }
+        end
+
+        if options[:detailed] || options[:with_runners]
+          json.runners record.runners.collect{ |r| serialize r, link: true }
+        end
+
+        # TODO: use separate flags
+        if options[:detailed]
+          json.categories Category.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('categories.name').pluck('distinct categories.name')
+          json.tags Tag.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('tags.name').pluck('distinct tags.name')
+          json.tickets Ticket.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('tickets.name').pluck('distinct tickets.name')
+        end
+      end
+    end
+  end
 end

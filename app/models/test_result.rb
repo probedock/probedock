@@ -43,26 +43,6 @@ class TestResult < ActiveRecord::Base
   validates :test_payload, presence: { unless: :quick_validation }
   validates :project_version, presence: { unless: :quick_validation }
 
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.id id
-      json.name name
-      json.passed passed
-      json.active active
-      json.message message
-      json.duration duration
-      json.key key.key if key.present? && payload_properties_set?(:key)
-      json.category category.name if category.present?
-      json.tags tags.collect(&:name)
-      json.tickets tickets.collect(&:name)
-      json.customData custom_values
-      json.runner runner.to_builder(link: true).attributes!
-      json.project project_version.project.to_builder(link: true).attributes!
-      json.projectVersion project_version.name
-      json.runAt run_at.iso8601(3)
-    end
-  end
-
   def passed?
     passed
   end

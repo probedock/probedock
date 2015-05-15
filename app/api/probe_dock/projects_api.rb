@@ -24,11 +24,15 @@ module ProbeDock
         end
 
         def current_organization
-          if params[:organizationId].present?
+          @current_organization ||= if params[:organizationId].present?
             Organization.where(api_id: params[:organizationId].to_s).first!
           elsif params[:organizationName].present?
             Organization.where(normalized_name: params[:organizationName].to_s.downcase).first!
           end
+        end
+
+        def with_serialization_includes rel
+          rel = rel.includes :organization
         end
       end
 
@@ -52,6 +56,10 @@ module ProbeDock
 
         rel = paginated rel do |rel|
 
+          if current_organization.present?
+            rel = rel.where organization_id: current_organization.id
+          end
+
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
             rel = rel.where 'LOWER(api_id) LIKE ? OR LOWER(name) LIKE ?', term, term
@@ -64,32 +72,30 @@ module ProbeDock
           rel
         end
 
-        rel.to_a
+        serialize load_resources(rel)
       end
 
       namespace '/:id' do
-        before do
-          authenticate!
-        end
-
         helpers do
-          def current_project
-            @current_project ||= Project.where(api_id: params[:id].to_s).first!
+          def record
+            @record ||= Project.where(api_id: params[:id].to_s).first!
           end
 
           def current_organization
-            current_project.organization
+            record.organization
           end
         end
 
         get do
-          authorize! current_project, :show
-          current_project
+          authenticate
+          authorize! record, :show
+          serialize record
         end
 
         patch do
-          authorize! current_project, :update
-          update_record current_project, parse_project
+          authenticate!
+          authorize! record, :update
+          update_record record, parse_project
         end
       end
     end

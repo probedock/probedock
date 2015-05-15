@@ -33,23 +33,6 @@ class Project < ActiveRecord::Base
   validates :organization, presence: true
   validate :name_must_not_be_reserved
 
-  def to_builder options = {}
-    Jbuilder.new do |json|
-      json.id api_id
-      json.name name
-      json.displayName display_name if display_name.present?
-      json.organizationId organization.api_id
-
-      unless options[:link]
-        json.description description if description.present?
-        json.testsCount tests_count
-        json.deprecatedTestsCount deprecated_tests_count
-        json.createdAt created_at.iso8601(3)
-        json.updatedAt updated_at.iso8601(3)
-      end
-    end
-  end
-
   private
 
   def name_must_not_be_reserved

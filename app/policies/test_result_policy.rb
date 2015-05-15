@@ -15,38 +15,25 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class TestKeyPolicy < ApplicationPolicy
-  def create?
-    user.is?(:admin) || user.member_of?(record.project.try(:organization))
-  end
-
-  def index?
-    user.is?(:admin) || (organization && user.member_of?(organization))
-  end
-
-  def release?
-    user
-  end
-
-  class Scope < Scope
-    def resolve
-      if user.is? :admin
-        scope
-      else
-        scope.where projects: { organization_id: organization.id }
-      end
-    end
-  end
-
+class TestResultPolicy < ApplicationPolicy
   class Serializer < Serializer
     def to_builder options = {}
       Jbuilder.new do |json|
-        json.key record.key
-        json.free record.free
-        json.projectId record.project.api_id
-        json.userId record.user.api_id if record.user.present?
-        json.createdAt record.created_at.iso8601(3)
-        json.updatedAt record.updated_at.iso8601(3)
+        json.id record.id
+        json.name record.name
+        json.passed record.passed
+        json.active record.active
+        json.message record.message
+        json.duration record.duration
+        json.key record.key.key if record.key.present? && record.payload_properties_set?(:key)
+        json.category record.category.name if record.category.present?
+        json.tags record.tags.collect(&:name)
+        json.tickets record.tickets.collect(&:name)
+        json.customData record.custom_values
+        json.runner serialize(record.runner, link: true)
+        json.project serialize(record.project_version.project, link: true)
+        json.projectVersion record.project_version.name
+        json.runAt record.run_at.iso8601(3)
       end
     end
   end

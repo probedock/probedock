@@ -15,15 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
-class ProjectVersion < ActiveRecord::Base
-  include QuickValidation
-
-  belongs_to :project
-  has_many :test_results
-  has_many :test_descriptions
-  has_many :test_payloads
-
-  strip_attributes
-  validates :name, presence: true, uniqueness: { scope: :project_id, unless: :quick_validation }, length: { maximum: 100 }
-  validates :project, presence: { unless: :quick_validation }
+class EmailPolicy < ApplicationPolicy
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.address record.address
+        json.active record.active
+      end
+    end
+  end
 end
