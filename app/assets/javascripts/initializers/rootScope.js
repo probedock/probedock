@@ -3,7 +3,7 @@ angular.module('probe-dock')
   .run(function(orgs, $rootScope) {
 
     $rootScope.currentMember = function() {
-      return orgs.currentOrganization && orgs.currentOrganization.member;
+      return $rootScope.currentUserIs('admin') || orgs.currentOrganization && orgs.currentOrganization.member;
     };
 
     $rootScope.currentMemberIs = function() {

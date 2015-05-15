@@ -6,7 +6,6 @@ angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-
 
       organizations: [],
 
-      // FIXME: deselect current organization if private and logging out
       currentOrganization: appStore.get('currentOrganization'),
 
       addOrganization: function(org) {

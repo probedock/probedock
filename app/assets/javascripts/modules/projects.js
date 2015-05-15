@@ -109,6 +109,10 @@ angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'p
         url: url,
         data: $scope.editedProject
       }).then(function(res) {
+
+        // TODO: move this to projects service
+        orgs.updateOrganization(_.extend(orgs.currentOrganization, { projectsCount: orgs.currentOrganization.projectsCount + 1 }));
+
         $modalInstance.close(res.data);
       });
     };
