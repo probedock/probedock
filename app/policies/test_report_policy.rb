@@ -21,7 +21,7 @@ class TestReportPolicy < ApplicationPolicy
   end
 
   def show?
-    record.organization.public? || user.is?(:admin) || user.member_of?(record.organization)
+    record.organization.public? || user.try(:is?, :admin) || user.try(:member_of?, record.organization)
   end
 
   class Scope < Scope
