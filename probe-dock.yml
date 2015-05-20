@@ -1,5 +1,5 @@
 project:
-  apiId: gzeae15hfqzb
+  apiId: djz392lfd2l2
   version: 0.1.0
 
 payload:
@@ -8,5 +8,5 @@ payload:
   print: false
 
 workspace: tmp/probe-dock
-server: localhost
+server: demo.probe-dock.io
 publish: true
