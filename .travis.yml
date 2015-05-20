@@ -1,3 +1,21 @@
 language: ruby
 rvm:
   - 2.2.1
+addons:
+  postgresql: "9.3"
+services:
+  - redis-server
+before_script:
+  - psql -c 'create database probe-dock-test;' -U postgres
+env:
+  global:
+    - RAILS_ENV=test
+    - PROBE_DOCK_TEST_DATABASE_NAME=probe-dock-test
+    - PROBE_DOCK_TEST_REDIS_URL=localhost:6379:1
+    - PROBE_DOCK_TEST_SECRET_KEY_BASE=54dbd7f0fc9ef70fb056af36fe73bf283f3e4d7a2f951d38e63021f32cda66db819b6d340120c38a4cea3393d16f2f67a1674b5fb469151639928552e7f89fc0
+    - PROBE_DOCK_JWT_SECRET=a8a136961fe62e20cf6cdea1437250a4fbb52ee00f5b4d27a196acbf9ba742ae13bb2d7beb49a2bd441204df84c74d1f35910f8da8130ed9bd605dc9949f84d3
+    - PROBE_DOCK_TEST_APP_PROTOCOL=http
+    - PROBE_DOCK_TEST_APP_HOST=localhost
+    - PROBE_DOCK_TEST_APP_PORT=3001
+    - PROBE_DOCK_TEST_MAIL_FROM=no-reply@probe-dock.io
+    - PROBE_DOCK_TEST_MAIL_FROM_NAME="Probe Dock"
