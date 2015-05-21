@@ -43,7 +43,7 @@ describe TestKey, probe_dock: { tags: :unit } do
   context "key" do
 
     # TODO: test automatic increase of key size
-    it "should be 12 characters long", probe_dock: { key: '9a8335194eb5' } do
+    it "should be 4 characters long", probe_dock: { key: '9a8335194eb5' } do
       10.times{ expect(TestKey.generate_random_key(1).length).to eq(4) }
     end
 
@@ -76,7 +76,7 @@ describe TestKey, probe_dock: { tags: :unit } do
 
   context "database table" do
     it(nil, probe_dock: { key: '2fc3e9920ebf' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: 'aeac4b7f7091' }){ should have_db_column(:key).of_type(:string).with_options(null: false, limit: 12) }
+    it(nil, probe_dock: { key: 'aeac4b7f7091' }){ should have_db_column(:key).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probe_dock: { key: 'b8348c80380a' }){ should have_db_column(:free).of_type(:boolean).with_options(null: false, default: true) }
     it(nil, probe_dock: { key: 'ef12acb9b301' }){ should have_db_column(:user_id).of_type(:integer).with_options(null: true) }
     it(nil, probe_dock: { key: 'f839734b03ad' }){ should have_db_column(:project_id).of_type(:integer).with_options(null: false) }

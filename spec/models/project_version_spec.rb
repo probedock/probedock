@@ -47,7 +47,7 @@ describe ProjectVersion do
 
   context "database table" do
     it(nil, probe_dock: { key: '55f10dca159e' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: '4f8bf6a84917' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
+    it(nil, probe_dock: { key: '4f8bf6a84917' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 100) }
     it(nil, probe_dock: { key: 'd98e4624f114' }){ should have_db_column(:project_id).of_type(:integer).with_options(null: false) }
     it(nil, probe_dock: { key: '4b3cc531f1f4' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probe_dock: { key: '043683ddfcb8' }){ should have_db_index([ :name, :project_id ]).unique(true) }

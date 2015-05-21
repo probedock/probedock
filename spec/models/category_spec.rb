@@ -46,7 +46,7 @@ describe Category do
 
   context "database table" do
     it(nil, probe_dock: { key: '4c2d12b4392b' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: '36105d8b309b' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
+    it(nil, probe_dock: { key: '36105d8b309b' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probe_dock: { key: '45ec9284a110' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probe_dock: { key: '542503b7d3f5' }){ should have_db_index([ :name, :organization_id ]).unique(true) }
   end

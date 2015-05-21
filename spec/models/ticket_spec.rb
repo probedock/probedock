@@ -53,7 +53,7 @@ describe Ticket, probe_dock: { tags: :unit } do
 
   context "database table" do
     it(nil, probe_dock: { key: '83a5605a055e' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
-    it(nil, probe_dock: { key: '6e9ad64aaa9e' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 255) }
+    it(nil, probe_dock: { key: '6e9ad64aaa9e' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probe_dock: { key: '0a41edc50d67' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
   end
 end
