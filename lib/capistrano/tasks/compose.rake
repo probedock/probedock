@@ -144,6 +144,20 @@ namespace :compose do
     end
   end
 
+  desc 'Register a user'
+  task :register do
+
+    ask :user_name, nil
+    ask :user_email, nil
+    ask :user_password, nil, echo: false
+
+    on roles(:app) do
+      within release_path do
+        execute :compose_rake, "users:register[#{fetch(:user_name)},#{fetch(:user_email)},#{fetch(:user_password)}]"
+      end
+    end
+  end
+
   task :run_db do
     on roles(:app) do
       within release_path do

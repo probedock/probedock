@@ -41,7 +41,7 @@ class OrganizationPolicy < ApplicationPolicy
       if user.try :is?, :admin
         scope
       elsif user
-        scope.joins('LEFT OUTER JOIN memberships ON organizations.id = memberships.organization_id').where('organizations.public_access = ? OR memberships.id IS NOT NULL', true)
+        scope.joins('LEFT OUTER JOIN memberships ON organizations.id = memberships.organization_id').where('organizations.public_access = ? OR (memberships.id IS NOT NULL AND memberships.user_id = ?)', true, user.id)
       else
         scope.where public_access: true
       end

@@ -59,7 +59,7 @@ class MembershipPolicy < ApplicationPolicy
       elsif user.try :is?, :admin
         scope
       elsif user.present?
-        scope.joins(organization_email: :user).where(user: user)
+        scope.joins(organization_email: :user).where('users.id = ?', user.id)
       else
         scope.none
       end
