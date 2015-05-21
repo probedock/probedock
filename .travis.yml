@@ -6,7 +6,7 @@ addons:
 services:
   - redis-server
 before_script:
-  - psql -c 'create database probe-dock-test;' -U postgres
+  - psql -c 'create database "probe-dock-test";' -U postgres
 env:
   global:
     - RAILS_ENV=test
