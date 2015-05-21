@@ -7,6 +7,7 @@ services:
   - redis-server
 before_script:
   - psql -c 'create database "probe-dock-test";' -U postgres
+  - bundle exec rake db:schema:load db:seed
 env:
   global:
     - RAILS_ENV=test
