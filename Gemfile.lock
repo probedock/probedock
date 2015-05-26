@@ -189,7 +189,7 @@ GEM
     oj (2.12.8)
     paint (1.0.0)
     pg (0.18.2)
-    probe-dock-rspec (0.5.1)
+    probe-dock-rspec (0.5.2)
       httparty (~> 0.13)
       oj (~> 2.1)
       paint (~> 1.0)
