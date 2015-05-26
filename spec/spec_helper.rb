@@ -25,10 +25,6 @@ require 'capybara/rails'
 require 'capybara/rspec'
 require 'pundit/rspec'
 
-#ProbeDockRSpec.configure do |config|
-#  config.project.category = 'RSpec'
-#end
-
 Capybara.default_driver = :selenium
 
 FactoryGirl.find_definitions
