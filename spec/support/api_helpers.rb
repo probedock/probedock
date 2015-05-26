@@ -1,4 +1,4 @@
-# Copyright (c) 2015 42 inside
+# Copyright (c) 2015 Probe Dock
 # Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of Probe Dock.
@@ -17,17 +17,17 @@
 # along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
 module SpecApiHelper
   MEDIA_TYPES = {
-    payload_v1: 'application/vnd.42inside.probe-dock.payload.v1+json',
-    probe_dock_payload_v1: 'application/vnd.42inside.probe-dock.payload.v1+json',
+    payload_v1: 'application/vnd.probe-dock.payload.v1+json',
+    probe_dock_payload_v1: 'application/vnd.probe-dock.payload.v1+json',
     markdown: 'text/x-markdown'
   }
 
   def check_api_errors expected_errors, options = {}
-    
+
     actual_errors = parse_api_errors
 
     expected_errors.each do |expected|
-      
+
       name, msg = expected[:name], Array.wrap(expected[:message])
       actual, matched = if name
         [ actual_errors.find{ |e| e[:name] == name.to_s }, "name #{name}" ]
@@ -139,7 +139,7 @@ module SpecApiHelper
   end
 
   def post_api_payload payload, user, headers = {}
-    post api_test_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.42inside.probe-dock.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
+    post api_test_payloads_path, payload, { 'CONTENT_TYPE' => 'application/vnd.probe-dock.payload.v1+json' }.merge(api_authentication_headers(user)).merge(headers)
   end
 
   def api_authentication_headers user

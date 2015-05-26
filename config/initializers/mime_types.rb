@@ -1,4 +1,4 @@
-# Copyright (c) 2015 42 inside
+# Copyright (c) 2015 Probe Dock
 # Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of Probe Dock.
@@ -24,4 +24,4 @@ Mime::Type.register "text/x-markdown", :md
 Mime::Type.register "application/hal+json", :hal_json
 
 # Custom media types
-Mime::Type.register "application/vnd.42inside.probe-dock.payload.v1+json", :probe_dock_payload_v1
+Mime::Type.register "application/vnd.probe-dock.payload.v1+json", :probe_dock_payload_v1

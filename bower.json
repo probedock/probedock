@@ -1,7 +1,7 @@
 {
   "name": "probe-dock",
   "version": "0.1.0",
-  "homepage": "https://github.com/42inside/probe-dock",
+  "homepage": "https://github.com/probe-dock/probe-dock",
   "description": "Test tracking and analysis tool.",
   "authors": [
     "Simon Oulevay"
