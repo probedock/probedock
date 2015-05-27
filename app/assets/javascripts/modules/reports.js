@@ -1,4 +1,4 @@
-angular.module('probe-dock.reports', [ 'ngSanitize', 'probe-dock.api', 'probe-dock.orgs', 'probe-dock.state', 'probe-dock.tables' ])
+angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.orgs', 'probedock.state', 'probedock.tables' ])
 
   .factory('reports', function() {
     return {

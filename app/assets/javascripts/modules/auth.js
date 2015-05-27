@@ -1,4 +1,4 @@
-angular.module('probe-dock.auth', ['base64', 'probe-dock.storage'])
+angular.module('probedock.auth', ['base64', 'probedock.storage'])
 
   .factory('auth', function(appStore, $base64, $http, $log, $modal, $rootScope) {
 

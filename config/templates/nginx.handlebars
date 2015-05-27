@@ -38,7 +38,7 @@ http {
     listen 80 default_server;
     server_name _;
 
-    root /var/lib/probe-dock/public;
+    root /var/lib/probedock/public;
 
     location / {
       proxy_set_header X-Real-IP $remote_addr;

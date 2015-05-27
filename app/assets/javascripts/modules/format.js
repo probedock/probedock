@@ -1,4 +1,4 @@
-angular.module('probe-dock.format', [])
+angular.module('probedock.format', [])
 
   .filter('durationFormat', function () {
 

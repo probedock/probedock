@@ -1,4 +1,4 @@
-angular.module('probe-dock.forms', [])
+angular.module('probedock.forms', [])
 
   .factory('forms', function() {
 

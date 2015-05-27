@@ -15,7 +15,7 @@ form novalidate=true name='orgForm' ng-submit='orgForm.$valid && save()'
       label for='orgDisplayName' Display name
       input#orgDisplayName.form-control type='string' placeholder='{{ editedOrg.name }}' maxlength=50 ng-model='editedOrg.displayName'
       p.help-block
-        | The is the name of the organization as shown in Probe Dock.
+        | The is the name of the organization as shown in ProbeDock.
     .checkbox
       label
         input type='checkbox' ng-model='editedOrg.public' Public

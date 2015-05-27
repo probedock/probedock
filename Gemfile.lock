@@ -189,7 +189,7 @@ GEM
     oj (2.12.8)
     paint (1.0.0)
     pg (0.18.2)
-    probe-dock-rspec (0.5.2)
+    probedock-rspec (0.5.3)
       httparty (~> 0.13)
       oj (~> 2.1)
       paint (~> 1.0)
@@ -423,7 +423,7 @@ DEPENDENCIES
   oj
   paint
   pg
-  probe-dock-rspec
+  probedock-rspec
   pundit
   quiet_assets
   rails (~> 4.2)

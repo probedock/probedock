@@ -9,7 +9,7 @@
       div ng-if='!currentOrganization.projectsCount'
         markdown:
           The organization has no **projects** yet.
-          Each project must be registered in Probe Dock before you can publish the results of their test suites.
+          Each project must be registered in ProbeDock before you can publish the results of their test suites.
       p ng-if='!currentOrganization.projectsCount && currentMemberIs("admin")'
         button.btn.btn-success.btn-lg ui-sref='org.projects.new({ orgName: currentOrganization.name })'
           span.glyphicon.glyphicon-plus

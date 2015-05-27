@@ -7,4 +7,4 @@
   vars_files:
     - versions.yml
   roles:
-    - role: probe-dock
+    - role: probedock

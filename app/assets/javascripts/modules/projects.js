@@ -1,4 +1,4 @@
-angular.module('probe-dock.projects', [ 'probe-dock.api', 'probe-dock.forms', 'probe-dock.utils' ])
+angular.module('probedock.projects', [ 'probedock.api', 'probedock.forms', 'probedock.utils' ])
 
   .factory('projects', function(api, eventUtils, $modal, $q) {
 

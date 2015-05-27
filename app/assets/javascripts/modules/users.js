@@ -1,4 +1,4 @@
-angular.module('probe-dock.users', [ 'probe-dock.api', 'probe-dock.state', 'probe-dock.utils' ])
+angular.module('probedock.users', [ 'probedock.api', 'probedock.state', 'probedock.utils' ])
 
   .factory('users', function(api, auth, eventUtils, $modal, $rootScope) {
 

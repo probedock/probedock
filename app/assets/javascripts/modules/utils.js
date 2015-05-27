@@ -1,4 +1,4 @@
-angular.module('probe-dock.utils', [])
+angular.module('probedock.utils', [])
 
   .factory('eventUtils', function($timeout, $window) {
     return {

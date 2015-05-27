@@ -1,4 +1,4 @@
-angular.module('probe-dock.api', [ 'probe-dock.auth', 'probe-dock.utils' ])
+angular.module('probedock.api', [ 'probedock.auth', 'probedock.utils' ])
 
   .factory('api', function(apiPagination, auth, $http, $log, urls) {
 

@@ -1,4 +1,4 @@
-angular.module('probe-dock.home', [ 'probe-dock.orgs' ])
+angular.module('probedock.home', [ 'probedock.orgs' ])
 
   .controller('HomeCtrl', function(orgs, $scope, $state) {
 

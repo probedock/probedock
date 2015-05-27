@@ -1,4 +1,4 @@
-angular.module('probe-dock.nav', [ 'probe-dock.orgs', 'probe-dock.profile' ])
+angular.module('probedock.nav', [ 'probedock.orgs', 'probedock.profile' ])
 
   .controller('NavCtrl', function(api, orgs, profile, $rootScope, $scope, $state) {
 

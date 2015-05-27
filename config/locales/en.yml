@@ -3,7 +3,7 @@
 
 en:
   common:
-    title: "Probe Dock"
+    title: "ProbeDock"
     title_separator: " > "
     home: "Home"
     loading: "Loading..."
@@ -17,7 +17,7 @@ en:
   application:
     maintenance:
       title: "Maintenance Mode."
-      notice: "Probe Dock is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
+      notice: "ProbeDock is currently undergoing maintenance. You will only be able to view data until maintenance is complete."
 
   flash:
     warning: "Sorry."

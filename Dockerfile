@@ -1,4 +1,4 @@
-FROM probedock/probe-dock-docker-base
+FROM probedock/probedock-docker-base
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1

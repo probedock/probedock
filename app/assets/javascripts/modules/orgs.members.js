@@ -1,4 +1,4 @@
-angular.module('probe-dock.orgs.members', [ 'probe-dock.api' ])
+angular.module('probedock.orgs.members', [ 'probedock.api' ])
 
   .factory('orgMembers', function(api, $modal, $rootScope) {
 

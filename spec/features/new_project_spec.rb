@@ -1,20 +1,20 @@
 # Copyright (c) 2015 ProbeDock
 # Copyright (c) 2012-2014 Lotaris SA
 #
-# This file is part of Probe Dock.
+# This file is part of ProbeDock.
 #
-# Probe Dock is free software: you can redistribute it and/or modify
+# ProbeDock is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Probe Dock is distributed in the hope that it will be useful,
+# ProbeDock is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
+# along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
 describe "Creating a project and submitting new results", type: :feature, probe_dock: { category: 'Selenium' } do
@@ -26,7 +26,7 @@ describe "Creating a project and submitting new results", type: :feature, probe_
     visit_test_server
 
     # log in
-    expect(page).to have_content('Probe Dock')
+    expect(page).to have_content('ProbeDock')
 
     within 'form' do
       fill_in 'user_name', with: user.name

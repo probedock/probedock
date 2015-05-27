@@ -1,4 +1,4 @@
-angular.module('probe-dock.state', [ 'ui.router' ])
+angular.module('probedock.state', [ 'ui.router' ])
 
   .config(function($locationProvider, $urlRouterProvider) {
     $locationProvider.html5Mode(true);

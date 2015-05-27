@@ -11,7 +11,7 @@ form role='form' name='registrationForm' ng-submit='registrationForm.$valid && r
       label for='userName' Name
       input#userName.form-control type='text' name='name' ng-model='newUser.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' placeholder='Your username' required=true maxlength=25 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-user-name=true autofocus=true
       p.help-block
-        | This will be your main identifier in Probe Dock.
+        | This will be your main identifier in ProbeDock.
         |  You can also use it to sign in.
         |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
       .alert.alert-danger ng-if='registrationForm.name.$error.uniqueUserName'

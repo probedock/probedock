@@ -9,6 +9,6 @@
   roles:
     - role: docker-user
       user_name: vagrant
-    - role: probe-dock
+    - role: probedock
   tasks:
     - authorized_key: user=root key="{{ lookup('file', public_key_file) }}"

@@ -1,4 +1,4 @@
-angular.module('probe-dock.dashboard', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-dock.reports' ])
+angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'probedock.reports' ])
 
   .controller('DashboardCtrl', function(api, orgs, $scope, $stateParams) {
 

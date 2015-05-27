@@ -7,6 +7,6 @@ payload:
   cache: false
   print: false
 
-workspace: tmp/probe-dock
-server: demo.probe-dock.io
+workspace: tmp/probedock
+server: demo.probedock.io
 publish: true

@@ -1,4 +1,4 @@
-angular.module('probe-dock')
+angular.module('probedock')
 
   .run(function(orgs, $rootScope) {
 

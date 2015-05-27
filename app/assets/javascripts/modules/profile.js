@@ -1,4 +1,4 @@
-angular.module('probe-dock.profile', [ 'probe-dock.api', 'probe-dock.auth', 'probe-dock.utils' ])
+angular.module('probedock.profile', [ 'probedock.api', 'probedock.auth', 'probedock.utils' ])
 
   .factory('profile', function(api, auth, eventUtils, $rootScope) {
 

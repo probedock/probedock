@@ -1,20 +1,20 @@
 # Copyright (c) 2015 ProbeDock
 # Copyright (c) 2012-2014 Lotaris SA
 #
-# This file is part of Probe Dock.
+# This file is part of ProbeDock.
 #
-# Probe Dock is free software: you can redistribute it and/or modify
+# ProbeDock is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Probe Dock is distributed in the hope that it will be useful,
+# ProbeDock is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
+# along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 require 'paint'
 
 desc %|Generates random test results (25 by default)|
@@ -177,16 +177,16 @@ namespace :samples do
     publish_samples_payload payload, runner
   end
 
-  desc %/Register Probe Dock as a sample project/
+  desc %/Register ProbeDock as a sample project/
   task :project => :environment do
 
-    if Project.where(name: 'Probe Dock').first
-      puts Paint["Probe Dock project already exists", :yellow]
+    if Project.where(name: 'ProbeDock').first
+      puts Paint["ProbeDock project already exists", :yellow]
       next
     end
 
-    project = Project.new(name: 'Probe Dock', description: 'Test tracking and analysis tool.').tap(&:save!)
-    puts Paint["Probe Dock project created with API ID #{project.api_id}", :green]
+    project = Project.new(name: 'ProbeDock', description: 'Test tracking and analysis tool.').tap(&:save!)
+    puts Paint["ProbeDock project created with API ID #{project.api_id}", :green]
   end
 end
 

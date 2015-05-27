@@ -1,7 +1,7 @@
-angular.module('probe-dock.storage', ['angular-storage'])
+angular.module('probedock.storage', ['angular-storage'])
 
   .service('appStore', function(store) {
-    return store.getNamespacedStore('probe-dock');
+    return store.getNamespacedStore('probedock');
   })
 
 ;

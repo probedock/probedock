@@ -1,4 +1,4 @@
-angular.module('probe-dock.errors', [])
+angular.module('probedock.errors', [])
 
   .controller('ErrorPageCtrl', function($scope, $stateParams) {
     if ($stateParams.type == 'unauthorized') {

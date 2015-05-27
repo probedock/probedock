@@ -1,4 +1,4 @@
-angular.module('probe-dock.routes', [ 'ui.router' ])
+angular.module('probedock.routes', [ 'ui.router' ])
 
   .config(function($stateProvider, $urlRouterProvider) {
 

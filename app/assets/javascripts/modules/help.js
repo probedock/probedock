@@ -1,4 +1,4 @@
-angular.module('probe-dock.help', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-dock.utils' ])
+angular.module('probedock.help', [ 'probedock.api', 'probedock.orgs', 'probedock.utils' ])
 
   .controller('GettingStartedCtrl', function(api, orgs, $scope, $stateParams, yaml) {
 
@@ -29,7 +29,7 @@ angular.module('probe-dock.help', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-
       if (value) {
         var yamlConfiguration = yaml.dump(value).trim();
         $scope.homeYaml = yamlConfiguration;
-        $scope.homeScript = 'mkdir -p ~/.probe-dock && echo "' + yamlConfiguration.replace(/\n/g, "\\n") + '" > ~/.probe-dock/config.yml';
+        $scope.homeScript = 'mkdir -p ~/.probedock && echo "' + yamlConfiguration.replace(/\n/g, "\\n") + '" > ~/.probedock/config.yml';
       }
     }, true);
 
@@ -88,7 +88,7 @@ angular.module('probe-dock.help', [ 'probe-dock.api', 'probe-dock.orgs', 'probe-
       if (value) {
         var yamlConfiguration = yaml.dump($scope.projectConfiguration).trim();
         $scope.projectYaml = yamlConfiguration;
-        $scope.projectScript = 'echo "' + yamlConfiguration.replace(/\n/g, "\\n") + '" > probe-dock.yml';
+        $scope.projectScript = 'echo "' + yamlConfiguration.replace(/\n/g, "\\n") + '" > probedock.yml';
       }
     }, true);
   })

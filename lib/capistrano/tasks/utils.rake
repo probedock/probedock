@@ -1,25 +1,25 @@
 # Copyright (c) 2015 ProbeDock
 # Copyright (c) 2012-2014 Lotaris SA
 #
-# This file is part of Probe Dock.
+# This file is part of ProbeDock.
 #
-# Probe Dock is free software: you can redistribute it and/or modify
+# ProbeDock is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Probe Dock is distributed in the hope that it will be useful,
+# ProbeDock is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Probe Dock.  If not, see <http://www.gnu.org/licenses/>.
+# along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 
 desc 'Stop the running application and erase all data'
 task implode: 'compose:list_containers' do
 
-  ask :confirmation, %/are you #{Paint["ABSOLUTELY 100% POSITIVE", :bold, :red]} you want to #{Paint["remove all probe-dock containers and erase all data", :underline]}? You are in #{Paint[fetch(:stage).to_s.upcase, :magenta]} mode; type #{Paint["yes", :bold]} to proceed/
+  ask :confirmation, %/are you #{Paint["ABSOLUTELY 100% POSITIVE", :bold, :red]} you want to #{Paint["remove all ProbeDock containers and erase all data", :underline]}? You are in #{Paint[fetch(:stage).to_s.upcase, :magenta]} mode; type #{Paint["yes", :bold]} to proceed/
   raise 'Task aborted by user' unless fetch(:confirmation).match(/^yes$/i)
 
   unless fetch(:stage).to_s == 'vagrant'

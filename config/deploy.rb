@@ -3,8 +3,8 @@ require 'paint'
 # config valid only for current version of Capistrano
 lock '3.4.0'
 
-set :application, 'probe-dock'
-set :repo_url, 'git@github.com:probe-dock/probe-dock.git'
+set :application, 'probedock'
+set :repo_url, 'git@github.com:probedock/probedock.git'
 set :root, File.expand_path('..', File.dirname(__FILE__))
 
 # Default branch is :master
@@ -12,7 +12,7 @@ set :root, File.expand_path('..', File.dirname(__FILE__))
 set :branch, 'master'
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '/var/lib/probe-dock'
+set :deploy_to, '/var/lib/probedock'
 
 # Default value for :scm is :git
 set :scm, :git
@@ -40,7 +40,7 @@ set :log_level, ENV['DEBUG'] ? :debug : :info
 
 # Prefix used for all docker-compose commands
 set :docker_prefix, 'probedock'
-set :docker_image, "#{fetch(:docker_prefix)}/probe-dock"
+set :docker_image, "#{fetch(:docker_prefix)}/probedock"
 set :docker_build_path, ->{ release_path }
 
 # docker command shortcuts

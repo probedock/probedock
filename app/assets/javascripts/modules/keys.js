@@ -1,4 +1,4 @@
-angular.module('probe-dock.keys', [ 'probe-dock.storage' ])
+angular.module('probedock.keys', [ 'probedock.storage' ])
 
   .directive('testKeyGenerator', function() {
     return {

@@ -1,6 +1,6 @@
 .container
   .jumbotron ng-if='membership'
-    h1 Welcome to Probe Dock!
+    h1 Welcome to ProbeDock!
     p
       | You have been invited to join the 
       a ng-if='membership.organization.public' href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })' {{ membership.organization | orgName }}

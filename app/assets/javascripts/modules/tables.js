@@ -1,4 +1,4 @@
-angular.module('probe-dock.tables', [])
+angular.module('probedock.tables', [])
 
   .factory('tables', function(api) {
 

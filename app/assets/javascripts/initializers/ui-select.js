@@ -1,3 +1,3 @@
-angular.module('probe-dock').config(function(uiSelectConfig) {
+angular.module('probedock').config(function(uiSelectConfig) {
   uiSelectConfig.theme = 'bootstrap';
 });

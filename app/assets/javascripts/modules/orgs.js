@@ -1,4 +1,4 @@
-angular.module('probe-dock.orgs', [ 'probe-dock.api', 'probe-dock.auth', 'probe-dock.forms', 'probe-dock.storage', 'probe-dock.utils' ])
+angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock.forms', 'probedock.storage', 'probedock.utils' ])
 
   .factory('orgs', function(api, appStore, auth, eventUtils, $modal, $rootScope, $state, $stateParams) {
 
