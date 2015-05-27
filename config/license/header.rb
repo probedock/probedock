@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Probe Dock
+# Copyright (c) 2015 ProbeDock
 # Copyright (c) 2012-2014 Lotaris SA
 #
 # This file is part of Probe Dock.
