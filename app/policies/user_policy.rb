@@ -25,11 +25,11 @@ class UserPolicy < ApplicationPolicy
   end
 
   def show?
-    user.is? :admin
+    user == record || user.is?(:admin)
   end
 
   def update?
-    user.is? :admin
+    user == record || user.is?(:admin)
   end
 
   def destroy?
