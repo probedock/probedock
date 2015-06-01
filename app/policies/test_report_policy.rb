@@ -45,15 +45,15 @@ class TestReportPolicy < ApplicationPolicy
         json.createdAt record.created_at.iso8601(3)
 
         if options[:detailed] || options[:with_projects]
-          json.projects record.projects.collect{ |p| serialize p, link: true }
+          json.projects record.projects.distinct.collect{ |p| serialize p, link: true }
         end
 
         if options[:detailed] || options[:with_project_versions]
-          json.projectVersions record.project_versions.collect{ |v| serialize v, link: true }
+          json.projectVersions record.project_versions.distinct.collect{ |v| serialize v, link: true }
         end
 
         if options[:detailed] || options[:with_runners]
-          json.runners record.runners.collect{ |r| serialize r, link: true }
+          json.runners record.runners.distinct.collect{ |r| serialize r, link: true }
         end
 
         # TODO: use separate flags
