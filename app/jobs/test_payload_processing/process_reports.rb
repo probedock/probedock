@@ -43,7 +43,7 @@ module TestPayloadProcessing
 
     def update_report report, payload
 
-      report.test_payloads << @payload
+      report.test_payloads << payload
 
       if payload.ended_at < report.started_at
         report.update_attribute :started_at, payload.ended_at
