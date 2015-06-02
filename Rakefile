@@ -25,7 +25,7 @@ ProbeDock::Application.load_tasks
 
 require 'rake-version'
 RakeVersion::Tasks.new do |v|
-  v.copy 'bower.json', 'package.json', 'probedock.yml', 'spec/javascripts/version.spec.js'
+  v.copy 'bower.json', 'package.json', 'probedock.yml', 'app/assets/javascripts/boot.js.erb', 'spec/javascripts/version.spec.js'
 end
 
 #if Rails.env != 'production'
