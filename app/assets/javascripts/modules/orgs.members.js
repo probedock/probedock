@@ -138,7 +138,7 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
     }
   })
 
-  .controller('NewMembershipCtrl', function(api, auth, $modal, $scope, $state, $stateParams) {
+  .controller('NewMembershipCtrl', function(api, auth, $modal, orgs, $q, $scope, $state, $stateParams) {
 
     api({
       url: '/memberships',
@@ -197,7 +197,16 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
           userId: auth.currentUser.id
         }
       }).then(function() {
-        $state.go('org.dashboard.default', { orgName: $scope.membership.organization.name });
+
+        var promise = $q.when();
+
+        if (!$scope.membership.organization.public) {
+          promise = promise.then(orgs.refreshOrgs);
+        }
+
+        promise.then(function() {
+          $state.go('org.dashboard.default', { orgName: $scope.membership.organization.name });
+        });
       });
     };
 

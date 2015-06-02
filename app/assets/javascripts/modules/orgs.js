@@ -56,11 +56,23 @@ angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock
         });
 
         return modal;
+      },
+
+      refreshOrgs: function() {
+        return api({
+          url: '/organizations',
+          params: {
+            withRoles: 1
+          }
+        }).then(function(res) {
+          setOrganizations(res.data);
+          return res.data;
+        });
       }
     });
 
-    refreshOrgs();
-    $rootScope.$on('auth.signIn', refreshOrgs);
+    service.refreshOrgs();
+    $rootScope.$on('auth.signIn', service.refreshOrgs);
     $rootScope.$on('auth.signOut', forgetPrivateData);
 
     $rootScope.$on('$stateChangeSuccess', function(event, toState) {
@@ -68,17 +80,6 @@ angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock
         setCurrentOrganization(_.findWhere(service.organizations, { name: $stateParams.orgName }));
       }
     });
-
-    function refreshOrgs() {
-      api({
-        url: '/organizations',
-        params: {
-          withRoles: 1
-        }
-      }).then(function(res) {
-        setOrganizations(res.data);
-      });
-    }
 
     function forgetPrivateData() {
       if (service.currentOrganization && !service.currentOrganization.public) {
