@@ -109,7 +109,7 @@ module ProbeDock
             record.active = !!updates[:active] if updates.key? :active
 
             # FIXME: only allow to set primary email if among existing emails
-            if updates.key? :primary_email
+            if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.address
               authorize! record, :set_email
               record.primary_email = Email.where(address: updates[:primary_email].to_s.downcase).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.try(:address)
               record.primary_email.user = record
