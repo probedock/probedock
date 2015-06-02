@@ -63,7 +63,7 @@ ProbeDock::Application.configure do
   # config.force_ssl = true
 
   # Set to :debug to see everything in the log.
-  config.log_level = :info
+  config.log_level = ENV['PROBE_DOCK_LOG_LEVEL'] ? ENV['PROBE_DOCK_LOG_LEVEL'].to_sym : :info
 
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :subdomain, :uuid ]
