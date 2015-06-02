@@ -207,6 +207,9 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
         params: {
           mine: 1,
           organizationId: $scope.membership.organizationId
+        },
+        custom: {
+          ignoreForbidden: true
         }
       }).then(function(res) {
         $scope.existingMembership = res.data.length ? res.data[0] : null;

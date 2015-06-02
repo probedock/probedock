@@ -92,8 +92,10 @@ angular.module('probedock.auth', ['base64', 'probedock.storage'])
     });
 
     // TODO: better authorization
-    $rootScope.$on('auth.forbidden', function() {
-      $state.go('error', { type: 'forbidden' });
+    $rootScope.$on('auth.forbidden', function(event, err) {
+      if (!err.config.custom || !err.config.custom.ignoreForbidden) {
+        $state.go('error', { type: 'forbidden' });
+      }
     });
 
     $rootScope.$on('auth.notFound', function(event, err) {
