@@ -22,11 +22,14 @@ div ng-controller='LatestReportsCtrl'
           a href='#' ui-sref='org.reports.show({ id: report.id })'
             report-health-bar report='report' click-for-details=true
         td.runners
-          img.gravatar ng-repeat='runner in report.runners.slice(0, 3)' gravatar-src='runner.primaryEmailMd5' gravatar-size='30' tooltip='{{ runner.name }}'
+          span ng-repeat='runner in report.runners.slice(0, 3)'
+            img.gravatar gravatar-src='runner.primaryEmailMd5' gravatar-size='30' tooltip='{{ runner.name }}'
+            span.hidden-xs  {{ runner.name }}
         td.duration.hidden-xs.hidden-sm {{ report.duration | durationFormat }}
         td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
         td.projects.hidden-xs
-          .label.label-primary ng-repeat='project in report.projects' {{ project.name }}
+          span ng-repeat='project in report.projects'
+            .label.label-primary ng-repeat='version in report.projectVersions' {{ project.name }} {{ version.name }}
     tfoot
       tr
         td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/pagination.html'
