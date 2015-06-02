@@ -29,7 +29,7 @@ div ng-controller='LatestReportsCtrl'
         td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
         td.projects.hidden-xs
           span ng-repeat='project in report.projects'
-            .label.label-primary ng-repeat='version in report.projectVersions' {{ project.name }} {{ version.name }}
+            .label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project.name }} {{ version.name }}
     tfoot
       tr
         td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/pagination.html'
