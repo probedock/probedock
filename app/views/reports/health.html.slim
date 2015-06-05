@@ -1,2 +1,2 @@
 - results.each do |r|
-  a class=[r.active? ? (r.passed? ? 'p' : 'f') : 'i'] data-n=r.name data-d=r.duration
+  a class=[r.active? ? (r.passed? ? 'p' : 'f') : 'i'] data-k=r.test.key.try(:key) data-n=r.name data-d=r.duration

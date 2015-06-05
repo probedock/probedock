@@ -29,7 +29,7 @@
     h3 List of results
     p.empty ng-if='!report' Loading...
     .result.col-xs-12.col-lg-6 ng-repeat-start='result in results' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
-      .panel ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
+      .panel id='{{ testAnchor(result) }}' ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
         .panel-body
           test-key-label.pull-right ng-if='result.key' key='result.key'
           h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}' {{ result.name }}

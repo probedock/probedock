@@ -92,7 +92,7 @@ module ProbeDock
           limit = 100
 
           begin
-            current_results = record.results.order('name, id').offset(offset).limit(limit).to_a
+            current_results = record.results.order('name, id').offset(offset).limit(limit).includes(test: :key).to_a
             html << report_health_template.render(OpenStruct.new(results: current_results))
             offset += limit
           end while current_results.present?

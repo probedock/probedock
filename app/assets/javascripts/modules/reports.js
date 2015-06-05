@@ -102,30 +102,11 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
 
       var tab = _.findWhere($scope.reportTabs, { id: reportId });
       if (!tab) {
-        tab = { id: reportId };
+        tab = { id: reportId, loading: true };
         $scope.reportTabs.push(tab);
       }
 
       selectTab(reportId);
-
-      if (!tab.report) {
-        if (tab.loading) {
-          return;
-        }
-
-        tab.loading = true;
-
-        getTabReport(reportId).then(function(report) {
-          tab.loading = false;
-          tab.report = report;
-        });
-      }
-    }
-
-    function getTabReport(id) {
-      return api({
-        url: '/reports/' + id
-      });
     }
 
     function selectTab(id) {
@@ -138,11 +119,25 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     }
   })
 
-  .controller('ReportDetailsCtrl', function(api, $scope, $stateParams) {
+  .directive('reportDetails', function() {
+    return {
+      restrict: 'E',
+      controller: 'ReportDetailsCtrl',
+      templateUrl: '/templates/report-details.html',
+      scope: {
+        report: '='
+      }
+    };
+  })
+
+  .controller('ReportTabCtrl', function(api, $scope) {
 
     api({
-      url: '/reports/' + $stateParams.id
-    }).then(showReport);
+      url: '/reports/' + $scope.reportTab.id
+    }).then(function(res) {
+      $scope.report = res.data;
+      $scope.reportTab.loading = false;
+    });
 
     $scope.reportTime = function() {
       if (!$scope.report) {
@@ -162,10 +157,27 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       var runners = _.first(_.pluck($scope.report.runners, 'name'), 3);
       return reportTime + ' by ' + runners.join(', ');
     };
+  })
 
-    function showReport(response) {
+  .controller('ReportDetailsCtrl', function(api, $scope) {
 
-      var report = $scope.report = response.data;
+    $scope.$watch('report', function(report) {
+      if (report) {
+        showReport(report);
+      }
+    });
+
+    $scope.testAnchor = function(result) {
+      if (result.key) {
+        return 'test-k-' + result.key;
+      } else {
+        return 'test-n-' + result.name.replace(/\s+/g, '');
+      }
+    };
+
+    function showReport(report) {
+
+      $scope.report = report;
 
       var numberPassed = report.passedResultsCount - report.inactivePassedResultsCount,
           numberInactive = report.inactiveResultsCount,
@@ -259,11 +271,27 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     };
   })
 
-  .directive('healthTooltips', function($compile) {
+  .directive('healthTooltips', function($compile, $document) {
     return function(scope, element, attrs) {
 
       var titleTemplate = _.template('<strong class="<%= titleClass %>"><%- title %></strong>'),
           contentTemplate = _.template('<ul class="list-unstyled"><li><strong>Duration:</strong> <%- duration %></li></ul>');
+
+      element.on('click', 'a', function() {
+
+        var e = $(this);
+
+        var testElement;
+        if (e.data('k')) {
+          testElement = $('#test-k-' + e.data('k'));
+        } else if (e.data('n')) {
+          testElement = $('#test-n-' + e.data('n').replace(/\s+/g, ''));
+        }
+
+        if (testElement.length) {
+          $document.duScrollTo(testElement, 50, 1000);
+        }
+      });
 
       element.on('mouseenter', 'a', function() {
 
