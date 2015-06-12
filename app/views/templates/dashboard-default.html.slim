@@ -59,7 +59,7 @@
       .panel-heading
         h3.panel-title New Tests
       .panel-body
-        canvas.chart.chart-bar height='100' data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
+        canvas.chart.chart-line height='100' data='chart.data' labels='chart.labels' options='chart.options' ng-if='chart.data.length'
         .empty ng-show='chart.data && !chart.data.length'
           em No tests have been added recently.
   .col-md-6.col-xs-12 ng-if='currentUser && orgIsActive() && currentMember()'

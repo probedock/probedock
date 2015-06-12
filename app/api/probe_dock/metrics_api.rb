@@ -35,16 +35,24 @@ module ProbeDock
       get :'new-tests' do
         authorize! :organization, :data
 
-        rel = ProjectTest.joins(:project).where(projects: { organization_id: current_organization.id }).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.first_run_at) as project_tests_day")
-        rel = rel.where 'project_tests.first_run_at >= ?', 30.days.ago
-        rel = rel.group('project_tests_day').order('project_tests_day').limit(7)
+        start_date = 29.days.ago.beginning_of_day
 
-        rel.to_a.collect do |data|
-          {
-            date: data.project_tests_day.strftime('%Y-%m-%d'),
-            testsCount: data.project_tests_count
-          }
+        rel = ProjectTest.joins(:project).where(projects: { organization_id: current_organization.id }).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.first_run_at) as project_tests_day")
+        rel = rel.where 'project_tests.first_run_at >= ?', start_date
+        rel = rel.group('project_tests_day').order('project_tests_day DESC')
+
+        counts = rel.to_a.inject({}){ |memo,data| memo[data.project_tests_day.strftime('%Y-%m-%d')] = data.project_tests_count; memo }
+
+        result = []
+        current_date = start_date
+
+        30.times do |i|
+          date = current_date.strftime('%Y-%m-%d')
+          result << { date: date, testsCount: counts.fetch(date, 0) }
+          current_date += 1.day
         end
+
+        result
       end
     end
   end

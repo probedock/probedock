@@ -58,14 +58,6 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
       }
     };
 
-    $scope.chartFormatX = function(timestamp) {
-      return moment(timestamp).format('ll');
-    };
-
-    $scope.chartTooltip = function(key, x, y, e, graph) {
-      return y + ' new tests on ' + moment(new Date(x)).format('ll');
-    };
-
     function fetchMetrics() {
       return api({
         url: '/metrics/new-tests',
@@ -84,7 +76,7 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
       $scope.chart.data = [ series ];
 
       _.each(response.data, function(data) {
-        $scope.chart.labels.push(moment(data.date).format('ddd'));
+        $scope.chart.labels.push(moment(data.date).format('DD.MM'));
         series.push(data.testsCount);
       });
     }
