@@ -34,7 +34,7 @@ pid ENV['PROBE_DOCK_UNICORN_PID_PATH'] || '/dev/null'
 # Additionally, ome applications/frameworks log to stderr or stdout,
 # so prevent them from going to /dev/null when daemonized here:
 stderr_path File.expand_path(ENV['PROBE_DOCK_UNICORN_STDERR_PATH'], APP_PATH) if ENV['PROBE_DOCK_UNICORN_STDERR_PATH']
-stderr_path File.expand_path(ENV['PROBE_DOCK_UNICORN_STDOUT_PATH'], APP_PATH) if ENV['PROBE_DOCK_UNICORN_STDOUT_PATH']
+stdout_path File.expand_path(ENV['PROBE_DOCK_UNICORN_STDOUT_PATH'], APP_PATH) if ENV['PROBE_DOCK_UNICORN_STDOUT_PATH']
 
 # combine REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
@@ -89,4 +89,3 @@ after_fork do |server, worker|
   # correctly implements pread()/pwrite() system calls)
   $redis.disconnect!
 end
-
