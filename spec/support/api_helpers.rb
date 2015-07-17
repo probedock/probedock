@@ -58,7 +58,7 @@ module SpecApiHelper
 
     expect(response.status).to eq(400)
     expect(response.content_type).to eq(media_type(:errors))
-    
+
     body = MultiJson.load response.body, mode: :strict
     expect(body).to be_a_kind_of(Hash)
 

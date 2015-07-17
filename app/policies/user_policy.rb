@@ -17,7 +17,11 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class UserPolicy < ApplicationPolicy
   def create?
-    user.try(:is?, :admin) || otp_record.present?
+    if record.human?
+      user.try(:is?, :admin) || otp_record.present?
+    else
+      user.try(:is?, :admin) || (record.memberships.present? && user.try(:membership_in, record.memberships.first.organization).try(:admin?))
+    end
   end
 
   def index?
@@ -51,15 +55,20 @@ class UserPolicy < ApplicationPolicy
       Jbuilder.new do |json|
         json.id record.api_id
         json.name record.name
+        json.technical record.technical
+        json.organizationId record.memberships.first.organization.api_id if record.technical?
 
-        # TODO: cache email MD5
-        json.primaryEmailMd5 Digest::MD5.hexdigest(record.primary_email.address)
+        if record.human?
 
-        if user == record || user.try(:is?, :admin) || ((user.try(:organizations) || []) & record.organizations).present?
-          json.primaryEmail record.primary_email.address
+          # TODO: cache email MD5
+          json.primaryEmailMd5 Digest::MD5.hexdigest(record.primary_email.address)
 
-          unless options[:link]
-            json.emails serialize(record.emails.to_a)
+          if user == record || user.try(:is?, :admin) || ((user.try(:organizations) || []) & record.organizations).present?
+            json.primaryEmail record.primary_email.address
+
+            unless options[:link]
+              json.emails serialize(record.emails.to_a)
+            end
           end
         end
 

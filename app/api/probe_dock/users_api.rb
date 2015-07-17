@@ -22,7 +22,7 @@ module ProbeDock
 
       helpers do
         def parse_user
-          parse_object :name, :primaryEmail, :active, :password, :passwordConfirmation
+          parse_object :name, :primaryEmail, :active, :technical, :organizationId, :password, :passwordConfirmation
         end
 
         def current_otp_record
@@ -34,14 +34,22 @@ module ProbeDock
 
       post do
         authenticate
-        authorize! User, :create
 
         data = parse_user
         email = data.delete(:primary_email).try(:to_s).try(:downcase)
+        org_id = data.delete :organization_id
         data[:password_confirmation] ||= ''
 
+        user = User.new data
+
         User.transaction do
-          user = User.new data
+
+          if data[:technical] && org_id.present?
+            org = Organization.where(api_id: org_id).first
+            user.memberships << Membership.new(user: user, organization: org)
+          end
+
+          authorize! user, :create
 
           if email.present? && email != current_otp_record.try(:organization_email).try(:address)
             authorize! user, :set_email

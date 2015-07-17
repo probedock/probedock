@@ -35,7 +35,7 @@ class Membership < ActiveRecord::Base
   belongs_to :user
 
   validates :organization, presence: true
-  validates :organization_email, presence: true
+  validates :organization_email, presence: { if: ->(m){ m.user_id && m.user.human? } }
   validates :user_id, uniqueness: { scope: :organization_id, if: :user_id }
   validate :organization_email_must_be_free_or_owned_by_user
 
@@ -46,7 +46,7 @@ class Membership < ActiveRecord::Base
   end
 
   def add_organization_email_to_user
-    if user.present? && organization_email.user.blank?
+    if user.present? && organization_email.present? && organization_email.user.blank?
       organization_email.user = user
       organization_email.active = true
       organization_email.save!

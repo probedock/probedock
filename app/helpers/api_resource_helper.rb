@@ -86,6 +86,9 @@ module ApiResourceHelper
       end
     end
 
+    # TODO: raise error
+    ProbeDock::API.logger.debug "Validation errors: #{errors}"
+
     errors
   end
 

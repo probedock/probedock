@@ -103,6 +103,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'cucumber-rails', require: false
   gem 'capybara'
   gem 'selenium-webdriver', '2.45.0'
   gem 'sqlite3'

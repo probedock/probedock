@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141031124422) do
+ActiveRecord::Schema.define(version: 20150717113140) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   create_table "memberships", force: :cascade do |t|
     t.string   "api_id",                limit: 12,              null: false
     t.integer  "user_id"
-    t.integer  "organization_email_id",                         null: false
+    t.integer  "organization_email_id"
     t.integer  "organization_id",                               null: false
     t.integer  "roles_mask",                        default: 0, null: false
     t.string   "otp",                   limit: 255
@@ -273,12 +273,13 @@ ActiveRecord::Schema.define(version: 20141031124422) do
   create_table "users", force: :cascade do |t|
     t.string   "api_id",           limit: 5,                  null: false
     t.string   "name",             limit: 25,                 null: false
-    t.boolean  "active",                       default: true, null: false
-    t.string   "password_digest",  limit: 255,                null: false
-    t.integer  "roles_mask",                   default: 0,    null: false
+    t.boolean  "active",                      default: true,  null: false
+    t.string   "password_digest"
+    t.integer  "roles_mask",                  default: 0,     null: false
     t.integer  "primary_email_id"
     t.datetime "created_at",                                  null: false
     t.datetime "updated_at",                                  null: false
+    t.boolean  "technical",                   default: false, null: false
   end
 
   add_index "users", ["api_id"], name: "index_users_on_api_id", unique: true, using: :btree

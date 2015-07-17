@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
 
   before_create{ set_identifier :api_id }
 
-  has_secure_password
+  has_secure_password validations: false
 
   # List of roles. DO NOT change the order of the roles, as they
   # are stored in a bitmask. Only append new roles to the list.
@@ -44,8 +44,14 @@ class User < ActiveRecord::Base
   strip_attributes except: :password_digest
   validates :name, presence: true, uniqueness: true, length: { maximum: 25 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
   # TODO: validate min password length
-  validates :primary_email, presence: true
+  validates :primary_email, presence: { unless: :technical }
   validate :primary_email_must_be_among_emails
+
+  validate do |record|
+    record.errors.add :password, :blank if human? && record.password_digest.blank?
+  end
+
+  validates :password, length: { unless: :technical, maximum: 512 }, confirmation: { unless: :technical, allow_blank: true }
 
   def generate_auth_token
     JSON::JWT.new({
@@ -68,9 +74,17 @@ class User < ActiveRecord::Base
     memberships.find{ |m| m.organization == organization }
   end
 
+  def technical?
+    !!technical
+  end
+
+  def human?
+    !technical
+  end
+
   private
 
   def primary_email_must_be_among_emails
-    errors.add :primary_email, :must_be_among_emails unless emails.include? primary_email
+    errors.add :primary_email, :must_be_among_emails unless primary_email.blank? || emails.include?(primary_email)
   end
 end
