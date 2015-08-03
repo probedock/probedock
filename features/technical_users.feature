@@ -48,6 +48,22 @@ Feature: Technical users
 
 
 
+  Scenario: An organization admin should not be able to create a technical user with a password.
+    Given organization Initech exists
+    And user blumbergh who is an admin of Initech exists
+    When blumbergh POSTs JSON to /api/users with:
+      | property       | value                       |
+      | name           | milton                      |
+      | technical      | true                        |
+      | organizationId | @idOf: Initech              |
+      | password       | foo                         |
+    Then the response should be HTTP 422 with the following errors:
+      | path      | message                |
+      | /password | Password must be blank |
+    And there should be no changes to the number of records in the database
+
+
+
   Scenario: A technical user should not be able to log in.
     Given organization Initech exists
     And user milton who is a technical user for Initech exists

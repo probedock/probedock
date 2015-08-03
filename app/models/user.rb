@@ -50,6 +50,7 @@ class User < ActiveRecord::Base
 
   validate do |record|
     record.errors.add :password, :blank if human? && record.password_digest.blank?
+    record.errors.add :password, :present if technical? && record.password_digest.present?
   end
 
   validates :password, length: { unless: :technical, maximum: 512 }, confirmation: { unless: :technical, allow_blank: true }
