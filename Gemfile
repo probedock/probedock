@@ -99,7 +99,7 @@ group :development, :test do
   gem 'guard-process'
 
   gem 'probedock-rspec'
-  #gem 'probedock-rspec', path: "#{ENV['HOME']}/Projects/probedock-rspec"
+  gem 'probedock-cucumber'
 end
 
 group :test do

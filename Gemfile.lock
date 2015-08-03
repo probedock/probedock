@@ -156,7 +156,7 @@ GEM
     jbuilder (2.2.16)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
-    json (1.8.2)
+    json (1.8.3)
     json-jwt (1.0.0)
       activesupport
       bindata
@@ -201,15 +201,19 @@ GEM
     notiffany (0.0.6)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    oj (2.12.8)
+    oj (2.12.10)
     paint (1.0.0)
     pg (0.18.2)
-    probedock-rspec (0.5.3)
+    probedock-cucumber (0.1.1)
+      probedock-ruby (~> 0.1)
+    probedock-rspec (0.5.4)
+      probedock-ruby (~> 0.1)
+      rspec (~> 3.1)
+    probedock-ruby (0.1.1)
       httparty (~> 0.13)
       oj (~> 2.1)
       paint (~> 1.0)
       rake (~> 10.1)
-      rspec (~> 3.1)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -439,6 +443,7 @@ DEPENDENCIES
   oj
   paint
   pg
+  probedock-cucumber
   probedock-rspec
   pundit
   quiet_assets
