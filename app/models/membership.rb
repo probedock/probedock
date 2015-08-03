@@ -35,18 +35,27 @@ class Membership < ActiveRecord::Base
   belongs_to :user
 
   validates :organization, presence: true
-  validates :organization_email, presence: true
+  validates :organization_email, presence: { if: ->(m){ m.user_id && m.user.human? } }
   validates :user_id, uniqueness: { scope: :organization_id, if: :user_id }
   validate :organization_email_must_be_free_or_owned_by_user
+  validate :technical_user_must_not_be_in_another_organization
 
   private
 
   def organization_email_must_be_free_or_owned_by_user
-    errors.add :organization_email, :must_be_owned_by_user if organization_email.present? && user.present? && !user.emails.include?(organization_email) && organization_email.user.present?
+    if organization_email.present? && user.present? && !user.emails.include?(organization_email) && organization_email.user.present?
+      errors.add :organization_email, :must_be_owned_by_user
+    end
+  end
+
+  def technical_user_must_not_be_in_another_organization
+    if organization.present? && user.present? && user.technical? && user.memberships.reject{ |m| m.organization_id == organization.id }.present?
+      errors.add :user_id, :must_not_be_technical_user
+    end
   end
 
   def add_organization_email_to_user
-    if user.present? && organization_email.user.blank?
+    if user.present? && organization_email.present? && organization_email.user.blank?
       organization_email.user = user
       organization_email.active = true
       organization_email.save!

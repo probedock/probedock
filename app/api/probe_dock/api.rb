@@ -37,10 +37,12 @@ module ProbeDock
     rescue_from :all do |e|
 
       if e.kind_of? Errapi::ValidationFailed
-        next Rack::Response.new([ JSON.dump(e.context.serialize) ], 422, { "Content-Type" => "application/json" }).finish
+        body = JSON.dump(e.context.serialize)
+        API.logger.debug "Validation errors: #{body}"
+        next Rack::Response.new([ body ], 422, { "Content-Type" => "application/json" }).finish
       end
 
-      if Rails.env != 'production'
+      if Rails.env == 'development'
         puts e.message
         puts e.backtrace
       end
@@ -53,7 +55,7 @@ module ProbeDock
       when ActiveRecord::RecordNotFound
         [ 404, 'No resource was found matching the request URI.' ]
       else
-        API.logger.error e
+        API.logger.error %/#{e.message}\n#{e.backtrace.join("\n")}/
         [ 500, 'An internal server error occurred.' ]
       end
 

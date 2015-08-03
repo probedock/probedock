@@ -9,7 +9,7 @@ development:
   <<: *default
   database: <%= ENV['PROBE_DOCK_DATABASE_NAME'] %>
 
-test:
+test: &test
   <<: *default
   database: <%= ENV['PROBE_DOCK_TEST_DATABASE_NAME'] %>
 
@@ -19,3 +19,6 @@ production:
   database: <%= ENV['PROBE_DOCK_DATABASE_NAME'] %>
   username: <%= ENV['PROBE_DOCK_DATABASE_USERNAME'] %>
   password: <%= ENV['PROBE_DOCK_DATABASE_PASSWORD'] %>
+
+cucumber:
+  <<: *test

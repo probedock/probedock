@@ -99,10 +99,11 @@ group :development, :test do
   gem 'guard-process'
 
   gem 'probedock-rspec'
-  #gem 'probedock-rspec', path: "#{ENV['HOME']}/Projects/probedock-rspec"
+  gem 'probedock-cucumber'
 end
 
 group :test do
+  gem 'cucumber-rails', require: false
   gem 'capybara'
   gem 'selenium-webdriver', '2.45.0'
   gem 'sqlite3'

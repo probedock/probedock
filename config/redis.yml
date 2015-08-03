@@ -1,3 +1,4 @@
 development: <%= ENV['PROBE_DOCK_REDIS_URL'] %>
 test: <%= ENV['PROBE_DOCK_TEST_REDIS_URL'] %>
+cucumber: <%= ENV['PROBE_DOCK_TEST_REDIS_URL'] %>
 production: <%= ENV['PROBE_DOCK_REDIS_URL'] %>

@@ -47,6 +47,10 @@ FactoryGirl.define do
           organization_roles [ :admin ]
         end
       end
+
+      factory :technical_user do
+        technical true
+      end
     end
   end
 end

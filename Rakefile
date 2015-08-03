@@ -28,8 +28,11 @@ RakeVersion::Tasks.new do |v|
   v.copy 'bower.json', 'package.json', 'probedock.yml', 'app/assets/javascripts/boot.js.erb', 'spec/javascripts/version.spec.js'
 end
 
-#if Rails.env != 'production'
-#  require 'probe_dock_rspec'
-#  ProbeDockRSpec::Tasks.new
-#  Rake::Task['spec'].prerequisites.unshift('spec:probedock:uid')
-#end
+if Rails.env != 'production'
+
+  Rake::Task['spec'].prerequisites.unshift('cucumber')
+
+  require 'probedock-rspec'
+  ProbeDockProbe::Tasks.new
+  Rake::Task['spec'].prerequisites.unshift('spec:probedock:uid')
+end

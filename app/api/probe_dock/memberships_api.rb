@@ -71,7 +71,7 @@ module ProbeDock
 
         Membership.transaction do
 
-          membership.organization_email = Email.where(address: data[:organization_email]).first_or_create
+          membership.organization_email = Email.where(address: data[:organization_email]).first_or_create if data.key? :organization_email
           membership.roles = data[:roles] if data[:roles].kind_of?(Array) && data[:roles].all?{ |r| r.kind_of?(String) }
 
           if data[:user_id].present?

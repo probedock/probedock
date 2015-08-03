@@ -193,6 +193,8 @@ en:
       messages: &errors_messages
         taken: "has already been taken"
         record_invalid: "Validation failed: %{errors}"
+        must_be_owned_by_user: "must be owned by the user"
+        must_not_be_technical_user: "must not be a technical user of another organization"
 
   activerecord:
     errors:

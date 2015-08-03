@@ -33,7 +33,7 @@ module ProbeDock
         User.where(name: parts[0]).first
       end
 
-      # TODO: protect against timing attacks
+      raise ProbeDock::Errors::Unauthorized.new 'Technical users cannot authenticate' if user.try(:technical?)
       raise ProbeDock::Errors::Unauthorized.new 'Invalid credentials' unless user && user.authenticate(parts[1])
 
       {
