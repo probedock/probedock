@@ -4,7 +4,12 @@ Given /organization (\w+) exists/ do |name|
   add_named_record name, create(:organization, options)
 end
 
-Given /user (\w+) who is an admin for (\w+) exists/ do |user_name,organization_name|
+Given /user (\w+) who is a member of (\w+) exists/ do |user_name,organization_name|
+  org = Organization.where(name: organization_name.downcase).first!
+  add_named_record user_name, create(:org_member, name: user_name, organization: org)
+end
+
+Given /user (\w+) who is an admin of (\w+) exists/ do |user_name,organization_name|
   org = Organization.where(name: organization_name.downcase).first!
   add_named_record user_name, create(:org_admin, name: user_name, organization: org)
 end
