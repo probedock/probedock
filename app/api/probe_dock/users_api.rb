@@ -52,7 +52,7 @@ module ProbeDock
           authorize! user, :create
 
           if email.present? && email != current_otp_record.try(:organization_email).try(:address)
-            authorize! user, :set_email
+            authorize! user, :update_email
             user.primary_email = Email.where(address: email).first_or_initialize
             user.primary_email.user = user
           elsif current_otp_record.kind_of? Membership
@@ -114,16 +114,21 @@ module ProbeDock
             updates = parse_user
 
             record.name = updates[:name] if updates.key? :name
-            record.active = !!updates[:active] if updates.key? :active
+
+            if updates.key?(:active) && !!updates[:active] != record.active
+              authorize! record, :update_active
+              record.active = !!updates[:active]
+            end
 
             # FIXME: only allow to set primary email if among existing emails
             if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.address
-              authorize! record, :set_email
+              authorize! record, :update_email
               record.primary_email = Email.where(address: updates[:primary_email].to_s.downcase).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.try(:address)
               record.primary_email.user = record
             end
 
             if updates.key? :password
+              authorize! record, :update_password
               record.password = updates[:password]
               record.password_confirmation = updates[:password_confirmation] || ''
             end

@@ -5,6 +5,8 @@ module NamedRecords
   end
 
   def named_record name
-    @named_records ? @named_records[name] : nil
+    record = @named_records.try :[], name
+    raise "Unknown named record #{name.inspect}" unless record
+    record
   end
 end

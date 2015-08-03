@@ -9,31 +9,30 @@ When /(\w+) authenticates by POSTing to \/api\/authentication with Basic passwor
   @response_body = MultiJson.load @response.body
 end
 
+When /(\w+) PATCHes JSON to (.*) with:/ do |user_name,api_path,properties|
+
+  store_model_counts
+
+  user = named_record user_name
+  header 'Content-Type', 'application/json'
+  header 'Authorization', "Bearer #{user.generate_auth_token}"
+
+  body = cucumber_properties_to_json properties
+
+  @request_body = body
+  @response = patch interpolate_api_url(api_path), MultiJson.dump(@request_body)
+  @response_body = MultiJson.load @response.body
+end
+
 When /(\w+) POSTs JSON to (.*) with:/ do |user_name,api_path,properties|
 
   store_model_counts
 
-  user = User.where(name: user_name).first!
+  user = named_record user_name
   header 'Content-Type', 'application/json'
   header 'Authorization', "Bearer #{user.generate_auth_token}"
 
-  body = {}
-
-  properties.hashes.each do |h|
-    name, value = h['property'], h['value']
-
-    if m = value.match(/^@idOf: (.*)$/)
-      body[name] = named_record(m[1]).api_id
-    else
-      body[name] = if value == 'true'
-        true
-      elsif value == 'false'
-        false
-      else
-        value
-      end
-    end
-  end
+  body = cucumber_properties_to_json properties
 
   @request_body = body
   @response = post api_path, MultiJson.dump(@request_body)
@@ -46,13 +45,20 @@ end
 
 Then /the response body should include in addition to the request body:/ do |properties|
 
+  raise "No request body found" unless @request_body
+  raise "No response body found" unless @response_body
+
   expected = @request_body.dup
 
   properties.hashes.each do |h|
     name, value = h['property'], h['value']
 
-    expected[name] = if value == '@alphanumeric'
+    expected[name] = if m = value.match(/^@idOf: (.*)$/)
+      named_record(m[1]).api_id
+    elsif value == '@alphanumeric'
       /\A[a-z0-9]+\Z/
+    elsif value == '@string'
+      /.+/
     elsif value == '@iso8601'
       /.*/ # TODO: validate ISO 8601 dates
     elsif value == 'true'

@@ -15,29 +15,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
-module ProbeDock
-  class AccessTokensApi < Grape::API
+class AccessToken
+  attr_accessor :user
 
-    namespace :tokens do
+  def initialize user = nil
+    @user = user
+  end
 
-      before do
-        authenticate!
-      end
-
-      post do
-
-        user = if params[:userId].present?
-          User.where(api_id: params[:userId].to_s).first!
-        else
-          current_user
-        end
-
-        token = AccessToken.new user
-
-        authorize! token, :create
-
-        { token: token.token, userId: token.user.api_id }
-      end
-    end
+  def token
+    user.generate_auth_token
   end
 end

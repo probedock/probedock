@@ -35,7 +35,7 @@ class Membership < ActiveRecord::Base
   belongs_to :user
 
   validates :organization, presence: true
-  validates :organization_email, presence: { if: ->(m){ m.user_id && m.user.human? } }
+  validates :organization_email, presence: { if: ->(m){ m.user_id && m.user.human? } }, absence: { if: ->(m){ m.user_id && m.user.technical? } }
   validates :user_id, uniqueness: { scope: :organization_id, if: :user_id }
   validate :organization_email_must_be_free_or_owned_by_user
   validate :technical_user_must_not_be_in_another_organization

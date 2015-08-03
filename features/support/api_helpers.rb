@@ -1,4 +1,32 @@
 module ApiHelpers
+  def interpolate_api_url url
+    url.gsub /\{@idOf: ([a-z0-9\-]+)\}/ do |*args|
+      named_record($1).api_id
+    end
+  end
+
+  def cucumber_properties_to_json properties
+    json = {}
+
+    properties.hashes.each do |h|
+      name, value = h['property'], h['value']
+
+      if m = value.match(/^@idOf: (.*)$/)
+        json[name] = named_record(m[1]).api_id
+      else
+        json[name] = if value == 'true'
+          true
+        elsif value == 'false'
+          false
+        else
+          value
+        end
+      end
+    end
+
+    json
+  end
+
   def http_status_code_description code
     name = Rack::Utils::HTTP_STATUS_CODES[code.to_i]
     name ? "HTTP #{code} #{name}" : "HTTP #{code}"
@@ -38,6 +66,7 @@ module ApiHelpers
           msg = %/expected JSON object at "#{path}" to have the following properties: #{expectations.keys.join(', ')}/
           msg << %/\n  got missing properties: #{missing_keys.join(', ')}/ if missing_keys.present?
           msg << %/\n  got extra properties: #{extra_keys.join(', ')}/ if extra_keys.present?
+          msg << %/\n\n#{JSON.pretty_generate(json)}/
           errors << msg
         end
       else

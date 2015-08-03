@@ -69,6 +69,22 @@ class ApplicationPolicy
     serializer_class.new @user_context || @user, @record
   end
 
+  private
+
+  def admin?
+    user.try :admin?
+  end
+
+  def human?
+    user.try :human?
+  end
+
+  def technical?
+    user.try :technical?
+  end
+
+  public
+
   class Scope
     attr_reader :user, :organization, :otp_record, :params, :scope
 

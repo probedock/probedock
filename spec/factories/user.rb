@@ -50,6 +50,9 @@ FactoryGirl.define do
 
       factory :technical_user do
         technical true
+        password nil
+        primary_email_id nil
+        emails []
       end
     end
   end

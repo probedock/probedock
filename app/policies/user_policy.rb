@@ -17,32 +17,44 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class UserPolicy < ApplicationPolicy
   def create?
-    if record.human?
-      user.try(:is?, :admin) || otp_record.present?
-    else
-      user.try(:is?, :admin) || (record.memberships.present? && user.try(:membership_in, record.memberships.first.organization).try(:admin?))
-    end
+    admin? || otp_record.present? || org_admin_of_technical_user?
   end
 
   def index?
-    user.try(:is?, :admin) || params[:name].present?
+    admin? || params[:name].present?
   end
 
   def show?
-    user == record || user.is?(:admin)
+    admin? || user == record
   end
 
   def update?
-    user == record || user.is?(:admin)
+    admin? || user == record || org_admin_of_technical_user?
+  end
+
+  def update_active?
+    admin? || org_admin_of_technical_user?
+  end
+
+  def update_email?
+    admin?
+  end
+
+  def update_password?
+    admin? || user == record
   end
 
   def destroy?
-    user.is? :admin
+    admin?
   end
 
-  def set_email?
-    user.is? :admin
+  private
+
+  def org_admin_of_technical_user?
+    record.technical? && record.memberships.present? && user.try(:membership_in, record.memberships.first.organization).try(:admin?)
   end
+
+  public
 
   class Scope < Scope
     def resolve

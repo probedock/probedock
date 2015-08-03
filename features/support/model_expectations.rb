@@ -13,11 +13,26 @@ module ModelExpectations
     @errors.compare user.roles.to_a.collect(&:to_s).sort, json[:roles].try(:sort), :roles
     @errors.compare user.created_at.iso8601(3), json[:createdAt], :created_at
 
+    if json.key? :primaryEmail
+      @errors.compare user.primary_email.address, json[:primaryEmail], :primary_email
+    end
+
+    if json.key? :primaryEmailMd5
+      @errors.compare Digest::MD5.hexdigest(user.primary_email.address), json[:primaryEmailMd5], :primary_email_md5
+    end
+
+    if !json.key?(:primaryEmail) && !json.key?(:primaryEmailMd5)
+      @errors.ensure_blank user.primary_email.try(:address), :primary_email
+    end
+
+    if json.key? :emails
+      @errors.compare user.emails.collect(&:address).sort, json[:emails].sort, :emails
+    else
+      @errors.ensure_blank user.emails.collect(&:address), :emails
+    end
+
     if json[:technical]
       @errors << %/expected user to have no password, but it has a password digest/ unless user.password_digest.nil?
-      @errors << %/expected user to have no roles, got #{user.roles.to_a.inspect}/ unless user.roles.empty?
-      @errors << %/expected user to have no primary e-mail, got #{user.primary_email.inspect}/ unless user.primary_email.nil?
-      @errors << %/expected user to have no e-mails, got #{user.emails.collect(&:address).inspect}/ unless user.emails.blank?
       @errors << %/expected user to have exactly one membership, found #{user.memberships.length}/ unless user.memberships.length == 1
     end
 
@@ -46,6 +61,16 @@ module ModelExpectations
     def compare actual, expected, error
       if actual != expected
         error = %/expected :#{error} to be #{expected.inspect}, but got #{actual.inspect}/ if error.kind_of? Symbol
+        @errors << error
+        false
+      else
+        true
+      end
+    end
+
+    def ensure_blank actual, error
+      if actual.present?
+        error = %/expected :#{error} to be blank, but got #{actual.inspect}/ if error.kind_of? Symbol
         @errors << error
         false
       else

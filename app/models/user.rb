@@ -44,8 +44,9 @@ class User < ActiveRecord::Base
   strip_attributes except: :password_digest
   validates :name, presence: true, uniqueness: true, length: { maximum: 25 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
   # TODO: validate min password length
-  validates :primary_email, presence: { unless: :technical }
+  validates :primary_email, presence: { unless: :technical }, absence: { if: :technical }
   validate :primary_email_must_be_among_emails
+  validate :technical_must_not_change
 
   validate do |record|
     record.errors.add :password, :blank if human? && record.password_digest.blank?
@@ -86,5 +87,9 @@ class User < ActiveRecord::Base
 
   def primary_email_must_be_among_emails
     errors.add :primary_email, :must_be_among_emails unless primary_email.blank? || emails.include?(primary_email)
+  end
+
+  def technical_must_not_change
+    errors.add :technical, :must_not_change if technical_changed? && persisted?
   end
 end
