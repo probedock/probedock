@@ -2,6 +2,8 @@
 
 ## Features
 
+* click to copy project API ID
+
 * integrate with travis
 
 * allow to close report tabs

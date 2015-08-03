@@ -89,7 +89,7 @@ module ApiResourceHelper
     # TODO: raise error
     ProbeDock::API.logger.debug "Validation errors: #{errors}"
 
-    errors
+    { errors: errors }
   end
 
   def uuid? value
