@@ -4,22 +4,42 @@ form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && s
     h3.modal-title ng-if='editedMembership.id && !editedMembership.user' Edit Membership
     h3.modal-title ng-if='!editedMembership.id' New Member
   .modal-body
-    .form-group ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
+    .form-group ng-if='!membership.id'
+      label Type
+      .radio
+        label
+          input type='radio' ng-model='settings.technicalUser' name='technical' ng-value='false'
+          | Standard user
+      .radio
+        label
+          input type='radio' ng-model='settings.technicalUser' name='technical' ng-value='true'
+          | Technical user
+      p.help-block
+        markdown:
+          *Standard users* are the people in your organization. They must be identified by an e-mail which may be used to communicate information relevant to your organization.
+        markdown:
+          *Technical users* are meant to be used on continuous integration servers. They have no e-mail and cannot log in, but they can publish test results to Probe Dock.
+    .form-group ng-if='!settings.technicalUser' ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
       label for='membershipOrgEmail' E-mail
       input#membershipOrgEmail.form-control type='email' name='orgEmail' placeholder='E-mail of the member within the organization' required=true maxlength=255 autofocus=true ng-model='editedMembership.organizationEmail' ng-disabled='editedMembership.id'
       p.help-block
         | This e-mail is used to contact the member about activity regarding the organization.
       p.help-block ng-if='!editedMembership.id'
         | It will also be used to send a registration e-mail if the member doesn't have a registered account.
-    .form-group
+    .form-group ng-if='!settings.technicalUser'
       label for='membershipRoles' Roles
       ui-select#membershipRoles.form-control multiple=true ng-model='editedMembership.roles'
         ui-select-match placeholder='Select a role...' {{ $item }}
         ui-select-choices repeat='role in organizationRoles | filter: $select.search' {{ role }}
       p.help-block
         | Roles give a member additional privileges within the organization.
+    .form-group ng-if='settings.technicalUser' ng-class='{"has-error": membershipForm.name.$dirty && membershipForm.name.$invalid}'
+      label for='user-name' Username
+      input#user-name.form-control type='text' name='name' ng-model='technicalUser.name' placeholder='Unique username' required=true maxlength=25 autofocus=true unique-user-name=true ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
+      p.help-block ng-if='membershipForm.name.$error.uniqueUserName'
+        strong This username is already taken.
   .modal-footer.clearfix
     .btn-group.pull-right
       button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
       button.btn.btn-warning type='button' ng-if='editedMembership.id' ng-click='reset()' ng-disabled='!changed()' Reset
-      button.btn.btn-primary type='submit' ng-disabled='membershipForm.$invalid' Save
+      button.btn.btn-primary type='submit' ng-disabled='!changed() || membershipForm.$invalid' Save

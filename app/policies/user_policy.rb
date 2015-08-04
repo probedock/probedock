@@ -84,6 +84,10 @@ class UserPolicy < ApplicationPolicy
           end
         end
 
+        if record.technical? && options[:with_technical_membership]
+          json.technicalMembership serialize(record.memberships.first, options)
+        end
+
         unless options[:link]
           json.active record.active
           json.roles record.roles.collect(&:to_s)

@@ -79,8 +79,10 @@ angular.module('probedock.api', [ 'probedock.auth', 'probedock.utils' ])
 
       if (existingItem) {
         list[list.indexOf(existingItem)] = item;
+        return 0;
       } else {
         list.push(item);
+        return 1;
       }
     };
 
@@ -94,11 +96,12 @@ angular.module('probedock.api', [ 'probedock.auth', 'probedock.utils' ])
         page: parsePaginationHeader(res, 'X-Pagination-Page', true),
         pageSize: parsePaginationHeader(res, 'X-Pagination-Page-Size', true),
         total: parsePaginationHeader(res, 'X-Pagination-Total', true),
-        filteredTotal: parsePaginationHeader(res, 'X-Pagination-Filtered-Total', false)
+        filteredTotal: parsePaginationHeader(res, 'X-Pagination-Filtered-Total', false),
+        length: res.data.length
       };
 
       pagination.numberOfPages = Math.ceil((pagination.filteredTotal || pagination.total) / pagination.pageSize);
-      pagination.hasMorePages = pagination.page * pagination.pageSize < (pagination.filteredTotal !== undefined ? pagination.filteredTotal : pagination.total);
+      pagination.hasMorePages = pagination.page * pagination.pageSize < (pagination.filteredTotal !== undefined ? pagination.filteredTotal : pagination.total) && pagination.length !== 0;
 
       return pagination;
     };

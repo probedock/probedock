@@ -105,7 +105,7 @@ module ProbeDock
           if current_user && params.key?(:mine)
             if current_organization.present? || current_user.try(:is?, :admin)
               condition = true_flag?(:mine) ? '=' : '!='
-              rel = rel.joins(organization_email: :user).where("users.id #{condition} (?)", current_user.id)
+              rel = rel.joins(organization_email: :user).where("users.id #{condition} ?", current_user.id)
             else
               rel = rel.none unless true_flag?(:mine)
             end
@@ -124,7 +124,7 @@ module ProbeDock
 
         helpers do
           def record
-            @record ||= Membership.where(api_id: params[:id].to_s).first!
+            @record ||= load_resource!(Membership.where(api_id: params[:id].to_s))
           end
         end
 

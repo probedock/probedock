@@ -30,9 +30,9 @@
       .panel-body.text-center
         p Access tokens can be used to authenticate to the API with Bearer Token Authentication.
         p
-          button.btn.btn-success type='button' ng-click='generate()' ng-disabled='busy'
-            span.glyphicon.glyphicon-plus
-            |  Generate a new access token
+          button.btn.btn-default type='button' ng-click='generate()' ng-disabled='busy'
+            span.glyphicon.glyphicon-lock
+            |  Generate an access token
         .alert.alert-danger ng-show='generateError'
           | An error occurred while generating the access token.
         p.text-success ng-show='token'

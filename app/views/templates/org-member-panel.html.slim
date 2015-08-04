@@ -1,0 +1,49 @@
+.panel.panel-default ng-class='{"human-membership": !membership.user.technical, "technical-membership": membership.user.technical}'
+
+  .panel-heading.clearfix
+
+    strong ng-if='membership.user' {{ membership.user.name }}
+    em ng-if='!membership.user' Waiting for user to accept...
+
+    .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
+      button.btn.btn-warning type='button' tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.members.edit({ id: membership.id })'
+        span.glyphicon.glyphicon-pencil
+      button.btn.btn-danger type='button' tooltip='Remove Member' tooltip-append-to-body='true' ng-click='remove()'
+        span.glyphicon.glyphicon-remove
+
+  .panel-body
+
+    .media
+
+      .media-left
+
+        .avatar.glyphicon.glyphicon-cog ng-if='membership.user.technical'
+        a href='#' ng-if='membership.user.primaryEmailMd5'
+          img.avatar.media-object gravatar-src='membership.user.primaryEmailMd5' gravatar-size=64
+
+      .media-body
+
+        .pull-right
+          .label.label-info.pull-right ng-if='!membership.user.technical && !membership.roles.length' user
+          .label.pull-right ng-if='!membership.user.technical' ng-repeat='role in membership.roles.sort()' ng-class='{"label-primary": role == "admin", "label-info": role != "admin"}' {{ role }}
+          button.btn.btn-default.btn-sm type='button' ng-if='membership.user.technical && currentMemberIs("admin")' ng-click='generateAccessToken()'
+            span.glyphicon.glyphicon-lock
+            |  Generate an access token
+
+        dl
+          dt ng-if='membership.organizationEmail' Organization e-mail
+          dd ng-if='membership.organizationEmail' {{ membership.organizationEmail }}
+          dt ng-if='!membership.user.technical && membership.acceptedAt' Member since
+          dd ng-if='!membership.user.technical && membership.acceptedAt' {{ membership.acceptedAt | amDateFormat: 'LL' }}
+          dt ng-if='membership.user.technical && membership.createdAt' Creation date
+          dd ng-if='membership.user.technical && membership.createdAt' {{ membership.createdAt | amDateFormat: 'LL' }}
+
+        p.text-success ng-if='accessToken'
+          strong Here's an access token for this user! It will be valid for one year.
+        form role='form' ng-if='accessToken'
+          .form-group
+            .input-group
+              input.form-control type='text' value='{{ accessToken }}' readonly=true select-on-click=true
+              .input-group-btn
+                .btn.btn-primary clip-copy='accessToken' tooltip='Click to copy' tooltip-append-to-body='true'
+                  span.glyphicon.glyphicon-share

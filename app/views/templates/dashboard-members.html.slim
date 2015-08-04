@@ -17,26 +17,10 @@
         span.glyphicon.glyphicon-plus
         |  Add a member
   .col-lg-9.col-md-8.col-xs-12
-    #orgMembers.col-sm-6.col-xs-12 ng-repeat='membership in memberships | orderBy: "-createdAt"'
-      .panel.panel-default
-        .panel-heading.clearfix
-          strong ng-if='membership.user' {{ membership.user.name }}
-          em ng-if='!membership.user' Waiting for user to accept...
-          .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
-            button.btn.btn-warning type='button' tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.members.edit({ id: membership.id })'
-              span.glyphicon.glyphicon-pencil
-            button.btn.btn-danger type='button' tooltip='Remove Member' tooltip-append-to-body='true' ng-click='remove(membership)'
-              span.glyphicon.glyphicon-remove
-        .panel-body
-          .media
-            .media-left
-              a href='#'
-                img.avatar.media-object gravatar-src='membership.user.primaryEmailMd5' gravatar-size=64
-            .media-body
-              .label.label-info.pull-right ng-if='!membership.roles.length' user
-              .label.pull-right ng-repeat='role in membership.roles.sort()' ng-class='{"label-primary": role == "admin", "label-info": role != "admin"}' {{ role }}
-              dl
-                dt ng-if='membership.organizationEmail' Organization e-mail
-                dd ng-if='membership.organizationEmail' {{ membership.organizationEmail }}
-                dt ng-if='membership.acceptedAt' Member since
-                dd ng-if='membership.acceptedAt' {{ membership.acceptedAt | amDateFormat: 'LL' }}
+    #org-members
+      .membership.human-membership.col-sm-6.col-xs-12 ng-repeat='membership in humanMemberships() | orderBy: "-createdAt"'
+        org-member-panel membership='membership' on-delete='removeMembership(membership)'
+      .col-xs-12 ng-if='technicalMemberships().length'
+        h2 Technical users
+      .membership.technical-membership.col-sm-6.col-xs-12 ng-repeat='membership in technicalMemberships() | orderBy: "-createdAt"'
+        org-member-panel membership='membership' on-delete='removeMembership(membership)'

@@ -19,7 +19,6 @@ module ProbeDock
   class UsersApi < Grape::API
 
     namespace :users do
-
       helpers do
         def parse_user
           parse_object :name, :primaryEmail, :active, :technical, :organizationId, :password, :passwordConfirmation
@@ -29,6 +28,17 @@ module ProbeDock
           @current_otp_record ||= if params.key? :membershipOtp
             Membership.where('otp IS NOT NULL').where(otp: params[:membershipOtp].to_s).where('expires_at > ?', Time.now).first
           end
+        end
+
+        def with_serialization_includes rel
+          rel = rel.includes :memberships if true_flag? :withTechnicalMembership
+          rel
+        end
+
+        def serialization_options *args
+          {
+            with_technical_membership: true_flag?(:withTechnicalMembership)
+          }
         end
       end
 
@@ -97,7 +107,7 @@ module ProbeDock
 
         helpers do
           def record
-            @record ||= User.where(api_id: params[:id].to_s).first!
+            @record ||= load_resource!(User.where(api_id: params[:id].to_s))
           end
         end
 

@@ -43,6 +43,24 @@ angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock
         }
       },
 
+      addAuthFunctions: function($scope) {
+
+        $scope.currentMember = function() {
+          return $rootScope.currentUserIs('admin') || service.currentOrganization && service.currentOrganization.member;
+        };
+
+        $scope.currentMemberIs = function() {
+          if ($rootScope.currentUserIs('admin')) {
+            return true;
+          }
+
+          var org = service.currentOrganization,
+              roles = Array.prototype.slice.call(arguments);
+
+          return org && _.isArray(org.roles) && _.intersection(org.roles, roles).length == roles.length;
+        };
+      },
+
       openForm: function($scope) {
 
         var modal = $modal.open({

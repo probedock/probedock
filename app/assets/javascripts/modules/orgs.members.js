@@ -25,9 +25,23 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
   .controller('OrgMembersCtrl', function(api, orgMembers, orgs, $scope, $state, $stateParams) {
 
     $scope.memberships = [];
-    fetchMemberships();
 
-    $scope.organizationRoles = [ 'admin' ];
+    $scope.removeMembership = removeMembership;
+    $scope.updateMembership = updateMembership;
+
+    $scope.humanMemberships = function() {
+      return _.filter($scope.memberships, function(membership) {
+        return !membership.user || !membership.user.technical;
+      });
+    };
+
+    $scope.technicalMemberships = function() {
+      return _.filter($scope.memberships, function(membership) {
+        return membership.user && membership.user.technical;
+      });
+    };
+
+    fetchMemberships();
 
     $scope.$on('$stateChangeSuccess', function(event, toState) {
       if (toState.name.match(/^org\.dashboard\.members\.(?:new|edit)$/)) {
@@ -35,8 +49,7 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
         var modal = orgMembers.openForm($scope);
 
         modal.result.then(function(membership) {
-          api.pushOrUpdate($scope.memberships, membership);
-          orgs.updateOrganization(_.extend(orgs.currentOrganization, { membershipsCount: orgs.currentOrganization.membershipsCount + 1 }));
+          updateMembership(membership);
           $state.go('^', {}, { inherit: true });
         }, function(reason) {
           if (reason != 'stateChange') {
@@ -45,25 +58,6 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
         });
       }
     });
-
-    $scope.remove = function(membership) {
-
-      var message = "Are you sure you want to remove ";
-      message += membership.user ? membership.user.name : membership.organizationEmail;
-      message += "'s membership?";
-
-      if (!confirm(message)) {
-        return;
-      }
-
-      api({
-        method: 'DELETE',
-        url: '/memberships/' + membership.id
-      }).then(function() {
-        $scope.memberships.splice($scope.memberships.indexOf(membership), 1);
-        orgs.updateOrganization(_.extend(orgs.currentOrganization, { membershipsCount: orgs.currentOrganization.membershipsCount - 1 }));
-      });
-    };
 
     function fetchMemberships(page) {
       page = page || 1;
@@ -78,12 +72,96 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
         }
       }).then(function(res) {
         $scope.memberships = $scope.memberships.concat(res.data);
-        // FIXME: use pagination to determine if more records are available
-        if (res.data.length == 25) {
+        if (res.pagination().hasMorePages) {
           fetchMemberships(++page);
         }
       });
     }
+
+    function updateMembership(membership) {
+      var n = api.pushOrUpdate($scope.memberships, membership);
+      orgs.updateOrganization(_.extend(orgs.currentOrganization, { membershipsCount: orgs.currentOrganization.membershipsCount + n }));
+    }
+
+    function removeMembership(membership) {
+      $scope.memberships.splice($scope.memberships.indexOf(membership), 1);
+      orgs.updateOrganization(_.extend(orgs.currentOrganization, { membershipsCount: orgs.currentOrganization.membershipsCount - 1 }));
+    }
+  })
+
+  .directive('orgMemberPanel', function() {
+    return {
+      restrict: 'E',
+      templateUrl: '/templates/org-member-panel.html',
+      controller: 'OrgMemberPanelCtrl',
+      scope: {
+        membership: '=',
+        onDelete: '&'
+      }
+    };
+  })
+
+  .controller('OrgMemberPanelCtrl', function(api, orgs, $scope) {
+
+    orgs.addAuthFunctions($scope);
+
+    $scope.generateAccessToken = generateAccessToken;
+    $scope.remove = deleteMembership;
+
+    function generateAccessToken() {
+      api({
+        method: 'POST',
+        url: '/tokens',
+        data: {
+          userId: $scope.membership.user.id
+        }
+      }).then(function(res) {
+        $scope.accessToken = res.data.token;
+      });
+    }
+
+    function deleteMembership() {
+
+      var membership = $scope.membership;
+
+      var message;
+      if (membership.user.technical) {
+        message = "Are you sure you want to delete technical user " + membership.user.name + '?';
+      } else {
+        message = "Are you sure you want to remove ";
+        message += membership.user ? membership.user.name : membership.organizationEmail;
+        message += "'s membership?";
+      }
+
+      if (!confirm(message)) {
+        return;
+      }
+
+      var promise;
+      if (membership.user.technical) {
+        promise = deleteTechnicalUser();
+      } else {
+        promise = deleteMembership();
+      }
+
+      promise.then(function() {
+        $scope.onDelete();
+      });
+
+      function deleteMembership() {
+        return api({
+          method: 'DELETE',
+          url: '/memberships/' + membership.id
+        });
+      }
+
+      function deleteTechnicalUser() {
+        return api({
+          method: 'DELETE',
+          url: '/users/' + membership.user.id
+        });
+      }
+    };
   })
 
   // TODO: display message if user is aleady a member
@@ -91,7 +169,18 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
 
     orgs.forwardData($scope);
 
+    $scope.organizationRoles = [ 'admin' ];
+
+    $scope.settings = {
+      technicalUser: false
+    };
+
     $scope.membership = {
+      organizationId: $scope.currentOrganization.id
+    };
+
+    $scope.user = {
+      technical: true,
       organizationId: $scope.currentOrganization.id
     };
 
@@ -104,37 +193,102 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
           withUser: 1
         }
       }).then(function(res) {
+
         $scope.membership = res.data;
+
+        if (res.data.user.technical) {
+          $scope.settings.technicalUser = true;
+          _.defaults($scope.user, res.data.user);
+        }
+
         reset();
       });
     }
 
     $scope.reset = reset;
+
     $scope.changed = function() {
-      return !forms.dataEquals($scope.membership, $scope.editedMembership);
+      if ($scope.settings.technicalUser) {
+        return !forms.dataEquals($scope.user, $scope.technicalUser);
+      } else {
+        return !forms.dataEquals($scope.membership, $scope.editedMembership);
+      }
     };
 
     $scope.save = function() {
+      var promise;
 
-      var method = 'POST',
-          url = '/memberships';
-
-      if ($scope.membership.id) {
-        method = 'PATCH';
-        url += '/' + $scope.membership.id;
+      if ($scope.settings.technicalUser && $scope.user.id) {
+        promise = updateTechnicalUser();
+      } else if ($scope.settings.technicalUser) {
+        promise = createTechnicalUser();
+      } else if ($scope.membership.id) {
+        promise = updateMembership();
+      } else {
+        promise = createMembershipembership();
       }
 
-      api({
-        method: method,
-        url: url,
-        data: $scope.editedMembership
-      }).then(function(res) {
-        $modalInstance.close(res.data);
+      promise.then(function(membership) {
+        $modalInstance.close(membership);
       });
     };
 
+    function createTechnicalUser() {
+      return api({
+        method: 'POST',
+        url: '/users',
+        params: {
+          withTechnicalMembership: 1
+        },
+        data: $scope.technicalUser
+      }).then(function(res) {
+        return _.extend(res.data.technicalMembership, {
+          user: _.omit(res.data, 'technicalMembership')
+        });
+      });
+    }
+
+    function updateTechnicalUser() {
+      return api({
+        method: 'PATCH',
+        url: '/users/' + $scope.user.id,
+        params: {
+          withTechnicalMembership: 1
+        },
+        data: $scope.technicalUser
+      }).then(function(res) {
+        return _.extend(res.data.technicalMembership, {
+          user: _.omit(res.data, 'technicalMembership')
+        });
+      });
+    }
+
+    function createMembershipembership() {
+      return api({
+        method: 'POST',
+        url: '/memberships',
+        data: $scope.editedMembership
+      }).then(function(res) {
+        return res.data;
+      });
+    }
+
+    function updateMembership() {
+      return api({
+        method: 'PATCH',
+        url: '/memberships/' + $scope.membership.id,
+        params: {
+          withUser: 1
+        },
+        data: $scope.editedMembership
+      }).then(function(res) {
+        return res.data;
+      });
+    }
+
     function reset() {
       $scope.editedMembership = angular.copy($scope.membership);
+      $scope.technicalUser = angular.copy($scope.user);
     }
   })
 
