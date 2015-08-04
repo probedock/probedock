@@ -85,7 +85,7 @@ module ProbeDock
         authenticate
         authorize! User, :index
 
-        rel = User.order 'name ASC'
+        rel = User.order 'LOWER(name) ASC'
 
         rel = paginated rel do |rel|
           if params[:search].present?

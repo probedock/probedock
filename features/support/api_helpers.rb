@@ -5,6 +5,52 @@ module ApiHelpers
     end
   end
 
+  def cucumber_doc_string_to_json doc
+    interpolate_json MultiJson.load(doc)
+  end
+
+  def cucumber_doc_string_to_json_expectations doc
+    interpolate_json MultiJson.load(doc), expectations: true
+  end
+
+  def interpolate_json json, options = {}
+    if json.kind_of? Hash
+      json.inject({}) do |memo,(key,value)|
+        memo[key] = interpolate_json value, options
+        memo
+      end
+    elsif json.kind_of? Array
+      json.collect do |value|
+        interpolate_json value, options
+      end
+    elsif json.kind_of? String
+      interpolate_string json, options
+    else
+      json
+    end
+  end
+
+  def interpolate_string value, options = {}
+
+    if options[:expectations]
+      expectation = if value == '@alphanumeric'
+        /\A[a-z0-9]+\Z/
+      elsif value == '@string'
+        /.+/
+      elsif value == '@iso8601'
+        /.*/ # TODO: validate ISO 8601 dates
+      end
+
+      return expectation if expectation
+    end
+
+    if m = value.match(/^@idOf: (.*)$/)
+      named_record(m[1]).api_id
+    else
+      value
+    end
+  end
+
   def cucumber_properties_to_json properties
     json = {}
 

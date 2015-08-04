@@ -5,5 +5,5 @@ std_opts = "--format #{ENV['CUCUMBER_FORMAT'] || 'pretty'} --strict --tags ~@wip
 probedock_opts = "--format ProbeDockCucumber::Formatter --out tmp/probedock/cucumber-ruby/output.txt"
 %>
 default: <%= std_opts %> <%= probedock_opts %> features
-wip: --tags @wip:3 --wip --format pretty <%= probedock_opts %> features
+wip: --tags @wip:10 --wip --format pretty <%= probedock_opts %> features
 rerun: <%= rerun_opts %> --format rerun <%= probedock_opts %> rerun.txt --strict --tags ~@wip

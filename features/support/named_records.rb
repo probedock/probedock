@@ -1,6 +1,7 @@
 module NamedRecords
   def add_named_record name, record
     @named_records ||= {}
+    raise "A named record already exists for name #{name.inspect}" if @named_records[name]
     @named_records[name] = record
   end
 
