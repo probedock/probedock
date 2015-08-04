@@ -63,7 +63,7 @@ class Membership < ActiveRecord::Base
   end
 
   def set_accepted_at
-    self.accepted_at ||= Time.now if user.present?
+    self.accepted_at ||= Time.now if user.present? && user.human?
   end
 
   def set_otp

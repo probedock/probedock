@@ -1,7 +1,7 @@
 module ApiHelpers
   def interpolate_api_url url
-    url.gsub /\{@idOf: ([a-z0-9\-]+)\}/ do |*args|
-      named_record($1).api_id
+    url.gsub /\{(@idOf:\s?[a-z0-9\-]+)\}/ do |*args|
+      interpolate_string $1
     end
   end
 
@@ -33,21 +33,39 @@ module ApiHelpers
   def interpolate_string value, options = {}
 
     if options[:expectations]
+
       expectation = if value == '@alphanumeric'
         /\A[a-z0-9]+\Z/
       elsif value == '@string'
         /.+/
       elsif value == '@iso8601'
         /.*/ # TODO: validate ISO 8601 dates
+      elsif m = value.match(/^@json\((.*)\)$/)
+        extract_json @response_body, m[1]
       end
 
       return expectation if expectation
     end
 
-    if m = value.match(/^@idOf: (.*)$/)
+    if m = value.match(/^@idOf:\s?(.*)$/)
       named_record(m[1]).api_id
     else
       value
+    end
+  end
+
+  def extract_json json, pointer
+    return json if pointer == ''
+
+    location = pointer.match(/^\/([^\/]*)\/?/)[1]
+    next_pointer = pointer.sub(/^\/[^\/]*(\/?)/, '\1')
+
+    if json.kind_of?(Array) && location.match(/^\d+$/)
+      extract_json json[location.to_i], next_pointer
+    elsif json.kind_of?(Hash)
+      extract_json json[location], next_pointer
+    else
+      raise "Invalid JSON pointer #{pointer.inspect} for JSON value #{json.inspect}"
     end
   end
 

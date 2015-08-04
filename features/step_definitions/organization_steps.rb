@@ -14,7 +14,7 @@ Given /user (\w+) who is an admin of (\w+) exists/ do |user_name,organization_na
   add_named_record user_name, create(:org_admin, name: user_name, organization: org)
 end
 
-Given /user (\w+) who is a technical user for (\w+) exists/ do |user_name,organization_name|
+Given /user (\w+) who is a technical user of (\w+) exists/ do |user_name,organization_name|
   org = Organization.where(name: organization_name.downcase).first!
   add_named_record user_name, create(:technical_user, name: user_name, organization: org)
 end
