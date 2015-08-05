@@ -1,0 +1,12 @@
+# top-most EditorConfig file
+root = true
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.{rb}]
+charset = utf-8
+
+# 2 space indentation
+[*.{erb,js,rb,slim,styl}]
+indent_style = space
+indent_size = 2
