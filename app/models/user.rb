@@ -20,6 +20,9 @@ class User < ActiveRecord::Base
   include JsonResource
   include IdentifiableResource
 
+  # TODO: remove this and the associated rake task once no longer needed
+  attr_accessor :technical_validation_disabled
+
   before_create{ set_identifier :api_id }
 
   has_secure_password validations: false
@@ -66,7 +69,7 @@ class User < ActiveRecord::Base
   end
 
   def primary_email= email
-    self.emails << email if primary_email.blank? && emails.blank?
+    self.emails << email if primary_email.blank? && emails.blank? && email
     super email
   end
 
@@ -93,6 +96,6 @@ class User < ActiveRecord::Base
   end
 
   def technical_must_not_change
-    errors.add :technical, :must_not_change if technical_changed? && persisted?
+    errors.add :technical, :must_not_change if technical_changed? && persisted? && !technical_validation_disabled
   end
 end

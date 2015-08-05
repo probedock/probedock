@@ -102,4 +102,62 @@ namespace :users do
 
     puts user.generate_auth_token
   end
+
+  desc %|Transform a human user into a technical user|
+  task :technical, [ :name ] => :environment do |t,args|
+
+    unless name = args[:name]
+      puts Paint[%/A username must be given as first argument/, :red]
+      next
+    end
+
+    unless user = User.where(name: name).first
+      puts Paint[%/No user found with name #{name}/, :red]
+      next
+    end
+
+    unless user.human?
+      puts Paint[%/User #{name} is already a technical user/, :yellow]
+      next
+    end
+
+    if user.memberships.blank?
+      puts Paint[%/User #{name} belongs to no organization/, :red]
+      next
+    end
+
+    if user.memberships.length >= 2
+      puts Paint[%/User #{name} belongs to multiple organizations (technical users can only belong to one organization)/, :red]
+      next
+    end
+
+    User.transaction do
+
+      emails = user.emails.to_a
+
+      # unlink and deactivate all e-mails
+      emails.each do |email|
+        email.user = nil
+        email.active = false
+        email.save!
+      end
+
+      # remove password and primary e-mail
+      user.password = nil
+      user.primary_email = nil
+
+      # set technical flag
+      user.technical = true
+      user.technical_validation_disabled = true
+      user.save!
+
+      # remove acceptation date and organization e-mail from membership
+      membership = user.memberships.first
+      membership.accepted_at = nil
+      membership.organization_email = nil
+      membership.save!
+
+      puts Paint[%/User #{name} is now a technical user (unlinked emails: #{emails.collect(&:address).sort.join(', ')})/, :green]
+    end
+  end
 end
