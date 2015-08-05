@@ -45,7 +45,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def destroy?
-    admin?
+    admin? || org_admin_of_technical_user?
   end
 
   private

@@ -256,6 +256,44 @@ Feature: Technical users
 
 
 
+  Scenario: An organization admin should be able to delete a technical user of the organization.
+    Given organization Initech exists
+    And user milton who is a technical user of Initech exists
+    And user blumbergh who is an admin of Initech exists
+    When blumbergh sends a DELETE request to /api/users/{@idOf: milton}
+    Then the response code should be 204
+    And the changes to the number of records in the database should be as follows: -1 user, -1 membership
+    And user milton should no longer exist
+
+
+
+  @authorization
+  Scenario: An organization member should not be able to delete a technical user of the organization.
+    Given organization Initech exists
+    And user milton who is a technical user of Initech exists
+    And user pgibbons who is a member of Initech exists
+    When pgibbons sends a DELETE request to /api/users/{@idOf: milton}
+    Then the response should be HTTP 403 with the following errors:
+      | message                                        |
+      | You are not authorized to perform this action. |
+    And there should be no changes to the number of records in the database
+
+
+
+  @authorization
+  Scenario: An organization admin should not be able to delete a technical user of another organization.
+    Given organization Initech exists
+    And user milton who is a technical user of Initech exists
+    And organization Chotchkies exists
+    And user stan who is an admin of Chotchkies exists
+    When stan sends a DELETE request to /api/users/{@idOf: milton}
+    Then the response should be HTTP 403 with the following errors:
+      | message                                        |
+      | You are not authorized to perform this action. |
+    And there should be no changes to the number of records in the database
+
+
+
   @authentication
   Scenario: An organization admin should be able to create an authentication token for a technical user of the organization.
     Given organization Initech exists

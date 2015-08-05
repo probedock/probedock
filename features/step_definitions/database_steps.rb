@@ -25,6 +25,11 @@ Then /the changes to the number of records in the database should be as follows:
   expect_model_count_changes changes
 end
 
+Then /(\w+) (\w+) should no longer exist/ do |type_name,record_name|
+  model = named_record record_name
+  expect(model.class.where(id: model.id).first).to be_nil
+end
+
 Then /there should be a (\w+) in the database corresponding to the response body/ do |model|
 
   model = begin

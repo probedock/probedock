@@ -51,6 +51,18 @@ When /(\w+) sends a PATCH request with the following JSON to (.*):/ do |user_nam
   @response_body = MultiJson.load @response.body
 end
 
+When /(\w+) sends a DELETE request to (.*)/ do |user_name,url|
+
+  store_model_counts
+
+  user = named_record user_name
+  header 'Authorization', "Bearer #{user.generate_auth_token}"
+
+  @request_body = nil
+  @response = delete interpolate_api_url(url)
+  @response_body = MultiJson.load @response.body unless @response.body.nil? || @response.body.empty?
+end
+
 Then /the response code should be (\d+)/ do |code|
   expect_http_status_code code.to_i
 end
