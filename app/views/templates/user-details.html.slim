@@ -10,7 +10,11 @@
     dl
       dt Username
       dd {{ user.name }}
-      dt Primary e-mail
-      dd {{ user.primaryEmail }}
+      dt Type
+      dd
+        span ng-if='user.technical' Technical
+        span ng-if='!user.technical' Human
+      dt ng-if='user.primaryEmail' Primary e-mail
+      dd ng-if='user.primaryEmail' {{ user.primaryEmail }}
       dt Registered since
       dd {{ user.createdAt | amDateFormat:'ll' }}
