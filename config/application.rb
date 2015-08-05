@@ -89,6 +89,8 @@ module ProbeDock
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
+    config.active_job.queue_adapter = :resque
+
     config.action_mailer.delivery_method = :smtp
 
     config.action_mailer.smtp_settings = {
