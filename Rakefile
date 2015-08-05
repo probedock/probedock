@@ -30,7 +30,9 @@ end
 
 if Rails.env != 'production'
 
-  Rake::Task['spec'].prerequisites.unshift('cucumber')
+  Rake::Task['spec'].enhance do
+    Rake::Task['cucumber'].invoke
+  end
 
   require 'probedock-rspec'
   ProbeDockProbe::Tasks.new
