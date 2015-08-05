@@ -17,9 +17,9 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe 'Version', probe_dock: { tags: :unit } do
+describe 'Version', probedock: { tags: :unit } do
 
-  it "should be correct", probe_dock: { key: '80b899f3d494' } do
+  it "should be correct", probedock: { key: '80b899f3d494' } do
     expect(ProbeDock::Application::VERSION).to eq(File.open(File.join(Rails.root, 'VERSION'), 'r').read)
   end
 end

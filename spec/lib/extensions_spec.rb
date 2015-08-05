@@ -22,24 +22,24 @@ describe Time do
 
   describe "#to_ms" do
 
-    it "should return the number of milliseconds since the epoch", probe_dock: { key: '896d38d5e773' } do
+    it "should return the number of milliseconds since the epoch", probedock: { key: '896d38d5e773' } do
       expect(subject.to_ms).to eq((subject.to_f * 1000).floor)
     end
 
-    it "should floor the value", probe_dock: { key: 'baca0e9b455e' } do
+    it "should floor the value", probedock: { key: 'baca0e9b455e' } do
       expect(described_class.at(10.4567).to_ms).to eq(10456)
     end
   end
 
   describe "#ms_from" do
 
-    it "should return the difference in milliseconds from another time", probe_dock: { key: 'aa6dc6859ed0' } do
+    it "should return the difference in milliseconds from another time", probedock: { key: 'aa6dc6859ed0' } do
       expect(subject.ms_from subject).to eq(0)
       expect(subject.ms_from subject - 1.hour).to eq(3600000)
       expect(subject.ms_from subject + 2.minutes).to eq(-120000)
     end
 
-    it "should round the value", probe_dock: { key: '4a119e0b108b' } do
+    it "should round the value", probedock: { key: '4a119e0b108b' } do
       expect(subject.ms_from(subject - 0.5678)).to eq(568)
     end
   end

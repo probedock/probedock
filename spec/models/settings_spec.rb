@@ -17,7 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe Settings, probe_dock: { tags: :unit } do
+describe Settings, probedock: { tags: :unit } do
 
   let(:sample_settings){
     {
@@ -31,7 +31,7 @@ describe Settings, probe_dock: { tags: :unit } do
   }
 
   context ".app" do
-    it "should return the app settings", probe_dock: { key: 'd5fe308a81f7' } do
+    it "should return the app settings", probedock: { key: 'd5fe308a81f7' } do
       Settings::App.first.update_attributes sample_settings
       expect(Settings.app).to eq(OpenStruct.new(sample_settings))
     end

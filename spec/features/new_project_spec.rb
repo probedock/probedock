@@ -17,7 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-describe "Creating a project and submitting new results", type: :feature, probe_dock: { category: 'Selenium' } do
+describe "Creating a project and submitting new results", type: :feature, probedock: { category: 'Selenium' } do
 
   let(:user){ create :admin, encrypted_password: test_password }
 
