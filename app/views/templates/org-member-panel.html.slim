@@ -16,19 +16,14 @@
     .media
 
       .media-left
-
-        .avatar.glyphicon.glyphicon-cog ng-if='membership.user.technical'
-        a href='#' ng-if='membership.user.primaryEmailMd5'
-          img.avatar.media-object gravatar-src='membership.user.primaryEmailMd5' gravatar-size=64
+        .media-object
+          user-avatar user='membership.user' size='"large"'
 
       .media-body
 
         .pull-right
           .label.label-info.pull-right ng-if='!membership.user.technical && !membership.roles.length' user
           .label.pull-right ng-if='!membership.user.technical' ng-repeat='role in membership.roles.sort()' ng-class='{"label-primary": role == "admin", "label-info": role != "admin"}' {{ role }}
-          button.btn.btn-default.btn-sm type='button' ng-if='membership.user.technical && currentMemberIs("admin")' ng-click='generateAccessToken()'
-            span.glyphicon.glyphicon-lock
-            |  Generate an access token
 
         dl
           dt ng-if='membership.organizationEmail' Organization e-mail
@@ -38,12 +33,19 @@
           dt ng-if='membership.user.technical && membership.createdAt' Creation date
           dd ng-if='membership.user.technical && membership.createdAt' {{ membership.createdAt | amDateFormat: 'LL' }}
 
-        p.text-success ng-if='accessToken'
-          strong Here's an access token for this user! It will be valid for one year.
-        form role='form' ng-if='accessToken'
-          .form-group
-            .input-group
-              input.form-control type='text' value='{{ accessToken }}' readonly=true select-on-click=true
-              .input-group-btn
-                .btn.btn-primary clip-copy='accessToken' tooltip='Click to copy' tooltip-append-to-body='true'
-                  span.glyphicon.glyphicon-share
+    .access-token ng-if='membership.user.technical && currentMemberIs("admin")'
+      .text-center
+        button.btn.btn-default.btn-sm type='button' ng-click='generateAccessToken()'
+          span.glyphicon.glyphicon-lock
+          |  Generate an access token
+
+      p.text-success.text-center ng-if='accessToken'
+        strong Here's an access token for this user! It will be valid for one year.
+
+      form role='form' ng-if='accessToken'
+        .form-group
+          .input-group
+            input.form-control type='text' value='{{ accessToken }}' readonly=true select-on-click=true
+            .input-group-btn
+              .btn.btn-primary clip-copy='accessToken' tooltip='Click to copy' tooltip-append-to-body='true'
+                span.glyphicon.glyphicon-share

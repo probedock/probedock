@@ -5,7 +5,8 @@
         span.glyphicon.glyphicon-pencil
     h3.panel-title User Details
   .panel-body
-    img.pull-right gravatar-src='user.primaryEmailMd5' gravatar-size=100
+    .pull-right
+      user-avatar user='user' size='"large"'
     dl
       dt Username
       dd {{ user.name }}

@@ -49,7 +49,7 @@
                 em No tests have been run recently.
             tr ng-repeat='report in reports' ng-show='reports.length'
               td.runs
-                img ng-if='report.runners.length == 1' gravatar-src='report.runners[0].primaryEmailMd5' gravatar-size=30 tooltip='{{ report.runners[0].name }}' tooltip-placement='right'
+                user-avatar ng-if='report.runners.length == 1' user='report.runners[0]' name-tooltip='true'
                 span.time.hidden-xs am-time-ago='report.endedAt'
               td.results
                 a href='#' ui-sref='org.reports.show({ id: report.id })'

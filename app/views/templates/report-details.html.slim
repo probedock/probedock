@@ -15,8 +15,8 @@
           ul
             li {{ report.resultsCount | number }} test results
             li Run in {{ report.duration | durationFormat }}
-          .text-center
-            img.gravatar ng-repeat='runner in report.runners' gravatar-src="runner.primaryEmailMd5" gravatar-size="40" tooltip="{{ runner.name }}"
+          .avatars.text-center
+            user-avatar ng-repeat='runner in report.runners' user='runner' name-tooltip='true'
           canvas.chart.chart-doughnut data='healthChart.data' labels='healthChart.labels' colours='healthChart.colors' ng-if='healthChart'
     .col-md-7.col-lg-8
       .health.panel.panel-default ng-controller='ReportHealthCtrl'
@@ -45,7 +45,7 @@
             li
               strong By:
               |  
-              img gravatar-src='result.runner.primaryEmailMd5' gravatar-size=30 tooltip='{{ result.runner.name }}'
+              user-avatar user='result.runner' name-tooltip='true'
             li
               strong Duration:
               |  {{ result.duration | durationFormat }}

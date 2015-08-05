@@ -14,8 +14,8 @@
         tbody
           tr ng-repeat='user in usersList.records'
             td.avatar
-              a ui-sref='admin.users.show({ id: user.id })'
-                img gravatar-src='user.primaryEmailMd5' gravatar-size=30
+              a href='#' ui-sref='admin.users.show({ id: user.id })'
+                user-avatar user='user'
             td.name
               a ui-sref='admin.users.show({ id: user.id })' {{ user.name }}
             td.email.hidden-xs.hidden-sm.hidden-md {{ user.primaryEmail }}

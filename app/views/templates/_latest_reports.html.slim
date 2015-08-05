@@ -23,7 +23,7 @@ div ng-controller='LatestReportsCtrl'
             report-health-bar report='report' click-for-details=true
         td.runners
           span ng-repeat='runner in report.runners.slice(0, 3)'
-            img.gravatar gravatar-src='runner.primaryEmailMd5' gravatar-size='30' tooltip='{{ runner.name }}'
+            user-avatar user='runner'
             span.hidden-xs  {{ runner.name }}
         td.duration.hidden-xs.hidden-sm {{ report.duration | durationFormat }}
         td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
