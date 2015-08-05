@@ -18,7 +18,10 @@
                 user-avatar user='user'
             td.name
               a ui-sref='admin.users.show({ id: user.id })' {{ user.name }}
-            td.email.hidden-xs.hidden-sm.hidden-md {{ user.primaryEmail }}
+            td.email.hidden-xs.hidden-sm.hidden-md
+              span ng-if='user.primaryEmail' {{ user.primaryEmail }}
+              span ng-if='!user.primaryEmail'
+                | -
             td.registeredAt.hidden-xs
               | {{ user.createdAt | amDateFormat:'ll' }}
               |  
@@ -27,6 +30,9 @@
               .btn-group.btn-group-sm
                 a.btn.btn-danger ng-click='delete(user)' tooltip='Delete User' tooltip-append-to-body='true'
                   span.glyphicon.glyphicon-remove
+        tfoot
+          tr
+            td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/pagination.html'
     tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
       tab-heading
         | {{ userTab.user.name }} 
