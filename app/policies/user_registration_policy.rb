@@ -15,14 +15,28 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
-module JsonResource
-  extend ActiveSupport::Concern
-
-  def to_json options = {}
-    to_builder(options).attributes!.to_json
+class UserRegistrationPolicy < ApplicationPolicy
+  def create?
+    true
   end
 
-  def serializable_hash options = {}
-    to_builder(options).attributes!
+  class Scope < Scope
+    def resolve
+      scope
+    end
+  end
+
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.id record.api_id
+        json.user serialize(record.user)
+        json.organization serialize(record.organization) if record.organization.present?
+        json.completed record.completed
+        json.expiresAt record.expires_at.iso8601(3) if record.expires_at.present?
+        json.completedAt record.completed_at.iso8601(3) if record.completed_at.present?
+        json.createdAt record.created_at.iso8601(3)
+      end
+    end
   end
 end

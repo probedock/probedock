@@ -1,5 +1,3 @@
-* remove unused app settings
-
 ## Features
 
 * click to copy project API ID

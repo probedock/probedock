@@ -17,13 +17,12 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class User < ActiveRecord::Base
   # TODO: make sure "active" is used
-  include JsonResource
   include IdentifiableResource
 
   # TODO: remove this and the associated rake task once no longer needed
   attr_accessor :technical_validation_disabled
 
-  before_create{ set_identifier :api_id }
+  before_create :set_identifier
 
   has_secure_password validations: false
 
@@ -41,6 +40,7 @@ class User < ActiveRecord::Base
   has_many :memberships, dependent: :destroy # TODO: cascade in database
   has_many :organizations, through: :memberships
   belongs_to :primary_email, class_name: 'Email', autosave: true
+  has_one :registration, class_name: 'UserRegistration'
   # TODO: purge emails if unused
   has_many :emails
 
@@ -49,16 +49,16 @@ class User < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true, length: { maximum: 25 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
   # TODO: validate min password length
   validates :primary_email, presence: { unless: :technical }, absence: { if: :technical }
-  # TODO: validate uniqueness of primary_email_id
+  validates :primary_email_id, uniqueness: true
   validate :primary_email_must_be_among_emails
   validate :technical_must_not_change
 
   validate do |record|
-    record.errors.add :password, :blank if human? && record.password_digest.blank?
-    record.errors.add :password, :present if technical? && record.password_digest.present?
+    record.errors.add :password, :blank if human? && active? && record.password_digest.blank?
+    record.errors.add :password, :present if record.password_digest.present? && (technical? || !active?)
   end
 
-  validates :password, length: { unless: :technical, maximum: 512 }, confirmation: { unless: :technical, allow_blank: true }
+  validates :password, length: { if: ->(u){ u.human? && u.active? }, maximum: 512 }, confirmation: { if: ->(u){ u.human? && u.active? }, allow_blank: true }
 
   def generate_auth_token
     JSON::JWT.new({
@@ -87,6 +87,10 @@ class User < ActiveRecord::Base
 
   def human?
     !technical
+  end
+
+  def active?
+    active
   end
 
   private

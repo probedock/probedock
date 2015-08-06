@@ -1,0 +1,83 @@
+.container
+
+  .page-header
+    h1 Registration
+
+  .registration-successful ng-if='registration'
+    p.lead.text-success Registration successful!
+    p.text-success
+      | We have sent a confirmation e-mail to 
+      strong {{ registration.user.email }}
+      | .
+      |  Please follow the link in the e-mail to complete the registration.
+    p.text-muted
+      | (It may take a few minutes for the e-mail to arrive.
+      |  Please also check your spam folder if you do not see it in your inbox.)
+
+  p.lead ng-if='!registration'
+    | Welcome to Probe Dock!
+    |  Please fill in the details of your new user account.
+
+  form#registration-form role='form' name='registrationForm' ng-submit='registrationForm.$valid && register()' novalidate=true ng-if='!registration'
+
+    .col-xs-12
+      h2 User account
+
+    .col-sm-6.col-xs-12
+      .form-group ng-class='{"has-error": registrationForm.userName.$dirty && registrationForm.userName.$invalid}'
+        label for='user-name' Username
+        input#user-name.form-control type='text' name='userName' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' required=true maxlength=25 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-user-name=true autofocus=true ng-model='user.name'
+        p.help-block
+          | User names can only contain alphanumeric characters and single hyphens (not at the beginning or end).
+        p.help-block ng-if='registrationForm.userName.$error.uniqueUserName'
+          strong This username is already taken.
+
+    .col-sm-6.col-xs-12
+      .form-group ng-class='{"has-error": registrationForm.userEmail.$dirty && registrationForm.userEmail.$invalid}'
+        label for='user-email' E-mail
+        input#user-email.form-control type='email' name='userEmail' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' required=true maxlength=255 unique-user-email=true ng-model='user.primaryEmail'
+        p.help-block
+          | This will be your primary e-mail in Probe Dock.
+          |  We will send a confirmation e-mail to validate it.
+        p.help-block ng-if='registrationForm.userEmail.$error.uniqueUserEmail'
+          strong This e-mail is already taken.
+
+    .col-xs-12
+      h2
+        | Organization
+
+      p.text-info
+        | To publish test results to Probe Dock, you must register your projects/apps under an organization.
+        |  You will create an organization now as part of the registration process.
+        |  You will be the administrator of this organization and may invite other members later.
+
+    .col-sm-6.col-xs-12
+      .form-group
+        label for='organization-display-name' Name
+        input#organization-display-name.form-control type='string' maxlength=50 ng-model='organization.displayName' required=true
+        p.help-block
+          | The name of the organization.
+
+    .col-sm-6.col-xs-12
+      .form-group ng-class='{"has-error": registrationForm.name.$dirty && registrationForm.name.$invalid || organizationNamePlaceholderTaken}'
+        label for='organization-name' Identifier
+        input#organization-name.form-control type='string' name='organizationName' placeholder='{{ organizationNamePlaceholder }}' maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-org-name=true autofocus=true ng-model='organization.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
+        p.help-block
+          | The unique identifier of the organization (used in URLs).
+          |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
+        p.help-block ng-if='registrationForm.name.$error.uniqueOrgName || organizationNamePlaceholderTaken'
+          strong An organization with this identifier already exists.
+
+    .col-xs-12
+      .checkbox
+        label
+          input type='checkbox' ng-model='organization.public' Make the organization public
+        p.help-block
+          | When an organization is public, anyone can see its dashboard, projects and reports.
+          |  However, you still need to be a member of the organization to publish new test results.
+
+    .col-xs-12
+      .text-center
+        .controls.btn-group
+          a.btn.btn-default href='#' ui-sref='home' Cancel
+          button.btn.btn-primary type='submit' ng-disabled='!registrationForm.$valid' Submit

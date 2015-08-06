@@ -17,7 +17,6 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class Project < ActiveRecord::Base
   RESERVED_NAMES = %w(dashboard edit info members projects reports)
-  include JsonResource
   include IdentifiableResource
 
   before_create{ set_identifier :api_id, size: 12 }

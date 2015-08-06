@@ -79,6 +79,7 @@ module ProbeDock
     mount OrganizationsApi
     mount PayloadsApi
     mount ProjectsApi
+    mount RegistrationsApi
     mount ReportsApi
     mount TagsApi
     mount TestKeysApi

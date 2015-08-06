@@ -63,7 +63,7 @@ namespace :users do
     end
 
     email = Email.where(address: email_address).first_or_create active: true
-    user = User.new name: name, primary_email: email, password: password
+    user = User.new name: name, primary_email: email, password: password, active: true
     user.primary_email.user = user
 
     user.save!

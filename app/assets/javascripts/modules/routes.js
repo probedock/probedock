@@ -38,6 +38,12 @@ angular.module('probedock.routes', [ 'ui.router' ])
         templateUrl: '/templates/new-membership.html'
       })
 
+      .state('register', {
+        url: '/register?otp',
+        controller: 'UserRegistrationCtrl',
+        templateUrl: '/templates/user-registration.html'
+      })
+
       .state('profile', {
         url: '/profile',
         templateUrl: '/templates/profile.html'

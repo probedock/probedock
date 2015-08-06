@@ -17,11 +17,11 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class UserPolicy < ApplicationPolicy
   def create?
-    admin? || otp_record.present? || org_admin_of_technical_user?
+    admin? || membership_otp? || org_admin_of_technical_user?
   end
 
   def index?
-    admin? || params[:name].present?
+    admin? || params[:name].present? || params[:email].present?
   end
 
   def show?
@@ -29,11 +29,15 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update?
+    admin? || user == record || org_admin_of_technical_user? || (registration_otp? && !record.active)
+  end
+
+  def update_name?
     admin? || user == record || org_admin_of_technical_user?
   end
 
   def update_active?
-    admin? || org_admin_of_technical_user?
+    admin? || org_admin_of_technical_user? || (registration_otp? && !record.active)
   end
 
   def update_email?
@@ -49,6 +53,14 @@ class UserPolicy < ApplicationPolicy
   end
 
   private
+
+  def membership_otp?
+    otp_record.present? && otp_record.kind_of?(Membership)
+  end
+
+  def registration_otp?
+    otp_record.present? && otp_record.kind_of?(UserRegistration)
+  end
 
   def org_admin_of_technical_user?
     record.technical? && record.memberships.present? && user.try(:membership_in, record.memberships.first.organization).try(:admin?)

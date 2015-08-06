@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150717113140) do
+ActiveRecord::Schema.define(version: 20150806105354) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20150717113140) do
     t.integer  "projects_count",               default: 0,     null: false
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
+    t.boolean  "active",                       default: false, null: false
   end
 
   add_index "organizations", ["api_id"], name: "index_organizations_on_api_id", unique: true, using: :btree
@@ -270,10 +271,25 @@ ActiveRecord::Schema.define(version: 20150717113140) do
 
   add_index "tickets", ["name", "organization_id"], name: "index_tickets_on_name_and_organization_id", unique: true, using: :btree
 
+  create_table "user_registrations", force: :cascade do |t|
+    t.string   "api_id",          limit: 5,                 null: false
+    t.string   "otp"
+    t.datetime "expires_at"
+    t.boolean  "completed",                 default: false, null: false
+    t.datetime "completed_at"
+    t.integer  "user_id",                                   null: false
+    t.integer  "organization_id"
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+  end
+
+  add_index "user_registrations", ["api_id"], name: "index_user_registrations_on_api_id", unique: true, using: :btree
+  add_index "user_registrations", ["otp"], name: "index_user_registrations_on_otp", unique: true, using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "api_id",           limit: 5,                  null: false
     t.string   "name",             limit: 25,                 null: false
-    t.boolean  "active",                      default: true,  null: false
+    t.boolean  "active",                      default: false, null: false
     t.string   "password_digest"
     t.integer  "roles_mask",                  default: 0,     null: false
     t.integer  "primary_email_id"
@@ -330,5 +346,7 @@ ActiveRecord::Schema.define(version: 20150717113140) do
   add_foreign_key "test_results_tickets", "test_results"
   add_foreign_key "test_results_tickets", "tickets"
   add_foreign_key "tickets", "organizations"
+  add_foreign_key "user_registrations", "organizations"
+  add_foreign_key "user_registrations", "users"
   add_foreign_key "users", "emails", column: "primary_email_id"
 end

@@ -51,6 +51,7 @@ module ProbeDock
         data[:password_confirmation] ||= ''
 
         user = User.new data
+        user.active = true
 
         User.transaction do
 
@@ -88,12 +89,24 @@ module ProbeDock
         rel = User.order 'LOWER(name) ASC'
 
         rel = paginated rel do |rel|
+          if params[:email].present?
+            email = Email.where(address: params[:email].to_s.downcase).first
+            if email.present? && email.user_id.present?
+              rel = rel.where id: email.user_id
+            else
+              rel = rel.none
+            end
+          end
+
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
             rel = rel.where 'LOWER(users.name) LIKE ?', term
           end
 
-          rel = rel.where 'users.name = ?', params[:name].to_s if params[:name].present?
+          if params[:name].present?
+            rel = rel.where 'users.name = ?', params[:name].to_s
+          end
+
           rel
         end
 
@@ -109,6 +122,12 @@ module ProbeDock
           def record
             @record ||= load_resource!(User.where(api_id: params[:id].to_s))
           end
+
+          def current_otp_record
+            @current_otp_record ||= if params.key? :registrationOtp
+              UserRegistration.where('otp IS NOT NULL').where(otp: params[:registrationOtp].to_s).where('expires_at > ?', Time.now).first
+            end
+          end
         end
 
         get do
@@ -123,7 +142,10 @@ module ProbeDock
 
             updates = parse_user
 
-            record.name = updates[:name] if updates.key? :name
+            if updates.key? :name
+              authorize! record, :update_name
+              record.name = updates[:name]
+            end
 
             if updates.key?(:active) && !!updates[:active] != record.active
               authorize! record, :update_active
@@ -133,7 +155,7 @@ module ProbeDock
             # FIXME: only allow to set primary email if among existing emails
             if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.address
               authorize! record, :update_email
-              record.primary_email = Email.where(address: updates[:primary_email].to_s.downcase).first_or_initialize if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.try(:address)
+              record.primary_email = Email.where(address: updates[:primary_email].to_s.downcase).first_or_initialize
               record.primary_email.user = record
             end
 

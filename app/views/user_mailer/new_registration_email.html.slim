@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    meta content='text/html; charset=UTF-8' http-equiv='Content-Type'
+  body
+    h1
+      | Welcome to ProbeDock!
+    p
+      | You have just registered as 
+      strong #{@registration.user.name}
+      | .
+    p
+      | To complete your registration, please 
+      a href=@otp_url click here!

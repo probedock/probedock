@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ApiResourceHelper
-
   def parse_object *attrs
-    HashWithIndifferentAccess.new params.pick(*attrs.collect(&:to_s)).inject({}){ |memo,(k,v)| memo[k.underscore] = v; memo }
+    h = attrs.first.kind_of?(Hash) ? attrs.shift : params
+    HashWithIndifferentAccess.new h.slice(*attrs.collect(&:to_s)).inject({}){ |memo,(k,v)| memo[k.underscore] = v; memo }
   end
 
   def load_resource rel
@@ -87,7 +87,7 @@ module ApiResourceHelper
     errors = []
     record.errors.each do |attr,errs|
       Array.wrap(errs).each do |err|
-        errors << { message: "#{attr.to_s.humanize} #{err}", path: "/#{attr.to_s.camelize(:lower)}" }
+        errors << { message: "#{attr.to_s.humanize} #{err}", path: "/#{attr.to_s.camelize(:lower).gsub(/\./, '/')}" }
       end
     end
 

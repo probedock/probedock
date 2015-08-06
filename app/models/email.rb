@@ -21,7 +21,7 @@ class Email < ActiveRecord::Base
   belongs_to :user
   has_one :primary_user, foreign_key: :primary_email_id
 
-  validates :address, presence: true, uniqueness: true, length: { maximum: 255, allow_blank: true }
+  validates :address, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 255, allow_blank: true }
 
   private
 
