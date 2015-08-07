@@ -83,6 +83,10 @@ class ApplicationPolicy
     user.try :technical?
   end
 
+  def otp_record? type = nil
+    otp_record.present? && (type.nil? || otp_record.kind_of?(type))
+  end
+
   public
 
   class Scope
@@ -103,6 +107,12 @@ class ApplicationPolicy
 
     def resolve
       scope
+    end
+
+    private
+
+    def otp_record? type = nil
+      otp_record.present? && (type.nil? || otp_record.kind_of?(type))
     end
   end
 

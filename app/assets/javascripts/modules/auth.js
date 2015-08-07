@@ -51,6 +51,7 @@ angular.module('probedock.auth', ['base64', 'probedock.storage'])
       appStore.set('auth.token', res.data.token);
       appStore.set('auth.user', res.data.user);
       $rootScope.$broadcast('auth.signIn', res.data.user);
+      return res.data.user;
     }
 
     function authenticate(token, user) {

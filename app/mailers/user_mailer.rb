@@ -9,7 +9,7 @@ class UserMailer < ApplicationMailer
 
   def new_registration_email registration
     @registration = registration
-    @otp_url = otp_url 'new-user', :otp, registration.otp
+    @otp_url = otp_url 'confirm-registration', :otp, registration.otp
     mail to: registration.user.primary_email.address, subject: "Probe Dock: Confirm your registration"
   end
 

@@ -16,13 +16,35 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class UserRegistrationPolicy < ApplicationPolicy
+  def index?
+    admin? || registration_otp?
+  end
+
   def create?
     true
   end
 
+  private
+
+  def registration_otp?
+    otp_record? UserRegistration
+  end
+
+  public
+
   class Scope < Scope
     def resolve
-      scope
+      if registration_otp?
+        scope.where id: otp_record.id
+      else
+        scope
+      end
+    end
+
+    private
+
+    def registration_otp?
+      otp_record? UserRegistration
     end
   end
 

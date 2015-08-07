@@ -114,10 +114,6 @@ module ProbeDock
       end
 
       namespace '/:id' do
-        before do
-          authenticate!
-        end
-
         helpers do
           def record
             @record ||= load_resource!(User.where(api_id: params[:id].to_s))
@@ -131,11 +127,13 @@ module ProbeDock
         end
 
         get do
+          authenticate!
           authorize! record, :show
           serialize record
         end
 
         patch do
+          authenticate
           authorize! record, :update
 
           User.transaction do
@@ -170,6 +168,7 @@ module ProbeDock
         end
 
         delete do
+          authenticate!
           authorize! record, :destroy
           record.destroy
           status 204

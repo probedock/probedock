@@ -29,6 +29,12 @@ module ProbeDock
         def with_serialization_includes rel
           rel.includes :user, :organization
         end
+
+        def current_otp_record
+          @current_otp_record = if params.key? :otp
+            UserRegistration.where('otp IS NOT NULL').where(otp: params[:otp].to_s).where('expires_at > ?', Time.now).first
+          end
+        end
       end
 
       post do
@@ -52,6 +58,22 @@ module ProbeDock
             UserMailer.new_registration_email(registration).deliver_later
           end
         end
+      end
+
+      get do
+        authenticate
+        authorize! UserRegistration, :index
+
+        rel = policy_scope UserRegistration
+
+        rel = paginated rel do |rel|
+          # no filters for now
+          rel
+        end
+
+        rel = rel.order 'created_at DESC'
+
+        serialize load_resources(rel)
       end
 
       namespace '/:id' do

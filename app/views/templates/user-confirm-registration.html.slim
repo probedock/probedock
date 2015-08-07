@@ -1,0 +1,30 @@
+.container
+
+  .page-header
+    h1 Confirm Registration
+
+  p.lead.text-success ng-if='registration'
+    | You're almost done!
+    |  Please choose a password and we will activate your account.
+
+  form#confirm-registration-form role='form' name='confirmRegistrationForm' ng-submit='confirmRegistrationForm.$valid && confirmRegistration()' novalidate=true ng-if='registration'
+
+    .col-xs-12
+      .form-group
+        label for='user-name' Username
+        input#user-name.form-control type='text' ng-model='registration.user.name' readonly=true
+
+    .col-sm-6.col-xs-12
+      .form-group ng-class='{"has-error": confirmRegistrationForm.password.$dirty && confirmRegistrationForm.password.$invalid}'
+        label for='user-password' Password
+        input#user-password.form-control type='password' name='password' ng-model='registration.user.password' placeholder='Your password' required=true autofocus=true
+
+    .col-sm-6.col-xs-12
+      .form-group ng-class='{"has-error": confirmRegistrationForm.passwordConfirmation.$dirty && confirmRegistrationForm.passwordConfirmation.$invalid}'
+        label for='user-password-confirmation' Password confirmation
+        input#user-password-confirmation.form-control type='password' name='passwordConfirmation' ng-model='registration.user.passwordConfirmation' required=true confirmation-for='registration.user.password' placeholder='Re-type your password'
+
+    .col-xs-12
+      .text-center
+        .controls.btn-group
+          button.btn.btn-primary type='submit' ng-disabled='!confirmRegistrationForm.$valid' Submit

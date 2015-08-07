@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   attr_accessor :technical_validation_disabled
 
   before_create :set_identifier
+  after_save :complete_registration
 
   has_secure_password validations: false
 
@@ -101,5 +102,13 @@ class User < ActiveRecord::Base
 
   def technical_must_not_change
     errors.add :technical, :must_not_change if technical_changed? && persisted? && !technical_validation_disabled
+  end
+
+  def complete_registration
+    if active_changed? && active? && registration.present? && !registration.completed?
+      registration.update_attribute :completed, true
+      self.primary_email.update_attribute :active, true
+      registration.organization.update_attribute :active, true if registration.organization.present?
+    end
   end
 end

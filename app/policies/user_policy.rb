@@ -45,7 +45,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update_password?
-    admin? || user == record
+    admin? || user == record || registration_otp?
   end
 
   def destroy?
