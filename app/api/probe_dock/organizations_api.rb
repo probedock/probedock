@@ -47,6 +47,7 @@ module ProbeDock
         authorize! Organization, :create
 
         data = parse_organization
+        data[:active] = true
         data[:public_access] = data.delete :public if data.key? :public
 
         organization = Organization.new data
