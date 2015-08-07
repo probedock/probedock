@@ -27,6 +27,7 @@ FactoryGirl.define do
     end
 
     name{ generate :user_name }
+    active true
     password 'test'
 
     association :primary_email, factory: :email
@@ -51,6 +52,7 @@ FactoryGirl.define do
       factory :technical_user do
         technical true
         password nil
+        password_digest nil
         primary_email_id nil
         emails []
       end
