@@ -72,6 +72,14 @@ module ProbeDock
             rel = rel.where normalized_name: params[:name].to_s.downcase
           end
 
+          if params.key? :public
+            rel = rel.where public_access: true_flag?(:public)
+          end
+
+          if current_user && params.key?(:accessible)
+            rel = rel.joins('LEFT OUTER JOIN memberships ON organizations.id = memberships.organization_id').where('organizations.public_access = ? OR (memberships.id IS NOT NULL AND memberships.user_id = ?)', true, current_user.id).distinct
+          end
+
           rel
         end
 

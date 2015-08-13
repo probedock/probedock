@@ -80,6 +80,7 @@ angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock
         return api({
           url: '/organizations',
           params: {
+            accessible: 1,
             withRoles: 1
           }
         }).then(function(res) {

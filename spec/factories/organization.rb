@@ -22,5 +22,6 @@ FactoryGirl.define do
 
   factory :organization do
     name{ generate(:organization_name) }
+    active true
   end
 end

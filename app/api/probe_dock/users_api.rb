@@ -56,7 +56,7 @@ module ProbeDock
         User.transaction do
 
           if data[:technical] && org_id.present?
-            org = Organization.where(api_id: org_id).first
+            org = Organization.active.where(api_id: org_id).first
             user.memberships << Membership.new(user: user, organization: org)
           end
 

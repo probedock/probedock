@@ -24,6 +24,8 @@ class Organization < ActiveRecord::Base
 
   has_many :memberships
 
+  scope :active, ->{ where active: true }
+
   # TODO: do not accept UUIDs
   validates :name, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
   validates :display_name, length: { maximum: 50, allow_blank: true }

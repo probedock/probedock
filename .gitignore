@@ -7,7 +7,7 @@
 /ansible/production-inventory
 /bower_components
 /db/test.*
-/doc/app
+/doc/*.html
 /docker/app/Gem*
 /docker/dev/Gem*
 /docker-compose.yml
@@ -16,4 +16,5 @@
 /node_modules
 /public/*
 !/public/.keep
+/rerun.txt
 /tmp
