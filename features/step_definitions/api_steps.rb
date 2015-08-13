@@ -1,6 +1,6 @@
 When /(\w+) authenticates by sending a POST request to \/api\/authentication with Basic password (.*)/ do |user_name,password|
 
-  store_model_counts
+  store_preaction_state
 
   user = User.where(name: user_name).first!
   header 'Authorization', %/Basic #{Base64.strict_encode64("#{user.name}:#{password}")}/
@@ -11,10 +11,10 @@ end
 
 When /(\w+) sends a GET request to (.*)/ do |user_name,url|
 
-  store_model_counts
+  store_preaction_state
 
-  user = named_record user_name
-  header 'Authorization', "Bearer #{user.generate_auth_token}"
+  user = find_api_user user_name
+  header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
   @request_body = nil
   @response = get interpolate_api_url(url)
@@ -23,11 +23,11 @@ end
 
 When /(\w+) sends a POST request with the following JSON to (.*):/ do |user_name,url,doc|
 
-  store_model_counts
+  store_preaction_state
 
-  user = named_record user_name
+  user = find_api_user user_name
   header 'Content-Type', 'application/json'
-  header 'Authorization', "Bearer #{user.generate_auth_token}"
+  header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
   body = cucumber_doc_string_to_json doc
 
@@ -38,11 +38,11 @@ end
 
 When /(\w+) sends a PATCH request with the following JSON to (.*):/ do |user_name,url,doc|
 
-  store_model_counts
+  store_preaction_state
 
-  user = named_record user_name
+  user = find_api_user user_name
   header 'Content-Type', 'application/json'
-  header 'Authorization', "Bearer #{user.generate_auth_token}"
+  header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
   body = cucumber_doc_string_to_json doc
 
@@ -53,10 +53,10 @@ end
 
 When /(\w+) sends a DELETE request to (.*)/ do |user_name,url|
 
-  store_model_counts
+  store_preaction_state
 
-  user = named_record user_name
-  header 'Authorization', "Bearer #{user.generate_auth_token}"
+  user = find_api_user user_name
+  header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
   @request_body = nil
   @response = delete interpolate_api_url(url)

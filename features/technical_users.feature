@@ -38,7 +38,7 @@ Feature: Technical users
         "createdAt": "@iso8601"
       }
       """
-    And the changes to the number of records in the database should be as follows: +1 user, +1 membership
+    And the following changes should have occurred: +1 user, +1 membership
     And there should be a user in the database corresponding to the response body
 
 
@@ -76,7 +76,7 @@ Feature: Technical users
         "createdAt": "@iso8601"
       }
       """
-    And the changes to the number of records in the database should be as follows: +1 user, +1 membership
+    And the following changes should have occurred: +1 user, +1 membership
     And there should be a user in the database corresponding to the response body
 
 
@@ -262,7 +262,7 @@ Feature: Technical users
     And user blumbergh who is an admin of Initech exists
     When blumbergh sends a DELETE request to /api/users/{@idOf: milton}
     Then the response code should be 204
-    And the changes to the number of records in the database should be as follows: -1 user, -1 membership
+    And the following changes should have occurred: -1 user, -1 membership
     And user milton should no longer exist
 
 

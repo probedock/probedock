@@ -1,4 +1,14 @@
 module ApiHelpers
+  def find_api_user name
+    if name == 'nobody'
+      nil
+    else
+      user = named_record name
+      expect(user).to be_a_kind_of(User)
+      user
+    end
+  end
+
   def interpolate_api_url url
     url.gsub /\{(@idOf:\s?[a-z0-9\-]+)\}/ do |*args|
       interpolate_string $1

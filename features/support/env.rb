@@ -69,6 +69,9 @@ Dir[Rails.root.join('features/support/**/*.rb')].each { |f| require f }
 require Rails.root.join('spec/support/errapi.rb')
 
 World(ApiHelpers)
+World(ChangeHelpers)
 World(DbHelpers)
+World(JobHelpers)
+World(MailerHelpers)
 World(ModelExpectations)
 World(NamedRecords)
