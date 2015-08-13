@@ -42,6 +42,14 @@ module ApiHelpers
 
   def interpolate_string value, options = {}
 
+    if options[:references] || options[:expectations]
+      reference = if m = value.match(/^@json\((.*)\)$/)
+        extract_json @response_body, m[1]
+      end
+
+      return reference if reference
+    end
+
     if options[:expectations]
 
       expectation = if value == '@alphanumeric'
@@ -50,8 +58,6 @@ module ApiHelpers
         /.+/
       elsif value == '@iso8601'
         /.*/ # TODO: validate ISO 8601 dates
-      elsif m = value.match(/^@json\((.*)\)$/)
-        extract_json @response_body, m[1]
       end
 
       return expectation if expectation

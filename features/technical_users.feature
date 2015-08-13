@@ -39,7 +39,14 @@ Feature: Technical users
       }
       """
     And the following changes should have occurred: +1 user, +1 membership
-    And there should be a user in the database corresponding to the response body
+    And the following user should be in the database:
+      """
+      id: "@json(/id)"
+      name: "milton"
+      technical: true
+      organizationId: "@json(/organizationId)"
+      createdAt: "@json(/createdAt)"
+      """
 
 
 
@@ -77,7 +84,14 @@ Feature: Technical users
       }
       """
     And the following changes should have occurred: +1 user, +1 membership
-    And there should be a user in the database corresponding to the response body
+    And the following user should be in the database:
+      """
+      id: "@json(/id)"
+      name: "milton"
+      technical: true
+      organizationId: "@json(/organizationId)"
+      createdAt: "@json(/createdAt)"
+      """
 
 
 
@@ -96,7 +110,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -116,7 +130,7 @@ Feature: Technical users
     Then the response should be HTTP 422 with the following errors:
       | path      | message                |
       | /password | Password must be blank |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -128,7 +142,7 @@ Feature: Technical users
     Then the response should be HTTP 401 with the following errors:
       | message                             |
       | Technical users cannot authenticate |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -148,7 +162,7 @@ Feature: Technical users
     Then the response should be HTTP 422 with the following errors:
       | path    | message                                                   |
       | /userId | User must not be a technical user of another organization |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -175,8 +189,16 @@ Feature: Technical users
         "createdAt": "@iso8601"
       }
       """
-    And there should be no changes to the number of records in the database
-    And there should be a user in the database corresponding to the response body
+    And nothing should have been added or deleted
+    And the following user should be in the database:
+      """
+      id: "@json(/id)"
+      name: "basement"
+      active: false
+      technical: true
+      organizationId: "@json(/organizationId)"
+      createdAt: "@json(/createdAt)"
+      """
 
 
 
@@ -212,8 +234,16 @@ Feature: Technical users
         "createdAt": "@iso8601"
       }
       """
-    And there should be no changes to the number of records in the database
-    And there should be a user in the database corresponding to the response body
+    And nothing should have been added or deleted
+    And the following user should be in the database:
+      """
+      id: "@json(/id)"
+      name: "basement"
+      active: false
+      technical: true
+      organizationId: "@json(/organizationId)"
+      createdAt: "@json(/createdAt)"
+      """
 
 
 
@@ -232,7 +262,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -252,7 +282,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -276,7 +306,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -290,7 +320,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -313,7 +343,7 @@ Feature: Technical users
         "token": "@string"
       }
       """
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -331,7 +361,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -350,7 +380,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 
@@ -369,7 +399,7 @@ Feature: Technical users
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
-    And there should be no changes to the number of records in the database
+    And nothing should have been added or deleted
 
 
 

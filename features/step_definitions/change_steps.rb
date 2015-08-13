@@ -1,3 +1,9 @@
+Then /nothing should have been added or deleted/ do
+  expect_new_jobs
+  expect_model_count_changes
+  expect_new_mail_deliveries 0
+end
+
 Then /the following changes should have occurred: ((?:[+-]?\d+ [\w ]+)(?:, [+-]?\d+ [\w ]+)*)/ do |changes|
 
   job_counts = {}

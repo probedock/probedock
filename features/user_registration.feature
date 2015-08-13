@@ -4,7 +4,7 @@ Feature: User registration
   People who want to test Probe Dock should be able to register a new user account.
 
   Since an organization is needed to create projects and publish test results, a new user
-  shoudl also be able to create their own organization when registering. The user will
+  should also be able to create their own organization when registering. The user will
   automatically be assigned as the administrator of the new organization.
 
 
@@ -49,4 +49,21 @@ Feature: User registration
       }
       """
     And the following changes should have occurred: +1 user, +1 email, +1 organization, +1 membership, +1 user registration, +1 mailer job
-    And a registration e-mail for the last registration should be queued for sending
+    And the following user should be in the database:
+      """
+      id: "@json(/user/id)"
+      name: "borgana"
+      active: false
+      primaryEmail: "bail.organa@galactic-republic.org"
+      createdAt: "@json(/user/createdAt)"
+      """
+    And the following organization should be in the database:
+      """
+      id: "@json(/organization/id)"
+      name: "rebel-alliance"
+      displayName: "Rebel Alliance"
+      public: false
+      active: false
+      membershipsCount: 1
+      """
+    And a registration e-mail for the last created registration should be queued for sending

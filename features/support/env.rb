@@ -4,6 +4,8 @@
 # instead of editing this one. Cucumber will automatically load all features/**/*.rb
 # files.
 
+ENV['RAILS_ENV'] ||= 'test'
+
 require 'cucumber/rails'
 
 # Capybara defaults to CSS3 selectors rather than XPath.
@@ -75,3 +77,7 @@ World(JobHelpers)
 World(MailerHelpers)
 World(ModelExpectations)
 World(NamedRecords)
+
+unless Rails.env == 'test'
+  raise "Cucumber tests should only be run in the test environment (current environment is #{Rails.env.inspect})"
+end
