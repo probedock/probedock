@@ -6,4 +6,4 @@ probedock_opts = "--format ProbeDockCucumber::Formatter --out tmp/probedock/cucu
 %>
 default: <%= std_opts %> <%= probedock_opts %> features
 wip: --tags @wip:10 --wip --format pretty <%= probedock_opts %> features
-rerun: <%= rerun_opts %> --format rerun <%= probedock_opts %> rerun.txt --strict --tags ~@wip
+rerun: <%= rerun_opts %> --format rerun --out rerun.txt <%= probedock_opts %> --strict --tags ~@wip
