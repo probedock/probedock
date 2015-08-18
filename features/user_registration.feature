@@ -74,3 +74,29 @@ Feature: User registration
       roles: [admin]
       """
     And a registration e-mail for the last created registration should be queued for sending
+
+
+
+  @validation
+  Scenario: A new user should not be able to register with the same name as an existing user or create an organization with the same name as an existing organization.
+    Given organization Galactic Republic exists
+    And user palpatine who is an admin of Galactic Republic exists
+    When nobody sends a POST request with the following JSON to /api/registrations:
+      """
+      {
+        "user": {
+          "name": "palpatine",
+          "primaryEmail": "supreme-chancelor@galactic-republic.org"
+        },
+        "organization": {
+          "name": "galactic-republic",
+          "displayName": "Galactic Republic",
+          "public": true
+        }
+      }
+      """
+    Then the response should be HTTP 422 with the following errors:
+      | path       | message                          |
+      | /user/name | User name has already been taken |
+      | /organization/name | Organization name has already been taken |
+    And nothing should have been added or deleted

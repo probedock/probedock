@@ -87,7 +87,7 @@ module ApiResourceHelper
     errors = []
     record.errors.each do |attr,errs|
       Array.wrap(errs).each do |err|
-        errors << { message: "#{attr.to_s.humanize} #{err}", path: "/#{attr.to_s.camelize(:lower).gsub(/\./, '/')}" }
+        errors << { message: "#{attr.to_s.gsub(/\./, ' ').humanize} #{err}", path: "/#{attr.to_s.camelize(:lower).gsub(/\./, '/')}" }
       end
     end
 
