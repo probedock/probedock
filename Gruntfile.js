@@ -84,11 +84,23 @@ module.exports = function(grunt) {
 
     jshint: {
       all: [ 'app/assets/javascripts/**/*.js', 'Gruntfile.js' ]
+    },
+
+    raml2boot: {
+      options: {
+        standalone: true
+      },
+      apidoc: {
+        files: {
+          'doc/api.html': 'doc/api/api.raml'
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-raml2boot');
 
   grunt.registerTask('default', [ 'jshint' ]);
   grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap' ]);

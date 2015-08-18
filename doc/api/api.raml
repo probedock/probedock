@@ -1,0 +1,17 @@
+#%RAML 0.8
+title: Probe Dock API
+baseUri: https://example.com/api
+version: v1
+traits:
+  - paged:
+      queryParameters:
+        pages:
+          description: The number of pages to return
+          type: number
+/user-registrations:
+  description: Allows new users to create a user account and organization.
+  post:
+    description: Register a new user (and optional organization).
+    body:
+      application/json:
+        schema: !include doc/api/resources/user-registrations/schema.json
