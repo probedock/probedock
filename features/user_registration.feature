@@ -66,4 +66,11 @@ Feature: User registration
       active: false
       membershipsCount: 1
       """
+    And the following membership should be in the database:
+      """
+      userId: "@json(/user/id)"
+      organizationId: "@json(/organization/id)"
+      organizationEmail: "bail.organa@galactic-republic.org"
+      roles: [admin]
+      """
     And a registration e-mail for the last created registration should be queued for sending

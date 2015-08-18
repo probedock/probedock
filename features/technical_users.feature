@@ -451,3 +451,4 @@ Feature: Technical users
         }
       ]
       """
+    And nothing should have been added or deleted

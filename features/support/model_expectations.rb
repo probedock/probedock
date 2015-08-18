@@ -1,4 +1,30 @@
 module ModelExpectations
+  def expect_membership data
+
+    @errors = Errors.new
+    data = interpolate_json(data, references: true).with_indifferent_access
+
+    membership = expect_record Membership, data do
+      if data.key? :id
+        Membership.where(api_id: data[:id].to_s).first
+      elsif data.key?(:userId) && data.key?(:organizationId)
+        Membership.joins(:organization, :user).where('organizations.api_id = ? AND users.api_id = ?', data[:organizationId].to_s, data[:userId].to_s).first
+      else
+        raise "Membership must be identified either by ID or by User and Organization ID"
+      end
+    end
+
+    @errors.compare membership.try(:user).try(:api_id), data[:userId], :user_id if data.key? :userId
+    @errors.compare membership.organization.api_id, data[:organizationId], :organization_id
+    @errors.compare membership.roles.collect(&:to_s).sort, (data[:roles] || []).collect(&:to_s).sort, :roles
+
+    if data.key? :organizationEmail
+      @errors.compare membership.try(:organization_email).try(:address), data[:organizationEmail], :organization_email
+    else
+      @errors.ensure_blank membership.try(:organization_email).try(:address), :organization_email
+    end
+  end
+
   def expect_organization data
 
     @errors = Errors.new
@@ -54,8 +80,8 @@ module ModelExpectations
 
   private
 
-  def expect_record model, data
-    record = model.where(api_id: data[:id]).first
+  def expect_record model, data, &block
+    record = block ? block.call : model.where(api_id: data[:id]).first
     trigger_errors %/expected to find the following #{model} in the database, but it was not found:\n\n#{JSON.pretty_generate(data)}/ if record.blank?
     record
   end
