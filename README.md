@@ -10,7 +10,7 @@ It has two main components: the ProbeDock server and clients.
 Clients hook into your favorite test framework and publish the test results to ProbeDock for analysis.
 ProbeDock generates test run reports and day-to-day metrics on your tests.
 
-Head over to the [ProbeDock clients repository](https://github.com/probedock/probedock-clients) to find out which clients are available.
+Head over to the [ProbeDock clients repository](https://github.com/probedock/probedock-probes) to find out which clients are available.
 
 ## Requirements
 
