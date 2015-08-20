@@ -29,9 +29,9 @@ class Membership < ActiveRecord::Base
   include RoleModel
   roles :admin
 
+  belongs_to :user
   belongs_to :organization, counter_cache: true
   belongs_to :organization_email, class_name: 'Email'
-  belongs_to :user
 
   validates :organization, presence: true
   validates :organization_email, presence: { if: ->(m){ m.user_id && m.user.human? } }, absence: { if: ->(m){ m.user_id && m.user.technical? } }
@@ -49,7 +49,7 @@ class Membership < ActiveRecord::Base
 
   def technical_user_must_not_be_in_another_organization
     if organization.present? && user.present? && user.technical? && user.memberships.reject{ |m| m.organization_id == organization.id }.present?
-      errors.add :user_id, :must_not_be_technical_user
+      errors.add :user_id, :must_not_be_technical_user_from_another_organization
     end
   end
 

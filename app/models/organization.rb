@@ -16,10 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class Organization < ActiveRecord::Base
-  RESERVED_NAMES = %w(admin emails help error new new-member organizations profile status users)
+  RESERVED_NAMES = %w(admin authentication emails help error memberships metrics new new-member organizations ping payloads profile projects publish registrations reports status tags test-keys tokens users)
   include IdentifiableResource
 
-  before_create{ set_identifier :api_id }
+  before_create :set_identifier
   before_save :normalize_name
 
   has_many :memberships
@@ -43,8 +43,7 @@ class Organization < ActiveRecord::Base
   private
 
   def name_must_not_be_reserved
-    # TODO: add missing translation
-    errors.add :name, :reserved if RESERVED_NAMES.include? name.to_s.downcase
+    errors.add :name, :exclusion if RESERVED_NAMES.include? name.to_s.downcase
   end
 
   def normalize_name

@@ -59,7 +59,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def registration_otp?
-    otp_record.present? && otp_record.kind_of?(UserRegistration)
+    otp_record.present? && otp_record.kind_of?(UserRegistration) && otp_record.user == record
   end
 
   def org_admin_of_technical_user?

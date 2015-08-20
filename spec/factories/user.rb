@@ -32,6 +32,12 @@ FactoryGirl.define do
 
     association :primary_email, factory: :email
 
+    factory :new_user do
+      active false
+      password nil
+      password_digest nil
+    end
+
     factory :admin_user, aliases: [ :admin ] do
       roles_mask User.mask_for(:admin)
     end
@@ -41,6 +47,7 @@ FactoryGirl.define do
         m = Membership.new user: user, organization: evaluator.organization, organization_email: user.primary_email
         m.roles = evaluator.organization_roles
         m.save!
+        user.reload
       end
 
       factory :org_admin do

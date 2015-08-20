@@ -1,4 +1,4 @@
-@technical-users
+@api @technical-users
 Feature: Technical users
 
   When publishing test results to Probe Dock from a continuous integration pipeline,

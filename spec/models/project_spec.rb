@@ -30,7 +30,7 @@ describe Project do
   describe "when created" do
     subject{ create :project }
 
-    it "should have a well-formatted api id", probedock: { key: '2820535dcaf3' } do
+    it "should have a well-formatted API ID", probedock: { key: '2820535dcaf3' } do
       expect(subject.api_id).to match(/\A[a-z0-9]{12}\Z/i)
     end
   end

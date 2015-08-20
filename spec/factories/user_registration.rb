@@ -15,17 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
-class Email < ActiveRecord::Base
-  before_validation :ensure_lowercase_address
-
-  belongs_to :user
-  has_one :primary_user, class_name: 'User', foreign_key: :primary_email_id
-
-  validates :address, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 255, allow_blank: true }
-
-  private
-
-  def ensure_lowercase_address
-    self.address = address.try(:downcase)
+FactoryGirl.define do
+  factory :user_registration, aliases: %i(registration) do
+    association :user, factory: :new_user
+    association :organization, factory: :new_organization
   end
 end

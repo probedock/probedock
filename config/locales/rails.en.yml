@@ -195,7 +195,7 @@ en:
         record_invalid: "Validation failed: %{errors}"
         must_not_change: "cannot be changed"
         must_be_owned_by_user: "must be owned by the user"
-        must_not_be_technical_user: "must not be a technical user of another organization"
+        must_not_be_technical_user_from_another_organization: "must not be a technical user of another organization"
 
   activerecord:
     errors:

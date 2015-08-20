@@ -45,6 +45,7 @@ class UserRegistration < ActiveRecord::Base
     if completed?
       self.otp = nil
       self.expires_at = nil
+      self.completed_at = Time.now
     end
   end
 

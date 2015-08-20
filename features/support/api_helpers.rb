@@ -10,8 +10,8 @@ module ApiHelpers
   end
 
   def interpolate_api_url url
-    url.gsub /\{(@idOf:\s?[a-z0-9\-]+)\}/ do |*args|
-      interpolate_string $1
+    url.gsub /\{(@[^\}]+)\}/ do |*args|
+      Rack::Utils::escape(interpolate_string($1))
     end
   end
 
@@ -41,15 +41,6 @@ module ApiHelpers
   end
 
   def interpolate_string value, options = {}
-
-    if options[:references] || options[:expectations]
-      reference = if m = value.match(/^@json\((.*)\)$/)
-        extract_json @response_body, m[1]
-      end
-
-      return reference if reference
-    end
-
     if options[:expectations]
 
       expectation = if value == '@alphanumeric'
@@ -63,8 +54,25 @@ module ApiHelpers
       return expectation if expectation
     end
 
-    if m = value.match(/^@idOf:\s?(.*)$/)
+    if m = value.match(/^@json\((.*)\)$/)
+      extract_json @response_body, m[1]
+    elsif m = value.match(/^@idOf:\s?(.*)$/)
       named_record(m[1]).api_id
+    elsif m = value.match(/^@registrationOtpOf:\s?(.*)$/)
+
+      record = named_record(m[1])
+      registration = if record.kind_of? User
+        UserRegistration.where(user_id: record.id).first
+      elsif record.kind_of? Organization
+        UserRegistration.where(organization_id: record.id).first
+      else
+        raise "Unsupported registration OTP reference: #{record.inspect}"
+      end
+
+      raise "No user registration found for #{record.inspect}" unless registration.present?
+      raise "Registration for #{record.inspect} has no OTP" unless registration.otp.present?
+
+      registration.otp
     else
       value
     end

@@ -1,8 +1,56 @@
 module ModelExpectations
+  def expect_user_registration data
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    registration = expect_record UserRegistration, data do
+      if data.key? :id
+        UserRegistration.where(api_id: data[:id].to_s).first
+      elsif data.key? :userId
+        UserRegistration.joins(:user).where('users.api_id = ?', data[:userId].to_s).first
+      elsif data.key? :organizationId
+        UserRegistration.joins(:organization).where('organizations.api_id = ?', data[:organizationId].to_s).first
+      else
+        raise "User registration must be identified by ID, user ID or organization ID"
+      end
+    end
+
+    @errors.compare registration.try(:user).try(:api_id), data[:userId], :user_id
+
+    if data.key? :organizationId
+      @errors.compare registration.try(:organization).try(:api_id), data[:organizationId], :organization_id
+    else
+      @errors.ensure_blank registration.try(:organization).try(:api_id), :organization_id
+    end
+
+    @errors.compare registration.created_at.iso8601(3), data[:createdAt] if data.key? :createdAt
+    @errors.compare registration.created_at.iso8601(3), data[:updatedAt] if data.key? :updatedAt
+
+    if data[:completed]
+      @errors.compare registration.completed, true, :completed
+      @errors.ensure_blank registration.otp, :otp
+      @errors.ensure_blank registration.expires_at, :expires_at
+      @errors.ensure_present registration.completed_at, :completed_at
+      @errors.compare registration.completed_at.iso8601(3), data[:completedAt] if data.key? :completedAt
+    else
+      @errors.compare registration.completed, false, :completed
+      @errors.ensure_present registration.otp, :otp
+      @errors.ensure_present registration.expires_at, :expires_at
+      @errors.ensure_blank registration.completed_at, :completed_at
+
+      if registration.expires_at - registration.created_at < 1.week
+        @errors < "expected :expires_at to be at least 1 week after :created_at, got #{registration.expires_at} (created at #{registration.created_at})"
+      end
+    end
+
+    expect_no_errors
+  end
+
   def expect_membership data
 
     @errors = Errors.new
-    data = interpolate_json(data, references: true).with_indifferent_access
+    data = interpolate_json(data, expectations: true).with_indifferent_access
 
     membership = expect_record Membership, data do
       if data.key? :id
@@ -23,12 +71,14 @@ module ModelExpectations
     else
       @errors.ensure_blank membership.try(:organization_email).try(:address), :organization_email
     end
+
+    expect_no_errors
   end
 
   def expect_organization data
 
     @errors = Errors.new
-    data = interpolate_json(data, references: true).with_indifferent_access
+    data = interpolate_json(data, expectations: true).with_indifferent_access
 
     organization = expect_record Organization, data
 
@@ -48,7 +98,7 @@ module ModelExpectations
   def expect_user data
 
     @errors = Errors.new
-    data = interpolate_json(data, references: true).with_indifferent_access
+    data = interpolate_json(data, expectations: true).with_indifferent_access
 
     user = expect_record User, data
 
@@ -75,6 +125,11 @@ module ModelExpectations
       @errors << %/expected user to have exactly one membership, found #{user.memberships.length}/ unless user.memberships.length == 1
     end
 
+    if user.primary_email.present?
+      expected_state = data[:active] ? 'active' : 'inactive'
+      @errors.compare user.primary_email.active, !!data[:active], "expected primary e-mail to be #{expected_state}, but it was not"
+    end
+
     expect_no_errors
   end
 
@@ -98,7 +153,11 @@ module ModelExpectations
     end
 
     def compare actual, expected, error
-      if actual != expected
+      if expected.kind_of?(Regexp) && !actual.to_s.match(expected)
+        error = %/expected :#{error} to match #{expected.inspect}, but got #{actual.inspect}/ if error.kind_of? Symbol
+        @errors << error
+        false
+      elsif !expected.kind_of?(Regexp) && actual != expected
         error = %/expected :#{error} to be #{expected.inspect}, but got #{actual.inspect}/ if error.kind_of? Symbol
         @errors << error
         false
@@ -110,6 +169,16 @@ module ModelExpectations
     def ensure_blank actual, error
       if actual.present?
         error = %/expected :#{error} to be blank, but got #{actual.inspect}/ if error.kind_of? Symbol
+        @errors << error
+        false
+      else
+        true
+      end
+    end
+
+    def ensure_present actual, error
+      if actual.blank?
+        error = %/expected :#{error} to be present, but got #{actual.inspect}/ if error.kind_of? Symbol
         @errors << error
         false
       else

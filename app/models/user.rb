@@ -47,10 +47,11 @@ class User < ActiveRecord::Base
 
   strip_attributes except: :password_digest
   # TODO: validate min name length
-  validates :name, presence: true, uniqueness: true, length: { maximum: 25 }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
+  validates :name, presence: true, uniqueness: true, length: { maximum: 25, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
   # TODO: validate min password length
   validates :primary_email, presence: { unless: :technical }, absence: { if: :technical }
   validates :primary_email_id, uniqueness: { if: :primary_email_id }
+  validates :password, length: { if: ->(u){ u.human? && u.active? }, maximum: 512 }, confirmation: { if: ->(u){ u.human? && u.active? }, allow_blank: true }
   validate :primary_email_must_be_among_emails
   validate :technical_must_not_change
 
@@ -59,18 +60,16 @@ class User < ActiveRecord::Base
     record.errors.add :password, :present if record.password_digest.present? && (technical? || !active?)
   end
 
-  validates :password, length: { if: ->(u){ u.human? && u.active? }, maximum: 512 }, confirmation: { if: ->(u){ u.human? && u.active? }, allow_blank: true }
-
   def generate_auth_token
     JSON::JWT.new({
       iss: api_id,
-      exp: 1.year.from_now,
+      exp: 1.year.from_now.to_i,
       nbf: Time.now
     }).sign(Rails.application.secrets.jwt_secret, 'HS512').to_s
   end
 
   def primary_email= email
-    self.emails << email if primary_email.blank? && emails.blank? && email
+    self.emails << email if primary_email.blank? && emails.blank? && email.present?
     super email
   end
 
