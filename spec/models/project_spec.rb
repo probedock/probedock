@@ -38,6 +38,13 @@ describe Project do
   describe "validations" do
     it(nil, probedock: { key: '439478e8b142' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: '38a831c819f7' }){ should validate_length_of(:name).is_at_most(50) }
+    it(nil, probedock: { key: '2ujf' }){ should allow_value('foo', 'FoO', 'foo-bar', 'Foo-Bar-Baz').for(:name) }
+    it(nil, probedock: { key: 'iwil' }){ should_not allow_value('---', '-foo', 'foo-', '$oo', 'Yee haw').for(:name) }
+
+    describe "with an existing project" do
+      before(:each){ create :project }
+      it(nil, probedock: { key: 'gh4c' }){ should validate_uniqueness_of(:name).scoped_to(:organization_id) }
+    end
   end
 
   describe "associations" do
