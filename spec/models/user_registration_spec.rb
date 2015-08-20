@@ -57,7 +57,7 @@ RSpec.describe UserRegistration, type: :model, probedock: { tags: :unit } do
     expect(membership.organization).to eq(registration.organization)
     expect(membership.organization_email).to eq(registration.user.primary_email)
     expect(membership.roles).to match_array(%i(admin))
-    expect(membership.accepted_at).to eq(registration.created_at)
+    expect(membership.accepted_at).to be_present
   end
 
   describe "#completed?" do

@@ -56,10 +56,6 @@ class TestDescription < ActiveRecord::Base
     where 'deprecation_id IS NULL'
   end
 
-  def self.outdated settings = nil
-    standard.where 'last_run_at < ?', (settings || Settings.app).test_outdated_days.days.ago
-  end
-
   def self.failing
     standard.where passing: false, active: true
   end

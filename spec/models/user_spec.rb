@@ -167,7 +167,7 @@ describe User, probedock: { tags: :unit } do
       expect(user).not_to be_valid
     end
 
-    describe "with an existing user" do # TODO: deprecate test key: 1b4e57e85d2b
+    describe "with an existing user" do
       let!(:user){ create :user }
       it(nil, probedock: { key: 'f9be952c7792' }){ should validate_uniqueness_of(:name) }
       it(nil, probedock: { key: 'hxfk' }){ should validate_uniqueness_of(:primary_email_id) }
@@ -190,7 +190,7 @@ describe User, probedock: { tags: :unit } do
     end
   end
 
-  describe "associations" do # TODO: deprecate test key: 7a371e669906
+  describe "associations" do
     it(nil, probedock: { key: '28a9398ebe26' }){ should have_many(:test_keys).dependent(:destroy) }
     it(nil, probedock: { key: 'bc98127d768c' }){ should have_many(:free_test_keys).class_name('TestKey') }
     it(nil, probedock: { key: 'a5dca889075c' }){ should have_many(:test_payloads).with_foreign_key(:runner_id).dependent(:restrict_with_exception) }

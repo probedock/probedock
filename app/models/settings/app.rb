@@ -20,12 +20,7 @@ class Settings::App < ActiveRecord::Base
 
   strip_attributes
   # TODO: add max time during which a report remains editable
-  validates :ticketing_system_url, length: { maximum: 255 }
-  validates :reports_cache_size, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :tag_cloud_size, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
-  validates :test_outdated_days, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
-  validates :test_payloads_lifespan, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
-  validates :test_runs_lifespan, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
+  validates :user_registration_enabled, inclusion: { in: [ true, false ] }
 
   def self.get
     first
@@ -33,12 +28,12 @@ class Settings::App < ActiveRecord::Base
 
   def serializable_hash options = {}
     DATA_ATTRS.inject({}) do |memo,attr|
-      memo[attr] = send attr
+      memo[attr] = send attr unless send(attr).nil?
       memo
-    end.select{ |k,v| v.present? }
+    end
   end
 
   private
 
-  DATA_ATTRS = [ :ticketing_system_url, :reports_cache_size, :tag_cloud_size, :test_outdated_days, :test_payloads_lifespan, :test_runs_lifespan ]
+  DATA_ATTRS = [ :user_registration_enabled ]
 end

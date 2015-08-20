@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -22,13 +23,6 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-
 if Settings::App.get.blank?
-  Settings::App.new.tap do |s|
-    s.reports_cache_size = 50
-    s.tag_cloud_size = 50
-    s.test_outdated_days = 30
-    s.test_payloads_lifespan = 7
-    s.test_runs_lifespan = 60
-  end.save!
+  Settings::App.new.save!
 end

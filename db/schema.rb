@@ -11,19 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150820132120) do
+ActiveRecord::Schema.define(version: 20150820144158) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "app_settings", force: :cascade do |t|
-    t.string   "ticketing_system_url",   limit: 255
-    t.integer  "reports_cache_size",                 null: false
-    t.integer  "tag_cloud_size",                     null: false
-    t.integer  "test_outdated_days",                 null: false
-    t.integer  "test_payloads_lifespan",             null: false
-    t.integer  "test_runs_lifespan",                 null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "updated_at",                                null: false
+    t.boolean  "user_registration_enabled", default: false, null: false
   end
 
   create_table "categories", force: :cascade do |t|

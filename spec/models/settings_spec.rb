@@ -21,12 +21,7 @@ describe Settings, probedock: { tags: :unit } do
 
   let(:sample_settings){
     {
-      ticketing_system_url: 'foo',
-      reports_cache_size: 24,
-      tag_cloud_size: 66,
-      test_outdated_days: 32,
-      test_payloads_lifespan: 11,
-      test_runs_lifespan: 77
+      user_registration_enabled: true
     }
   }
 

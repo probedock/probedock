@@ -17,6 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class Ticket < ActiveRecord::Base
   include QuickValidation
+  # TODO: add ticketing system url to organizations/projects
 
   belongs_to :organization
   has_and_belongs_to_many :test_descriptions
@@ -25,9 +26,4 @@ class Ticket < ActiveRecord::Base
   strip_attributes
   validates :name, presence: true, uniqueness: { scope: :organization_id, unless: :quick_validation }, length: { maximum: 50 }
   validates :organization, presence: { unless: :quick_validation }
-
-  def url
-    return nil unless ticketing_system_url = Settings.app.ticketing_system_url
-    ticketing_system_url.sub /\%\{name\}/, name
-  end
 end

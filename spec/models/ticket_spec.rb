@@ -19,20 +19,6 @@ require 'spec_helper'
 
 describe Ticket, probedock: { tags: :unit } do
 
-  context "#url" do
-    let(:ticket){ create :ticket }
-
-    it "should not return an URL if the ticketing system URL is not set", probedock: { key: '55c7ff71779e' } do
-      allow(Settings).to receive(:app).and_return(OpenStruct.new(ticketing_system_url: nil))
-      expect(ticket.url).to be_nil
-    end
-
-    it "should return an URL with the ticket name if the ticketing system URL is set", probedock: { key: '83afe4f8c3a7' } do
-      allow(Settings).to receive(:app).and_return(OpenStruct.new(ticketing_system_url: 'http://example.com/%{name}'))
-      expect(ticket.url).to eq("http://example.com/#{ticket.name}")
-    end
-  end
-
   context "validations" do
     it(nil, probedock: { key: '81aea9cd1da7' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: 'e416f98af1a8' }){ should validate_length_of(:name).is_at_most(50) }
