@@ -11,7 +11,7 @@ class UpdateAppSettings < ActiveRecord::Migration
     remove_column :app_settings, :test_outdated_days
     remove_column :app_settings, :test_payloads_lifespan
     remove_column :app_settings, :test_runs_lifespan
-    Settings::App.update_all user_registration_enabled: true
+    Settings::App.update_all user_registration_enabled: false
   end
 
   def down
