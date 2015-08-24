@@ -21,7 +21,7 @@ describe Settings, probedock: { tags: :unit } do
 
   let(:sample_settings){
     {
-      user_registration_enabled: true
+      user_registration_enabled: false
     }
   }
 

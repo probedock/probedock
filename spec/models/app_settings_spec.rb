@@ -32,15 +32,15 @@ describe Settings::App, probedock: { tags: :unit } do
 
       # try with the defaults
       expect(Settings::App.first.serializable_hash).to eq({
-        user_registration_enabled: true
+        user_registration_enabled: false
       })
 
       # try with a new instance
-      subject.user_registration_enabled = false
+      subject.user_registration_enabled = true
       subject.updated_at = Time.now
 
       expect(subject.serializable_hash).to eq({
-        user_registration_enabled: false
+        user_registration_enabled: true
       })
     end
   end
