@@ -16,47 +16,34 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class ApplicationPolicy
-  attr_reader :user, :organization, :otp_record, :params, :record
+  include PolicyHelpers
+
+  attr_reader :record
 
   def initialize user, record
     @user = user
     @record = record
-
-    if user.kind_of? UserContext
-      @user_context = user
-      @user = user.user
-      @organization = user.organization
-      @otp_record = user.otp_record
-      @params = user.params
-    end
-  end
-
-  def default?
-    false
-  end
-
-  def collection_default?
-    false
+    expand_user_context!
   end
 
   def index?
-    collection_default?
+    false
   end
 
   def show?
-    default?
+    false
   end
 
   def create?
-    collection_default?
+    false
   end
 
   def update?
-    default?
+    false
   end
 
   def destroy?
-    default?
+    false
   end
 
   def scope
@@ -69,67 +56,33 @@ class ApplicationPolicy
     serializer_class.new @user_context || @user, @record
   end
 
-  private
-
-  def admin?
-    user.try :admin?
-  end
-
-  def human?
-    user.try :human?
-  end
-
-  def technical?
-    user.try :technical?
-  end
-
-  def otp_record? type = nil
-    otp_record.present? && (type.nil? || otp_record.kind_of?(type))
-  end
-
   public
 
   class Scope
-    attr_reader :user, :organization, :otp_record, :params, :scope
+    include PolicyHelpers
+
+    attr_reader :scope
 
     def initialize user, scope
       @user = user
       @scope = scope
-
-      if user.kind_of? UserContext
-        @user_context = user
-        @user = user.user
-        @organization = user.organization
-        @otp_record = user.otp_record
-        @params = user.params
-      end
+      expand_user_context!
     end
 
     def resolve
       scope
     end
-
-    private
-
-    def otp_record? type = nil
-      otp_record.present? && (type.nil? || otp_record.kind_of?(type))
-    end
   end
 
   class Serializer
-    attr_reader :user, :record, :organization, :otp_record, :params
+    include PolicyHelpers
+
+    attr_reader :record
 
     def initialize user, record
       @user = user
       @record = record
-
-      if user.kind_of? UserContext
-        @user_context = user
-        @user = user.user
-        @organization = user.organization
-        @otp_record = user.otp_record
-        @params = user.params
-      end
+      expand_user_context!
     end
 
     def serialize *args
@@ -148,7 +101,13 @@ class ApplicationPolicy
     end
 
     def to_builder options = {}
-      Jbuilder.new{}
+      Jbuilder.new do |json|
+        build json, options
+      end
+    end
+
+    def build json, options = {}
+      # To be implemented by subclasses.
     end
   end
 end

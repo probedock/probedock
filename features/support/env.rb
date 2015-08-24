@@ -5,6 +5,7 @@
 # files.
 
 ENV['RAILS_ENV'] ||= 'test'
+raise "$RAILS_ENV must be test, but it's #{ENV['RAILS_ENV'].inspect}" unless ENV['RAILS_ENV'] == 'test'
 
 require 'cucumber/rails'
 

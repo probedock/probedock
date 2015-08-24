@@ -1,6 +1,8 @@
-angular.module('probedock.nav', [ 'probedock.orgs', 'probedock.profile' ])
+angular.module('probedock.nav', [ 'probedock.orgs', 'probedock.profile', 'probedock.settings.app' ])
 
-  .controller('NavCtrl', function(api, orgs, profile, $rootScope, $scope, $state) {
+  .controller('NavCtrl', function(api, appSettings, orgs, profile, $rootScope, $scope, $state) {
+
+    appSettings.forwardSettings($scope);
 
     var state = $state.current;
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {

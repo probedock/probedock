@@ -73,6 +73,7 @@ module ProbeDock
     end
 
     mount AccessTokensApi
+    mount AppSettingsApi
     mount AuthenticationApi
     mount MembershipsApi
     mount MetricsApi

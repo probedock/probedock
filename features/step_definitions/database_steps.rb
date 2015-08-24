@@ -5,6 +5,11 @@ end
 
 Then /the following ([\w ]+) should be in the database/ do |model,doc|
 
+  if model == 'app settings'
+    expect_app_settings YAML.load(doc)
+    next
+  end
+
   model = begin
     model.gsub(/ +/, '_').singularize.camelize.constantize
   rescue

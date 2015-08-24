@@ -1,3 +1,7 @@
+Given /user registrations are (enabled|disabled)/ do |enabled|
+  Settings::App.update_all user_registration_enabled: enabled == 'enabled'
+end
+
 Given /user (.+) registered with e-mail (.+) and created (.+) organization (.+)/ do |user_name,user_email,org_access,org_display_name|
 
   user = create :new_user, name: user_name, primary_email: create(:email, address: user_email)

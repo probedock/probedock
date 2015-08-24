@@ -70,6 +70,12 @@ angular.module('probedock.routes', [ 'ui.router' ])
         templateUrl: '/templates/users.html'
       })
 
+      .state('admin.settings', {
+        url: '/settings',
+        controller: 'AppSettingsCtrl',
+        templateUrl: '/templates/app-settings.html'
+      })
+
       .state('admin.users.show', {
         url: '/:id'
       })

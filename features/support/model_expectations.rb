@@ -1,4 +1,18 @@
 module ModelExpectations
+  def expect_app_settings data
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    settings = Settings::App.get
+    @errors.errors << %/expected to find an instance of #{Settings::App} in the database, but it was not found/ if settings.blank?
+
+    @errors.compare settings.user_registration_enabled, data[:userRegistrationEnabled], :user_registration_enabled
+    @errors.compare settings.updated_at.iso8601(3), data[:updatedAt], :updated_at if data.key? :updatedAt
+
+    expect_no_errors
+  end
+
   def expect_user_registration data
 
     @errors = Errors.new

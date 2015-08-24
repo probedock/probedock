@@ -1,0 +1,14 @@
+.container
+  .page-header
+    h1 Probe Dock Settings
+
+  form#app-settings-form role='form' novalidate=true name='appSettingsForm' ng-submit='appSettingsForm.$valid && save()'
+
+    .checkbox
+      label
+        input type='checkbox' ng-model='modifiedAppSettings.userRegistrationEnabled' User registration enabled
+      p.help-block If enabled, anyone will be able to register and create a new organization.
+
+    .btn-group
+      button.btn.btn-warning type='button' ng-click='reset()' ng-disabled='!changed()' Reset
+      button.btn.btn-primary type='submit' ng-disabled='appSettingsForm.$invalid || !changed()' Save

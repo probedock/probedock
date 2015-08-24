@@ -10,6 +10,7 @@ Feature: User registration
 
 
   Scenario: A new user should be able to register and create an organization.
+    Given user registrations are enabled
     When nobody sends a POST request with the following JSON to /api/registrations:
       """
       {
@@ -83,10 +84,34 @@ Feature: User registration
 
 
 
+  Scenario: A new user should not be able to register if user registrations are disabled.
+    Given user registrations are disabled
+    When nobody sends a POST request with the following JSON to /api/registrations:
+      """
+      {
+        "user": {
+          "name": "borgana",
+          "primaryEmail": "bail.organa@galactic-republic.org"
+        },
+        "organization": {
+          "name": "rebel-alliance",
+          "displayName": "Rebel Alliance",
+          "public": false
+        }
+      }
+      """
+    Then the response should be HTTP 403 with the following errors:
+      | message                                        |
+      | You are not authorized to perform this action. |
+    And nothing should have been added or deleted
+
+
+
   @validation
   Scenario: A new user should not be able to register with the same name as an existing user or create an organization with the same name as an existing organization.
     Given organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
+    And user registrations are enabled
     When nobody sends a POST request with the following JSON to /api/registrations:
       """
       {

@@ -21,13 +21,17 @@ class UserRegistrationPolicy < ApplicationPolicy
   end
 
   def create?
-    true
+    enabled?
   end
 
   private
 
   def registration_otp?
     otp_record? UserRegistration
+  end
+
+  def enabled?
+    Settings.app.user_registration_enabled
   end
 
   public
