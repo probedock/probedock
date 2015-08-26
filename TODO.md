@@ -1,12 +1,14 @@
 ## Features
 
+* status page
+
 * click to copy project API ID
 
 * integrate with travis
 
 * allow to close report tabs
 
-* share org header among dashboard, reports and projects page
+* share org header among dashboard, reports and projects page (remove those links from menu)
 
 * mount resque server in production
 
@@ -17,10 +19,6 @@
 * payload analysis (indicate duplicate results)
 
 * option to display test keys as text
-
-* send mails in resque jobs
-
-* save and validate emails as lowercase
 
 * increase z-index of bootstrap modals so that the loading bar isn't over them
 
@@ -34,15 +32,6 @@
 * display a graph of test counters
 
 * purge data
-  * action to purge all data in purge control panel
-  * purge outdated tests
-  * purge test deprecations
-  * purge purge actions
-
-* make sure test payloads are processed even if one of the jobs fails
-
-* find a way to make report generation faster
-  * it must also be future-proof as 2000-result reports already take up to 10 minutes to be rendered
 
 # Improvements
 
