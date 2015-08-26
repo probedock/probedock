@@ -54,6 +54,7 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
       data: [],
       labels: [],
       options: {
+        pointHitDetectionRadius: 5,
         tooltipTemplate: '<%= value %> new tests on <%= label %>'
       }
     };
