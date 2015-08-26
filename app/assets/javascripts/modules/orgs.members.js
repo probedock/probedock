@@ -125,7 +125,7 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
       var membership = $scope.membership;
 
       var message;
-      if (membership.user.technical) {
+      if (membership.user && membership.user.technical) {
         message = "Are you sure you want to delete technical user " + membership.user.name + '?';
       } else {
         message = "Are you sure you want to remove ";
@@ -138,7 +138,7 @@ angular.module('probedock.orgs.members', [ 'probedock.api' ])
       }
 
       var promise;
-      if (membership.user.technical) {
+      if (membership.user && membership.user.technical) {
         promise = deleteTechnicalUser();
       } else {
         promise = deleteMembership();

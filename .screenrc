@@ -11,6 +11,7 @@ stuff "bundle exec rails server\012"
 screen -t vim 4
 stuff "\${PROJECT_EDITOR-\$EDITOR}\012"
 screen -t zsh 5
+stuff "direnv reload\012"
 screen -t spec 6
 stuff "bundle exec rake"
 screen -t console 7
