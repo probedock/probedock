@@ -6,7 +6,7 @@
   table.table
     margin-bottom 0
     th, td
-      &.runs
+      &.runners
         width 33%
       &.results
         width 67%
@@ -14,8 +14,11 @@
       tr
         td
           vertical-align middle
-          .time
-            margin-left 0.6em
+          &.runners
+            .time
+              margin-left 0.4em
+            span
+              vertical-align middle
 
 .dashboardTagCloud
   .cloud

@@ -44,8 +44,7 @@
               |  {{ result.runAt | amDateFormat: 'lll' }}
             li
               strong By:
-              |  
-              user-avatar user='result.runner' name-tooltip='true'
+              |  {{ result.runner.name }}
             li
               strong Duration:
               |  {{ result.duration | durationFormat }}

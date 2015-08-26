@@ -24,7 +24,7 @@ div ng-controller='LatestReportsCtrl'
         td.runners
           span ng-repeat='runner in report.runners.slice(0, 3)'
             user-avatar user='runner'
-            span.hidden-xs  {{ runner.name }}
+            span.name.hidden-xs  {{ runner.name }}
         td.duration.hidden-xs.hidden-sm {{ report.duration | durationFormat }}
         td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
         td.projects.hidden-xs
