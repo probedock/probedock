@@ -23,6 +23,6 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-if Settings::App.get.blank?
+if Settings::App.first.blank?
   Settings::App.new.save!
 end
