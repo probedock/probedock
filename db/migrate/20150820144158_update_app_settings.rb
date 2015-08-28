@@ -15,7 +15,7 @@ class UpdateAppSettings < ActiveRecord::Migration
   end
 
   def down
-    Settings::App.first.destroy
+    Settings::App.first.try :destroy
 
     add_column :app_settings, :reports_cache_size, :integer, null: false
     add_column :app_settings, :tag_cloud_size, :integer, null: false
