@@ -11,6 +11,16 @@ angular.module('probedock.api', [ 'probedock.auth', 'probedock.utils' ])
         options.url = urls.join('/api', options.url);
       }
 
+      // TODO: replace by $httpParamSerializerJQLike when upgrading to Angular 1.4
+      if (options.params) {
+        _.each(options.params, function(value, key) {
+          if (_.isArray(value) && !key.match(/\[\]$/)) {
+            options.params[key + '[]'] = value;
+            delete options.params[key];
+          }
+        });
+      }
+
       if (auth.token) {
         options.headers = _.defaults({}, options.headers, {
           Authorization: 'Bearer ' + auth.token

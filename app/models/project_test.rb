@@ -20,6 +20,7 @@ class ProjectTest < ActiveRecord::Base
 
   belongs_to :key, class_name: 'TestKey'
   belongs_to :project
+  belongs_to :first_runner, class_name: 'User'
   belongs_to :description, class_name: 'TestDescription'
   has_many :descriptions, class_name: 'TestDescription', foreign_key: 'test_id'
   has_many :results, class_name: 'TestResult', foreign_key: 'test_id'

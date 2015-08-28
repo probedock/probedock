@@ -46,26 +46,83 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
     });
   })
 
-  .controller('DashboardNewTestMetricsCtrl', function(api, $scope, $stateParams) {
+  .directive('newTestsLineChart', function() {
+    return {
+      restrict: 'E',
+      controller: 'NewTestsLineChartCtrl',
+      templateUrl: '/templates/new-tests-line-chart.html',
+      scope: {
+        organization: '='
+      }
+    };
+  })
 
-    fetchMetrics().then(showMetrics);
+  .controller('NewTestsLineChartCtrl', function(api, $scope) {
 
     $scope.chart = {
       data: [],
       labels: [],
+      params: {
+        projectIds: [],
+        userIds: []
+      },
       options: {
         pointHitDetectionRadius: 5,
         tooltipTemplate: '<%= value %> new tests on <%= label %>'
       }
     };
 
+    $scope.projectChoices = [];
+
+    // TODO: replace users by contributors
+    $scope.userChoices = [];
+
+    $scope.$watch('organization', function(value) {
+      if (value) {
+        fetchMetrics();
+        fetchProjectChoices();
+        fetchUserChoices();
+      }
+    });
+
+    var ignoreChartParams = true;
+    $scope.$watch('chart.params', function(value) {
+      if (value && !ignoreChartParams) {
+        fetchMetrics();
+      }
+
+      ignoreChartParams = false;
+    }, true);
+
+    function fetchProjectChoices() {
+      api({
+        url: '/projects',
+        params: {
+          organizationId: $scope.organization.id
+        }
+      }).then(function(res) {
+        $scope.projectChoices = res.data;
+      });
+    }
+
+    function fetchUserChoices() {
+      api({
+        url: '/users',
+        params: {
+          organizationId: $scope.organization.id
+        }
+      }).then(function(res) {
+        $scope.userChoices = res.data;
+      });
+    }
+
     function fetchMetrics() {
       return api({
-        url: '/metrics/new-tests',
-        params: {
-          organizationName: $stateParams.orgName
-        }
-      });
+        url: '/metrics/newTests',
+        params: _.extend({}, $scope.chart.params, {
+          organizationId: $scope.organization.id
+        })
+      }).then(showMetrics);
     }
 
     function showMetrics(response) {
@@ -75,6 +132,7 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
 
       var series = [];
       $scope.chart.data = [ series ];
+      $scope.chart.labels.length = 0;
 
       _.each(response.data, function(data) {
         $scope.chart.labels.push(moment(data.date).format('DD.MM'));

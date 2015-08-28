@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150820144158) do
+ActiveRecord::Schema.define(version: 20150828081639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,14 +71,15 @@ ActiveRecord::Schema.define(version: 20150820144158) do
   add_index "organizations", ["normalized_name"], name: "index_organizations_on_normalized_name", unique: true, using: :btree
 
   create_table "project_tests", force: :cascade do |t|
-    t.string   "name",                       null: false
+    t.string   "name",                        null: false
     t.integer  "key_id"
     t.integer  "description_id"
-    t.integer  "project_id",                 null: false
-    t.integer  "results_count",  default: 0, null: false
-    t.datetime "first_run_at",               null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "project_id",                  null: false
+    t.integer  "results_count",   default: 0, null: false
+    t.datetime "first_run_at",                null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "first_runner_id"
   end
 
   add_index "project_tests", ["description_id"], name: "index_project_tests_on_description_id", unique: true, using: :btree
@@ -305,6 +306,7 @@ ActiveRecord::Schema.define(version: 20150820144158) do
   add_foreign_key "project_tests", "projects"
   add_foreign_key "project_tests", "test_descriptions", column: "description_id"
   add_foreign_key "project_tests", "test_keys", column: "key_id"
+  add_foreign_key "project_tests", "users", column: "first_runner_id"
   add_foreign_key "project_versions", "projects"
   add_foreign_key "projects", "organizations"
   add_foreign_key "tags", "organizations"

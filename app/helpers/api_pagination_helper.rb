@@ -20,7 +20,16 @@ module ApiPaginationHelper
       rel
     end
 
-    header 'X-Pagination-Filtered-Total', filtered_rel.count.to_s if filtered_rel != rel
+    if filtered_rel != rel
+
+      filtered_count = if @pagination_filtered_count
+        @pagination_filtered_count
+      else
+        (@pagination_filtered_count_rel || filtered_rel).count
+      end
+
+      header 'X-Pagination-Filtered-Total', filtered_count.to_s
+    end
 
     filtered_rel.offset(offset).limit(limit)
   end

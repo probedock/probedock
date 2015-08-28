@@ -86,13 +86,13 @@ module ProbeDock
         authenticate
         authorize! User, :index
 
-        rel = User.order 'LOWER(name) ASC'
+        rel = User.order 'LOWER(users.name) ASC'
 
         rel = paginated rel do |rel|
           if params[:email].present?
             email = Email.where(address: params[:email].to_s.downcase).first
             if email.present? && email.user_id.present?
-              rel = rel.where id: email.user_id
+              rel = rel.where 'users.id = ?', email.user_id
             else
               rel = rel.none
             end
@@ -106,6 +106,18 @@ module ProbeDock
           if params[:name].present?
             rel = rel.where 'users.name = ?', params[:name].to_s
           end
+
+          group = false
+          if params[:organizationId].present?
+            organization = Organization.where(api_id: params[:organizationId].to_s).first!
+            authorize! organization, :show
+            rel = rel.joins(memberships: :organization).where('organizations.api_id = ?', params[:organizationId].to_s)
+            group = true
+          end
+
+          @pagination_filtered_count = rel.count 'distinct users.id'
+
+          rel = rel.group 'users.id' if group
 
           rel
         end

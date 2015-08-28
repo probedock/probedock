@@ -32,13 +32,27 @@ module ProbeDock
         end
       end
 
-      get :'new-tests' do
+      get :newTests do
         authorize! :organization, :data
 
         start_date = 29.days.ago.beginning_of_day
 
-        rel = ProjectTest.joins(:project).where(projects: { organization_id: current_organization.id }).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.first_run_at) as project_tests_day")
+        rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.first_run_at) as project_tests_day")
         rel = rel.where 'project_tests.first_run_at >= ?', start_date
+
+        if params[:projectIds].present? && params[:projectIds].kind_of?(Array)
+          rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s)
+        end
+
+        if params[:userIds].present? && params[:userIds].kind_of?(Array)
+
+          users = User.where('api_id IN (?)', params[:userIds].collect(&:to_s)).to_a
+          rel = rel.joins 'LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id'
+
+          user_ids = users.collect &:id
+          rel = rel.where '(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids
+        end
+
         rel = rel.group('project_tests_day').order('project_tests_day DESC')
 
         counts = rel.to_a.inject({}){ |memo,data| memo[data.project_tests_day.strftime('%Y-%m-%d')] = data.project_tests_count; memo }
