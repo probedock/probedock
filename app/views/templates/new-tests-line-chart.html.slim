@@ -1,6 +1,7 @@
 .new-tests-line-chart
   p.text-info ng-if='chart.data.length'
-    strong {{ newTestsCount | number }} 
+    strong ng-if='newTestsCount' {{ newTestsCount | number }} 
+    span ng-if='newTestsCount === 0' No 
     ng-pluralize count='newTestsCount' when='{"1": "new test was run over the last 30 days.", "other": "new tests were run over the last 30 days."}'
   canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
   form.form role='form' ng-if='chart.data.length'

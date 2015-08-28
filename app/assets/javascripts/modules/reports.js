@@ -171,7 +171,7 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       if (result.key) {
         return 'test-k-' + result.key;
       } else {
-        return 'test-n-' + result.name.replace(/\s+/g, '');
+        return 'test-n-' + result.name.replace(/\s+/g, '').replace(/[^A-Za-z0-9\_\-]/g, '');
       }
     };
 
@@ -286,7 +286,7 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
         if (e.data('k')) {
           testElement = $('#test-k-' + e.data('k'));
         } else if (e.data('n')) {
-          testElement = $('#test-n-' + e.data('n').replace(/\s+/g, ''));
+          testElement = $('#test-n-' + e.data('n').replace(/\s+/g, '').replace(/[^A-Za-z0-9\_\-]/g, ''));
         }
 
         if (testElement.length) {

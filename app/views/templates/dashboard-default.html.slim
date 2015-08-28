@@ -36,19 +36,17 @@
         h3.panel-title Recent Activity
       .panel-body
         recent-activity ng-if='currentOrganization' organization='currentOrganization'
-  .col-md-6.col-xs-12 ng-if='orgIsActive()'
-    .panel.panel-default
-      .panel-heading
-        h3.panel-title New Tests
-      .panel-body
-        new-tests-line-chart ng-if='currentOrganization' organization='currentOrganization'
-  .col-md-6.col-xs-12 ng-if='currentUser && orgIsActive() && currentMember()'
-    test-key-generator
-  .col-md-6.col-xs-12 ng-if='orgIsActive()'
-    .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl'
+    .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl' ng-if='orgIsActive()'
       .panel-heading
         h3.panel-title Test Tags
       .panel-body
         jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
         .empty ng-show='tags && !tags.length'
           em No tests have been tagged.
+  .col-md-6.col-xs-12 ng-if='orgIsActive()'
+    .panel.panel-default
+      .panel-heading
+        h3.panel-title New Tests
+      .panel-body
+        new-tests-line-chart ng-if='currentOrganization' organization='currentOrganization'
+    test-key-generator ng-if='currentUser && orgIsActive() && currentMember()'
