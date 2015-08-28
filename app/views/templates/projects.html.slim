@@ -23,4 +23,4 @@
         |  Add a new project
   .col-xs-12.col-sm-8.col-md-9
     .col-xs-12 ng-repeat='project in projects | orderBy: orderProject'
-      include _project.html
+      ng-include src='"/templates/project-panel.html"'
