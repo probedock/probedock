@@ -198,9 +198,10 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       pageSize: 15,
       params: {
         organizationName: $stateParams.orgName,
+        withRunners: 1,
         withProjects: 1,
         withProjectVersions: 1,
-        withRunners: 1
+        withCategories: 1
       }
     });
 

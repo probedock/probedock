@@ -4,8 +4,12 @@
     span ng-if='!report' Test Run Report - Loading report data...
   .project-version-labels.clearfix
     .label.label-primary ng-if='!report' Loading...
-    div ng-repeat='project in report.projects'
-      .label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project | projectName }} {{ version.name }}
+    span ng-repeat='project in report.projects'
+      span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project | projectName }} {{ version.name }}
+      |  
+    span ng-repeat='category in report.categories'
+      span.label.label-info {{ category }}
+      |  
   .row style='margin-top: 2em;'
     .col-md-5.col-lg-4
       .summary.panel.panel-default

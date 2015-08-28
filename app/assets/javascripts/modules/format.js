@@ -23,7 +23,7 @@ angular.module('probedock.format', [])
       return duration;
     }
 
-    return function(milliseconds, min, shorten) {
+    return function(milliseconds, maxParts, min, shorten) {
 
       if (min) {
         var duration = findDuration(min);
@@ -35,7 +35,7 @@ angular.module('probedock.format', [])
       }
 
       if (shorten) {
-        var duration = findDuration(options.shorten);
+        var duration = findDuration(shorten);
         var closestDuration = _.find(durations, function(d) {
           return d.value <= duration.value && milliseconds >= d.value;
         });
@@ -44,14 +44,20 @@ angular.module('probedock.format', [])
         }
       }
 
-      return _.inject(durations, function(memo, d) {
+      var parts = _.inject(durations, function(memo, d) {
         var value = Math.floor(milliseconds / d.value);
         if (value >= 1) {
           milliseconds = milliseconds - value * d.value;
           memo.push(value + d.name);
         }
         return memo;
-      }, []).join(' ');
+      }, []);
+
+      if (maxParts && maxParts >= 1) {
+        parts = parts.slice(0, maxParts);
+      }
+
+      return parts.join(' ');
     };
   });
 

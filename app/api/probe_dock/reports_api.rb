@@ -43,7 +43,10 @@ module ProbeDock
           @serialization_options ||= {
             with_projects: true_flag?(:withProjects),
             with_project_versions: true_flag?(:withProjectVersions),
-            with_runners: true_flag?(:withRunners)
+            with_runners: true_flag?(:withRunners),
+            with_categories: true_flag?(:withCategories),
+            with_tags: true_flag?(:withTags),
+            with_tickets: true_flag?(:withTickets)
           }
         end
       end

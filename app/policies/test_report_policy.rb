@@ -57,9 +57,15 @@ class TestReportPolicy < ApplicationPolicy
         end
 
         # TODO: use separate flags
-        if options[:detailed]
+        if options[:detailed] || options[:with_categories]
           json.categories Category.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('categories.name').pluck('distinct categories.name')
+        end
+
+        if options[:detailed] || options[:with_tags]
           json.tags Tag.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('tags.name').pluck('distinct tags.name')
+        end
+
+        if options[:detailed] || options[:with_tickets]
           json.tickets Ticket.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('tickets.name').pluck('distinct tickets.name')
         end
       end

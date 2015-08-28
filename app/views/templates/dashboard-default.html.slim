@@ -31,29 +31,11 @@
       '  guide to find out how to publish test results for your projects.
 .container-fluid ng-if='orgIsActive()'
   .col-md-6.col-xs-12
-    .dashboardLatestReports.panel.panel-default ng-controller='DashboardLatestReportsCtrl'
+    .panel.panel-default
       .panel-heading
-        h3.panel-title Latest Reports
+        h3.panel-title Recent Activity
       .panel-body
-        table.table.table-hover
-          thead
-            tr
-              th.runners Run
-              th.results Results
-          tbody
-            tr.loading ng-hide='reports'
-              td colspan=2
-                em Loading...
-            tr.empty ng-show='reports && !reports.length'
-              td colspan=2
-                em No tests have been run recently.
-            tr ng-repeat='report in reports' ng-show='reports.length'
-              td.runners
-                user-avatar ng-if='report.runners.length == 1' user='report.runners[0]' name-tooltip='true'
-                span.time.hidden-xs am-time-ago='report.endedAt'
-              td.results
-                a href='#' ui-sref='org.reports.show({ id: report.id })'
-                  report-health-bar report='report' click-for-details=true
+        recent-activity ng-if='currentOrganization' organization='currentOrganization'
   .col-md-6.col-xs-12 ng-if='orgIsActive()'
     .panel.panel-default
       .panel-heading

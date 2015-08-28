@@ -133,10 +133,12 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
       var series = [];
       $scope.chart.data = [ series ];
       $scope.chart.labels.length = 0;
+      $scope.newTestsCount = 0;
 
       _.each(response.data, function(data) {
         $scope.chart.labels.push(moment(data.date).format('DD.MM'));
         series.push(data.testsCount);
+        $scope.newTestsCount += data.testsCount;
       });
     }
   })
@@ -167,16 +169,39 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
     }
   })
 
-  .controller('DashboardLatestReportsCtrl', function(api, $scope, $stateParams) {
-
-    api({
-      url: '/reports',
-      params: {
-        pageSize: 8,
-        organizationName: $stateParams.orgName,
-        withRunners: 1
+  .directive('recentActivity', function() {
+    return {
+      restrict: 'E',
+      controller: 'RecentActivityCtrl',
+      controllerAs: 'ctrl',
+      templateUrl: '/templates/recent-activity.html',
+      scope: {
+        organization: '='
       }
-    }).then(showReports);
+    };
+  })
+
+  .controller('RecentActivityCtrl', function(api, $scope) {
+
+    $scope.$watch('organization', function(value) {
+      if (value) {
+        fetchReports();
+      }
+    });
+
+    function fetchReports() {
+      return api({
+        url: '/reports',
+        params: {
+          pageSize: 5,
+          organizationId: $scope.organization.id,
+          withRunners: 1,
+          withProjects: 1,
+          withProjectVersions: 1,
+          withCategories: 1
+        }
+      }).then(showReports);
+    }
 
     function showReports(response) {
       $scope.reports = response.data;
