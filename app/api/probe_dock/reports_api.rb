@@ -46,7 +46,8 @@ module ProbeDock
             with_runners: true_flag?(:withRunners),
             with_categories: true_flag?(:withCategories),
             with_tags: true_flag?(:withTags),
-            with_tickets: true_flag?(:withTickets)
+            with_tickets: true_flag?(:withTickets),
+            with_project_counts_for: params[:withProjectCountsFor].try(:to_s)
           }
         end
       end

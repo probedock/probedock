@@ -45,7 +45,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavC
           button.btn.btn-success.navbar-btn.btn-sm tooltip='You have been invited to join an organization!' tooltip-append-to-body='true' tooltip-placement='bottom' ui-sref='profile'
             span.glyphicon.glyphicon-exclamation-sign
         li ng-if='currentUser' ng-class='{active: baseStateIs("profile")}'
-          a href='#' tooltip='Your profile' tooltip-placement='bottom' ui-sref='profile' {{ currentUser.primaryEmail }}
+          a href='#' tooltip='Your profile' tooltip-placement='bottom' ui-sref='profile' {{ currentUser.name }}
         li ng-if='!currentUser'
           button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='openSignInDialog()' tooltip='Sign in' tooltip-placement='left'
             span.glyphicon.glyphicon-log-in

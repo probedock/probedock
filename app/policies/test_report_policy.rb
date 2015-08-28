@@ -44,6 +44,17 @@ class TestReportPolicy < ApplicationPolicy
         json.endedAt record.ended_at.iso8601(3)
         json.createdAt record.created_at.iso8601(3)
 
+        if options[:with_project_counts_for]
+          project_api_id = options[:with_project_counts_for].to_s
+          rel = TestResult.joins(project_version: :project, test_payload: :test_reports).where('test_reports.id = ? AND projects.api_id = ?', record.id, project_api_id)
+          json.projectCounts do
+            json.resultsCount rel.count
+            json.passedResultsCount rel.where('test_results.passed = ?', true).count
+            json.inactiveResultsCount rel.where('test_results.active = ?', false).count
+            json.inactivePassedResultsCount rel.where('test_results.passed = ? AND test_results.active = ?', true, false).count
+          end
+        end
+
         if options[:detailed] || options[:with_projects]
           json.projects record.projects.distinct.collect{ |p| serialize p, link: true }
         end

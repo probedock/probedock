@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150828081639) do
+ActiveRecord::Schema.define(version: 20150828114227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(version: 20150828081639) do
     t.integer  "deprecated_tests_count",            default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.integer  "last_report_id"
   end
 
   add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
@@ -309,6 +310,7 @@ ActiveRecord::Schema.define(version: 20150828081639) do
   add_foreign_key "project_tests", "users", column: "first_runner_id"
   add_foreign_key "project_versions", "projects"
   add_foreign_key "projects", "organizations"
+  add_foreign_key "projects", "test_reports", column: "last_report_id"
   add_foreign_key "tags", "organizations"
   add_foreign_key "tags_test_descriptions", "tags"
   add_foreign_key "tags_test_descriptions", "test_descriptions"

@@ -23,6 +23,7 @@ class Project < ActiveRecord::Base
   before_save :normalize_name
 
   belongs_to :organization, counter_cache: true
+  belongs_to :last_report, class_name: 'TestReport'
   has_many :test_keys
   has_many :tests, class_name: 'ProjectTest'
   has_many :versions, class_name: 'ProjectVersion'
