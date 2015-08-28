@@ -77,3 +77,17 @@ task:
   env_file:
     - .env
   restart: no
+
+# Backup script.
+# This is meant to be run as a one-off task (with "run" instead of "up").
+backup:
+  image: probedock/probedock-backup
+  links:
+    - db
+    - cache
+  volumes:
+    - "{{ release_path }}/backup:/backup"
+    - "/var/lib/lair/backup:/var/lib/lair/backup"
+  env_file:
+    - .env
+  restart: no
