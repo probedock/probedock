@@ -21,7 +21,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def index?
-    admin? || params[:name].present? || params[:email].present?
+    true
   end
 
   def show?
@@ -96,6 +96,7 @@ class UserPolicy < ApplicationPolicy
           end
         end
 
+        # FIXME: only allow admin and org members to see this
         if record.technical? && options[:with_technical_membership]
           json.technicalMembership serialize(record.memberships.first, options)
         end
