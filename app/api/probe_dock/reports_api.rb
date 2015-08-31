@@ -90,14 +90,19 @@ module ProbeDock
         get :health do
           authorize! record, :show
 
+          categories = Category.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('categories.name').pluck('distinct categories.name')
+          tags = Tag.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('tags.name').pluck('distinct tags.name')
+          tickets = Ticket.joins(test_results: { test_payload: :test_reports }).where(test_reports: { id: record.id }).order('tickets.name').pluck('distinct tickets.name')
+          helper = ReportsHelper::Template.new categories, tags, tickets
+
           html = ''
 
           offset = 0
           limit = 100
 
           begin
-            current_results = record.results.order('name, id').offset(offset).limit(limit).includes(test: :key).to_a
-            html << report_health_template.render(OpenStruct.new(results: current_results))
+            current_results = record.results.order('name, id').offset(offset).limit(limit).includes(:key, :category, :tags, :tickets).to_a
+            html << report_health_template.render(OpenStruct.new(results: current_results, helper: helper))
             offset += limit
           end while current_results.present?
 

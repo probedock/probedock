@@ -55,6 +55,47 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       fetchResults().then(addResults);
     };
 
+    $scope.resultClasses = function(result) {
+      var classes = [];
+
+      if (result.newTest) {
+        classes.push('nt');
+      }
+
+      if (result.active) {
+        classes.push(result.passed ? 'p' : 'f');
+      } else {
+        classes.push('i');
+      }
+
+      if (result.category) {
+        var i = $scope.report.categories.indexOf(result.category);
+        if (i >= 0) {
+          classes.push('c-' + i.toString(36));
+        }
+      }
+
+      if (result.tags && result.tags.length) {
+        _.each(result.tags, function(tag) {
+          var i = $scope.report.tags.indexOf(tag);
+          if (i >= 0) {
+            classes.push('t-' + i.toString(36));
+          }
+        });
+      }
+
+      if (result.tickets && result.tickets.length) {
+        _.each(result.tickets, function(ticket) {
+          var i = $scope.report.tickets.indexOf(ticket);
+          if (i >= 0) {
+            classes.push('i-' + i.toString(36));
+          }
+        });
+      }
+
+      return classes.join(' ');
+    };
+
     function fetchResults() {
 
       $scope.fetchingMoreResults = true;
@@ -80,6 +121,10 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       }
 
       $scope.noMoreResults = $scope.results.length >= $scope.total || !response.data.length;
+
+      if (response.data.length) {
+        $scope.$broadcast('report.moreResultsLoaded');
+      }
     }
   })
 
@@ -160,6 +205,21 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
   })
 
   .controller('ReportDetailsCtrl', function(api, $scope) {
+
+    $scope.reportFilters = {
+      showPassed: true,
+      showFailed: true,
+      showInactive: true,
+      categories: [],
+      tags: [],
+      tickets: []
+    };
+
+    $scope.$watch('reportFilters', function(value) {
+      if (value && $scope.report) {
+        $scope.$broadcast('report.filtersChanged', value);
+      }
+    }, true);
 
     $scope.$watch('report', function(report) {
       if (report) {
@@ -272,8 +332,75 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     };
   })
 
+  .directive('reportFilters', function($timeout) {
+    return {
+      link: function($scope, element, attrs) {
+        $scope.$on('report.filtersChanged', function(event, filters) {
+          applyFilters(filters);
+        });
+
+        $scope.$on('report.moreResultsLoaded', function() {
+          applyFilters($scope.reportFilters);
+        });
+
+        function applyFilters(filters) {
+
+          var report = $scope[attrs.reportFilters],
+              selector = attrs.reportFiltersSelector;
+
+          if (!report || !selector) {
+            return;
+          }
+
+          var filters = _.extend({}, filters);
+          if (!filters.name || !filters.name.trim().length) {
+            delete filters.name;
+          }
+
+          element[filters.showPassed ? 'removeClass' : 'addClass']('hidePassed');
+          element[filters.showFailed ? 'removeClass' : 'addClass']('hideFailed');
+          element[filters.showInactive ? 'removeClass' : 'addClass']('hideInactive');
+
+          var elements = element.find(selector),
+              elementsToHide = elements.filter(function() {
+                var e = $(this);
+
+                if (filters.name && e.data('n') && e.data('n').toLowerCase().indexOf(filters.name.toLowerCase()) < 0) {
+                  return true;
+                } else if (metadataMismatch(e, filters.categories, report.categories, 'c')) {
+                  return true;
+                } else if (metadataMismatch(e, filters.tags, report.tags, 't')) {
+                  return true;
+                } else if (metadataMismatch(e, filters.tickets, report.tickets, 'i')) {
+                  return true;
+                }
+
+                return false;
+              });
+
+          elements.removeClass('h');
+          elementsToHide.addClass('h');
+
+          $timeout(function() {
+            if (element.find(selector + ':visible').length) {
+              element.find('.no-match').hide();
+            } else {
+              element.find('.no-match').show();
+            }
+          }, 250);
+        }
+
+        function metadataMismatch(element, items, allItems, classPrefix) {
+          return items.length && !_.some(items, function(item) {
+            return element.hasClass(classPrefix + '-' + allItems.indexOf(item).toString(36));
+          });
+        }
+      }
+    };
+  })
+
   .directive('healthTooltips', function($compile, $document) {
-    return function(scope, element, attrs) {
+    return function($scope, element, attrs) {
 
       var titleTemplate = _.template('<strong class="<%= titleClass %>"><%- title %></strong>'),
           contentTemplate = _.template('<ul class="list-unstyled"><li><strong>Duration:</strong> <%- duration %></li></ul>');

@@ -50,6 +50,10 @@ class TestResult < ActiveRecord::Base
     active
   end
 
+  def new_test?
+    new_test
+  end
+
   def custom_values
     read_attribute(:custom_values) || {}
   end

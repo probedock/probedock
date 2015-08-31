@@ -10,7 +10,7 @@
     span ng-repeat='category in report.categories'
       span.label.label-info {{ category }}
       |  
-  .row style='margin-top: 2em;'
+  .row.overview
     .col-md-5.col-lg-4
       .summary.panel.panel-default
         .panel-heading
@@ -26,13 +26,53 @@
       .health.panel.panel-default ng-controller='ReportHealthCtrl'
         .panel-heading
           h3.panel-title Health
-        .panel-body
-          div ng-bind-html='healthHtml' ng-show='healthHtml' health-tooltips='healthHtml'
+        .panel-body report-filters='report' report-filters-selector='a'
+          p.empty.no-match No result matches the selected filters.
+          div ng-if='healthHtml' ng-bind-html='healthHtml' health-tooltips=true
           .clearfix
-  .results ng-controller='ReportResultsCtrl'
+  .row.filters
+    .col-xs-12
+      .well
+        form.clearfix role='form'
+          .col-md-4.col-sm-6.col-xs-12
+            .form-group
+              label Filter by result
+              div
+                .btn-group
+                  label.btn.btn-success btn-checkbox=true ng-model='reportFilters.showPassed' tooltip='Click to show/hide passed results' tooltip-append-to-body='true'
+                    span.glyphicon.glyphicon-thumbs-up
+                  label.btn.btn-danger btn-checkbox=true ng-model='reportFilters.showFailed' tooltip='Click to show/hide failed results' tooltip-append-to-body='true'
+                    span.glyphicon.glyphicon-thumbs-down
+                  label.btn.btn-warning btn-checkbox=true ng-model='reportFilters.showInactive' tooltip='Click to show/hide inactive results' tooltip-append-to-body='true'
+                    span.glyphicon.glyphicon-ban-circle
+            .form-group
+              label.control-label for='report-filters-name' Filter by name
+              input#report-filters-name.form-control type='text' placeholder='Any name' ng-model='reportFilters.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
+          .col-md-4.col-sm-6.col-xs-12
+            .form-group
+              label.control-label for='report-filters-categories' Filter by category
+              ui-select#report-filters-categories ng-model='reportFilters.categories' multiple=true reset-search-input=true
+                ui-select-match placeholder='All categories' {{ $item }}
+                ui-select-choices repeat='category in report.categories | filter: $select.search'
+                  span ng-bind-html='category'
+            .form-group
+              label.control-label for='report-filters-tags' Filter by tag
+              ui-select#report-filters-tags ng-model='reportFilters.tags' multiple=true reset-search-input=true
+                ui-select-match placeholder='All tags' {{ $item }}
+                ui-select-choices repeat='tag in report.tags | filter: $select.search'
+                  span ng-bind-html='tag'
+          .col-md-4.col-sm-6.col-xs-12
+            .form-group
+              label.control-label for='report-filters-tickets' Filter by ticket
+              ui-select#report-filters-tickets ng-model='reportFilters.tickets' multiple=true reset-search-input=true
+                ui-select-match placeholder='All tickets' {{ $item }}
+                ui-select-choices repeat='ticket in report.tickets | filter: $select.search'
+                  span ng-bind-html='ticket'
+  .results ng-controller='ReportResultsCtrl' report-filters='report' report-filters-selector='.result'
     h3 List of results
     p.empty ng-if='!report' Loading...
-    .result.col-xs-12.col-lg-6 ng-repeat-start='result in results' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
+    p.empty.no-match No result matches the selected filters.
+    .result.col-xs-12 ng-repeat='result in results' class='{{ resultClasses(result) }}' data-n='{{ result.name }}' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
       .panel id='{{ testAnchor(result) }}' ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
         .panel-body
           test-key-label.pull-right ng-if='result.key' key='result.key'
@@ -53,7 +93,6 @@
               strong Duration:
               |  {{ result.duration | durationFormat }}
           pre ng-if='result.message' {{ result.message }}
-    .clearfix.visible-lg-block ng-if='$index % 2 == 1' ng-repeat-end=true
     button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()'
       span.glyphicon.glyphicon-eye-open
       |  Show {{ total - results.length }} more results
