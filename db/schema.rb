@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150828114227) do
+ActiveRecord::Schema.define(version: 20150831124925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -202,6 +202,8 @@ ActiveRecord::Schema.define(version: 20150828114227) do
     t.datetime "processed_at"
     t.datetime "created_at",                                           null: false
     t.datetime "updated_at",                                           null: false
+    t.integer  "tests_count",                              default: 0, null: false
+    t.integer  "new_tests_count",                          default: 0, null: false
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree
@@ -215,13 +217,15 @@ ActiveRecord::Schema.define(version: 20150828114227) do
   add_index "test_payloads_reports", ["test_payload_id", "test_report_id"], name: "index_test_payloads_reports_on_payload_and_report_id", unique: true, using: :btree
 
   create_table "test_reports", force: :cascade do |t|
-    t.string   "api_id",          limit: 12,  null: false
+    t.string   "api_id",          limit: 12,              null: false
     t.string   "uid",             limit: 100
-    t.integer  "organization_id",             null: false
-    t.datetime "started_at",                  null: false
-    t.datetime "ended_at",                    null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.integer  "organization_id",                         null: false
+    t.datetime "started_at",                              null: false
+    t.datetime "ended_at",                                null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+    t.integer  "tests_count",                 default: 0, null: false
+    t.integer  "new_tests_count",             default: 0, null: false
   end
 
   add_index "test_reports", ["api_id"], name: "index_test_reports_on_api_id", unique: true, using: :btree
