@@ -32,8 +32,6 @@ module TestPayloadProcessing
         cache.test @test_result.name
       end
 
-      @test_result.name ||= @test_result.test.try(:name)
-
       @test_result.new_test = @test_result.test_id.blank?
 
       @test_result.test_payload = test_payload

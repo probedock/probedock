@@ -23,7 +23,7 @@ class TestPayloadValidations < Errapi::SingleValidator
       validates 'k', type: :string, trim: true, length: 50
 
       # test name
-      validates 'n', presence: { unless: 'k' }, type: :string, trim: true, length: 255
+      validates 'n', presence: true, type: :string, trim: true, length: 255
 
       # whether the test passed (defaults to true)
       validates 'p', type: :boolean
