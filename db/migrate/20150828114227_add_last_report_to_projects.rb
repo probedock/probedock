@@ -24,7 +24,7 @@ class AddLastReportToProjects < ActiveRecord::Migration
       Project.all.to_a.each do |project|
         versions = ProjectVersion.where(project_id: project.id).all.to_a
         last_report = TestReport.joins(:test_payloads).where('test_payloads.project_version_id IN (?)', versions.collect(&:id)).order('test_reports.ended_at DESC').limit(1).first
-        project.update_attribute :last_report_id, last_report.id if last_report.present?
+        Project.where(id: project.id).update_all last_report_id: last_report.id if last_report.present?
       end
     end
   end

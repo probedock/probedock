@@ -26,6 +26,7 @@ class TestResultPolicy < ApplicationPolicy
         json.message record.message
         json.duration record.duration
         json.key record.key.key if record.key.present? && record.payload_properties_set?(:key)
+        json.newTest record.new_test
         json.category record.category.name if record.category.present?
         json.tags record.tags.collect(&:name)
         json.tickets record.tickets.collect(&:name)
