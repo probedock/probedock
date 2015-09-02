@@ -47,4 +47,12 @@ class TestPayload < ActiveRecord::Base
   def finish_processing
     test_keys.clear
   end
+
+  def started_at
+    if duration
+      ended_at - (duration / 1000.to_f)
+    else
+      ended_at
+    end
+  end
 end

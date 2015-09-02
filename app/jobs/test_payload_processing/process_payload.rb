@@ -42,7 +42,7 @@ module TestPayloadProcessing
 
           organization = project_version.project.organization
 
-          @cache = Cache.new project_version.project
+          @cache = PayloadCache.new project_version
           @test_payload.duration = 0
 
           offset = 0
@@ -59,13 +59,22 @@ module TestPayloadProcessing
             @cache.prefill results
 
             results.each do |result|
-              test_result = ProcessResult.new(result, @test_payload, @cache).test_result
-              ProcessTest.new test_result, @cache
+              ProcessResult.new result, @test_payload, @cache
             end
 
             break if results.blank?
             offset += 100
           end
+
+          @test_payload.tests_count = @cache.test_data.length
+          @test_payload.new_tests_count = @cache.test_data.select{ |d| !d[:test] }.length
+
+          @cache.test_data.each do |data|
+            results = @cache.test_results.select{ |r| (r.key && r.key == data[:key]) || data[:names].include?(r.name) }
+            ProcessTest.new project_version, data[:key], data[:test], results
+          end
+
+          Project.update_counters project_version.project.id, tests_count: @test_payload.new_tests_count
 
           @test_payload.duration = duration if duration.present?
 

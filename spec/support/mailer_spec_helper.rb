@@ -1,4 +1,4 @@
-module MailerHelpers
+module MailerSpecHelper
   include ActiveJob::TestHelper
 
   def store_mailer_state
@@ -10,7 +10,7 @@ module MailerHelpers
 
   def expect_new_mail_deliveries count = 0
     unless @mailer_state_stored
-      raise %/Use MailerHelpers#store_mailer_state at the beginning of all "When" step definitions to keep track of sent mails/
+      raise %/Use MailerSpecHelper#store_mailer_state at the beginning of all "When" step definitions to keep track of sent mails/
     end
 
     expect(mailer_deliveries_count).to eq(@mailer_deliveries_count), ->{ "Expected number of mail deliveries not to have changed, but it changed by #{mailer_deliveries_count - @mailer_deliveries_count}" }

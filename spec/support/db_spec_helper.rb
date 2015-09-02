@@ -1,9 +1,9 @@
-module DbHelpers
+module DbSpecHelper
   MODELS ||= [ Category, Email, Membership, Organization, Project, ProjectTest, ProjectVersion, Tag, TestDescription, TestKey, TestPayload, TestReport, TestResult, Ticket, User ]
 
   def expect_model_count_changes changes = {}
     unless @model_counts
-      raise %/Use DbHelpers#store_model_counts at the beginning of all "When" step definitions to keep track of changes to the database/
+      raise %/Use DbSpecHelper#store_model_counts at the beginning of all "When" step definitions to keep track of changes to the database/
     end
 
     current_counts = count_models

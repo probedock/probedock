@@ -58,7 +58,6 @@ class ProjectPolicy < ApplicationPolicy
         unless options[:link]
           json.description record.description if record.description.present?
           json.testsCount record.tests_count
-          json.deprecatedTestsCount record.deprecated_tests_count
           json.createdAt record.created_at.iso8601(3)
           json.updatedAt record.updated_at.iso8601(3)
         end

@@ -63,6 +63,14 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   config.include RedisHelpers
 
+  config.include ApiSpecHelper
+  config.include ChangeSpecHelper
+  config.include DbSpecHelper
+  config.include JobSpecHelper
+  config.include MailerSpecHelper
+  config.include ModelExpectations
+  config.include NamedRecordsSpecHelper
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.

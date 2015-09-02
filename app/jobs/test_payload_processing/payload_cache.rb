@@ -16,13 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module TestPayloadProcessing
-  class Cache
-    attr_reader :tests, :test_keys, :categories, :tags, :tickets
+  class PayloadCache
+    attr_reader :test_data, :test_results, :tests, :test_keys, :categories, :tags, :tickets
 
-    def initialize project
+    def initialize project_version
 
-      @project = project
-      @organization = project.organization
+      @project_version = project_version
+      @project = project_version.project
+      @organization = @project.organization
+      @test_data = []
+      @test_results = []
 
       @tests = {}
       @test_keys = {}
@@ -42,6 +45,29 @@ module TestPayloadProcessing
       end
 
       Rails.logger.info "Cached data for #{results.length} results in #{(time * 1000).round 1}ms"
+    end
+
+    def register_result result
+      @test_results << result
+
+      has_key = result.key.present?
+      existing_data_by_key = @test_data.find{ |d| has_key && d[:key] == result.key }
+      existing_data_by_name = @test_data.find{ |d| d[:names].include? result.name }
+
+      if existing_data_by_key
+        existing_data_by_key[:names] << result.name unless existing_data_by_key[:names].include? result.name
+        existing_data_by_key[:test] = existing_data_by_name[:test] if !result.key.test && !existing_data_by_key[:test]
+        @test_data.delete existing_data_by_name if existing_data_by_name
+      elsif existing_data_by_name
+        existing_data_by_name[:key] = result.key if has_key
+        existing_data_by_name[:test] = result.key.test if has_key && result.key.test && !existing_data_by_name[:test]
+      else
+        @test_data << {
+          key: result.key,
+          test: result.test,
+          names: [ result.name ]
+        }
+      end
     end
 
     def test name
@@ -70,7 +96,14 @@ module TestPayloadProcessing
       new_names = results.inject([]){ |memo,result| memo << result['n'] if result.key?('n') && !result.key?('k'); memo }.reject{ |n| @tests.key? n }
 
       if new_names.present?
-        @tests.merge! @project.tests.where(key_id: nil, name: new_names).to_a.inject({}){ |memo,test| memo[test.name] = test; memo }
+        @project_version.test_descriptions.where(name: new_names).includes(:test).to_a.each do |description|
+          existing_test = @tests[description.name]
+          if !existing_test
+            @tests[description.name] = description.test
+          elsif !existing_test.key_id && description.test.key_id
+            @tests[description.name] = description.test
+          end
+        end
       end
     end
 

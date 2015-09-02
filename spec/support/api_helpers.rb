@@ -77,7 +77,7 @@ module SpecApiHelper
     expect(response.success?).to be(true)
     expect(response.headers['Content-Type']).to match(/\Aapplication\/hal\+json/)
 
-    MultiJson.load response.body, mode: :strict
+    @response_body = MultiJson.load response.body, mode: :strict
   end
 
   def api_post path, body, options = {}
@@ -87,6 +87,8 @@ module SpecApiHelper
     headers['Authorization'] = "Bearer #{user.generate_auth_token}" if options[:user]
 
     post path, body, headers
+
+    @response_body = MultiJson.load response.body, mode: :strict
   end
 
   def api_put user, path, body, params = {}, options = {}
@@ -105,6 +107,8 @@ module SpecApiHelper
       expect(response.status).to eq(401)
       put send("#{path}_path", params), body, headers.merge(api_authentication_headers(user))
     end
+
+    @response_body = MultiJson.load response.body, mode: :strict
   end
 
   def api_delete user, path, params = {}, options = {}
@@ -121,6 +125,8 @@ module SpecApiHelper
       expect(response.status).to eq(401)
       delete send("#{path}_path"), params, headers.merge(api_authentication_headers(user))
     end
+
+    @response_body = MultiJson.load response.body, mode: :strict
   end
 
   def media_type name

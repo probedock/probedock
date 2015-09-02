@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150831124925) do
+ActiveRecord::Schema.define(version: 20150902152740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,17 +71,19 @@ ActiveRecord::Schema.define(version: 20150831124925) do
   add_index "organizations", ["normalized_name"], name: "index_organizations_on_normalized_name", unique: true, using: :btree
 
   create_table "project_tests", force: :cascade do |t|
-    t.string   "name",                        null: false
+    t.string   "name",                                   null: false
     t.integer  "key_id"
     t.integer  "description_id"
-    t.integer  "project_id",                  null: false
-    t.integer  "results_count",   default: 0, null: false
-    t.datetime "first_run_at",                null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.integer  "project_id",                             null: false
+    t.integer  "results_count",              default: 0, null: false
+    t.datetime "first_run_at",                           null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.integer  "first_runner_id"
+    t.string   "api_id",          limit: 12,             null: false
   end
 
+  add_index "project_tests", ["api_id"], name: "index_project_tests_on_api_id", unique: true, using: :btree
   add_index "project_tests", ["description_id"], name: "index_project_tests_on_description_id", unique: true, using: :btree
   add_index "project_tests", ["project_id", "key_id"], name: "index_project_tests_on_project_id_and_key_id", unique: true, using: :btree
 
@@ -94,16 +96,15 @@ ActiveRecord::Schema.define(version: 20150831124925) do
   add_index "project_versions", ["name", "project_id"], name: "index_project_versions_on_name_and_project_id", unique: true, using: :btree
 
   create_table "projects", force: :cascade do |t|
-    t.string   "api_id",                 limit: 12,             null: false
-    t.string   "name",                   limit: 50,             null: false
-    t.string   "display_name",           limit: 50
-    t.string   "normalized_name",        limit: 50,             null: false
+    t.string   "api_id",          limit: 12,             null: false
+    t.string   "name",            limit: 50,             null: false
+    t.string   "display_name",    limit: 50
+    t.string   "normalized_name", limit: 50,             null: false
     t.text     "description"
-    t.integer  "organization_id",                               null: false
-    t.integer  "tests_count",                       default: 0, null: false
-    t.integer  "deprecated_tests_count",            default: 0, null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.integer  "organization_id",                        null: false
+    t.integer  "tests_count",                default: 0, null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.integer  "last_report_id"
   end
 
@@ -217,15 +218,13 @@ ActiveRecord::Schema.define(version: 20150831124925) do
   add_index "test_payloads_reports", ["test_payload_id", "test_report_id"], name: "index_test_payloads_reports_on_payload_and_report_id", unique: true, using: :btree
 
   create_table "test_reports", force: :cascade do |t|
-    t.string   "api_id",          limit: 12,              null: false
+    t.string   "api_id",          limit: 12,  null: false
     t.string   "uid",             limit: 100
-    t.integer  "organization_id",                         null: false
-    t.datetime "started_at",                              null: false
-    t.datetime "ended_at",                                null: false
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-    t.integer  "tests_count",                 default: 0, null: false
-    t.integer  "new_tests_count",             default: 0, null: false
+    t.integer  "organization_id",             null: false
+    t.datetime "started_at",                  null: false
+    t.datetime "ended_at",                    null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   add_index "test_reports", ["api_id"], name: "index_test_reports_on_api_id", unique: true, using: :btree

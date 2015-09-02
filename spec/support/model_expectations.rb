@@ -1,4 +1,140 @@
 module ModelExpectations
+  def expect_test_result data
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    result = expect_record TestResult, data do
+      if data.key?(:payloadId) && data.key?(:key)
+        TestResult.joins(:key, :test_payload).where('test_payloads.api_id = ? AND test_keys.key = ?', data[:payloadId].to_s, data[:key].to_s).first
+      elsif data.key?(:payloadId) && data.key?(:name)
+        TestResult.joins(:test_payload).where('test_payloads.api_id = ? AND test_results.name = ?', data[:payloadId].to_s, data[:name].to_s).first
+      else
+        raise "Test result must be identified by payload/key or payload/name, got #{data.inspect}"
+      end
+    end
+
+    @errors.compare result.name, data[:name], :name
+    @errors.compare result.passed, data.fetch(:passed, true), :passed
+    @errors.compare result.active, data.fetch(:active, true), :active
+    @errors.compare result.duration, data[:duration], :duration
+    @errors.compare result.new_test, data.fetch(:newTest, false), :new_test
+    @errors.compare result.test.api_id, data[:testId], :test_id
+
+    if data.key? :message
+      @errors.compare result.message, data[:message], :message
+    else
+      @errors.ensure_blank result.message, :message
+    end
+
+    expect_no_errors
+    result
+  end
+
+  def expect_test data
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    test = expect_record ProjectTest, data do
+      if data.key? :id
+        ProjectTest.where(api_id: data[:id].to_s).first
+      elsif data.key?(:projectId) && data.key?(:name)
+        ProjectTest.joins(:project).where('projects.api_id = ? AND project_tests.name = ?', data[:projectId].to_s, data[:name].to_s).first
+      else
+        raise "Project test must be identified by an ID or the combination of the project ID and name, got #{data.inspect}"
+      end
+    end
+
+    @errors.compare test.name, data[:name], :name
+    @errors.compare test.key.try(:key), data[:key], :key
+    @errors.compare test.project.api_id, data[:projectId], :project_id
+    @errors.compare test.results_count, data.fetch(:resultsCount, 0), :results_count
+    @errors.compare test.first_run_at.try(:iso8601, 3), data[:firstRunAt], :first_run_at if data.key? :firstRunAt
+    @errors.compare test.first_runner.try(:api_id), data[:firstRunnerId], :first_runner_id if data.key? :firstRunnerId
+
+    expect_no_errors
+    test
+  end
+
+  def expect_test_report data
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    report = expect_record TestReport, data
+
+    @errors.compare report.organization.api_id, data[:organizationId], :organization_id
+    @errors.compare report.started_at.iso8601(3), data[:startedAt], :started_at if data.key? :startedAt
+    @errors.compare report.ended_at.iso8601(3), data[:endedAt], :ended_at if data.key? :endedAt
+    @errors.compare report.test_payloads.collect(&:api_id).sort, data[:payloadIds].try(:sort), :payload_ids
+
+    if data.key? :uid
+      @errors.compare report.uid, data[:uid], :uid
+    else
+      @errors.ensure_blank report.uid, :uid
+    end
+
+    expect_no_errors
+    report
+  end
+
+  def expect_test_payload data
+
+    data = data.with_indifferent_access
+    if data[:payloads].kind_of?(Array) && data[:payloads].length == 1
+      data.merge! data[:payloads][0].with_indifferent_access
+      data.delete :payloads
+    end
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    payload = expect_record TestPayload, data
+
+    @errors.compare payload.state.to_s, data.fetch(:state, :created).to_s, :state
+    @errors.compare payload.duration, data[:duration], :duration
+    @errors.compare payload.runner.api_id, data[:runnerId], :runner_id
+    @errors.compare payload.project_version.project.api_id, data[:projectId], :project_id
+    @errors.compare payload.project_version.name, data[:projectVersion], :project_version
+    @errors.compare payload.ended_at.iso8601(3), data[:endedAt], :ended_at
+    @errors.compare payload.received_at.iso8601(3), data[:receivedAt] || data[:endedAt], :received_at
+    @errors.compare payload.results_count, data.fetch(:resultsCount, 0), :results_count
+    @errors.compare payload.passed_results_count, data.fetch(:passedResultsCount, 0), :passed_results_count
+    @errors.compare payload.inactive_results_count, data.fetch(:inactiveResultsCount, 0), :inactive_results_count
+    @errors.compare payload.inactive_passed_results_count, data.fetch(:inactivePassedResultsCount, 0), :inactive_passed_results_count
+    @errors.compare payload.tests_count, data.fetch(:testsCount, 0), :tests_count
+    @errors.compare payload.new_tests_count, data.fetch(:newTestsCount, 0), :new_tests_count
+
+    if data.key? :contents
+      @errors.compare payload.contents, data[:contents].with_indifferent_access, :contents
+      @errors.compare payload.contents_bytesize, MultiJson.dump(data[:contents]).bytesize, :contents_bytesize
+    else
+      @errors.ensure_present payload.contents, :contents
+      @errors.ensure_present payload.contents_bytesize, :contents_bytesize
+    end
+
+    expect_no_errors
+    payload
+  end
+
+  def expect_project_version data
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    version = expect_record ProjectVersion, data do
+      ProjectVersion.joins(:project).where('project_versions.name = ? AND projects.api_id = ?', data[:name].to_s, data[:projectId].to_s).first
+    end
+
+    @errors.compare version.name, data[:name], :name
+    @errors.compare version.project.api_id, data[:projectId], :project_id
+    @errors.compare version.created_at, data[:createdAt] if data.key? :createdAt
+
+    expect_no_errors
+    version
+  end
+
   def expect_app_settings data
 
     @errors = Errors.new
@@ -11,6 +147,7 @@ module ModelExpectations
     @errors.compare settings.updated_at.iso8601(3), data[:updatedAt], :updated_at if data.key? :updatedAt
 
     expect_no_errors
+    settings
   end
 
   def expect_user_registration data
@@ -59,6 +196,7 @@ module ModelExpectations
     end
 
     expect_no_errors
+    registration
   end
 
   def expect_membership data
@@ -87,6 +225,7 @@ module ModelExpectations
     end
 
     expect_no_errors
+    membership
   end
 
   def expect_organization data
@@ -107,6 +246,7 @@ module ModelExpectations
     @errors.compare organization.updated_at.iso8601(3), data[:updatedAt], :updated_at if data.key? :updatedAt
 
     expect_no_errors
+    organization
   end
 
   def expect_user data
@@ -145,6 +285,7 @@ module ModelExpectations
     end
 
     expect_no_errors
+    user
   end
 
   private

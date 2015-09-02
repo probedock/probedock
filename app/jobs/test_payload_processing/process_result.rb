@@ -44,7 +44,6 @@ module TestPayloadProcessing
       @test_result.message = data['m'].to_s if data['m'].present?
       @test_result.run_at = test_payload.ended_at
 
-      # TODO: support caching
       @test_result.category = category data, cache if data.key? 'c'
       @test_result.tags = tags data, cache if data.key? 'g'
       @test_result.tickets = tickets data, cache if data.key? 't'
@@ -56,6 +55,8 @@ module TestPayloadProcessing
       @test_result.payload_properties_set = payload_properties_set data
 
       @test_result.save_quickly!
+
+      cache.register_result @test_result
     end
 
     def payload_properties_set data

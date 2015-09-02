@@ -37,7 +37,6 @@ RSpec.describe ProbeDock::ProjectsApi do
         'name' => 'probedock',
         'organizationId' => organization.api_id,
         'testsCount' => created_project.tests_count,
-        'deprecatedTestsCount' => created_project.deprecated_tests_count,
         'createdAt' => created_project.created_at.iso8601(3),
         'updatedAt' => created_project.updated_at.iso8601(3)
       })

@@ -69,7 +69,7 @@ end
 
 Then /the response body should be the following JSON:/ do |doc|
   raise "No response body found" unless @response_body
-  expect_json @response_body, cucumber_doc_string_to_json_expectations(doc)
+  expect_json @response_body, MultiJson.load(doc)
 end
 
 Then /the response should be HTTP (\d+) with the following errors:/ do |code,properties|

@@ -1,4 +1,4 @@
-module ApiHelpers
+module ApiSpecHelper
   def find_api_user name
     if name == 'nobody'
       nil
@@ -13,14 +13,6 @@ module ApiHelpers
     url.gsub /\{(@[^\}]+)\}/ do |*args|
       Rack::Utils::escape(interpolate_string($1))
     end
-  end
-
-  def cucumber_doc_string_to_json doc
-    interpolate_json MultiJson.load(doc)
-  end
-
-  def cucumber_doc_string_to_json_expectations doc
-    interpolate_json MultiJson.load(doc), expectations: true
   end
 
   def interpolate_json json, options = {}
@@ -93,28 +85,6 @@ module ApiHelpers
     end
   end
 
-  def cucumber_properties_to_json properties
-    json = {}
-
-    properties.hashes.each do |h|
-      name, value = h['property'], h['value']
-
-      if m = value.match(/^@idOf: (.*)$/)
-        json[name] = named_record(m[1]).api_id
-      else
-        json[name] = if value == 'true'
-          true
-        elsif value == 'false'
-          false
-        else
-          value
-        end
-      end
-    end
-
-    json
-  end
-
   def http_status_code_description code
     name = Rack::Utils::HTTP_STATUS_CODES[code.to_i]
     name ? "HTTP #{code} #{name}" : "HTTP #{code}"
@@ -133,8 +103,15 @@ module ApiHelpers
   end
 
   def expect_json json, expectations
+
     errors = []
-    validate_json json, expectations, '', errors
+    expectations = if expectations.kind_of? Hash
+      expectations.with_indifferent_access
+    elsif expectations.kind_of? Array
+      expectations.collect{ |e| e.kind_of?(Hash) ? e.with_indifferent_access : e }
+    end
+
+    validate_json json, interpolate_json(expectations, expectations: true), '', errors
     expect(errors).to be_empty, ->{
       %/\n#{errors.join("\n")}\n\n/
     }

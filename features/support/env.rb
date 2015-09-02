@@ -69,15 +69,18 @@ ProbeDockCucumber.configure do |config|
 end
 
 Dir[Rails.root.join('features/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*_spec_helper.rb')].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*_expectations.rb')].each { |f| require f }
 require Rails.root.join('spec/support/errapi.rb')
 
-World(ApiHelpers)
-World(ChangeHelpers)
-World(DbHelpers)
-World(JobHelpers)
-World(MailerHelpers)
+World(ApiSpecHelper)
+World(ChangeSpecHelper)
+World(CucumberSpecHelper)
+World(DbSpecHelper)
+World(JobSpecHelper)
+World(MailerSpecHelper)
 World(ModelExpectations)
-World(NamedRecords)
+World(NamedRecordsSpecHelper)
 
 unless Rails.env == 'test'
   raise "Cucumber tests should only be run in the test environment (current environment is #{Rails.env.inspect})"

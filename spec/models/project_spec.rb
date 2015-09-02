@@ -23,10 +23,6 @@ describe Project do
     expect(subject.tests_count).to eq(0)
   end
 
-  it "should have no deprecated tests by default", probedock: { key: '1802e31de320' } do
-    expect(subject.deprecated_tests_count).to eq(0)
-  end
-
   describe "when created" do
     subject{ create :project }
 
@@ -56,7 +52,6 @@ describe Project do
     it(nil, probedock: { key: '66b088f28c76' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probedock: { key: 'df86a430816f' }){ should have_db_column(:api_id).of_type(:string).with_options(null: false, limit: 12) }
     it(nil, probedock: { key: '89de5255730b' }){ should have_db_column(:tests_count).of_type(:integer).with_options(null: false, default: 0) }
-    it(nil, probedock: { key: 'eba1a511e15f' }){ should have_db_column(:deprecated_tests_count).of_type(:integer).with_options(null: false, default: 0) }
     it(nil, probedock: { key: '20bb321bfa30' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probedock: { key: 'acf557d6db43' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
     it(nil, probedock: { key: '6c8efd97b251' }){ should have_db_index(:api_id).unique(true) }

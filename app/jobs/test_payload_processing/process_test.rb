@@ -19,40 +19,39 @@ module TestPayloadProcessing
   class ProcessTest
     attr_reader :test
 
-    def initialize test_result, cache
+    def initialize project_version, key, test, results
 
-      new_test = test_result.test_id.blank?
+      new_test = test.nil?
+      project = project_version.project
+      last_name = results.last.name
 
-      test = if new_test
-        created_test = ProjectTest.new(key: test_result.key, project: test_result.project_version.project, name: test_result.name, first_run_at: test_result.run_at).tap(&:save_quickly!)
-        test_result.key.test = created_test if test_result.key
-        cache.tests[test_result.name] = created_test unless test_result.key
-        created_test
-      else
-        test_result.test
+      if new_test
+        test = ProjectTest.new(key: key, project: project, name: last_name, first_run_at: results.first.run_at, first_runner: results.first.runner).tap(&:save_quickly!)
+        key.test = test if key
+      elsif key
+        test.key = key
       end
 
-      description = new_test ? nil : test.descriptions.where(project_version_id: test_result.project_version_id).includes(:project_version).first
+      description = new_test ? nil : test.descriptions.where(project_version_id: project_version.id).includes(:project_version).first
       new_description = description.blank?
 
       if new_description
-        description = TestDescription.new test: test, project_version: test_result.project_version
+        description = TestDescription.new test: test, project_version: project_version
       end
 
-      # TODO: handle client caching (fill name, tags, etc if not given in payload)
-      description.name = test_result.name
-      description.passing = test_result.passed
-      description.active = test_result.active
-      description.last_duration = test_result.duration
-      description.last_run_at = test_result.run_at
-      description.last_runner = test_result.runner
-      description.last_result = test_result
-      description.category = test_result.category
-      description.tags = test_result.tags
-      description.tickets = test_result.tickets
-      description.custom_values = description.custom_values.merge(test_result.custom_values).select{ |k,v| !v.nil? }
+      description.name = last_name
+      description.passing = results.any?{ |r| !r.passed }
+      description.active = results.any?{ |r| r.passed }
+      description.last_duration = results.last.duration
+      description.last_run_at = results.last.run_at
+      description.last_runner = results.last.runner
+      description.last_result = results.last
+      description.category = results.collect(&:category).compact.last
+      description.tags = results.inject([]){ |memo,r| memo & r.tags }
+      description.tickets = results.inject([]){ |memo,r| memo & r.tickets }
+      description.custom_values = results.inject(description.custom_values){ |memo,r| memo.merge r.custom_values }.select{ |k,v| !v.nil? }
 
-      description.results_count += 1
+      description.results_count += results.length
       description.save!
 
       # for now, always update test to latest received information
@@ -60,18 +59,12 @@ module TestPayloadProcessing
       test.name = description.name
 
       # support past results
-      test.first_run_at = test_result.run_at if test_result.run_at < test.first_run_at
+      test.first_run_at = results.first.run_at if results.first.run_at < test.first_run_at
 
-      # TODO: only increment results count once per test
-      test.results_count += 1
+      test.results_count += results.length
       test.save_quickly!
 
-      if new_test
-        # TODO: only do this once for each test
-        TestResult.where(id: test_result.id).update_all test_id: test.id
-        # TODO: increment counter once
-        Project.increment_counter :tests_count, test_result.project_version.project_id
-      end
+      TestResult.where(id: results.collect(&:id)).update_all test_id: test.id, new_test: new_test
 
       @test = test
     end

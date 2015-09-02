@@ -38,7 +38,7 @@ module TestPayloadProcessing
     private
 
     def create_report payload, uid = nil
-      report = TestReport.new(uid: uid, organization: payload.project_version.project.organization, started_at: payload.ended_at, ended_at: payload.ended_at, test_payloads: [ payload ]).tap &:save_quickly!
+      report = TestReport.new(uid: uid, organization: payload.project_version.project.organization, started_at: payload.started_at, ended_at: payload.ended_at, test_payloads: [ payload ]).tap &:save_quickly!
       update_project report, payload
     end
 
@@ -46,11 +46,10 @@ module TestPayloadProcessing
 
       report.test_payloads << payload
 
-      if payload.ended_at < report.started_at
-        report.update_attribute :started_at, payload.ended_at
-      elsif payload.ended_at > report.ended_at
-        report.update_attribute :ended_at, payload.ended_at
-      end
+      updates = {}
+      updates[:started_at] = payload.started_at if payload.started_at < report.started_at
+      updates[:ended_at] = payload.ended_at if payload.ended_at > report.ended_at
+      report.update_attributes! updates
 
       update_project report, payload
     end

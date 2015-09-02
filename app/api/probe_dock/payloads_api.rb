@@ -29,7 +29,7 @@ module ProbeDock
 
         post :publish do
 
-          received_at = Time.now
+          received_at = Time.now.utc
 
           body = env['api.request.input']
           json = MultiJson.load body
@@ -60,6 +60,12 @@ module ProbeDock
             payloads: [
               {
                 id: payload.api_id,
+                projectId: project.api_id,
+                projectVersion: json['version'],
+                duration: json['duration'],
+                runnerId: current_user.api_id,
+                receivedAt: payload.received_at.iso8601(3),
+                endedAt: payload.ended_at.iso8601(3),
                 bytes: body.bytesize
               }
             ]

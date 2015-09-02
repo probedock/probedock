@@ -3,6 +3,15 @@ class FixTestResultNewTestColumn < ActiveRecord::Migration
 
   class TestPayload < ActiveRecord::Base
     has_many :test_results
+    has_and_belongs_to_many :test_reports
+
+    def started_at
+      if duration
+        ended_at - (duration / 1000.to_f)
+      else
+        ended_at
+      end
+    end
   end
 
   class TestReport < ActiveRecord::Base
@@ -10,10 +19,9 @@ class FixTestResultNewTestColumn < ActiveRecord::Migration
   end
 
   def up
+    remove_column :projects, :deprecated_tests_count
     add_column :test_payloads, :tests_count, :integer, null: false, default: 0
     add_column :test_payloads, :new_tests_count, :integer, null: false, default: 0
-    add_column :test_reports, :tests_count, :integer, null: false, default: 0
-    add_column :test_reports, :new_tests_count, :integer, null: false, default: 0
 
     data = TestResult.select('test_results.test_id, test_results.test_payload_id').group('test_results.test_id, test_results.test_payload_id').having('count(test_results.id) > 1 and bool_or(new_test)').to_a
 
@@ -45,11 +53,11 @@ class FixTestResultNewTestColumn < ActiveRecord::Migration
     i = 0
     count = TestReport.count
 
-    TestReport.find_in_batches batch_size: 250 do |reports|
-      say_with_time "set tests_count and new_tests_count of reports #{i + 1}-#{i + reports.length} (out of #{count})" do
+    TestReport.select(:id).find_in_batches batch_size: 250 do |reports|
+      say_with_time "fix started_at of reports #{i + 1}-#{i + reports.length} (out of #{count})" do
         reports.each do |report|
-          data = TestReport.joins(:test_payloads).select('test_reports.*, sum(test_payloads.tests_count) as tmp_tests_count, sum(test_payloads.new_tests_count) as tmp_new_tests_count').where('test_reports.id = ?', report.id).group('test_reports.id').first
-          TestReport.where(id: report.id).update_all tests_count: data.tmp_tests_count, new_tests_count: data.tmp_new_tests_count
+          first_payload = TestPayload.joins(:test_reports).where('test_reports.id = ?', report.id).order('ended_at ASC').limit(1).first
+          TestReport.where(id: report.id).update_all started_at: first_payload.started_at
         end
 
         i += reports.length
@@ -60,7 +68,6 @@ class FixTestResultNewTestColumn < ActiveRecord::Migration
   def down
     remove_column :test_payloads, :tests_count
     remove_column :test_payloads, :new_tests_count
-    remove_column :test_reports, :tests_count
-    remove_column :test_reports, :new_tests_count
+    add_column :projects, :deprecated_tests_count, :integer, null: false, default: 0
   end
 end

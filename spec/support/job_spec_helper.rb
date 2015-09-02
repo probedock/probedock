@@ -1,4 +1,4 @@
-module JobHelpers
+module JobSpecHelper
   include ActiveJob::TestHelper
   JOBS ||= [ ActionMailer::DeliveryJob, ProcessNextTestPayloadJob ]
 
@@ -52,7 +52,7 @@ module JobHelpers
 
   def ensure_jobs_state_stored
     unless @jobs_count
-      raise %/Use JobHelpers#store_jobs_state at the beginning of all "When" step definitions to keep track of background jobs/
+      raise %/Use JobSpecHelper#store_jobs_state at the beginning of all "When" step definitions to keep track of background jobs/
     end
   end
 
