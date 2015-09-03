@@ -60,6 +60,10 @@ module ApiSpecHelper
         /.+/
       elsif value == '@iso8601'
         /.*/ # TODO: validate ISO 8601 dates
+      elsif value == '@email'
+        /\A[^@]+@[^@]+\Z/
+      elsif value == '@md5'
+        /\A[a-f0-9]{32}\Z/
       end
 
       return expectation if expectation
@@ -67,6 +71,9 @@ module ApiSpecHelper
 
     if m = value.match(/^@json\((.*)\)$/)
       extract_json @response_body, m[1]
+    elsif m = value.match(/^@md5OfJson\((.*)\)$/)
+      raw_value = extract_json @response_body, m[1]
+      Digest::MD5.hexdigest raw_value
     elsif m = value.match(/^@idOf:\s?(.*)$/)
       named_record(m[1]).api_id
     elsif m = value.match(/^@registrationOtpOf:\s?(.*)$/)

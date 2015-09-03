@@ -420,13 +420,17 @@ Feature: Technical users
           "active": true,
           "technical": false,
           "roles": [ "admin" ],
-          "organizationId": "@idOf: Initech",
+          "primaryEmail": "@email",
+          "primaryEmailMd5": "@md5OfJson(/0/primaryEmail)",
+          "emails": [
+            { "address": "@json(/0/primaryEmail)", "active": false }
+          ],
           "createdAt": "@iso8601"
         },
         {
           "id": "@alphanumeric",
-          "name": "basement",
-          "active": false,
+          "name": "milton",
+          "active": true,
           "technical": true,
           "roles": [],
           "organizationId": "@idOf: Initech",
@@ -446,7 +450,11 @@ Feature: Technical users
           "active": true,
           "technical": false,
           "roles": [],
-          "organizationId": "@idOf: Initech",
+          "primaryEmail": "@email",
+          "primaryEmailMd5": "@md5OfJson(/2/primaryEmail)",
+          "emails": [
+            { "address": "@json(/2/primaryEmail)", "active": false }
+          ],
           "createdAt": "@iso8601"
         }
       ]
