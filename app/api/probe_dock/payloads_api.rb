@@ -64,7 +64,6 @@ module ProbeDock
                 projectVersion: json['version'],
                 duration: json['duration'],
                 runnerId: current_user.api_id,
-                receivedAt: payload.received_at.iso8601(3),
                 endedAt: payload.ended_at.iso8601(3),
                 bytes: body.bytesize
               }

@@ -23,6 +23,7 @@ module TestPayloadProcessing
 
       @test_result = TestResult.new
       @test_result.name = data['n']
+      @test_result.payload_index = cache.test_results.length
 
       @test_result.key = test_key data, cache
 

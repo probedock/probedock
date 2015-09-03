@@ -1,3 +1,20 @@
+# Copyright (c) 2015 ProbeDock
+# Copyright (c) 2012-2014 Lotaris SA
+#
+# This file is part of ProbeDock.
+#
+# ProbeDock is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# ProbeDock is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ModelExpectations
   def expect_test_result data
 
@@ -5,7 +22,9 @@ module ModelExpectations
     data = interpolate_json(data, expectations: true).with_indifferent_access
 
     result = expect_record TestResult, data do
-      if data.key?(:payloadId) && data.key?(:key)
+      if data.key?(:payloadId) && data.key?(:payloadIndex)
+        TestResult.joins(:test_payload).where('test_payloads.api_id = ? AND test_results.payload_index = ?', data[:payloadId].to_s, data[:payloadIndex].to_i).first
+      elsif data.key?(:payloadId) && data.key?(:key)
         TestResult.joins(:key, :test_payload).where('test_payloads.api_id = ? AND test_keys.key = ?', data[:payloadId].to_s, data[:key].to_s).first
       elsif data.key?(:payloadId) && data.key?(:name)
         TestResult.joins(:test_payload).where('test_payloads.api_id = ? AND test_results.name = ?', data[:payloadId].to_s, data[:name].to_s).first
@@ -15,6 +34,7 @@ module ModelExpectations
     end
 
     @errors.compare result.name, data[:name], :name
+    @errors.compare result.payload_index, data[:payloadIndex], :payload_index
     @errors.compare result.passed, data.fetch(:passed, true), :passed
     @errors.compare result.active, data.fetch(:active, true), :active
     @errors.compare result.duration, data[:duration], :duration
@@ -80,12 +100,6 @@ module ModelExpectations
   end
 
   def expect_test_payload data
-
-    data = data.with_indifferent_access
-    if data[:payloads].kind_of?(Array) && data[:payloads].length == 1
-      data.merge! data[:payloads][0].with_indifferent_access
-      data.delete :payloads
-    end
 
     @errors = Errors.new
     data = interpolate_json(data, expectations: true).with_indifferent_access

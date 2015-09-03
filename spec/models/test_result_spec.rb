@@ -33,6 +33,7 @@ describe TestResult, probedock: { tags: :unit } do
     it(nil, probedock: { key: '512d38de3e73' }){ should validate_presence_of(:runner) }
     it(nil, probedock: { key: 'ffa2bc12ab4a' }){ should validate_presence_of(:test) }
     it(nil, probedock: { key: '437888444049' }){ should validate_presence_of(:test_payload) }
+    it(nil, probedock: { key: 'ro68' }){ should validate_presence_of(:payload_index) }
     it(nil, probedock: { key: '655398ed00bc' }){ should allow_value(true, false).for(:active) }
     it(nil, probedock: { key: '3108c4643221' }){ should_not allow_value(nil, 'abc', 123).for(:active) }
   end
@@ -52,8 +53,9 @@ describe TestResult, probedock: { tags: :unit } do
     it(nil, probedock: { key: 'e9f576c1cc45' }){ should have_db_column(:active).of_type(:boolean).with_options(null: false) }
     it(nil, probedock: { key: '0ffbb1a73cb7' }){ should have_db_column(:new_test).of_type(:boolean).with_options(null: false) }
     it(nil, probedock: { key: 'f27560967967' }){ should have_db_column(:runner_id).of_type(:integer).with_options(null: false) }
-    it(nil, probedock: { key: '93d491c4e31f' }){ should have_db_column(:test_id).of_type(:integer).with_options(null: true) } # TODO: check why null is true
+    it(nil, probedock: { key: '93d491c4e31f' }){ should have_db_column(:test_id).of_type(:integer).with_options(null: true) }
     it(nil, probedock: { key: '556726a1c0cc' }){ should have_db_column(:test_payload_id).of_type(:integer).with_options(null: false) }
+    it(nil, probedock: { key: 'rj7d' }){ should have_db_column(:payload_index).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: 'c5fa090e339b' }){ should have_db_column(:project_version_id).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: '7c2f23a0d69f' }){ should have_db_column(:category_id).of_type(:integer).with_options(null: true) }
     it(nil, probedock: { key: '8e2d652a897e' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }

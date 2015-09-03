@@ -49,10 +49,6 @@ class TestPayload < ActiveRecord::Base
   end
 
   def started_at
-    if duration
-      ended_at - (duration / 1000.to_f)
-    else
-      ended_at
-    end
+    ended_at - (duration / 1000.to_f)
   end
 end

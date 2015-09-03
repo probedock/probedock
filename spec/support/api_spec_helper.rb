@@ -1,3 +1,20 @@
+# Copyright (c) 2015 ProbeDock
+# Copyright (c) 2012-2014 Lotaris SA
+#
+# This file is part of ProbeDock.
+#
+# ProbeDock is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# ProbeDock is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ApiSpecHelper
   def find_api_user name
     if name == 'nobody'
@@ -37,6 +54,8 @@ module ApiSpecHelper
 
       expectation = if value == '@alphanumeric'
         /\A[a-z0-9]+\Z/
+      elsif value == '@uuid'
+        /\A[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}\Z/
       elsif value == '@string'
         /.+/
       elsif value == '@iso8601'
@@ -138,9 +157,11 @@ module ApiSpecHelper
         errors << %/expected JSON value at "#{path}" to be an object, got #{json.inspect} (#{json.class})/
       end
     elsif expectations.kind_of? Array
-      # TODO: validate array contents
       if json.kind_of? Array
         errors << %/expected JSON array at "#{path}" to have #{expectations.length} elements, got #{json.length}/ unless expectations.length == json.length
+        [ expectations.length, json.length ].min.times do |i|
+          validate_json json[i], expectations[i], "#{path}/#{i}", errors
+        end
       else
         errors << %/expected JSON value at "#{path}" to be an array, got #{json.inspect} (#{json.class})/
       end

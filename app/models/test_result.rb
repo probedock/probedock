@@ -32,6 +32,7 @@ class TestResult < ActiveRecord::Base
 
   strip_attributes
   validates :name, length: { maximum: 255, allow_blank: true }
+  validates :payload_index, presence: true
   validates :passed, inclusion: [ true, false ]
   validates :duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :message, length: { maximum: 65535, tokenizer: lambda{ |s| s.bytes.to_a } } # byte length

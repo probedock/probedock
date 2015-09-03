@@ -16,11 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 FactoryGirl.define do
-
   factory :test_payload do
+    runner
+
     contents{ MultiJson.dump foo: 'bar' }
+    contents_bytesize{ contents.bytesize }
     received_at{ Time.now }
-    user
+    ended_at{ received_at }
+    duration{ rand(10000) + 1 }
 
     factory :processing_test_payload do
       state :processing

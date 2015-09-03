@@ -56,8 +56,10 @@ module TestPayloadProcessing
 
       if existing_data_by_key
         existing_data_by_key[:names] << result.name unless existing_data_by_key[:names].include? result.name
-        existing_data_by_key[:test] = existing_data_by_name[:test] if !result.key.test && !existing_data_by_key[:test]
-        @test_data.delete existing_data_by_name if existing_data_by_name
+        if existing_data_by_name && existing_data_by_name != existing_data_by_key
+          existing_data_by_key[:test] = existing_data_by_name[:test] if !result.key.test && !existing_data_by_key[:test]
+          @test_data.delete existing_data_by_name if existing_data_by_name
+        end
       elsif existing_data_by_name
         existing_data_by_name[:key] = result.key if has_key
         existing_data_by_name[:test] = result.key.test if has_key && result.key.test && !existing_data_by_name[:test]

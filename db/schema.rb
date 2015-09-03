@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150902152740) do
+ActiveRecord::Schema.define(version: 20150903112154) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,7 +189,7 @@ ActiveRecord::Schema.define(version: 20150902152740) do
     t.string   "state",                         limit: 20,             null: false
     t.json     "contents",                                             null: false
     t.integer  "contents_bytesize",                                    null: false
-    t.integer  "duration"
+    t.integer  "duration",                                 default: 0, null: false
     t.integer  "results_count",                            default: 0, null: false
     t.integer  "passed_results_count",                     default: 0, null: false
     t.integer  "inactive_results_count",                   default: 0, null: false
@@ -254,7 +254,10 @@ ActiveRecord::Schema.define(version: 20150902152740) do
     t.integer  "category_id"
     t.datetime "run_at",                                         null: false
     t.datetime "created_at",                                     null: false
+    t.integer  "payload_index",                                  null: false
   end
+
+  add_index "test_results", ["test_payload_id", "payload_index"], name: "index_test_results_on_test_payload_id_and_payload_index", unique: true, using: :btree
 
   create_table "test_results_tickets", id: false, force: :cascade do |t|
     t.integer "test_result_id", null: false
