@@ -98,7 +98,8 @@ module TestPayloadProcessing
       new_names = results.inject([]){ |memo,result| memo << result['n'] if result.key?('n') && !result.key?('k'); memo }.reject{ |n| @tests.key? n }
 
       if new_names.present?
-        @project_version.test_descriptions.where(name: new_names).includes(:test).to_a.each do |description|
+        matching_descriptions = @project_version.test_descriptions.where(name: new_names).includes(:test).to_a
+        matching_descriptions.each do |description|
           existing_test = @tests[description.name]
           if !existing_test
             @tests[description.name] = description.test

@@ -37,7 +37,7 @@ class TestDescription < ActiveRecord::Base
   validates :passing, inclusion: [ true, false ]
   validates :active, inclusion: [ true, false ]
   validates :last_run_at, presence: true
-  validates :last_duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :last_duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_blank: true }
   validates :last_runner, presence: { unless: :quick_validation }
 
   def self.count_by_category

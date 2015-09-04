@@ -55,16 +55,16 @@ RSpec.describe 'Payload processing' do
 
     # check the 3 new tests
     tests = check_tests projects[0], user, payload do
-      raw_payload[:results].each do |result|
-        check_test name: result[:n]
-      end
+      check_test name: 'It should work'
+      check_test name: 'It might work'
+      check_test name: 'It should also work'
     end
 
     # check the 3 results
     check_results raw_payload, payload do
-      raw_payload[:results].length.times do |i|
-        check_result testId: tests[i].api_id, newTest: true
-      end
+      check_result test: tests[0], newTest: true
+      check_result test: tests[1], newTest: true
+      check_result test: tests[2], newTest: true
     end
   end
 
@@ -108,15 +108,12 @@ RSpec.describe 'Payload processing' do
 
     # check the 3 new tests
     tests = check_tests projects[0], user, first_payload do
-      first_raw_payload[:results].each do |result|
-        check_test name: result[:n]
-      end
+      check_test name: 'It should work'
     end
 
     tests += check_tests(projects[0], user, second_payload) do
-      second_raw_payload[:results].each do |result|
-        check_test name: result[:n]
-      end
+      check_test name: 'It might work'
+      check_test name: 'It should also work'
     end
 
     # check the result of the first payload
@@ -186,6 +183,74 @@ RSpec.describe 'Payload processing' do
       raw_payload[:results].length.times do |i|
         check_result test: expected_tests[i], newTest: true
       end
+    end
+  end
+
+  it "should associate results with existing tests" do
+
+    tests = []
+
+    version = create :project_version, project: projects[0], name: '1.2.3'
+    tests << create(:test, name: 'It should work', project: projects[0], last_runner: user, project_version: version)
+    k1 = create :test_key, user: user, project: projects[0]
+    tests << create(:test, name: 'It might work', project: projects[0], key: k1, last_runner: user, project_version: version)
+    k2 = create :test_key, user: user, project: projects[0]
+    tests << create(:test, name: 'It could work', project: projects[0], key: k2, last_runner: user, project_version: version)
+
+    version = create :project_version, project: projects[1], name: '1.2.3'
+    create :test, name: 'It should work', project: projects[1], last_runner: user, project_version: version
+    k3 = create :test_key, user: user, project: projects[1], key: k2.key
+    create :test, name: 'It could work', project: projects[1], key: k3, last_runner: user, project_version: version
+
+    Project.where(id: projects[0].id).update_all tests_count: ProjectTest.where(project_id: projects[0].id).count
+
+    raw_payload = generate_raw_payload projects[0], version: '1.2.3', results: [
+      { n: 'It had worked', p: false },
+      { n: 'It should work' },
+      { n: 'It might work', k: k1.key },
+      { n: 'It will work', p: false },
+      { n: 'It could work', k: k2.key },
+      { n: 'It will work', k: k2.key },
+      { n: 'It had worked', k: 'foo', p: false }
+    ]
+
+    store_preaction_state
+
+    # publish payload
+    with_resque do
+      api_post '/api/publish', raw_payload.to_json, user: user
+      expect(response.status).to eq(202)
+      check_payload_response @response_body, projects[0], user, raw_payload
+    end
+
+    # check database changes
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 7, test_keys: 1, project_tests: 1, test_descriptions: 1
+
+    # check payload & report
+    payload = check_payload @response_body, raw_payload, testsCount: 4, newTestsCount: 1
+    check_report payload, organization: organization
+
+    # check project & version
+    expect(projects[0].tap(&:reload).tests_count).to eq(4)
+    expect_project_version name: raw_payload[:version], projectId: projects[0].api_id
+
+    # check the 3 existing tests and the new test
+    tests = check_tests projects[0], user, payload do
+      check_test name: 'It should work', test: tests[0]
+      check_test name: 'It might work', key: k1.key, resultsCount: 1, test: tests[1]
+      check_test name: 'It will work', key: k2.key, resultsCount: 3, test: tests[2]
+      tests << check_test(name: 'It had worked', key: 'foo', resultsCount: 2)
+    end
+
+    # check the 7 results
+    check_results raw_payload, payload do
+      check_result test: tests[3], newTest: true
+      check_result test: tests[0], newTest: false
+      check_result test: tests[1], newTest: false
+      check_result test: tests[2], newTest: false
+      check_result test: tests[2], newTest: false
+      check_result test: tests[2], newTest: false
+      check_result test: tests[3], newTest: true
     end
   end
 end

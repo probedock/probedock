@@ -78,10 +78,24 @@ module PayloadProcessingSpecHelper
       projectId: @test_check_project.api_id,
       name: options[:name],
       key: options[:key],
-      resultsCount: options.fetch(:resultsCount, 1),
-      firstRunAt: @test_check_payload.ended_at.iso8601(3),
-      firstRunnerId: @test_check_runner.api_id
+      resultsCount: options.fetch(:resultsCount, 1)
     }
+
+    expectations[:firstRunAt] = if options[:firstRunAt]
+      options[:firstRunAt]
+    elsif options[:test]
+      options[:test].first_run_at.iso8601(3)
+    else
+      @test_check_payload.ended_at.iso8601(3)
+    end
+
+    expectations[:firstRunnerId] = if options[:firstRunnerId]
+      options[:firstRunnerId]
+    elsif options[:test]
+      options[:test].first_runner.try :api_id
+    else
+      @test_check_runner.api_id
+    end
 
     test = expect_test expectations
     @test_check_tests << test
