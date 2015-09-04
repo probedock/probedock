@@ -81,7 +81,6 @@
   .results ng-controller='ReportResultsCtrl' report-filters='report' report-filters-selector='.result'
     h3 List of results
     p.empty ng-if='!report' Loading...
-    p.empty.no-match No result matches the selected filters.
     .result.tmp-hidden.col-xs-12 ng-repeat='result in results' class='{{ resultClasses(result) }}' data-n='{{ result.name }}' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
       .panel id='{{ testAnchor(result) }}' ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
         .panel-body
@@ -103,6 +102,9 @@
               strong Duration:
               |  {{ result.duration | durationFormat }}
           pre ng-if='result.message' {{ result.message }}
+    p.empty
+      span ng-if='noMoreResults' All results have been loaded. 
+      em.no-match No result matches the selected filters.
     button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()'
       span.glyphicon.glyphicon-eye-open
       |  Show {{ total - results.length }} more results
@@ -110,7 +112,3 @@
       .progress ng-if='fetchingMoreResults'
         .progress-bar.progress-bar-striped.active role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width:100%;'
           | Loading more results...
-    .col-xs-12 ng-if='noMoreResults'
-      p.empty
-        | All results have been loaded.
-        span ng-if='hasFilters()'  (Some results may be hidden due to applied filters.)
