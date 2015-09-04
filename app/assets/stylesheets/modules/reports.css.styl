@@ -70,6 +70,12 @@ large-progress-bar()
     .hideInactive
       .i
         display none
+    .hideExisting
+      .et
+        display none
+    .hideNew
+      .nt
+        display none
     a.h
       display none
   .results
@@ -85,8 +91,14 @@ large-progress-bar()
     &.hideInactive
       .i
         display none
+    &.hideExisting
+      .et
+        display none
+    &.hideNew
+      .nt
+        display none
     .result
-      &.h
+      &.h, &.tmp-hidden
         display none
       h4
         margin 0

@@ -56,11 +56,9 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     };
 
     $scope.resultClasses = function(result) {
-      var classes = [];
 
-      if (result.newTest) {
-        classes.push('nt');
-      }
+      var classes = [];
+      classes.push(result.newTest ? 'nt' : 'et');
 
       if (result.active) {
         classes.push(result.passed ? 'p' : 'f');
@@ -210,9 +208,28 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       showPassed: true,
       showFailed: true,
       showInactive: true,
+      showExisting: true,
+      showNew: true,
       categories: [],
       tags: [],
       tickets: []
+    };
+
+    $scope.hasFilters = function() {
+      var f = $scope.reportFilters;
+
+      var result =
+        !f.showPassed ||
+        !f.showFailed ||
+        !f.showInactive ||
+        !f.showExisting ||
+        !f.showNew ||
+        (!!f.name && !!f.name.length) ||
+        !!f.categories.length ||
+        !!f.tags.length ||
+        !!f.tickets.length;
+
+      return result;
     };
 
     $scope.$watch('reportFilters', function(value) {
@@ -336,11 +353,15 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     return {
       link: function($scope, element, attrs) {
         $scope.$on('report.filtersChanged', function(event, filters) {
-          applyFilters(filters);
+          $timeout(function() {
+            applyFilters(filters);
+          });
         });
 
         $scope.$on('report.moreResultsLoaded', function() {
-          applyFilters($scope.reportFilters);
+          $timeout(function() {
+            applyFilters($scope.reportFilters);
+          });
         });
 
         function applyFilters(filters) {
@@ -360,6 +381,8 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
           element[filters.showPassed ? 'removeClass' : 'addClass']('hidePassed');
           element[filters.showFailed ? 'removeClass' : 'addClass']('hideFailed');
           element[filters.showInactive ? 'removeClass' : 'addClass']('hideInactive');
+          element[filters.showExisting ? 'removeClass' : 'addClass']('hideExisting');
+          element[filters.showNew ? 'removeClass' : 'addClass']('hideNew');
 
           var elements = element.find(selector),
               elementsToHide = elements.filter(function() {
@@ -378,16 +401,14 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
                 return false;
               });
 
-          elements.removeClass('h');
+          elements.removeClass('h tmp-hidden');
           elementsToHide.addClass('h');
 
-          $timeout(function() {
-            if (element.find(selector + ':visible').length) {
-              element.find('.no-match').hide();
-            } else {
-              element.find('.no-match').show();
-            }
-          }, 250);
+          if (element.find(selector + ':visible').length) {
+            element.find('.no-match').hide();
+          } else {
+            element.find('.no-match').show();
+          }
         }
 
         function metadataMismatch(element, items, allItems, classPrefix) {

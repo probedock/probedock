@@ -50,6 +50,11 @@
                     span.glyphicon.glyphicon-thumbs-down
                   label.btn.btn-warning btn-checkbox=true ng-model='reportFilters.showInactive' tooltip='Click to show/hide inactive results' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-ban-circle
+                .btn-group
+                  label.btn.btn-default btn-checkbox=true ng-model='reportFilters.showExisting' tooltip='Click to show/hide results of existing tests' tooltip-append-to-body='true'
+                    span.glyphicon.glyphicon-time
+                  label.btn.btn-default btn-checkbox=true ng-model='reportFilters.showNew' tooltip='Click to show/hide results of new tests' tooltip-append-to-body='true'
+                    span.glyphicon.glyphicon-plus
             .form-group
               label.control-label for='report-filters-name' Filter by name
               input#report-filters-name.form-control type='text' placeholder='Any name' ng-model='reportFilters.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
@@ -77,7 +82,7 @@
     h3 List of results
     p.empty ng-if='!report' Loading...
     p.empty.no-match No result matches the selected filters.
-    .result.col-xs-12 ng-repeat='result in results' class='{{ resultClasses(result) }}' data-n='{{ result.name }}' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
+    .result.tmp-hidden.col-xs-12 ng-repeat='result in results' class='{{ resultClasses(result) }}' data-n='{{ result.name }}' infinite-scroll='showMoreResults()' infinite-scroll-distance='2' infinite-scroll-use-document-bottom='true' infinite-scroll-disabled='!showingAllResults || fetchingMoreResults || noMoreResults'
       .panel id='{{ testAnchor(result) }}' ng-class='{"panel-success": result.passed && result.active, "panel-danger": !result.passed && result.active, "panel-warning": !result.active}'
         .panel-body
           test-key-label.pull-right ng-if='result.key' key='result.key'
@@ -101,3 +106,11 @@
     button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()'
       span.glyphicon.glyphicon-eye-open
       |  Show {{ total - results.length }} more results
+    .col-xs-4
+      .progress ng-if='fetchingMoreResults'
+        .progress-bar.progress-bar-striped.active role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width:100%;'
+          | Loading more results...
+    .col-xs-12 ng-if='noMoreResults'
+      p.empty
+        | All results have been loaded.
+        span ng-if='hasFilters()'  (Some results may be hidden due to applied filters.)

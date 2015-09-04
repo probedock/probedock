@@ -26,6 +26,7 @@ module ReportsHelper
       classes = []
 
       classes << 'nt' if result.new_test?
+      classes << 'et' unless result.new_test?
 
       if result.active?
         classes << (result.passed? ? 'p' : 'f')
