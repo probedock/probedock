@@ -27,13 +27,7 @@ module TestPayloadProcessing
 
       @test_result.key = test_key data, cache
 
-      @test_result.test = if @test_result.key_id
-        @test_result.key.test
-      else
-        cache.test @test_result.name
-      end
-
-      @test_result.new_test = @test_result.test_id.blank?
+      @test_result.new_test = false # TODO: make it false by default in the database
 
       @test_result.test_payload = test_payload
       @test_result.runner = test_payload.runner

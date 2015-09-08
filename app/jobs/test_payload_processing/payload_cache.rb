@@ -51,22 +51,45 @@ module TestPayloadProcessing
       @test_results << result
 
       has_key = result.key.present?
+
+      existing_data = nil
       existing_data_by_key = @test_data.find{ |d| has_key && d[:key] == result.key }
       existing_data_by_name = @test_data.find{ |d| d[:names].include? result.name }
+      existing_data_by_test = @test_data.find{ |d| d[:test] && d[:test] == result.key.try(:test) }
 
       if existing_data_by_key
-        existing_data_by_key[:names] << result.name unless existing_data_by_key[:names].include? result.name
-        if existing_data_by_name && existing_data_by_name != existing_data_by_key
-          existing_data_by_key[:test] = existing_data_by_name[:test] if !result.key.test && !existing_data_by_key[:test]
-          @test_data.delete existing_data_by_name if existing_data_by_name
+        existing_data = existing_data_by_key
+        existing_data[:names] << result.name unless existing_data[:names].include? result.name
+      end
+
+      if existing_data_by_test
+        if existing_data && existing_data_by_test != existing_data
+          existing_data[:names] << result.name unless existing_data[:names].include? result.name
+          existing_data[:test] = existing_data_by_test[:test] if !existing_data[:test]
+          @test_data.delete existing_data_by_test
+        elsif !existing_data
+          existing_data = existing_data_by_test
+          existing_data[:names] << result.name unless existing_data[:names].include? result.name
+          existing_data[:key] = result.key if has_key
+          existing_data[:test] = result.key.test if has_key && result.key.test && !existing_data[:test]
         end
-      elsif existing_data_by_name
-        existing_data_by_name[:key] = result.key if has_key
-        existing_data_by_name[:test] = result.key.test if has_key && result.key.test && !existing_data_by_name[:test]
-      else
+      end
+
+      if existing_data_by_name
+        if existing_data && existing_data_by_name != existing_data
+          existing_data[:test] = existing_data_by_name[:test] if !existing_data[:test]
+          @test_data.delete existing_data_by_name
+        elsif !existing_data
+          existing_data = existing_data_by_name
+          existing_data[:key] = result.key if has_key
+          existing_data[:test] = result.key.test if has_key && result.key.test && !existing_data[:test]
+        end
+      end
+
+      unless existing_data
         @test_data << {
           key: result.key,
-          test: result.test,
+          test: result.key ? result.key.test : test(result.name),
           names: [ result.name ]
         }
       end
@@ -98,6 +121,7 @@ module TestPayloadProcessing
       new_names = results.inject([]){ |memo,result| memo << result['n'] if result.key?('n') && !result.key?('k'); memo }.reject{ |n| @tests.key? n }
 
       if new_names.present?
+
         matching_descriptions = @project_version.test_descriptions.where(name: new_names).includes(:test).to_a
         matching_descriptions.each do |description|
           existing_test = @tests[description.name]
@@ -105,6 +129,20 @@ module TestPayloadProcessing
             @tests[description.name] = description.test
           elsif !existing_test.key_id && description.test.key_id
             @tests[description.name] = description.test
+          end
+        end
+
+        remaining_new_names = new_names.reject{ |name| matching_descriptions.any?{ |desc| desc.name == name } }
+
+        if remaining_new_names.present?
+          matching_tests = @project.tests.where(name: remaining_new_names).to_a
+          matching_tests.each do |test|
+            existing_test = @tests[test.name]
+            if !existing_test
+              @tests[test.name] = test
+            elsif !existing_test.key_id && test.key_id
+              @tests[test.name] = test
+            end
           end
         end
       end
