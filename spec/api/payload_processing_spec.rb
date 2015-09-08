@@ -61,10 +61,17 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 3 results
-    check_results raw_payload, payload do
+    results = check_results raw_payload, payload do
       check_result test: tests[0], newTest: true
       check_result test: tests[1], newTest: true
       check_result test: tests[2], newTest: true
+    end
+
+    # check the descriptions of the 3 tests for the payload's project version
+    check_descriptions payload, tests do
+      check_description results[0], resultsCount: 1
+      check_description results[1], resultsCount: 1, passing: false
+      check_description results[2], resultsCount: 1
     end
   end
 
@@ -117,14 +124,25 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the result of the first payload
-    check_results first_raw_payload, first_payload do
+    results = check_results first_raw_payload, first_payload do
       check_result test: tests[0], newTest: true
     end
 
     # check the 2 results of the second payload
-    check_results second_raw_payload, second_payload do
+    results += check_results second_raw_payload, second_payload do
       check_result test: tests[1], newTest: true
       check_result test: tests[2], newTest: true
+    end
+
+    # check the descriptions of the first test for the first payload's project version
+    check_descriptions first_payload, tests[0, 1] do
+      check_description results[0], resultsCount: 1
+    end
+
+    # check the descriptions of the two other tests for the second payload's project version
+    check_descriptions second_payload, tests[1, 2] do
+      check_description results[1], resultsCount: 1, passing: false
+      check_description results[2], resultsCount: 1
     end
   end
 
@@ -175,14 +193,29 @@ RSpec.describe 'Payload processing' do
       check_test name: 'It could work', key: 'bcde', resultsCount: 5
     end
 
-    # this array of 12 tests indicates which test each of the 12 results is expected to be attached to
-    expected_tests = [ 4, 0, 2, 3, 4, 1, 2, 4, 4, 3, 1, 4 ].collect{ |i| tests[i] }
-
     # check the 12 results
-    check_results raw_payload, payload do
-      raw_payload[:results].length.times do |i|
-        check_result test: expected_tests[i], newTest: true
-      end
+    results = check_results raw_payload, payload do
+      check_result test: tests[4], newTest: true
+      check_result test: tests[0], newTest: true
+      check_result test: tests[2], newTest: true
+      check_result test: tests[3], newTest: true
+      check_result test: tests[4], newTest: true
+      check_result test: tests[1], newTest: true
+      check_result test: tests[2], newTest: true
+      check_result test: tests[4], newTest: true
+      check_result test: tests[4], newTest: true
+      check_result test: tests[3], newTest: true
+      check_result test: tests[1], newTest: true
+      check_result test: tests[4], newTest: true
+    end
+
+    # check the descriptions of the 5 tests for the payload's project version
+    check_descriptions payload, tests do
+      check_description results[1], resultsCount: 1, passing: false
+      check_description results[10], resultsCount: 2, passing: false
+      check_description results[6], resultsCount: 2
+      check_description results[9], resultsCount: 2, passing: false
+      check_description results[11], resultsCount: 5, passing: false
     end
   end
 
@@ -243,7 +276,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 7 results
-    check_results raw_payload, payload do
+    results = check_results raw_payload, payload do
       check_result test: tests[3], newTest: true
       check_result test: tests[0], newTest: false
       check_result test: tests[1], newTest: false
@@ -251,6 +284,14 @@ RSpec.describe 'Payload processing' do
       check_result test: tests[2], newTest: false
       check_result test: tests[2], newTest: false
       check_result test: tests[3], newTest: true
+    end
+
+    # check the descriptions of the 4 tests for the project version
+    check_descriptions payload, tests do
+      check_description results[1], resultsCount: 1
+      check_description results[2], resultsCount: 1
+      check_description results[5], resultsCount: 3, passing: false
+      check_description results[6], resultsCount: 2, passing: false
     end
   end
 
@@ -313,7 +354,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 7 results
-    check_results raw_payload, payload do
+    results = check_results raw_payload, payload do
       check_result test: tests[3], newTest: true
       check_result test: tests[0], newTest: false
       check_result test: tests[1], newTest: false
@@ -321,6 +362,14 @@ RSpec.describe 'Payload processing' do
       check_result test: tests[2], newTest: false
       check_result test: tests[2], newTest: false
       check_result test: tests[3], newTest: true
+    end
+
+    # check the descriptions of the 4 tests for the project version
+    check_descriptions payload, tests do
+      check_description results[1], resultsCount: 1
+      check_description results[2], resultsCount: 1
+      check_description results[5], resultsCount: 3, passing: false
+      check_description results[6], resultsCount: 2, passing: false
     end
   end
 end

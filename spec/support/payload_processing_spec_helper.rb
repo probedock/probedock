@@ -16,17 +16,52 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module PayloadProcessingSpecHelper
+  def check_descriptions payload, tests, options = {}
+    @description_check_payload = payload
+    @description_check_tests = tests
+    @description_check_descriptions = []
+
+    yield if block_given?
+
+    @description_check_payload = nil
+    @description_check_tests = nil
+
+    descriptions = @description_check_descriptions
+    @description_check_descriptions = nil
+
+    descriptions
+  end
+
+  def check_description last_result, options = {}
+
+    index = @description_check_descriptions.length
+    test = @description_check_tests[index]
+    project_version = @description_check_payload.project_version
+
+    expectations = options.reverse_merge({
+      testId: test.api_id,
+      projectVersion: project_version.name,
+      name: last_result.name,
+      lastDuration: last_result.duration,
+      lastRunAt: last_result.run_at,
+      lastRunnerId: last_result.runner.api_id,
+      lastResultId: last_result.id
+    })
+
+    description = expect_test_description expectations
+    @description_check_descriptions << description
+    description
+  end
+
   def check_results raw_payload, payload, options = {}
     @result_check_raw_payload = raw_payload
     @result_check_payload = payload
     @result_check_results = []
-    @result_check_index = options.fetch :index, 0
 
     yield if block_given?
 
     @result_check_raw_payload = nil
     @result_check_payload = nil
-    @result_check_index = nil
 
     results = @result_check_results
     @result_check_results = nil

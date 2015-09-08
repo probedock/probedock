@@ -40,8 +40,8 @@ module TestPayloadProcessing
       end
 
       description.name = last_name
-      description.passing = results.any?{ |r| !r.passed }
-      description.active = results.any?{ |r| r.passed }
+      description.passing = results.none?{ |r| !r.passed }
+      description.active = results.any?{ |r| r.active }
       description.last_duration = results.last.duration
       description.last_run_at = results.last.run_at
       description.last_runner = results.last.runner

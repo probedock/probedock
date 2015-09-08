@@ -51,6 +51,36 @@ module ModelExpectations
     result
   end
 
+  def expect_test_description data
+
+    @errors = Errors.new
+    data = interpolate_json(data, expectations: true).with_indifferent_access
+
+    description = expect_record TestDescription, data do
+      if data.key?(:testId) && data.key?(:projectVersion)
+        TestDescription.joins(:test, :project_version).where('project_tests.api_id = ? AND project_versions.name = ?', data[:testId].to_s, data[:projectVersion].to_s).first
+      else
+        raise "Test description must be identified by a test ID and project version, got #{data.inspect}"
+      end
+    end
+
+    @errors.compare description.name, data[:name], :name
+    @errors.compare description.passing, data.fetch(:passing, true), :passing
+    @errors.compare description.active, data.fetch(:active, true), :active
+    @errors.compare description.category, data[:category], :category
+    @errors.compare description.tags.collect(&:name), data.fetch(:tags, []), :tags
+    @errors.compare description.tickets.collect(&:name), data.fetch(:tickets, []), :tickets
+    @errors.compare description.last_duration, data[:lastDuration], :last_duration
+    @errors.compare description.last_run_at.try(:iso8601, 3), data[:lastRunAt].try(:iso8601, 3), :last_run_at
+    @errors.compare description.last_runner.try(:api_id), data[:lastRunnerId], :last_runner_id
+    @errors.compare description.last_result.try(:id), data[:lastResultId], :last_result_id
+    @errors.compare description.results_count, data.fetch(:resultsCount, 1), :results_count
+    @errors.compare description.custom_values, data.fetch(:customValues, {}), :custom_values
+
+    expect_no_errors
+    description
+  end
+
   def expect_test data
 
     @errors = Errors.new
