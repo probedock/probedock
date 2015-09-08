@@ -29,6 +29,7 @@ module TestPayloadProcessing
 
       @tests = {}
       @test_keys = {}
+      @new_test_keys = []
       @categories = {}
       @tags = {}
       @tickets = {}
@@ -37,8 +38,8 @@ module TestPayloadProcessing
     def prefill results
 
       time = Benchmark.realtime do
-        cache_tests results
         cache_test_keys results
+        cache_tests results
         cache_organization_records results, Category, 'c'
         cache_organization_records results, Tag, 'g'
         cache_organization_records results, Ticket, 't'
@@ -89,7 +90,7 @@ module TestPayloadProcessing
       unless existing_data
         @test_data << {
           key: result.key,
-          test: result.key ? result.key.test : test(result.name),
+          test: result.key.try(:test) || test(result.name),
           names: [ result.name ]
         }
       end
@@ -118,7 +119,7 @@ module TestPayloadProcessing
     private
 
     def cache_tests results
-      new_names = results.inject([]){ |memo,result| memo << result['n'] if result.key?('n') && !result.key?('k'); memo }.reject{ |n| @tests.key? n }
+      new_names = results.inject([]){ |memo,result| memo << result['n'] if result.key?('n') && (!result.key?('k') || @new_test_keys.include?(result['k'])); memo }.reject{ |n| @tests.key? n }
 
       if new_names.present?
 
@@ -158,6 +159,8 @@ module TestPayloadProcessing
           @test_keys[key] = existing_keys[key] || TestKey.new(key: key, free: false, project_id: @project.id).tap(&:save_quickly!)
         end
       end
+
+      @new_test_keys = @test_keys.keys.reject{ |key| @test_keys[key].test }
     end
 
     def cache_organization_records results, model, payload_property

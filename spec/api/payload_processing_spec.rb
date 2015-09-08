@@ -229,6 +229,7 @@ RSpec.describe 'Payload processing' do
     tests << create(:test, name: 'It might work', project: projects[0], key: k1, last_runner: user, project_version: version)
     k2 = create :test_key, user: user, project: projects[0]
     tests << create(:test, name: 'It could work', project: projects[0], key: k2, last_runner: user, project_version: version)
+    tests << create(:test, name: 'It has always worked', project: projects[0], last_runner: user, project_version: version)
 
     version = create :project_version, project: projects[1], name: '1.2.3'
     create :test, name: 'It should work', project: projects[1], last_runner: user, project_version: version
@@ -244,7 +245,8 @@ RSpec.describe 'Payload processing' do
       { n: 'It will work', p: false },
       { n: 'It could work', k: k2.key },
       { n: 'It will work', k: k2.key },
-      { n: 'It had worked', k: 'foo', p: false }
+      { n: 'It had worked', k: 'foo', p: false },
+      { n: 'It has always worked', k: 'bar' }
     ]
 
     store_preaction_state
@@ -257,25 +259,26 @@ RSpec.describe 'Payload processing' do
     end
 
     # check database changes
-    expect_changes test_payloads: 1, test_reports: 1, test_results: 7, test_keys: 1, project_tests: 1, test_descriptions: 1
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 8, test_keys: 2, project_tests: 1, test_descriptions: 1
 
     # check payload & report
-    payload = check_payload @response_body, raw_payload, testsCount: 4, newTestsCount: 1
+    payload = check_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
     check_report payload, organization: organization
 
     # check project & version
-    expect(projects[0].tap(&:reload).tests_count).to eq(4)
+    expect(projects[0].tap(&:reload).tests_count).to eq(5)
     expect_project_version name: raw_payload[:version], projectId: projects[0].api_id
 
-    # check the 3 existing tests and the new test
+    # check the 4 existing tests and the new test
     tests = check_tests projects[0], user, payload do
       check_test name: 'It should work', test: tests[0]
       check_test name: 'It might work', key: k1.key, resultsCount: 1, test: tests[1]
       check_test name: 'It will work', key: k2.key, resultsCount: 3, test: tests[2]
       tests << check_test(name: 'It had worked', key: 'foo', resultsCount: 2)
+      check_test name: 'It has always worked', key: 'bar', resultsCount: 1, test: tests[3]
     end
 
-    # check the 7 results
+    # check the 8 results
     results = check_results raw_payload, payload do
       check_result test: tests[3], newTest: true
       check_result test: tests[0], newTest: false
@@ -284,14 +287,16 @@ RSpec.describe 'Payload processing' do
       check_result test: tests[2], newTest: false
       check_result test: tests[2], newTest: false
       check_result test: tests[3], newTest: true
+      check_result test: tests[4], newTest: false
     end
 
-    # check the descriptions of the 4 tests for the project version
+    # check the descriptions of the 5 tests for the project version
     check_descriptions payload, tests do
       check_description results[1], resultsCount: 1
       check_description results[2], resultsCount: 1
       check_description results[5], resultsCount: 3, passing: false
       check_description results[6], resultsCount: 2, passing: false
+      check_description results[7], resultsCount: 1
     end
   end
 
@@ -307,6 +312,7 @@ RSpec.describe 'Payload processing' do
     tests << create(:test, name: 'It might work', project: projects[0], key: k1, last_runner: user, project_version: v2)
     k2 = create :test_key, user: user, project: projects[0]
     tests << create(:test, name: 'It could work', project: projects[0], key: k2, last_runner: user, project_version: v2)
+    tests << create(:test, name: 'It has always worked', project: projects[0], last_runner: user, project_version: v2)
 
     v3 = create :project_version, project: projects[1], name: '1.3.4'
     create :test, name: 'It should work', project: projects[1], last_runner: user, project_version: v3
@@ -322,7 +328,9 @@ RSpec.describe 'Payload processing' do
       { n: 'It will work', p: false },
       { n: 'It could work' },
       { n: 'It will work', k: k2.key },
-      { n: 'It had worked', k: 'foo', p: false }
+      { n: 'It had worked', k: 'foo', p: false },
+      { n: 'It has always worked', k: 'bar' },
+      { n: 'It has always worked' }
     ]
 
     store_preaction_state
@@ -335,25 +343,26 @@ RSpec.describe 'Payload processing' do
     end
 
     # check database changes
-    expect_changes test_payloads: 1, test_reports: 1, test_results: 7, project_versions: 1, test_keys: 1, project_tests: 1, test_descriptions: 4
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 9, project_versions: 1, test_keys: 2, project_tests: 1, test_descriptions: 5
 
     # check payload & report
-    payload = check_payload @response_body, raw_payload, testsCount: 4, newTestsCount: 1
+    payload = check_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
     check_report payload, organization: organization
 
     # check project & version
-    expect(projects[0].tap(&:reload).tests_count).to eq(4)
+    expect(projects[0].tap(&:reload).tests_count).to eq(5)
     expect_project_version name: raw_payload[:version], projectId: projects[0].api_id
 
-    # check the 3 existing tests and the new test
+    # check the 4 existing tests and the new test
     tests = check_tests projects[0], user, payload do
       check_test name: 'It should work', test: tests[0]
       check_test name: 'It might work', key: k1.key, resultsCount: 1, test: tests[1]
       check_test name: 'It will work', key: k2.key, resultsCount: 3, test: tests[2]
-      tests << check_test(name: 'It had worked', key: 'foo', resultsCount: 2)
+      check_test name: 'It had worked', key: 'foo', resultsCount: 2
+      check_test name: 'It has always worked', key: 'bar', resultsCount: 2, test: tests[3]
     end
 
-    # check the 7 results
+    # check the 9 results
     results = check_results raw_payload, payload do
       check_result test: tests[3], newTest: true
       check_result test: tests[0], newTest: false
@@ -362,14 +371,17 @@ RSpec.describe 'Payload processing' do
       check_result test: tests[2], newTest: false
       check_result test: tests[2], newTest: false
       check_result test: tests[3], newTest: true
+      check_result test: tests[4], newTest: false
+      check_result test: tests[4], newTest: false
     end
 
-    # check the descriptions of the 4 tests for the project version
+    # check the descriptions of the 5 tests for the project version
     check_descriptions payload, tests do
       check_description results[1], resultsCount: 1
       check_description results[2], resultsCount: 1
       check_description results[5], resultsCount: 3, passing: false
       check_description results[6], resultsCount: 2, passing: false
+      check_description results[8], resultsCount: 2
     end
   end
 end
