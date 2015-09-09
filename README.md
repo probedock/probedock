@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/probedock/probedock.png?label=ready&title=Ready)](https://waffle.io/probedock/probedock)
 # ProbeDock
 
 **Test tracking and analysis tool.**
