@@ -10,10 +10,10 @@
 require 'dotenv'
 Dotenv.load! '.env.production'
 
-raise '$PROBE_DOCK_SSH_HOST must be set to deploy in production' unless ENV['PROBE_DOCK_SSH_HOST']
+raise '$PROBEDOCK_SSH_HOST must be set to deploy in production' unless ENV['PROBEDOCK_SSH_HOST']
 
-server ENV['PROBE_DOCK_SSH_HOST'], user: ENV['PROBE_DOCK_SSH_USER'] || 'root', roles: %w(app), ssh_options: {
-  port: ENV['PROBE_DOCK_SSH_PORT'] ? ENV['PROBE_DOCK_SSH_PORT'].to_i : 22,
+server ENV['PROBEDOCK_SSH_HOST'], user: ENV['PROBEDOCK_SSH_USER'] || 'root', roles: %w(app), ssh_options: {
+  port: ENV['PROBEDOCK_SSH_PORT'] ? ENV['PROBEDOCK_SSH_PORT'].to_i : 22,
   auth_methods: %w(publickey)
 }
 

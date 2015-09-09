@@ -23,7 +23,7 @@ app:
   env_file:
     - .env
   environment:
-    PROBE_DOCK_LOG_TO_STDOUT: "1"
+    PROBEDOCK_LOG_TO_STDOUT: "1"
   restart: always
 
 # Background job processing task.
@@ -37,7 +37,7 @@ job:
     QUEUE: "*"
     INTERVAL: "2"
     TERM_CHILD: "1"
-    PROBE_DOCK_LOG_TO_STDOUT: "1"
+    PROBEDOCK_LOG_TO_STDOUT: "1"
   env_file:
     - .env
   restart: always
@@ -49,10 +49,10 @@ db:
     - "{{ release_path }}/db-init-scripts:/docker-entrypoint-initdb.d"
     - "{{ deploy_to }}/postgresql/data:/var/lib/postgresql/data"
   environment:
-    POSTGRES_PASSWORD: {{ PROBE_DOCK_POSTGRES_PASSWORD }}
-    PROBE_DOCK_DATABASE_NAME: {{ PROBE_DOCK_DATABASE_NAME }}
-    PROBE_DOCK_DATABASE_USERNAME: {{ PROBE_DOCK_DATABASE_USERNAME }}
-    PROBE_DOCK_DATABASE_PASSWORD: {{ PROBE_DOCK_DATABASE_PASSWORD }}
+    POSTGRES_PASSWORD: {{ PROBEDOCK_POSTGRES_PASSWORD }}
+    PROBEDOCK_DATABASE_NAME: {{ PROBEDOCK_DATABASE_NAME }}
+    PROBEDOCK_DATABASE_USERNAME: {{ PROBEDOCK_DATABASE_USERNAME }}
+    PROBEDOCK_DATABASE_PASSWORD: {{ PROBEDOCK_DATABASE_PASSWORD }}
   restart: always
 
 # Redis in-memory database.

@@ -26,7 +26,7 @@ namespace :compose do
 
           execute :compose_up, '--no-deps', '-d', 'app'
 
-          app_containers_count = ENV['PROBE_DOCK_DOCKER_APP_CONTAINERS'].to_i
+          app_containers_count = ENV['PROBEDOCK_DOCKER_APP_CONTAINERS'].to_i
           app_containers_count = 1 if app_containers_count <= 0
           execute :compose_scale, "app=#{app_containers_count}"
 
@@ -65,7 +65,7 @@ namespace :compose do
 
         execute :compose_up, '--no-deps', '-d', 'job'
 
-        job_containers_count = ENV['PROBE_DOCK_DOCKER_JOB_CONTAINERS'].to_i
+        job_containers_count = ENV['PROBEDOCK_DOCKER_JOB_CONTAINERS'].to_i
         job_containers_count = 1 if job_containers_count <= 0
         execute :compose_scale, "job=#{job_containers_count}"
       end

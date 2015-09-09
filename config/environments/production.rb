@@ -63,14 +63,14 @@ ProbeDock::Application.configure do
   # config.force_ssl = true
 
   # Set to :debug to see everything in the log.
-  config.log_level = ENV['PROBE_DOCK_LOG_LEVEL'] ? ENV['PROBE_DOCK_LOG_LEVEL'].to_sym : :info
+  config.log_level = ENV['PROBEDOCK_LOG_LEVEL'] ? ENV['PROBEDOCK_LOG_LEVEL'].to_sym : :info
 
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :subdomain, :uuid ]
 
   # Use a different logger for distributed setups.
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
-  if ENV['PROBE_DOCK_LOG_TO_STDOUT']
+  if ENV['PROBEDOCK_LOG_TO_STDOUT']
     config.logger = Logger.new STDOUT
     config.logger.level = :info
   end

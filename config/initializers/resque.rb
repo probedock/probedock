@@ -19,7 +19,7 @@
 Resque.redis = $redis_db
 Resque.redis.namespace = 'probedock:resque'
 
-if ENV['PROBE_DOCK_LOG_TO_STDOUT']
+if ENV['PROBEDOCK_LOG_TO_STDOUT']
   Resque.logger = Logger.new STDOUT
 else
   Resque.logger = Logger.new Rails.root.join('log', "resque.#{Rails.env}.log")

@@ -110,7 +110,7 @@ RSpec.configure do |config|
       wait = config.test_server_wait
       start_command = "bundle exec thin start -e test -p #{port} -d"
       puts Paint["Starting test server with `#{start_command}`...", :magenta]
-      ENV['PROBE_DOCK_CONFIG'] = 'probedock.test.yml'
+      ENV['PROBEDOCK_CONFIG'] = 'probedock.test.yml'
       raise 'Could not start test server' unless system start_command
 
       ping = nil

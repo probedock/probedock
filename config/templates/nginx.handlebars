@@ -2,13 +2,13 @@
 #   * Official English Documentation: http://nginx.org/en/docs/
 
 user nginx;
-worker_processes {{#if PROBE_DOCK_NGINX_WORKER_PROCESSES}}{{ PROBE_DOCK_NGINX_WORKER_PROCESSES }}{{else}}5{{/if}};
+worker_processes {{#if PROBEDOCK_NGINX_WORKER_PROCESSES}}{{ PROBEDOCK_NGINX_WORKER_PROCESSES }}{{else}}5{{/if}};
 daemon off;
 
 error_log /dev/stderr info;
 
 events {
-  worker_connections {{#if PROBE_DOCK_NGINX_WORKER_CONNECTIONS}}{{ PROBE_DOCK_NGINX_WORKER_CONNECTIONS }}{{else}}1024{{/if}};
+  worker_connections {{#if PROBEDOCK_NGINX_WORKER_CONNECTIONS}}{{ PROBEDOCK_NGINX_WORKER_CONNECTIONS }}{{else}}1024{{/if}};
 }
 
 http {

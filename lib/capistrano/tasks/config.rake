@@ -81,7 +81,7 @@ namespace :config do
   end
 
   task :prepare_config_env do
-    set :config_env_vars, ENV.select{ |k,v| k.match /^PROBE_DOCK_/ }.merge('RAILS_ENV' => ENV['RAILS_ENV']).inject({}){ |memo,(k,v)| memo[k] = ->{ Handlebars::SafeString.new(v) }; memo }
+    set :config_env_vars, ENV.select{ |k,v| k.match /^PROBEDOCK_/ }.merge('RAILS_ENV' => ENV['RAILS_ENV']).inject({}){ |memo,(k,v)| memo[k] = ->{ Handlebars::SafeString.new(v) }; memo }
   end
 
   def generate_config name, template_options = {}

@@ -45,17 +45,17 @@ task :samples, [ :n, :runner, :project ] => :environment do |t,args|
     results: []
   }
 
-  if ENV['PROBE_DOCK_SAMPLES_REPORT'].present?
+  if ENV['PROBEDOCK_SAMPLES_REPORT'].present?
     payload[:reports] = [
-      { uid: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
+      { uid: ENV['PROBEDOCK_SAMPLES_REPORT'] }
     ]
   end
 
-  if ENV['PROBE_DOCK_SAMPLES_ENDED_AT'].present?
-    payload[:endedAt] = ENV['PROBE_DOCK_SAMPLES_ENDED_AT']
+  if ENV['PROBEDOCK_SAMPLES_ENDED_AT'].present?
+    payload[:endedAt] = ENV['PROBEDOCK_SAMPLES_ENDED_AT']
   end
 
-  random_keys = ENV['PROBE_DOCK_SAMPLES_RANDOM_KEYS'].present?
+  random_keys = ENV['PROBEDOCK_SAMPLES_RANDOM_KEYS'].present?
 
   test_keys = Forgery.dictionaries[:test_keys]
   test_tags = Forgery.dictionaries[:test_tags]
@@ -163,15 +163,15 @@ namespace :samples do
     end
 
     payload.delete :reports
-    if ENV['PROBE_DOCK_SAMPLES_REPORT'].present?
+    if ENV['PROBEDOCK_SAMPLES_REPORT'].present?
       payload[:reports] = [
-        { uid: ENV['PROBE_DOCK_SAMPLES_REPORT'] }
+        { uid: ENV['PROBEDOCK_SAMPLES_REPORT'] }
       ]
     end
 
     payload.delete :endedAt
-    if ENV['PROBE_DOCK_SAMPLES_ENDED_AT'].present?
-      payload[:endedAt] = ENV['PROBE_DOCK_SAMPLES_ENDED_AT']
+    if ENV['PROBEDOCK_SAMPLES_ENDED_AT'].present?
+      payload[:endedAt] = ENV['PROBEDOCK_SAMPLES_ENDED_AT']
     end
 
     publish_samples_payload payload, runner

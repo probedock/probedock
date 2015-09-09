@@ -7,18 +7,18 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV['PROBE_DOCK_DATABASE_NAME'] %>
+  database: <%= ENV['PROBEDOCK_DATABASE_NAME'] %>
 
 test: &test
   <<: *default
-  database: <%= ENV['PROBE_DOCK_TEST_DATABASE_NAME'] %>
+  database: <%= ENV['PROBEDOCK_TEST_DATABASE_NAME'] %>
 
 production:
   <<: *default
-  host: <%= ENV['PROBE_DOCK_DATABASE_HOST'] %>
-  database: <%= ENV['PROBE_DOCK_DATABASE_NAME'] %>
-  username: <%= ENV['PROBE_DOCK_DATABASE_USERNAME'] %>
-  password: <%= ENV['PROBE_DOCK_DATABASE_PASSWORD'] %>
+  host: <%= ENV['PROBEDOCK_DATABASE_HOST'] %>
+  database: <%= ENV['PROBEDOCK_DATABASE_NAME'] %>
+  username: <%= ENV['PROBEDOCK_DATABASE_USERNAME'] %>
+  password: <%= ENV['PROBEDOCK_DATABASE_PASSWORD'] %>
 
 cucumber:
   <<: *test
