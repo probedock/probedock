@@ -1,6 +1,6 @@
 {
   "name": "probedock",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "private": true,
   "devDependencies": {
     "grunt": "~0.4.5",
