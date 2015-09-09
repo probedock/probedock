@@ -21,9 +21,9 @@ class AddLastReportToProjects < ActiveRecord::Migration
 
     count = Project.count
     say_with_time "setting last report for #{count} projects" do
-      Project.all.to_a.each do |project|
-        versions = ProjectVersion.where(project_id: project.id).all.to_a
-        last_report = TestReport.joins(:test_payloads).where('test_payloads.project_version_id IN (?)', versions.collect(&:id)).order('test_reports.ended_at DESC').limit(1).first
+      Project.select(:id).to_a.each do |project|
+        versions = ProjectVersion.select(:id).where(project_id: project.id).to_a
+        last_report = TestReport.select('test_reports.id').joins(:test_payloads).where('test_payloads.project_version_id IN (?)', versions.collect(&:id)).order('test_reports.ended_at DESC').limit(1).first
         Project.where(id: project.id).update_all last_report_id: last_report.id if last_report.present?
       end
     end
