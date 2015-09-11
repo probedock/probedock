@@ -1,0 +1,18 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    handlebars (0.7.0)
+      handlebars-source (~> 3.0.0)
+      therubyracer (~> 0.12.1)
+    handlebars-source (3.0.3)
+    libv8 (3.16.14.11)
+    ref (2.0.0)
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  handlebars

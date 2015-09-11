@@ -7,8 +7,8 @@ web:
   ports:
     - "3001:80"
   volumes:
-    - "{{ release_path }}/nginx.conf:/etc/nginx/nginx.conf:ro"
-    - "{{ release_path }}/public:/var/lib/probedock/public"
+    - "{{ PROBEDOCK_RELEASE_PATH }}/nginx.conf:/etc/nginx/nginx.conf:ro"
+    - "{{ PROBEDOCK_RELEASE_PATH }}/public:/var/lib/probedock/public"
   restart: always
 
 # Application in production mode.
@@ -19,7 +19,7 @@ app:
     - db
     - cache
   volumes:
-    - "{{ release_path }}/public:/usr/src/app/public"
+    - "{{ PROBEDOCK_RELEASE_PATH }}/public:/usr/src/app/public"
   env_file:
     - .env
   environment:
@@ -46,8 +46,8 @@ job:
 db:
   image: postgres:9.4
   volumes:
-    - "{{ release_path }}/db-init-scripts:/docker-entrypoint-initdb.d"
-    - "{{ deploy_to }}/postgresql/data:/var/lib/postgresql/data"
+    - "{{ PROBEDOCK_RELEASE_PATH }}/db-init-scripts:/docker-entrypoint-initdb.d"
+    - "{{ PROBEDOCK_ENV_PATH }}/postgresql/data:/var/lib/postgresql/data"
   environment:
     POSTGRES_PASSWORD: {{ PROBEDOCK_POSTGRES_PASSWORD }}
     PROBEDOCK_DATABASE_NAME: {{ PROBEDOCK_DATABASE_NAME }}
@@ -60,7 +60,7 @@ cache:
   image: redis:2.8
   command: redis-server --appendonly yes
   volumes:
-    - "{{ deploy_to }}/redis/data:/data"
+    - "{{ PROBEDOCK_ENV_PATH }}/redis/data:/data"
   restart: always
 
 # Pre-compile application assets.
@@ -72,8 +72,8 @@ task:
     - db
     - cache
   volumes:
-    - "{{ release_path }}/public:/usr/src/app/public"
-    - "{{ release_path }}/tmp:/usr/src/app/tmp"
+    - "{{ PROBEDOCK_RELEASE_PATH }}/public:/usr/src/app/public"
+    - "{{ PROBEDOCK_RELEASE_PATH }}/tmp:/usr/src/app/tmp"
   env_file:
     - .env
   restart: no
