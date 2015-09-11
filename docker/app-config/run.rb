@@ -2,8 +2,7 @@
 require 'handlebars'
 
 # Validate command-line arguments.
-dest = ARGV.shift
-raise "First argument should be the directory into which to generate the configuration files" unless dest
+dest = ARGV.shift || '/probedock-config'
 raise "#{dest} is not a directory" unless File.directory? dest
 
 # Compiles a template file into the specified destination directory.
