@@ -9,7 +9,7 @@ class AddFirstRunnerToProjectTests < ActiveRecord::Migration
     i = 0
     count = ProjectTest.count
 
-    ProjectTest.find_in_batches batch_size: 250 do |tests|
+    ProjectTest.select(:id).find_in_batches batch_size: 250 do |tests|
       say_with_time "set first runner of tests #{i + 1}-#{i + tests.length} (out of #{count})" do
         tests.each do |test|
           first_result = TestResult.where(test_id: test.id).order('run_at ASC').limit(1).first
