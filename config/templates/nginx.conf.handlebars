@@ -28,9 +28,9 @@ http {
 
   gzip on;
 
-  upstream probe_dock_cluster {
-    {{#each app_containers}}
-    server {{this.name}}:3000;
+  upstream probedock_cluster {
+    {{#each appContainers}}
+    server {{id}}:3000;
     {{/each}}
   }
 
@@ -76,7 +76,7 @@ http {
 
       # Pass request to app.
       if (!-f $request_filename) {
-        proxy_pass http://probe_dock_cluster;
+        proxy_pass http://probedock_cluster;
         break;
       }
     }
