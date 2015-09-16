@@ -5,7 +5,7 @@ web:
   links:
     - app
   ports:
-    - "3001:80"
+    - "{{ PROBEDOCK_NGINX_PORT }}:80"
   volumes:
     - "{{ PROBEDOCK_RELEASE_PATH }}/nginx.conf:/etc/nginx/nginx.conf:ro"
     - "{{ PROBEDOCK_RELEASE_PATH }}/public:/var/lib/probedock/public"
@@ -23,7 +23,29 @@ app:
   env_file:
     - .env
   environment:
+    RAILS_ENV: production
+    PROBEDOCK_DATABASE_HOST: db
+    PROBEDOCK_DATABASE_NAME: probedock
+    PROBEDOCK_DATABASE_USERNAME: probedock
+    PROBEDOCK_DATABASE_PASSWORD:
+    PROBEDOCK_REDIS_URL: "cache:6379:0"
+    PROBEDOCK_SECRET_KEY_BASE:
+    PROBEDOCK_JWT_SECRET:
+    PROBEDOCK_LOG_LEVEL:
     PROBEDOCK_LOG_TO_STDOUT: "1"
+    PROBEDOCK_MAIL_ADDRESS:
+    PROBEDOCK_MAIL_PORT:
+    PROBEDOCK_MAIL_DOMAIN:
+    PROBEDOCK_MAIL_USERNAME:
+    PROBEDOCK_MAIL_PASSWORD:
+    PROBEDOCK_MAIL_AUTHENTICATION:
+    PROBEDOCK_MAIL_FROM:
+    PROBEDOCK_MAIL_FROM_NAME:
+    PROBEDOCK_APP_PROTOCOL:
+    PROBEDOCK_APP_HOST:
+    PROBEDOCK_APP_PORT:
+    PROBEDOCK_UNICORN_USER: root
+    PROBEDOCK_UNICORN_WORKERS:
   restart: always
 
 # Background job processing task.
@@ -49,10 +71,10 @@ db:
     - "{{ PROBEDOCK_RELEASE_PATH }}/db-init-scripts:/docker-entrypoint-initdb.d"
     - "{{ PROBEDOCK_ENV_PATH }}/postgresql/data:/var/lib/postgresql/data"
   environment:
-    POSTGRES_PASSWORD: {{ PROBEDOCK_POSTGRES_PASSWORD }}
-    PROBEDOCK_DATABASE_NAME: {{ PROBEDOCK_DATABASE_NAME }}
-    PROBEDOCK_DATABASE_USERNAME: {{ PROBEDOCK_DATABASE_USERNAME }}
-    PROBEDOCK_DATABASE_PASSWORD: {{ PROBEDOCK_DATABASE_PASSWORD }}
+    POSTGRES_PASSWORD:
+    PROBEDOCK_DATABASE_NAME:
+    PROBEDOCK_DATABASE_USERNAME:
+    PROBEDOCK_DATABASE_PASSWORD:
   restart: always
 
 # Redis in-memory database.

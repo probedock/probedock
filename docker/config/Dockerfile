@@ -8,8 +8,8 @@ COPY Gemfile.lock /usr/src/app/
 RUN bundle install --without development test
 
 ADD run.rb /usr/src/app/run.rb
-ADD *.handlebars /usr/src/app/
 
-RUN mkdir -p /probedock-config
+RUN mkdir -p /probedock-templates
+RUN mkdir -p /probedock-configs
 
 ENTRYPOINT ["/usr/src/app/run.rb"]
