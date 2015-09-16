@@ -60,7 +60,7 @@ end
 
 # Parse custom data.
 data_files = Dir.glob File.join(data_dir, '**', '*.yml')
-custom_data = data_files.inject {} do |memo,file|
+custom_data = data_files.inject({}) do |memo,file|
   custom_data[File.basename(file).sub(/\.yml$/, '').to_sym] = YAML.load_file(file)
   custom_data
 end
