@@ -30,7 +30,7 @@ http {
 
   upstream probedock_cluster {
     {{#each appContainers}}
-    server {{id}}:3000;
+    server {{name}}:3000;
     {{/each}}
   }
 
