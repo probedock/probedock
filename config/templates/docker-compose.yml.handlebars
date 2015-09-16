@@ -68,7 +68,7 @@ job:
 db:
   image: postgres:9.4
   volumes:
-    - "{{ PROBEDOCK_RELEASE_PATH }}/db-init-scripts:/docker-entrypoint-initdb.d"
+    - "{{ PROBEDOCK_RELEASE_PATH }}/docker/postgres/db-init-scripts:/docker-entrypoint-initdb.d"
     - "{{ PROBEDOCK_ENV_PATH }}/postgresql/data:/var/lib/postgresql/data"
   environment:
     POSTGRES_PASSWORD:
