@@ -81,7 +81,7 @@ cache:
     - "{{ PROBEDOCK_ENV_PATH }}/redis/data:/data"
   restart: always
 
-# Pre-compile application assets.
+# Run a rake task.
 # This is meant to be run as a one-off task (with "run" instead of "up").
 task:
   image: probedock/probedock
@@ -93,3 +93,25 @@ task:
     - "{{ PROBEDOCK_RELEASE_PATH }}/public:/usr/src/app/public"
     - "{{ PROBEDOCK_RELEASE_PATH }}/tmp:/usr/src/app/tmp"
   restart: no
+  environment:
+    RAILS_ENV: production
+    PROBEDOCK_DATABASE_HOST: db
+    PROBEDOCK_DATABASE_NAME: probedock
+    PROBEDOCK_DATABASE_USERNAME: probedock
+    PROBEDOCK_DATABASE_PASSWORD:
+    PROBEDOCK_REDIS_URL: "cache:6379:0"
+    PROBEDOCK_SECRET_KEY_BASE:
+    PROBEDOCK_JWT_SECRET:
+    PROBEDOCK_LOG_LEVEL:
+    PROBEDOCK_LOG_TO_STDOUT: "1"
+    PROBEDOCK_MAIL_ADDRESS:
+    PROBEDOCK_MAIL_PORT:
+    PROBEDOCK_MAIL_DOMAIN:
+    PROBEDOCK_MAIL_USERNAME:
+    PROBEDOCK_MAIL_PASSWORD:
+    PROBEDOCK_MAIL_AUTHENTICATION:
+    PROBEDOCK_MAIL_FROM:
+    PROBEDOCK_MAIL_FROM_NAME:
+    PROBEDOCK_APP_PROTOCOL:
+    PROBEDOCK_APP_HOST:
+    PROBEDOCK_APP_PORT:
