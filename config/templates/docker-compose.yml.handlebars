@@ -20,8 +20,6 @@ app:
     - cache
   volumes:
     - "{{ PROBEDOCK_RELEASE_PATH }}/public:/usr/src/app/public"
-  env_file:
-    - .env
   environment:
     RAILS_ENV: production
     PROBEDOCK_DATABASE_HOST: db
@@ -60,8 +58,6 @@ job:
     INTERVAL: "2"
     TERM_CHILD: "1"
     PROBEDOCK_LOG_TO_STDOUT: "1"
-  env_file:
-    - .env
   restart: always
 
 # PostgreSQL database.
@@ -96,6 +92,4 @@ task:
   volumes:
     - "{{ PROBEDOCK_RELEASE_PATH }}/public:/usr/src/app/public"
     - "{{ PROBEDOCK_RELEASE_PATH }}/tmp:/usr/src/app/tmp"
-  env_file:
-    - .env
   restart: no
