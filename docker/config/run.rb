@@ -59,10 +59,10 @@ env_variables = ENV.select{ |k,v| k.match /^PROBEDOCK_/ }
 end
 
 # Parse custom data.
-data_files = Dir.glob File.join(data_dir, '**', '*.yml')
+data_files = Dir.glob File.join(data_dir, '*.yml')
 custom_data = data_files.inject({}) do |memo,file|
-  custom_data[File.basename(file).sub(/\.yml$/, '').to_sym] = YAML.load_file(file)
-  custom_data
+  memo[File.basename(file).sub(/\.yml$/, '').to_sym] = YAML.load_file(file)
+  memo
 end
 
 # Prepare template options (strings must be marked as safe for handlebars to prevent HTML escaping).
