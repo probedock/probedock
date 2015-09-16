@@ -72,8 +72,8 @@ db:
     - "{{ PROBEDOCK_ENV_PATH }}/postgresql/data:/var/lib/postgresql/data"
   environment:
     POSTGRES_PASSWORD:
-    PROBEDOCK_DATABASE_NAME:
-    PROBEDOCK_DATABASE_USERNAME:
+    PROBEDOCK_DATABASE_NAME: probedock
+    PROBEDOCK_DATABASE_USERNAME: probedock
     PROBEDOCK_DATABASE_PASSWORD:
   restart: always
 
