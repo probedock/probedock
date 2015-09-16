@@ -2,8 +2,10 @@
 require 'handlebars'
 require 'fileutils'
 require 'pathname'
+require 'yaml'
 
 templates_dir = '/probedock-templates'
+data_dir = '/probedock-data'
 dest_dir = '/probedock-configs'
 
 # Validate command-line arguments.
@@ -33,6 +35,19 @@ def generate_config handlebars, template_file, dest_file, template_options = {}
   File.open(dest_file, 'w'){ |f| f.write compiled }
 end
 
+def safe value
+  if value.kind_of? Hash
+    value.inject({}) do |memo,(k,v)|
+      memo[k] = safe v
+      memo
+    end
+  elsif value.kind_of? Array
+    value.collect{ |v| safe v }
+  else
+    Handlebars::SafeString.new value
+  end
+end
+
 handlebars = Handlebars::Context.new
 templates_dir = File.dirname __FILE__
 
@@ -43,8 +58,15 @@ env_variables = ENV.select{ |k,v| k.match /^PROBEDOCK_/ }
   env_variables[var] = ENV[var] if ENV.key? var
 end
 
+# Parse custom data.
+data_files = Dir.glob File.join(data_dir, '**', '*.yml')
+custom_data = data_files.inject {} do |memo,file|
+  custom_data[File.basename(file).sub(/\.yml$/, '').to_sym] = YAML.load_file(file)
+  custom_data
+end
+
 # Prepare template options (strings must be marked as safe for handlebars to prevent HTML escaping).
-template_options = env_variables.inject({}){ |memo,(k,v)| memo[k] = ->{ Handlebars::SafeString.new(v) }; memo }
+template_options = safe custom_data.merge(env_variables)
 
 # Generate each configuration file.
 FileUtils.mkdir_p dest_dir
