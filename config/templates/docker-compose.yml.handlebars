@@ -14,7 +14,7 @@ web:
 # Application in production mode.
 # The application will not serve assets.
 app:
-  image: probedock/probedock
+  image: "{{ PROBEDOCK_IMAGE }}"
   links:
     - db
     - cache
@@ -48,7 +48,7 @@ app:
 
 # Background job processing task.
 job:
-  image: probedock/probedock
+  image: "{{ PROBEDOCK_IMAGE }}"
   command: rake resque:work
   links:
     - db
@@ -84,7 +84,7 @@ cache:
 # Run a rake task.
 # This is meant to be run as a one-off task (with "run" instead of "up").
 task:
-  image: probedock/probedock
+  image: "{{ PROBEDOCK_IMAGE }}"
   command: rake -T
   links:
     - db
