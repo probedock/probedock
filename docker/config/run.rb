@@ -11,17 +11,19 @@ template_file = ARGV.shift
 dest_file = ARGV.shift
 raise "If passing arguments, the source (first argument) and destination (second argument) files must be given" if template_file && !dest_file
 
-template_files = if template_file
-  [ template_file ]
+template_files = nil
+template_dests = nil
+
+if template_file && dest_file
+  template_files = [ template_file ]
+  template_dests = [ dest_file ]
 else
   pattern = File.join templates_dir, '**', '*.handlebars'
-  Dir.glob(pattern).collect{ |f| Pathname.new(f).relative_path_from(Pathname.new(templates_dir)).to_s }
-end
-
-template_dests = if dest_file
-  [ dest_file ]
-else
-  template_files.collect{ |f| File.join dest_dir, f.sub(/\.handlebars$/, '') }
+  template_files = Dir.glob pattern
+  template_dests = template_files.collect do |f|
+    relative_path = Pathname.new(f).relative_path_from(Pathname.new(templates_dir)).to_s
+    File.join dest_dir, relative_path.sub(/\.handlebars$/, '')
+  end
 end
 
 # Compiles a template file into the specified destination directory.
@@ -48,5 +50,5 @@ template_options = env_variables.inject({}){ |memo,(k,v)| memo[k] = ->{ Handleba
 FileUtils.mkdir_p dest_dir
 template_files.each.with_index do |file,i|
   generate_config handlebars, file, template_dests[i], template_options
-  puts "Successfully generated #{template_dests[i]}"
+  puts "Successfully generated #{file} -> #{template_dests[i]}"
 end
