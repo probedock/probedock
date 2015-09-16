@@ -44,7 +44,7 @@ def safe value
   elsif value.kind_of? Array
     value.collect{ |v| safe v }
   else
-    Handlebars::SafeString.new value
+    ->{ Handlebars::SafeString.new value }
   end
 end
 
