@@ -69,7 +69,7 @@ class OrganizationPolicy < ApplicationPolicy
           end
 
           if options[:with_projects]
-            json.projects record.projects.collect{ |p| serialize p }
+            json.projects record.projects.collect{ |p| serialize p, options[:project_options] }
           end
         end
       end
