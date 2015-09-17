@@ -87,7 +87,7 @@ class UserPolicy < ApplicationPolicy
           # TODO: cache email MD5
           json.primaryEmailMd5 Digest::MD5.hexdigest(record.primary_email.address)
 
-          if user == record || user.try(:is?, :admin) || ((user.try(:organizations) || []) & record.organizations).present?
+          if user == record || app? || admin? || ((user.try(:organizations) || []) & record.organizations).present?
             json.primaryEmail record.primary_email.address
 
             unless options[:link]

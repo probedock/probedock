@@ -17,7 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class OrganizationPolicy < ApplicationPolicy
   def create?
-    user.is? :admin
+    admin?
   end
 
   def index?
@@ -25,15 +25,15 @@ class OrganizationPolicy < ApplicationPolicy
   end
 
   def show?
-    record.public? || user.try(:is?, :admin) || user.try(:member_of?, record)
+    record.public? || admin? || user.try(:member_of?, record)
   end
 
   def data?
-    organization.try(:public?) || user.try(:is?, :admin) || user.try(:member_of?, organization)
+    organization.try(:public?) || admin? || user.try(:member_of?, organization)
   end
 
   def update?
-    user.is?(:admin) || user.membership_in(record).try(:is?, :admin)
+    admin? || user.membership_in(record).try(:is?, :admin)
   end
 
   class Scope < Scope
@@ -51,7 +51,7 @@ class OrganizationPolicy < ApplicationPolicy
         json.name record.name
         json.public record.public_access
 
-        if record.public? || user.try(:admin?) || user.try(:member_of?, record)
+        if record.public? || app? || admin? || user.try(:member_of?, record)
           json.displayName record.display_name if record.display_name.present?
           json.projectsCount record.projects_count
           json.membershipsCount record.memberships_count
@@ -62,6 +62,14 @@ class OrganizationPolicy < ApplicationPolicy
             membership = options[:current_user_memberships].find{ |m| m.organization_id == record.id }
             json.member !!membership
             json.roles membership.try(:roles) || []
+          end
+
+          if options[:with_memberships]
+            json.memberships record.memberships.collect{ |m| serialize m, options[:membership_options] }
+          end
+
+          if options[:with_projects]
+            json.projects record.projects.collect{ |p| serialize p }
           end
         end
       end

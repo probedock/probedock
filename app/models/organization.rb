@@ -23,6 +23,7 @@ class Organization < ActiveRecord::Base
   before_save :normalize_name
 
   has_many :memberships
+  has_many :projects
 
   scope :active, ->{ where active: true }
 

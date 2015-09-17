@@ -56,8 +56,8 @@ class UserRegistrationPolicy < ApplicationPolicy
     def to_builder options = {}
       Jbuilder.new do |json|
         json.id record.api_id
-        json.user serialize(record.user)
-        json.organization serialize(record.organization) if record.organization.present?
+        json.user serialize(record.user, options[:user_options])
+        json.organization serialize(record.organization, options[:organization_options]) if record.organization.present?
         json.completed record.completed
         json.expiresAt record.expires_at.iso8601(3) if record.expires_at.present?
         json.completedAt record.completed_at.iso8601(3) if record.completed_at.present?

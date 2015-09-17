@@ -17,19 +17,19 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class MembershipPolicy < ApplicationPolicy
   def create?
-    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+    admin? || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   def index?
     if organization.present?
-      organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization)
+      organization.public? || admin? || user.try(:member_of?, organization)
     else
       user.present? || otp_record.present?
     end
   end
 
   def show?
-    user.is?(:admin) || user.member_of?(record.organization)
+    admin? || user.member_of?(record.organization)
   end
 
   def update?
@@ -37,11 +37,11 @@ class MembershipPolicy < ApplicationPolicy
   end
 
   def set_roles?
-    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+    admin? || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   def set_user?
-    user.is?(:admin)
+    admin?
   end
 
   def accept?
@@ -49,14 +49,14 @@ class MembershipPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+    admin? || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   class Scope < Scope
     def resolve
       if organization.present?
         scope.where organization: organization
-      elsif user.try :is?, :admin
+      elsif admin?
         scope
       elsif user.present?
         scope.joins(organization_email: :user).where('users.id = ?', user.id)
@@ -77,7 +77,7 @@ class MembershipPolicy < ApplicationPolicy
         json.acceptedAt record.accepted_at.iso8601(3) if record.accepted_at.present?
         json.updatedAt record.updated_at.iso8601(3)
 
-        if record.organization_email.present? && (user.try(:is?, :admin) || user.try(:member_of?, record.organization) || otp_record)
+        if record.organization_email.present? && (admin? || app? || user.try(:member_of?, record.organization) || otp_record)
           json.organizationEmail record.organization_email.address
         end
 

@@ -34,19 +34,27 @@ module PolicyHelpers
     end
   end
 
+  def app?
+    user == :app
+  end
+
   def admin?
-    user.try :admin?
+    role? :admin
   end
 
   def human?
-    user.try :human?
+    user.kind_of(User) && user.try(:human?)
   end
 
   def technical?
-    user.try :technical?
+    user.kind_of(User) && user.try(:technical?)
   end
 
   def otp_record? type = nil
     otp_record.present? && (type.nil? || otp_record.kind_of?(type))
+  end
+
+  def role? *roles
+    user.kind_of?(User) && user.has_all_roles?(*roles)
   end
 end
