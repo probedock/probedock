@@ -29,7 +29,7 @@ angular.module('probedock.help', [ 'probedock.api', 'probedock.orgs', 'probedock
       if (value) {
         var yamlConfiguration = yaml.dump(value).trim();
         $scope.homeYaml = yamlConfiguration;
-        $scope.homeScript = 'mkdir -p ~/.probedock && echo "' + yamlConfiguration.replace(/\n/g, "\\n") + '" > ~/.probedock/config.yml';
+        $scope.homeScript = 'mkdir -p ~/.probedock && ' + echoScript(yamlConfiguration, '~/.probedock/config.yml');
       }
     }, true);
 
@@ -88,9 +88,21 @@ angular.module('probedock.help', [ 'probedock.api', 'probedock.orgs', 'probedock
       if (value) {
         var yamlConfiguration = yaml.dump($scope.projectConfiguration).trim();
         $scope.projectYaml = yamlConfiguration;
-        $scope.projectScript = 'echo "' + yamlConfiguration.replace(/\n/g, "\\n") + '" > probedock.yml';
+        $scope.projectScript = echoScript(yamlConfiguration, 'probedock.yml');
       }
     }, true);
+
+    function echoScript(content, file) {
+
+      var parts = content.split(/\n/),
+          script = 'echo "' + parts[0] + '" > ' + file;
+
+      if (parts.length >= 2) {
+        script += ' && echo "' + parts.slice(1).join('" >> ' + file + ' && echo "') + '" >> ' + file;
+      }
+
+      return script;
+    }
   })
 
 ;
