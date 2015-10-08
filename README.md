@@ -6,13 +6,21 @@
 
 Probe Dock tracks the tests in your projects to show you the evolution of your test coverage and analyze the health of your projects.
 
-It has two main components: the Probe Dock server and clients.
-Clients hook into your favorite test framework and publish the test results to Probe Dock for analysis.
+It has two main components: the Probe Dock server and probes.
+Probes hook into your favorite test framework and publish the test results to Probe Dock for analysis.
 Probe Dock generates test run reports and day-to-day metrics on your tests.
 
-Head over to the [Probe Dock clients repository](https://github.com/probedock/probedock-probes) to find out which clients are available.
+[Check out our website](http://probedock.io) for more information about how to get started and news.
+
+Head over to the [Probe Dock probes repository](https://github.com/probedock/probedock-probes) to find documentation about specific probes and how to configure them.
 
 ## Requirements
+
+**Docker installation:**
+
+* Docker 1.6 or higher
+
+**Classic installation:**
 
 * Ruby 2.2
 * Postgresql 9 or higher
