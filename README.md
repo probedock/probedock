@@ -3,7 +3,7 @@
 **Test tracking and analysis tool.**
 
 [![Build Status](https://secure.travis-ci.org/probedock/probedock.svg)](http://travis-ci.org/probedock/probedock)
-[![License](https://img.shields.io/github/license/probedock/probedock.svg)](LICENSE.txt)
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE.txt)
 
 Probe Dock tracks the tests in your projects to show you the evolution of your test coverage and analyze the health of your projects.
 
