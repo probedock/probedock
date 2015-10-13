@@ -219,7 +219,7 @@ describe TestPayloadProcessing::ProcessResult, probedock: { tags: :unit } do
     expect(result.category.try(:name)).to eq(data['c'])
     expect(result.tags.collect(&:name)).to eq(data.fetch('g', []))
     expect(result.tickets.collect(&:name)).to eq(data.fetch('t', []))
-    expect(result.run_at).to eq(test_payload.ended_at)
+    expect(result.run_at).to be_within(0.001).of(test_payload.ended_at)
     expect(result.payload_index).to eq(test_results.length)
     result
   end
