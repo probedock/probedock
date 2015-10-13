@@ -26,12 +26,11 @@ class TestResult < ActiveRecord::Base
   belongs_to :category
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
-  has_and_belongs_to_many :test_reports
 
   bitmask :payload_properties_set, as: [ :key, :name, :category, :tags, :tickets, :custom_values ], null: false
 
   strip_attributes
-  validates :name, length: { maximum: 255, allow_blank: true }
+  validates :name, presence: true, length: { maximum: 255, allow_blank: true }
   validates :payload_index, presence: true
   validates :passed, inclusion: [ true, false ]
   validates :duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

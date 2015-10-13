@@ -203,9 +203,10 @@ module PayloadProcessingSpecHelper
         d: r[:d] || rand(1000)
       }
 
-      result[:k] = r[:k] if r.key? :k
+      %i(k m c g t a).each do |attr|
+        result[attr] = r[attr] if r.key? attr
+      end
 
-      result[:m] = r[:m] if r.key? :m
       result[:m] ||= "bug #{rand(1000)}" unless result[:p]
 
       raw_payload[:results] << result

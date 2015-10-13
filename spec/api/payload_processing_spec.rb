@@ -30,7 +30,7 @@ RSpec.describe 'Payload processing' do
     raw_payload = generate_raw_payload projects[0], results: [
       { n: 'It should work' },
       { n: 'It might work', p: false },
-      { n: 'It should also work' }
+      { n: 'It should also work', c: nil }
     ]
 
     store_preaction_state

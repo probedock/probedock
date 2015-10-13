@@ -17,7 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module TestPayloadProcessing
   class ProcessResult
-    attr_reader :test, :test_result
+    attr_reader :test_result
 
     def initialize data, test_payload, cache
 
@@ -25,7 +25,7 @@ module TestPayloadProcessing
       @test_result.name = data['n']
       @test_result.payload_index = cache.test_results.length
 
-      @test_result.key = test_key data, cache
+      @test_result.key = test_key data, cache if data.key?('k') && !data['k'].nil?
 
       @test_result.new_test = false # TODO: make it false by default in the database
 
@@ -39,7 +39,7 @@ module TestPayloadProcessing
       @test_result.message = data['m'].to_s if data['m'].present?
       @test_result.run_at = test_payload.ended_at
 
-      @test_result.category = category data, cache if data.key? 'c'
+      @test_result.category = category data, cache if data.key?('c') && !data['c'].nil?
       @test_result.tags = tags data, cache if data.key? 'g'
       @test_result.tickets = tickets data, cache if data.key? 't'
 
@@ -67,7 +67,7 @@ module TestPayloadProcessing
 
     def test_key data, cache
       cache.test_key(data['k']).tap do |test_key|
-        raise "Expected to find test key '#{data['k']}' in cache" if data.key?('k') && test_key.blank?
+        raise "Expected to find test key '#{data['k']}' in cache" if test_key.blank?
       end
     end
 
