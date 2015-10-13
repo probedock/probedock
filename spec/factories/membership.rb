@@ -17,8 +17,8 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 FactoryGirl.define do
   factory :membership do
-    association :user, factory: :user
-    association :organization, factory: :organization
+    user
+    organization
     organization_email{ user.primary_email }
   end
 end

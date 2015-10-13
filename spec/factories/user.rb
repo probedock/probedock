@@ -44,9 +44,7 @@ FactoryGirl.define do
 
     factory :org_member, aliases: [ :member ] do
       after :create do |user,evaluator|
-        m = Membership.new user: user, organization: evaluator.organization, organization_email: user.primary_email
-        m.roles = evaluator.organization_roles
-        m.save!
+        create :membership, user: user, organization: evaluator.organization, roles: evaluator.organization_roles
         user.reload
       end
 
