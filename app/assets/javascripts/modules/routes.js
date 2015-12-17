@@ -20,6 +20,12 @@ angular.module('probedock.routes', [ 'ui.router' ])
         templateUrl: '/templates/error.html'
       })
 
+      .state('permalinks', {
+        url: '/go/:target',
+        controller: 'PermalinksCtrl',
+        templateUrl: '/templates/permalinks.html'
+      })
+
       .state('help', {
         url: '/help',
         abstract: true,

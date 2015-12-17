@@ -33,6 +33,7 @@ module ProbeDock
         end
 
         def with_serialization_includes rel
+          rel = rel.includes :organization
           rel = rel.includes :projects if true_flag? :withProjects
           rel = rel.includes :project_versions if true_flag? :withProjectVersions
           rel = rel.includes :runners if true_flag? :withRunners
@@ -41,6 +42,7 @@ module ProbeDock
 
         def serialization_options reports
           @serialization_options ||= {
+            with_organization: true_flag?(:withOrganization),
             with_projects: true_flag?(:withProjects),
             with_project_versions: true_flag?(:withProjectVersions),
             with_runners: true_flag?(:withRunners),
@@ -58,6 +60,14 @@ module ProbeDock
         rel = policy_scope(TestReport).order 'created_at DESC'
 
         rel = paginated rel do |rel|
+
+          if params[:uid]
+            rel = rel.where uid: params[:uid].to_s
+          end
+
+          if params[:payloadId]
+            rel = rel.joins(:test_payloads).where 'test_payloads.api_id = ?', params[:payloadId].to_s
+          end
 
           if params[:after]
             ref = TestReport.select('id, created_at').where(api_id: params[:after].to_s).first!
@@ -79,6 +89,10 @@ module ProbeDock
 
           def report_health_template
             @report_health_template ||= Slim::Template.new(Rails.root.join('app', 'views', 'reports', 'health.html.slim').to_s)
+          end
+
+          def with_serialization_includes rel
+            rel
           end
         end
 

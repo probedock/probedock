@@ -43,6 +43,8 @@ class TestReportPolicy < ApplicationPolicy
         json.startedAt record.started_at.iso8601(3)
         json.endedAt record.ended_at.iso8601(3)
         json.createdAt record.created_at.iso8601(3)
+        json.organizationId record.organization.api_id
+        json.organization serialize(record.organization) if options[:with_organization]
 
         if options[:with_project_counts_for]
           project_api_id = options[:with_project_counts_for].to_s
