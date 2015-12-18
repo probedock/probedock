@@ -19,12 +19,12 @@ FactoryGirl.define do
 
   factory :test_result, aliases: [ :result ] do
     passed true
+    active true
     runner
-    test_info
+    test{ create :project_test, last_runner: runner, project_version: project_version, project: project_version.project }
+    new_test true
+    name{ test.name }
     run_at{ Time.now }
-    category{ test_info.category }
-    project_version{ create :project_version, project: test_info.project }
     duration 750
-    test_run{ create :test_run, runner: runner }
   end
 end

@@ -26,8 +26,8 @@ module ApiSpecHelper
     end
   end
 
-  def interpolate_api_url url
-    url.gsub /\{(@[^\}]+)\}/ do |*args|
+  def interpolate_content content
+    content.gsub /\{(@[^\}]+)\}/ do |*args|
       Rack::Utils::escape(interpolate_string($1))
     end
   end
@@ -73,9 +73,11 @@ module ApiSpecHelper
       extract_json @response_body, m[1]
     elsif m = value.match(/^@md5OfJson\((.*)\)$/)
       raw_value = extract_json @response_body, m[1]
-      Digest::MD5.hexdigest raw_value
+      raw_value ? Digest::MD5.hexdigest(raw_value.to_s) : nil
     elsif m = value.match(/^@idOf:\s?(.*)$/)
       named_record(m[1]).api_id
+    elsif m = value.match(/^@valueOf\((.*), (.*)\)$/)
+      named_record(m[1]).send(m[2])
     elsif m = value.match(/^@registrationOtpOf:\s?(.*)$/)
 
       record = named_record(m[1])
@@ -92,7 +94,7 @@ module ApiSpecHelper
 
       registration.otp
     else
-      value
+      interpolate_content value
     end
   end
 

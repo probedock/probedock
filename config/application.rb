@@ -40,6 +40,10 @@ module ProbeDock
       VERSION
     end
 
+    def root_url
+      routes.url_helpers.root_url protocol: config_for(:application)['protocol'], host: config_for(:application)['host'], port: config_for(:application)['port']
+    end
+
     VERSION = File.open(File.join(root, 'VERSION'), 'r').read
 
     config.after_initialize do

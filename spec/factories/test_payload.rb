@@ -17,13 +17,45 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 FactoryGirl.define do
   factory :test_payload do
-    runner
+    transient do
+      random_results false
+      test_report nil
+    end
 
+    runner
     contents{ MultiJson.dump foo: 'bar' }
     contents_bytesize{ contents.bytesize }
     received_at{ Time.now }
     ended_at{ received_at }
     duration{ rand(10000) + 1 }
+
+    after :create do |payload,evaluator|
+      evaluator.test_report.test_payloads << payload if evaluator.test_report
+
+      random = evaluator.random_results
+      n = payload.results_count
+      n = rand(25) + 1 if n == 0 && random
+      next if n <= 0
+
+      n_passed = random ? n - rand(n) - 1 : payload.passed_results_count
+      results_data = Array.new(n){ |i| { passed: i < n_passed } }
+
+      # TODO: generate some inactive results
+
+      results_data.shuffle!
+      n.times do |i|
+        options = {
+          passed: results_data[i][:passed],
+          runner: payload.runner,
+          project_version: payload.project_version,
+          run_at: payload.ended_at,
+          test_payload: payload,
+          payload_index: i
+        }
+
+        create :test_result, options
+      end
+    end
 
     factory :processing_test_payload do
       state :processing

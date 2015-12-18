@@ -17,7 +17,7 @@ When /(\w+) sends a GET request to (.*)/ do |user_name,url|
   header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
   @request_body = nil
-  @response = get interpolate_api_url(url)
+  @response = get interpolate_content(url)
   @response_body = MultiJson.load @response.body
 end
 
@@ -32,7 +32,7 @@ When /(\w+) sends a POST request with the following JSON to (.*):/ do |user_name
   body = cucumber_doc_string_to_json doc
 
   @request_body = body
-  @response = post interpolate_api_url(url), MultiJson.dump(@request_body)
+  @response = post interpolate_content(url), MultiJson.dump(@request_body)
   @response_body = MultiJson.load @response.body
 end
 
@@ -47,7 +47,7 @@ When /(\w+) sends a PATCH request with the following JSON to (.*):/ do |user_nam
   body = cucumber_doc_string_to_json doc
 
   @request_body = body
-  @response = patch interpolate_api_url(url), MultiJson.dump(@request_body)
+  @response = patch interpolate_content(url), MultiJson.dump(@request_body)
   @response_body = MultiJson.load @response.body
 end
 
@@ -59,7 +59,7 @@ When /(\w+) sends a DELETE request to (.*)/ do |user_name,url|
   header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
   @request_body = nil
-  @response = delete interpolate_api_url(url)
+  @response = delete interpolate_content(url)
   @response_body = MultiJson.load @response.body unless @response.body.nil? || @response.body.empty?
 end
 
