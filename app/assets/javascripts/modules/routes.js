@@ -126,10 +126,10 @@ angular.module('probedock.routes', [ 'ui.router' ])
         url: '/:id/edit'
       })
 
-	    .state('org.projects', {
-		    abstract: true,
+      .state('org.projects', {
+        abstract: true,
         template: '<div ui-view />'
-	     })
+      })
 
       .state('org.projects.list', {
         url: '/projects',
@@ -155,17 +155,16 @@ angular.module('probedock.routes', [ 'ui.router' ])
         url: '/:id'
       })
 
-	    .state('org.project', {
-		    abstract: true,
+      .state('org.project', {
+        abstract: true,
         template: '<div ui-view />'
-	     })
+      })
 
-	    .state('org.project.show', {
-		    url: '/:projectName',
-		    controller: 'ProjectCtrl',
-		    templateUrl: '/templates/project.html'
-	    })
-
+      .state('org.project.show', {
+        url: '/:projectName',
+        controller: 'ProjectCtrl',
+        templateUrl: '/templates/project.html'
+      })
     ;
 
     $urlRouterProvider.otherwise(function($injector) {
