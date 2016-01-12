@@ -126,17 +126,22 @@ angular.module('probedock.routes', [ 'ui.router' ])
         url: '/:id/edit'
       })
 
-      .state('org.projects', {
+	    .state('org.projects', {
+		    abstract: true,
+        template: '<div ui-view />'
+	     })
+
+      .state('org.projects.list', {
         url: '/projects',
         controller: 'ProjectsCtrl',
         templateUrl: '/templates/projects.html'
       })
 
-      .state('org.projects.new', {
+      .state('org.projects.list.new', {
         url: '/new'
       })
 
-      .state('org.projects.edit', {
+      .state('org.projects.list.edit', {
         url: '/edit?id'
       })
 
@@ -149,6 +154,17 @@ angular.module('probedock.routes', [ 'ui.router' ])
       .state('org.reports.show', {
         url: '/:id'
       })
+
+	    .state('org.project', {
+		    abstract: true,
+        template: '<div ui-view />'
+	     })
+
+	    .state('org.project.show', {
+		    url: '/:projectName',
+		    controller: 'ProjectCtrl',
+		    templateUrl: '/templates/project.html'
+	    })
 
     ;
 
