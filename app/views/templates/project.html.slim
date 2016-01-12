@@ -3,7 +3,7 @@
     h1 {{ project | projectName }}
   .row.overview
     .col-lg-3.col-md-4.col-xs-12
-      .summary.panel.panel-default
+      .summary.panel.panel-default ng-show='project.id'
         .panel-heading.clearfix
           .label.label-info.pull-right tooltip='Project ID' {{ project.id }}
           h3.panel-title Details
@@ -11,5 +11,6 @@
           ul
             li ng-show='project.description' {{ project.description }}
             li {{ project.testsCount | number }} tests in the project
+            li {{ project.reportsCount | number }} test runs
             li Created on {{ project.createdAt | amDateFormat:'llll' }}
             li Updated on {{ project.updatedAt | amDateFormat:'llll' }}

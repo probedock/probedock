@@ -10,14 +10,25 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
         organizationName: $stateParams.orgName,
         name: $stateParams.projectName
       }
-    }).then(showProject);
-
-    function showProject(response) {
+    })
+    .then(function(response) {
 	    if (response.data[0]) {
-		    $scope.project = response.data[0];
-	      console.log(response.data[0]);
+		    project = response.data[0];
+
+		    return api({
+		      url: '/reports',
+		      params: {
+			      organizationName: $stateParams.orgName,
+		        projectId: project.id
+		      }
+		    })
+		    .then(function(response) {
+			    $scope.project = _.extend(project, {
+				    reportsCount: response.pagination().filteredTotal
+			    });
+		    });
 	    }
-    }
+    });
   })
 
 ;

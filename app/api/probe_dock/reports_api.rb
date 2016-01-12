@@ -74,6 +74,18 @@ module ProbeDock
             rel = rel.where 'created_at > ?', ref.created_at
           end
 
+          group = false
+          if params[:projectId].present?
+            project = Project.where(api_id: params[:projectId].to_s).first!
+            authorize! project, :show
+            rel = rel.joins(test_payloads: :project_version).where('project_versions.project_id = ?', project.id)
+            group = true
+          end
+
+          @pagination_filtered_count = rel.count 'distinct test_reports.id'
+
+          rel = rel.group 'test_reports.id' if group
+
           rel
         end
 
