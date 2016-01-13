@@ -3,8 +3,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
   .controller('ProjectCtrl', function (api, forms, orgs, projects, $scope, $state, $stateParams) {
     orgs.forwardData($scope);
 
-    //$scope.project = {};
-
     api({
       url: '/projects',
       params: {
