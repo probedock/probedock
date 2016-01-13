@@ -1,11 +1,12 @@
 .projectPanel.panel.panel-default ng-controller='ProjectPanelCtrl'
   .panel-heading.clearfix
     .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
-      a.btn.btn-warning ui-sref='org.projects.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
+      a.btn.btn-warning ui-sref='org.projects.list.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
         span.glyphicon.glyphicon-pencil
     .label.label-info.apiId.pull-right tooltip='Project ID' {{ project.id }}
     h3.panel-title
-      strong {{ project | projectName }}
+      strong
+        a href='#' ui-sref='org.projects.show({ projectName: project.name })' {{ project | projectName }}
   .panel-body
     .col-md-9.col-sm-8.col-xs-12
       p.lead ng-show='project.description' {{ project.description }}

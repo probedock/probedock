@@ -136,7 +136,7 @@ angular.module('probedock.projects', [ 'probedock.api', 'probedock.forms', 'prob
     }).then(showProjects);
 
     $scope.$on('$stateChangeSuccess', function(event, toState) {
-      if (toState.name.match(/^org.projects.(?:new|edit)$/)) {
+      if (toState.name.match(/^org.projects.list.(?:new|edit)$/)) {
         modal = projects.openForm($scope);
 
         modal.result.then(function(project) {

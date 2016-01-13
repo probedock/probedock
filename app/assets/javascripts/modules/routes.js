@@ -127,16 +127,21 @@ angular.module('probedock.routes', [ 'ui.router' ])
       })
 
       .state('org.projects', {
+        abstract: true,
+        template: '<div ui-view />'
+      })
+
+      .state('org.projects.list', {
         url: '/projects',
         controller: 'ProjectsCtrl',
         templateUrl: '/templates/projects.html'
       })
 
-      .state('org.projects.new', {
+      .state('org.projects.list.new', {
         url: '/new'
       })
 
-      .state('org.projects.edit', {
+      .state('org.projects.list.edit', {
         url: '/edit?id'
       })
 
@@ -150,6 +155,12 @@ angular.module('probedock.routes', [ 'ui.router' ])
         url: '/:id'
       })
 
+      // Must be the last route to match any non-reserved word under /:orgName
+      .state('org.projects.show', {
+        url: '/:projectName',
+        controller: 'ProjectCtrl',
+        templateUrl: '/templates/project.html'
+      })
     ;
 
     $urlRouterProvider.otherwise(function($injector) {
