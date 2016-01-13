@@ -142,8 +142,8 @@ module ModelExpectations
     @errors.compare payload.state.to_s, data.fetch(:state, :created).to_s, :state
     @errors.compare payload.duration, data[:duration], :duration
     @errors.compare payload.runner.api_id, data[:runnerId], :runner_id
-    @errors.compare payload.project_version.project.api_id, data[:projectId], :project_id
-    @errors.compare payload.project_version.name, data[:projectVersion], :project_version
+    @errors.compare payload.project_version.try(:project).try(:api_id), data[:projectId], :project_id
+    @errors.compare payload.project_version.try(:name), data[:projectVersion], :project_version
     @errors.compare payload.ended_at.iso8601(3), data[:endedAt], :ended_at
     @errors.compare payload.received_at.iso8601(3), data[:receivedAt] || data[:endedAt], :received_at
     @errors.compare payload.results_count, data.fetch(:resultsCount, 0), :results_count

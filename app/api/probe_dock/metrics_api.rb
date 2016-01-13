@@ -71,7 +71,7 @@ module ProbeDock
         result
       end
 
-      # GET /api/metrics/team?organizationId&projectId&withUser
+      # GET /api/metrics/contributors?organizationId&projectId&withUser
       #
       # Returns the list of contributors for an organization or project.
       # Ordered by descending number of tests and ascending user name.
@@ -88,7 +88,7 @@ module ProbeDock
       #         "categories": [ "JUnit", "Karma" ]
       #       }
       #     ]
-      get :team do
+      get :contributors do
         authorize! :organization, :data
 
         # load optional project filter

@@ -60,7 +60,7 @@ module TestPayloadProcessing
         [ test.first_runner, :first_runner ]
       end
 
-      if contributor
+      if contributor && (new_description || description.contributors.where(user_id: contributor.id).none?)
         TestContributor.new(kind: kind, test_description: description, user: contributor).save_quickly!
       end
 

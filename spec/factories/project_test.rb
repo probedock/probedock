@@ -22,6 +22,7 @@ FactoryGirl.define do
 
   factory :project_test, aliases: %w(test) do
     transient do
+      first_runner nil
       last_runner nil
       project_version nil
     end
@@ -33,6 +34,16 @@ FactoryGirl.define do
     after :create do |test,evaluator|
       description = create :test_description, test: test, last_runner: evaluator.last_runner, project_version: evaluator.project_version
       ProjectTest.where(id: test.id).update_all description_id: description.id
+
+      contributor, kind = if test.key.try(:user).try(:human?)
+        [ test.key.user, :key_creator ]
+      elsif evaluator.first_runner.try(:human?)
+        [ evaluator.first_runner, :first_runner ]
+      end
+
+      if contributor
+        TestContributor.new(test_description: description, user: contributor, kind: kind).save!
+      end
     end
   end
 end
