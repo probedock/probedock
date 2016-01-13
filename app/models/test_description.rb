@@ -29,6 +29,7 @@ class TestDescription < ActiveRecord::Base
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
   has_many :results, class_name: 'TestResult'
+  has_many :contributors, class_name: 'TestContributor'
 
   strip_attributes
   validates :name, presence: true, length: { maximum: 255 }

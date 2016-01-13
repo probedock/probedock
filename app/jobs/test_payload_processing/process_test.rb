@@ -54,6 +54,16 @@ module TestPayloadProcessing
       description.results_count += results.length
       description.save!
 
+      contributor, kind = if test.key.try(:user).try(:human?)
+        [ test.key.user, :key_creator ]
+      elsif test.first_runner.try(:human?)
+        [ test.first_runner, :first_runner ]
+      end
+
+      if contributor
+        TestContributor.new(kind: kind, test_description: description, user: contributor).save_quickly!
+      end
+
       # for now, always update test to latest received information
       test.description = description
       test.name = description.name

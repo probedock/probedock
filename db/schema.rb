@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150903112154) do
+ActiveRecord::Schema.define(version: 20160113093454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -133,12 +133,15 @@ ActiveRecord::Schema.define(version: 20150903112154) do
 
   add_index "tags_test_results", ["test_result_id", "tag_id"], name: "index_tags_test_results_on_test_result_id_and_tag_id", unique: true, using: :btree
 
-  create_table "test_contributors", id: false, force: :cascade do |t|
-    t.integer "test_description_id", null: false
-    t.integer "email_id",            null: false
+  create_table "test_contributors", force: :cascade do |t|
+    t.string   "kind",                limit: 20, null: false
+    t.integer  "test_description_id",            null: false
+    t.integer  "user_id",                        null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
-  add_index "test_contributors", ["test_description_id", "email_id"], name: "index_test_contributors_on_description_and_email", unique: true, using: :btree
+  add_index "test_contributors", ["test_description_id", "user_id"], name: "index_test_contributors_on_test_description_id_and_user_id", unique: true, using: :btree
 
   create_table "test_descriptions", force: :cascade do |t|
     t.string   "name",                           null: false
@@ -322,8 +325,8 @@ ActiveRecord::Schema.define(version: 20150903112154) do
   add_foreign_key "tags_test_descriptions", "test_descriptions"
   add_foreign_key "tags_test_results", "tags"
   add_foreign_key "tags_test_results", "test_results"
-  add_foreign_key "test_contributors", "emails"
   add_foreign_key "test_contributors", "test_descriptions"
+  add_foreign_key "test_contributors", "users"
   add_foreign_key "test_descriptions", "categories"
   add_foreign_key "test_descriptions", "project_tests", column: "test_id"
   add_foreign_key "test_descriptions", "project_versions"

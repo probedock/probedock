@@ -68,6 +68,48 @@ module ProbeDock
 
         result
       end
+
+      get :team do
+        authorize! :organization, :data
+
+        project = nil
+        project = Project.where(organization_id: current_organization.id, api_id: params[:projectId]).first! if params[:projectId]
+
+        category_rel = if project
+          Category.joins(test_descriptions: [ :contributors, :project_version ]).where 'project_versions.project_id = ?', project.id
+        else
+          Category.joins(test_descriptions: :contributors)
+        end
+
+        with_user = true_flag? :withUser
+
+        user_joins = { test_contributors: { test_description: { test: :project } } }
+        user_select_clause = 'users.*, count(distinct project_tests.id) AS tests_count'
+        user_order = 'tests_count DESC, users.name ASC'
+
+        user_conditions = [ 'projects.organization_id = ?' ]
+        user_values = [ current_organization.id ]
+
+        if project
+          user_conditions << 'projects.id = ?'
+          user_values << project.id
+        end
+
+        user_where_clause = user_values.unshift user_conditions.join(' AND ')
+
+        User.select(user_select_clause).joins(user_joins).where(user_where_clause).group('users.id').order(user_order).to_a.collect do |user|
+
+          contributor = {
+            userId: user.api_id,
+            testsCount: user.tests_count,
+            categories: category_rel.where('test_contributors.user_id = ?', user.id).distinct.pluck(:name)
+          }
+
+          contributor[:user] = policy_serializer(user).serialize if with_user
+
+          contributor
+        end
+      end
     end
   end
 end

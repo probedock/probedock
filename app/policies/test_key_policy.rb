@@ -17,6 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class TestKeyPolicy < ApplicationPolicy
   def create?
+    # TODO: check that technical user cannot generate key
     user.is?(:admin) || user.member_of?(record.project.try(:organization))
   end
 
