@@ -20,5 +20,9 @@ FactoryGirl.define do
     organization
     started_at{ 3.minutes.ago }
     ended_at{ 1.minute.ago }
+
+    factory :test_report_with_uid, aliases: [ :report_with_uid ] do
+      uid{ SecureRandom.uuid }
+    end
   end
 end

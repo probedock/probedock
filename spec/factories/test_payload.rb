@@ -30,6 +30,8 @@ FactoryGirl.define do
     duration{ rand(10000) + 1 }
 
     after :create do |payload,evaluator|
+      next unless evaluator.random_results
+
       evaluator.test_report.test_payloads << payload if evaluator.test_report
 
       random = evaluator.random_results
