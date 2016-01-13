@@ -155,12 +155,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
         url: '/:id'
       })
 
-      .state('org.project', {
-        abstract: true,
-        template: '<div ui-view />'
-      })
-
-      .state('org.project.show', {
+      // Must be the last route to match any non-reserved word under /:orgName
+      .state('org.projects.show', {
         url: '/:projectName',
         controller: 'ProjectCtrl',
         templateUrl: '/templates/project.html'

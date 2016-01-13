@@ -5,8 +5,8 @@ Feature: Reports
   organization should be able to access a list of reports for a specific project.
 
 
-
-  Scenario: An organization member should be able to get a list of reports for a specific project and a private organization by ID.
+  @search
+  Scenario: An organization member should be able to get a list of reports for a specific project and a private organization.
     Given private organization Rebel Alliance exists
     And private organization Galactic Empire exists
     And project X-Wing exists within organization Rebel Alliance
@@ -57,7 +57,8 @@ Feature: Reports
 
 
 
-  Scenario: A member in a different organization should be able to get a list of reports for a specific project from a public organization by ID.
+  @search
+  Scenario: A member in a different organization should be able to get a list of reports for a specific project from a public organization.
     Given public organization Rebel Alliance exists
     And private organization Galactic Empire exists
     And project X-Wing exists within organization Rebel Alliance
@@ -105,7 +106,8 @@ Feature: Reports
 
 
 
-  Scenario: An anonymous user should be able to get a list of reports for a specific project from a public organization by ID.
+  @search
+  Scenario: An anonymous user should be able to get a list of reports for a specific project from a public organization.
     Given public organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And user hsolo who is a member of Rebel Alliance exists
@@ -149,7 +151,7 @@ Feature: Reports
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get a list report with a project id of a private organization by ID.
+  Scenario: An anonymous user should not be able to get a list report with a project id of a private organization.
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And project Y-Wing exists within organization Rebel Alliance
@@ -165,7 +167,7 @@ Feature: Reports
 
 
   @authorization
-  Scenario: A member of another organization should not be able to get a list report with a project id of a private organization by ID.
+  Scenario: A member of another organization should not be able to get a list report with a project id of a private organization.
     Given private organization Rebel Alliance exists
     And private organization Galactic Empire exists
     And project X-Wing exists within organization Rebel Alliance

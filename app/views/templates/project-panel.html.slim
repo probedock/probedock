@@ -6,7 +6,7 @@
     .label.label-info.apiId.pull-right tooltip='Project ID' {{ project.id }}
     h3.panel-title
       strong
-        a href='#' ui-sref='org.project.show({ projectName: project.name })' {{ project | projectName }}
+        a href='#' ui-sref='org.projects.show({ projectName: project.name })' {{ project | projectName }}
   .panel-body
     .col-md-9.col-sm-8.col-xs-12
       p.lead ng-show='project.description' {{ project.description }}
