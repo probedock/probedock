@@ -13,6 +13,7 @@ RSpec.describe TestDescription, type: :model do
   end
 
   describe "validations" do
+    it(nil, probedock: { key: '3fjz' }){ should have_validations_on(:name, :test, :project_version, :passing, :active, :last_run_at, :last_duration, :last_runner) }
     it(nil, probedock: { key: 'ere4' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: 'b81s' }){ should validate_length_of(:name).is_at_most(255) }
     it(nil, probedock: { key: 'wv4d' }){ should validate_presence_of(:test) }
@@ -30,6 +31,7 @@ RSpec.describe TestDescription, type: :model do
   end
 
   describe "associations" do
+    it(nil, probedock: { key: '2qxj' }){ should have_associations(:test, :project_version, :category, :last_runner, :last_result, :contributions, :tags, :tickets) }
     it(nil, probedock: { key: 'dxzw' }){ should belong_to(:test).class_name('ProjectTest') }
     it(nil, probedock: { key: 'ykj7' }){ should belong_to(:project_version) }
     it(nil, probedock: { key: '7trp' }){ should belong_to(:category) }

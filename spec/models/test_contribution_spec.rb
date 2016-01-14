@@ -10,6 +10,7 @@ RSpec.describe TestContribution, type: :model do
   end
 
   describe "validations" do
+    it(nil, probedock: { key: '1z46' }){ should have_validations_on(:kind, :test_description, :user, :user_id) }
     it(nil, probedock: { key: 'i5dc' }){ should validate_presence_of(:kind) }
     it(nil, probedock: { key: 'rtvv' }){ should validate_inclusion_of(:kind).in_array(SPEC_TEST_CONTRIBUTION_KINDS.collect(&:to_s)) }
     it(nil, probedock: { key: 'wrhj' }){ should validate_presence_of(:test_description) }
@@ -26,6 +27,7 @@ RSpec.describe TestContribution, type: :model do
   end
 
   describe "associations" do
+    it(nil, probedock: { key: 'i52h' }){ should have_associations(:test_description, :user) }
     it(nil, probedock: { key: '2qsb' }){ should belong_to(:test_description) }
     it(nil, probedock: { key: 'q0eq' }){ should belong_to(:user) }
   end
