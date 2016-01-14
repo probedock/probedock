@@ -28,7 +28,7 @@ class ProjectTest < ActiveRecord::Base
   has_many :descriptions, class_name: 'TestDescription', foreign_key: 'test_id'
   has_many :results, class_name: 'TestResult', foreign_key: 'test_id'
 
-  validates :name, presence: true, length: { maximum: 255, allow_blank: true }
+  validates :name, presence: true, length: { maximum: 255 }
   validates :project, presence: true
   validates :key_id, uniqueness: { scope: :project_id, if: ->(t){ t.key_id && !t.quick_validation } }
 end
