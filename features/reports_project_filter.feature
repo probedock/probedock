@@ -22,7 +22,7 @@ Feature: Reports
     And test payload C1 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report C
     And test result report D was generated for organization Galactic Empire
     And test payload D1 sent by palpatine for version 1.2.3 of project TIE Fighter was used to generate report D
-    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectId={@idOf: X-Wing}
+    When hsolo sends a GET request to /api/reports?projectId={@idOf: X-Wing}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -73,7 +73,7 @@ Feature: Reports
     And test payload C1 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report C
     And test result report D was generated for organization Galactic Empire
     And test payload D1 sent by palpatine for version 1.2.3 of project TIE Fighter was used to generate report D
-    When palpatine sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectId={@idOf: X-Wing}
+    When palpatine sends a GET request to /api/reports?projectId={@idOf: X-Wing}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -119,7 +119,7 @@ Feature: Reports
     And test payload A1 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report A
     And test result report C was generated for organization Rebel Alliance
     And test payload C1 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report C
-    When nobody sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectId={@idOf: X-Wing}
+    When nobody sends a GET request to /api/reports?projectId={@idOf: X-Wing}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -164,7 +164,7 @@ Feature: Reports
     And user hsolo who is a member of Rebel Alliance exists
     And test result report A was generated for organization Rebel Alliance
     And test payload A1 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report A
-    When nobody sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectId={@idOf: X-Wing}
+    When nobody sends a GET request to /api/reports?projectId={@idOf: X-Wing}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
@@ -183,7 +183,7 @@ Feature: Reports
     And user palpatine who is a member of Galactic Empire exists
     And test result report A was generated for organization Rebel Alliance
     And test payload A1 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report A
-    When palpatine sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectId={@idOf: X-Wing}
+    When palpatine sends a GET request to /api/reports?projectId={@idOf: X-Wing}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
