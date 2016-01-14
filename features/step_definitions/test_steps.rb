@@ -58,7 +58,7 @@ Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+?)(?: and tags
   if ticket_names
     ticket_names.split(',').each do |t|
       ticket = create :ticket, name: t, organization: organization
-      add_named_record t, tag
+      add_named_record t, ticket
       description.tickets << ticket
     end
   end

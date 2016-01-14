@@ -34,13 +34,14 @@ class ProjectTestPolicy < ApplicationPolicy
         json.name record.name
         json.category record.description.category.name
         json.key record.key.key if record.key.present?
-        json.resultCounts record.results_count
+        json.resultsCount record.results_count
         json.firstRunAt record.first_run_at.iso8601(3)
         json.lastRunAt record.description.last_run_at.iso8601(3)
         json.projectVersion record.description.project_version.name
         json.passing record.description.passing
         json.active record.description.active
         json.tags record.description.tags.collect{ |t| t.name }
+        json.tickets record.description.tickets.collect{ |t| t.name }
         json.project serialize(record.project) if options[:with_project]
       end
     end
