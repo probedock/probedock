@@ -28,7 +28,6 @@ class TestDescription < ActiveRecord::Base
   belongs_to :category
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :tickets
-  has_many :results, class_name: 'TestResult'
   has_many :contributors, class_name: 'TestContributor'
 
   strip_attributes
@@ -40,53 +39,6 @@ class TestDescription < ActiveRecord::Base
   validates :last_run_at, presence: true
   validates :last_duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_blank: true }
   validates :last_runner, presence: { unless: :quick_validation }
-
-  def self.count_by_category
-    standard.select('category_id, count(id) AS tests_count').group('category_id').includes(:category).to_a.collect{ |t| { category: t.category.try(:name), count: t.tests_count } }
-  end
-
-  def self.count_by_project
-    standard.select('project_id, count(id) AS tests_count').group('project_id').includes(:project).to_a.collect{ |t| { project: t.project.name, count: t.tests_count } }
-  end
-
-  def self.count_by_author
-    standard.select('author_id, count(id) AS tests_count').group('author_id').includes(:author).to_a.collect{ |t| { author: t.author, count: t.tests_count } }
-  end
-
-  def self.standard
-    where 'deprecation_id IS NULL'
-  end
-
-  def self.failing
-    standard.where passing: false, active: true
-  end
-
-  def self.inactive
-    standard.where active: false
-  end
-
-  def self.deprecated
-    where 'deprecation_id IS NOT NULL'
-  end
-
-  def self.for_projects_and_keys keys_by_project
-    conditions = ([ '(projects.api_id = ? AND test_keys.key IN (?))' ] * keys_by_project.length)
-    values = keys_by_project.inject([]){ |memo,(k,v)| memo << k << v }
-    where_args = values.unshift conditions.join(' OR ')
-    joins(:project).joins(:key).where *where_args
-  end
-
-  def self.find_by_project_and_key project_and_key
-    parts = project_and_key.split '-'
-    return nil if parts.length != 2
-    TestInfo.joins(:project).joins(:key).includes(:key).where(projects: { api_id: parts[0].to_s }, test_keys: { key: parts[1].to_s })
-  end
-
-  def self.find_by_project_and_key! project_and_key
-    find_by_project_and_key(project_and_key).tap do |rel|
-      raise ActiveRecord::RecordNotFound unless rel
-    end
-  end
 
   def custom_values
     read_attribute(:custom_values) || {}
