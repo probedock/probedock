@@ -1,3 +1,4 @@
+# The contribution of a user to a test at a given version.
 class TestContribution < ActiveRecord::Base
   TEST_CONTRIBUTION_KINDS = %i(key_creator first_runner)
 

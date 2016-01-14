@@ -52,6 +52,7 @@ describe TestReport do
   end
 
   describe "validations" do
+    it(nil, probedock: { key: '0m5a' }){ should have_validations_on(:uid, :organization) }
     it(nil, probedock: { key: '8h57' }){ should validate_length_of(:uid).is_at_most(100) }
     it(nil, probedock: { key: 'fr09' }){ should validate_presence_of(:organization) }
     it(nil, probedock: { key: 'oykp' }){ should_not validate_presence_of(:uid) }
@@ -63,6 +64,7 @@ describe TestReport do
   end
 
   describe "associations" do
+    it(nil, probedock: { key: 'knu5' }){ should have_associations(:organization, :test_payloads, :project_versions, :projects, :results, :runners) }
     it(nil, probedock: { key: '6ipz' }){ should belong_to(:organization) }
     it(nil, probedock: { key: 'a1fm' }){ should have_and_belong_to_many(:test_payloads) }
     it(nil, probedock: { key: '930w' }){ should have_many(:project_versions).through(:test_payloads) }

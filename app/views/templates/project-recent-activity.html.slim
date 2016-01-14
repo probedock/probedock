@@ -1,8 +1,11 @@
-.recent-activity
-  p.loading ng-if='!reports'
-    em Loading...
-  p.empty ng-if='reports.length === 0'
-    em No tests have been run recently.
+.panel.panel-default.recent-activity
+  .panel-heading
+    h3.panel-title Recent Project Activity
+  .panel-body ng-if='!reports'
+    p.loading ng-if='!reports'
+      em Loading...
+    p.empty ng-if='reports.length === 0'
+      em No tests have been run recently.
   .list-group ng-if='reports.length'
     .list-group-item ng-repeat='report in reports'
       span.singleRunner ng-if='report.runners.length == 1'
@@ -24,12 +27,12 @@
       .details
         a href='#' ui-sref='org.reports.show({ id: report.id })'
           report-health-bar report='report' click-for-details=true
-      .projectTestsWritten ng-if='report.newTestsCount > 0'
+      .projectTestsWritten ng-if='report.projectCounts.newTestsCount > 0'
         span
           i.glyphicon.glyphicon-plus
           strong
             '
-            span {{ report.newTestsCount | number }}
+            span {{ report.projectCounts.newTestsCount | number }}
             '  new
-            ng-pluralize count='report.newTestsCount' when='{one: "test was", other: "tests were"}'
+            ng-pluralize count='report.projectCounts.newTestsCount' when='{one: "test was", other: "tests were"}'
             '  added

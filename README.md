@@ -4,6 +4,7 @@
 
 [![Build Status](https://secure.travis-ci.org/probedock/probedock.svg)](http://travis-ci.org/probedock/probedock)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE.txt)
+[![Waffle Board](https://img.shields.io/badge/waffle-board-blue.svg)](https://waffle.io/probedock/probedock)
 
 Probe Dock tracks the tests in your projects to show you the evolution of your test coverage and analyze the health of your projects.
 

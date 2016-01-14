@@ -227,34 +227,4 @@ angular.module('probedock.projects', [ 'probedock.api', 'probedock.forms', 'prob
     }
   })
 
-  .directive('projectTeamWidget', function() {
-    return {
-      restrict: 'E',
-      controller: 'ProjectTeamWidgetCtrl',
-      templateUrl: '/templates/project-team-widget.html',
-      scope: {
-        project: '='
-      }
-    };
-  })
-
-  .controller('ProjectTeamWidgetCtrl', function(api, $scope) {
-    $scope.$watch('project', function(project) {
-      if (project) {
-        fetchContributions();
-      }
-    });
-
-    function fetchContributions() {
-      api({
-        url: '/metrics/contributions',
-        params: {
-          projectId: $scope.project.id
-        }
-      }).then(function(res) {
-        $scope.contributions = res.data;
-      });
-    }
-  })
-
 ;
