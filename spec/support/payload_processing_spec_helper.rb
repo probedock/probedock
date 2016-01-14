@@ -45,8 +45,17 @@ module PayloadProcessingSpecHelper
       lastDuration: last_result.duration,
       lastRunAt: last_result.run_at,
       lastRunnerId: last_result.runner.api_id,
-      lastResultId: last_result.id
+      lastResultId: last_result.id,
+      contributions: options.fetch(:contributions, [])
     })
+
+    unless options.key? :contributions
+      if test.key.try(:user).try(:human?)
+        expectations[:contributions] << { kind: :key_creator, userId: test.key.user.api_id }
+      elsif test.first_runner.try(:human?)
+        expectations[:contributions] << { kind: :first_runner, userId: test.first_runner.api_id }
+      end
+    end
 
     description = expect_test_description expectations
     @description_check_descriptions << description

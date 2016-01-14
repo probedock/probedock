@@ -44,6 +44,7 @@ class User < ActiveRecord::Base
   has_one :registration, class_name: 'UserRegistration'
   # TODO: purge emails if unused
   has_many :emails
+  has_many :test_contributions
 
   strip_attributes except: :password_digest
   # TODO: validate min name length
