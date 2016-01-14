@@ -21,6 +21,7 @@ class TestResultPolicy < ApplicationPolicy
       Jbuilder.new do |json|
         json.id record.id
         json.name record.name
+        json.testId record.test.api_id
         json.passed record.passed
         json.active record.active
         json.message record.message
