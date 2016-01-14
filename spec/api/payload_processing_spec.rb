@@ -385,7 +385,7 @@ RSpec.describe 'Payload processing' do
     end
   end
 
-  it "should not assign contributors to tests run by a technical user for the first time and with no test key", probedock: { key: '35of' } do
+  it "should not assign contributions to tests run by a technical user for the first time and with no test key", probedock: { key: '35of' } do
 
     tests = []
 
@@ -439,9 +439,9 @@ RSpec.describe 'Payload processing' do
 
     # check the descriptions of the 3 tests for the project version
     check_descriptions payload, tests do
-      check_description results[0], resultsCount: 1, passing: false, contributors: []
-      check_description results[1], resultsCount: 1, contributors: []
-      check_description results[2], resultsCount: 1, contributors: [ { kind: :key_creator, userId: user.api_id } ]
+      check_description results[0], resultsCount: 1, passing: false, contributions: []
+      check_description results[1], resultsCount: 1, contributions: []
+      check_description results[2], resultsCount: 1, contributions: [ { kind: :key_creator, userId: user.api_id } ]
     end
   end
 end

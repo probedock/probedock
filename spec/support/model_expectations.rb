@@ -77,8 +77,8 @@ module ModelExpectations
     @errors.compare description.results_count, data.fetch(:resultsCount, 1), :results_count
     @errors.compare description.custom_values, data.fetch(:customValues, {}), :custom_values
 
-    actual_contributors = description.contributors.sort{ |d| d.user.api_id }.collect{ |d| { kind: d.kind.to_sym, userId: d.user.api_id }.with_indifferent_access }
-    @errors.compare actual_contributors, data.fetch(:contributors, []), :contributors
+    actual_contributions = description.contributions.sort{ |d| d.user.api_id }.collect{ |d| { kind: d.kind.to_sym, userId: d.user.api_id }.with_indifferent_access }
+    @errors.compare actual_contributions, data.fetch(:contributions, []), :contributions
 
     expect_no_errors
     description

@@ -71,9 +71,9 @@ module ProbeDock
         result
       end
 
-      # GET /api/metrics/contributors?organizationId&projectId&withUser
+      # GET /api/metrics/contributions?organizationId&projectId&withUser
       #
-      # Returns the list of contributors for an organization or project.
+      # Returns the list of contributions for an organization or project.
       # Ordered by descending number of tests and ascending user name.
       #
       #     [
@@ -88,16 +88,16 @@ module ProbeDock
       #         "categories": [ "JUnit", "Karma" ]
       #       }
       #     ]
-      get :contributors do
+      get :contributions do
         authorize! :organization, :data
 
         # load optional project filter
         project = nil
         project = Project.where(organization_id: current_organization.id, api_id: params[:projectId]).first! if params[:projectId]
 
-        # query all categories linked to the organization, and all contributors that have written tests for those categories
-        category_joins = { test_descriptions: [ :contributors, { test: :project } ] }
-        category_select = 'categories.*, array_agg(distinct test_contributors.user_id) AS contributor_ids'
+        # query all categories linked to the organization, and all contributions that have been made for those categories
+        category_joins = { test_descriptions: [ :contributions, { test: :project } ] }
+        category_select = 'categories.*, array_agg(distinct test_contributions.user_id) AS contributor_ids'
         category_where = [ 'projects.organization_id = ?', current_organization.id ]
 
         # if a project ID is given, limit the query to the project in question
@@ -110,7 +110,7 @@ module ProbeDock
         categories_with_contributors = Category.select(category_select).joins(category_joins).where(*category_where).group('categories.id').to_a
 
         # query all users that have contributed within the organization, and the number of tests they have written
-        user_joins = { test_contributors: { test_description: { test: :project } } }
+        user_joins = { test_contributions: { test_description: { test: :project } } }
         user_select = 'users.*, count(distinct project_tests.id) AS tests_count'
         user_order = 'tests_count DESC, users.name ASC'
 
@@ -133,15 +133,15 @@ module ProbeDock
 
         contributors.collect do |user|
 
-          contributor = {
+          contribution = {
             userId: user.api_id,
             testsCount: user.tests_count,
             categories: categories_with_contributors.select{ |cat| cat.contributor_ids.include? user.id }.collect(&:name).sort
           }
 
-          contributor[:user] = policy_serializer(user).serialize if with_user
+          contribution[:user] = policy_serializer(user).serialize if with_user
 
-          contributor
+          contribution
         end
       end
     end

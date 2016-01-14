@@ -133,7 +133,7 @@ ActiveRecord::Schema.define(version: 20160114085241) do
 
   add_index "tags_test_results", ["test_result_id", "tag_id"], name: "index_tags_test_results_on_test_result_id_and_tag_id", unique: true, using: :btree
 
-  create_table "test_contributors", force: :cascade do |t|
+  create_table "test_contributions", force: :cascade do |t|
     t.string   "kind",                limit: 20, null: false
     t.integer  "test_description_id",            null: false
     t.integer  "user_id",                        null: false
@@ -141,7 +141,7 @@ ActiveRecord::Schema.define(version: 20160114085241) do
     t.datetime "updated_at",                     null: false
   end
 
-  add_index "test_contributors", ["test_description_id", "user_id"], name: "index_test_contributors_on_test_description_id_and_user_id", unique: true, using: :btree
+  add_index "test_contributions", ["test_description_id", "user_id"], name: "index_test_contributions_on_test_description_id_and_user_id", unique: true, using: :btree
 
   create_table "test_descriptions", force: :cascade do |t|
     t.string   "name",               limit: 255,             null: false
@@ -325,8 +325,8 @@ ActiveRecord::Schema.define(version: 20160114085241) do
   add_foreign_key "tags_test_descriptions", "test_descriptions"
   add_foreign_key "tags_test_results", "tags"
   add_foreign_key "tags_test_results", "test_results"
-  add_foreign_key "test_contributors", "test_descriptions"
-  add_foreign_key "test_contributors", "users"
+  add_foreign_key "test_contributions", "test_descriptions"
+  add_foreign_key "test_contributions", "users"
   add_foreign_key "test_descriptions", "categories"
   add_foreign_key "test_descriptions", "project_tests", column: "test_id"
   add_foreign_key "test_descriptions", "project_versions"

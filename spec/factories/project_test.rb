@@ -42,7 +42,7 @@ FactoryGirl.define do
       end
 
       if contributor
-        TestContributor.new(test_description: description, user: contributor, kind: kind).save!
+        TestContribution.new(test_description: description, user: contributor, kind: kind).save!
       end
     end
   end

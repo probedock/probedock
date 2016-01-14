@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 FactoryGirl.define do
-  factory :test_contributor do
+  factory :test_contribution do
     kind :first_runner
     test_description
     user

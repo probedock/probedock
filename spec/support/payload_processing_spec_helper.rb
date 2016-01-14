@@ -46,14 +46,14 @@ module PayloadProcessingSpecHelper
       lastRunAt: last_result.run_at,
       lastRunnerId: last_result.runner.api_id,
       lastResultId: last_result.id,
-      contributors: options.fetch(:contributors, [])
+      contributions: options.fetch(:contributions, [])
     })
 
-    unless options.key? :contributors
+    unless options.key? :contributions
       if test.key.try(:user).try(:human?)
-        expectations[:contributors] << { kind: :key_creator, userId: test.key.user.api_id }
+        expectations[:contributions] << { kind: :key_creator, userId: test.key.user.api_id }
       elsif test.first_runner.try(:human?)
-        expectations[:contributors] << { kind: :first_runner, userId: test.first_runner.api_id }
+        expectations[:contributions] << { kind: :first_runner, userId: test.first_runner.api_id }
       end
     end
 

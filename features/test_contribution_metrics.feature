@@ -1,5 +1,5 @@
 @api @metrics
-Feature: Contributor metrics
+Feature: Test contribution metrics
 
   Users should be able to list the contributors of an organization or project.
   Contributors are the users that have written new tests. Users that have not written
@@ -11,7 +11,7 @@ Feature: Contributor metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's contributor metrics
+  Scenario: An organization member should be able to get the organization's contribution metrics
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -40,7 +40,7 @@ Feature: Contributor metrics
     And project Lightsaber exists within organization New Jedi Order
     And test "It should cut" was first run by lskywalker for version 0.0.0 of project Lightsaber
     And test "It should cut" has category C5 for version 0.0.0
-    When hsolo sends a GET request to /api/metrics/contributors?organizationId={@idOf: Rebel Alliance}
+    When hsolo sends a GET request to /api/metrics/contributions?organizationId={@idOf: Rebel Alliance}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -66,7 +66,7 @@ Feature: Contributor metrics
 
 
 
-  Scenario: An organization member should be able to get a project's contributor metrics
+  Scenario: An organization member should be able to get a project's contribution metrics
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -95,7 +95,7 @@ Feature: Contributor metrics
     And project Lightsaber exists within organization New Jedi Order
     And test "It should cut" was first run by lskywalker for version 0.0.0 of project Lightsaber
     And test "It should cut" has category C5 for version 0.0.0
-    When hsolo sends a GET request to /api/metrics/contributors?projectId={@idOf: X-Wing}
+    When hsolo sends a GET request to /api/metrics/contributions?projectId={@idOf: X-Wing}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -116,11 +116,11 @@ Feature: Contributor metrics
 
 
 
-  Scenario: Organization contributor metrics should be empty by default
+  Scenario: Organization contribution metrics should be empty by default
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
-    When hsolo sends a GET request to /api/metrics/contributors?organizationId={@idOf: Rebel Alliance}
+    When hsolo sends a GET request to /api/metrics/contributions?organizationId={@idOf: Rebel Alliance}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -131,13 +131,13 @@ Feature: Contributor metrics
 
 
   @authorization
-  Scenario: An anonymous user should be able to get a public organization's contributor metrics
+  Scenario: An anonymous user should be able to get a public organization's contribution metrics
     Given public organization Rebel Alliance exists
     And user wantilles who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And test "Ion engine should provide thrust" was created by wantilles with key k1 for version 1.0.0 of project X-Wing
     And test "Ion engine should provide thrust" has category C1 for version 1.0.0
-    When nobody sends a GET request to /api/metrics/contributors?organizationId={@idOf: Rebel Alliance}
+    When nobody sends a GET request to /api/metrics/contributions?organizationId={@idOf: Rebel Alliance}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -154,14 +154,14 @@ Feature: Contributor metrics
 
 
   @authorization
-  Scenario: A user should be able to retrieve user details with contributor metrics
+  Scenario: A user should be able to retrieve user details with contribution metrics
     Given public organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user wantilles who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And test "Ion engine should provide thrust" was created by wantilles with key k1 for version 1.0.0 of project X-Wing
     And test "Ion engine should provide thrust" has category C1 for version 1.0.0
-    When hsolo sends a GET request to /api/metrics/contributors?organizationId={@idOf: Rebel Alliance}&withUser=1
+    When hsolo sends a GET request to /api/metrics/contributions?organizationId={@idOf: Rebel Alliance}&withUser=1
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -194,10 +194,10 @@ Feature: Contributor metrics
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get a private organization's contributor metrics
+  Scenario: An anonymous user should not be able to get a private organization's contribution metrics
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
-    When nobody sends a GET request to /api/metrics/contributors?organizationId={@idOf: Rebel Alliance}
+    When nobody sends a GET request to /api/metrics/contributions?organizationId={@idOf: Rebel Alliance}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
@@ -206,10 +206,10 @@ Feature: Contributor metrics
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get the contributor metrics for a private organization's project
+  Scenario: An anonymous user should not be able to get the contribution metrics for a private organization's project
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
-    When nobody sends a GET request to /api/metrics/contributors?projectId={@idOf: X-Wing}
+    When nobody sends a GET request to /api/metrics/contributions?projectId={@idOf: X-Wing}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
@@ -218,12 +218,12 @@ Feature: Contributor metrics
 
 
   @authorization
-  Scenario: A member from another organization should not be able to get a private organization's contributor metrics
+  Scenario: A member from another organization should not be able to get a private organization's contribution metrics
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And private organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
-    When palpatine sends a GET request to /api/metrics/contributors?organizationId={@idOf: Rebel Alliance}
+    When palpatine sends a GET request to /api/metrics/contributions?organizationId={@idOf: Rebel Alliance}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |
@@ -232,12 +232,12 @@ Feature: Contributor metrics
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get the contributor metrics for a private organization's project
+  Scenario: An anonymous user should not be able to get the contribution metrics for a private organization's project
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And private organization Galactic Republic exists
     And user dvader who is a member of Galactic Republic exists
-    When dvader sends a GET request to /api/metrics/contributors?projectId={@idOf: X-Wing}
+    When dvader sends a GET request to /api/metrics/contributions?projectId={@idOf: X-Wing}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
       | You are not authorized to perform this action. |

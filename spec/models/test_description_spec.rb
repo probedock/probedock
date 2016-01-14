@@ -35,7 +35,7 @@ RSpec.describe TestDescription, type: :model do
     it(nil, probedock: { key: '7trp' }){ should belong_to(:category) }
     it(nil, probedock: { key: '58kx' }){ should belong_to(:last_runner).class_name('User') }
     it(nil, probedock: { key: 'uyqz' }){ should belong_to(:last_result).class_name('TestResult') }
-    it(nil, probedock: { key: 'mosm' }){ should have_many(:contributors).class_name('TestContributor') }
+    it(nil, probedock: { key: 'mosm' }){ should have_many(:contributions).class_name('TestContribution') }
     it(nil, probedock: { key: 'cjti' }){ should have_and_belong_to_many(:tags) }
     it(nil, probedock: { key: 'uuie' }){ should have_and_belong_to_many(:tickets) }
   end
