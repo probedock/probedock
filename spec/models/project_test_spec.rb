@@ -18,6 +18,7 @@ RSpec.describe ProjectTest, type: :model do
   end
 
   describe "validations" do
+    it(nil, probedock: { key: 'w6cm' }){ should have_validations_on(:key_id, :name, :project) }
     it(nil, probedock: { key: 'ffmg' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: 'lq77' }){ should validate_length_of(:name).is_at_most(255) }
     it(nil, probedock: { key: 'qids' }){ should validate_presence_of(:project) }
@@ -33,6 +34,7 @@ RSpec.describe ProjectTest, type: :model do
   end
 
   describe "associations" do
+    it(nil, probedock: { key: 'hiwh' }){ should have_associations(:key, :project, :first_runner, :description, :descriptions, :results)}
     it(nil, probedock: { key: 'e6ln' }){ should belong_to(:key).class_name('TestKey') }
     it(nil, probedock: { key: '2sq0' }){ should belong_to(:project) }
     it(nil, probedock: { key: '0s76' }){ should belong_to(:first_runner).class_name('User') }
