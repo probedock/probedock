@@ -1,8 +1,11 @@
-.recent-activity
-  p.loading ng-if='!reports'
-    em Loading...
-  p.empty ng-if='reports.length === 0'
-    em No tests have been run recently.
+.panel.panel-default.recent-activity
+  .panel-heading
+    h3.panel-title Recent Activity
+  .panel-body ng-if='!reports || reports.length === 0'
+    p.loading ng-if='!reports'
+      em Loading...
+    p.empty ng-if='reports.length === 0'
+      em No tests have been run recently.
   .list-group ng-if='reports.length'
     .list-group-item ng-repeat='report in reports'
       span.singleRunner ng-if='report.runners.length == 1'
