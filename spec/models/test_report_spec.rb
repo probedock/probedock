@@ -72,6 +72,7 @@ describe TestReport do
   end
 
   describe "database table" do
+    it(nil, probedock: { key: '8y80' }){ should have_db_columns(:id, :organization_id, :api_id, :uid, :started_at, :ended_at, :created_at, :updated_at) }
     it(nil, probedock: { key: '5fgu' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: 'fjlf' }){ should have_db_column(:api_id).of_type(:string).with_options(null: false, limit: 12) }
     it(nil, probedock: { key: 'fjlf' }){ should have_db_column(:uid).of_type(:string).with_options(null: true, limit: 100) }
