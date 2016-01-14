@@ -56,12 +56,12 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
         url: '/reports',
         params: {
           pageSize: 5,
-          organizationId: $scope.organization.id,
           projectId: $scope.project.id,
           withRunners: 1,
           withProjects: 1,
           withProjectVersions: 1,
-          withCategories: 1
+          withCategories: 1,
+          withProjectCountsFor: $scope.project.id
         }
       }).then(showReports);
     }
