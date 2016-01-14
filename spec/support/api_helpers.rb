@@ -84,7 +84,7 @@ module SpecApiHelper
 
     headers = options[:headers] || {}
     headers['Content-Type'] ||= options[:content_type] || 'application/json'
-    headers['Authorization'] = "Bearer #{user.generate_auth_token}" if options[:user]
+    headers['Authorization'] = "Bearer #{options[:user].generate_auth_token}" if options[:user]
 
     post path, body, headers
 

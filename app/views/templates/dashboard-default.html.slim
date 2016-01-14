@@ -31,11 +31,7 @@
       '  guide to find out how to publish test results for your projects.
 .container-fluid ng-if='orgIsActive()'
   .col-md-6.col-xs-12
-    .panel.panel-default
-      .panel-heading
-        h3.panel-title Recent Activity
-      .panel-body
-        recent-activity ng-if='currentOrganization' organization='currentOrganization'
+    recent-activity ng-if='currentOrganization' organization='currentOrganization'
     .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl' ng-if='orgIsActive()'
       .panel-heading
         h3.panel-title Test Tags

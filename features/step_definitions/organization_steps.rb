@@ -25,7 +25,7 @@ Given /user (\w+) who is a technical user of (.+) exists/ do |user_name,organiza
   add_named_record user_name, create(:technical_user, name: user_name, organization: org)
 end
 
-Given /user (\w+) is a member of (.+)/ do |user_name,organization_name|
+Given /user (\w+) is(?: also)? a member of (.+)/ do |user_name,organization_name|
   user = named_record user_name
   org = named_record organization_name
   create :membership, user: user, organization: org

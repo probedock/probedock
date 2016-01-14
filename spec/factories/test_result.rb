@@ -21,6 +21,7 @@ FactoryGirl.define do
     passed true
     active true
     runner
+    project_version
     test{ create :project_test, last_runner: runner, project_version: project_version, project: project_version.project }
     new_test true
     name{ test.name }

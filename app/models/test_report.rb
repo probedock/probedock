@@ -28,7 +28,7 @@ class TestReport < ActiveRecord::Base
   has_many :results, through: :test_payloads, class_name: 'TestResult'
   has_many :runners, through: :test_payloads, class_name: 'User'
 
-  validates :uid, length: { maximum: 100, allow_blank: true }
+  validates :uid, length: { maximum: 100, allow_blank: true }, uniqueness: { scope: :organization_id, allow_blank: true }
   validates :organization, presence: true
 
   %w(duration results_count passed_results_count inactive_results_count inactive_passed_results_count tests_count new_tests_count).each do |method|

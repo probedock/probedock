@@ -384,4 +384,64 @@ RSpec.describe 'Payload processing' do
       check_description results[8], resultsCount: 2
     end
   end
+
+  it "should not assign contributions to tests run by a technical user for the first time and with no test key", probedock: { key: '35of' } do
+
+    tests = []
+
+    version = create :project_version, project: projects[0], name: '1.2.3'
+    tests << create(:test, name: 'It might work', project: projects[0], last_runner: user, project_version: version)
+    k1 = create :test_key, user: user, project: projects[0]
+
+    Project.where(id: projects[0].id).update_all tests_count: ProjectTest.where(project_id: projects[0].id).count
+
+    raw_payload = generate_raw_payload projects[0], version: '1.2.3', results: [
+      { n: 'It had worked', p: false },
+      { n: 'It should work' },
+      { n: 'It might work', k: k1.key }
+    ]
+
+    technical_user = create :technical_user, organization: organization
+
+    store_preaction_state
+
+    # publish payload
+    with_resque do
+      api_post '/api/publish', raw_payload.to_json, user: technical_user
+      expect(response.status).to eq(202)
+      check_payload_response @response_body, projects[0], technical_user, raw_payload
+    end
+
+    # check database changes
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 3, project_tests: 2, test_descriptions: 2
+
+    # check payload & report
+    payload = check_payload @response_body, raw_payload, testsCount: 3, newTestsCount: 2
+    check_report payload, organization: organization
+
+    # check project & version
+    expect(projects[0].tap(&:reload).tests_count).to eq(3)
+    expect_project_version name: raw_payload[:version], projectId: projects[0].api_id
+
+    # check the existing test and the 2 new tests
+    tests = check_tests projects[0], technical_user, payload do
+      check_test name: 'It had worked'
+      check_test name: 'It should work'
+      check_test name: 'It might work', key: k1.key, test: tests[0]
+    end
+
+    # check the 3 results
+    results = check_results raw_payload, payload do
+      check_result test: tests[0], newTest: true
+      check_result test: tests[1], newTest: true
+      check_result test: tests[2], newTest: false
+    end
+
+    # check the descriptions of the 3 tests for the project version
+    check_descriptions payload, tests do
+      check_description results[0], resultsCount: 1, passing: false, contributions: []
+      check_description results[1], resultsCount: 1, contributions: []
+      check_description results[2], resultsCount: 1, contributions: [ { kind: :key_creator, userId: user.api_id } ]
+    end
+  end
 end

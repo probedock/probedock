@@ -32,6 +32,8 @@ FactoryGirl.define do
     after :create do |payload,evaluator|
       evaluator.test_report.test_payloads << payload if evaluator.test_report
 
+      next unless evaluator.random_results
+
       random = evaluator.random_results
       n = payload.results_count
       n = rand(25) + 1 if n == 0 && random

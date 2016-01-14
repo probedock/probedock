@@ -40,6 +40,7 @@ class TestReportPolicy < ApplicationPolicy
         json.passedResultsCount record.passed_results_count
         json.inactiveResultsCount record.inactive_results_count
         json.inactivePassedResultsCount record.inactive_passed_results_count
+        json.newTestsCount record.new_tests_count
         json.startedAt record.started_at.iso8601(3)
         json.endedAt record.ended_at.iso8601(3)
         json.createdAt record.created_at.iso8601(3)
@@ -54,6 +55,7 @@ class TestReportPolicy < ApplicationPolicy
             json.passedResultsCount rel.where('test_results.passed = ?', true).count
             json.inactiveResultsCount rel.where('test_results.active = ?', false).count
             json.inactivePassedResultsCount rel.where('test_results.passed = ? AND test_results.active = ?', true, false).count
+            json.newTestsCount rel.where('test_results.new_test = ?', true).count
           end
         end
 
