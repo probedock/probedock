@@ -54,12 +54,14 @@ module TestPayloadProcessing
       description.results_count += results.length
       description.save!
 
+      # set the contributor of the test (for now, either the creator of the key or the first runner, but only if it's a human user)
       contributor, kind = if test.key.try(:user).try(:human?)
         [ test.key.user, :key_creator ]
       elsif test.first_runner.try(:human?)
         [ test.first_runner, :first_runner ]
       end
 
+      # only add the contribution to new descriptions (for new versions) or if it's not already there
       if contributor && (new_description || description.contributions.where(user_id: contributor.id).none?)
         TestContribution.new(kind: kind, test_description: description, user: contributor).save_quickly!
       end
