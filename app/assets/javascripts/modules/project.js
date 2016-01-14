@@ -30,4 +30,45 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
     });
   })
 
+  .directive('projectRecentActivity', function() {
+    return {
+      restrict: 'E',
+      controller: 'ProjectRecentActivityCtrl',
+      controllerAs: 'ctrl',
+      templateUrl: '/templates/project-recent-activity.html',
+      scope: {
+        organization: '=',
+        project: '='
+      }
+    };
+  })
+
+  .controller('ProjectRecentActivityCtrl', function(api, $scope) {
+
+    $scope.$watch('project', function(value) {
+      if (value) {
+        fetchReports();
+      }
+    });
+
+    function fetchReports() {
+      return api({
+        url: '/reports',
+        params: {
+          pageSize: 5,
+          projectId: $scope.project.id,
+          withRunners: 1,
+          withProjects: 1,
+          withProjectVersions: 1,
+          withCategories: 1,
+          withProjectCountsFor: $scope.project.id
+        }
+      }).then(showReports);
+    }
+
+    function showReports(response) {
+      $scope.reports = response.data;
+    }
+  })
+
 ;

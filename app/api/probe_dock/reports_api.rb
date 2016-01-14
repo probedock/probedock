@@ -29,6 +29,8 @@ module ProbeDock
             Organization.active.where(api_id: params[:organizationId].to_s).first!
           elsif params[:organizationName].present?
             Organization.active.where(normalized_name: params[:organizationName].to_s.downcase).first!
+          elsif params[:projectId].present?
+            Organization.active.joins(:projects).where('projects.api_id = ?', params[:projectId].to_s).first!
           end
         end
 
@@ -76,7 +78,7 @@ module ProbeDock
 
           group = false
           if params[:projectId].present?
-            project = Project.where(api_id: params[:projectId].to_s).first!
+            project = Project.where(organization_id: current_organization.id, api_id: params[:projectId].to_s).first!
             authorize! project, :show
             rel = rel.joins(test_payloads: :project_version).where('project_versions.project_id = ?', project.id)
             group = true
