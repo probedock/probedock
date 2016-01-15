@@ -58,8 +58,9 @@ gem 'simple_states' # state machines
 gem 'bitmask_attributes' # bitmasks
 gem 'strip_attributes' # trimming
 
-# Fast JSON
-gem 'oj'
+# Parsing
+gem 'oj' # fast JSON parsing
+gem 'ox' # fast XML parsing (without nokogiri)
 
 # Tools
 gem 'rake-version'

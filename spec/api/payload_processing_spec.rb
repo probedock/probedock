@@ -38,7 +38,7 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       check_payload_response @response_body, projects[0], user, raw_payload
     end
 
@@ -92,12 +92,12 @@ RSpec.describe 'Payload processing' do
     # publish the 2 payloads
     with_resque do
       api_post '/api/publish', first_raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       @first_response_body = @response_body
       check_payload_response @response_body, projects[0], user, first_raw_payload
 
       api_post '/api/publish', second_raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       check_payload_response @response_body, projects[0], user, second_raw_payload
     end
 
@@ -169,7 +169,7 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       check_payload_response @response_body, projects[0], user, raw_payload
     end
 
@@ -254,7 +254,7 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       check_payload_response @response_body, projects[0], user, raw_payload
     end
 
@@ -338,7 +338,7 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       check_payload_response @response_body, projects[0], user, raw_payload
     end
 
@@ -408,7 +408,7 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: technical_user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       check_payload_response @response_body, projects[0], technical_user, raw_payload
     end
 

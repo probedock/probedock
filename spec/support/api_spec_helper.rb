@@ -118,15 +118,16 @@ module ApiSpecHelper
     name ? "HTTP #{code} #{name}" : "HTTP #{code}"
   end
 
-  def expect_http_status_code code, response = nil
+  def expect_http_status_code code, res = nil
 
-    response ||= @response
+    res ||= @response
+    res ||= response if respond_to? :response
 
-    expect(response.status).to eq(code), ->{
+    expect(res.status).to eq(code), ->{
       msg = ""
       msg << "\nexpected #{http_status_code_description(code)}"
-      msg << "\n     got #{http_status_code_description(response.status)}"
-      msg << "\n\n#{JSON.pretty_generate MultiJson.load(response.body)}\n\n"
+      msg << "\n     got #{http_status_code_description(res.status)}"
+      msg << "\n\n#{JSON.pretty_generate MultiJson.load(res.body)}\n\n"
     }
   end
 
@@ -141,7 +142,7 @@ module ApiSpecHelper
 
     validate_json json, interpolate_json(expectations, expectations: true), '', errors
     expect(errors).to be_empty, ->{
-      %/\n#{errors.join("\n")}\n\n/
+      %/\n#{errors.join("\n")}\n\n#{JSON.pretty_generate(json)}\n\n/
     }
   end
 
@@ -159,7 +160,6 @@ module ApiSpecHelper
           msg = %/expected JSON object at "#{path}" to have the following properties: #{expectations.keys.join(', ')}/
           msg << %/\n  got missing properties: #{missing_keys.join(', ')}/ if missing_keys.present?
           msg << %/\n  got extra properties: #{extra_keys.join(', ')}/ if extra_keys.present?
-          msg << %/\n\n#{JSON.pretty_generate(json)}/
           errors << msg
         end
       else
@@ -187,7 +187,7 @@ module ApiSpecHelper
         errors << %/expected JSON value at "#{path}" to be a boolean, got #{json.inspect} (#{json.class})/
       end
     else
-      errors << %/expected JSON value at "#{path}" to equal #{expectations}, got #{json}/ unless json == expectations
+      errors << %/expected JSON value at "#{path}" to equal #{expectations}, got #{json.inspect}/ unless json == expectations
     end
   end
 end

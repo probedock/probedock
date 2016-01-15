@@ -17,7 +17,16 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
   class PayloadsApi < Grape::API
+    format :json
+    default_format :json
+
     content_type :payload_v1, 'application/vnd.probedock.payload.v1+json'
+    content_type :json, 'application/json'
+    content_type :xml, 'application/xml'
+
+    parser :payload_v1, nil
+    parser :json, nil
+    parser :xml, nil
 
     namespace do
 
@@ -31,20 +40,36 @@ module ProbeDock
 
           received_at = Time.now.utc
 
+          raw_payload = nil
+          raw_payload_type = :json
           body = env['api.request.input']
-          json = MultiJson.load body
 
-          TestPayloadValidations.validate json, validation_context, location_type: :json, raise_error: true
+          case request.content_type
+          when Mime::Type.lookup_by_extension(:json), Mime::Type.lookup_by_extension(:payload_v1)
+            raw_payload = MultiJson.load body
+            TestPayloadValidations.validate raw_payload, validation_context, location_type: :json, raise_error: true
+          when Mime::Type.lookup_by_extension(:xml)
+            raw_payload_type = :xml
+            raw_payload = Ox.parse body
+            raw_payload = TestPayloadXmlParser.new(raw_payload).parse
+          else
+            status 415
+            return nil
+          end
 
           # FIXME: do not accept payloads in the future
-          ended_at = json.key?('endedAt') ? Time.parse(json['endedAt']) : received_at
+          ended_at = received_at
+          ended_at = Time.parse raw_payload['endedAt'] if raw_payload_type == :json && raw_payload.key?('endedAt')
 
           # FIXME: foreign key validation
-          project = Project.where(api_id: json['projectId']).first
+          project_api_id = raw_payload.fetch('projectId', headers['Probe-Dock-Project-Id']).to_s
+          project = Project.where(api_id: project_api_id).first
           Pundit.authorize current_user, project, :publish?
 
+          project_version = raw_payload.fetch('version', headers['Probe-Dock-Project-Version']).to_s
+
           payload = TestPayload.new runner: current_user, received_at: received_at, ended_at: ended_at
-          payload.contents = json
+          payload.contents = raw_payload
           payload.contents_bytesize = body.bytesize
 
           unless payload.save
@@ -61,8 +86,8 @@ module ProbeDock
               {
                 id: payload.api_id,
                 projectId: project.api_id,
-                projectVersion: json['version'],
-                duration: json['duration'],
+                projectVersion: project_version,
+                duration: raw_payload['duration'],
                 runnerId: current_user.api_id,
                 endedAt: payload.ended_at.iso8601(3),
                 bytes: body.bytesize

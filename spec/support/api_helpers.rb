@@ -18,7 +18,7 @@
 module SpecApiHelper
   MEDIA_TYPES = {
     payload_v1: 'application/vnd.probedock.payload.v1+json',
-    probe_dock_payload_v1: 'application/vnd.probedock.payload.v1+json',
+    probedock_payload_v1: 'application/vnd.probedock.payload.v1+json',
     markdown: 'text/x-markdown'
   }
 
