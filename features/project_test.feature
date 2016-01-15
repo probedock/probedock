@@ -18,7 +18,7 @@ Feature: Test
   - active/inactive
 
 
-@wip
+
   Scenario: An organization member should be able to get the test details without project data in his organization
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
@@ -45,7 +45,11 @@ Feature: Test
         "passing": true,
         "active": true,
         "tags": [ "tag1", "tag2" ],
-        "tickets": [ "ticket1", "ticket2" ]
+        "tickets": [ "ticket1", "ticket2" ],
+        "contributions": [{
+          "userId": "@idOf: lskywalker",
+          "kind": "key_creator"
+        }]
       }
       """
     And nothing should have been added or deleted
@@ -78,7 +82,11 @@ Feature: Test
         "passing": true,
         "active": true,
         "tags": [ "tag1", "tag2" ],
-        "tickets": [ "ticket1", "ticket2" ]
+        "tickets": [ "ticket1", "ticket2" ],
+        "contributions": [{
+          "userId": "@idOf: lskywalker",
+          "kind": "key_creator"
+        }]
       }
       """
     And nothing should have been added or deleted
@@ -112,6 +120,10 @@ Feature: Test
         "active": true,
         "tags": [ "tag1", "tag2" ],
         "tickets": [ "ticket1", "ticket2" ],
+        "contributions": [{
+          "userId": "@idOf: lskywalker",
+          "kind": "key_creator"
+        }],
         "project": {
           "id": "@idOf: X-Wing",
           "name": "@valueOf(X-Wing, name)",
@@ -154,7 +166,11 @@ Feature: Test
         "passing": true,
         "active": true,
         "tags": [ "tag1", "tag2" ],
-        "tickets": [ "ticket1", "ticket2" ]
+        "tickets": [ "ticket1", "ticket2" ],
+        "contributions": [{
+          "userId": "@idOf: lskywalker",
+          "kind": "key_creator"
+        }]
       }
       """
     And nothing should have been added or deleted
@@ -186,7 +202,11 @@ Feature: Test
         "passing": true,
         "active": true,
         "tags": [ "tag1", "tag2" ],
-        "tickets": [ "ticket1", "ticket2" ]
+        "tickets": [ "ticket1", "ticket2" ],
+        "contributions": [{
+          "userId": "@idOf: lskywalker",
+          "kind": "key_creator"
+        }]
       }
       """
     And nothing should have been added or deleted
