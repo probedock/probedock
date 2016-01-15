@@ -1,6 +1,8 @@
 .container-fluid
   .page-header
     h1 {{ test.name }}
+    h4 ng-if='!organization || !test' Loading...
+    h4 ng-if='organization && test' {{ organization | orgName }} > {{ test.project | projectName }}
   .row
     .col-lg-4.col-md-6.col-xs-12
       .summary.panel.panel-default
@@ -20,30 +22,21 @@
               .label.label-warning ng-repeat='ticket in test.tickets' {{ ticket }}
             dl
               dt
-                strong First run:
+                strong First run
               dd {{ test.firstRunAt | amDateFormat: 'lll' }}
               dt
-                strong Last run:
+                strong Last run
               dd {{ test.lastRunAt | amDateFormat: 'lll' }}
               dt
-                strong Total of results:
+                strong Number of results
               dd {{ test.resultsCount }}
-            /dl
-            /  dt Number of Tests
-            /  dd {{ project.testsCount | number }}
-            /  dt Number of Test Runs
-            /  dd {{ project.reportsCount | number }}
-            /  dt Creation Date
-            /  dd {{ project.createdAt | amDateFormat:'llll' }}
-            /  dt Last Update
-            /  dd {{ project.updatedAt | amDateFormat:'llll' }}
-            /p.text-info.text-center ng-if='!project.testsCount'
-            /  ' No test results have been published for this project.
-            /  ' Follow the
-            /  a ui-sref='help.gettingStarted({ organizationId: project.organizationId, projectId: project.id })'
-            /    strong Getting Started
-            /  '  guide to set it up.
-    /.col-lg-4.col-md-6.col-xs-12
-    /  project-recent-activity project='project' organization='currentOrganization'
-    /.col-lg-4.col-md-6.col-xs-12
-    /  test-contributions project='project'
+              dd
+                strong Last status
+              dt.test-details-status
+                span.glyphicon.glyphicon-thumbs-up.test-details-passed ng-if='test.passing && test.active' tooltip='Passed' tooltip-append-to-body='true'
+                span.glyphicon.glyphicon-thumbs-down.test-details-failed ng-if='!test.passing && test.active' tooltip='Failed' tooltip-append-to-body='true'
+                span.glyphicon.glyphicon-ban-circle.test-details-inactive ng-if='!test.active' tooltip='Inactive' tooltip-append-to-body='true'
+              dd
+                strong Contributors
+              dd
+                user-avatar ng-repeat='contribution in test.contributions' user='contribution.user' tooltip='{{ contribution.user.name }}' tooltip-append-to-body='true'
