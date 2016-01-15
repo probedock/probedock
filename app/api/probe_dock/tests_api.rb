@@ -35,7 +35,8 @@ module ProbeDock
 
         def serialization_options tests
           @serialization_options ||= {
-            with_project: true_flag?(:withProject)
+            with_project: true_flag?(:withProject),
+            with_contributions: true_flag?(:withContributions)
           }
         end
       end

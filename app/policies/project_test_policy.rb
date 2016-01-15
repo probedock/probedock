@@ -43,9 +43,9 @@ class ProjectTestPolicy < ApplicationPolicy
         json.tags record.description.tags.collect{ |t| t.name }
         json.tickets record.description.tickets.collect{ |t| t.name }
         json.contributions record.description.contributions.collect{ |c| {
-          userId: c.user.api_id,
+          user: serialize(c.user),
           kind: c.kind
-        }}
+        }} if options[:with_contributions]
         json.project serialize(record.project) if options[:with_project]
       end
     end
