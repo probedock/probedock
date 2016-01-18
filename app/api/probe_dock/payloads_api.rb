@@ -50,8 +50,7 @@ module ProbeDock
             TestPayloadValidations.validate raw_payload, validation_context, location_type: :json, raise_error: true
           when Mime::Type.lookup_by_extension(:xml)
             raw_payload_type = :xml
-            raw_payload = Ox.parse body
-            raw_payload = TestPayloadXmlParser.new(raw_payload).parse
+            raw_payload = TestPayloadXunitParser.new(body, headers['Probe-Dock-Duration']).parse
           else
             status 415
             return nil
@@ -65,8 +64,10 @@ module ProbeDock
           project_api_id = raw_payload.fetch('projectId', headers['Probe-Dock-Project-Id']).to_s
           project = Project.where(api_id: project_api_id).first
           Pundit.authorize current_user, project, :publish?
+          raw_payload['projectId'] ||= project_api_id
 
           project_version = raw_payload.fetch('version', headers['Probe-Dock-Project-Version']).to_s
+          raw_payload['version'] ||= project_version
 
           payload = TestPayload.new runner: current_user, received_at: received_at, ended_at: ended_at
           payload.contents = raw_payload

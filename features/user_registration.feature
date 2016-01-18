@@ -127,8 +127,8 @@ Feature: User registration
       }
       """
     Then the response should be HTTP 422 with the following errors:
-      | path       | message                          |
-      | /user/name | User name has already been taken |
+      | path               | message                                  |
+      | /user/name         | User name has already been taken         |
       | /organization/name | Organization name has already been taken |
     And nothing should have been added or deleted
 

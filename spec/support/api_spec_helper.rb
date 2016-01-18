@@ -56,14 +56,14 @@ module ApiSpecHelper
         /\A[a-z0-9]+\Z/
       elsif value == '@uuid'
         /\A[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}\Z/
-      elsif value == '@string'
-        /.+/
       elsif value == '@iso8601'
         /.*/ # TODO: validate ISO 8601 dates
       elsif value == '@email'
         /\A[^@]+@[^@]+\Z/
       elsif value == '@md5'
         /\A[a-f0-9]{32}\Z/
+      elsif %w(@integer @number @string @boolean).include? value
+        TypeExpectation.new value.sub(/^\@/, '').to_sym
       end
 
       return expectation if expectation
@@ -180,6 +180,8 @@ module ApiSpecHelper
       else
         errors << %/expected JSON value at "#{path}" to be a string, got #{json.inspect} (#{json.class})/
       end
+    elsif expectations.kind_of? TypeExpectation
+      expectations.validate json, %/JSON value at "#{path}"/, errors
     elsif expectations == !!expectations
       if json == !!json
         errors << %/expected JSON boolean at "#{path}" to be #{expectations}, got #{json}/ unless expectations == json
@@ -189,5 +191,39 @@ module ApiSpecHelper
     else
       errors << %/expected JSON value at "#{path}" to equal #{expectations}, got #{json.inspect}/ unless json == expectations
     end
+  end
+
+  # An expectation that a value is of a given type (e.g. a number).
+  #
+  # Available types are: boolean, integer, number, string.
+  #
+  #     expectation = TypeExpectation.new :integer
+  #     expectation.error 24, "foo"      #=> nil
+  #     expectation.error 5.6, "foo"     #=> 'expected foo to be of type :integer, but got 5.6'
+  #     expectation.error "bar", "foo"   #=> 'expected foo to be of type :integer, but got "bar"'
+  class TypeExpectation
+    attr_reader :type
+
+    def initialize type
+      raise "Unknown type #{type.inspect}; known types are #{SPEC_CONTENT_EXPECTATION_TYPES.keys.collect(&:to_s).sort.join(', ')}" unless SPEC_CONTENT_EXPECTATION_TYPES.key? type
+      @type = type
+    end
+
+    # Validates the specified value, adding an error to the supplied errors array if it is invalid.
+    # The description is used to build the error message with the template "expected #{description} to be of type :#{type}, but got #{value}".
+    def validate value, description, errors = []
+      if Array.wrap(SPEC_CONTENT_EXPECTATION_TYPES[@type]).none?{ |type| value.kind_of? type }
+        errors << "expected #{description} to be of type :#{@type}, but got #{value.inspect}"
+      end
+    end
+
+    private
+
+    SPEC_CONTENT_EXPECTATION_TYPES = {
+      integer: Integer,
+      number: Numeric,
+      string: String,
+      boolean: [ TrueClass, FalseClass ]
+    }
   end
 end

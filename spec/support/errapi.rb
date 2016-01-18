@@ -49,10 +49,12 @@ RSpec::Matchers.define :have_api_errors do |expected_errors|
   end
 
   failure_message do |actual|
-    Array.new.tap do |msg|
-      msg << "expected API response to contain #{expected_errors.length} errors"
-      msg << "the following expected errors were not found: #{@missing_errors}" if @missing_errors.any?
-      msg << "the following extra errors were found: #{@extra_errors}" if @extra_errors.any?
-    end.join '; '
+    message = Array.new.tap do |msg|
+      msg << %/expected API response to contain #{expected_errors.length} errors/
+      msg << %/the following expected errors were not found: \n  #{@missing_errors.join("\n  ")}/ if @missing_errors.any?
+      msg << %/the following extra errors were found: \n  #{@extra_errors.join("\n  ")}/ if @extra_errors.any?
+    end.join "\n"
+
+    "\n#{message}\n\n"
   end
 end
