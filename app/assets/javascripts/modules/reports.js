@@ -202,7 +202,8 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     };
   })
 
-  .controller('ReportDetailsCtrl', function(api, $scope) {
+  .controller('ReportDetailsCtrl', function(api, orgs, $scope) {
+    orgs.forwardData($scope);
 
     $scope.reportFilters = {
       showPassed: true,
@@ -268,7 +269,8 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     }
   })
 
-  .controller('LatestReportsCtrl', function(api, reports, $scope, $stateParams, tables, $timeout) {
+  .controller('LatestReportsCtrl', function(api, reports, orgs, $scope, $stateParams, tables, $timeout) {
+    orgs.forwardData($scope);
 
     tables.create($scope, 'reportsList', {
       url: '/reports',

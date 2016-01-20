@@ -6,7 +6,7 @@
     .label.label-primary ng-if='!report' Loading...
     span ng-repeat='project in report.projects'
       span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}'
-        a.label-link href='#' ui-sref='org.projects.show({ projectName: project.name })' {{ project | projectName }}
+        a.label-link href='#' ui-sref='org.projects.show({ orgName: currentOrganization.name, projectName: project.name })' {{ project | projectName }}
         |  {{ version.name }}
       '
     span ng-repeat='category in report.categories'
@@ -93,7 +93,7 @@
           .labels.clearfix
             '
             .label.label-primary
-              a.label-link href='#' ui-sref='org.projects.show({ projectName: result.project.name })' {{ result.project | projectName }}
+              a.label-link href='#' ui-sref='org.projects.show({ orgName: currentOrganization.name, projectName: result.project.name })' {{ result.project | projectName }}
               |  {{ result.projectVersion }}
             |  <div class='label label-info' ng-if='result.category'>{{ result.category }}</div>
             |  <div class='label label-default' ng-repeat='tag in result.tags'>{{ tag }}</div>
