@@ -84,7 +84,7 @@ Feature: Test
     And nothing should have been added or deleted
 
 
-@wip
+
   Scenario: An organization member should be able to get test details with project data in his organization
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
