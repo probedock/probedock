@@ -1,6 +1,6 @@
 angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock.forms', 'probedock.storage', 'probedock.utils' ])
 
-  .factory('orgs', function(api, appStore, auth, eventUtils, $modal, $rootScope, $state, $stateParams) {
+  .factory('orgs', function(api, appStore, auth, eventUtils, $modal, $rootScope, $state, $stateParams, $q) {
 
     var service = eventUtils.service({
 
@@ -11,6 +11,21 @@ angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock
       addOrganization: function(org) {
         service.organizations.push(org);
         service.emit('refresh', service.organizations);
+      },
+
+      getOrganization: function(orgId) {
+        var org =_.findWhere(service.organizations, { id: orgId });
+
+        if (_.isUndefined(org)) {
+          return api({
+            url: '/organizations/' + orgId
+          }).then(function(response) {
+            service.addOrganization(response.data);
+            return response.data;
+          });
+        } else {
+          return $q.when(org);
+        }
       },
 
       updateOrganization: function(org) {

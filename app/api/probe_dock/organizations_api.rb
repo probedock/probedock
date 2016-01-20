@@ -91,10 +91,6 @@ module ProbeDock
       end
 
       namespace '/:id' do
-        before do
-          authenticate!
-        end
-
         helpers do
           def record
             @record = Organization.where(api_id: params[:id].to_s).first!
@@ -102,11 +98,13 @@ module ProbeDock
         end
 
         get do
+          authenticate
           authorize! record, :show
           serialize record
         end
 
         patch do
+          authenticate!
           authorize! record, :update
 
           updates = parse_organization

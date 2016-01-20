@@ -3,7 +3,8 @@ Given /^test "(.+)" was created by (.+) with key (.+) for version (.+) of projec
   project = named_record project_name
   project_version = ProjectVersion.where(project_id: project.id, name: project_version).first_or_create
 
-  key = create :test_key, user: user, project: project
+  key = create :test_key, user: user, project: project, key: test_key
+  add_named_record test_key, key
 
   options = {
     name: name,
@@ -32,7 +33,7 @@ Given /^test "(.+)" was first run by (.+) for version (.+) of project (.+)$/ do 
   add_named_record name, create(:test, options)
 end
 
-Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+)(?: and tags (.+))?(?: and tickets (.+))? for version (.+)$/ do |name,runner_name,category_name,tag_names,ticket_names,version_name|
+Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+?)(?: and tags (.+?))?(?: and tickets (.+?))? for version (.+)$/ do |name,runner_name,category_name,tag_names,ticket_names,version_name|
   test = named_record name
   last_runner = runner_name ? named_record(runner_name) : nil
   project_version = ProjectVersion.where(project_id: test.project_id, name: version_name).first_or_create
@@ -45,8 +46,22 @@ Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+)(?: and tags 
   organization = project_version.project.organization
 
   description.category = Category.where(organization_id: organization.id, name: category_name).first_or_create if category_name
-  raise 'not yet implemented' if tag_names
-  raise 'not yet implemented' if ticket_names
+
+  if tag_names
+    tag_names.split(',').each do |t|
+      tag = Tag.where(organization: organization, name: t).first_or_create
+      add_named_record t, tag
+      description.tags << tag
+    end
+  end
+
+  if ticket_names
+    ticket_names.split(',').each do |t|
+      ticket = Ticket.where(organization: organization, name: t).first_or_create
+      add_named_record t, ticket
+      description.tickets << ticket
+    end
+  end
 
   description.save!
 end

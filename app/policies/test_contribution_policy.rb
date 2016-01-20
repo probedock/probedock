@@ -15,20 +15,20 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
-class ProjectTest < ActiveRecord::Base
-  include IdentifiableResource
-  include QuickValidation
+class TestContributionPolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      scope
+    end
+  end
 
-  before_create{ set_identifier :api_id, size: 12 }
+  class Serializer < Serializer
+    def to_builder options = {}
 
-  belongs_to :key, class_name: 'TestKey'
-  belongs_to :project
-  belongs_to :first_runner, class_name: 'User'
-  belongs_to :description, class_name: 'TestDescription'
-  has_many :descriptions, class_name: 'TestDescription', foreign_key: 'test_id'
-  has_many :results, class_name: 'TestResult', foreign_key: 'test_id'
-
-  validates :name, presence: true, length: { maximum: 255 }
-  validates :project, presence: true
-  validates :key_id, uniqueness: { scope: :project_id, if: ->(t){ t.key_id && !t.quick_validation } }
+      Jbuilder.new do |json|
+        json.user serialize(record.user)
+        json.kind record.kind
+      end
+    end
+  end
 end
