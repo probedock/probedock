@@ -89,7 +89,7 @@
         .panel-body
           test-key-label.pull-right ng-if='result.key' key='result.key'
           h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}'
-            a href='#' ui-sref='org.tests.show({ testId: result.testId, orgId: result.project.organizationId })' {{ result.name }}
+            a href='#' ui-sref='org.tests.show({ orgName: currentOrganization.name, testId: result.testId })' {{ result.name }}
           .labels.clearfix
             '
             .label.label-primary
@@ -111,6 +111,7 @@
           pre ng-if='result.message' {{ result.message }}
     p.empty
       span ng-if='noMoreResults' All results have been loaded.
+      '
       em.no-match No result matches the selected filters.
     button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()'
       span.glyphicon.glyphicon-eye-open

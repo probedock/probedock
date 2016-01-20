@@ -1,8 +1,8 @@
 .container-fluid
   .page-header
     h1 {{ test.name }}
-    h4 ng-if='!organization || !test' Loading...
-    h4 ng-if='organization && test' {{ organization | orgName }} > {{ test.project | projectName }}
+    h4 ng-if='!test' Loading...
+    h4 ng-if='test' {{ currentOrganization | orgName }} > {{ test.project | projectName }}
   .row
     .col-lg-4.col-md-6.col-xs-12
       .summary.panel.panel-default
@@ -39,4 +39,6 @@
               dd
                 strong Contributors
               dd
-                user-avatar ng-repeat='contribution in test.contributions' user='contribution.user' tooltip='{{ contribution.user.name }}' tooltip-append-to-body='true'
+                user-avatar ng-if='test.contributions.length > 0' ng-repeat='contribution in test.contributions' user='contribution.user' tooltip='{{ contribution.user.name }}' tooltip-append-to-body='true'
+                p.empty ng-if='test.contributions.length === 0'
+                  em No users are known to have contributed to this test.

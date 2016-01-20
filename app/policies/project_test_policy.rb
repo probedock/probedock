@@ -17,7 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class ProjectTestPolicy < ApplicationPolicy
   def show?
-    user.try(:is?, :admin) || record.project.organization.try(:public?) || user.try('member_of?', record.project.try(:organization))
+    admin? || public?(record.project.organization) || member_of?(record.project.organization)
   end
 
   class Scope < Scope
@@ -40,8 +40,8 @@ class ProjectTestPolicy < ApplicationPolicy
         json.projectVersion record.description.project_version.name
         json.passing record.description.passing
         json.active record.description.active
-        json.tags record.description.tags.collect{ |t| t.name }
-        json.tickets record.description.tickets.collect{ |t| t.name }
+        json.tags record.description.tags.collect(&:name)
+        json.tickets record.description.tickets.collect(&:name)
         json.contributions serialize(record.description.contributions.to_a) if options[:with_contributions]
         json.project serialize(record.project) if options[:with_project]
       end

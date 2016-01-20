@@ -49,7 +49,7 @@ Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+?)(?: and tags
 
   if tag_names
     tag_names.split(',').each do |t|
-      tag = create :tag, name: t, organization: organization
+      tag = Tag.where(organization: organization, name: t).first_or_create
       add_named_record t, tag
       description.tags << tag
     end
@@ -57,7 +57,7 @@ Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+?)(?: and tags
 
   if ticket_names
     ticket_names.split(',').each do |t|
-      ticket = create :ticket, name: t, organization: organization
+      ticket = Ticket.where(organization: organization, name: t).first_or_create
       add_named_record t, ticket
       description.tickets << ticket
     end

@@ -6,20 +6,11 @@ angular.module('probedock.test', [ 'probedock.api', 'probedock.forms', 'probedoc
     api({
       url: '/tests/' + $stateParams.testId,
       params: {
-        organizationId: $stateParams.orgId,
         withProject: 1,
         withContributions: 1
       }
-    })
-    .then(function(response) {
+    }).then(function(response) {
       $scope.test = response.data;
-
-      orgs
-        .getOrganization(response.data.project.organizationId)
-        .then(function(organization) {
-          $scope.organization = organization;
-        });
     });
   })
-
 ;
