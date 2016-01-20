@@ -52,23 +52,42 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
       controller: 'NewTestsLineChartCtrl',
       templateUrl: '/templates/new-tests-line-chart.html',
       scope: {
-        organization: '='
+        organization: '=',
+        projectId: '='
       }
     };
   })
 
   .controller('NewTestsLineChartCtrl', function(api, $scope) {
 
+    var chartConfig = {
+      written: {
+        url: '/metrics/newTestsByDay',
+        tooltipTemplate: '<%= value %> new tests on <%= label %>',
+        valueFieldName: 'testsCount'
+      },
+      run: {
+        url: '/metrics/reportsByDay',
+        tooltipTemplate: '<%= value %> runs on <%= label %>',
+        valueFieldName: 'runsCount'
+      }
+    };
+
     $scope.chart = {
       data: [],
       labels: [],
       params: {
         projectIds: [],
-        userIds: []
+        userIds: [],
+        type: 'written'
       },
       options: {
         pointHitDetectionRadius: 5,
-        tooltipTemplate: '<%= value %> new tests on <%= label %>'
+        // Will be set from chartConfig based on chart type
+        tooltipTemplate: '',
+        scaleLabel: function(object) {
+          return '  ' + object.value;
+        }
       }
     };
 
@@ -80,8 +99,11 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
     $scope.$watch('organization', function(value) {
       if (value) {
         fetchMetrics();
-        fetchProjectChoices();
         fetchUserChoices();
+
+        if (!$scope.projectId) {
+          fetchProjectChoices();
+        }
       }
     });
 
@@ -117,9 +139,13 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
     }
 
     function fetchMetrics() {
+      if ($scope.projectId) {
+        $scope.chart.params.projectIds = [$scope.projectId];
+      }
+
       return api({
-        url: '/metrics/newTests',
-        params: _.extend({}, $scope.chart.params, {
+        url: chartConfig[$scope.chart.params.type].url,
+        params: _.extend({}, _.omit($scope.chart.params, 'type'), {
           organizationId: $scope.organization.id
         })
       }).then(showMetrics);
@@ -130,15 +156,19 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
         return;
       }
 
+      $scope.chart.options.tooltipTemplate = chartConfig[$scope.chart.params.type].tooltipTemplate;
+
       var series = [];
       $scope.chart.data = [ series ];
       $scope.chart.labels.length = 0;
-      $scope.newTestsCount = 0;
+      $scope.totalCount = 0;
+
+      var fieldName = chartConfig[$scope.chart.params.type].valueFieldName;
 
       _.each(response.data, function(data) {
         $scope.chart.labels.push(moment(data.date).format('DD.MM'));
-        series.push(data.testsCount);
-        $scope.newTestsCount += data.testsCount;
+        series.push(data[fieldName]);
+        $scope.totalCount += data[fieldName];
       });
     }
   })
