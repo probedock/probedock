@@ -79,6 +79,7 @@ Feature: Reports by day metrics
     And nothing should have been added or deleted
 
 
+
   Scenario: An organization member should be able to get the organization's reports by day metrics filtered by user
     When hsolo sends a GET request to /api/metrics/reportsByDay?organizationId={@idOf: Rebel Alliance}&userIds[]={@idOf: hsolo}
     Then the response code should be 200
