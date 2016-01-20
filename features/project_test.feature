@@ -1,7 +1,7 @@
 @api @test
 Feature: Test
 
-  Users should be able to retrieve the test details by its id.
+  Users should be able to retrieve test details by its id.
 
   The details of a test contains:
   - name
@@ -19,7 +19,7 @@ Feature: Test
 
 
 
-  Scenario: An organization member should be able to get the test details without project data in his organization
+  Scenario: An organization member should be able to get test details in his organization
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -29,7 +29,7 @@ Feature: Test
     And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2 for version 1.0.0
     And test "Blasters should fire" was first run by lskywalker for version 1.0.0 of project X-Wing
     And test "Blasters should fire" has category C2 for version 1.0.0
-    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?organizationId={@idOf: Rebel Alliance}
+    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -52,7 +52,7 @@ Feature: Test
 
 
 
-  Scenario: An organization member should be able to get the test details without project data in his organization with the project id
+  Scenario: An organization member should be able to get test details in his organization with the project id
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -62,7 +62,7 @@ Feature: Test
     And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2  for version 1.0.0
     And test "Blasters should fire" was first run by lskywalker for version 1.0.0 of project X-Wing
     And test "Blasters should fire" has category C2 for version 1.0.0
-    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?projectId={@idOf: X-Wing}
+    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -84,8 +84,8 @@ Feature: Test
     And nothing should have been added or deleted
 
 
-
-  Scenario: An organization member should be able to get the test details with project data in his organization
+@wip
+  Scenario: An organization member should be able to get test details with project data in his organization
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -95,7 +95,7 @@ Feature: Test
     And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2  for version 1.0.0
     And test "Blasters should fire" was first run by lskywalker for version 1.0.0 of project X-Wing
     And test "Blasters should fire" has category C2 for version 1.0.0
-    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?organizationId={@idOf: Rebel Alliance}&withProject=1
+    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?withProject=1
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -127,7 +127,7 @@ Feature: Test
 
 
 
-  Scenario: An organization member should be able to get the test details with project and contributions data in his organization
+  Scenario: An organization member should be able to get test details with project and contributions data in his organization
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -137,7 +137,7 @@ Feature: Test
     And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2  for version 1.0.0
     And test "Blasters should fire" was first run by lskywalker for version 1.0.0 of project X-Wing
     And test "Blasters should fire" has category C2 for version 1.0.0
-    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?organizationId={@idOf: Rebel Alliance}&withProject=1&withContributions=1
+    When hsolo sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?&withProject=1&withContributions=1
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -187,7 +187,7 @@ Feature: Test
 
 
   @authorization
-  Scenario: A user should be able to get the test details without project data in a public organization
+  Scenario: A user should be able to get test details in a public organization
     Given public organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -197,7 +197,7 @@ Feature: Test
     And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2  for version 1.0.0
     And public organization Galactic Empire exists
     And user palpatine who is a member of Galactic Empire exists
-    When palpatine sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?organizationId={@idOf: Rebel Alliance}
+    When palpatine sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -221,7 +221,7 @@ Feature: Test
 
 
   @authorization
-  Scenario: An anonymous user should be able to get the test details without project data in a public organization
+  Scenario: An anonymous user should be able to get test details in a public organization
     Given public organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
@@ -229,7 +229,7 @@ Feature: Test
     And project X-Wing exists within organization Rebel Alliance
     And test "Ion engine should provide thrust" was created by lskywalker with key k1 for version 1.0.0 of project X-Wing
     And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2  for version 1.0.0
-    When nobody sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?organizationId={@idOf: Rebel Alliance}
+    When nobody sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -253,7 +253,7 @@ Feature: Test
 
 
    @authorization
-   Scenario: A user should not be able to get the test details without project data of a private organization
+   Scenario: A user should not be able to get test details of a private organization
      Given private organization Rebel Alliance exists
      And user hsolo who is a member of Rebel Alliance exists
      And user lskywalker who is a member of Rebel Alliance exists
@@ -263,14 +263,14 @@ Feature: Test
      And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2  for version 1.0.0
      And public organization Galactic Empire exists
      And user palpatine who is a member of Galactic Empire exists
-     When palpatine sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?organizationId={@idOf: Rebel Alliance}
+     When palpatine sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}
      Then the response code should be 403
      And nothing should have been added or deleted
 
 
 
    @authorization
-   Scenario: An anonymous user should not be able to get the test details without project data of a private organization
+   Scenario: An anonymous user should not be able to get test details of a private organization
      Given private organization Rebel Alliance exists
      And user hsolo who is a member of Rebel Alliance exists
      And user lskywalker who is a member of Rebel Alliance exists
@@ -278,7 +278,7 @@ Feature: Test
      And project X-Wing exists within organization Rebel Alliance
      And test "Ion engine should provide thrust" was created by lskywalker with key k1 for version 1.0.0 of project X-Wing
      And test "Ion engine should provide thrust" has category C1 and tags tag1, tag2 and tickets ticket1, ticket2  for version 1.0.0
-     When nobody sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}?organizationId={@idOf: Rebel Alliance}
+     When nobody sends a GET request to /api/tests/{@idOf: Ion engine should provide thrust}
      Then the response code should be 403
      And nothing should have been added or deleted
 
