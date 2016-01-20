@@ -14,7 +14,7 @@
       span.multipleRunners ng-if='report.runners.length >= 2'
         span.runner ng-repeat='runner in report.runners'
           user-avatar user='runner' name-tooltip='true'
-      |  ran some tests
+      '  ran some tests
       span.time.hidden-xs am-time-ago='report.endedAt'
       span.labels
         '
