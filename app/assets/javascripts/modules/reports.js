@@ -271,6 +271,7 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
   })
 
   .controller('LatestReportsCtrl', function(api, reports, $scope, $stateParams, tables, $timeout) {
+
     tables.create($scope, 'reportsList', {
       url: '/reports',
       pageSize: 15,
