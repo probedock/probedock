@@ -211,8 +211,7 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
     };
   })
 
-  .controller('RecentActivityCtrl', function(api, orgs, $scope) {
-    orgs.forwardData($scope);
+  .controller('RecentActivityCtrl', function(api, $scope) {
 
     $scope.$watch('organization', function(value) {
       if (value) {

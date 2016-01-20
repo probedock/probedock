@@ -168,7 +168,8 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       controller: 'ReportDetailsCtrl',
       templateUrl: '/templates/report-details.html',
       scope: {
-        report: '='
+        report: '=',
+        organization: '='
       }
     };
   })
@@ -269,9 +270,7 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     }
   })
 
-  .controller('LatestReportsCtrl', function(api, reports, orgs, $scope, $stateParams, tables, $timeout) {
-    orgs.forwardData($scope);
-
+  .controller('LatestReportsCtrl', function(api, reports, $scope, $stateParams, tables, $timeout) {
     tables.create($scope, 'reportsList', {
       url: '/reports',
       pageSize: 15,

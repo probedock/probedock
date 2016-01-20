@@ -9,4 +9,4 @@
         ng-include src='"/templates/reports-latest.html"'
       tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' active='activeTabs[reportTab.id]' ng-controller='ReportTabCtrl'
         tab-heading {{ reportTime() }}
-        report-details report='report'
+        report-details report='report' organization='currentOrganization'
