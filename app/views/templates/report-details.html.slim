@@ -6,10 +6,10 @@
     .label.label-primary ng-if='!report' Loading...
     span ng-repeat='project in report.projects'
       span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project | projectName }} {{ version.name }}
-      |
+      '
     span ng-repeat='category in report.categories'
       span.label.label-info {{ category }}
-      |
+      '
   .row.overview
     .col-lg-2.col-md-3
       .summary.panel.panel-default
@@ -87,7 +87,7 @@
         .panel-body
           test-key-label.pull-right ng-if='result.key' key='result.key'
           h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}'
-            a href='#' ui-sref='org.tests.show({ testId: result.testId, orgId: result.project.organizationId })' {{ result.name }}
+            a href='#' ui-sref='org.tests.show({ orgName: currentOrganization.name, testId: result.testId })' {{ result.name }}
           .labels.clearfix
             |  <div class='label label-primary'>{{ result.project | projectName }} {{ result.projectVersion }}</div>
             |  <div class='label label-info' ng-if='result.category'>{{ result.category }}</div>
@@ -106,6 +106,7 @@
           pre ng-if='result.message' {{ result.message }}
     p.empty
       span ng-if='noMoreResults' All results have been loaded.
+      '
       em.no-match No result matches the selected filters.
     button.center-block.btn.btn-primary ng-show='results && !showingAllResults && total > results.length' ng-click='showAllResults()'
       span.glyphicon.glyphicon-eye-open

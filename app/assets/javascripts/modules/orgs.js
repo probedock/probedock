@@ -19,8 +19,7 @@ angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock
         if (_.isUndefined(org)) {
           return api({
             url: '/organizations/' + orgId
-          })
-          .then(function(response) {
+          }).then(function(response) {
             service.addOrganization(response.data);
             return response.data;
           });

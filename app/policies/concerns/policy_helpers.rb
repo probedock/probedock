@@ -62,6 +62,16 @@ module PolicyHelpers
     user.kind_of(User) && user.try(:technical?)
   end
 
+  # Indicates whether the current user is member of the given organization
+  def member_of?(organization)
+    user.kind_of?(User) && organization.kind_of?(Organization) && user.try(:member_of?, organization)
+  end
+
+  # Indicates whether the given organization is public
+  def public?(organization)
+    organization.kind_of?(Organization) && organization.try(:public?)
+  end
+
   # Indicates whether there is a current OTP record available.
   # Optionally, pass a class as the first argument to ensure that it is of the correct type.
   #
