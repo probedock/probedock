@@ -17,6 +17,9 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
   class MetricsApi < Grape::API
+    DEFAULT_NB_DAYS_FOR_REPORTS = 30
+    DEFAULT_MAX_NB_DAYS_FOR_REPORTS = 120
+
     namespace :metrics do
       before do
         authenticate
@@ -34,7 +37,7 @@ module ProbeDock
         end
       end
 
-      get :newTests do
+      get :newTestsByDay do
         authorize! :organization, :data
 
         start_date = 29.days.ago.beginning_of_day
@@ -65,6 +68,49 @@ module ProbeDock
         30.times do |i|
           date = current_date.strftime('%Y-%m-%d')
           result << { date: date, testsCount: counts.fetch(date, 0) }
+          current_date += 1.day
+        end
+
+        result
+      end
+
+      get :reportsByDay do
+        authorize! :organization, :data
+
+        nb_days = params[:nbDays].to_i
+        nb_days = DEFAULT_MAX_NB_DAYS_FOR_REPORTS if nb_days > DEFAULT_MAX_NB_DAYS_FOR_REPORTS
+        nb_days = DEFAULT_NB_DAYS_FOR_REPORTS if nb_days <= 0
+
+        start_date = (nb_days - 1).days.ago.beginning_of_day
+
+        rel = TestReport.where('test_reports.organization_id = ?', current_organization.id).select("count(distinct test_reports.id) as runs_count, date_trunc('day', test_reports.ended_at) as runs_day")
+        rel = rel.where 'test_reports.ended_at >= ?', start_date
+
+        # Set filters by
+        filter_by_projects = params[:projectIds].present? && params[:projectIds].kind_of?(Array)
+        filter_by_users = params[:userIds].present? && params[:userIds].kind_of?(Array)
+
+        # Prepare additional join for test_payloads
+        more_joins = []
+        more_joins << { project_version: :project } if filter_by_projects
+        more_joins << :runner if filter_by_users
+
+        rel = rel.joins(test_payloads: more_joins) unless more_joins.empty?
+
+        # Apply filters
+        rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s) if filter_by_projects
+        rel = rel.where 'users.api_id IN (?)', params[:userIds].collect(&:to_s) if filter_by_users
+
+        rel = rel.group('runs_day').order('runs_day DESC')
+
+        counts = rel.to_a.inject({}){ |memo,data| memo[data.runs_day.strftime('%Y-%m-%d')] = data.runs_count; memo }
+
+        result = []
+        current_date = start_date
+
+        nb_days.times do |i|
+          date = current_date.strftime('%Y-%m-%d')
+          result << { date: date, runsCount: counts.fetch(date, 0) }
           current_date += 1.day
         end
 

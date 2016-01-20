@@ -8,6 +8,7 @@ ENV['RAILS_ENV'] ||= 'test'
 raise "$RAILS_ENV must be test, but it's #{ENV['RAILS_ENV'].inspect}" unless ENV['RAILS_ENV'] == 'test'
 
 require 'cucumber/rails'
+require 'cucumber/rspec/doubles'
 
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any
