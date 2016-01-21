@@ -81,9 +81,10 @@ module ApiSpecHelper
     elsif m = value.match(/^@date\((.*)\)$/)
       if m[1].match(/(today|now)/)
         Time.now.strftime('%Y-%m-%d')
-      else
-        m = value.match(/(\d+) (second|minute|hour|day|week|month|year)s? ago/)
+      elsif m = value.match(/(\d+) (second|minute|hour|day|week|month|year)s? ago/)
         m[1].to_i.send(m[2]).ago.strftime('%Y-%m-%d')
+      else
+        raise 'Unknown date expectation format'
       end
     elsif m = value.match(/^@registrationOtpOf:\s?(.*)$/)
 

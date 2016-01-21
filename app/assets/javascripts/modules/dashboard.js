@@ -53,7 +53,7 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
       templateUrl: '/templates/new-tests-line-chart.html',
       scope: {
         organization: '=',
-        projectId: '='
+        project: '='
       }
     };
   })
@@ -76,15 +76,22 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
     $scope.chart = {
       data: [],
       labels: [],
+      type: 'written',
       params: {
         projectIds: [],
-        userIds: [],
-        type: 'written'
+        userIds: []
       },
       options: {
         pointHitDetectionRadius: 5,
+
         // Will be set from chartConfig based on chart type
         tooltipTemplate: '',
+
+        /*
+         * Fix for space issue in the Y axis labels
+         * see: https://github.com/nnnick/Chart.js/issues/729
+         * see: http://stackoverflow.com/questions/26498171/how-do-i-prevent-the-scale-labels-from-being-cut-off-in-chartjs
+         */
         scaleLabel: function(object) {
           return '  ' + object.value;
         }
@@ -101,7 +108,7 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
         fetchMetrics();
         fetchUserChoices();
 
-        if (!$scope.projectId) {
+        if (!$scope.project) {
           fetchProjectChoices();
         }
       }
@@ -139,13 +146,13 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
     }
 
     function fetchMetrics() {
-      if ($scope.projectId) {
-        $scope.chart.params.projectIds = [$scope.projectId];
+      if ($scope.project) {
+        $scope.chart.params.projectIds = [$scope.project.id];
       }
 
       return api({
-        url: chartConfig[$scope.chart.params.type].url,
-        params: _.extend({}, _.omit($scope.chart.params, 'type'), {
+        url: chartConfig[$scope.chart.type].url,
+        params: _.extend({},$scope.chart.params, {
           organizationId: $scope.organization.id
         })
       }).then(showMetrics);
@@ -156,14 +163,14 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
         return;
       }
 
-      $scope.chart.options.tooltipTemplate = chartConfig[$scope.chart.params.type].tooltipTemplate;
+      $scope.chart.options.tooltipTemplate = chartConfig[$scope.chart.type].tooltipTemplate;
 
       var series = [];
       $scope.chart.data = [ series ];
       $scope.chart.labels.length = 0;
       $scope.totalCount = 0;
 
-      var fieldName = chartConfig[$scope.chart.params.type].valueFieldName;
+      var fieldName = chartConfig[$scope.chart.type].valueFieldName;
 
       _.each(response.data, function(data) {
         $scope.chart.labels.push(moment(data.date).format('DD.MM'));
