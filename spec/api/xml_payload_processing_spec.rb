@@ -17,7 +17,7 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 require 'spec_helper'
 
-RSpec.describe 'XML payload processing' do
+RSpec.describe 'xUnit payload processing', probedock: { tags: %w(xunit) } do
   include PayloadProcessingSpecHelper
 
   let(:organization){ create :organization }
@@ -30,17 +30,17 @@ RSpec.describe 'XML payload processing' do
     raw_payload = <<-EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite name="rspec" tests="3" failures="1" errors="0" time="5.207134" timestamp="2016-01-14T14:08:09+01:00">
-<properties />
-<testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
-<testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
-  <failure message="something unexpected occurred" type="StandardError">
-    <![CDATA[stack
+  <properties />
+  <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
+  <testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
+    <failure message="something unexpected occurred" type="StandardError">
+      <![CDATA[stack
 trace]]>
-  </failure>
-</testcase>
-<testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
-  <skipped/>
-</testcase>
+    </failure>
+  </testcase>
+  <testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
+    <skipped/>
+  </testcase>
 </testsuite>
     EOS
 
@@ -98,30 +98,109 @@ trace]]>
     end
   end
 
+  it "should process an xUnit payload with multiple test suites", probedock: { key: '685u' } do
+
+    # prepare payload
+    raw_payload = <<-EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="rspec" tests="2" failures="1" errors="0" time="3.207134" timestamp="2016-01-14T14:08:09+01:00">
+    <properties />
+    <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
+    <testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
+      <failure message="something unexpected occurred" type="StandardError">
+        <![CDATA[stack
+trace]]>
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="rspec" tests="1" failures="0" errors="0" time="1.671" timestamp="2016-01-14T14:08:12+01:00">
+    <properties />
+    <testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
+      <skipped/>
+    </testcase>
+  </testsuite>
+</testsuites>
+    EOS
+
+    version = '1.2.3'
+    payload_headers = generate_xml_payload_headers projects[0], version: version
+
+    store_preaction_state
+
+    # publish payload
+    with_resque do
+      api_post '/api/publish', raw_payload, user: user, content_type: 'application/xml', headers: payload_headers
+      expect_http_status_code 202
+      check_payload_response @response_body, projects[0], user, version: version, duration: 4878, bytes: raw_payload.bytesize
+    end
+
+    # check database changes
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3
+
+    # check payload & report
+    payload = check_payload @response_body, rawContents: raw_payload,
+                            testsCount: 3, newTestsCount: 3,
+                            resultsCount: 3, passedResultsCount: 2, inactiveResultsCount: 1, inactivePassedResultsCount: 1
+
+    check_report payload, organization: organization
+
+    # check project & version
+    expect(projects[0].tap(&:reload).tests_count).to eq(3)
+    expect_project_version name: version, projectId: projects[0].api_id
+
+    # check the 3 new tests
+    tests = check_tests projects[0], user, payload do
+      check_test name: 'It should work'
+      check_test name: 'It might work'
+      check_test name: 'It could work'
+    end
+
+    # check the 3 results
+    raw_results = [
+      { n: 'It should work', d: 3 },
+      { n: 'It might work', d: 50, p: false, m: "StandardError\nstack\ntrace" },
+      { n: 'It could work', d: 0, v: false }
+    ]
+
+    results = check_results raw_results, payload do
+      check_result test: tests[0], newTest: true
+      check_result test: tests[1], newTest: true
+      check_result test: tests[2], newTest: true
+    end
+
+    # check the descriptions of the 3 tests for the project version
+    check_descriptions payload, tests do
+      check_description results[0], resultsCount: 1
+      check_description results[1], resultsCount: 1, passing: false
+      check_description results[2], resultsCount: 1, active: false
+    end
+  end
+
   it "should combine payloads based on the test report uid", probedock: { key: 'mlcm' } do
 
     # prepare 2 payloads
     first_raw_payload = <<-EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite name="rspec" tests="1" failures="0" errors="0" time="1.2078" timestamp="2016-01-14T14:08:09+01:00">
-<properties />
-<testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
+  <properties />
+  <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
 </testsuite>
     EOS
 
     second_raw_payload = <<-EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite name="rspec" tests="2" failures="1" errors="0" time="0.305392" timestamp="2016-01-14T14:08:09+01:00">
-<properties />
-<testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
-  <failure message="something unexpected occurred" type="StandardError">
-    <![CDATA[stack
+  <properties />
+  <testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
+    <failure message="something unexpected occurred" type="StandardError">
+      <![CDATA[stack
 trace]]>
-  </failure>
-</testcase>
-<testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
-  <skipped/>
-</testcase>
+    </failure>
+  </testcase>
+  <testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
+    <skipped/>
+  </testcase>
 </testsuite>
     EOS
 
@@ -226,19 +305,19 @@ trace]]>
     raw_payload = <<-EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite name="rspec" tests="3" failures="1" errors="0" time="5.207134" timestamp="2016-01-14T14:08:09+01:00">
-<properties />
-<testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
-<testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
-  <failure message="something unexpected occurred" type="StandardError">
-    <![CDATA[stack
+  <properties />
+  <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
+  <testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
+    <failure message="something unexpected occurred" type="StandardError">
+      <![CDATA[stack
 trace]]>
-  </failure>
-</testcase>
-<testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
-  <skipped/>
-</testcase>
-<testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.01204"/>
-<testcase classname="spec.models.d_spec" name="It worked" file="./spec/models/d_spec.rb" time="2.51953"/>
+    </failure>
+  </testcase>
+  <testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
+    <skipped/>
+  </testcase>
+  <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.01204"/>
+  <testcase classname="spec.models.d_spec" name="It worked" file="./spec/models/d_spec.rb" time="2.51953"/>
 </testsuite>
     EOS
 

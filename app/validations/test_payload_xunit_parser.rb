@@ -24,22 +24,52 @@ class TestPayloadXunitParser
       'results' => []
     }
 
-    # check that the top-level tag is a <testsuite>
-    location '/testsuite'
-    suite = @payload.try(:root) || @payload
-    add_error! :missing unless suite.respond_to?(:name) && suite.name == 'testsuite'
+    # find <testsuite> tags (at the top level or in a <testsuites> tag)
+    root = @payload.try(:root) || @payload
+
+    suites = case root.name
+    when 'testsuites'
+      location '/testsuites/testsuite'
+      root.locate 'testsuite'
+    when 'testsuite'
+      location '/testsuite'
+      [ root ]
+    else
+      location '/testsuite'
+      []
+    end
+
+    Errapi::Validations::Presence.new.validate suites, @context_proxy, location: @location, value_set: suites.present?
+
+    suites.each.with_index do |suite,i|
+      relative_location i + 1 if root.name == 'testsuites'
+      parse_test_suite suite, parsed
+      @location.pop! if root.name == 'testsuites'
+    end
+
+    # raise an error if anything invalid was found
+    check!
+
+    parsed
+  end
+
+  def parse_test_suite suite, parsed
 
     # parse the "time" attribute of the <testsuite>
     # (mandatory if no duration was supplied in a request header)
     check_time_attribute suite, :time, required: !@duration do |value|
-      parsed['duration'] = (value * 1000).round
+      parsed['duration'] += (value * 1000).round
     end
 
     i = 0
-    location '/testsuite/testcase'
+    relative_location '/testcase'
+
+    # check that there is at least one <testcase>
+    test_cases = suite.locate 'testcase'
+    Errapi::Validations::Presence.new.validate test_cases, @context_proxy, location: @location, value_set: test_cases.present?
 
     # iterate over <testcase> tags in the <testsuite>
-    suite.locate('testcase').each do |test_case|
+    test_cases.each do |test_case|
       relative_location i + 1
 
       result = {}
@@ -89,14 +119,7 @@ class TestPayloadXunitParser
       i += 1
     end
 
-    # check that there is at least one <testcase>
-    location '/testsuite/testcase'
-    add_error :empty if i <= 0
-
-    # raise an error if anything invalid was found
-    check!
-
-    parsed
+    @location.pop!
   end
 
   # Sets the current XPath location of the validation.
