@@ -1,4 +1,4 @@
-@api @test
+@api @project-version
 Feature: Project version
 
   Users should be able to retrieve project versions.
@@ -14,11 +14,11 @@ Feature: Project version
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
-    And project version 1.0.1 exists for project X-Wing with creation date set 2 days ago
-    And project version 1.0.0 exists for project X-Wing with creation date set 1 day ago
+    And project version 1.0.1 exists for project X-Wing since 2 days ago
+    And project version 1.0.0 exists for project X-Wing since 1 day ago
     And project Y-Wing exists within organization Rebel Alliance
-    And project version a exists for project Y-Wing with creation date set 10 days ago
-    And project version b exists for project Y-Wing with creation date set 5 days ago
+    And project version a exists for project Y-Wing since 10 days ago
+    And project version b exists for project Y-Wing since 5 days ago
 
 
 
