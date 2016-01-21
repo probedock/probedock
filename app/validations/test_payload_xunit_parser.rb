@@ -26,7 +26,7 @@ class TestPayloadXunitParser
 
     # check that the top-level tag is a <testsuite>
     location '/testsuite'
-    suite = @payload
+    suite = @payload.try(:root) || @payload
     add_error! :missing unless suite.respond_to?(:name) && suite.name == 'testsuite'
 
     # parse the "time" attribute of the <testsuite>

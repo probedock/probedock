@@ -56,6 +56,10 @@ module ProbeDock
             return nil
           end
 
+          if raw_payload['reports'].blank? && uid = headers['Probe-Dock-Test-Report-Uid']
+            raw_payload['reports'] = [ { 'uid' => uid } ]
+          end
+
           # FIXME: do not accept payloads in the future
           ended_at = received_at
           ended_at = Time.parse raw_payload['endedAt'] if raw_payload_type == :json && raw_payload.key?('endedAt')
@@ -72,6 +76,7 @@ module ProbeDock
           payload = TestPayload.new runner: current_user, received_at: received_at, ended_at: ended_at
           payload.contents = raw_payload
           payload.contents_bytesize = body.bytesize
+          payload.raw_contents = body if raw_payload_type != :json
 
           unless payload.save
             return record_errors payload

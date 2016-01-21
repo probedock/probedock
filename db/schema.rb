@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160114090321) do
+ActiveRecord::Schema.define(version: 20160121085033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -208,6 +208,7 @@ ActiveRecord::Schema.define(version: 20160114090321) do
     t.datetime "updated_at",                                           null: false
     t.integer  "tests_count",                              default: 0, null: false
     t.integer  "new_tests_count",                          default: 0, null: false
+    t.text     "raw_contents"
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree
