@@ -33,6 +33,8 @@ module ProbeDock
             Organization.active.where(normalized_name: params[:organizationName].to_s.downcase).first!
           elsif params[:projectId].present?
             Organization.active.joins(:projects).where('projects.api_id = ?', params[:projectId].to_s).first!
+          elsif params[:projectVersionId].present?
+            Organization.active.joins(:projects => [:versions]).where('project_versions.api_id = ?', params[:projectVersionId]).first!
           end
         end
       end
@@ -116,6 +118,40 @@ module ProbeDock
 
         result
       end
+
+      get :projectHealth do
+        authorize! :organization, :data
+
+        rel = TestDescription.joins(:project_version)
+
+        # Retrieve the data from the specified version otherwise take the most recent project version to retrieve the data
+        if params[:projectVersionId].present?
+          rel = rel.joins(:project_version).where('project_versions.api_id = ?', params[:projectVersionId])
+        else
+          project_version = ProjectVersion.joins(:project).where('projects.api_id = ?', params[:projectId]).order('created_at DESC').first
+          rel = rel.where('project_versions.id = ?', project_version.id)
+        end
+
+        # Calculate the different metrics
+        result = rel.to_a.inject({testsCount: 0, passedTestsCount: 0, inactiveTestsCount: 0, inactivePassedTestsCount: 0}) do |memo, data|
+          memo[:testsCount] += 1
+          memo[:passedTestsCount] += data.passing ? 1 : 0
+          memo[:inactiveTestsCount] += !data.active ? 1 : 0
+          memo[:inactivePassedTestsCount] += data.passing && !data.active ? 1 : 0
+          memo
+        end
+
+        # Enrich with project version data
+        result.merge!({
+          projectVersion: {
+            id: rel.first.project_version.api_id,
+            name: rel.first.project_version.name
+          }
+        })
+
+        result
+      end
+
 
       # GET /api/metrics/contributions?organizationId&projectId&withUser
       #
