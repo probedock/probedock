@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160114085241) do
+ActiveRecord::Schema.define(version: 20160114090321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,16 +71,16 @@ ActiveRecord::Schema.define(version: 20160114085241) do
   add_index "organizations", ["normalized_name"], name: "index_organizations_on_normalized_name", unique: true, using: :btree
 
   create_table "project_tests", force: :cascade do |t|
-    t.string   "name",                                   null: false
+    t.string   "name",            limit: 255,             null: false
     t.integer  "key_id"
     t.integer  "description_id"
-    t.integer  "project_id",                             null: false
-    t.integer  "results_count",              default: 0, null: false
-    t.datetime "first_run_at",                           null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.integer  "project_id",                              null: false
+    t.integer  "results_count",               default: 0, null: false
+    t.datetime "first_run_at",                            null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.integer  "first_runner_id"
-    t.string   "api_id",          limit: 12,             null: false
+    t.string   "api_id",          limit: 12,              null: false
   end
 
   add_index "project_tests", ["api_id"], name: "index_project_tests_on_api_id", unique: true, using: :btree

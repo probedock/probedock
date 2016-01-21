@@ -17,7 +17,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
         return api({
           url: '/reports',
           params: {
-            organizationName: $stateParams.orgName,
             projectId: project.id
           }
         })
