@@ -3,7 +3,7 @@ Feature: Project version
 
   Users should be able to retrieve project versions.
 
-  The details of a test contains:
+  The details of a project version contains:
   - name
   - project id
   - creation date
@@ -61,6 +61,62 @@ Feature: Project version
       }, {
         "name": "1.0.1",
         "projectId": "@idOf: X-Wing",
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: An anonymous member should be able to get project versions from public organization
+    Given public organization Old Republic exists
+    And user jjbinks who is a member of Old Republic exists
+    And project Jedi Temple exists within organization Old Republic
+    And project version 2.0.1 exists for project Jedi Temple since 2 days ago
+    And project version 2.0.0 exists for project Jedi Temple since 1 day ago
+    And project Senate exists within organization Old Republic
+    And project version 3.0.0 exists for project Senate since 1 day ago
+    When nobody sends a GET request to /api/projectVersions?organizationId={@idOf: Old Republic}
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "name": "2.0.0",
+        "projectId": "@idOf: Jedi Temple",
+        "createdAt": "@iso8601"
+      }, {
+        "name": "2.0.1",
+        "projectId": "@idOf: Jedi Temple",
+        "createdAt": "@iso8601"
+      }, {
+        "name": "3.0.0",
+        "projectId": "@idOf: Senate",
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: An anonymous member should be able to get project versions from public project
+    Given public organization Old Republic exists
+    And user jjbinks who is a member of Old Republic exists
+    And project Jedi Temple exists within organization Old Republic
+    And project version 2.0.1 exists for project Jedi Temple since 2 days ago
+    And project version 2.0.0 exists for project Jedi Temple since 1 day ago
+    And project Senate exists within organization Old Republic
+    And project version 3.0.0 exists for project Senate since 1 day ago
+    When nobody sends a GET request to /api/projectVersions?projectId={@idOf: Jedi Temple}
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "name": "2.0.0",
+        "projectId": "@idOf: Jedi Temple",
+        "createdAt": "@iso8601"
+      }, {
+        "name": "2.0.1",
+        "projectId": "@idOf: Jedi Temple",
         "createdAt": "@iso8601"
       }]
       """
