@@ -18,7 +18,7 @@
 module ProbeDock
   class MetricsApi < Grape::API
     DEFAULT_NB_DAYS_FOR_REPORTS = 30
-    DEFAULT_MAX_NB_DAYS_FOR_REPORTS = 120
+    MAX_NB_DAYS_FOR_REPORTS = 120
 
     namespace :metrics do
       before do
@@ -78,7 +78,7 @@ module ProbeDock
         authorize! :organization, :data
 
         nb_days = params[:nbDays].to_i
-        nb_days = DEFAULT_MAX_NB_DAYS_FOR_REPORTS if nb_days > DEFAULT_MAX_NB_DAYS_FOR_REPORTS
+        nb_days = MAX_NB_DAYS_FOR_REPORTS if nb_days > MAX_NB_DAYS_FOR_REPORTS
         nb_days = DEFAULT_NB_DAYS_FOR_REPORTS if nb_days <= 0
 
         start_date = (nb_days - 1).days.ago.beginning_of_day
@@ -91,11 +91,11 @@ module ProbeDock
         filter_by_users = params[:userIds].present? && params[:userIds].kind_of?(Array)
 
         # Prepare additional join for test_payloads
-        more_joins = []
-        more_joins << { project_version: :project } if filter_by_projects
-        more_joins << :runner if filter_by_users
+        payload_joins = []
+        payload_joins << { project_version: :project } if filter_by_projects
+        payload_joins << :runner if filter_by_users
 
-        rel = rel.joins(test_payloads: more_joins) unless more_joins.empty?
+        rel = rel.joins(test_payloads: payload_joins) unless payload_joins.empty?
 
         # Apply filters
         rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s) if filter_by_projects

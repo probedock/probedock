@@ -30,8 +30,7 @@ div ng-controller='LatestReportsCtrl'
         td.details.hidden-xs
           span ng-repeat='project in report.projects'
             span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}'
-              a.label-link href='#' ui-sref='org.projects.show({ orgName: currentOrganization.name, projectName: project.name })' {{ project.name }}
-              |  {{ version.name }}
+              a.label-link href='#' ui-sref='org.projects.show({ orgName: currentOrganization.name, projectName: project.name })' {{ project.name }} {{ version.name }}
             '
           span ng-repeat='category in report.categories'
             span.label.label-info {{ category }}
