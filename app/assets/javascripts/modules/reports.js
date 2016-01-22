@@ -168,7 +168,8 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
       controller: 'ReportDetailsCtrl',
       templateUrl: '/templates/report-details.html',
       scope: {
-        report: '='
+        report: '=',
+        organization: '='
       }
     };
   })
@@ -203,7 +204,6 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
   })
 
   .controller('ReportDetailsCtrl', function(api, $scope) {
-
     $scope.reportFilters = {
       showPassed: true,
       showFailed: true,

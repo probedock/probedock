@@ -1,6 +1,6 @@
 angular.module('probedock.test', [ 'probedock.api', 'probedock.forms', 'probedock.utils' ])
 
-  .controller('TestCtrl', function (api, forms, orgs, projects, $scope, $state, $stateParams) {
+  .controller('TestCtrl', function (api, orgs, $scope, $stateParams) {
     orgs.forwardData($scope);
 
     api({
