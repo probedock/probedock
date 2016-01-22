@@ -18,8 +18,8 @@
 FactoryGirl.define do
   factory :test_report do
     organization
-    started_at{ 3.minutes.ago }
-    ended_at{ 1.minute.ago }
+    started_at{ Time.now }
+    ended_at{ started_at + 3.minutes }
 
     factory :test_report_with_uid, aliases: [ :report_with_uid ] do
       uid{ SecureRandom.uuid }

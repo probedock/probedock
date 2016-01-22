@@ -6,18 +6,18 @@
       p.text-info ng-if='chart.data.length'
         strong ng-if='totalCount' {{ totalCount | number }}
         span ng-if='totalCount === 0' No
-        ng-pluralize ng-if='chart.params.type === "written"' count='totalCount' when='{"1": " new test was run over the last 30 days.", "other": " new tests were run over the last 30 days."}'
-        ng-pluralize ng-if='chart.params.type === "run"' count='totalCount' when='{"1": " test run over the last 30 days.", "other": " test runs over the last 30 days."}'
+        ng-pluralize ng-if='chart.type === "written"' count='totalCount' when='{"1": " new test was run over the last 30 days.", "other": " new tests were run over the last 30 days."}'
+        ng-pluralize ng-if='chart.type === "run"' count='totalCount' when='{"1": " test run over the last 30 days.", "other": " test runs over the last 30 days."}'
       canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
       form.form role='form' ng-if='chart.data.length'
         .col-xs-12 ng-class='{"col-sm-4": !projectId, "col-sm-6": projectId }'
           .form-group
             label for='new-tests-line-chart-type' Display
             .btn-group.btn-group-sm.btn-group-justified#new-tests-line-chart-type role='group'
-              label.btn.btn-default ng-model='chart.params.type' btn-radio='"written"'
+              label.btn.btn-default ng-model='chart.type' btn-radio='"written"'
                 span.hidden-md Written
                 span.visible-md tooltip='Tests written' tooltip-append-to-body='true' W
-              label.btn.btn-default ng-model='chart.params.type' btn-radio='"run"'
+              label.btn.btn-default ng-model='chart.type' btn-radio='"run"'
                 span.hidden-md Run
                 span.visible-md tooltip='Tests run' tooltip-append-to-body='true' R
         .col-sm-4.col-xs-12 ng-if='!projectId'
@@ -35,4 +35,4 @@
               ui-select-choices repeat='user.id as user in userChoices | filter: $select.search'
                 span ng-bind-html='user.name'
       .empty ng-if='chart.data.length === 0'
-        em No tests have been added recently.
+        em No recent activity.

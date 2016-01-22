@@ -15,28 +15,28 @@ Feature: Reports by day metrics
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
-    And test result report report 1 was generated 2 days ago for organization Rebel Alliance
-    And test payload payload 1 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report report 1
-    And test payload payload 2 sent by hsolo for version 1.0.0 of project X-Wing was used to generate report report 1
-    And test result report report 2 was generated 2 days ago for organization Rebel Alliance
-    And test payload payload 3 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report report 2
-    And test result report report 3 was generated 1 days ago for organization Rebel Alliance
-    And test payload payload 4 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report report 3
-    And test result report report 4 was generated 1 days ago for organization Rebel Alliance
-    And test payload payload 5 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report report 4
-    And test result report report 5 was generated 1 days ago for organization Rebel Alliance
-    And test payload payload 6 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report report 5
-    And test result report report 6 was generated 1 days ago for organization Rebel Alliance
-    And test payload payload 7 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report report 6
-    And test result report report 7 was generated for organization Rebel Alliance
-    And test payload payload 8 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report report 7
+    And test result report R1 was generated 2 days ago for organization Rebel Alliance
+    And test payload payload 1 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R1
+    And test payload payload 2 sent by hsolo for version 1.0.0 of project X-Wing was used to generate report R1
+    And test result report R2 was generated 2 days ago for organization Rebel Alliance
+    And test payload payload 3 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R2
+    And test result report R3 was generated 1 day ago for organization Rebel Alliance
+    And test payload payload 4 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R3
+    And test result report R4 was generated 1 day ago for organization Rebel Alliance
+    And test payload payload 5 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R4
+    And test result report R5 was generated 1 day ago for organization Rebel Alliance
+    And test payload payload 6 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R5
+    And test result report R6 was generated 1 day ago for organization Rebel Alliance
+    And test payload payload 7 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R6
+    And test result report R7 was generated for organization Rebel Alliance
+    And test payload payload 8 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R7
     And project Y-Wing exists within organization Rebel Alliance
-    And test result report report 8 was generated 1 day ago for organization Rebel Alliance
-    And test payload payload 9 sent by hsolo for version 1.0.0 of project Y-Wing was used to generate report report 8
-    And test payload payload 10 sent by lskywalker for version 1.0.0 of project Y-Wing was used to generate report report 8
-    And test result report report 9 was generated for organization Rebel Alliance
-    And test payload payload 11 sent by hsolo for version 1.0.0 of project Y-Wing was used to generate report report 9
-    And assuming 3 days is set to retrieve the reports by day
+    And test result report R8 was generated 1 day ago for organization Rebel Alliance
+    And test payload payload 9 sent by hsolo for version 1.0.0 of project Y-Wing was used to generate report R8
+    And test payload payload 10 sent by lskywalker for version 1.0.0 of project Y-Wing was used to generate report R8
+    And test result report R9 was generated for organization Rebel Alliance
+    And test payload payload 11 sent by hsolo for version 1.0.0 of project Y-Wing was used to generate report R9
+    And assuming reports by day metrics are calculated for 3 days by default
 
 
 

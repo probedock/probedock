@@ -203,9 +203,7 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     };
   })
 
-  .controller('ReportDetailsCtrl', function(api, orgs, $scope) {
-    orgs.forwardData($scope);
-
+  .controller('ReportDetailsCtrl', function(api, $scope) {
     $scope.reportFilters = {
       showPassed: true,
       showFailed: true,
