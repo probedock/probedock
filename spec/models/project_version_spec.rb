@@ -20,6 +20,7 @@ require 'spec_helper'
 describe ProjectVersion do
 
   context "validations" do
+    it(nil, probedock: { key: '2t90' }){ should have_validations_on(:name, :project) }
     it(nil, probedock: { key: '2a51543c8f94' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: '57f900fc8f42' }){ should validate_length_of(:name).is_at_most(100) }
     it(nil, probedock: { key: '0e4c2027f0d9' }){ should validate_presence_of(:project) }
@@ -42,7 +43,11 @@ describe ProjectVersion do
   end
 
   context "associations" do
+    it(nil, probedock: { key: '7itc' }){ should have_associations(:project, :test_results, :test_descriptions, :test_payloads)}
     it(nil, probedock: { key: 'f6581e00e16f' }){ should belong_to(:project) }
+    it(nil, probedock: { key: 'bavy' }){ should have_many(:test_results) }
+    it(nil, probedock: { key: 'o5nr' }){ should have_many(:test_descriptions) }
+    it(nil, probedock: { key: 'uq9y' }){ should have_many(:test_payloads) }
   end
 
   context "database table" do
