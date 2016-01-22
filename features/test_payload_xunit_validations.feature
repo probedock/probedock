@@ -135,6 +135,25 @@ Feature: xUnit test payload validations
 
 
 
+  Scenario: An xUnit payload sent without the required headers should be refused
+    Given private organization Rebel Alliance exists
+    And user hsolo who is a member of Rebel Alliance exists
+    And project X-Wing exists within organization Rebel Alliance
+    And hsolo sends a POST request with the following XML to /api/publish:
+      """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <testsuite name="rspec" tests="1" failures="0" errors="0" time="0.235481" timestamp="2016-01-15T15:22:41+01:00">
+        <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.031456" />
+      </testsuite>
+      """
+    Then the response should be HTTP 422 with the following errors:
+      | reason  | locationType | location                   | message                 |
+      | missing | header       | Probe-Dock-Project-Id      | This value is required. |
+      | missing | header       | Probe-Dock-Project-Version | This value is required. |
+    And nothing should have been added or deleted
+
+
+
   Scenario: An xUnit payload with no <testsuite> tag should be refused
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists

@@ -47,7 +47,8 @@ class TestPayloadXunitParser
 
     # get the duration from headers (optional)
     @duration = @headers['Probe-Dock-Duration']
-    parsed['duration'] = @duration.to_i if @duration
+    # TODO: properly validate the Probe-Dock-Duration header
+    parsed['duration'] = @duration.to_i if @duration && @duration.to_i > 0
 
     # get the report UID from headers (optional)
     @uid = @headers['Probe-Dock-Test-Report-Uid']
