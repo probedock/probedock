@@ -152,7 +152,7 @@ angular.module('probedock.dashboard', [ 'probedock.api', 'probedock.orgs', 'prob
 
       return api({
         url: chartConfig[$scope.chart.type].url,
-        params: _.extend({},$scope.chart.params, {
+        params: _.extend({}, $scope.chart.params, {
           organizationId: $scope.organization.id
         })
       }).then(showMetrics);
