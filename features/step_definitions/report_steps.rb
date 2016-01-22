@@ -1,8 +1,17 @@
-Given /^test result report (.+) was generated(?: with UID ([a-zA-Z0-9_-]+))? for organization (.+)$/ do |name,uid,organization_name|
+Given /^test result report (.+) was generated(?: (1 day|[2-9]\d* days) ago)?(?: with UID ([a-zA-Z0-9_-]+))? for organization (.+)$/ do |name,days,uid,organization_name|
   options = {
     uid: uid,
     organization: named_record(organization_name)
   }
+
+  if days
+    date = days.split(' ')[0].to_i.days.ago
+
+    options.merge!({
+      started_at: date,
+      ended_at: date + 3.minute
+    })
+  end
 
   add_named_record name, create(:test_report, options)
 end

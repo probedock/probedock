@@ -78,6 +78,14 @@ module ApiSpecHelper
       named_record(m[1]).api_id
     elsif m = value.match(/^@valueOf\((.*), (.*)\)$/)
       named_record(m[1]).send(m[2])
+    elsif m = value.match(/^@date\((.*)\)$/)
+      if m[1].match(/(today|now)/)
+        Time.now.strftime('%Y-%m-%d')
+      elsif m = value.match(/(\d+) (second|minute|hour|day|week|month|year)s? ago/)
+        m[1].to_i.send(m[2]).ago.strftime('%Y-%m-%d')
+      else
+        raise 'Unknown date expectation format'
+      end
     elsif m = value.match(/^@registrationOtpOf:\s?(.*)$/)
 
       record = named_record(m[1])

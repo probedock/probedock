@@ -40,10 +40,6 @@
         .empty ng-show='tags && !tags.length'
           em No tests have been tagged.
   .col-md-6.col-xs-12 ng-if='orgIsActive()'
-    .panel.panel-default
-      .panel-heading
-        h3.panel-title New Tests
-      .panel-body
-        new-tests-line-chart ng-if='currentOrganization' organization='currentOrganization'
+    new-tests-line-chart ng-if='currentOrganization' organization='currentOrganization'
     test-key-generator ng-if='currentUser && orgIsActive() && currentMember()'
     test-contributions ng-if='currentOrganization' organization='currentOrganization'

@@ -5,7 +5,8 @@
   .project-version-labels.clearfix
     .label.label-primary ng-if='!report' Loading...
     span ng-repeat='project in report.projects'
-      span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' {{ project | projectName }} {{ version.name }}
+      span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}'
+        a.label-link href='#' ui-sref='org.projects.show({ orgName: organization.name, projectName: project.name })' {{ project | projectName }} {{ version.name }}
       '
     span ng-repeat='category in report.categories'
       span.label.label-info {{ category }}
@@ -50,7 +51,7 @@
                     span.glyphicon.glyphicon-thumbs-down
                   label.btn.btn-warning btn-checkbox=true ng-model='reportFilters.showInactive' tooltip='Click to show/hide inactive results' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-ban-circle
-                |
+                '
                 .btn-group
                   label.btn.btn-default btn-checkbox=true ng-model='reportFilters.showExisting' tooltip='Click to show/hide results of existing tests' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-time
@@ -87,9 +88,11 @@
         .panel-body
           test-key-label.pull-right ng-if='result.key' key='result.key'
           h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}'
-            a href='#' ui-sref='org.tests.show({ orgName: currentOrganization.name, testId: result.testId })' {{ result.name }}
+            a href='#' ui-sref='org.tests.show({ orgName: organization.name, testId: result.testId })' {{ result.name }}
           .labels.clearfix
-            |  <div class='label label-primary'>{{ result.project | projectName }} {{ result.projectVersion }}</div>
+            '
+            .label.label-primary
+              a.label-link href='#' ui-sref='org.projects.show({ orgName: organization.name, projectName: result.project.name })' {{ result.project | projectName }} {{ result.projectVersion }}
             |  <div class='label label-info' ng-if='result.category'>{{ result.category }}</div>
             |  <div class='label label-default' ng-repeat='tag in result.tags'>{{ tag }}</div>
             |  <div class='label label-warning' ng-repeat='ticket in result.tickets'>{{ ticket }}</div>

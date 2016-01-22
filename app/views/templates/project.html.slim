@@ -27,7 +27,9 @@
               a ui-sref='help.gettingStarted({ organizationId: project.organizationId, projectId: project.id })'
                 strong Getting Started
               '  guide to set it up.
+      test-contributions project='project'
     .col-lg-4.col-md-6.col-xs-12
       project-recent-activity project='project' organization='currentOrganization'
     .col-lg-4.col-md-6.col-xs-12
-      test-contributions project='project'
+      new-tests-line-chart ng-if='currentOrganization && project' organization='currentOrganization' project='project'
+

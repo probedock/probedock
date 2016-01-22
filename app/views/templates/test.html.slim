@@ -15,8 +15,7 @@
           div ng-if='test'
             .labels.clearfix
               .label.label-primary
-                a href='#' ui-sref='org.projects.show({ projectName: test.project.name })' {{ test.project | projectName }}
-                |  {{ test.projectVersion }}
+                a.label-link href='#' ui-sref='org.projects.show({ orgName: currentOrganization.name, projectName: test.project.name })' {{ test.project | projectName }} {{ test.projectVersion }}
               .label.label-info ng-if='test.category' {{ test.category }}
               .label.label-default ng-repeat='tag in test.tags' {{ tag }}
               .label.label-warning ng-repeat='ticket in test.tickets' {{ ticket }}
