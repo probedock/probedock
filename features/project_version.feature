@@ -68,7 +68,7 @@ Feature: Project version
 
 
 
-  Scenario: An anonymous member should be able to get project versions from public organization
+  Scenario: An anonymous member should be able to get project versions from a public organization
     Given public organization Old Republic exists
     And user jjbinks who is a member of Old Republic exists
     And project Jedi Temple exists within organization Old Republic
@@ -98,7 +98,7 @@ Feature: Project version
 
 
 
-  Scenario: An anonymous member should be able to get project versions from public project
+  Scenario: An anonymous member should be able to get project versions for a project in a public organization
     Given public organization Old Republic exists
     And user jjbinks who is a member of Old Republic exists
     And project Jedi Temple exists within organization Old Republic
@@ -147,7 +147,7 @@ Feature: Project version
 
 
   @authorization
-  Scenario: A user should not be able to get project versions of a project in a private organization
+  Scenario: A user should not be able to get the versions of a project in a private organization
     Given private organization Galactic Empire exists
     And user palpatine who is a member of Galactic Empire exists
     When palpatine sends a GET request to /api/projectVersions?projectId={@idOf: X-Wing}
@@ -178,7 +178,7 @@ Feature: Project version
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get project versions of a project in a private organization
+  Scenario: An anonymous user should not be able to get the versions of a project in a private organization
     When nobody sends a GET request to /api/projectVersions?projectId={@idOf: X-Wing}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
