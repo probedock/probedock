@@ -39,13 +39,16 @@ Feature: Project health metrics
     And the response body should be the following JSON:
       """
       {
-        "testsCount": 2,
+        "testsCount": 4,
         "passedTestsCount": 2,
         "inactiveTestsCount": 1,
         "inactivePassedTestsCount": 1,
+        "runTestsCount": 2,
         "projectVersion": {
           "id": "@idOf: 1.0.1",
-          "name": "1.0.1"
+          "name": "1.0.1",
+          "projectId": "@idOf: X-Wing",
+          "createdAt": "@iso8601"
         }
       }
       """
@@ -63,9 +66,12 @@ Feature: Project health metrics
         "passedTestsCount": 2,
         "inactiveTestsCount": 2,
         "inactivePassedTestsCount": 1,
+        "runTestsCount": 4,
         "projectVersion": {
           "id": "@idOf: 1.0.0",
-          "name": "1.0.0"
+          "name": "1.0.0",
+          "projectId": "@idOf: X-Wing",
+          "createdAt": "@iso8601"
         }
       }
       """

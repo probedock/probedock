@@ -122,36 +122,47 @@ module ProbeDock
       get :projectHealth do
         authorize! :organization, :data
 
-        rel = TestDescription.joins(:project_version)
+        test_descriptions_rel = TestDescription.joins(:project_version)
 
         # Retrieve the data from the specified version otherwise take the most recent project version to retrieve the data
         if params[:projectVersionId].present?
-          rel = rel.joins(:project_version).where('project_versions.api_id = ?', params[:projectVersionId])
+          project_version = ProjectVersion.where('api_id = ?', params[:projectVersionId]).first
+          test_descriptions_rel = test_descriptions_rel.joins(:project_version).where('project_versions.api_id = ?', params[:projectVersionId])
         else
           project_version = ProjectVersion.joins(:project).where('projects.api_id = ?', params[:projectId]).order('created_at DESC').first
-          rel = rel.where('project_versions.id = ?', project_version.id)
+          test_descriptions_rel = test_descriptions_rel.where('project_versions.id = ?', project_version.id)
         end
 
-        # Calculate the different metrics
-        result = rel.to_a.inject({testsCount: 0, passedTestsCount: 0, inactiveTestsCount: 0, inactivePassedTestsCount: 0}) do |memo, data|
-          memo[:testsCount] += 1
-          memo[:passedTestsCount] += data.passing ? 1 : 0
-          memo[:inactiveTestsCount] += !data.active ? 1 : 0
-          memo[:inactivePassedTestsCount] += data.passing && !data.active ? 1 : 0
-          memo
-        end
+        # In this statement, we use nullif which return null if left value is equal to right value. Therefore, we want to
+        # count the opposite of this results as COUNT will not take into account null values. Ex: all passing tests have
+        # value set to true and then we want to remove the failing ones. Then, we want nullif to return null when passing
+        # is false.
+        test_descriptions_rel = test_descriptions_rel.select(
+          # Count the number of passed tests even if they are inactive
+          'count(nullif(passing, false)) as passed_tests_count, ' +
 
-        # Enrich with project version data
-        result.merge!({
-          projectVersion: {
-            id: rel.first.project_version.api_id,
-            name: rel.first.project_version.name
-          }
-        })
+          # Count the number of inactive tests
+          'count(nullif(active, true)) as inactive_tests_count, ' +
 
-        result
+          # Count the number of inactive passing tests
+          'count(nullif(passing and not active, false)) as inactive_passed_tests_count, ' +
+
+          # Count the number of used tests meaning the tests where results have been received for the project version
+          'count(*) as run_tests_count'
+        ).take
+
+        # Count the number of tests for the specific versions
+        project_tests_rel = ProjectTest.joins(:project).where('projects.id = ?', project_version.project.id)
+
+        {
+          testsCount: project_tests_rel.count,
+          passedTestsCount: test_descriptions_rel.passed_tests_count,
+          inactiveTestsCount: test_descriptions_rel.inactive_tests_count,
+          inactivePassedTestsCount: test_descriptions_rel.inactive_passed_tests_count,
+          runTestsCount: test_descriptions_rel.run_tests_count,
+          projectVersion: serialize(project_version)
+        }
       end
-
 
       # GET /api/metrics/contributions?organizationId&projectId&withUser
       #
