@@ -18,8 +18,8 @@ Feature: Project health metrics
     And user lskywalker who is a member of Rebel Alliance exists
     And user wantilles who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
-    And project version 1.0.0 exists for project X-Wing with creation date set 5 days ago
-    And project version 1.0.1 exists for project X-Wing with creation date set 2 days ago
+    And project version 1.0.0 exists for project X-Wing since 5 days ago
+    And project version 1.0.1 exists for project X-Wing since 2 days ago
     And test "Ion engine should provide thrust" was created by hsolo with key aaaa for version 1.0.0 of project X-Wing
     And test "Blasters should fire" was created by hsolo with key bbbb for version 1.0.0 of project X-Wing
     And test "Shields should protect" was created by hsolo with key cccc for version 1.0.0 of project X-Wing
