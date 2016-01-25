@@ -33,10 +33,15 @@ module JobSpecHelper
     JOBS.each do |job_class|
 
       expected_count = counts[job_class] || 0
-      matching_jobs = new_jobs.select{ |h| h[:job] == job_class }
+
+      matching_jobs = if queue_name = job_class.instance_variable_get(:@queue)
+        ResqueSpec.queue_by_name(queue_name).select{ |h| h[:class].to_s == job_class.to_s }
+      else
+        new_jobs_since_action.select{ |h| h[:job].to_s == job_class.to_s }
+      end
 
       unless matching_jobs.length == expected_count
-        errors << "expected to find #{expected_count} #{'job'.pluralize(expected_count)} of class #{job_class} to have been queued, but found #{matching_jobs.length}"
+        errors << "expected to find #{expected_count} #{'job'.pluralize(expected_count)} of class #{job_class} queued, but found #{matching_jobs.length}"
       end
     end
 

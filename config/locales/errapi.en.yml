@@ -8,3 +8,5 @@ en:
     too_short: "This value is too short (the maximum is %{check_value} while the actual length is %{checked_value})."
     wrong_length: "This value is the wrong length (the expected length is %{check_value} while the actual length is %{checked_value}."
     wrong_type: "This value is of the wrong type."
+    not_numeric: "This value is not a number."
+    not_greater_than_or_equal_to: "This value is too small."

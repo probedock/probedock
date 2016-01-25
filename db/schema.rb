@@ -210,6 +210,7 @@ ActiveRecord::Schema.define(version: 20160121143333) do
     t.datetime "updated_at",                                           null: false
     t.integer  "tests_count",                              default: 0, null: false
     t.integer  "new_tests_count",                          default: 0, null: false
+    t.text     "raw_contents"
   end
 
   add_index "test_payloads", ["api_id"], name: "index_test_payloads_on_api_id", unique: true, using: :btree

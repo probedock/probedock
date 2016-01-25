@@ -161,6 +161,8 @@ module ModelExpectations
       @errors.ensure_present payload.contents_bytesize, :contents_bytesize
     end
 
+    @errors.compare payload.raw_contents, data[:rawContents], :raw_contents
+
     expect_no_errors
     payload
   end

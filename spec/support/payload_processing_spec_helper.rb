@@ -62,14 +62,14 @@ module PayloadProcessingSpecHelper
     description
   end
 
-  def check_results raw_payload, payload, options = {}
-    @result_check_raw_payload = raw_payload
+  def check_results raw_results, payload, options = {}
+    @result_check_raw_results = raw_results
     @result_check_payload = payload
     @result_check_results = []
 
     yield if block_given?
 
-    @result_check_raw_payload = nil
+    @result_check_raw_results = nil
     @result_check_payload = nil
 
     results = @result_check_results
@@ -81,13 +81,14 @@ module PayloadProcessingSpecHelper
   def check_result options = {}
 
     index = @result_check_results.length
-    raw_result = @result_check_raw_payload[:results][index]
+    raw_result = @result_check_raw_results[index]
 
     expectations = options.reverse_merge({
       payloadId: @result_check_payload.api_id,
       payloadIndex: index,
       testId: options[:test].try(:api_id),
       passed: raw_result.fetch(:p, true),
+      active: raw_result.fetch(:v, true),
       name: raw_result[:n],
       duration: raw_result[:d],
       message: raw_result[:m],
@@ -164,37 +165,62 @@ module PayloadProcessingSpecHelper
     expect_test_report expectations
   end
 
-  def check_payload body, raw_payload, options = {}
+  def check_json_payload body, raw_payload, options = {}
+    check_payload body, options.merge({
+      resultsCount: raw_payload[:results].length,
+      passedResultsCount: raw_payload[:results].select{ |r| r.fetch :p, true }.length,
+      inactiveResultsCount: raw_payload[:results].reject{ |r| r.fetch :v, true }.length,
+      inactivePassedResultsCount: raw_payload[:results].select{ |r| r.fetch(:p, true) && !r.fetch(:v, true) }.length
+    })
+  end
+
+  def check_payload body, options = {}
 
     expectations = body.with_indifferent_access.slice :receivedAt
     expectations.merge! body['payloads'][0] if body['payloads'].length == 1
 
     expect_test_payload expectations.merge({
       state: :processed,
-      resultsCount: raw_payload[:results].length,
-      passedResultsCount: raw_payload[:results].select{ |r| r.fetch :p, true }.length,
-      inactiveResultsCount: raw_payload[:results].reject{ |r| r.fetch :v, true }.length,
-      inactivePassedResultsCount: raw_payload[:results].select{ |r| r.fetch(:p, true) && !r.fetch(:v, true) }.length,
+      resultsCount: options.fetch(:resultsCount, 0),
+      passedResultsCount: options.fetch(:passedResultsCount, 0),
+      inactiveResultsCount: options.fetch(:inactiveResultsCount, 0),
+      inactivePassedResultsCount: options.fetch(:inactivePassedResultsCount, 0),
       testsCount: options.fetch(:testsCount, 0),
-      newTestsCount: options.fetch(:newTestsCount, 0)
+      newTestsCount: options.fetch(:newTestsCount, 0),
+      rawContents: options[:rawContents]
     })
   end
 
-  def check_payload_response body, project, runner, raw_payload
+  def check_json_payload_response body, project, runner, raw_payload
+    check_payload_response body, project, runner, raw_payload.merge(bytes: MultiJson.dump(raw_payload).bytesize)
+  end
+
+  def check_payload_response body, project, runner, options = {}
     expect_json body, {
       receivedAt: '@iso8601',
       payloads: [
         {
           id: '@uuid',
           projectId: project.api_id,
-          projectVersion: raw_payload[:version],
-          duration: raw_payload[:duration],
+          projectVersion: options[:version],
+          duration: options[:duration],
           runnerId: runner.api_id,
           endedAt: '@json(/receivedAt)',
-          bytes: MultiJson.dump(raw_payload).bytesize
+          bytes: options[:bytes]
         }
       ]
     }
+  end
+
+  def generate_xml_payload_headers project, options = {}
+    h = {
+      'Probe-Dock-Project-Id' => project.api_id,
+      'Probe-Dock-Project-Version' => options[:version] || random_project_version
+    }
+
+    h['Probe-Dock-Test-Report-Uid'] = options[:uid] if options[:uid]
+
+    h
   end
 
   def generate_raw_payload project, options = {}

@@ -38,15 +38,15 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
-      check_payload_response @response_body, projects[0], user, raw_payload
+      expect_http_status_code 202
+      check_json_payload_response @response_body, projects[0], user, raw_payload
     end
 
     # check database changes
     expect_changes test_payloads: 1, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3
 
     # check payload & report
-    payload = check_payload @response_body, raw_payload, testsCount: 3, newTestsCount: 3
+    payload = check_json_payload @response_body, raw_payload, testsCount: 3, newTestsCount: 3
     check_report payload, organization: organization
 
     # check project & version
@@ -61,7 +61,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 3 results
-    results = check_results raw_payload, payload do
+    results = check_results raw_payload[:results], payload do
       check_result test: tests[0], newTest: true
       check_result test: tests[1], newTest: true
       check_result test: tests[2], newTest: true
@@ -92,21 +92,21 @@ RSpec.describe 'Payload processing' do
     # publish the 2 payloads
     with_resque do
       api_post '/api/publish', first_raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
+      expect_http_status_code 202
       @first_response_body = @response_body
-      check_payload_response @response_body, projects[0], user, first_raw_payload
+      check_json_payload_response @response_body, projects[0], user, first_raw_payload
 
       api_post '/api/publish', second_raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
-      check_payload_response @response_body, projects[0], user, second_raw_payload
+      expect_http_status_code 202
+      check_json_payload_response @response_body, projects[0], user, second_raw_payload
     end
 
     # check database changes
     expect_changes test_payloads: 2, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3
 
     # check payloads & report
-    first_payload = check_payload @first_response_body, first_raw_payload, testsCount: 1, newTestsCount: 1
-    second_payload = check_payload @response_body, second_raw_payload, testsCount: 2, newTestsCount: 2
+    first_payload = check_json_payload @first_response_body, first_raw_payload, testsCount: 1, newTestsCount: 1
+    second_payload = check_json_payload @response_body, second_raw_payload, testsCount: 2, newTestsCount: 2
     check_report first_payload, second_payload, uid: 'foo', organization: organization
 
     # check project & version
@@ -124,12 +124,12 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the result of the first payload
-    results = check_results first_raw_payload, first_payload do
+    results = check_results first_raw_payload[:results], first_payload do
       check_result test: tests[0], newTest: true
     end
 
     # check the 2 results of the second payload
-    results += check_results second_raw_payload, second_payload do
+    results += check_results second_raw_payload[:results], second_payload do
       check_result test: tests[1], newTest: true
       check_result test: tests[2], newTest: true
     end
@@ -169,15 +169,15 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
-      check_payload_response @response_body, projects[0], user, raw_payload
+      expect_http_status_code 202
+      check_json_payload_response @response_body, projects[0], user, raw_payload
     end
 
     # check database changes
     expect_changes test_payloads: 1, test_reports: 1, project_versions: 1, test_keys: 3, test_results: 12, project_tests: 5, test_descriptions: 5
 
     # check payload & report
-    payload = check_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 5
+    payload = check_json_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 5
     check_report payload, organization: organization
 
     # check project & version
@@ -194,7 +194,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 12 results
-    results = check_results raw_payload, payload do
+    results = check_results raw_payload[:results], payload do
       check_result test: tests[4], newTest: true
       check_result test: tests[0], newTest: true
       check_result test: tests[2], newTest: true
@@ -254,15 +254,15 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
-      check_payload_response @response_body, projects[0], user, raw_payload
+      expect_http_status_code 202
+      check_json_payload_response @response_body, projects[0], user, raw_payload
     end
 
     # check database changes
     expect_changes test_payloads: 1, test_reports: 1, test_results: 8, test_keys: 2, project_tests: 1, test_descriptions: 1
 
     # check payload & report
-    payload = check_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
+    payload = check_json_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
     check_report payload, organization: organization
 
     # check project & version
@@ -279,7 +279,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 8 results
-    results = check_results raw_payload, payload do
+    results = check_results raw_payload[:results], payload do
       check_result test: tests[3], newTest: true
       check_result test: tests[0], newTest: false
       check_result test: tests[1], newTest: false
@@ -338,15 +338,15 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: user
-      expect(response.status).to eq(202)
-      check_payload_response @response_body, projects[0], user, raw_payload
+      expect_http_status_code 202
+      check_json_payload_response @response_body, projects[0], user, raw_payload
     end
 
     # check database changes
     expect_changes test_payloads: 1, test_reports: 1, test_results: 9, project_versions: 1, test_keys: 2, project_tests: 1, test_descriptions: 5
 
     # check payload & report
-    payload = check_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
+    payload = check_json_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
     check_report payload, organization: organization
 
     # check project & version
@@ -363,7 +363,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 9 results
-    results = check_results raw_payload, payload do
+    results = check_results raw_payload[:results], payload do
       check_result test: tests[3], newTest: true
       check_result test: tests[0], newTest: false
       check_result test: tests[1], newTest: false
@@ -408,15 +408,15 @@ RSpec.describe 'Payload processing' do
     # publish payload
     with_resque do
       api_post '/api/publish', raw_payload.to_json, user: technical_user
-      expect(response.status).to eq(202)
-      check_payload_response @response_body, projects[0], technical_user, raw_payload
+      expect_http_status_code 202
+      check_json_payload_response @response_body, projects[0], technical_user, raw_payload
     end
 
     # check database changes
     expect_changes test_payloads: 1, test_reports: 1, test_results: 3, project_tests: 2, test_descriptions: 2
 
     # check payload & report
-    payload = check_payload @response_body, raw_payload, testsCount: 3, newTestsCount: 2
+    payload = check_json_payload @response_body, raw_payload, testsCount: 3, newTestsCount: 2
     check_report payload, organization: organization
 
     # check project & version
@@ -431,7 +431,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check the 3 results
-    results = check_results raw_payload, payload do
+    results = check_results raw_payload[:results], payload do
       check_result test: tests[0], newTest: true
       check_result test: tests[1], newTest: true
       check_result test: tests[2], newTest: false

@@ -202,6 +202,7 @@ GEM
       nenv (~> 0.1)
       shellany (~> 0.0)
     oj (2.14.1)
+    ox (2.2.3)
     paint (1.0.0)
     pg (0.18.2)
     probedock-cucumber (0.1.1)
@@ -441,6 +442,7 @@ DEPENDENCIES
   minitest
   ngannotate-rails
   oj
+  ox
   paint
   pg
   probedock-cucumber
