@@ -11,6 +11,7 @@
  *= require_self
  *= require normalize
  *= require jqcloud2
+ *= require dropzone
  *= require angular-chart
  *= require angular-loading-bar
  *= require angular-ui-select

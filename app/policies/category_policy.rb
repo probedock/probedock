@@ -15,15 +15,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
-# Be sure to restart your server when you modify this file.
-
-# Add new mime types for use in respond_to blocks:
-# Mime::Type.register "text/richtext", :rtf
-# Mime::Type.register_alias "text/html", :iphone
-Mime::Type.register "text/x-markdown", :md
-Mime::Type.register "text/xml", :text_xml
-Mime::Type.register "text/json", :text_json
-Mime::Type.register "multipart/form-data", :multipart_form_data
-
-# Custom media types
-Mime::Type.register "application/vnd.probedock.payload.v1+json", :probedock_payload_v1
+class CategoryPolicy < ApplicationPolicy
+  class Serializer < Serializer
+    def to_builder options = {}
+      Jbuilder.new do |json|
+        json.name record.name
+        json.testsCount record.tests_count
+        json.organizationId record.organization.api_id
+        json.createdAt record.created_at.iso8601(3)
+      end
+    end
+  end
+end

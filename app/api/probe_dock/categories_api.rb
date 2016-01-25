@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
-  class TagsApi < Grape::API
-    namespace :tags do
+  class CategoriesApi < Grape::API
+    namespace :categories do
       before do
         authenticate
       end
@@ -39,15 +39,15 @@ module ProbeDock
       get do
         authorize! :organization, :data
 
-        rel = Tag
+        rel = Category
 
         rel = paginated rel do |rel|
           rel = rel.where organization_id: current_organization.id if current_organization
           rel
         end
 
-        rel = rel.joins(:test_descriptions).group('tags.name, tags.organization_id, tags.created_at').order('count(distinct test_descriptions.test_id) desc, tags.name asc').having('count(distinct test_descriptions.test_id) > 0')
-        rel = rel.select('tags.name, tags.organization_id, tags.created_at, count(distinct test_descriptions.test_id) as tests_count')
+        rel = rel.joins(:test_descriptions).group('categories.name, categories.organization_id, categories.created_at').order('count(distinct test_descriptions.test_id) desc, categories.name asc').having('count(distinct test_descriptions.test_id) > 0')
+        rel = rel.select('categories.name, categories.organization_id, categories.created_at, count(distinct test_descriptions.test_id) as tests_count')
 
         serialize load_resources(rel)
       end

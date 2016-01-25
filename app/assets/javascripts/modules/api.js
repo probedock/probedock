@@ -21,11 +21,7 @@ angular.module('probedock.api', [ 'probedock.auth', 'probedock.utils' ])
         });
       }
 
-      if (auth.token) {
-        options.headers = _.defaults({}, options.headers, {
-          Authorization: 'Bearer ' + auth.token
-        });
-      }
+      options.headers = _.defaults({}, options.headers, api.authHeaders());
 
       var n = ++counter;
 
@@ -47,6 +43,16 @@ angular.module('probedock.api', [ 'probedock.auth', 'probedock.utils' ])
 
         return res;
       });
+    };
+
+    api.authHeaders = function() {
+
+      var headers = {};
+      if (auth.token) {
+        headers.Authorization = 'Bearer ' + auth.token;
+      }
+
+      return headers;
     };
 
     api.getResource = function(id, basePath) {

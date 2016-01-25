@@ -1,0 +1,46 @@
+.panel.panel-default.test-payload-dropzone
+  .panel-heading
+    h3.panel-title Upload Test Report
+  .panel-body
+    p
+      ' You may manually standard xUnit test reports here.
+      ' Select the project version and optionally a test category.
+    form
+
+      .form-group
+        label for='test-report-version' Version
+        label.new-switch.pull-right
+          input type='checkbox' ng-model='formConfig.newVersion'
+          '
+          ' create a new version
+        ui-select#test-report-version ng-if='!formConfig.newVersion' ng-model='uploadParams.projectVersion'
+          ui-select-match placeholder='Version' {{ $select.selected.name }}
+          ui-select-choices repeat='version.name as version in projectVersions | filter: $select.search'
+            span ng-bind-html='version.name | highlight: $select.search'
+        input.form-control type='text' ng-if='formConfig.newVersion' ng-model='uploadParams.projectVersion'
+
+      .form-group
+        label for='test-report-category' Category
+        label.new-switch.pull-right
+          input type='checkbox' ng-model='formConfig.newCategory'
+          '
+          ' create a new category
+        ui-select#test-report-category ng-if='!formConfig.newCategory' ng-model='uploadParams.category'
+          ui-select-match placeholder='Category' allow-clear='true' {{ $select.selected.name }}
+          ui-select-choices repeat='category.name as category in categories | filter: $select.search'
+            span ng-bind-html='category.name | highlight: $select.search'
+        input.form-control type='text' ng-if='formConfig.newCategory' ng-model='uploadParams.category'
+
+      .dropzone ng-show='formConfig.uploadEnabled'
+
+      p.text-success ng-if='success'
+        ' Your payload was accepted and will be processed shortly.
+
+      p.text-danger ng-if='error'
+        strong ng-if='!serverError'
+          ' {{ error }}
+        strong ng-if='serverError'
+          ' Your payload was refused.
+          button.btn.btn-danger.btn-xs.pull-right ng-click='showErrorDetails()'
+            span.glyphicon.glyphicon-question-sign
+            '  More details
