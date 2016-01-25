@@ -70,4 +70,92 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
     }
   })
 
+.directive('projectHealthChart', function() {
+  return {
+    restrict: 'E',
+    controller: 'ProjectHealthChartCtrl',
+    templateUrl: '/templates/project-health.html',
+    scope: {
+      project: '='
+    }
+  };
+})
+
+
+.controller('ProjectHealthChartCtrl', function(api, $scope) {
+  $scope.chart = {
+    data: [],
+    labels: ['passed', 'failed', 'inactive'],
+    colors: ['#62c462', '#ee5f5b', '#fbb450'],
+    params: {}
+
+  };
+
+  $scope.projectVersionChoices = [];
+
+  $scope.$watch('project', function(value) {
+    if (value) {
+      fetchMetrics();
+      fetchProjectVersionChoices();
+    }
+  });
+
+  var ignoreChartParams = true;
+  $scope.$watch('chart.params', function(value) {
+    if (value && !ignoreChartParams) {
+      fetchMetrics();
+    }
+
+    ignoreChartParams = false;
+  }, true);
+
+  function fetchProjectVersionChoices() {
+    api({
+      url: '/projectVersions',
+      params: {
+        projectId: $scope.project.id
+      }
+    }).then(function(res) {
+      $scope.projectVersionChoices = res.data;
+    });
+  }
+
+  function fetchMetrics() {
+    var params;
+
+    if ($scope.chart.params.projectVersion) {
+      params = {
+        projectVersionId: $scope.chart.params.projectVersion.id
+      };
+    }
+    else {
+      params = {
+        projectId: $scope.project.id
+      };
+    }
+
+    return api({
+      url: '/metrics/projectHealth',
+      params: params
+    }).then(showMetrics);
+  }
+
+  function showMetrics(response) {
+    if (!response.data) {
+      return;
+    }
+
+    if (!$scope.chart.rawData) {
+      $scope.chart.latestVersion = response.data.projectVersion;
+    }
+
+    var data = $scope.chart.rawData = response.data;
+
+    var numberPassed = data.passedTestsCount - data.inactivePassedTestsCount,
+        numberInactive = data.inactiveTestsCount,
+        numberFailed = data.runTestsCount - numberPassed - numberInactive;
+
+    $scope.chart.data = [ numberPassed, numberFailed, numberInactive ];
+  }
+})
 ;
