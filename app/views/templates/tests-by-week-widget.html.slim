@@ -1,33 +1,22 @@
 .panel.panel-default
   .panel-heading
-    h3.panel-title Test run activity
+    h3.panel-title Tests suite size
   .panel-body
     .new-tests-line-chart
       p.text-info ng-if='chart.data.length'
         strong ng-if='totalCount' {{ totalCount | number }}
         span ng-if='totalCount === 0' No
-        ng-pluralize ng-if='chart.type === "written"' count='totalCount' when='{"1": " new test was run over the last 30 days.", "other": " new tests were run over the last 30 days."}'
-        ng-pluralize ng-if='chart.type === "run"' count='totalCount' when='{"1": " test run over the last 30 days.", "other": " test runs over the last 30 days."}'
+        ng-pluralize count='totalCount' when='{"1": " test in the project.", "other": " tests in the projects."}'
       canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
       form.form role='form' ng-if='chart.data.length'
-        .col-xs-12 ng-class='{"col-sm-4": !project, "col-sm-6": project }'
-          .form-group
-            label for='new-tests-line-chart-type' Display
-            .btn-group.btn-group-sm.btn-group-justified#new-tests-line-chart-type role='group'
-              label.btn.btn-default ng-model='chart.type' btn-radio='"written"'
-                span.hidden-md Written
-                span.visible-md tooltip='Tests written' tooltip-append-to-body='true' W
-              label.btn.btn-default ng-model='chart.type' btn-radio='"run"'
-                span.hidden-md Run
-                span.visible-md tooltip='Tests run' tooltip-append-to-body='true' R
-        .col-sm-4.col-xs-12 ng-if='!project'
+        .col-sm-6.col-xs-12 ng-if='!project'
           .form-group
             label for='new-tests-line-chart-projects' Filter by project
             ui-select#new-tests-line-chart-projects ng-model='chart.params.projectIds' multiple=true reset-search-input=true
               ui-select-match placeholder='All projects' {{ $item | projectName }}
               ui-select-choices repeat='project.id as project in projectChoices | filter: $select.search'
                 span ng-bind-html='project | projectName'
-        .col-xs-12 ng-class='{"col-sm-4": !project, "col-sm-6": project }'
+        .col-xs-12 ng-class='{"col-sm-6": !project }'
           .form-group
             label for='new-tests-line-chart-users' Filter by user
             ui-select#new-tests-line-chart-users ng-model='chart.params.userIds' multiple=true reset-search-input=true
