@@ -3,19 +3,13 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
     return {
       restrict: 'E',
       controller: 'TestActivityChartCtrl',
-      templateUrl: '/templates/test-activity-chart.html',
-      scope: {
-        organization: '=',
-        project: '='
-      }
-    };
-  })
-
-  .directive('projectTestActivityChart', function() {
-    return {
-      restrict: 'E',
-      controller: 'TestActivityChartCtrl',
-      templateUrl: '/templates/project-test-activity-chart.html',
+      templateUrl: function(element, attr) {
+        if (attr.type == 'projects') {
+          return '/templates/project-test-activity-chart.html';
+        } else {
+          return '/templates/test-activity-chart.html';
+        }
+      },
       scope: {
         organization: '=',
         project: '=',
