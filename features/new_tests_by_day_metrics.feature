@@ -1,4 +1,4 @@
-@api @metrics @wip
+@api @metrics
 Feature: Reports by day metrics
 
   Users should be able to retrieve the number of new tests by day of an organization.
