@@ -21,7 +21,7 @@ Feature: Reports by day metrics
     And test "Fuel must be efficient" was created by lskywalker with key k4 for version 1.0.0 of project X-Wing
     And project Y-Wing exists within organization Rebel Alliance
     And test "Wings must be enough for atmospheric flights" was created 1 day ago by hsolo with key k5 for version 1.0.0 of project Y-Wing
-    And assuming reports by day metrics are calculated for 3 days by default
+    And assuming new tests by day metrics are calculated for 3 days by default
 
 
 

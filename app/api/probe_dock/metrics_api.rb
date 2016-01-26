@@ -20,6 +20,9 @@ module ProbeDock
     DEFAULT_NB_DAYS_FOR_REPORTS = 30
     MAX_NB_DAYS_FOR_REPORTS = 120
 
+    DEFAULT_NB_DAYS_FOR_NEW_TESTS = 30
+    MAX_NB_DAYS_FOR_NEW_TESTS = 120
+
     namespace :metrics do
       before do
         authenticate
@@ -37,19 +40,15 @@ module ProbeDock
             Organization.active.joins(:projects => [:versions]).where('project_versions.api_id = ?', params[:projectVersionId]).first!
           end
         end
-
-        def nb_days
-          nb_days = params[:nbDays].to_i
-          nb_days = MAX_NB_DAYS_FOR_REPORTS if nb_days > MAX_NB_DAYS_FOR_REPORTS
-          nb_days = DEFAULT_NB_DAYS_FOR_REPORTS if nb_days <= 0
-          nb_days
-        end
       end
 
       get :newTestsByDay do
         authorize! :organization, :data
 
-        nb_days = nb_days()
+        nb_days = params[:nbDays].to_i
+        nb_days = MAX_NB_DAYS_FOR_NEW_TESTS if nb_days > MAX_NB_DAYS_FOR_NEW_TESTS
+        nb_days = DEFAULT_NB_DAYS_FOR_NEW_TESTS if nb_days <= 0
+        nb_days
 
         start_date = (nb_days - 1).days.ago.beginning_of_day
 
@@ -88,7 +87,10 @@ module ProbeDock
       get :reportsByDay do
         authorize! :organization, :data
 
-        nb_days = nb_days()
+        nb_days = params[:nbDays].to_i
+        nb_days = MAX_NB_DAYS_FOR_REPORTS if nb_days > MAX_NB_DAYS_FOR_REPORTS
+        nb_days = DEFAULT_NB_DAYS_FOR_REPORTS if nb_days <= 0
+        nb_days
 
         start_date = (nb_days - 1).days.ago.beginning_of_day
 
