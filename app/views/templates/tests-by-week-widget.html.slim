@@ -17,11 +17,6 @@
               ui-select-choices repeat='project.id as project in projectChoices | filter: $select.search'
                 span ng-bind-html='project | projectName'
         .col-xs-12 ng-class='{"col-sm-6": !project }'
-          .form-group
-            label for='new-tests-line-chart-users' Filter by user
-            ui-select#new-tests-line-chart-users ng-model='chart.params.userIds' multiple=true reset-search-input=true
-              ui-select-match placeholder='All users' {{ $item.name }}
-              ui-select-choices repeat='user.id as user in userChoices | filter: $select.search'
-                span ng-bind-html='user.name'
+          user-choice--ctrl project='project' organization='organization' update='updateUserIds'
       .empty ng-if='chart.data.length === 0'
         em No recent activity.
