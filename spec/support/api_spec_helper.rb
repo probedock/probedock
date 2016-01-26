@@ -16,6 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ApiSpecHelper
+  def uploaded_file content, mime_type
+    file = Tempfile.new 'probedock-uploaded-file'
+    file.write content
+    file.close
+
+    ufile = Rack::Test::UploadedFile.new file.path, mime_type
+
+    if block_given?
+      begin
+        yield ufile
+      ensure
+        file.unlink
+      end
+    end
+
+    ufile
+  end
+
   def find_api_user name
     if name == 'nobody'
       nil

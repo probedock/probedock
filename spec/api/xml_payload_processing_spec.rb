@@ -53,7 +53,7 @@ trace]]>
     with_resque do
       api_post '/api/publish', raw_payload, user: user, content_type: 'application/xml', headers: payload_headers
       expect_http_status_code 202
-      check_payload_response @response_body, projects[0], user, version: version, duration: 5207, bytes: raw_payload.bytesize
+      check_payload_response @response_body, projects[0], user, version: version, duration: 5207, bytes: raw_payload.bytesize, endedAt: '2016-01-14T13:08:09.000Z'
     end
 
     # check database changes
@@ -132,7 +132,7 @@ trace]]>
     with_resque do
       api_post '/api/publish', raw_payload, user: user, content_type: 'application/xml', headers: payload_headers
       expect_http_status_code 202
-      check_payload_response @response_body, projects[0], user, version: version, duration: 4878, bytes: raw_payload.bytesize
+      check_payload_response @response_body, projects[0], user, version: version, duration: 4878, bytes: raw_payload.bytesize, endedAt: '2016-01-14T13:08:12.000Z'
     end
 
     # check database changes
@@ -190,7 +190,7 @@ trace]]>
 
     second_raw_payload = <<-EOS
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="rspec" tests="2" failures="1" errors="0" time="0.305392" timestamp="2016-01-14T14:08:09+01:00">
+<testsuite name="rspec" tests="2" failures="1" errors="0" time="0.305392" timestamp="2016-01-14T14:08:12+01:00">
   <properties />
   <testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
     <failure message="something unexpected occurred" type="StandardError">
@@ -215,11 +215,11 @@ trace]]>
       api_post '/api/publish', first_raw_payload, user: user, content_type: 'application/xml', headers: first_payload_headers
       expect_http_status_code 202
       @first_response_body = @response_body
-      check_payload_response @response_body, projects[0], user, version: version, duration: 1208, bytes: first_raw_payload.bytesize
+      check_payload_response @response_body, projects[0], user, version: version, duration: 1208, bytes: first_raw_payload.bytesize, endedAt: '2016-01-14T13:08:09.000Z'
 
       api_post '/api/publish', second_raw_payload, user: user, content_type: 'application/xml', headers: second_payload_headers
       expect_http_status_code 202
-      check_payload_response @response_body, projects[0], user, version: version, duration: 305, bytes: second_raw_payload.bytesize
+      check_payload_response @response_body, projects[0], user, version: version, duration: 305, bytes: second_raw_payload.bytesize, endedAt: '2016-01-14T13:08:12.000Z'
     end
 
     # check payloads
@@ -287,17 +287,17 @@ trace]]>
     tests = []
 
     v1 = create :project_version, project: projects[0], name: '1.1.2'
-    tests << create(:test, name: 'It should work', project: projects[0], last_runner: user, project_version: v1)
+    tests << create(:test, name: 'It should work', project: projects[0], last_runner: user, project_version: v1, first_run_at: Time.parse('2015-01-01'))
 
     v2 = create :project_version, project: projects[0], name: '1.2.3'
     k1 = create :test_key, user: user, project: projects[0]
-    tests << create(:test, name: 'It might work', project: projects[0], key: k1, last_runner: user, project_version: v2)
-    tests << create(:test, name: 'It worked', project: projects[0], last_runner: user, project_version: v2)
+    tests << create(:test, name: 'It might work', project: projects[0], key: k1, last_runner: user, project_version: v2, first_run_at: Time.parse('2015-01-01'))
+    tests << create(:test, name: 'It worked', project: projects[0], last_runner: user, project_version: v2, first_run_at: Time.parse('2015-01-01'))
 
     v3 = create :project_version, project: projects[1], name: '1.3.4'
-    create :test, name: 'It should work', project: projects[1], last_runner: user, project_version: v3
+    create :test, name: 'It should work', project: projects[1], last_runner: user, project_version: v3, first_run_at: Time.parse('2015-01-01')
     k2 = create :test_key, user: user, project: projects[1], key: k1.key
-    create :test, name: 'It could work', project: projects[1], key: k2, last_runner: user, project_version: v3
+    create :test, name: 'It could work', project: projects[1], key: k2, last_runner: user, project_version: v3, first_run_at: Time.parse('2015-01-01')
 
     Project.where(id: projects[0].id).update_all tests_count: ProjectTest.where(project_id: projects[0].id).count
 
@@ -330,7 +330,7 @@ trace]]>
     with_resque do
       api_post '/api/publish', raw_payload, user: user, content_type: 'application/xml', headers: payload_headers
       expect_http_status_code 202
-      check_payload_response @response_body, projects[0], user, version: version, duration: 5207, bytes: raw_payload.bytesize
+      check_payload_response @response_body, projects[0], user, version: version, duration: 5207, bytes: raw_payload.bytesize, endedAt: '2016-01-14T13:08:09.000Z'
     end
 
     # check database changes

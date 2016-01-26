@@ -205,7 +205,7 @@ module PayloadProcessingSpecHelper
           projectVersion: options[:version],
           duration: options[:duration],
           runnerId: runner.api_id,
-          endedAt: '@json(/receivedAt)',
+          endedAt: options.fetch(:endedAt, '@json(/receivedAt)'),
           bytes: options[:bytes]
         }
       ]

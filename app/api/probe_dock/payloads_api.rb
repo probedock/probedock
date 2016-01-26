@@ -108,7 +108,7 @@ module ProbeDock
             payload_contents = TestPayloadXunitParser.new(raw_payload, headers).parse
           else
             status 415
-            return nil
+            return { errors: [ { message: "The content type of the test payload should be application/json or application/xml." } ] }
           end
 
           # FIXME: do not accept payloads in the future

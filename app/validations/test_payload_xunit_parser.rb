@@ -89,6 +89,18 @@ class TestPayloadXunitParser
   # Parses the test results in a <testsuite> tag.
   def parse_test_suite suite, parsed
 
+    # parse the "timestamp" attribute of the <testsuite>
+    if suite.attributes.key? :timestamp
+      ended_at = suite.attributes[:timestamp]
+      parsed_ended_at = Time.parse ended_at rescue nil
+
+      # save the latest valid timestamp found
+      if parsed_ended_at && (!@last_ended_at || parsed_ended_at > @last_ended_at)
+        parsed['endedAt'] = ended_at # put the raw version into the payload
+        @last_ended_at = parsed_ended_at
+      end
+    end
+
     # parse the "time" attribute of the <testsuite>
     # (if no duration was supplied in a request header)
     unless @duration

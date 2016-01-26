@@ -9,8 +9,7 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
         organizationName: $stateParams.orgName,
         name: $stateParams.projectName
       }
-    })
-    .then(function (response) {
+    }).then(function(response) {
       if (response.data[0]) {
         project = response.data[0];
 
@@ -19,8 +18,7 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
           params: {
             projectId: project.id
           }
-        })
-        .then(function (response) {
+        }).then(function(response) {
           $scope.project = _.extend(project, {
             reportsCount: response.pagination().filteredTotal
           });
@@ -185,6 +183,7 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
         }
       }).then(function(res) {
         $scope.categories = res.data;
+        $scope.formConfig.newCategory = !res.data.length;
       });
     }
 

@@ -28,20 +28,37 @@ When /(\w+) sends a GET request to (.*)/ do |user_name,url|
   @response_body = MultiJson.load @response.body
 end
 
-When /(\w+) sends a POST request with the following (XML|JSON) to (.*):/ do |user_name,content_type,url,doc|
+When /^(\w+) sends a multipart\/form-data POST request with the following (?:(XML|JSON|[A-Za-z0-9\-\.\+\/]+)(?: data)?) as the ([A-Za-z0-9\-]+) parameter to (.*):$/ do |user_name,data_type,filename,url,doc|
 
   store_preaction_state
   apply_headers_for_current_request!
-  content_type = content_type.downcase.to_sym
+
+  request_data = cucumber_request_data data_type, doc
 
   user = find_api_user user_name
-  header 'Content-Type', "application/#{content_type}"
+  header 'Content-Type', 'multipart/form-data'
   header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
-  @request_body = send "cucumber_doc_string_to_#{content_type}".to_sym, doc
-  serialized_body = content_type == :json ? MultiJson.dump(@request_body) : Ox.dump(@request_body)
+  uploaded_file request_data[:serialized_content], request_data[:content_type] do |file|
+    @request_body = request_data[:content]
+    @response = post interpolate_content(url), { filename => file }
+    @response_body = MultiJson.load @response.body
+  end
+end
 
-  @response = post interpolate_content(url), serialized_body
+When /^(\w+) sends a POST request with the following (?:(XML|JSON|[A-Za-z0-9\-\.\+\/]+)(?: data)?) to (.*):$/ do |user_name,data_type,url,doc|
+
+  store_preaction_state
+  apply_headers_for_current_request!
+
+  request_data = cucumber_request_data data_type, doc
+
+  user = find_api_user user_name
+  header 'Content-Type', request_data[:content_type]
+  header 'Authorization', "Bearer #{user.generate_auth_token}" if user
+
+  @request_body = request_data[:content]
+  @response = post interpolate_content(url), request_data[:serialized_content]
   @response_body = MultiJson.load @response.body
 end
 
