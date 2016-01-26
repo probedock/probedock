@@ -1,5 +1,5 @@
 @api @metrics
-Feature: Reports by day metrics
+Feature: New tests by day metrics
 
   Users should be able to retrieve the number of new tests by day of an organization.
   The users can filter the by project and/or by user.
