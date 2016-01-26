@@ -37,12 +37,21 @@ module ProbeDock
             Organization.active.joins(:projects => [:versions]).where('project_versions.api_id = ?', params[:projectVersionId]).first!
           end
         end
+
+        def nb_days
+          nb_days = params[:nbDays].to_i
+          nb_days = MAX_NB_DAYS_FOR_REPORTS if nb_days > MAX_NB_DAYS_FOR_REPORTS
+          nb_days = DEFAULT_NB_DAYS_FOR_REPORTS if nb_days <= 0
+          nb_days
+        end
       end
 
       get :newTestsByDay do
         authorize! :organization, :data
 
-        start_date = 29.days.ago.beginning_of_day
+        nb_days = nb_days()
+
+        start_date = (nb_days - 1).days.ago.beginning_of_day
 
         rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.first_run_at) as project_tests_day")
         rel = rel.where 'project_tests.first_run_at >= ?', start_date
@@ -67,7 +76,7 @@ module ProbeDock
         result = []
         current_date = start_date
 
-        30.times do |i|
+        nb_days.times do |i|
           date = current_date.strftime('%Y-%m-%d')
           result << { date: date, testsCount: counts.fetch(date, 0) }
           current_date += 1.day
@@ -79,9 +88,7 @@ module ProbeDock
       get :reportsByDay do
         authorize! :organization, :data
 
-        nb_days = params[:nbDays].to_i
-        nb_days = MAX_NB_DAYS_FOR_REPORTS if nb_days > MAX_NB_DAYS_FOR_REPORTS
-        nb_days = DEFAULT_NB_DAYS_FOR_REPORTS if nb_days <= 0
+        nb_days = nb_days()
 
         start_date = (nb_days - 1).days.ago.beginning_of_day
 
