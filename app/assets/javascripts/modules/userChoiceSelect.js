@@ -6,25 +6,23 @@ angular.module('probedock.userChoiceSelect', [ 'probedock.api' ])
       templateUrl: '/templates/user-choice-select.html',
       scope: {
         organization: '=',
-        userIds: '=ngModel'
+        parentData: '=modelObject',
+        modelProperty: '=?'
       }
     };
   })
 
   .controller('UserChoiceSelectCtrl', function(api, $scope) {
-    $scope.model = {
-      userIds: []
-    };
+    if (!$scope.modelProperty) {
+      $scope.modelProperty = "userIds";
+    }
+
     $scope.userChoices = [];
 
     $scope.$watch('organization', function(value) {
       if (value) {
         fetchUserChoices();
       }
-    });
-
-    $scope.$watch('model.userIds', function(value) {
-      $scope.userIds = value;
     });
 
     function fetchUserChoices() {

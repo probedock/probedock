@@ -17,6 +17,6 @@
               ui-select-choices repeat='project.id as project in projectChoices | filter: $select.search'
                 span ng-bind-html='project | projectName'
         .col-xs-12 ng-class='{"col-sm-6": !project }'
-          user-choice-select project='project' organization='organization' ng-model='chart.params.userIds'
+          user-choice-select project='project' organization='organization' model-object='chart.params'
       .empty ng-if='chart.data.length === 0'
         em No recent activity.

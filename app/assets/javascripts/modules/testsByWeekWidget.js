@@ -40,7 +40,6 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
     $scope.$watch('organization', function(value) {
       if (value) {
         fetchMetrics();
-        //fetchUserChoices();
 
         if (!$scope.project) {
           fetchProjectChoices();
