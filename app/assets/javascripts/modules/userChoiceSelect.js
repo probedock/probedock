@@ -1,17 +1,17 @@
-angular.module('probedock.userChoiceCtrl', [ 'probedock.api' ])
-  .directive('userChoiceCtrl', function() {
+angular.module('probedock.userChoiceSelect', [ 'probedock.api' ])
+  .directive('userChoiceSelect', function() {
     return {
       restrict: 'E',
-      controller: 'UserChoiceCtrl',
-      templateUrl: '/templates/user-choice-ctrl.html',
+      controller: 'UserChoiceSelectCtrl',
+      templateUrl: '/templates/user-choice-select.html',
       scope: {
         organization: '=',
-        update: '='
+        onUpdate: '&'
       }
     };
   })
 
-  .controller('UserChoiceCtrl', function(api, $scope) {
+  .controller('UserChoiceSelectCtrl', function(api, $scope) {
     $scope.model = {
       userIds: []
     };
@@ -24,8 +24,8 @@ angular.module('probedock.userChoiceCtrl', [ 'probedock.api' ])
     });
 
     $scope.$watch('model.userIds', function(value) {
-      if (value && $scope.update) {
-        $scope.update(value);
+      if (value && $scope.onUpdate) {
+        $scope.onUpdate({ userIds: value });
       }
     });
 
