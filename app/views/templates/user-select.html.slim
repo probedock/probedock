@@ -1,6 +1,6 @@
 .form-group
   label for='{{ prefix }}-user-select' Filter by user
-  ui-select id='{{ prefix }}-user-select' ng-if='modelProperty' ng-model='parentData[modelProperty]' multiple=true reset-search-input=true
+  ui-select id='{{ prefix }}-user-select' ng-if='modelProperty' ng-model='modelObject[modelProperty]' multiple=true reset-search-input=true
     ui-select-match placeholder='All users' {{ $item.name }}
     ui-select-choices repeat='user.id as user in userChoices | filter: $select.search'
       span ng-bind-html='user.name'

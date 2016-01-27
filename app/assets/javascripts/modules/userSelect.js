@@ -6,7 +6,7 @@ angular.module('probedock.userSelect', [ 'probedock.api' ])
       templateUrl: '/templates/user-select.html',
       scope: {
         organization: '=',
-        parentData: '=modelObject',
+        modelObject: '=',
         modelProperty: '=?',
         prefix: '='
       }

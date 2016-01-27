@@ -7,7 +7,7 @@ angular.module('probedock.projectSelect', [ 'probedock.api' ])
       scope: {
         organization: '=',
         project: '=',
-        parentData: '=modelObject',
+        modelObject: '=',
         modelProperty: '=?',
         prefix: '='
       }

@@ -6,7 +6,7 @@ angular.module('probedock.projectVersionSelect', [ 'probedock.api' ])
       templateUrl: '/templates/project-version-select.html',
       scope: {
         project: '=',
-        parentData: '=modelObject',
+        modelObject: '=',
         modelProperty: '=?',
         latestVersion: '=',
         prefix: '='
