@@ -34,7 +34,7 @@ module ProbeDock
           elsif params[:projectId].present?
             Organization.active.joins(:projects).where('projects.api_id = ?', params[:projectId].to_s).first!
           elsif params[:projectVersionId].present?
-            Organization.active.joins(:projects => [:versions]).where('project_versions.api_id = ?', params[:projectVersionId]).first!
+            Organization.active.joins(projects: [:versions]).where('project_versions.api_id = ?', params[:projectVersionId]).first!
           end
         end
       end
@@ -122,22 +122,21 @@ module ProbeDock
       get :projectHealth do
         authorize! :organization, :data
 
-        test_descriptions_rel = TestDescription.joins(:project_version)
 
         # Retrieve the data from the specified version otherwise take the most recent project version to retrieve the data
         if params[:projectVersionId].present?
           project_version = ProjectVersion.where('api_id = ?', params[:projectVersionId]).first
-          test_descriptions_rel = test_descriptions_rel.joins(:project_version).where('project_versions.api_id = ?', params[:projectVersionId])
         else
           project_version = ProjectVersion.joins(:project).where('projects.api_id = ?', params[:projectId]).order('created_at DESC').first
-          test_descriptions_rel = test_descriptions_rel.where('project_versions.id = ?', project_version.id)
         end
+
+        tests_counts = TestDescription.joins(:project_version).where('project_versions.id = ?', project_version.id)
 
         # In this statement, we use nullif which return null if left value is equal to right value. Therefore, we want to
         # count the opposite of this results as COUNT will not take into account null values. Ex: all passing tests have
         # value set to true and then we want to remove the failing ones. Then, we want nullif to return null when passing
         # is false.
-        test_descriptions_rel = test_descriptions_rel.select(
+        tests_counts = tests_counts.select(
           # Count the number of passed tests even if they are inactive
           'count(nullif(passing, false)) as passed_tests_count, ' +
 
@@ -156,10 +155,10 @@ module ProbeDock
 
         {
           testsCount: project_tests_rel.count,
-          passedTestsCount: test_descriptions_rel.passed_tests_count,
-          inactiveTestsCount: test_descriptions_rel.inactive_tests_count,
-          inactivePassedTestsCount: test_descriptions_rel.inactive_passed_tests_count,
-          runTestsCount: test_descriptions_rel.run_tests_count,
+          passedTestsCount: tests_counts.passed_tests_count,
+          inactiveTestsCount: tests_counts.inactive_tests_count,
+          inactivePassedTestsCount: tests_counts.inactive_passed_tests_count,
+          runTestsCount: tests_counts.run_tests_count,
           projectVersion: serialize(project_version)
         }
       end
