@@ -8,8 +8,8 @@ angular.module('probedock.projectSelect', [ 'probedock.api' ])
         organization: '=',
         project: '=',
         modelObject: '=',
-        modelProperty: '=?',
-        prefix: '='
+        modelProperty: '@',
+        prefix: '@'
       }
     };
   })

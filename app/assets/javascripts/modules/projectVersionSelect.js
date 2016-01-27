@@ -7,9 +7,9 @@ angular.module('probedock.projectVersionSelect', [ 'probedock.api' ])
       scope: {
         project: '=',
         modelObject: '=',
-        modelProperty: '=?',
+        modelProperty: '@',
         latestVersion: '=',
-        prefix: '='
+        prefix: '@'
       }
     };
   })

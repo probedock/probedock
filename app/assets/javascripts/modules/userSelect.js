@@ -7,8 +7,8 @@ angular.module('probedock.userSelect', [ 'probedock.api' ])
       scope: {
         organization: '=',
         modelObject: '=',
-        modelProperty: '=?',
-        prefix: '='
+        modelProperty: '@',
+        prefix: '@'
       }
     };
   })
