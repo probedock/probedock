@@ -96,7 +96,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
   $scope.$watch('project', function(value) {
     if (value) {
       fetchMetrics();
-      fetchProjectVersionChoices();
     }
   });
 
@@ -108,17 +107,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
 
     ignoreChartParams = false;
   }, true);
-
-  function fetchProjectVersionChoices() {
-    api({
-      url: '/projectVersions',
-      params: {
-        projectId: $scope.project.id
-      }
-    }).then(function(res) {
-      $scope.projectVersionChoices = res.data;
-    });
-  }
 
   function fetchMetrics() {
     var params;

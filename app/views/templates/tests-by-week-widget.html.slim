@@ -10,13 +10,8 @@
       canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
       form.form role='form' ng-if='chart.data.length'
         .col-sm-6.col-xs-12 ng-if='!project'
-          .form-group
-            label for='new-tests-line-chart-projects' Filter by project
-            ui-select#new-tests-line-chart-projects ng-model='chart.params.projectIds' multiple=true reset-search-input=true
-              ui-select-match placeholder='All projects' {{ $item | projectName }}
-              ui-select-choices repeat='project.id as project in projectChoices | filter: $select.search'
-                span ng-bind-html='project | projectName'
+          project-select project='project' organization='organization' model-object='chart.params'
         .col-xs-12 ng-class='{"col-sm-6": !project }'
-          user-select project='project' organization='organization' model-object='chart.params'
+          user-select organization='organization' model-object='chart.params'
       .empty ng-if='chart.data.length === 0'
         em No recent activity.

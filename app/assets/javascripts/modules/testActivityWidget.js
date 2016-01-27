@@ -58,7 +58,7 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
       }
     };
 
-    $scope.projectChoices = [];
+    $scope.projectVersionChoices = [];
 
     // TODO: replace users by contributors
     $scope.userChoices = [];
@@ -66,11 +66,6 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
     $scope.$watch('organization', function(value) {
       if (value) {
         fetchMetrics();
-        fetchUserChoices();
-
-        if (!$scope.project) {
-          fetchProjectChoices();
-        }
       }
     });
 
@@ -86,28 +81,6 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
     $scope.$watch('chart.type', function(value) {
       fetchMetrics();
     }, true);
-
-    function fetchProjectChoices() {
-      api({
-        url: '/projects',
-        params: {
-          organizationId: $scope.organization.id
-        }
-      }).then(function(res) {
-        $scope.projectChoices = res.data;
-      });
-    }
-
-    function fetchUserChoices() {
-      api({
-        url: '/users',
-        params: {
-          organizationId: $scope.organization.id
-        }
-      }).then(function(res) {
-        $scope.userChoices = res.data;
-      });
-    }
 
     function fetchMetrics() {
       if ($scope.project) {

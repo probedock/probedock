@@ -35,15 +35,11 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
       }
     };
 
-    $scope.projectChoices = [];
+    $scope.projectVersionChoices = [];
 
     $scope.$watch('organization', function(value) {
       if (value) {
         fetchMetrics();
-
-        if (!$scope.project) {
-          fetchProjectChoices();
-        }
       }
     });
 
@@ -55,17 +51,6 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
 
       ignoreChartParams = false;
     }, true);
-
-    function fetchProjectChoices() {
-      api({
-        url: '/projects',
-        params: {
-          organizationId: $scope.organization.id
-        }
-      }).then(function(res) {
-        $scope.projectChoices = res.data;
-      });
-    }
 
     function fetchMetrics() {
       if ($scope.project) {

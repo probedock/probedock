@@ -1,0 +1,6 @@
+.form-group
+  label for='project-version-select' Version
+  ui-select#project-version-select ng-if='modelProperty' ng-model='parentData[modelProperty]' multiple=false reset-search-input=true
+    ui-select-match placeholder='Latest version: {{ latestVersion.name }}' {{ $select.selected.name }}
+    ui-select-choices repeat='projectVersion in projectVersionChoices | filter: $select.search'
+      span ng-bind-html='projectVersion.name'
