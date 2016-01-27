@@ -27,7 +27,7 @@
       .details
         a href='#' ui-sref='org.reports.show({ id: report.id })'
           report-health-bar report='report' click-for-details=true
-      .projectTestsWritten ng-if='report.projectCounts.newTestsCount > 0'
+      .project-tests-written ng-if='report.projectCounts.newTestsCount > 0'
         span
           i.glyphicon.glyphicon-plus
           strong
