@@ -8,12 +8,17 @@ angular.module('probedock.projectSelect', [ 'probedock.api' ])
         organization: '=',
         project: '=',
         parentData: '=modelObject',
-        modelProperty: '=?'
+        modelProperty: '=?',
+        prefix: '='
       }
     };
   })
 
   .controller('ProjectSelectCtrl', function(api, $scope) {
+    if (!$scope.prefix) {
+      throw new Error("The prefix attribute on project-select directive is not set.");
+    }
+
     if (!$scope.modelProperty) {
       $scope.modelProperty = "projectIds";
     }

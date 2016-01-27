@@ -8,12 +8,17 @@ angular.module('probedock.projectVersionSelect', [ 'probedock.api' ])
         project: '=',
         parentData: '=modelObject',
         modelProperty: '=?',
-        latestVersion: '='
+        latestVersion: '=',
+        prefix: '='
       }
     };
   })
 
   .controller('ProjectVersionSelectCtrl', function(api, $scope) {
+    if (!$scope.prefix) {
+      throw new Error("The prefix attribute on project-version-select directive is not set.");
+    }
+
     if (!$scope.modelProperty) {
       $scope.modelProperty = "projectVersion";
     }

@@ -7,12 +7,17 @@ angular.module('probedock.userSelect', [ 'probedock.api' ])
       scope: {
         organization: '=',
         parentData: '=modelObject',
-        modelProperty: '=?'
+        modelProperty: '=?',
+        prefix: '='
       }
     };
   })
 
   .controller('UserSelectCtrl', function(api, $scope) {
+    if (!$scope.prefix) {
+      throw new Error("The prefix attribute on user-select directive is not set.");
+    }
+
     if (!$scope.modelProperty) {
       $scope.modelProperty = "userIds";
     }
