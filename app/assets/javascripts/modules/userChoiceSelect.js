@@ -6,7 +6,7 @@ angular.module('probedock.userChoiceSelect', [ 'probedock.api' ])
       templateUrl: '/templates/user-choice-select.html',
       scope: {
         organization: '=',
-        onUpdate: '&'
+        userIds: '=ngModel'
       }
     };
   })
@@ -24,9 +24,7 @@ angular.module('probedock.userChoiceSelect', [ 'probedock.api' ])
     });
 
     $scope.$watch('model.userIds', function(value) {
-      if (value && $scope.onUpdate) {
-        $scope.onUpdate({ userIds: value });
-      }
+      $scope.userIds = value;
     });
 
     function fetchUserChoices() {

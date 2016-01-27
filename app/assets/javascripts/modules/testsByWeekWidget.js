@@ -37,10 +37,6 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
 
     $scope.projectChoices = [];
 
-    $scope.updateUserIds = function(userIds) {
-      $scope.chart.params.userIds = userIds;
-    };
-
     $scope.$watch('organization', function(value) {
       if (value) {
         fetchMetrics();
