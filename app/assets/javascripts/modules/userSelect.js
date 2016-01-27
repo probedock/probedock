@@ -1,9 +1,9 @@
-angular.module('probedock.userChoiceSelect', [ 'probedock.api' ])
-  .directive('userChoiceSelect', function() {
+angular.module('probedock.userSelect', [ 'probedock.api' ])
+  .directive('userSelect', function() {
     return {
       restrict: 'E',
-      controller: 'UserChoiceSelectCtrl',
-      templateUrl: '/templates/user-choice-select.html',
+      controller: 'UserSelectCtrl',
+      templateUrl: '/templates/user-select.html',
       scope: {
         organization: '=',
         parentData: '=modelObject',
@@ -12,7 +12,7 @@ angular.module('probedock.userChoiceSelect', [ 'probedock.api' ])
     };
   })
 
-  .controller('UserChoiceSelectCtrl', function(api, $scope) {
+  .controller('UserSelectCtrl', function(api, $scope) {
     if (!$scope.modelProperty) {
       $scope.modelProperty = "userIds";
     }
