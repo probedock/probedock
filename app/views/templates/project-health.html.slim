@@ -3,19 +3,19 @@
     h3.panel-title Project health
   .panel-body
     .project-health-chart
-      p.text-info ng-if='chart.rawData'
-        strong ng-if='chart.rawData.runTestsCount > 0' {{ chart.rawData.runTestsCount | number }}
-        ng-pluralize count='chart.rawData.runTestsCount' when='{"1": " test", "other": " tests"}'
+      p.text-info ng-if='projectHealth'
+        strong ng-if='projectHealth.runTestsCount > 0' {{ projectHealth.runTestsCount | number }}
+        ng-pluralize count='projectHealth.runTestsCount' when='{"1": " test", "other": " tests"}'
         span
           |  in version
-          strong  {{ chart.rawData.projectVersion.name }}
+          strong  {{ projectHealth.projectVersion.name }}
           |  of the project.
 
       canvas.chart.chart-pie data='chart.data' labels='chart.labels' colours='chart.colors'
 
       form.form role='form' ng-if='chart.data.length'
         .col-12
-          project-version-select prefix='project-health' project='project' model-object='chart.params' latest-version='chart.latestVersion'
+          project-version-select prefix='project-health' project='project' model-object='chart.params' latest-version='latestVersion'
 
       .empty ng-if='chart.data.length === 0'
         em No tests in the project.

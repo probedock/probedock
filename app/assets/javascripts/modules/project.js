@@ -81,7 +81,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
   };
 })
 
-
 .controller('ProjectHealthChartCtrl', function(api, $scope) {
   $scope.chart = {
     data: [],
@@ -109,17 +108,12 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
   }, true);
 
   function fetchMetrics() {
-    var params;
+    var params = {};
 
     if ($scope.chart.params.projectVersion) {
-      params = {
-        projectVersionId: $scope.chart.params.projectVersion.id
-      };
-    }
-    else {
-      params = {
-        projectId: $scope.project.id
-      };
+      params.projectVersionId = $scope.chart.params.projectVersion.id;
+    } else {
+      params.projectId = $scope.project.id;
     }
 
     return api({
@@ -133,11 +127,11 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
       return;
     }
 
-    if (!$scope.chart.rawData) {
-      $scope.chart.latestVersion = response.data.projectVersion;
+    if (!$scope.projectHealth) {
+      $scope.latestVersion = response.data.projectVersion;
     }
 
-    var data = $scope.chart.rawData = response.data;
+    var data = $scope.projectHealth = response.data;
 
     var numberPassed = data.passedTestsCount - data.inactivePassedTestsCount,
         numberInactive = data.inactiveTestsCount,
