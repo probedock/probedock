@@ -16,7 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class ProjectVersion < ActiveRecord::Base
+  include IdentifiableResource
   include QuickValidation
+
+  before_create{ set_identifier :api_id, size: 12 }
 
   belongs_to :project
   has_many :test_results

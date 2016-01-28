@@ -28,18 +28,22 @@ Feature: Project version
     And the response body should be the following JSON:
       """
       [{
+        "id": "@idOf: 1.0.0",
         "name": "1.0.0",
         "projectId": "@idOf: X-Wing",
         "createdAt": "@iso8601"
       }, {
+        "id": "@idOf: 1.0.1",
         "name": "1.0.1",
         "projectId": "@idOf: X-Wing",
         "createdAt": "@iso8601"
       }, {
+        "id": "@idOf: b",
         "name": "b",
         "projectId": "@idOf: Y-Wing",
         "createdAt": "@iso8601"
       }, {
+        "id": "@idOf: a",
         "name": "a",
         "projectId": "@idOf: Y-Wing",
         "createdAt": "@iso8601"
@@ -55,10 +59,12 @@ Feature: Project version
     And the response body should be the following JSON:
       """
       [{
+        "id": "@idOf: 1.0.0",
         "name": "1.0.0",
         "projectId": "@idOf: X-Wing",
         "createdAt": "@iso8601"
       }, {
+        "id": "@idOf: 1.0.1",
         "name": "1.0.1",
         "projectId": "@idOf: X-Wing",
         "createdAt": "@iso8601"
@@ -81,14 +87,17 @@ Feature: Project version
     And the response body should be the following JSON:
       """
       [{
+        "id": "@idOf: 2.0.0",
         "name": "2.0.0",
         "projectId": "@idOf: Jedi Temple",
         "createdAt": "@iso8601"
       }, {
+        "id": "@idOf: 2.0.1",
         "name": "2.0.1",
         "projectId": "@idOf: Jedi Temple",
         "createdAt": "@iso8601"
       }, {
+        "id": "@idOf: 3.0.0",
         "name": "3.0.0",
         "projectId": "@idOf: Senate",
         "createdAt": "@iso8601"
@@ -111,10 +120,12 @@ Feature: Project version
     And the response body should be the following JSON:
       """
       [{
+        "id": "@idOf: 2.0.0",
         "name": "2.0.0",
         "projectId": "@idOf: Jedi Temple",
         "createdAt": "@iso8601"
       }, {
+        "id": "@idOf: 2.0.1",
         "name": "2.0.1",
         "projectId": "@idOf: Jedi Temple",
         "createdAt": "@iso8601"
