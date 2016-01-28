@@ -1,4 +1,4 @@
-@api @metrics
+@api @metrics @wip
 Feature: Project health metrics
 
   Users should be able to retrieve project health metrics
@@ -24,12 +24,12 @@ Feature: Project health metrics
     And test "Blasters should fire" was created by hsolo with key bbbb for version 1.0.0 of project X-Wing
     And test "Shields should protect" was created by hsolo with key cccc for version 1.0.0 of project X-Wing
     And test "Boosters should not explode" was created by hsolo with key dddd for version 1.0.0 of project X-Wing
-    And test "Ion engine should provide thrust" is passing and active was last run by hsolo and has category C1 for version 1.0.0
-    And test "Blasters should fire" is passing and inactive was last run by hsolo and has category C1 for version 1.0.0
-    And test "Shields should protect" is failing and active was last run by hsolo and has category C1 for version 1.0.0
-    And test "Boosters should not explode" is failing and inactive was last run by hsolo and has category C1 for version 1.0.0
-    And test "Ion engine should provide thrust" is passing and active was last run by hsolo and has category C1 for version 1.0.1
-    And test "Blasters should fire" is passing and inactive was last run by hsolo and has category C1 for version 1.0.1
+    And test "Ion engine should provide thrust" is passing and active and was last run by hsolo and has category C1 for version 1.0.0
+    And test "Blasters should fire" is passing and inactive and was last run by hsolo and has category C1 for version 1.0.0
+    And test "Shields should protect" is failing and active and was last run by hsolo and has category C1 for version 1.0.0
+    And test "Boosters should not explode" is failing and inactive and was last run by hsolo and has category C1 for version 1.0.0
+    And test "Ion engine should provide thrust" is passing and active and was last run by hsolo and has category C1 for version 1.0.1
+    And test "Blasters should fire" is passing and inactive and was last run by hsolo and has category C1 for version 1.0.1
 
 
 
