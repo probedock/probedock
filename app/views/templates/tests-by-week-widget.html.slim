@@ -6,7 +6,9 @@
       p.text-info ng-if='chart.data.length'
         strong ng-if='totalCount' {{ totalCount | number }}
         span ng-if='totalCount === 0' No
-        ng-pluralize count='totalCount' when='{"1": " test in the project.", "other": " tests in the projects."}'
+        ng-pluralize count='totalCount' when='{"1": " test in the ", "other": " tests in the "}'
+        span ng-if='project' project.
+        span ng-if='!project' organization.
       canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
       form.form role='form' ng-if='chart.data.length'
         .col-sm-6.col-xs-12 ng-if='!project'
