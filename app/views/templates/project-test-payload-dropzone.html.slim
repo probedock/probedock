@@ -4,7 +4,7 @@
   .panel-body
 
     p
-      ' You may manually publish standard xUnit test reports here.
+      ' You may manually publish standard xUnit XML test reports here.
       ' Select the project version and optionally a test category,
       ' then drop your generated xUnit report file into the box below.
 
@@ -16,7 +16,7 @@
 
         / check box to choose whether to create a new version or not
         label.new-switch.pull-right
-          input type='checkbox' ng-model='formConfig.newVersion'
+          input type='checkbox' ng-model='formConfig.newVersion' ng-disabled='!projectVersions.length'
           '
           ' create a new version
 
@@ -37,7 +37,7 @@
 
         / check box to choose whether to create a new category or not
         label.new-switch.pull-right
-          input type='checkbox' ng-model='formConfig.newCategory'
+          input type='checkbox' ng-model='formConfig.newCategory' ng-disabled='!categories.length'
           '
           ' create a new category
 

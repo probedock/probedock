@@ -1,4 +1,4 @@
-When /^the ([A-Za-z0-9\-\_]+) header is( temporarily)? set to (.+)$/ do |header_name,next_request_flag,header_value|
+When /^the ([A-Za-z0-9\-\_]+) header is( temporarily)? set to "?([^"]+)"?$/ do |header_name,next_request_flag,header_value|
   target_headers = send(next_request_flag ? :headers_for_next_request : :headers_for_all_requests)
   target_headers[header_name] = interpolate_content header_value
 end

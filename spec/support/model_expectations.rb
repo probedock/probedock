@@ -67,9 +67,9 @@ module ModelExpectations
     @errors.compare description.name, data[:name], :name
     @errors.compare description.passing, data.fetch(:passing, true), :passing
     @errors.compare description.active, data.fetch(:active, true), :active
-    @errors.compare description.category, data[:category], :category
-    @errors.compare description.tags.collect(&:name), data.fetch(:tags, []), :tags
-    @errors.compare description.tickets.collect(&:name), data.fetch(:tickets, []), :tickets
+    @errors.compare description.category.try(:name), data[:category], :category
+    @errors.compare description.tags.collect(&:name).sort, data.fetch(:tags, []).sort, :tags
+    @errors.compare description.tickets.collect(&:name).sort, data.fetch(:tickets, []).sort, :tickets
     @errors.compare description.last_duration, data[:lastDuration], :last_duration
     @errors.compare description.last_run_at.try(:iso8601, 3), data[:lastRunAt].try(:iso8601, 3), :last_run_at
     @errors.compare description.last_runner.try(:api_id), data[:lastRunnerId], :last_runner_id

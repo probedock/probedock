@@ -12,6 +12,7 @@ Feature: xUnit test payload validations
     And project X-Wing exists within organization Rebel Alliance
     When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
     And the Probe-Dock-Project-Version header is set to 0.4.6
+    And the Probe-Dock-Category header is set to RSpec
     And hsolo sends a POST request with the following XML to /api/publish:
       """
       <?xml version="1.0" encoding="UTF-8"?>
@@ -57,10 +58,47 @@ Feature: xUnit test payload validations
     When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
     And the Probe-Dock-Project-Version header is set to 0.4.6
     And the Probe-Dock-Duration header is set to 5106
+    And the Probe-Dock-Category header is set to RSpec
     And hsolo sends a POST request with the following XML to /api/publish:
       """
       <?xml version="1.0" encoding="UTF-8"?>
       <testsuite name="rspec" tests="1" failures="0" errors="0" time="0.235481">
+        <properties />
+        <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.031456" />
+      </testsuite>
+      """
+    Then the response should be HTTP 202 with the following JSON:
+      """
+      {
+        "receivedAt": "@iso8601",
+        "payloads": [
+          {
+            "id": "@uuid",
+            "projectId": "@idOf: X-Wing",
+            "projectVersion": "0.4.6",
+            "duration": 5106,
+            "runnerId": "@idOf: hsolo",
+            "endedAt": "@iso8601",
+            "bytes": "@integer"
+          }
+        ]
+      }
+      """
+    And the following changes should have occurred: +1 test payload, +1 process next test payload job
+
+
+
+  Scenario: An xUnit payload with no category in the Probe-Dock-Category header should be accepted
+    Given private organization Rebel Alliance exists
+    And user hsolo who is a member of Rebel Alliance exists
+    And project X-Wing exists within organization Rebel Alliance
+    When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
+    And the Probe-Dock-Project-Version header is set to 0.4.6
+    And the Probe-Dock-Duration header is set to 5106
+    And hsolo sends a POST request with the following XML to /api/publish:
+      """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <testsuite name="rspec" tests="1" failures="0" errors="0" time="0.235481" timestamp="2016-01-15T15:22:41+01:00">
         <properties />
         <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.031456" />
       </testsuite>
@@ -93,6 +131,7 @@ Feature: xUnit test payload validations
     When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
     And the Probe-Dock-Project-Version header is set to 0.4.6
     And the Probe-Dock-Duration header is set to 5106
+    And the Probe-Dock-Category header is set to RSpec
     And hsolo sends a POST request with the following XML to /api/publish:
       """
       <?xml version="1.0" encoding="UTF-8"?>
@@ -128,6 +167,7 @@ Feature: xUnit test payload validations
     And project X-Wing exists within organization Rebel Alliance
     When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
     And the Probe-Dock-Project-Version header is set to 0.4.6
+    And the Probe-Dock-Category header is set to RSpec
     And hsolo sends a POST request with the following XML to /api/publish:
       """
       <?xml version="1.0" encoding="UTF-8"?>
@@ -177,6 +217,7 @@ Feature: xUnit test payload validations
     And project X-Wing exists within organization Rebel Alliance
     When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
     And the Probe-Dock-Project-Version header is set to 0.4.6
+    And the Probe-Dock-Category header is set to RSpec
     And hsolo sends a multipart/form-data POST request with the following XML as the payload parameter to /api/publish:
       """
       <?xml version="1.0" encoding="UTF-8"?>
@@ -265,8 +306,9 @@ Feature: xUnit test payload validations
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
-    When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
-    And the Probe-Dock-Project-Version header is set to 0.4.6
+    When the Probe-Dock-Project-Id header is set to " "
+    And the Probe-Dock-Project-Version header is set to "  "
+    And the Probe-Dock-Category header is set to "   "
     And hsolo sends a POST request with the following XML to /api/publish:
       """
       <testsuite>
@@ -279,6 +321,9 @@ Feature: xUnit test payload validations
       """
     Then the response should be HTTP 422 with the following errors:
       | reason  | locationType | location                     | message                     |
+      | blank   | header       | Probe-Dock-Category          | This value cannot be blank. |
+      | blank   | header       | Probe-Dock-Project-Id        | This value cannot be blank. |
+      | blank   | header       | Probe-Dock-Project-Version   | This value cannot be blank. |
       | missing | xpath        | /testsuite/@time             | This value is required.     |
       | missing | xpath        | /testsuite/testcase[1]/@name | This value is required.     |
       | missing | xpath        | /testsuite/testcase[2]/@time | This value is required.     |
@@ -317,7 +362,8 @@ Feature: xUnit test payload validations
     And user hsolo who is a member of Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
-    And the Probe-Dock-Project-Version header is set to 0.4.6
+    And the Probe-Dock-Project-Version header is set to 1.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6
+    And the Probe-Dock-Category header is set to 123456789012345678901234567890123456789012345678901
     And hsolo sends a POST request with the following XML to /api/publish:
       """
       <testsuites>
@@ -334,14 +380,16 @@ Feature: xUnit test payload validations
       </testsuites>
       """
     Then the response should be HTTP 422 with the following errors:
-      | reason                  | locationType | location                                   | message                     |
-      | missing                 | xpath        | /testsuites/testsuite[1]/@time             | This value is required.     |
-      | missing                 | xpath        | /testsuites/testsuite[1]/testcase[1]/@name | This value is required.     |
-      | missing                 | xpath        | /testsuites/testsuite[1]/testcase[2]/@time | This value is required.     |
-      | empty                   | xpath        | /testsuites/testsuite[1]/testcase[3]/@time | This value cannot be empty. |
-      | notNumeric              | xpath        | /testsuites/testsuite[2]/@time             | This value is not a number. |
-      | empty                   | xpath        | /testsuites/testsuite[2]/testcase[1]/@name | This value cannot be empty. |
-      | notGreaterThanOrEqualTo | xpath        | /testsuites/testsuite[2]/testcase[2]/@time | This value is too small.    |
+      | reason                  | locationType | location                                   | message                                                                     |
+      | tooLong                 | header       | Probe-Dock-Category                        | This value is too long (the maximum is 50 while the actual length is 51).   |
+      | tooLong                 | header       | Probe-Dock-Project-Version                 | This value is too long (the maximum is 100 while the actual length is 101). |
+      | missing                 | xpath        | /testsuites/testsuite[1]/@time             | This value is required.                                                     |
+      | missing                 | xpath        | /testsuites/testsuite[1]/testcase[1]/@name | This value is required.                                                     |
+      | missing                 | xpath        | /testsuites/testsuite[1]/testcase[2]/@time | This value is required.                                                     |
+      | empty                   | xpath        | /testsuites/testsuite[1]/testcase[3]/@time | This value cannot be empty.                                                 |
+      | notNumeric              | xpath        | /testsuites/testsuite[2]/@time             | This value is not a number.                                                 |
+      | empty                   | xpath        | /testsuites/testsuite[2]/testcase[1]/@name | This value cannot be empty.                                                 |
+      | notGreaterThanOrEqualTo | xpath        | /testsuites/testsuite[2]/testcase[2]/@time | This value is too small.                                                    |
     And nothing should have been added or deleted
 
 
@@ -352,6 +400,7 @@ Feature: xUnit test payload validations
     And project X-Wing exists within organization Rebel Alliance
     When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
     And the Probe-Dock-Project-Version header is set to 0.4.6
+    And the Probe-Dock-Category header is set to "   "
     And hsolo sends a multipart/form-data POST request with the following XML as the payload parameter to /api/publish:
       """
       <testsuites>
@@ -369,6 +418,7 @@ Feature: xUnit test payload validations
       """
     Then the response should be HTTP 422 with the following errors:
       | reason                  | locationType | location                                   | message                     |
+      | blank                   | header       | Probe-Dock-Category                        | This value cannot be blank. |
       | missing                 | xpath        | /testsuites/testsuite[1]/@time             | This value is required.     |
       | missing                 | xpath        | /testsuites/testsuite[1]/testcase[1]/@name | This value is required.     |
       | missing                 | xpath        | /testsuites/testsuite[1]/testcase[2]/@time | This value is required.     |

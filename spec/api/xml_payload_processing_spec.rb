@@ -24,7 +24,7 @@ RSpec.describe 'xUnit payload processing', probedock: { tags: %w(xunit) } do
   let!(:projects){ Array.new(2){ create :project, organization: organization } }
   let!(:user){ create :org_member, organization: organization }
 
-  it "should process an XML payload", probedock: { key: '5vvk' } do
+  it "should process an xUnit payload", probedock: { key: '5vvk' } do
 
     # prepare payload
     raw_payload = <<-EOS
@@ -95,6 +95,80 @@ trace]]>
       check_description results[0], resultsCount: 1
       check_description results[1], resultsCount: 1, passing: false
       check_description results[2], resultsCount: 1, active: false
+    end
+  end
+
+  it "should process an xUnit payload with the Probe-Dock-Category header set", probedock: { key: 'klc3' } do
+
+    # prepare payload
+    raw_payload = <<-EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="rspec" tests="3" failures="1" errors="0" time="5.207134" timestamp="2016-01-14T14:08:09+01:00">
+  <properties />
+  <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.003033"/>
+  <testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
+    <failure message="something unexpected occurred" type="StandardError">
+      <![CDATA[stack
+trace]]>
+    </failure>
+  </testcase>
+  <testcase classname="spec.models.c" name="It could work" file="./spec/models/c_spec.rb" time="0.000015">
+    <skipped/>
+  </testcase>
+</testsuite>
+    EOS
+
+    version = '1.2.3'
+    payload_headers = generate_xml_payload_headers projects[0], version: version, category: 'RSpec'
+
+    store_preaction_state
+
+    # publish payload
+    with_resque do
+      api_post '/api/publish', raw_payload, user: user, content_type: 'application/xml', headers: payload_headers
+      expect_http_status_code 202
+      check_payload_response @response_body, projects[0], user, version: version, duration: 5207, bytes: raw_payload.bytesize, endedAt: '2016-01-14T13:08:09.000Z'
+    end
+
+    # check database changes
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3, categories: 1
+
+    # check payload & report
+    payload = check_payload @response_body, rawContents: raw_payload,
+                            testsCount: 3, newTestsCount: 3,
+                            resultsCount: 3, passedResultsCount: 2, inactiveResultsCount: 1, inactivePassedResultsCount: 1
+
+    check_report payload, organization: organization
+
+    # check project & version
+    expect(projects[0].tap(&:reload).tests_count).to eq(3)
+    expect_project_version name: version, projectId: projects[0].api_id
+
+    # check the 3 new tests
+    tests = check_tests projects[0], user, payload do
+      check_test name: 'It should work'
+      check_test name: 'It might work'
+      check_test name: 'It could work'
+    end
+
+    # check the 3 results
+    raw_results = [
+      { n: 'It should work', d: 3 },
+      { n: 'It might work', d: 50, p: false, m: "StandardError\nstack\ntrace" },
+      { n: 'It could work', d: 0, v: false }
+    ]
+
+    results = check_results raw_results, payload do
+      check_result test: tests[0], newTest: true
+      check_result test: tests[1], newTest: true
+      check_result test: tests[2], newTest: true
+    end
+
+    # check the descriptions of the 3 tests for the project version
+    check_descriptions payload, tests do
+      check_description results[0], resultsCount: 1, category: 'RSpec'
+      check_description results[1], resultsCount: 1, passing: false, category: 'RSpec'
+      check_description results[2], resultsCount: 1, active: false, category: 'RSpec'
     end
   end
 
@@ -190,7 +264,7 @@ trace]]>
 
     second_raw_payload = <<-EOS
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="rspec" tests="2" failures="1" errors="0" time="0.305392" timestamp="2016-01-14T14:08:12+01:00">
+<testsuite name="cucumber" tests="2" failures="1" errors="0" time="0.305392" timestamp="2016-01-14T14:08:12+01:00">
   <properties />
   <testcase classname="spec.models.b_spec" name="It might work" file="./spec/models/b_spec.rb" time="0.050373">
     <failure message="something unexpected occurred" type="StandardError">
@@ -205,8 +279,8 @@ trace]]>
     EOS
 
     version = '1.2.3'
-    first_payload_headers = generate_xml_payload_headers projects[0], version: version, uid: 'foo'
-    second_payload_headers = generate_xml_payload_headers projects[0], version: version, uid: 'foo'
+    first_payload_headers = generate_xml_payload_headers projects[0], version: version, uid: 'foo', category: 'RSpec'
+    second_payload_headers = generate_xml_payload_headers projects[0], version: version, uid: 'foo', category: 'Cucumber'
 
     store_preaction_state
 
@@ -231,7 +305,7 @@ trace]]>
                                    resultsCount: 2, passedResultsCount: 1, inactiveResultsCount: 1, inactivePassedResultsCount: 1
 
     # check database changes
-    expect_changes test_payloads: 2, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3
+    expect_changes test_payloads: 2, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3, categories: 2
 
     # check report
     check_report first_payload, second_payload, uid: 'foo', organization: organization
@@ -272,13 +346,13 @@ trace]]>
 
     # check the descriptions of the first test for the first payload's project version
     check_descriptions first_payload, tests[0, 1] do
-      check_description results[0], resultsCount: 1
+      check_description results[0], resultsCount: 1, category: 'RSpec'
     end
 
     # check the descriptions of the two other tests for the second payload's project version
     check_descriptions second_payload, tests[1, 2] do
-      check_description results[1], resultsCount: 1, passing: false
-      check_description results[2], resultsCount: 1, active: false
+      check_description results[1], resultsCount: 1, passing: false, category: 'Cucumber'
+      check_description results[2], resultsCount: 1, active: false, category: 'Cucumber'
     end
   end
 
