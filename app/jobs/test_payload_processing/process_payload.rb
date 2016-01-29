@@ -69,9 +69,19 @@ module TestPayloadProcessing
           @test_payload.tests_count = @cache.test_data.length
           @test_payload.new_tests_count = @cache.test_data.select{ |d| !d[:test] }.length
 
+          raw_test_data = JSON.pretty_generate(@cache.test_data.collect{ |d|
+            h = d.dup
+            h[:test] = h[:test].id || 'new' if h[:test]
+            h
+          })
+          Rails.logger.debug '@@@@@@@@@@@@@@@@@@@@'
+          Rails.logger.debug raw_test_data
+
+          assigned_results = []
           @cache.test_data.each do |data|
-            results = @cache.test_results.select{ |r| (r.key && r.key == data[:key]) || data[:names].include?(r.name) }
+            results = @cache.test_results.select{ |r| (r.key && r.key == data[:key]) || (!r.key && data[:names].include?(r.name)) }.reject{ |r| assigned_results.include? r }
             ProcessTest.new project_version, data[:key], data[:test], results
+            assigned_results += results
           end
 
           Project.update_counters project_version.project.id, tests_count: @test_payload.new_tests_count

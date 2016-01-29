@@ -90,12 +90,14 @@ module ModelExpectations
     data = interpolate_json(data, expectations: true).with_indifferent_access
 
     test = expect_record ProjectTest, data do
-      if data.key? :id
+      if data[:id]
         ProjectTest.where(api_id: data[:id].to_s).first
-      elsif data.key?(:projectId) && data.key?(:name)
+      elsif data[:projectId] && data[:key]
+        ProjectTest.joins(:project).joins(:key).where('projects.api_id = ? AND test_keys.key = ?', data[:projectId].to_s, data[:key].to_s).first
+      elsif data[:projectId] && data[:name]
         ProjectTest.joins(:project).where('projects.api_id = ? AND project_tests.name = ?', data[:projectId].to_s, data[:name].to_s).first
       else
-        raise "Project test must be identified by an ID or the combination of the project ID and name, got #{data.inspect}"
+        raise "Project test must be identified by an ID or the combination of the project ID and name or the project ID and key, got #{data.inspect}"
       end
     end
 
