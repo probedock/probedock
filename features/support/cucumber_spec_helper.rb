@@ -1,18 +1,24 @@
 module CucumberSpecHelper
 
   # Parses the specified cucumber doc string representing a request body
-  # and returns a Hash describing the request data. The contents of the request body
-  # are also interpolated to fill in placeholders. JSON and XML data will
-  # be parsed so it must be valid.
+  # and returns an object describing the request data. The contents of the
+  # request body are also interpolated to fill in placeholders. JSON and XML
+  # data will be parsed so it must be valid.
   #
   # The `data_type` argument must be "XML", "JSON", or a full content type (e.g. "multipart/form-data").
   #
-  # The returned Hash provides the following:
+  # The returned object has the following attributes:
   #
   # * `type` - the type of request data (:json, :xml or :custom)
   # * `content_type` - the content type of the request (e.g. "application/json" or "multipart/form-data")
   # * `content` - the parsed and interpolated request body
   # * `serialized_content` - the interpolated request body as a string
+  #
+  #     request_data = cucumber_request_data 'JSON', doc_string
+  #     request_data.type                 #=> :json
+  #     request_data.content_type         #=> "application/json"
+  #     request_data.content              #=> parsed JSON data
+  #     request_data.serialized_content   #=> JSON data as string
   def cucumber_request_data data_type, doc
 
     # determine type & content type
@@ -41,12 +47,12 @@ module CucumberSpecHelper
       content
     end
 
-    {
+    OpenStruct.new({
       type: type,
       content_type: content_type,
       content: content,
       serialized_content: serialized_content
-    }
+    })
   end
 
   def cucumber_doc_string_to_json doc

@@ -102,7 +102,7 @@ class TestPayloadXunitParser
       ended_at = suite.attributes[:timestamp]
       parsed_ended_at = Time.parse ended_at rescue nil
 
-      # save the latest valid timestamp found
+      # save the latest valid timestamp found (in case there are multiple <testsuite> tags)
       if parsed_ended_at && (!@last_ended_at || parsed_ended_at > @last_ended_at)
         parsed['endedAt'] = ended_at # put the raw version into the payload
         @last_ended_at = parsed_ended_at

@@ -69,7 +69,7 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
   })
 
   /**
-   * Widget to manually upload a test results payload it in the UI. For example,
+   * Widget to manually upload a test results payload for a project in the UI. For example,
    * a user may generate a standard xUnit XML test report and drag-and-drop it into
    * the widget. This functionality is provided by the Dropzone library: http://www.dropzonejs.com/
    *
@@ -162,7 +162,7 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
     // headers that will be sent with uploaded files
     $scope.uploadHeaders = api.authHeaders();
 
-    // update the upload headers when the configuration changes
+    // update the widget state and upload headers when the configuration changes
     $scope.$watch('uploadParams', function(params) {
 
       // only show the drop zone if a project version is present

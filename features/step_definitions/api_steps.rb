@@ -39,8 +39,8 @@ When /^(\w+) sends a multipart\/form-data POST request with the following (?:(XM
   header 'Content-Type', 'multipart/form-data'
   header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
-  uploaded_file request_data[:serialized_content], request_data[:content_type] do |file|
-    @request_body = request_data[:content]
+  uploaded_file request_data.serialized_content, request_data.content_type do |file|
+    @request_body = request_data.content
     @response = post interpolate_content(url), { filename => file }
     @response_body = MultiJson.load @response.body
   end
@@ -54,11 +54,11 @@ When /^(\w+) sends a POST request with the following (?:(XML|JSON|[A-Za-z0-9\-\.
   request_data = cucumber_request_data data_type, doc
 
   user = find_api_user user_name
-  header 'Content-Type', request_data[:content_type]
+  header 'Content-Type', request_data.content_type
   header 'Authorization', "Bearer #{user.generate_auth_token}" if user
 
-  @request_body = request_data[:content]
-  @response = post interpolate_content(url), request_data[:serialized_content]
+  @request_body = request_data.content
+  @response = post interpolate_content(url), request_data.serialized_content
   @response_body = MultiJson.load @response.body
 end
 
