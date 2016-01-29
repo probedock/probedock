@@ -24,7 +24,7 @@ RSpec.describe 'Payload processing' do
   let!(:project){ create :project, organization: organization }
   let!(:user){ create :org_member, organization: organization }
 
-  it "should add similarly named results to the first one of those results that has a key", probedock: { key: 'df2m' } do
+  it "should add similarly named results to the first one of those results that has a key", probedock: { key: 'gq5p' } do
 
     tests = []
 
