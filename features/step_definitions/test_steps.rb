@@ -33,7 +33,7 @@ Given /^test "(.+)" was first run by (.+) for version (.+) of project (.+)$/ do 
   add_named_record name, create(:test, options)
 end
 
-Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+?)(?: and tags (.+?))?(?: and tickets (.+?))? for version (.+)$/ do |name,runner_name,category_name,tag_names,ticket_names,version_name|
+Given /^test "(.+)"(?: is (passing|failing)(?: and (active|inactive))? and)?(?: was last run by (.+) and)? has category (.+?)(?: and tags (.+?))?(?: and tickets (.+?))? for version (.+)$/ do |name,passing,active,runner_name,category_name,tag_names,ticket_names,version_name|
   test = named_record name
   last_runner = runner_name ? named_record(runner_name) : nil
   project_version = ProjectVersion.where(project_id: test.project_id, name: version_name).first_or_create
@@ -46,6 +46,14 @@ Given /^test "(.+)"(?: was last run by (.+) and)? has category (.+?)(?: and tags
   organization = project_version.project.organization
 
   description.category = Category.where(organization_id: organization.id, name: category_name).first_or_create if category_name
+
+  if passing
+    description.passing = passing == 'passing'
+  end
+
+  if active
+    description.active = active == 'active'
+  end
 
   if tag_names
     tag_names.split(',').each do |t|

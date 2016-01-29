@@ -33,6 +33,8 @@ module ProbeDock
             Organization.active.where(normalized_name: params[:organizationName].to_s.downcase).first!
           elsif params[:projectId].present?
             Organization.active.joins(:projects).where('projects.api_id = ?', params[:projectId].to_s).first!
+          elsif params[:projectVersionId].present?
+            Organization.active.joins(projects: [:versions]).where('project_versions.api_id = ?', params[:projectVersionId]).first!
           end
         end
       end
@@ -115,6 +117,50 @@ module ProbeDock
         end
 
         result
+      end
+
+      get :projectHealth do
+        authorize! :organization, :data
+
+
+        # Retrieve the data from the specified version otherwise take the most recent project version to retrieve the data
+        if params[:projectVersionId].present?
+          project_version = ProjectVersion.where('api_id = ?', params[:projectVersionId]).first
+        else
+          project_version = ProjectVersion.joins(:project).where('projects.api_id = ?', params[:projectId]).order('created_at DESC').first
+        end
+
+        tests_counts = TestDescription.joins(:project_version).where('project_versions.id = ?', project_version.id)
+
+        # In this statement, we use nullif which return null if left value is equal to right value. Therefore, we want to
+        # count the opposite of this results as COUNT will not take into account null values. Ex: all passing tests have
+        # value set to true and then we want to remove the failing ones. Then, we want nullif to return null when passing
+        # is false.
+        tests_counts = tests_counts.select(
+          # Count the number of passed tests even if they are inactive
+          'count(nullif(passing, false)) as passed_tests_count, ' +
+
+          # Count the number of inactive tests
+          'count(nullif(active, true)) as inactive_tests_count, ' +
+
+          # Count the number of inactive passing tests
+          'count(nullif(passing and not active, false)) as inactive_passed_tests_count, ' +
+
+          # Count the number of used tests meaning the tests where results have been received for the project version
+          'count(*) as run_tests_count'
+        ).take
+
+        # Count the number of tests for the specific versions
+        project_tests_rel = ProjectTest.joins(:project).where('projects.id = ?', project_version.project.id)
+
+        {
+          testsCount: project_tests_rel.count,
+          passedTestsCount: tests_counts.passed_tests_count,
+          inactiveTestsCount: tests_counts.inactive_tests_count,
+          inactivePassedTestsCount: tests_counts.inactive_passed_tests_count,
+          runTestsCount: tests_counts.run_tests_count,
+          projectVersion: serialize(project_version)
+        }
       end
 
       # GET /api/metrics/contributions?organizationId&projectId&withUser

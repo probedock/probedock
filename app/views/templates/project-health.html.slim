@@ -1,0 +1,26 @@
+.panel.panel-default
+  .panel-heading
+    h3.panel-title Project health
+  .panel-body
+    .project-health-chart
+      p.text-info ng-if='projectHealth'
+        strong ng-if='projectHealth.runTestsCount > 0' {{ projectHealth.runTestsCount | number }}
+        ng-pluralize count='projectHealth.runTestsCount' when='{"1": " test", "other": " tests"}'
+        span
+          |  in version
+          strong  {{ projectHealth.projectVersion.name }}
+          |  of the project.
+
+      canvas.chart.chart-pie data='chart.data' labels='chart.labels' colours='chart.colors'
+
+      form.form role='form' ng-if='chart.data.length'
+        .col-12
+          .form-group
+            label for='project-version' Version
+            ui-select#project-version ng-model='chart.params.projectVersion' multiple=false reset-search-input=true
+              ui-select-match placeholder='Latest version: {{ latestVersion.name }}' {{ $select.selected.name }}
+              ui-select-choices repeat='projectVersion in projectVersionChoices | filter: $select.search'
+                span ng-bind-html='projectVersion.name'
+
+      .empty ng-if='chart.data.length === 0'
+        em No tests in the project.

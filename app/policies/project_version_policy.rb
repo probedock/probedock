@@ -23,6 +23,7 @@ class ProjectVersionPolicy < ApplicationPolicy
   class Serializer < Serializer
     def to_builder options = {}
       Jbuilder.new do |json|
+        json.id record.api_id
         json.name record.name
         json.projectId record.project.api_id
         json.createdAt record.created_at.iso8601(3)
