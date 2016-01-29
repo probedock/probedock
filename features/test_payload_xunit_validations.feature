@@ -247,6 +247,42 @@ Feature: xUnit test payload validations
 
 
 
+  Scenario: An xUnit payload should be accepted as a multipart/form-data parameter with the text/xml content type
+    Given private organization Rebel Alliance exists
+    And user hsolo who is a member of Rebel Alliance exists
+    And project X-Wing exists within organization Rebel Alliance
+    When the Probe-Dock-Project-Id header is set to {@idOf: X-Wing}
+    And the Probe-Dock-Project-Version header is set to 0.4.6
+    And the Probe-Dock-Category header is set to RSpec
+    And hsolo sends a multipart/form-data POST request with the following text/xml data as the payload parameter to /api/publish:
+      """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <testsuite name="rspec" tests="3" failures="1" errors="0" time="0.235481" timestamp="2016-01-15T15:22:41+01:00">
+        <properties />
+        <testcase classname="spec.models.a_spec" name="It should work" file="./spec/models/a_spec.rb" time="0.031456" />
+      </testsuite>
+      """
+    Then the response should be HTTP 202 with the following JSON:
+      """
+      {
+        "receivedAt": "@iso8601",
+        "payloads": [
+          {
+            "id": "@uuid",
+            "projectId": "@idOf: X-Wing",
+            "projectVersion": "0.4.6",
+            "duration": 235,
+            "runnerId": "@idOf: hsolo",
+            "endedAt": "2016-01-15T14:22:41.000Z",
+            "bytes": "@integer"
+          }
+        ]
+      }
+      """
+    And the following changes should have occurred: +1 test payload, +1 process next test payload job
+
+
+
   Scenario: An xUnit payload sent without the required headers should be refused
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
