@@ -16,7 +16,21 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ApiSpecHelper
+
+  # Returns an instance of Rack::Test::UploadedFile with the following
+  # content and mime type. It can be used to test a multipart/form-data
+  # file upload.
+  #
+  # If no block is given, the file should be manually deleted after use
+  # by calling `file.unlink`. If a block is given, the file will only be
+  # available within the block and automatically deleted afterwards.
+  #
+  #     uploaded_file '{"foo":"bar"}', 'application/json' do |file|
+  #       post '/api/resource', { file: file }
+  #     end
   def uploaded_file content, mime_type
+
+    # write the content to a temporary file
     file = Tempfile.new 'probedock-uploaded-file'
     file.write content
     file.close

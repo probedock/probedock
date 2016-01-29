@@ -1,13 +1,29 @@
 module CucumberSpecHelper
+
+  # Parses the specified cucumber doc string representing a request body
+  # and returns a Hash describing the request data. The contents of the request body
+  # are also interpolated to fill in placeholders. JSON and XML data will
+  # be parsed so it must be valid.
+  #
+  # The `data_type` argument must be "XML", "JSON", or a full content type (e.g. "multipart/form-data").
+  #
+  # The returned Hash provides the following:
+  #
+  # * `type` - the type of request data (:json, :xml or :custom)
+  # * `content_type` - the content type of the request (e.g. "application/json" or "multipart/form-data")
+  # * `content` - the parsed and interpolated request body
+  # * `serialized_content` - the interpolated request body as a string
   def cucumber_request_data data_type, doc
+
+    # determine type & content type
     type = :custom
     content_type = data_type
-
     if data_type.match /^(xml|json)$/i
       type = data_type.downcase.to_sym
       content_type = "application/#{type}"
     end
 
+    # parse & interpolate data
     content = if type == :json
       cucumber_doc_string_to_json doc
     elsif type == :xml
@@ -16,6 +32,7 @@ module CucumberSpecHelper
       cucumber_doc_string_to_data doc
     end
 
+    # serialize data
     serialized_content = if type == :json
       MultiJson.dump content
     elsif type == :xml

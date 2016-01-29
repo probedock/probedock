@@ -1,12 +1,16 @@
 .modal-header
   h3.modal-title Server Error
 .modal-body
+
+  // status code & text
   p.text-danger
     ' The server responded with status code
     strong
       | {{ statusCode }}
       span ng-if='statusText'  {{ statusText }}
     | .
+
+  // list of errors (if present)
   p.text-muted ng-if='!errors.length' No error message was given.
   table.table.table-hover ng-if='errors.length'
     thead
@@ -20,5 +24,6 @@
           span ng-if='error.location' {{ error.location }}
           span ng-if='!error.location'
             ' -
+
 .modal-footer
   button.btn.btn-default.pull-right ng-click='$close()' Close

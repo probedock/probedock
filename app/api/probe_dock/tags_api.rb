@@ -30,10 +30,6 @@ module ProbeDock
             Organization.active.where(normalized_name: params[:organizationName].to_s.downcase).first!
           end
         end
-
-        def with_serialization_includes rel
-          rel = rel.includes :organization
-        end
       end
 
       get do

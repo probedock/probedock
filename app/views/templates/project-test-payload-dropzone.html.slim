@@ -2,46 +2,71 @@
   .panel-heading
     h3.panel-title Publish Test Report
   .panel-body
+
     p
       ' You may manually publish standard xUnit test reports here.
       ' Select the project version and optionally a test category,
       ' then drop your generated xUnit report file into the box below.
+
     form
 
+      / project version selection
       .form-group
         label for='test-report-version' Version
+
+        / check box to choose whether to create a new version or not
         label.new-switch.pull-right
           input type='checkbox' ng-model='formConfig.newVersion'
           '
           ' create a new version
+
+        / dropdown menu to select an existing version
         ui-select#test-report-version ng-if='!formConfig.newVersion' ng-model='uploadParams.projectVersion'
           ui-select-match placeholder='Version' {{ $select.selected.name }}
           ui-select-choices repeat='version.name as version in projectVersions | filter: $select.search'
             span ng-bind-html='version.name | highlight: $select.search'
+
+        / free input field to create a new version
         input.form-control type='text' ng-if='formConfig.newVersion' ng-model='uploadParams.projectVersion'
 
+
+
+      / category selection
       .form-group
         label for='test-report-category' Category
+
+        / check box to choose whether to create a new category or not
         label.new-switch.pull-right
           input type='checkbox' ng-model='formConfig.newCategory'
           '
           ' create a new category
+
+        / dropdown menu to select an existing category
         ui-select#test-report-category ng-if='!formConfig.newCategory' ng-model='uploadParams.category'
           ui-select-match placeholder='Category' allow-clear='true' {{ $select.selected.name }}
           ui-select-choices repeat='category.name as category in categories | filter: $select.search'
             span ng-bind-html='category.name | highlight: $select.search'
+
+        / free input field to create a new category
         input.form-control type='text' ng-if='formConfig.newCategory' ng-model='uploadParams.category'
 
+
+
+      / file drop zone
       .dropzone ng-show='formConfig.uploadEnabled'
 
+      / success message
       p.text-success ng-if='success'
         ' Your payload was accepted and will be processed shortly.
 
+      / error message
       p.text-danger ng-if='error'
         strong ng-if='!serverError'
           ' {{ error }}
         strong ng-if='serverError'
           ' Your payload was refused.
+
+          / button to display the details of an unexpected server response
           button.btn.btn-danger.btn-xs.pull-right ng-click='showErrorDetails()'
             span.glyphicon.glyphicon-question-sign
             '  More details

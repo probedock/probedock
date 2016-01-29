@@ -30,10 +30,6 @@ module ProbeDock
             Organization.active.where(normalized_name: params[:organizationName].to_s.downcase).first!
           end
         end
-
-        def with_serialization_includes rel
-          rel = rel.includes :organization
-        end
       end
 
       get do
@@ -42,12 +38,30 @@ module ProbeDock
         rel = Category
 
         rel = paginated rel do |rel|
-          rel = rel.where organization_id: current_organization.id if current_organization
+          if current_organization
+            # filter by organization
+            rel = rel.where 'categories.organization_id = ?', current_organization.id
+          else
+            # join with organizations to be able to sort by organization name
+            rel = rel.joins :organization
+          end
+
           rel
         end
 
-        rel = rel.joins(:test_descriptions).group('categories.name, categories.organization_id, categories.created_at').order('count(distinct test_descriptions.test_id) desc, categories.name asc').having('count(distinct test_descriptions.test_id) > 0')
-        rel = rel.select('categories.name, categories.organization_id, categories.created_at, count(distinct test_descriptions.test_id) as tests_count')
+        rel = rel.joins(:test_descriptions)
+                 .select('categories.name, categories.organization_id, categories.created_at, count(distinct test_descriptions.test_id) as tests_count')
+                 .having('count(distinct test_descriptions.test_id) > 0')
+
+        if current_organization
+          # order by descending tests_count, then the category name
+          rel = rel.group('categories.id, categories.name, categories.organization_id, categories.created_at')
+                   .order('count(distinct test_descriptions.test_id) desc, categories.name asc')
+        else
+          # order by organization name, then the rest
+          rel = rel.group('categories.id, categories.name, categories.organization_id, categories.created_at, organizations.id, organizations.name')
+                   .order('organizations.name, count(distinct test_descriptions.test_id) desc, categories.name asc')
+        end
 
         serialize load_resources(rel)
       end

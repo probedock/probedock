@@ -1,5 +1,8 @@
 angular.module('probedock.errors', [ 'ui.bootstrap' ])
 
+  /**
+   * Controller of the global error page for not found or authorization errors.
+   */
   .controller('ErrorPageCtrl', function($scope, $stateParams) {
     if ($stateParams.type == 'unauthorized') {
       $scope.message = 'You are not logged in.';
@@ -12,8 +15,19 @@ angular.module('probedock.errors', [ 'ui.bootstrap' ])
     }
   })
 
+  /**
+   * Error handling service. Can be used to show a dialog detailing a server error.
+   */
   .service('errors', function($log, $modal) {
     var service = {
+
+      /**
+       * Displays a modal dialog detailing the server error in the specified jQuery AJAX object.
+       *
+       * The response body is expected to be a JSON object with an `errors` property containing
+       * an array of error objects. If that is not the case, only the status code and text will
+       * be shown in the modal.
+       */
       showXhrErrors: function($scope, xhr) {
 
         var errors = [];
@@ -26,6 +40,11 @@ angular.module('probedock.errors', [ 'ui.bootstrap' ])
         return service.showServerErrors($scope, xhr.status, xhr.statusText, errors);
       },
 
+      /**
+       * Displays a modal dialog detailing the specified server error.
+       * The `errors` argument must be a list of error objects that have already been
+       * parsed from the server response.
+       */
       showServerErrors: function($scope, statusCode, statusText, errors) {
 
         var scope = $scope.$new();

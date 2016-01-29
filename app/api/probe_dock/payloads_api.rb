@@ -29,7 +29,7 @@ module ProbeDock
     # accept xUnit XML payloads
     content_type :xml, 'application/xml'
 
-    # accept the above as uploaded files
+    # also accept test payloads as uploaded files
     content_type :multipart, 'multipart/form-data'
 
     # disable automatic parsing by Grape for this resource
@@ -47,21 +47,38 @@ module ProbeDock
       namespace do
 
         params do
+          # parse the test payload as a file upload (if present)
           optional :payload, type: File
         end
 
         helpers do
+          # Returns a content type string without its additional parameters.
+          #
+          #     content_type_without_parameters "application/json; charset=utf-8"   #=> "application/json"
           def content_type_without_parameters content_type
             content_type.sub /;.*/, ''
           end
 
-          def content_type? content_type, *types
+          # Indicates whether the specified content type is among the expected types.
+          # Expected types are specified by their extension (e.g. :json for "application/json")
+          # and looked up with `Mime::Type.lookup_by_extension`. Additional content types are
+          # defined in `config/initializers/mime_types.rb`.
+          #
+          #     content_type? "application/json", :json, :xml   #=> true
+          #     content_type? "text/plain", :json, :xml         #=> false
+          def content_type? content_type, *expected_types
             ct = content_type_without_parameters content_type
-            types.any?{ |type| Mime::Type.lookup_by_extension(type) === ct }
+            expected_types.any?{ |type| Mime::Type.lookup_by_extension(type) === ct }
           end
 
-          def request_content_type? *types
-            content_type? request.content_type, *types
+          # Indicates whether the content type of the current request is among the
+          # expected types. The behavior is the same as for `content_type?`.
+          #
+          #     # assuming a request with the content type "application/json"
+          #     request_content_type? :json, :xml            #=> true
+          #     request_content_type? :multipart_form_data   #=> false
+          def request_content_type? *expected_types
+            content_type? request.content_type, *expected_types
           end
         end
 
@@ -92,6 +109,8 @@ module ProbeDock
           end
 
           # determine the payload type
+          # also accept "text/json" and "text/xml" as that is sometimes the
+          # content type of manually uploaded files
           if content_type? raw_payload_content_type, :json, :text_json, :probedock_payload_v1
             payload_type = :json
           elsif content_type? raw_payload_content_type, :xml, :text_xml
