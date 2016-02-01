@@ -27,3 +27,4 @@ Mime::Type.register "multipart/form-data", :multipart_form_data
 
 # Custom media types
 Mime::Type.register "application/vnd.probedock.payload.v1+json", :probedock_payload_v1
+Mime::Type.register "application/vnd.probe-dock.payload.v1+json", :probedock_payload_v1_old_naming

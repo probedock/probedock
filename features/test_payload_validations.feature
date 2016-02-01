@@ -125,6 +125,57 @@ Feature: Test payload validations
 
 
 
+  Scenario: A valid JSON payload should be accepted with Probe Dock's custom content type with the old naming convention
+    Given private organization Rebel Alliance exists
+    And user hsolo who is a member of Rebel Alliance exists
+    And project X-Wing exists within organization Rebel Alliance
+    And hsolo sends a POST request with the following application/vnd.probe-dock.payload.v1+json data to /api/publish:
+      """
+      {
+        "projectId": "{@idOf: X-Wing}",
+        "version": "0.4.6",
+        "duration": 1529,
+        "results": [
+          {
+            "n": "Lorem ipsum dolor sit amet consectetuer adipiscing elit proin",
+            "p": true,
+            "d": 2058,
+            "c": "RSpec",
+            "g": [ "crud", "unit", "performance" ],
+            "t": [ "JIRA-857" ],
+            "a": {
+              "lorem.ipsum.dolor": "lorem ipsum dolor sit"
+            }
+          }
+        ],
+        "reports": [
+          {
+            "uid": "32d4d802-c436-11e5-9912-ba0be0483c18"
+          }
+        ]
+      }
+      """
+    Then the response should be HTTP 202 with the following JSON:
+      """
+      {
+        "receivedAt": "@iso8601",
+        "payloads": [
+          {
+            "id": "@uuid",
+            "projectId": "@idOf: X-Wing",
+            "projectVersion": "0.4.6",
+            "duration": 1529,
+            "runnerId": "@idOf: hsolo",
+            "endedAt": "@iso8601",
+            "bytes": "@integer"
+          }
+        ]
+      }
+      """
+    And the following changes should have occurred: +1 test payload, +1 process next test payload job
+
+
+
   Scenario: A payload of the wrong content type should be refused
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists

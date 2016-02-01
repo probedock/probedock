@@ -111,7 +111,7 @@ module ProbeDock
           # determine the payload type
           # also accept "text/json" and "text/xml" as that is sometimes the
           # content type of manually uploaded files
-          if content_type? raw_payload_content_type, :json, :text_json, :probedock_payload_v1
+          if content_type? raw_payload_content_type, :json, :text_json, :probedock_payload_v1, :probedock_payload_v1_old_naming
             payload_type = :json
           elsif content_type? raw_payload_content_type, :xml, :text_xml
             payload_type = :xml
