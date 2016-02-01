@@ -61,7 +61,7 @@ angular.module('probedock.orgs', [ 'probedock.api', 'probedock.auth', 'probedock
       addAuthFunctions: function($scope) {
 
         $scope.currentMember = function() {
-          return $rootScope.currentUserIs('admin') || service.currentOrganization && service.currentOrganization.member;
+          return $rootScope.currentUserIs('admin') || auth.currentUser && service.currentOrganization && service.currentOrganization.member;
         };
 
         $scope.currentMemberIs = function() {
