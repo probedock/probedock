@@ -10,7 +10,7 @@
         span ng-if='project' project
         span ng-if='!project' organization
         ng-pluralize count='nbWeeks' when='{"1": " over the last week.", "other": " over the last {{ nbWeeks }} weeks."}'
-      canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+      canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
       form.form role='form' ng-if='chart.data.length'
         .col-sm-6.col-xs-12 ng-if='!project'
           project-select prefix='tests-by-week' organization='organization' model-object='chart.params'
