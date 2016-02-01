@@ -75,7 +75,8 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
       var series = [];
       $scope.chart.data = [ series ];
       $scope.chart.labels.length = 0;
-      $scope.totalCount = response.data[response.data.length - 1].testsCount;
+      $scope.totalCount = _.last(response.data).testsCount;
+      $scope.countDelta = _.last(response.data).testsCount - _.first(response.data).testsCount;
 
       _.each(response.data, function(data) {
         $scope.chart.labels.push(moment(data.date).format('DD.MM.YYYY'));
