@@ -136,7 +136,8 @@ class TestPayloadXunitParser
 
       # parse the "name" attribute of the <testcase> (mandatory)
       check_string_attribute test_case, :name, limit: false do |value|
-        result['n'] = value.length > 255 ? "#{value[0, 252]}..." : value
+        normalized_value = value.strip
+        result['n'] = normalized_value.length > 255 ? "#{normalized_value[0, 252]}..." : normalized_value
       end
 
       # mark the result as inactive if the <testcase> contains any <skipped> tags (optional)
