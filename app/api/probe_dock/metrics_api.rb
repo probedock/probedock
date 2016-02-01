@@ -153,6 +153,16 @@ module ProbeDock
           project_version = ProjectVersion.joins(:project).where('projects.api_id = ?', params[:projectId]).order('created_at DESC').first
         end
 
+        if project_version.blank?
+          return {
+            testsCount: 0,
+            passedTestsCount: 0,
+            inactiveTestsCount: 0,
+            inactivePassedTestsCount: 0,
+            runTestsCount: 0
+          }
+        end
+
         tests_counts = TestDescription.joins(:project_version).where('project_versions.id = ?', project_version.id)
 
         # In this statement, we use nullif which return null if left value is equal to right value. Therefore, we want to

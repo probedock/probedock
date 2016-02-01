@@ -66,7 +66,7 @@ module ProbeDock
           end
 
           if params[:name].present?
-            rel = rel.where name: params[:name].to_s.downcase
+            rel = rel.where 'LOWER(name) LIKE ?', params[:name].to_s.downcase
           end
 
           rel
