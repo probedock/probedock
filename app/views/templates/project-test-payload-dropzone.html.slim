@@ -10,26 +10,7 @@
 
     form
 
-      / project version selection
-      .form-group
-        label for='test-report-version' Version
-
-        / check box to choose whether to create a new version or not
-        label.new-switch.pull-right
-          input type='checkbox' ng-model='formConfig.newVersion' ng-disabled='!projectVersions.length'
-          '
-          ' create a new version
-
-        / dropdown menu to select an existing version
-        ui-select#test-report-version ng-if='!formConfig.newVersion' ng-model='uploadParams.projectVersion'
-          ui-select-match placeholder='Version' {{ $select.selected.name }}
-          ui-select-choices repeat='version.name as version in projectVersions | filter: $select.search'
-            span ng-bind-html='version.name | highlight: $select.search'
-
-        / free input field to create a new version
-        input.form-control type='text' ng-if='formConfig.newVersion' ng-model='uploadParams.projectVersion'
-
-
+      project-version-select prefix='test-payload-dropzone' project='project' model-object='uploadParams' create-new='true' auto-select='true'
 
       / category selection
       .form-group

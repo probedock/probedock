@@ -146,9 +146,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
 
     // UI configuration
     $scope.formConfig = {
-      // if false, display a dropdown menu to select an existing version,
-      // otherwise, display a free input field to create a new one
-      newVersion: false,
       // if false, display a dropdown menu to select an existing category,
       // otherwise, display a free input field to create a new one
       newCategory: false,
@@ -173,7 +170,7 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
       }
 
       if (params.projectVersion) {
-        $scope.uploadHeaders['Probe-Dock-Project-Version'] = params.projectVersion;
+        $scope.uploadHeaders['Probe-Dock-Project-Version'] = params.projectVersion.name;
       } else {
         delete $scope.uploadHeaders['Probe-Dock-Project-Version'];
       }
@@ -213,7 +210,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
       if (values[0] && values[1]) {
         setUpHeaders();
         fetchCategories();
-        fetchVersions();
       }
     });
 
@@ -235,28 +231,6 @@ angular.module('probedock.project', [ 'probedock.api', 'probedock.forms', 'probe
         // if there is no existing category, automatically switch
         // to the free input field to create a new one
         $scope.formConfig.newCategory = !res.data.length;
-      });
-    }
-
-    function fetchVersions() {
-      api({
-        url: '/projectVersions',
-        params: {
-          projectId: $scope.project.id
-        }
-      }).then(function(res) {
-        $scope.projectVersions = res.data;
-
-        if (res.data.length) {
-          // if the project has existing versions, automatically
-          // select the first (most recent) one
-          $scope.uploadParams.projectVersion = res.data[0].name;
-        } else {
-          // otherwise, automatically switch to the free input field
-          // to create a new one, and pre-fill it
-          $scope.formConfig.newVersion = true;
-          $scope.uploadParams.projectVersion = '1.0.0';
-        }
       });
     }
   })
