@@ -81,8 +81,12 @@ module ApiSpecHelper
     elsif m = value.match(/^@date\((.*)\)$/)
       if m[1].match(/(today|now)/)
         Time.now.strftime('%Y-%m-%d')
+      elsif m = value.match(/(\d+) (second|minute|hour|day|week|month|year)s? ago beginning of (day|week)/)
+        m[1].to_i.send(m[2]).ago.send("beginning_of_#{m[3]}").strftime('%Y-%m-%d')
       elsif m = value.match(/(\d+) (second|minute|hour|day|week|month|year)s? ago/)
         m[1].to_i.send(m[2]).ago.strftime('%Y-%m-%d')
+      elsif m = value.match(/beginning of (day|week)/)
+        Time.now.send("beginning_of_#{m[1]}").strftime('%Y-%m-%d')
       else
         raise 'Unknown date expectation format'
       end

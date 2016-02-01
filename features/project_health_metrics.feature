@@ -1,4 +1,4 @@
-@api @metrics @wip
+@api @metrics
 Feature: Project health metrics
 
   Users should be able to retrieve project health metrics

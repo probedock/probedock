@@ -20,6 +20,12 @@ module ProbeDock
     DEFAULT_NB_DAYS_FOR_REPORTS = 30
     MAX_NB_DAYS_FOR_REPORTS = 120
 
+    DEFAULT_NB_DAYS_FOR_NEW_TESTS = 30
+    MAX_NB_DAYS_FOR_NEW_TESTS = 120
+
+    DEFAULT_NB_WEEKS_FOR_TESTS = 10
+    MAX_NB_WEEKS_FOR_TESTS = 52
+
     namespace :metrics do
       before do
         authenticate
@@ -37,40 +43,56 @@ module ProbeDock
             Organization.active.joins(projects: [:versions]).where('project_versions.api_id = ?', params[:projectVersionId]).first!
           end
         end
+
+        def apply_projects_and_users_filters(rel_for_filtering)
+          rel = rel_for_filtering
+
+          if params[:projectIds].present? && params[:projectIds].kind_of?(Array)
+            rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s)
+          end
+
+          if params[:userIds].present? && params[:userIds].kind_of?(Array)
+           users = User.where('api_id IN (?)', params[:userIds].collect(&:to_s)).to_a
+           rel = rel.joins 'LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id'
+
+           user_ids = users.collect &:id
+           rel = rel.where '(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids
+          end
+
+          rel
+        end
+
+        def count_new_tests_by_interval(start_date, interval)
+          rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select("count(project_tests.id) as project_tests_count, date_trunc('#{interval}', project_tests.first_run_at) as project_tests_by_interval")
+          rel = rel.where 'project_tests.first_run_at >= ?', start_date
+
+          rel = apply_projects_and_users_filters rel
+
+          rel = rel.group('project_tests_by_interval').order('project_tests_by_interval DESC')
+
+          rel.to_a.inject({}){ |memo,data| memo[data.project_tests_by_interval.strftime('%Y-%m-%d')] = data.project_tests_count; memo }
+        end
       end
 
       get :newTestsByDay do
         authorize! :organization, :data
 
-        start_date = 29.days.ago.beginning_of_day
+        nb_days = params[:nbDays].to_i
+        nb_days = MAX_NB_DAYS_FOR_NEW_TESTS if nb_days > MAX_NB_DAYS_FOR_NEW_TESTS
+        nb_days = DEFAULT_NB_DAYS_FOR_NEW_TESTS if nb_days <= 0
+        nb_days
 
-        rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select("count(project_tests.id) as project_tests_count, date_trunc('day', project_tests.first_run_at) as project_tests_day")
-        rel = rel.where 'project_tests.first_run_at >= ?', start_date
-
-        if params[:projectIds].present? && params[:projectIds].kind_of?(Array)
-          rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s)
-        end
-
-        if params[:userIds].present? && params[:userIds].kind_of?(Array)
-
-          users = User.where('api_id IN (?)', params[:userIds].collect(&:to_s)).to_a
-          rel = rel.joins 'LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id'
-
-          user_ids = users.collect &:id
-          rel = rel.where '(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids
-        end
-
-        rel = rel.group('project_tests_day').order('project_tests_day DESC')
-
-        counts = rel.to_a.inject({}){ |memo,data| memo[data.project_tests_day.strftime('%Y-%m-%d')] = data.project_tests_count; memo }
+        start_date = (nb_days - 1).days.ago.beginning_of_day
 
         result = []
         current_date = start_date
 
-        30.times do |i|
-          date = current_date.strftime('%Y-%m-%d')
-          result << { date: date, testsCount: counts.fetch(date, 0) }
-          current_date += 1.day
+        tests_counts = count_new_tests_by_interval start_date, :day
+
+        nb_days.times do |i|
+         date = current_date.strftime('%Y-%m-%d')
+         result << { date: date, testsCount: tests_counts.fetch(date, 0) }
+         current_date += 1.day
         end
 
         result
@@ -82,6 +104,7 @@ module ProbeDock
         nb_days = params[:nbDays].to_i
         nb_days = MAX_NB_DAYS_FOR_REPORTS if nb_days > MAX_NB_DAYS_FOR_REPORTS
         nb_days = DEFAULT_NB_DAYS_FOR_REPORTS if nb_days <= 0
+        nb_days
 
         start_date = (nb_days - 1).days.ago.beginning_of_day
 
@@ -161,6 +184,38 @@ module ProbeDock
           runTestsCount: tests_counts.run_tests_count,
           projectVersion: serialize(project_version)
         }
+      end
+
+      get :testsByWeek do
+        authorize! :organization, :data
+
+        nb_weeks = params[:nbWeeks].to_i
+        nb_weeks = MAX_NB_WEEKS_FOR_TESTS if nb_weeks > MAX_NB_WEEKS_FOR_TESTS
+        nb_weeks = DEFAULT_NB_WEEKS_FOR_TESTS if nb_weeks <= 0
+        nb_weeks
+
+        start_date = (nb_weeks - 1).weeks.ago.beginning_of_week
+
+        rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select('count(project_tests.id) as total_tests_count')
+        rel = rel.where 'project_tests.first_run_at < ?', start_date
+
+        rel = apply_projects_and_users_filters rel
+
+        total_tests_count = rel.take.total_tests_count
+
+        result = []
+        current_date = start_date
+
+        tests_count = count_new_tests_by_interval start_date, :week
+
+        nb_weeks.times do |i|
+          date = current_date.strftime('%Y-%m-%d')
+          total_tests_count = total_tests_count + tests_count.fetch(date, 0)
+          result << { date: date, testsCount: total_tests_count }
+          current_date += 1.week
+        end
+
+        result
       end
 
       # GET /api/metrics/contributions?organizationId&projectId&withUser
