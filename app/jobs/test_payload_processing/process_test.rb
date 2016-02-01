@@ -47,8 +47,8 @@ module TestPayloadProcessing
       description.last_runner = results.last.runner
       description.last_result = results.last
       description.category = results.collect(&:category).compact.last
-      description.tags = results.inject([]){ |memo,r| memo & r.tags }
-      description.tickets = results.inject([]){ |memo,r| memo & r.tickets }
+      description.tags = results.inject([]){ |memo,r| memo | r.tags }
+      description.tickets = results.inject([]){ |memo,r| memo | r.tickets }
       description.custom_values = results.inject(description.custom_values){ |memo,r| memo.merge r.custom_values }.select{ |k,v| !v.nil? }
 
       description.results_count += results.length

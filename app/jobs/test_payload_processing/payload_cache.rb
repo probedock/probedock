@@ -48,46 +48,72 @@ module TestPayloadProcessing
       Rails.logger.info "Cached data for #{results.length} results in #{(time * 1000).round 1}ms"
     end
 
+    # Collects each test payload result and adds it to the correct test.
+    #
+    # The algorithm to group test results with tests is the following one:
+    #
+    # * if a test result has a key, it is associated with the corresponding test
+    # * if a test result has no key but the same name as another result with a key in the payload, it is associated with the same test
+    # * if a test result has no key and the same name as another result with no key in the payload, it is associated with the same test
     def register_result result
       @test_results << result
 
       has_key = result.key.present?
 
       existing_data = nil
+
+      # find test data with the same key
       existing_data_by_key = @test_data.find{ |d| has_key && d[:key] == result.key }
+      # find test data with the same name
       existing_data_by_name = @test_data.find{ |d| d[:names].include? result.name }
+      # find test data with the same test
       existing_data_by_test = @test_data.find{ |d| d[:test] && d[:test] == result.key.try(:test) }
 
+      # previous results were found with the same key
       if existing_data_by_key
+        # the result will be added to the same test
         existing_data = existing_data_by_key
+        # add the result's name to the names linked to this key
+        # further results with the same name and no key will be added to the same test
         existing_data[:names] << result.name unless existing_data[:names].include? result.name
       end
 
-      if existing_data_by_test
-        if existing_data && existing_data_by_test != existing_data
-          existing_data[:names] << result.name unless existing_data[:names].include? result.name
-          existing_data[:test] = existing_data_by_test[:test] if !existing_data[:test]
-          @test_data.delete existing_data_by_test
-        elsif !existing_data
-          existing_data = existing_data_by_test
-          existing_data[:names] << result.name unless existing_data[:names].include? result.name
-          existing_data[:key] = result.key if has_key
-          existing_data[:test] = result.key.test if has_key && result.key.test && !existing_data[:test]
-        end
+      # the current result has a key and previous results were found for the same test but without a key (matched by name)
+      if existing_data_by_test && !existing_data
+        # attach the result to the same test
+        existing_data = existing_data_by_test
+        # add the result's name to the names linked to this key and test
+        # further results with the same name and no key will be added to the same test
+        existing_data[:names] << result.name unless existing_data[:names].include? result.name
+        existing_data[:key] = result.key
+        existing_data[:test] = result.key.test if result.key.test && !existing_data[:test]
       end
 
+      # previous results were found with the same name
       if existing_data_by_name
-        if existing_data && existing_data_by_name != existing_data
+
+        # the current result was already added to a test by key
+        # but the previous results are currently assigned to another test that does not have a key
+        if existing_data && existing_data_by_name != existing_data && !existing_data_by_name[:key]
+          # if the key is new, attach it to the existing test
           existing_data[:test] = existing_data_by_name[:test] if !existing_data[:test]
+          # the previous results will be added to the key's test instead
           @test_data.delete existing_data_by_name
-        elsif !existing_data
+
+        # the current result has not yet been added to a test
+        elsif !existing_data && (!existing_data_by_name[:key] || !result.key || existing_data_by_name[:key] == result.key)
+          # the current result will be added to the same test as the previous results with the same name
           existing_data = existing_data_by_name
+          # if the current result has a key and the previous results were added to an existing test with no key, the key will be attached to that test
           existing_data[:key] = result.key if has_key
-          existing_data[:test] = result.key.test if has_key && result.key.test && !existing_data[:test]
+          # if the key is attached to an existing test, the previous results will be added to that test instead
+          existing_data[:test] = result.key.test if has_key && result.key.test
         end
       end
 
+      # if no existing data was found, assign the result to a new test
       unless existing_data
+        test = result.key.try(:test) || test(result.name)
         @test_data << {
           key: result.key,
           test: result.key.try(:test) || test(result.name),

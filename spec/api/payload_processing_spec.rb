@@ -28,9 +28,9 @@ RSpec.describe 'Payload processing' do
 
     # prepare payload
     raw_payload = generate_raw_payload projects[0], results: [
-      { n: 'It should work' },
-      { n: 'It might work', p: false },
-      { n: 'It should also work', c: nil }
+      { n: 'It should work', t: %w(t1 t2) },
+      { n: 'It might work', p: false, c: 'RSpec', g: %w(foo bar baz) },
+      { n: 'It should also work', c: nil, g: %w(baz qux), t: %w(t2) }
     ]
 
     store_preaction_state
@@ -43,7 +43,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check database changes
-    expect_changes test_payloads: 1, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3, categories: 1, tags: 4, tickets: 2
 
     # check payload & report
     payload = check_json_payload @response_body, raw_payload, testsCount: 3, newTestsCount: 3
@@ -79,12 +79,12 @@ RSpec.describe 'Payload processing' do
 
     # prepare 2 payloads
     first_raw_payload = generate_raw_payload projects[0], version: '1.2.3', uid: 'foo', results: [
-      { n: 'It should work' }
+      { n: 'It should work', c: 'RSpec', g: %w(foo) }
     ]
 
     second_raw_payload = generate_raw_payload projects[0], version: '1.2.3', uid: 'foo', results: [
-      { n: 'It might work', p: false },
-      { n: 'It should also work' }
+      { n: 'It might work', p: false, c: 'JUnit'  },
+      { n: 'It should also work', g: %w(foo bar) }
     ]
 
     store_preaction_state
@@ -102,7 +102,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check database changes
-    expect_changes test_payloads: 2, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3
+    expect_changes test_payloads: 2, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3, categories: 2, tags: 2
 
     # check payloads & report
     first_payload = check_json_payload @first_response_body, first_raw_payload, testsCount: 1, newTestsCount: 1
@@ -150,18 +150,18 @@ RSpec.describe 'Payload processing' do
 
     # prepare payload with 12 results
     raw_payload = generate_raw_payload projects[0], results: [
-      { n: 'It should work' },                       # 0.  key: bcde (same name as result at index 8)
-      { n: 'It might work', p: false },              # 1.  name: It might work
-      { n: 'It should also work', k: 'abcd' },       # 2.  key: abcd
-      { n: 'It will work', k: 'cdef', p: false },    # 3.  key: cdef
-      { n: 'It should work' },                       # 4.  key: bcde (same name as result at index 8)
-      { n: 'It would work', p: false },              # 5.  name: It would work
-      { n: 'It should also work', k: 'abcd' },       # 6.  key: abcd
-      { n: 'It could work', k: 'bcde', p: false },   # 7.  key: bcde
-      { n: 'It should work', k: 'bcde' },            # 8.  key: bcde
-      { n: 'It will definitely work', k: 'cdef' },   # 9.  key: cdef
-      { n: 'It would work', p: false },              # 10. name: It would work
-      { n: 'It could work' }                         # 11. key: bcde (same name as result at index 7)
+      { n: 'It should work', g: %w(foo), c: 'JUnit' },           # 0.  key: bcde (same name as result at index 8)
+      { n: 'It might work', p: false, g: %w(bar) },              # 1.  name: It might work
+      { n: 'It should also work', k: 'abcd' },                   # 2.  key: abcd
+      { n: 'It will work', k: 'cdef', p: false, g: %w(bar) },    # 3.  key: cdef
+      { n: 'It should work', g: %w(foo bar), t: %w(t1) },        # 4.  key: bcde (same name as result at index 8)
+      { n: 'It would work', p: false, c: 'RSpec' },              # 5.  name: It would work
+      { n: 'It should also work', k: 'abcd' },                   # 6.  key: abcd
+      { n: 'It could work', k: 'bcde', p: false, g: %w(baz) },   # 7.  key: bcde
+      { n: 'It should work', k: 'bcde', t: %w(t1 t2 t3) },       # 8.  key: bcde
+      { n: 'It will definitely work', k: 'cdef', g: %w(baz) },   # 9.  key: cdef
+      { n: 'It would work', p: false },                          # 10. name: It would work
+      { n: 'It could work', c: 'RSpec' }                         # 11. key: bcde (same name as result at index 7)
     ]
 
     store_preaction_state
@@ -174,7 +174,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check database changes
-    expect_changes test_payloads: 1, test_reports: 1, project_versions: 1, test_keys: 3, test_results: 12, project_tests: 5, test_descriptions: 5
+    expect_changes test_payloads: 1, test_reports: 1, project_versions: 1, test_keys: 3, test_results: 12, project_tests: 5, test_descriptions: 5, categories: 2, tags: 3, tickets: 3
 
     # check payload & report
     payload = check_json_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 5
@@ -212,10 +212,10 @@ RSpec.describe 'Payload processing' do
     # check the descriptions of the 5 tests for the payload's project version
     check_descriptions payload, tests do
       check_description results[1], resultsCount: 1, passing: false
-      check_description results[10], resultsCount: 2, passing: false
+      check_description results[10], resultsCount: 2, passing: false, category: 'RSpec'
       check_description results[6], resultsCount: 2
-      check_description results[9], resultsCount: 2, passing: false
-      check_description results[11], resultsCount: 5, passing: false
+      check_description results[9], resultsCount: 2, passing: false, tags: %w(bar baz)
+      check_description results[11], resultsCount: 5, passing: false, category: 'RSpec', tags: %w(foo bar baz), tickets: %w(t1 t2 t3)
     end
   end
 
@@ -223,12 +223,16 @@ RSpec.describe 'Payload processing' do
 
     tests = []
 
+    categories = %w(RSpec).collect{ |name| create :category, name: name, organization: organization }
+    tags = %w(foo bar).collect{ |name| create :tag, name: name, organization: organization }
+    tickets = %w(t1).collect{ |name| create :ticket, name: name, organization: organization }
+
     version = create :project_version, project: projects[0], name: '1.2.3'
-    tests << create(:test, name: 'It should work', project: projects[0], last_runner: user, project_version: version)
+    tests << create(:test, name: 'It should work', project: projects[0], last_runner: user, project_version: version, category: categories[0], tags: tags)
     k1 = create :test_key, user: user, project: projects[0]
-    tests << create(:test, name: 'It might work', project: projects[0], key: k1, last_runner: user, project_version: version)
+    tests << create(:test, name: 'It might work', project: projects[0], key: k1, last_runner: user, project_version: version, category: categories[0], tickets: tickets)
     k2 = create :test_key, user: user, project: projects[0]
-    tests << create(:test, name: 'It could work', project: projects[0], key: k2, last_runner: user, project_version: version)
+    tests << create(:test, name: 'It could work', project: projects[0], key: k2, last_runner: user, project_version: version, tags: tags[0, 1])
     tests << create(:test, name: 'It has always worked', project: projects[0], last_runner: user, project_version: version)
 
     version = create :project_version, project: projects[1], name: '1.2.3'
@@ -240,11 +244,11 @@ RSpec.describe 'Payload processing' do
 
     raw_payload = generate_raw_payload projects[0], version: '1.2.3', results: [
       { n: 'It had worked', p: false },
-      { n: 'It should work' },
-      { n: 'It might work', k: k1.key },
+      { n: 'It should work', c: 'Cucumber', g: %w(baz) },
+      { n: 'It might work', k: k1.key, g: %w(foo bar baz), t: %w(t1 t2 t3) },
       { n: 'It will work', p: false },
-      { n: 'It could work', k: k2.key },
-      { n: 'It will work', k: k2.key },
+      { n: 'It could work', k: k2.key, c: 'RSpec' },
+      { n: 'It will work', k: k2.key, t: %w(t2 t3) },
       { n: 'It had worked', k: 'foo', p: false },
       { n: 'It has always worked', k: 'bar' }
     ]
@@ -259,7 +263,7 @@ RSpec.describe 'Payload processing' do
     end
 
     # check database changes
-    expect_changes test_payloads: 1, test_reports: 1, test_results: 8, test_keys: 2, project_tests: 1, test_descriptions: 1
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 8, test_keys: 2, project_tests: 1, test_descriptions: 1, categories: 1, tags: 1, tickets: 2
 
     # check payload & report
     payload = check_json_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
@@ -294,7 +298,7 @@ RSpec.describe 'Payload processing' do
     check_descriptions payload, tests do
       check_description results[1], resultsCount: 1
       check_description results[2], resultsCount: 1
-      check_description results[5], resultsCount: 3, passing: false
+      check_description results[5], resultsCount: 3, passing: false, category: 'RSpec'
       check_description results[6], resultsCount: 2, passing: false
       check_description results[7], resultsCount: 1
     end
@@ -326,7 +330,7 @@ RSpec.describe 'Payload processing' do
       { n: 'It should work' },
       { n: 'It might work', k: k1.key },
       { n: 'It will work', p: false },
-      { n: 'It could work' },
+      { n: 'It could work' }, # FIXME: move this result down one line and check why it doesn't work
       { n: 'It will work', k: k2.key },
       { n: 'It had worked', k: 'foo', p: false },
       { n: 'It has always worked', k: 'bar' },
@@ -342,12 +346,12 @@ RSpec.describe 'Payload processing' do
       check_json_payload_response @response_body, projects[0], user, raw_payload
     end
 
-    # check database changes
-    expect_changes test_payloads: 1, test_reports: 1, test_results: 9, project_versions: 1, test_keys: 2, project_tests: 1, test_descriptions: 5
-
     # check payload & report
     payload = check_json_payload @response_body, raw_payload, testsCount: 5, newTestsCount: 1
     check_report payload, organization: organization
+
+    # check database changes
+    expect_changes test_payloads: 1, test_reports: 1, test_results: 9, project_versions: 1, test_keys: 2, project_tests: 1, test_descriptions: 5
 
     # check project & version
     expect(projects[0].tap(&:reload).tests_count).to eq(5)
