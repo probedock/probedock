@@ -1,13 +1,13 @@
 @api @metrics
-Feature: Reports by day metrics
+Feature: Tests by week metrics
 
-  Users should be able to retrieve the number of new tests by day of an organization.
+  Users should be able to retrieve the number of tests by week of an organization.
   The users can filter the by project and/or by user.
-  Finally, the users can retrieve between 1 and 120 days of data.
+  Finally, the users can retrieve between 1 and 52 weeks of data.
 
   The following result is provided:
-  - testsCount for each day
-  - date for each day
+  - testsCount for each week
+  - date for each week (first day of the week)
 
 
   Background:
@@ -26,7 +26,7 @@ Feature: Reports by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics
+  Scenario: An organization member should be able to get the organization's tests by week metrics
     When hsolo sends a GET request to /api/metrics/testsByWeek?organizationId={@idOf: Rebel Alliance}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -46,7 +46,7 @@ Feature: Reports by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics filtered by project
+  Scenario: An organization member should be able to get the organization's tests by week metrics filtered by project
     When hsolo sends a GET request to /api/metrics/testsByWeek?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -66,7 +66,7 @@ Feature: Reports by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics filtered by user
+  Scenario: An organization member should be able to get the organization's tests by week metrics filtered by user
     When hsolo sends a GET request to /api/metrics/testsByWeek?organizationId={@idOf: Rebel Alliance}&userIds[]={@idOf: hsolo}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -86,7 +86,7 @@ Feature: Reports by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics filtered by project and user
+  Scenario: An organization member should be able to get the organization's tests by week metrics filtered by project and user
     When hsolo sends a GET request to /api/metrics/testsByWeek?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}&userIds[]={@idOf: hsolo}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -103,6 +103,64 @@ Feature: Reports by day metrics
       }]
       """
     And nothing should have been added or deleted
+
+
+@wip
+  Scenario: A user should be able to get a public organization's new tests by day metrics
+     Given public organization Old Republic exists
+     And user borgana who is a member of Old Republic exists
+     And project Senate exists within organization Old Republic
+     And test "Chairs must be comfortable" was created 2 weeks ago by borgana with key kp1 for version 1.0.0 of project Senate
+     And test "Doors must be large enough" was created 2 weeks ago by borgana with key kp2 for version 1.0.0 of project Senate
+     And test "Translations must be available for all" was created 1 week ago by borgana with key kp3 for version 1.0.0 of project Senate
+     And project Jedi Temple exists within organization Old Republic
+     And test "Enough room must be available" was created 1 week ago by borgana with key kp4 for version 1.0.0 of project Jedi Temple
+     And assuming tests by week metrics are calculated for 3 weeks by default
+     When lskywalker sends a GET request to /api/metrics/testsByWeek?organizationId={@idOf: Old Republic}
+     Then the response code should be 200
+     And the response body should be the following JSON:
+       """
+       [{
+         "date": "@date(2 weeks ago beginning of week)",
+         "testsCount": 2
+       }, {
+         "date": "@date(1 week ago beginning of week)",
+         "testsCount": 4
+       }, {
+         "date": "@date(beginning of week)",
+         "testsCount": 4
+       }]
+       """
+     And nothing should have been added or deleted
+
+
+@wip
+   Scenario: An anonymous user should be able to get a public organization's new tests by day metrics
+     Given public organization Old Republic exists
+     And user borgana who is a member of Old Republic exists
+     And project Senate exists within organization Old Republic
+     And test "Chairs must be comfortable" was created 2 weeks ago by borgana with key kp1 for version 1.0.0 of project Senate
+     And test "Doors must be large enough" was created 2 weeks ago by borgana with key kp2 for version 1.0.0 of project Senate
+     And test "Translations must be available for all" was created 1 week ago by borgana with key kp3 for version 1.0.0 of project Senate
+     And project Jedi Temple exists within organization Old Republic
+     And test "Enough room must be available" was created 1 week ago by borgana with key kp4 for version 1.0.0 of project Jedi Temple
+     And assuming tests by week metrics are calculated for 3 weeks by default
+     When nobody sends a GET request to /api/metrics/testsByWeek?organizationId={@idOf: Old Republic}
+     Then the response code should be 200
+     And the response body should be the following JSON:
+       """
+       [{
+         "date": "@date(2 weeks ago beginning of week)",
+         "testsCount": 2
+       }, {
+         "date": "@date(1 week ago beginning of week)",
+         "testsCount": 4
+       }, {
+         "date": "@date(beginning of week)",
+         "testsCount": 4
+       }]
+       """
+     And nothing should have been added or deleted
 
 
 

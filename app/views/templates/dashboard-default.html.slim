@@ -32,7 +32,7 @@
 .container-fluid ng-if='orgIsActive()'
   .col-md-6.col-xs-12
     recent-activity ng-if='currentOrganization' organization='currentOrganization'
-    tests-by-week-widget ng-if='currentOrganization' organization='currentOrganization'
+    tests-by-week-widget ng-if='currentOrganization' organization='currentOrganization' nb-weeks='30'
     .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl' ng-if='orgIsActive()'
       .panel-heading
         h3.panel-title Test Tags

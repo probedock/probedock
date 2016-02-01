@@ -6,7 +6,6 @@ angular.module('probedock.projectSelect', [ 'probedock.api' ])
       templateUrl: '/templates/project-select.html',
       scope: {
         organization: '=',
-        project: '=',
         modelObject: '=',
         modelProperty: '@',
         prefix: '@'

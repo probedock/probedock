@@ -6,19 +6,23 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
       templateUrl: '/templates/tests-by-week-widget.html',
       scope: {
         organization: '=',
-        project: '='
+        project: '=',
+        nbWeeks: '=?'
       }
     };
   })
 
   .controller('TestsByWeekChartCtrl', function(api, $scope) {
 
+    $scope.nbWeeks = $scope.nbWeeks || 30;
+
     $scope.chart = {
       data: [],
       labels: [],
       params: {
         projectIds: [],
-        userIds: []
+        userIds: [],
+        nbWeeks: $scope.nbWeeks
       },
       options: {
         pointHitDetectionRadius: 5,
@@ -34,8 +38,6 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
         }
       }
     };
-
-    $scope.projectVersionChoices = [];
 
     $scope.$watch('organization', function(value) {
       if (value) {
@@ -60,8 +62,7 @@ angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
       return api({
         url: '/metrics/testsByWeek',
         params: _.extend({}, $scope.chart.params, {
-          organizationId: $scope.organization.id,
-          nbWeeks: $scope.nbWeeks || 10
+          organizationId: $scope.organization.id
         })
       }).then(showMetrics);
     }

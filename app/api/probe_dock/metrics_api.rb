@@ -44,12 +44,11 @@ module ProbeDock
           end
         end
 
-        def count_new_tests_by_interval(start_date, interval)
-          rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select("count(project_tests.id) as project_tests_count, date_trunc('#{interval}', project_tests.first_run_at) as project_tests_by_interval")
-          rel = rel.where 'project_tests.first_run_at >= ?', start_date
+        def apply_projects_and_users_filters(rel_for_filtering)
+          rel = rel_for_filtering
 
           if params[:projectIds].present? && params[:projectIds].kind_of?(Array)
-           rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s)
+            rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s)
           end
 
           if params[:userIds].present? && params[:userIds].kind_of?(Array)
@@ -59,6 +58,15 @@ module ProbeDock
            user_ids = users.collect &:id
            rel = rel.where '(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids
           end
+
+          rel
+        end
+
+        def count_new_tests_by_interval(start_date, interval)
+          rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select("count(project_tests.id) as project_tests_count, date_trunc('#{interval}', project_tests.first_run_at) as project_tests_by_interval")
+          rel = rel.where 'project_tests.first_run_at >= ?', start_date
+
+          rel = apply_projects_and_users_filters rel
 
           rel = rel.group('project_tests_by_interval').order('project_tests_by_interval DESC')
 
@@ -191,17 +199,7 @@ module ProbeDock
         rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select('count(project_tests.id) as total_tests_count')
         rel = rel.where 'project_tests.first_run_at < ?', start_date
 
-        if params[:projectIds].present? && params[:projectIds].kind_of?(Array)
-         rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s)
-        end
-
-        if params[:userIds].present? && params[:userIds].kind_of?(Array)
-         users = User.where('api_id IN (?)', params[:userIds].collect(&:to_s)).to_a
-         rel = rel.joins 'LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id'
-
-         user_ids = users.collect &:id
-         rel = rel.where '(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids
-        end
+        rel = apply_projects_and_users_filters rel
 
         total_tests_count = rel.take.total_tests_count
 

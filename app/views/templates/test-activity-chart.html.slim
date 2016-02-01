@@ -6,8 +6,9 @@
       p.text-info ng-if='chart.data.length'
         strong ng-if='totalCount' {{ totalCount | number }}
         span ng-if='totalCount === 0' No
-        ng-pluralize ng-if='chart.type === "written"' count='totalCount' when='{"1": " new test was run over the last 30 days.", "other": " new tests were run over the last 30 days."}'
-        ng-pluralize ng-if='chart.type === "run"' count='totalCount' when='{"1": " test run over the last 30 days.", "other": " test runs over the last 30 days."}'
+        ng-pluralize ng-if='chart.type === "written"' count='totalCount' when='{"1": " new test was run", "other": " new tests were run"}'
+        ng-pluralize ng-if='chart.type === "run"' count='totalCount' when='{"1": " test run", "other": " test runs"}'
+        ng-pluralize count='nbDays' when='{"1": " over the last day.", "other": " over the last {{ nbDays }} days."}'
       canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
       form.form role='form' ng-if='chart.data.length'
         .col-xs-12 ng-class='{"col-sm-4": !project, "col-sm-6": project }'
@@ -21,7 +22,7 @@
                 span.hidden-md Run
                 span.visible-md tooltip='Tests run' tooltip-append-to-body='true' R
         .col-sm-4.col-xs-12 ng-if='!project'
-          project-select prefix='test-activity-chart' project='project' organization='organization' model-object='chart.params'
+          project-select prefix='test-activity-chart' organization='organization' model-object='chart.params'
         .col-xs-12 ng-class='{"col-sm-4": !project, "col-sm-6": project }'
           user-select prefix='test-activity-chart' organization='organization' model-object='chart.params'
       .empty ng-if='chart.data.length === 0'

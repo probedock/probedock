@@ -1,6 +1,7 @@
 .container-fluid ng-if='!project || !currentOrganization'
-  p.project-page-loading.loading
-    em Loading project data...
+  .page-header
+    h1
+      em Loading project data...
 .container-fluid ng-if='project && currentOrganization'
   .page-header
     h1 {{ project | projectName }}
@@ -29,10 +30,10 @@
                 strong Getting Started
               '  guide to set it up.
       test-contributions project='project'
-      tests-by-week-widget project='project' organization='currentOrganization'
+      tests-by-week-widget project='project' organization='currentOrganization' nb-weeks='15'
     .col-lg-4.col-md-6.col-xs-12
       project-recent-activity project='project' organization='currentOrganization'
     .col-lg-4.col-md-6.col-xs-12
       project-health-chart project='project'
-      test-activity-chart  organization='currentOrganization' project='project'
+      test-activity-chart  organization='currentOrganization' project='project' nb-days='20'
 

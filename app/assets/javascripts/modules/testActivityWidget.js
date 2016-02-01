@@ -13,7 +13,7 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
       scope: {
         organization: '=',
         project: '=',
-        nbDays: '='
+        nbDays: '=?'
       }
     };
   })
@@ -33,13 +33,16 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
       }
     };
 
+    $scope.nbDays = $scope.nbDays || 30;
+
     $scope.chart = {
       data: [],
       labels: [],
       type: 'written',
       params: {
         projectIds: [],
-        userIds: []
+        userIds: [],
+        nbDays: $scope.nbDays
       },
       options: {
         pointHitDetectionRadius: 5,
@@ -57,11 +60,6 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
         }
       }
     };
-
-    $scope.projectVersionChoices = [];
-
-    // TODO: replace users by contributors
-    $scope.userChoices = [];
 
     $scope.$watch('organization', function(value) {
       if (value) {
@@ -90,8 +88,7 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
       return api({
         url: chartConfig[$scope.chart.type].url,
         params: _.extend({}, $scope.chart.params, {
-          organizationId: $scope.organization.id,
-          nbDays: $scope.nbDays || 30
+          organizationId: $scope.organization.id
         })
       }).then(showMetrics);
     }

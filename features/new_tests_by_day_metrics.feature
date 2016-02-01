@@ -25,7 +25,7 @@ Feature: New tests by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics
+  Scenario: An organization member should be able to get the organization's new tests by day metrics
     When hsolo sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -45,7 +45,7 @@ Feature: New tests by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics filtered by project
+  Scenario: An organization member should be able to get the organization's new tests by day metrics filtered by project
     When hsolo sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -65,7 +65,7 @@ Feature: New tests by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics filtered by user
+  Scenario: An organization member should be able to get the organization's new tests by day metrics filtered by user
     When hsolo sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&userIds[]={@idOf: hsolo}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -85,7 +85,7 @@ Feature: New tests by day metrics
 
 
 
-  Scenario: An organization member should be able to get the organization's reports by day metrics filtered by project and user
+  Scenario: An organization member should be able to get the organization's new tests by day metrics filtered by project and user
     When hsolo sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}&userIds[]={@idOf: hsolo}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -105,7 +105,7 @@ Feature: New tests by day metrics
 
 
 
-  Scenario: An anonymous user should be able to get a public organization's reports by day metrics
+  Scenario: A user should be able to get a public organization's new tests by day metrics
     Given public organization Old Republic exists
     And user borgana who is a member of Old Republic exists
     And project Senate exists within organization Old Republic
@@ -134,7 +134,7 @@ Feature: New tests by day metrics
 
 
 
-  Scenario: An anonymous user should be able to get a public organization's reports by day metrics
+  Scenario: An anonymous user should be able to get a public organization's new tests by day metrics
     Given public organization Old Republic exists
     And user borgana who is a member of Old Republic exists
     And project Senate exists within organization Old Republic
@@ -164,7 +164,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An organization member should not be able to get the reports from another organization
+  Scenario: An organization member should not be able to get the new tests by day metrics from another organization
     Given private organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
     When palpatine sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}
@@ -176,7 +176,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An organization member should not be able to get the reports from another organization filtered by projects
+  Scenario: An organization member should not be able to get the new tests by day metrics from another organization filtered by projects
     Given private organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
     When palpatine sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}
@@ -188,7 +188,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An organization member should not be able to get the reports from another organization filtered by users
+  Scenario: An organization member should not be able to get the new tests by day metrics from another organization filtered by users
     Given private organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
     When palpatine sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&userIds[]={@idOf: lskywalker}
@@ -200,7 +200,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An organization member should not be able to get the reports from another organization filtered by projects and users
+  Scenario: An organization member should not be able to get the new tests by day metrics from another organization filtered by projects and users
     Given private organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
     When palpatine sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}&userIds[]={@idOf: lskywalker}
@@ -212,7 +212,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get the reports from private organization
+  Scenario: An anonymous user should not be able to get the new tests by day metrics from private organization
     When nobody sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -222,7 +222,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get the reports from private organization filtered by projects
+  Scenario: An anonymous user should not be able to get the new tests by day metrics from private organization filtered by projects
     When nobody sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -232,7 +232,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get the reports from private organization filtered by users
+  Scenario: An anonymous user should not be able to get the new tests by day metrics from private organization filtered by users
     When nobody sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&userIds[]={@idOf: lskywalker}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -242,7 +242,7 @@ Feature: New tests by day metrics
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get the reports from private organization filtered by projects and users
+  Scenario: An anonymous user should not be able to get the new tests by day metrics from private organization filtered by projects and users
     When nobody sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}&userIds[]={@idOf: lskywalker}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
