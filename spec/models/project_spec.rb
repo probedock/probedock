@@ -39,7 +39,7 @@ describe Project do
 
     describe "with an existing project" do
       before(:each){ create :project }
-      it(nil, probedock: { key: 'gh4c' }){ should validate_uniqueness_of(:name).scoped_to(:organization_id) }
+      it(nil, probedock: { key: 'gh4c' }){ should validate_uniqueness_of(:name).scoped_to(:organization_id).case_insensitive }
     end
   end
 

@@ -38,7 +38,7 @@ angular.module('probedock.projectVersionSelect', [ 'probedock.api' ])
     });
 
     $scope.$watch('config.newVersion', function(value) {
-      if (value && $scope.modelObject[$scope.modelProperty]) {
+      if (value) {
         var previousVersion = $scope.modelObject[$scope.modelProperty];
         // create a new object if a new version is to be created
         $scope.modelObject[$scope.modelProperty] = {};
