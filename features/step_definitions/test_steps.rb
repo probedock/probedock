@@ -18,7 +18,8 @@ Given /^test "(.+)" was created(?: (1 day|[2-9]\d* days) ago)? by (.+) with key 
     project: project,
     last_runner: user,
     project_version: project_version,
-    first_run_at: date
+    first_run_at: date,
+    created_at: date
   }
 
   add_named_record name, create(:test, options)
