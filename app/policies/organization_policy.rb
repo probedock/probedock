@@ -29,7 +29,7 @@ class OrganizationPolicy < ApplicationPolicy
   end
 
   def data?
-    organization.try(:public?) || admin? || user.try(:member_of?, organization)
+    public?(organization) || admin? || member_of?(organization)
   end
 
   def update?

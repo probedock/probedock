@@ -15,6 +15,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
+require_dependency 'errapi_utils'
+
 module ProbeDock
   class PayloadsApi < Grape::API
     format :json
@@ -27,10 +29,14 @@ module ProbeDock
     # accept xUnit XML payloads
     content_type :xml, 'application/xml'
 
+    # also accept test payloads as uploaded files
+    content_type :multipart, 'multipart/form-data'
+
     # disable automatic parsing by Grape for this resource
     parser :payload_v1, nil
     parser :json, nil
     parser :xml, nil
+    parser :multipart, nil
 
     namespace do
 
@@ -40,49 +46,108 @@ module ProbeDock
 
       namespace do
 
+        params do
+          # parse the test payload as a file upload (if present)
+          optional :payload, type: File
+        end
+
+        helpers do
+          # Returns a content type string without its additional parameters.
+          #
+          #     content_type_without_parameters "application/json; charset=utf-8"   #=> "application/json"
+          def content_type_without_parameters content_type
+            content_type.sub /;.*/, ''
+          end
+
+          # Indicates whether the specified content type is among the expected types.
+          # Expected types are specified by their extension (e.g. :json for "application/json")
+          # and looked up with `Mime::Type.lookup_by_extension`. Additional content types are
+          # defined in `config/initializers/mime_types.rb`.
+          #
+          #     content_type? "application/json", :json, :xml   #=> true
+          #     content_type? "text/plain", :json, :xml         #=> false
+          def content_type? content_type, *expected_types
+            ct = content_type_without_parameters content_type
+            expected_types.any?{ |type| Mime::Type.lookup_by_extension(type) === ct }
+          end
+
+          # Indicates whether the content type of the current request is among the
+          # expected types. The behavior is the same as for `content_type?`.
+          #
+          #     # assuming a request with the content type "application/json"
+          #     request_content_type? :json, :xml            #=> true
+          #     request_content_type? :multipart_form_data   #=> false
+          def request_content_type? *expected_types
+            content_type? request.content_type, *expected_types
+          end
+        end
+
         post :publish do
+
+          # check that the required "payload" file is present for multipart/form-data requests
+          if request_content_type?(:multipart_form_data) && params.payload.blank?
+            validation_context.add_error reason: :missing do |error|
+              ErrapiUtils.add_location error, :payload, :multipartFormData
+            end
+
+            raise Errapi::ValidationFailed.new(validation_context)
+          end
 
           received_at = Time.now.utc
 
+          payload_type = nil
           raw_payload = nil
-          raw_payload_type = nil
-          body = env['api.request.input']
+          raw_payload_content_type = nil
 
-          # parse and validate test payload with the
+          # get the test payload data from the request body or the multipart file upload
+          if request_content_type? :multipart_form_data
+            raw_payload = File.read params.payload.tempfile
+            raw_payload_content_type = params.payload.type
+          else
+            raw_payload = env['api.request.input']
+            raw_payload_content_type = request.content_type
+          end
+
+          # determine the payload type
+          # also accept "text/json" and "text/xml" as that is sometimes the
+          # content type of manually uploaded files
+          if content_type? raw_payload_content_type, :json, :text_json, :probedock_payload_v1
+            payload_type = :json
+          elsif content_type? raw_payload_content_type, :xml, :text_xml
+            payload_type = :xml
+          end
+
+          # parse and validate the test payload with the
           # correct parser depending on the content type
-          case request.content_type
-          # parse Probe Dock JSON payload
-          when Mime::Type.lookup_by_extension(:json), Mime::Type.lookup_by_extension(:payload_v1)
-            raw_payload_type = :json
-            raw_payload = MultiJson.load body
-            TestPayloadValidations.validate raw_payload, validation_context, location_type: :json, raise_error: true
-          # parse xUnit XML payload
-          when Mime::Type.lookup_by_extension(:xml)
-            raw_payload_type = :xml
-            raw_payload = TestPayloadXunitParser.new(body, headers).parse
+          case payload_type
+          when :json # parse Probe Dock JSON payload
+            payload_contents = MultiJson.load raw_payload
+            TestPayloadValidations.validate payload_contents, validation_context, location_type: :json, raise_error: true
+          when :xml # parse xUnit XML payload
+            payload_contents = TestPayloadXunitParser.new(raw_payload, headers).parse
           else
             status 415
-            return nil
+            return { errors: [ { message: "The content type of the test payload should be application/json or application/xml." } ] }
           end
 
           # FIXME: do not accept payloads in the future
           ended_at = received_at
-          ended_at = Time.parse raw_payload['endedAt'] if raw_payload.key?('endedAt')
+          ended_at = Time.parse payload_contents['endedAt'] if payload_contents.key?('endedAt')
 
           # FIXME: foreign key validation
-          project_api_id = raw_payload['projectId']
+          project_api_id = payload_contents['projectId']
           project = Project.where(api_id: project_api_id.to_s).first
           Pundit.authorize current_user, project, :publish?
 
-          project_version = raw_payload['version']
+          project_version = payload_contents['version']
 
           # save the payload to the database
           payload = TestPayload.new runner: current_user, received_at: received_at, ended_at: ended_at
-          payload.contents = raw_payload
-          payload.contents_bytesize = body.bytesize
+          payload.contents = payload_contents
+          payload.contents_bytesize = raw_payload.bytesize
 
           # save the original payload if not JSON (e.g. xUnit payload)
-          payload.raw_contents = body if raw_payload_type != :json
+          payload.raw_contents = raw_payload if payload_type != :json
 
           unless payload.save
             return record_errors payload
@@ -100,10 +165,10 @@ module ProbeDock
                 id: payload.api_id,
                 projectId: project.api_id,
                 projectVersion: project_version,
-                duration: raw_payload['duration'],
+                duration: payload_contents['duration'],
                 runnerId: current_user.api_id,
                 endedAt: payload.ended_at.iso8601(3),
-                bytes: body.bytesize
+                bytes: payload.contents_bytesize
               }
             ]
           }

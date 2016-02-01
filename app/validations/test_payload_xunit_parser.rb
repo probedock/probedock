@@ -44,6 +44,14 @@ class TestPayloadXunitParser
     parsed['version'] = @headers['Probe-Dock-Project-Version']
     @location = HeaderLocation.new 'Probe-Dock-Project-Version'
     Errapi::Validations::Presence.new.validate parsed['version'], @context_proxy, location: @location, value_set: @headers.key?('Probe-Dock-Project-Version')
+    Errapi::Validations::Length.new(maximum: 100).validate parsed['version'], @context_proxy, location: @location if parsed['version']
+
+    # get the category from headers (optional)
+    if @category = @headers['Probe-Dock-Category']
+      @location = HeaderLocation.new 'Probe-Dock-Category'
+      Errapi::Validations::Presence.new.validate @category, @context_proxy, location: @location
+      Errapi::Validations::Length.new(maximum: 50).validate @category, @context_proxy, location: @location
+    end
 
     # get the duration from headers (optional)
     @duration = @headers['Probe-Dock-Duration']
@@ -89,6 +97,18 @@ class TestPayloadXunitParser
   # Parses the test results in a <testsuite> tag.
   def parse_test_suite suite, parsed
 
+    # parse the "timestamp" attribute of the <testsuite>
+    if suite.attributes.key? :timestamp
+      ended_at = suite.attributes[:timestamp]
+      parsed_ended_at = Time.parse ended_at rescue nil
+
+      # save the latest valid timestamp found (in case there are multiple <testsuite> tags)
+      if parsed_ended_at && (!@last_ended_at || parsed_ended_at > @last_ended_at)
+        parsed['endedAt'] = ended_at # put the raw version into the payload
+        @last_ended_at = parsed_ended_at
+      end
+    end
+
     # parse the "time" attribute of the <testsuite>
     # (if no duration was supplied in a request header)
     unless @duration
@@ -110,6 +130,9 @@ class TestPayloadXunitParser
 
       result = {}
       n_errors = @context.errors.length
+
+      # add the category if present
+      result['c'] = @category if @category
 
       # parse the "name" attribute of the <testcase> (mandatory)
       check_string_attribute test_case, :name, limit: false do |value|

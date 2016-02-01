@@ -23,8 +23,10 @@ RSpec::Matchers.define :have_api_errors do |expected_errors|
       actual
     elsif actual.kind_of? String
       MultiJson.load actual
-    else
+    elsif actual.respond_to? :body
       MultiJson.load actual.body
+    else
+      raise "Unsupported assertion subject #{actual.inspect}"
     end
 
     actual_errors = res['errors']

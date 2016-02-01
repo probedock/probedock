@@ -9,7 +9,7 @@ class TestPayloadValidations < Errapi::SingleValidator
     validates 'version', presence: true, type: :string, trim: true, length: 100
 
     # test run duration
-    validates 'duration', presence: true, type: :integer, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates 'duration', presence: true, type: :number, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
     # the time the test run ended at
     validates 'endedAt', type: :string # TODO: validate iso8601
@@ -32,7 +32,7 @@ class TestPayloadValidations < Errapi::SingleValidator
       validates 'v', type: :boolean
 
       # execution duration
-      validates 'd', presence: true, type: :integer, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+      validates 'd', presence: true, type: :number, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
       # result message (usually in case of failure)
       validates 'm', type: :string, length: 50000

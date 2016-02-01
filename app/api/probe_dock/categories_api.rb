@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ProbeDock
-  class TagsApi < Grape::API
-    namespace :tags do
+  class CategoriesApi < Grape::API
+    namespace :categories do
       before do
         authenticate
       end
@@ -35,15 +35,33 @@ module ProbeDock
       get do
         authorize! :organization, :data
 
-        rel = Tag
+        rel = Category
 
         rel = paginated rel do |rel|
-          rel = rel.where organization_id: current_organization.id if current_organization
+          if current_organization
+            # filter by organization
+            rel = rel.where 'categories.organization_id = ?', current_organization.id
+          else
+            # join with organizations to be able to sort by organization name
+            rel = rel.joins :organization
+          end
+
           rel
         end
 
-        rel = rel.joins(:test_descriptions).group('tags.name, tags.organization_id, tags.created_at').order('count(distinct test_descriptions.test_id) desc, tags.name asc').having('count(distinct test_descriptions.test_id) > 0')
-        rel = rel.select('tags.name, tags.organization_id, tags.created_at, count(distinct test_descriptions.test_id) as tests_count')
+        rel = rel.joins(:test_descriptions)
+                 .select('categories.name, categories.organization_id, categories.created_at, count(distinct test_descriptions.test_id) as tests_count')
+                 .having('count(distinct test_descriptions.test_id) > 0')
+
+        if current_organization
+          # order by descending tests_count, then the category name
+          rel = rel.group('categories.id, categories.name, categories.organization_id, categories.created_at')
+                   .order('count(distinct test_descriptions.test_id) desc, categories.name asc')
+        else
+          # order by organization name, then the rest
+          rel = rel.group('categories.id, categories.name, categories.organization_id, categories.created_at, organizations.id, organizations.name')
+                   .order('organizations.name, count(distinct test_descriptions.test_id) desc, categories.name asc')
+        end
 
         serialize load_resources(rel)
       end

@@ -32,6 +32,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/jqcloud2/dist/jqcloud.js', dest: 'vendor/assets/javascripts/jqcloud2.js' },
           { nonull: true, src: 'bower_components/Chart.js/Chart.js', dest: 'vendor/assets/javascripts/chart.js' },
           { nonull: true, src: 'bower_components/zeroclipboard/dist/ZeroClipboard.js', dest: 'vendor/assets/javascripts/zero-clipboard.js' },
+          { nonull: true, src: 'bower_components/dropzone/dist/dropzone.js', dest: 'vendor/assets/javascripts/dropzone.js' },
           { nonull: true, src: 'bower_components/angular/angular.js', dest: 'vendor/assets/javascripts/angular.js' },
           { nonull: true, src: 'bower_components/angular-animate/angular-animate.js', dest: 'vendor/assets/javascripts/angular-animate.js' },
           { nonull: true, src: 'bower_components/angular-sanitize/angular-sanitize.js', dest: 'vendor/assets/javascripts/angular-sanitize.js' },
@@ -59,6 +60,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-loading-bar/build/loading-bar.css', dest: 'vendor/assets/stylesheets/angular-loading-bar.css' },
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.css', dest: 'vendor/assets/stylesheets/angular-ui-select.css' },
           { nonull: true, src: 'bower_components/angular-chart.js/dist/angular-chart.css', dest: 'vendor/assets/stylesheets/angular-chart.css' },
+          { nonull: true, src: 'bower_components/dropzone/dist/dropzone.css', dest: 'vendor/assets/stylesheets/dropzone.css' },
           // fonts
           { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
           // flash

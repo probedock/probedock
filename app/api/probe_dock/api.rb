@@ -75,6 +75,7 @@ module ProbeDock
     mount AccessTokensApi
     mount AppSettingsApi
     mount AuthenticationApi
+    mount CategoriesApi
     mount MembershipsApi
     mount MetricsApi
     mount OrganizationsApi

@@ -68,14 +68,12 @@ module SpecApiHelper
     end
   end
 
-  def api_get user, path, options = {}
+  def api_get path, options = {}
 
-    get path # without authentication
-    expect(response.status).to eq(401)
+    headers = options[:headers] || {}
+    headers['Authorization'] = "Bearer #{options[:user].generate_auth_token}" if options[:user]
 
-    get path, {}, api_authentication_headers(user)
-    expect(response.success?).to be(true)
-    expect(response.headers['Content-Type']).to match(/\Aapplication\/hal\+json/)
+    get path, {}, headers
 
     @response_body = MultiJson.load response.body, mode: :strict
   end

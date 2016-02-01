@@ -205,7 +205,7 @@ module PayloadProcessingSpecHelper
           projectVersion: options[:version],
           duration: options[:duration],
           runnerId: runner.api_id,
-          endedAt: '@json(/receivedAt)',
+          endedAt: options.fetch(:endedAt, '@json(/receivedAt)'),
           bytes: options[:bytes]
         }
       ]
@@ -218,6 +218,7 @@ module PayloadProcessingSpecHelper
       'Probe-Dock-Project-Version' => options[:version] || random_project_version
     }
 
+    h['Probe-Dock-Category'] = options[:category] if options[:category]
     h['Probe-Dock-Test-Report-Uid'] = options[:uid] if options[:uid]
 
     h

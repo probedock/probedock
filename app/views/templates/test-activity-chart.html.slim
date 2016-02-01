@@ -9,7 +9,7 @@
         ng-pluralize ng-if='chart.type === "written"' count='totalCount' when='{"1": " new test was run", "other": " new tests were run"}'
         ng-pluralize ng-if='chart.type === "run"' count='totalCount' when='{"1": " test run", "other": " test runs"}'
         ng-pluralize count='nbDays' when='{"1": " over the last day.", "other": " over the last {{ nbDays }} days."}'
-      canvas.chart.chart-line height='100' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+      canvas.chart.chart-line height='125' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
       form.form role='form' ng-if='chart.data.length'
         .col-xs-12 ng-class='{"col-sm-4": !project, "col-sm-6": project }'
           .form-group

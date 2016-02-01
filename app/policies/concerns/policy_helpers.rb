@@ -49,7 +49,7 @@ module PolicyHelpers
 
   # Indicates whether the current user is an administrator.
   def admin?
-    role? :admin
+    role?(:admin)
   end
 
   # Indicates whether the current user is human (i.e. not a technical user).
@@ -76,7 +76,7 @@ module PolicyHelpers
   # Optionally, pass a class as the first argument to ensure that it is of the correct type.
   #
   #     do_something if otp_record? UserRegistration
-  def otp_record? type = nil
+  def otp_record?(type = nil)
     otp_record.present? && (type.nil? || otp_record.kind_of?(type))
   end
 
@@ -84,7 +84,7 @@ module PolicyHelpers
   #
   #     do_something if role? :admin
   #     break_something if role? :foo, :bar
-  def role? *roles
+  def role?(*roles)
     user.kind_of?(User) && user.has_all_roles?(*roles)
   end
 end
