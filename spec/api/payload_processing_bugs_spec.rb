@@ -24,22 +24,32 @@ RSpec.describe 'Payload processing' do
   let!(:project){ create :project, organization: organization }
   let!(:user){ create :org_member, organization: organization }
 
-  it "should add similarly named results to the first one of those results that has a key", probedock: { key: 'gq5p' } do
+  it "should add similarly named results to the same test as the first one of those results that has a key", probedock: { key: 'gq5p' } do
 
     tests = []
 
     Project.where(id: project.id).update_all tests_count: ProjectTest.where(project_id: project.id).count
 
     raw_payload = generate_raw_payload project, version: '1.2.3', results: [
+      # R0: new test with key "foo"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing', k: 'foo' },
+      # R1: new test with key "bar"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus vestibulum quam', k: 'bar' },
+      # R2: added to test with key "foo" because R7 has the same name and the key "foo"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus' },
+      # R3: added to test with key "foo"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus vestibulum quam sapien', k: 'foo' },
+      # R4: added to test with key "foo" because R3 has the same name and the key "foo"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus vestibulum quam sapien' },
+      # R5: added to test with key "bar"
       { n: 'Lorem ipsum dolor sit', k: 'bar' },
+      # R6: added to test with key "bar" because R1 has the same name and the key "bar"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus vestibulum quam' },
+      # R7: added to test with key "foo"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus', k: 'foo' },
+      # R8: added to test with key "foo" because R7 has the same name and the key "foo"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus' },
+      # R9: added to test with key "bar"
       { n: 'Lorem ipsum dolor sit amet consectetuer adipiscing elit proin risus praesent lectus vestibulum quam sapien', k: 'bar' }
     ]
 
@@ -104,11 +114,17 @@ RSpec.describe 'Payload processing' do
     Project.where(id: project.id).update_all tests_count: ProjectTest.where(project_id: project.id).count
 
     raw_payload = generate_raw_payload project, version: '1.2.3', results: [
+      # R0: added to test with key k1 because R3 has the same name
       { n: 'It should work' },
+      # R1: added to test with key k1 because R3 has the same name
       { n: 'It should work' },
+      # R2: added to test with key k1
       { n: 'It should work', k: k1.key },
+      # R3: added to test with key k1 because R3 has the same name
       { n: 'It should work' },
+      # R4: added to test with key k2
       { n: 'It should work', k: k2.key },
+      # R5: added to test with key k1 because R3 has the same name
       { n: 'It should work' }
     ]
 

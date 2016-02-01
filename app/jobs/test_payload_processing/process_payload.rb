@@ -69,21 +69,15 @@ module TestPayloadProcessing
           @test_payload.tests_count = @cache.test_data.length
           @test_payload.new_tests_count = @cache.test_data.select{ |d| !d[:test] }.length
 
-          raw_test_data = JSON.pretty_generate(@cache.test_data.collect{ |d|
-            h = d.dup
-            h[:test] = h[:test].id || 'new' if h[:test]
-            h
-          })
-          Rails.logger.debug '@@@@@@@@@@@@@@@@@@@@'
-          Rails.logger.debug raw_test_data
-
+          # create or update each individual test identified from the test results
           assigned_results = []
           @cache.test_data.each do |data|
-            results = @cache.test_results.select{ |r| (r.key && r.key == data[:key]) || (!r.key && data[:names].include?(r.name)) }.reject{ |r| assigned_results.include? r }
+            results = matching_results @cache.test_results, data, assigned_results
             ProcessTest.new project_version, data[:key], data[:test], results
             assigned_results += results
           end
 
+          # update the number of tests in the project
           Project.update_counters project_version.project.id, tests_count: @test_payload.new_tests_count
 
           @test_payload.duration = duration if duration.present?
@@ -101,6 +95,19 @@ module TestPayloadProcessing
       duration = (time * 1000).round 1
 
       Rails.logger.info "Saved #{@test_payload.results_count} test payload results in #{duration}ms"
+    end
+
+    private
+
+    # Returns the results associated with the specified test.
+    def matching_results test_results, test_data, assigned_results
+      test_results.select do |r|
+        # all results with the same key or with no key but the same name
+        (r.key && r.key == test_data[:key]) || (!r.key && test_data[:names].include?(r.name))
+      end.reject do |r|
+        # except those that have already been used
+        assigned_results.include? r
+      end
     end
   end
 end

@@ -25,6 +25,9 @@ FactoryGirl.define do
       first_runner nil
       last_runner nil
       project_version nil
+      category nil
+      tags []
+      tickets []
     end
 
     name{ generate :project_test_name }
@@ -32,7 +35,13 @@ FactoryGirl.define do
     first_run_at{ 2.days.ago }
 
     after :create do |test,evaluator|
-      description = create :test_description, test: test, last_runner: evaluator.last_runner, project_version: evaluator.project_version
+
+      description_options = {
+        test: test, last_runner: evaluator.last_runner, project_version: evaluator.project_version,
+        category: evaluator.category, tags: evaluator.tags, tickets: evaluator.tickets
+      }
+
+      description = create :test_description, description_options
       ProjectTest.where(id: test.id).update_all description_id: description.id
 
       contributor, kind = if test.key.try(:user).try(:human?)
