@@ -1,4 +1,8 @@
-.container-fluid
+.container-fluid ng-if='!project || !currentOrganization'
+  .page-header
+    h1
+      em Loading project data...
+.container-fluid ng-if='project && currentOrganization'
   .page-header
     h1 {{ project | projectName }}
   .row
@@ -8,9 +12,7 @@
           .label.label-info.pull-right.apiId tooltip='Project ID' {{ project.id }}
           h3.panel-title Details
         .panel-body
-          p.loading ng-if='!project'
-            em Loading...
-          div ng-if='project'
+          div
             p.lead ng-show='project.description' {{ project.description }}
             dl
               dt Number of Tests
@@ -28,9 +30,10 @@
                 strong Getting Started
               '  guide to set it up.
       test-contributions project='project'
+      tests-by-week-widget project='project' organization='currentOrganization' nb-weeks='15'
     .col-lg-4.col-md-6.col-xs-12
       project-recent-activity project='project' organization='currentOrganization'
     .col-lg-4.col-md-6.col-xs-12
       project-health-chart project='project'
-      new-tests-line-chart ng-if='currentOrganization && project' organization='currentOrganization' project='project'
+      test-activity-chart  organization='currentOrganization' project='project' nb-days='20'
 

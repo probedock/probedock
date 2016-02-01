@@ -1,4 +1,4 @@
-Given /^test "(.+)" was created by (.+) with key (.+) for version (.+) of project (.+)$/ do |name,user_name,test_key,project_version,project_name|
+Given /^test "(.+)" was created(?: (\d*) ((?:day|week)s?) ago)? by (.+) with key (.+) for version (.+) of project (.+)$/ do |name,interval_count,interval,user_name,test_key,project_version,project_name|
   user = named_record user_name
   project = named_record project_name
   project_version = ProjectVersion.where(project_id: project.id, name: project_version).first_or_create
@@ -6,12 +6,20 @@ Given /^test "(.+)" was created by (.+) with key (.+) for version (.+) of projec
   key = create :test_key, user: user, project: project, key: test_key
   add_named_record test_key, key
 
+  date = if interval_count
+    interval_count.to_i.send(interval).ago
+  else
+    Time.now
+  end
+
   options = {
     name: name,
     key: key,
     project: project,
     last_runner: user,
-    project_version: project_version
+    project_version: project_version,
+    first_run_at: date,
+    created_at: date
   }
 
   add_named_record name, create(:test, options)
