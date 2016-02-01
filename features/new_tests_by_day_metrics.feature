@@ -105,6 +105,64 @@ Feature: New tests by day metrics
 
 
 
+  Scenario: An anonymous user should be able to get a public organization's reports by day metrics
+    Given public organization Old Republic exists
+    And user borgana who is a member of Old Republic exists
+    And project Senate exists within organization Old Republic
+    And test "Chairs must be comfortable" was created 2 days ago by borgana with key kp1 for version 1.0.0 of project Senate
+    And test "Doors must be large enough" was created 2 days ago by borgana with key kp2 for version 1.0.0 of project Senate
+    And test "Translations must be available for all" was created 1 day ago by borgana with key kp3 for version 1.0.0 of project Senate
+    And project Jedi Temple exists within organization Old Republic
+    And test "Enough room must be available" was created 1 day ago by borgana with key kp4 for version 1.0.0 of project Jedi Temple
+    And assuming new tests by day metrics are calculated for 3 days by default
+    When lskywalker sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Old Republic}
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "date": "@date(2 days ago)",
+        "testsCount": 2
+      }, {
+        "date": "@date(1 days ago)",
+        "testsCount": 2
+      }, {
+        "date": "@date(today)",
+        "testsCount": 0
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: An anonymous user should be able to get a public organization's reports by day metrics
+    Given public organization Old Republic exists
+    And user borgana who is a member of Old Republic exists
+    And project Senate exists within organization Old Republic
+    And test "Chairs must be comfortable" was created 2 days ago by borgana with key kp1 for version 1.0.0 of project Senate
+    And test "Doors must be large enough" was created 2 days ago by borgana with key kp2 for version 1.0.0 of project Senate
+    And test "Translations must be available for all" was created 1 day ago by borgana with key kp3 for version 1.0.0 of project Senate
+    And project Jedi Temple exists within organization Old Republic
+    And test "Enough room must be available" was created 1 day ago by borgana with key kp4 for version 1.0.0 of project Jedi Temple
+    And assuming new tests by day metrics are calculated for 3 days by default
+    When nobody sends a GET request to /api/metrics/newTestsByDay?organizationId={@idOf: Old Republic}
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "date": "@date(2 days ago)",
+        "testsCount": 2
+      }, {
+        "date": "@date(1 days ago)",
+        "testsCount": 2
+      }, {
+        "date": "@date(today)",
+        "testsCount": 0
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   @authorization
   Scenario: An organization member should not be able to get the reports from another organization
     Given private organization Galactic Republic exists
