@@ -105,7 +105,7 @@ Feature: Tests by week metrics
     And nothing should have been added or deleted
 
 
-@wip
+
   Scenario: A user should be able to get a public organization's new tests by day metrics
      Given public organization Old Republic exists
      And user borgana who is a member of Old Republic exists
@@ -134,7 +134,7 @@ Feature: Tests by week metrics
      And nothing should have been added or deleted
 
 
-@wip
+
    Scenario: An anonymous user should be able to get a public organization's new tests by day metrics
      Given public organization Old Republic exists
      And user borgana who is a member of Old Republic exists
