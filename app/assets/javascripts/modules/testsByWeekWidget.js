@@ -1,54 +1,32 @@
-angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
-  .directive('testActivityChart', function() {
+angular.module('probedock.testsByWeekWidget', [ 'probedock.api' ])
+  .directive('testsByWeekWidget', function() {
     return {
       restrict: 'E',
-      controller: 'TestActivityChartCtrl',
-      templateUrl: function(element, attr) {
-        if (attr.type == 'projects') {
-          return '/templates/project-test-activity-chart.html';
-        } else {
-          return '/templates/test-activity-chart.html';
-        }
-      },
+      controller: 'TestsByWeekChartCtrl',
+      templateUrl: '/templates/tests-by-week-widget.html',
       scope: {
         organization: '=',
         project: '=',
-        nbDays: '=?'
+        nbWeeks: '=?'
       }
     };
   })
 
-  .controller('TestActivityChartCtrl', function(api, $scope) {
+  .controller('TestsByWeekChartCtrl', function(api, $scope) {
 
-    var chartConfig = {
-      written: {
-        url: '/metrics/newTestsByDay',
-        tooltipTemplate: '<%= value %> new tests on <%= label %>',
-        valueFieldName: 'testsCount'
-      },
-      run: {
-        url: '/metrics/reportsByDay',
-        tooltipTemplate: '<%= value %> runs on <%= label %>',
-        valueFieldName: 'runsCount'
-      }
-    };
-
-    $scope.nbDays = $scope.nbDays || 30;
+    $scope.nbWeeks = $scope.nbWeeks || 30;
 
     $scope.chart = {
       data: [],
       labels: [],
-      type: 'written',
       params: {
         projectIds: [],
         userIds: [],
-        nbDays: $scope.nbDays
+        nbWeeks: $scope.nbWeeks
       },
       options: {
         pointHitDetectionRadius: 5,
-
-        // Will be set from chartConfig based on chart type
-        tooltipTemplate: '',
+        tooltipTemplate: '<%= value %> tests on <%= label %>',
 
         /*
          * Fix for space issue in the Y axis labels
@@ -76,17 +54,13 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
       ignoreChartParams = false;
     }, true);
 
-    $scope.$watch('chart.type', function(value) {
-      fetchMetrics();
-    }, true);
-
     function fetchMetrics() {
       if ($scope.project) {
         $scope.chart.params.projectIds = [$scope.project.id];
       }
 
       return api({
-        url: chartConfig[$scope.chart.type].url,
+        url: '/metrics/testsByWeek',
         params: _.extend({}, $scope.chart.params, {
           organizationId: $scope.organization.id
         })
@@ -98,19 +72,14 @@ angular.module('probedock.testActivityWidget', [ 'probedock.api' ])
         return;
       }
 
-      $scope.chart.options.tooltipTemplate = chartConfig[$scope.chart.type].tooltipTemplate;
-
       var series = [];
       $scope.chart.data = [ series ];
       $scope.chart.labels.length = 0;
-      $scope.totalCount = 0;
-
-      var fieldName = chartConfig[$scope.chart.type].valueFieldName;
+      $scope.totalCount = response.data[response.data.length - 1].testsCount;
 
       _.each(response.data, function(data) {
-        $scope.chart.labels.push(moment(data.date).format('DD.MM'));
-        series.push(data[fieldName]);
-        $scope.totalCount += data[fieldName];
+        $scope.chart.labels.push(moment(data.date).format('DD.MM.YYYY'));
+        series.push(data.testsCount);
       });
     }
   })
