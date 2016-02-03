@@ -55,6 +55,12 @@
                           strong {{ otherCategory.name }}
                         td.text-right {{ otherCategory.percent | number : 1 }}%
                         td.text-right {{ otherCategory.testsCount }}
+                    tfoot
+                      tr.active
+                        td
+                          strong Total
+                        td.text-right {{ record.percent | number : 1 }}%
+                        td.text-right {{ record.testsCount }}
 
     .progress.tests-by-category-progress
       .progress-bar style="width: {{ record.percent }}%; background-color: {{ getColor($index) }}" ng-repeat='record in testsByCategory'
