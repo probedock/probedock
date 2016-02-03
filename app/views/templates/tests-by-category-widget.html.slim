@@ -7,7 +7,7 @@
         div style='float:right;'
           a.btn.btn-default.btn-xs href='#' role='button'
             i.glyphicon.glyphicon-filter
-            drop constrain-to-scroll-parent='true' constrain-to-window='true' open-on='"click"' position='"left top"' before-close='beforeClose()'
+            drop constrain-to-scroll-parent='true' constrain-to-window='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}' before-close='beforeClose()'
               .panel.panel-default.tests-by-category-filters
                 .panel-heading
                   .h4.panel-title Filters
@@ -37,5 +37,24 @@
             strong {{ record.name }}
             |  {{ record.percent | number : 1 }}% / {{ record.testsCount }}
             ng-pluralize count='record.testsCount' when='{"1": " test", "other": " tests"}'
+            a.tests-by-category-show-more.btn.btn-default.btn-xs href='#' role='button' ng-if='record.others'
+              i.glyphicon.glyphicon-eye-open
+              drop constrain-to-scroll-parent='true' constrain-to-window='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}'
+                .panel.panel-default.tests-by-category-filters
+                  .panel-heading
+                    .h4.panel-title Other categories
+                  table.table
+                    thead
+                      tr
+                        th Category
+                        th Proportion
+                        th Tests
+                    tbody
+                      tr ng-repeat='otherCategory in record.others'
+                        td
+                          strong {{ otherCategory.name }}
+                        td.text-right {{ otherCategory.percent | number : 1 }}%
+                        td.text-right {{ otherCategory.testsCount }}
+
     .progress.tests-by-category-progress
       .progress-bar style="width: {{ record.percent }}%; background-color: {{ getColor($index) }}" ng-repeat='record in testsByCategory'

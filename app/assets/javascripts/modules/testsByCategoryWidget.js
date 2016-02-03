@@ -101,10 +101,14 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
 
       // Prepare the data for sorting
       var testsByCategoryRaw = _.clone(response.data.categories);
-      testsByCategoryRaw.push({
-        name: 'No category',
-        testsCount: response.data.noCategoryTestsCount
-      });
+
+      // Show the number of tests without a category only if there more than one test
+      if (response.data.noCategoryTestsCount > 0) {
+        testsByCategoryRaw.push({
+          name: 'No category',
+          testsCount: response.data.noCategoryTestsCount
+        });
+      }
 
       // Sort the metrics by testsCount
       var testsByCategorySorted = _.sortBy(testsByCategoryRaw, function(testByCategory) {
@@ -127,7 +131,11 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
 
       // If necessary calculate the number of tests for remaining categories and the corresponding percentage
       if (!_.isEmpty(otherCategories)) {
+        var othersArray = [];
         var others = _.reduce(otherCategories, function(memo, otherCategory) {
+          othersArray.push(_.extend(otherCategory, {
+            percent: 100 / total * otherCategory.testsCount
+          }));
           return memo + otherCategory.testsCount;
         }, 0);
 
@@ -136,7 +144,8 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
           testsByCategory.push({
             name: 'Others',
             testsCount: others,
-            percent: 100 / total * others
+            percent: 100 / total * others,
+            others: othersArray
           });
         }
       }
