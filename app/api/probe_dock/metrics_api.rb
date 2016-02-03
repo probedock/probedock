@@ -285,8 +285,6 @@ module ProbeDock
         .group('test_descriptions.category_id, categories.name')
         .order('categories.name ASC') # Ensure tests without category is the last result (if any)
 
-        puts categories_counts_rel.inspect
-
         # Pre-process the results to extract the result for tests without category
         categories_counts = categories_counts_rel.to_a
         no_category_tests_count = 0

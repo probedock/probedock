@@ -30,20 +30,64 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
       }
     });
 
+    var ignoreChartParams = true;
+    $scope.$watch('params', function(value) {
+      if (value && !ignoreChartParams) {
+        if (!$scope.latestVersion && $scope.params.projectVersion) {
+          $scope.latestVersion = $scope.params.projectVersion;
+        }
+
+        fetchMetrics();
+      }
+
+      ignoreChartParams = false;
+    }, true);
+
+    $scope.dropCloseState = false;
+
+    $scope.beforeClose = function() {
+      if ($scope.dropCloseState) {
+        $scope.dropCloseState = false;
+        return true;
+      }
+      return false;
+    };
+
+    $scope.closeFilters = function() {
+      $scope.dropCloseState = true;
+      $scope.$broadcast('closeDrop');
+    };
+
+    $scope.resetFilters = function() {
+      $scope.params = {
+        projectIds: [],
+        userIds: [],
+        projectVersion: $scope.latestVersion
+      }
+    };
+
     $scope.getColor = function(index) {
       return $scope.colors[index % ($scope.colors.length - 1)];
     };
 
     function fetchMetrics() {
-      if ($scope.project) {
+      if ($scope.project && !$scope.params.projectVersion) {
         $scope.params.projectIds = [$scope.project.id];
       }
 
-      console.log('Fetch tests by category');
+      var params = {
+        userIds: $scope.params.userIds
+      };
+
+      if ($scope.params.projectVersion) {
+        params.projectVersionId = $scope.params.projectVersion.id;
+      } else {
+        params.projectIds = $scope.params.projectIds;
+      }
 
       return api({
         url: '/metrics/testsByCategories',
-        params: _.extend({}, $scope.params, {
+        params: _.extend({}, params, {
           organizationId: $scope.organization.id
         })
       }).then(showMetrics);
