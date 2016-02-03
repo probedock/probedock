@@ -1,0 +1,16 @@
+.panel.panel-default
+  .panel-heading
+    h3.panel-title Tests by category
+  .panel-body ng-if='testsByCategory.length === 0'
+    .empty
+      em Loading...
+  .panel-body ng-if='testsByCategory.length > 0'
+    table.table.tests-by-category-table
+      tr
+        td.tests-by-category-td ng-repeat='record in testsByCategory'
+          span style='border-left-color: {{ getColor($index) }};'
+            strong {{ record.name }}
+            |  {{ record.percent | number : 1 }}% / {{ record.testsCount }}
+            ng-pluralize count='record.testsCount' when='{"1": " test", "other": " tests"}'
+    .progress.tests-by-category-progress
+      .progress-bar style="width: {{ record.percent }}%; background-color: {{ getColor($index) }}" ng-repeat='record in testsByCategory'

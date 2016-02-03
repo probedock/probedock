@@ -30,6 +30,8 @@
       a ui-sref='help.gettingStarted({ organizationId: currentOrganization.id })' Getting Started
       '  guide to find out how to publish test results for your projects.
 .container-fluid ng-if='orgIsActive()'
+  .col-md-12
+    tests-by-category-widget ng-if='currentOrganization' organization='currentOrganization'
   .col-md-6.col-xs-12
     recent-activity ng-if='currentOrganization' organization='currentOrganization'
     tests-by-week-widget ng-if='currentOrganization' organization='currentOrganization' nb-weeks='30'
