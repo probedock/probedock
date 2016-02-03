@@ -63,7 +63,7 @@ angular.module('probedock', [
   'probedock.users'
 ])
 
-  // version 0.1.11
+  // version 0.1.14
   .constant('version', <%= JSON.dump Rails.application.version %>)
   .constant('environment', <%= JSON.dump Rails.env %>)
   .constant('zeroClipboardFlash', <%= JSON.dump asset_path('zero-clipboard.swf') %>)

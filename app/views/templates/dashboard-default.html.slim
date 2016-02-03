@@ -11,7 +11,7 @@
           The organization has no **projects** yet.
           Each project must be registered in ProbeDock before you can publish the results of their test suites.
       p ng-if='!currentOrganization.projectsCount && currentMemberIs("admin")'
-        button.btn.btn-success.btn-lg ui-sref='org.projects.new({ orgName: currentOrganization.name })'
+        button.btn.btn-success.btn-lg ui-sref='org.projects.list.new({ orgName: currentOrganization.name })'
           span.glyphicon.glyphicon-plus
           |  Add a project
       div ng-if='!currentOrganization.membershipsCount'
