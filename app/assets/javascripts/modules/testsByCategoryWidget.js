@@ -131,22 +131,32 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
 
       // If necessary calculate the number of tests for remaining categories and the corresponding percentage
       if (!_.isEmpty(otherCategories)) {
-        var othersArray = [];
-        var others = _.reduce(otherCategories, function(memo, otherCategory) {
-          othersArray.push(_.extend(otherCategory, {
-            percent: 100 / total * otherCategory.testsCount
-          }));
-          return memo + otherCategory.testsCount;
-        }, 0);
+        // Create the other category only if there are two or more other categories
+        if (otherCategories.length > 1) {
+          var othersArray = [];
 
-        // Add others only if there is at least one test
-        if (others > 0) {
-          testsByCategory.push({
-            name: 'Others',
-            testsCount: others,
-            percent: 100 / total * others,
-            others: othersArray
-          });
+          var others = _.reduce(otherCategories, function (memo, otherCategory) {
+            othersArray.push(_.extend(otherCategory, {
+              percent: 100 / total * otherCategory.testsCount
+            }));
+            return memo + otherCategory.testsCount;
+          }, 0);
+
+          // Add others only if there is at least one test
+          if (others > 0) {
+            testsByCategory.push({
+              name: 'Others',
+              testsCount: others,
+              percent: 100 / total * others,
+              others: othersArray
+            });
+          }
+
+        // As there is only one other category, just show the category in place of others
+        } else {
+          testsByCategory.push(_.extend(otherCategories[0], {
+            percent: 100 / total * otherCategories[0].testsCount
+          }));
         }
       }
 
