@@ -132,13 +132,22 @@ angular.module('probedock.auth', ['base64', 'probedock.storage'])
     $scope.signOut = auth.signOut;
   })
 
-  .controller('LoginCtrl', function(auth, $http, $modalInstance, $scope) {
+  .controller('LoginCtrl', function(auth, $http, $modalInstance, $scope, $location) {
+
+    $scope.host = $location.host();
 
     $scope.credentials = {};
 
     $scope.signIn = function() {
       delete $scope.error;
       auth.signIn($scope.credentials).then($scope.$close, showError);
+    };
+
+    $scope.getEmailContent = function() {
+      return "Hello,%0A%0A" +
+        "Could you please reset my password on " + $location.host() +
+        (!_.isUndefined($scope.credentials.username) ? " for username: " + $scope.credentials.username : "") +
+        ".%0A%0AThanks";
     };
 
     $scope.$on('$stateChangeSuccess', function() {
