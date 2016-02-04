@@ -134,8 +134,6 @@ angular.module('probedock.auth', ['base64', 'probedock.storage'])
 
   .controller('LoginCtrl', function(auth, $http, $modalInstance, $scope, $location) {
 
-    $scope.host = $location.host();
-
     $scope.credentials = {};
 
     $scope.signIn = function() {
@@ -143,11 +141,15 @@ angular.module('probedock.auth', ['base64', 'probedock.storage'])
       auth.signIn($scope.credentials).then($scope.$close, showError);
     };
 
-    $scope.getEmailContent = function() {
-      return "Hello,%0A%0A" +
-        "Could you please reset my password on " + $location.host() +
-        (!_.isUndefined($scope.credentials.username) ? " for username: " + $scope.credentials.username : "") +
-        ".%0A%0AThanks";
+    $scope.getEmailUrl = function() {
+      return ('mailto:support@probedock.io?' +
+        // Build subject
+        'subject=Please reset my password on ' + $location.host() +
+        // Build body
+        '&body=Dear Probe Dock Team,%0A%0A' +
+        'Could you please reset my password on ' + $location.host() + '?' +
+        (!_.isUndefined($scope.credentials.username) ? ' My user name is: ' + $scope.credentials.username : '') +
+        '.%0A%0AThanks!').replace(' ', '%20');
     };
 
     $scope.$on('$stateChangeSuccess', function() {
