@@ -15,7 +15,7 @@
       tr ng-repeat='contribution in contributions'
         td
           user-avatar user='contribution.user'
-          span.name {{ contribution.user.name }}
+          span.project-contributions-name {{ contribution.user.name }}
         td {{ contribution.testsCount }}
         td
           span ng-repeat='category in contribution.categories'
