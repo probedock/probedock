@@ -47,15 +47,17 @@ nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='NavC
         li ng-if='currentUser' ng-class='{active: baseStateIs("profile")}'
           a href='#' tooltip='Your profile' tooltip-placement='bottom' ui-sref='profile' {{ currentUser.name }}
         li ng-if='!currentUser'
-          button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='openSignInDialog()' tooltip='Sign in' tooltip-placement='left'
+          button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='openSignInDialog()'
             span.glyphicon.glyphicon-log-in
+            |  Sign in
         li ng-if='!currentUser'
           button#register.btn.btn-success.navbar-btn.btn-sm type='button' ui-sref='register' ng-if='appSettings.userRegistrationEnabled'
             span.glyphicon.glyphicon-user
             |  Register
         li ng-if='currentUser'
-          button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()' tooltip='Sign out' tooltip-placement='left'
+          button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()'
             span.glyphicon.glyphicon-log-out
+            |  Sign out
 div ui-view=true
 nav#footer.navbar.navbar-default.navbar-fixed-bottom.hidden-xs ng-controller='FooterCtrl'
   .container.text-center
