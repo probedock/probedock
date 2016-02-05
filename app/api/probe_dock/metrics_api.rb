@@ -44,51 +44,86 @@ module ProbeDock
           end
         end
 
-        def apply_projects_filters(rel_for_filtering)
-          rel = rel_for_filtering
+        # Returns the specified relation filtered to match only the projects specified in the :projectIds query parameter.
+        # The original relation is not modified.
+        #
+        # This method requires that the :projects table be available in the relation.
+        def apply_projects_filter(rel)
+          filtered_rel = rel
 
-          if params[:projectIds].present? && params[:projectIds].kind_of?(Array)
-            rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s)
+          if array_param?(:projectIds)
+            filtered_rel = filtered_rel.where('projects.api_id IN (?)', params[:projectIds].collect(&:to_s))
           end
 
-          rel
+          filtered_rel
         end
 
-        def apply_users_filters(rel_for_filtering)
-          rel = rel_for_filtering
+        # Returns the specified relation filtered to match only the tests authored by the users specified in the :userIds query parameter.
+        # A test is defined to have been authored by a user if that user owns the corresponding test key, or if he was the first to run the test.
+        # The original relation is not modified.
+        #
+        # This method requires that the :project_tests table be available in the relation.
+        def apply_users_filter(rel)
+          filtered_rel = rel
 
-          if params[:userIds].present? && params[:userIds].kind_of?(Array)
-           users = User.where('api_id IN (?)', params[:userIds].collect(&:to_s)).to_a
-           rel = rel.joins 'LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id'
+          if array_param?(:userIds)
+            users = User.select(:id).where('api_id IN (?)', params[:userIds].collect(&:to_s)).to_a
 
-           user_ids = users.collect &:id
-           rel = rel.where '(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids
+            filtered_rel = filtered_rel.joins('LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id')
+
+            user_ids = users.collect(&:id)
+            filtered_rel = filtered_rel.where('(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids)
           end
 
-          rel
+          filtered_rel
         end
 
-        def apply_projects_and_users_filters(rel_for_filtering)
-          rel = apply_projects_filters rel_for_filtering
-          rel = apply_users_filters rel
-          rel
+        # Returns the specified relation filtered through both `apply_projects_filter` and `apply_users_filter`.
+        # The original relation is not modified.
+        def apply_projects_and_users_filters(rel)
+          filtered_rel = rel
+          filtered_rel = apply_projects_filter(filtered_rel)
+          filtered_rel = apply_users_filter(filtered_rel)
+          filtered_rel
         end
 
+        # Returns the number of tests by interval since the specified date.
+        #
+        # See the following PostgreSQL documentation for the available intervals:
+        # http://www.postgresql.org/docs/9.4/static/functions-datetime.html#FUNCTIONS-DATETIME-TRUNC
         def count_new_tests_by_interval(start_date, interval)
-          rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select("count(project_tests.id) as project_tests_count, date_trunc('#{interval}', project_tests.first_run_at) as project_tests_by_interval")
-          rel = rel.where 'project_tests.first_run_at >= ?', start_date
 
-          rel = apply_projects_and_users_filters rel
+          # Select the number of tests grouped by date, truncated to the specified interval (e.g. day, week)
+          rel = ProjectTest
+            .select("count(project_tests.id) as project_tests_count, date_trunc('#{interval}', project_tests.first_run_at) as project_tests_by_interval")
+            .group('project_tests_by_interval')
 
-          rel = rel.group('project_tests_by_interval').order('project_tests_by_interval DESC')
+          # Filter to match only the current organization
+          rel = rel.joins(:project).where('projects.organization_id = ?', current_organization.id)
 
-          rel.to_a.inject({}){ |memo,data| memo[data.project_tests_by_interval.strftime('%Y-%m-%d')] = data.project_tests_count; memo }
+          # Filter to match only the tests created since the specified start date
+          rel = rel.where('project_tests.first_run_at >= ?', start_date)
+
+          # Filter by projects and users
+          rel = apply_projects_and_users_filters(rel)
+
+          # Order by descending date
+          rel = rel.order('project_tests_by_interval DESC')
+
+          rel.to_a.inject({}) do |memo,data|
+            memo[data.project_tests_by_interval.strftime('%Y-%m-%d')] = data.project_tests_count
+            memo
+          end
         end
 
-        def project_version
-          # Retrieve the data from the specified version otherwise take the most recent project version to retrieve the data
+        # Returns the current project version corresponding to query parameters:
+        #
+        # * If the :projectVersionId query parameter is given, the corresponding project version is returned.
+        # * If the :projectId query parameter is given, the last created version for that project is returned (or nil if there is none).
+        # * Otherwise, nil is returned.
+        def current_project_version
           if params[:projectVersionId].present?
-            ProjectVersion.where('api_id = ?', params[:projectVersionId]).first
+            ProjectVersion.where('api_id = ?', params[:projectVersionId]).first!
           elsif params[:projectId]
             ProjectVersion.joins(:project).where('projects.api_id = ?', params[:projectId]).order('created_at DESC').first
           else
@@ -98,7 +133,7 @@ module ProbeDock
       end
 
       get :newTestsByDay do
-        authorize! :organization, :data
+        authorize!(:organization, :data)
 
         nb_days = params[:nbDays].to_i
         nb_days = MAX_NB_DAYS_FOR_NEW_TESTS if nb_days > MAX_NB_DAYS_FOR_NEW_TESTS
@@ -110,7 +145,7 @@ module ProbeDock
         result = []
         current_date = start_date
 
-        tests_counts = count_new_tests_by_interval start_date, :day
+        tests_counts = count_new_tests_by_interval(start_date, :day)
 
         nb_days.times do |i|
          date = current_date.strftime('%Y-%m-%d')
@@ -122,7 +157,7 @@ module ProbeDock
       end
 
       get :reportsByDay do
-        authorize! :organization, :data
+        authorize!(:organization, :data)
 
         nb_days = params[:nbDays].to_i
         nb_days = MAX_NB_DAYS_FOR_REPORTS if nb_days > MAX_NB_DAYS_FOR_REPORTS
@@ -131,27 +166,40 @@ module ProbeDock
 
         start_date = (nb_days - 1).days.ago.beginning_of_day
 
-        rel = TestReport.where('test_reports.organization_id = ?', current_organization.id).select("count(distinct test_reports.id) as runs_count, date_trunc('day', test_reports.ended_at) as runs_day")
-        rel = rel.where 'test_reports.ended_at >= ?', start_date
+        # Select the number of test reports grouped by day
+        rel = TestReport
+          .select("count(distinct test_reports.id) as runs_count, date_trunc('day', test_reports.ended_at) as runs_day")
+          .group('runs_day')
 
-        # Set filters by
-        filter_by_projects = params[:projectIds].present? && params[:projectIds].kind_of?(Array)
-        filter_by_users = params[:userIds].present? && params[:userIds].kind_of?(Array)
+        # Filter to match only the current organization
+        rel = rel.where('test_reports.organization_id = ?', current_organization.id)
 
-        # Prepare additional join for test_payloads
+        # Filter to match only the test reports received since the specified start date
+        rel = rel.where('test_reports.ended_at >= ?', start_date)
+
+        # Check which filters will be applied
+        filter_by_projects = array_param? :projectIds
+        filter_by_users = array_param? :userIds
+
+        # Prepare test payload joins, depending on which filters are present
         payload_joins = []
         payload_joins << { project_version: :project } if filter_by_projects
         payload_joins << :runner if filter_by_users
 
+        # Apply test payload joins
         rel = rel.joins(test_payloads: payload_joins) unless payload_joins.empty?
 
-        # Apply filters
-        rel = rel.where 'projects.api_id IN (?)', params[:projectIds].collect(&:to_s) if filter_by_projects
-        rel = rel.where 'users.api_id IN (?)', params[:userIds].collect(&:to_s) if filter_by_users
+        # Filter by projects and users
+        rel = rel.where('projects.api_id IN (?)', params[:projectIds].collect(&:to_s)) if filter_by_projects
+        rel = rel.where('users.api_id IN (?)', params[:userIds].collect(&:to_s)) if filter_by_users
 
-        rel = rel.group('runs_day').order('runs_day DESC')
+        # Order by descending date
+        rel = rel.order('runs_day DESC')
 
-        counts = rel.to_a.inject({}){ |memo,data| memo[data.runs_day.strftime('%Y-%m-%d')] = data.runs_count; memo }
+        counts = rel.to_a.inject({}) do |memo,data|
+          memo[data.runs_day.strftime('%Y-%m-%d')] = data.runs_count
+          memo
+        end
 
         result = []
         current_date = start_date
@@ -166,9 +214,9 @@ module ProbeDock
       end
 
       get :projectHealth do
-        authorize! :organization, :data
+        authorize!(:organization, :data)
 
-        project_version = project_version()
+        project_version = current_project_version
 
         if project_version.blank?
           return {
@@ -182,7 +230,7 @@ module ProbeDock
 
         tests_counts = TestDescription.joins(:project_version).where('project_versions.id = ?', project_version.id)
 
-        # In this statement, we use nullif which return null if left value is equal to right value. Therefore, we want to
+        # In this query, we use nullif which return null if left value is equal to right value. Therefore, we want to
         # count the opposite of this results as COUNT will not take into account null values. Ex: all passing tests have
         # value set to true and then we want to remove the failing ones. Then, we want nullif to return null when passing
         # is false.
@@ -223,17 +271,21 @@ module ProbeDock
 
         start_date = (nb_weeks - 1).weeks.ago.beginning_of_week
 
-        rel = ProjectTest.joins(:project).where('projects.organization_id = ?', current_organization.id).select('count(project_tests.id) as total_tests_count')
-        rel = rel.where 'project_tests.first_run_at < ?', start_date
-
+        # Count the total number of tests
+        rel = ProjectTest.select('count(project_tests.id) as total_tests_count')
+        # Filter to match only the current organization.
+        rel = rel.joins(:project).where('projects.organization_id = ?', current_organization.id)
+        # Filter to match only the tests created before the specified start date
+        rel = rel.where('project_tests.first_run_at < ?', start_date)
+        # Filter by projects and users
         rel = apply_projects_and_users_filters rel
-
+        # Retrieve the count
         total_tests_count = rel.take.total_tests_count
 
         result = []
         current_date = start_date
 
-        tests_count = count_new_tests_by_interval start_date, :week
+        tests_count = count_new_tests_by_interval(start_date, :week)
 
         nb_weeks.times do |i|
           date = current_date.strftime('%Y-%m-%d')
@@ -246,64 +298,64 @@ module ProbeDock
       end
 
       get :testsByCategories do
-        authorize! :organization, :data
+        authorize!(:organization, :data)
 
-        # Set filters by
-        filter_by_projects = params[:projectIds].present? && params[:projectIds].kind_of?(Array)
-        filter_by_users = params[:userIds].present? && params[:userIds].kind_of?(Array)
+        # Check which filters will be applied
+        filter_by_projects = array_param?(:projectIds)
+        filter_by_users = array_param?(:userIds)
 
         # Try to retrieve the project version
-        project_version = project_version()
+        project_version = current_project_version
 
-        project_versions = if !project_version.nil?
+        project_versions = if project_version
           [ project_version.id ]
         else
-          # Prepare a statement (postgresql) to retrieve the latest version by project
+          # Retrieve the latest version by project
           rel = ProjectVersion
             .joins(:project)
             .select('distinct on (projects.name) project_versions.id')
             .order('projects.name, project_versions.created_at DESC')
 
-          # Apply project filtering otherwise apply the filtering based on organization
           rel = if filter_by_projects
-            apply_projects_filters rel
+            # Filter by projects if specified
+            apply_projects_filter(rel)
           else
+            # Otherwise, filter to match only the current organization
             rel.where('projects.organization_id = ?', @current_organization.id)
           end
 
-          rel.collect { |version| version.id }
+          rel.collect(&:id)
         end
 
         # Prepare additional join for categories_counts
         categories_counts_joins = [ 'LEFT OUTER JOIN categories ON test_descriptions.category_id = categories.id', :project_version ]
         categories_counts_joins << { test: :first_runner } if filter_by_users
 
-        # Statement to retrieve the count of tests by category
-        categories_counts_rel = TestDescription.joins(categories_counts_joins).where('project_versions.id IN (?)', project_versions)
+        # Retrieve the number of tests by category
+        categories_counts_rel = TestDescription
+          .select('categories.name, count(test_descriptions.*) as categories_tests_count')
+          .group('test_descriptions.category_id, categories.name')
 
-        categories_counts_rel = apply_users_filters categories_counts_rel
+        # Filter to match only the selected project versions
+        categories_counts_rel = categories_counts_rel.joins(categories_counts_joins).where('project_versions.id IN (?)', project_versions)
 
-        # Prepare the select part of the statement to retrieve the category name
-        # and the count by category
-        categories_counts_rel = categories_counts_rel.select(
-          # Retrieve name of the category
-          'categories.name, ' +
+        # Filter by users if specified
+        categories_counts_rel = apply_users_filter(categories_counts_rel)
 
-          # Count the categories
-          'count(test_descriptions.*) as categories_tests_count'
-        )
-        .group('test_descriptions.category_id, categories.name')
-        .order('categories.name ASC') # Ensure tests without category is the last result (if any)
+        # Order by ascending category name (the null category will be at the end, if any)
+        categories_counts_rel = categories_counts_rel.order('categories.name ASC')
 
-        # Pre-process the results to extract the result for tests without category
+        # Perform the query and retrieve the counts
         categories_counts = categories_counts_rel.to_a
+
+        # Extract the number of tests without a category (last in the array, if present)
+        # and remove it from the original array
         no_category_tests_count = 0
         if categories_counts.last.name.nil?
           no_category_tests_count = categories_counts.last.categories_tests_count
           categories_counts.slice!(-1)
         end
 
-        # Result
         {
           noCategoryTestsCount: no_category_tests_count,
           categories: categories_counts.collect do |category_metric|
@@ -314,7 +366,6 @@ module ProbeDock
           end
         }
       end
-
 
       # GET /api/metrics/contributions?organizationId&projectId&withUser
       #
@@ -334,54 +385,62 @@ module ProbeDock
       #       }
       #     ]
       get :contributions do
-        authorize! :organization, :data
+        authorize!(:organization, :data)
 
-        # load optional project filter
+        # Load the optional project filter
         project = nil
         project = Project.where(organization_id: current_organization.id, api_id: params[:projectId]).first! if params[:projectId]
 
-        # query all categories linked to the organization, and all contributions that have been made for those categories
+        # Select test contributors by category
+        category_rel = Category
+          .select('categories.*, array_agg(distinct test_contributions.user_id) AS contributor_ids')
+          .group('categories.id')
+
         category_joins = { test_descriptions: [ :contributions, { test: :project } ] }
-        category_select = 'categories.*, array_agg(distinct test_contributions.user_id) AS contributor_ids'
         category_where = [ 'projects.organization_id = ?', current_organization.id ]
 
-        # if a project ID is given, limit the query to the project in question
+        # If a project ID is given, limit the query to the project in question
         if project
-          category_joins[:test_descriptions][1] = :test # no need to join with the projects table any more
+          # No need to join with the :projects table any more
+          # (replace `{ test: :project }` by `:test` in `category_joins`)
+          category_joins[:test_descriptions][1] = :test
           category_where = [ 'project_tests.project_id = ?', project.id ]
         end
 
-        # load the categories
-        categories_with_contributors = Category.select(category_select).joins(category_joins).where(*category_where).group('categories.id').to_a
+        # Load the categories
+        categories_with_contributors = category_rel.joins(category_joins).where(*category_where).to_a
 
-        # query all users that have contributed within the organization, and the number of tests they have written
+        # Query all users that have contributed within the organization, and the number of tests they have written
+        user_rel = User
+          .select('users.*, count(distinct project_tests.id) AS tests_count')
+          .group('users.id')
+
+        # Order by descending number of tests, then by user name
+        user_rel = user_rel.order('tests_count DESC, users.name ASC')
+
         user_joins = { test_contributions: { test_description: { test: :project } } }
-        user_select = 'users.*, count(distinct project_tests.id) AS tests_count'
-        user_order = 'tests_count DESC, users.name ASC'
-
         user_conditions = [ 'projects.organization_id = ?' ]
         user_values = [ current_organization.id ]
 
-        # if a project ID is given, limit the query to the project in question
+        # Filter by project if specified
         if project
           user_conditions << 'projects.id = ?'
           user_values << project.id
         end
 
-        user_where = user_values.unshift user_conditions.join(' AND ')
+        user_where = user_values.unshift(user_conditions.join(' AND '))
 
-        # load the users
-        contributors = User.select(user_select).joins(user_joins).where(user_where).group('users.id').order(user_order).to_a
+        # Load the users
+        contributors = user_rel.joins(user_joins).where(user_where).to_a
 
-        # send the response
-        with_user = true_flag? :withUser
+        with_user = true_flag?(:withUser)
 
         contributors.collect do |user|
 
           contribution = {
             userId: user.api_id,
             testsCount: user.tests_count,
-            categories: categories_with_contributors.select{ |cat| cat.contributor_ids.include? user.id }.collect(&:name).sort
+            categories: categories_with_contributors.select { |cat| cat.contributor_ids.include?(user.id) }.collect(&:name).sort
           }
 
           contribution[:user] = policy_serializer(user).serialize if with_user

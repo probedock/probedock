@@ -1,21 +1,32 @@
-.tests-by-category-table
-  margin-bottom 10px !important
+.tests-by-category-widget
 
-.tests-by-category-td
-  border-top none !important
-  padding 0 !important
-  text-align center
+  table.category-descriptions
+    width 100%
+    margin-bottom 10px
 
-  span
-    border-left-style  solid
-    border-left-width  6px
-    padding 4px 6px
-    font-size 1.1em
+    td
+      padding 0
+      text-align center
 
-.tests-by-category-progress
-  margin 0
+      span.category
+        border-left-style solid
+        border-left-width 6px
+        padding 4px 6px
+        font-size 1.1em
 
-.tests-by-category-filters
+      &.short
+        text-align left
+        span.category
+          font-size 1em
+          padding 0 6px
+
+  .categories-bar
+    margin 0
+
+  .show-other-categories
+    margin-left 10px
+
+.tests-by-categories-widget-filters
   width 250px
 
   .ui-select-search
@@ -27,6 +38,3 @@
     text-overflow ellipsis
     padding-right 5px
     text-align left
-
-.tests-by-category-show-more
-  margin-left 10px

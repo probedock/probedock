@@ -1,66 +1,38 @@
-.panel.panel-default
-  .panel-heading
-    .row
-      .col-md-6
-        h3.panel-title Tests by category
-      .col-md-6
-        div style='float:right;'
-          a.btn.btn-default.btn-xs href='#' role='button'
-            i.glyphicon.glyphicon-filter
-            drop constrain-to-scroll-parent='true' constrain-to-window='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}' before-close='beforeClose()'
-              .panel.panel-default.tests-by-category-filters
-                .panel-heading
-                  .h4.panel-title Filters
-                .panel-body
-                  form.form role='form'
-                    .col-md-12 ng-if='!project'
-                      project-select prefix='tests-by-category' organization='organization' model-object='params'
-                    .col-md-12 ng-if='project'
-                      project-version-select prefix='tests-by-category' organization='organization' project='project' model-object='params' auto-select='true'
-                    .col-md-12
-                      user-select prefix='tests-by-category' organization='organization' model-object='params'
-                    .col-md-12
-                      .btn-group.btn-group-justified
-                        .btn-group
-                          button.btn.btn-warning ng-click='resetFilters()' Reset
-                        .btn-group
-                          button.btn.btn-primary ng-click='closeFilters()' Close
+.tests-by-category-widget.panel.panel-default
+  .panel-heading.clearfix
+    a.btn.btn-default.btn-xs.pull-right href='#' role='button' tooltip='Filters'
+      i.glyphicon.glyphicon-filter
+      drop constrain-to-window='true' constrain-to-scroll-parent='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}' before-close='beforeClose()'
+        .panel.panel-default.tests-by-categories-widget-filters
+          .panel-heading
+            .h4.panel-title Filters
+          .panel-body
+            form.form role='form'
+              .col-md-12 ng-if='!project'
+                project-select prefix='tests-by-category' organization='organization' model-object='params'
+              .col-md-12 ng-if='project'
+                project-version-select prefix='tests-by-category' organization='organization' project='project' model-object='params' auto-select='true'
+              .col-md-12
+                user-select prefix='tests-by-category' organization='organization' model-object='params'
+              .col-md-12
+                .btn-group.btn-group-justified
+                  .btn-group
+                    button.btn.btn-warning ng-click='resetFilters()' Reset
+                  .btn-group
+                    button.btn.btn-primary ng-click='closeFilters()' Close
+    h3.panel-title Tests by category
 
-  .panel-body ng-if='testsByCategory.length === 0'
+  .panel-body ng-if='categories.length === 0'
     .empty
       em Loading...
-  .panel-body ng-if='testsByCategory.length > 0'
-    table.table.tests-by-category-table
-      tr
-        td.tests-by-category-td ng-repeat='record in testsByCategory'
-          span style='border-left-color: {{ getColor($index) }};'
-            strong {{ record.name }}
-            |  {{ record.percent | number : 1 }}% / {{ record.testsCount }}
-            ng-pluralize count='record.testsCount' when='{"1": " test", "other": " tests"}'
-            a.tests-by-category-show-more.btn.btn-default.btn-xs href='#' role='button' ng-if='record.others'
-              i.glyphicon.glyphicon-eye-open
-              drop constrain-to-scroll-parent='true' constrain-to-window='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}'
-                .panel.panel-default.tests-by-category-filters
-                  .panel-heading
-                    .h4.panel-title Other categories
-                  table.table
-                    thead
-                      tr
-                        th Category
-                        th Proportion
-                        th Tests
-                    tbody
-                      tr ng-repeat='otherCategory in record.others'
-                        td
-                          strong {{ otherCategory.name }}
-                        td.text-right {{ otherCategory.percent | number : 1 }}%
-                        td.text-right {{ otherCategory.testsCount }}
-                    tfoot
-                      tr.active
-                        td
-                          strong Total
-                        td.text-right {{ record.percent | number : 1 }}%
-                        td.text-right {{ record.testsCount }}
+  .panel-body ng-if='categories.length > 0'
+    table.category-descriptions
+      tr.hidden-xs
+        td ng-repeat='category in categories'
+          tests-by-category-widget-description category='category' category-index='$index'
+      tr.hidden-sm.hidden-md.hidden-lg ng-repeat='category in categories'
+        td.short
+          tests-by-category-widget-description category='category' category-index='$index'
 
-    .progress.tests-by-category-progress
-      .progress-bar style="width: {{ record.percent }}%; background-color: {{ getColor($index) }}" ng-repeat='record in testsByCategory'
+    .progress.categories-bar
+      .progress-bar style="width: {{ category.percentage }}%; background-color: {{ getColor($index) }}" ng-repeat='category in categories'

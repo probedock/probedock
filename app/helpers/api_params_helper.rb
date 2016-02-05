@@ -32,4 +32,9 @@ module ApiParamsHelper
   def false_flag? name
     !!params[name].to_s.match(/\A(?:0|n|no|f|false)\Z/i)
   end
+
+  # Returns true if the specified query parameter is present and is an array.
+  def array_param? name
+    params[name].present? && params[name].kind_of?(Array)
+  end
 end

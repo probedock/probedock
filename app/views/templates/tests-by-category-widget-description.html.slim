@@ -1,0 +1,33 @@
+span.category style='border-left-color: {{ getColor(categoryIndex) }};'
+  strong.visible-md-inline.visible-lg-inline {{ category.name }}
+  strong.visible-xs-inline.visible-sm-inline tooltip='{{ category.percentage | number : 1 }}% / {{ getTestsCountDescription() }}' {{ category.name }}
+  '
+  span.visible-lg-inline {{ category.percentage | number : 1 }}%
+  span.visible-md-inline tooltip='{{ getTestsCountDescription() }}' {{ category.percentage | number : 1 }}%
+  '
+  span.visible-lg-inline
+    ' / {{ getTestsCountDescription() }}
+  a.show-other-categories.btn.btn-default.btn-xs.pull-right href='#' role='button' ng-if='category.others' tooltip='Show all others'
+    i.glyphicon.glyphicon-eye-open
+    drop constrain-to-scroll-parent='true' constrain-to-window='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}'
+      .panel.panel-default.tests-by-category-filters
+        .panel-heading
+          h4.panel-title Other categories
+        table.table
+          thead
+            tr
+              th Category
+              th Proportion
+              th Tests
+          tbody
+            tr ng-repeat='otherCategory in category.others'
+              td
+                strong {{ otherCategory.name }}
+              td.text-right {{ otherCategory.percentage | number : 1 }}%
+              td.text-right {{ otherCategory.testsCount }}
+          tfoot
+            tr.active
+              td
+                strong Total
+              td.text-right {{ category.percentage | number : 1 }}%
+              td.text-right {{ category.testsCount }}

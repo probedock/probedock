@@ -1,4 +1,20 @@
 angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
+
+  .factory('testsByCategory', function() {
+
+    var colors = [ '#337AB7', '#5BC0DE', '#9966ff', '#D9534F', '#00cc99', '#ff9933', '#F0AD4E', '#99cc00', '#ccccff', '#339966' ];
+
+    return {
+      getColor: function(index) {
+        return colors[index % (colors.length - 1)];
+      }
+    };
+  })
+
+  /**
+   * Widget to display the categories in an organization or project along with the
+   * number of tests for each category.
+   */
   .directive('testsByCategoryWidget', function() {
     return {
       restrict: 'E',
@@ -7,17 +23,19 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
       scope: {
         organization: '=',
         project: '=',
-        nbCategories: '=?'
+        // The maximum number of categories that will be explicitly displayed.
+        // If there are more categories, the last ones will all be grouped
+        // under "Others".
+        maxNbCategories: '=?'
       }
     };
   })
 
-  .controller('TestsByCategoryBarsCtrl', function(api, $scope) {
+  .controller('TestsByCategoryBarsCtrl', function(api, $scope, testsByCategory) {
 
     _.extend($scope, {
       testsByCategory: [],
-      colors: [ '#337AB7', '#5BC0DE', '#9966ff', '#D9534F', '#00cc99', '#ff9933', '#F0AD4E', '#99cc00', '#ccccff', '#339966' ],
-      nbCategories: $scope.nbCategories || 4,
+      maxNbCategories: $scope.maxNbCategories || 5,
       params: {
         projectIds: [],
         userIds: []
@@ -66,9 +84,7 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
       }
     };
 
-    $scope.getColor = function(index) {
-      return $scope.colors[index % ($scope.colors.length - 1)];
-    };
+    $scope.getColor = testsByCategory.getColor;
 
     function fetchMetrics() {
       if ($scope.project && !$scope.params.projectVersion) {
@@ -94,73 +110,80 @@ angular.module('probedock.testsByCategoryWidget', [ 'probedock.api' ])
     }
 
     function showMetrics(response) {
-      // Sum the number of tests for all the categories
+
+      // Compute the total number of tests across all categories (including tests with no category)
       var total = _.reduce(response.data.categories, function(memo, category) {
         return memo + category.testsCount;
       }, response.data.noCategoryTestsCount);
 
-      // Prepare the data for sorting
-      var testsByCategoryRaw = _.clone(response.data.categories);
+      // Copy the array of categories with the number of tests
+      var categories = _.clone(response.data.categories);
 
-      // Show the number of tests without a category only if there more than one test
+      // If there are tests without a category, the number is given as a property outside of the array,
+      // so we transform it into a category object and add it to the array.
       if (response.data.noCategoryTestsCount > 0) {
-        testsByCategoryRaw.push({
+        categories.push({
           name: 'No category',
           testsCount: response.data.noCategoryTestsCount
         });
       }
 
-      // Sort the metrics by testsCount
-      var testsByCategorySorted = _.sortBy(testsByCategoryRaw, function(testByCategory) {
-        return -testByCategory.testsCount;
+      // Sort the categories by descending number of tests
+      categories = _.sortBy(categories, function(category) {
+        return -category.testsCount;
       });
 
-      // Split the categories to show and the categories to group under "other"
-      var slicing = testsByCategorySorted.length > $scope.nbCategories ? $scope.nbCategories : testsByCategorySorted.length - 1;
-      var retainedCategories = testsByCategorySorted.slice(0, slicing);
-      var otherCategories = testsByCategorySorted.slice(slicing);
-
-      var testsByCategory = [];
-
-      // Calculate the percentage of the shown categories
-      _.each(retainedCategories, function(retainedCategory) {
-        testsByCategory.push(_.extend(retainedCategory, {
-          percent: 100 / total * retainedCategory.testsCount
-        }));
+      // Compute the percentages for each category
+      _.each(categories, function(category) {
+        category.percentage = 100 / total * category.testsCount;
       });
 
-      // If necessary calculate the number of tests for remaining categories and the corresponding percentage
-      if (!_.isEmpty(otherCategories)) {
-        // Create the other category only if there are two or more other categories
-        if (otherCategories.length > 1) {
-          var othersArray = [];
+      // If the number of categories is greater than the maximum we want to display, group the last ones under "Others"
+      if (categories.length > $scope.maxNbCategories) {
 
-          var others = _.reduce(otherCategories, function (memo, otherCategory) {
-            othersArray.push(_.extend(otherCategory, {
-              percent: 100 / total * otherCategory.testsCount
-            }));
-            return memo + otherCategory.testsCount;
-          }, 0);
+        // Extract the other categories from the array
+        var otherCategories = categories.splice($scope.maxNbCategories - 1, categories.length - $scope.maxNbCategories + 1);
 
-          // Add others only if there is at least one test
-          if (others > 0) {
-            testsByCategory.push({
-              name: 'Others',
-              testsCount: others,
-              percent: 100 / total * others,
-              others: othersArray
-            });
-          }
+        // Compute the total number of test for the other categories
+        var otherCategoriesTotal = _.reduce(otherCategories, function(memo, category) {
+          return memo + category.testsCount;
+        }, 0);
 
-        // As there is only one other category, just show the category in place of others
-        } else {
-          testsByCategory.push(_.extend(otherCategories[0], {
-            percent: 100 / total * otherCategories[0].testsCount
-          }));
-        }
+        // Add a category object representing the other categories
+        categories.push({
+          name: 'Others',
+          testsCount: otherCategoriesTotal,
+          percentage: 100 / total * otherCategoriesTotal,
+          others: otherCategories
+        });
       }
 
-      $scope.testsByCategory = testsByCategory;
+      $scope.categories = categories;
     }
   })
+
+  .directive('testsByCategoryWidgetDescription', function() {
+    return {
+      restrict: 'E',
+      controller: 'TestsByCategoryDescriptionCtrl',
+      templateUrl: '/templates/tests-by-category-widget-description.html',
+      scope: {
+        category: '=',
+        categoryIndex: '='
+      }
+    };
+  })
+
+  .controller('TestsByCategoryDescriptionCtrl', function($scope, testsByCategory) {
+    $scope.getColor = testsByCategory.getColor;
+
+    $scope.getTestsCountDescription = function() {
+      if ($scope.category.testsCount == 1) {
+        return '1 test';
+      } else {
+        return $scope.category.testsCount + ' tests';
+      }
+    };
+  })
+
 ;
