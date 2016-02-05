@@ -8,7 +8,7 @@
       strong
         a href='#' ui-sref='org.projects.show({ projectName: project.name })' {{ project | projectName }}
   .panel-body
-    .col-lg-5.col-md-4.col-sm-12
+    .col-sm-12 ng-class='{"col-lg-5 col-md-4": project && stateChart}'
       p.lead ng-show='project.description' {{ project.description }}
       dl
         dt Number of Tests
@@ -21,7 +21,7 @@
         a ui-sref='help.gettingStarted({ organizationId: project.organizationId, projectId: project.id })'
           strong Getting Started
         '  guide to set it up.
-    .col-lg-4.col-md-5.col-sm-12 ng-if='project'
+    .col-lg-4.col-md-5.col-sm-12 ng-if='project && stateChart'
       test-activity-chart ng-if='currentOrganization && project' type='projects' nb-days='15' organization='currentOrganization' project='project'
     .col-lg-3.col-md-3.col-sm-12 ng-if='stateChart'
       .latest-state

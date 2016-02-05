@@ -5,6 +5,8 @@ form role='form' name='loginForm'
     .form-group ng-class='{"has-error": error, "has-feedback": error}'
       input#username.form-control type='text' ng-model='credentials.username' placeholder='Your username or e-mail' autofocus=true required=true
       span.glyphicon.glyphicon-remove.form-control-feedback ng-show='error'
+    p.forgot-password
+      a href="{{ getEmailUrl() }}" Forgot password?
     .form-group ng-class='{"has-error": error, "has-feedback": error}'
       input#password.form-control type='password' ng-model='credentials.password' placeholder='Your password' required=true
       span.glyphicon.glyphicon-remove.form-control-feedback ng-show='error'
