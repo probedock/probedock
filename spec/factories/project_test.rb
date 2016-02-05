@@ -22,7 +22,6 @@ FactoryGirl.define do
 
   factory :project_test, aliases: %w(test) do
     transient do
-      first_runner nil
       last_runner nil
       project_version nil
       category nil
@@ -46,8 +45,8 @@ FactoryGirl.define do
 
       contributor, kind = if test.key.try(:user).try(:human?)
         [ test.key.user, :key_creator ]
-      elsif evaluator.first_runner.try(:human?)
-        [ evaluator.first_runner, :first_runner ]
+      elsif test.first_runner.try(:human?)
+        [ test.first_runner, :first_runner ]
       end
 
       if contributor

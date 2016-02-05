@@ -2,7 +2,7 @@
 Feature: New tests by day metrics
 
   Users should be able to retrieve the number of new tests by day of an organization.
-  The users can filter the by project and/or by user.
+  The users can filter by project and/or by user.
   Finally, the users can retrieve between 1 and 120 days of data.
 
   The following result is provided:
@@ -11,16 +11,24 @@ Feature: New tests by day metrics
 
 
   Background:
+    # Create 1 organization with 2 users
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
+
+    # Create 2 projects
     And project X-Wing exists within organization Rebel Alliance
+    And project Y-Wing exists within organization Rebel Alliance
+
+    # Create 4 tests for X-Wing project
     And test "Ion engine should provide thrust" was created 2 days ago by lskywalker with key k1 for version 1.0.0 of project X-Wing
     And test "Shields must protect" was created 2 days ago by lskywalker with key k2 for version 1.0.0 of project X-Wing
     And test "Proton torpedo should not explode on load" was created 1 day ago by hsolo with key k3 for version 1.0.0 of project X-Wing
     And test "Fuel must be efficient" was created by lskywalker with key k4 for version 1.0.0 of project X-Wing
-    And project Y-Wing exists within organization Rebel Alliance
+
+    # Create 1 test for Y-Wing project
     And test "Wings must be enough for atmospheric flights" was created 1 day ago by hsolo with key k5 for version 1.0.0 of project Y-Wing
+
     And assuming new tests by day metrics are calculated for 3 days by default
 
 

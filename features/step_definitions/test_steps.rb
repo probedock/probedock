@@ -16,6 +16,7 @@ Given /^test "(.+)" was created(?: (\d*) ((?:day|week)s?) ago)? by (.+) with key
     name: name,
     key: key,
     project: project,
+    first_runner: user,
     last_runner: user,
     project_version: project_version,
     first_run_at: date,
@@ -25,23 +26,30 @@ Given /^test "(.+)" was created(?: (\d*) ((?:day|week)s?) ago)? by (.+) with key
   add_named_record name, create(:test, options)
 end
 
-Given /^test "(.+)" was first run by (.+) for version (.+) of project (.+)$/ do |name,user_name,project_version,project_name|
+Given /^test "(.+)" was first run by (.+)(?: (\d*) ((?:day|week)s?) ago)? for version (.+) of project (.+)$/ do |name,user_name,interval_count,interval,project_version,project_name|
   user = named_record user_name
   project = named_record project_name
   project_version = ProjectVersion.where(project_id: project.id, name: project_version).first_or_create
+
+  date = if interval_count
+    interval_count.to_i.send(interval).ago
+  else
+    Time.now
+  end
 
   options = {
     name: name,
     project: project,
     first_runner: user,
     last_runner: user,
+    first_run_at: date,
     project_version: project_version
   }
 
   add_named_record name, create(:test, options)
 end
 
-Given /^test "(.+)"(?: is (passing|failing)(?: and (active|inactive))? and)?(?: was last run by (.+) and)? has category (.+?)(?: and tags (.+?))?(?: and tickets (.+?))? for version (.+)$/ do |name,passing,active,runner_name,category_name,tag_names,ticket_names,version_name|
+Given /^test "(.+)"(?: is (passing|failing)(?: and (active|inactive))? and)?(?: was last run by (.+?))?(?:(?: and)? has category (.+?))?(?: and tags (.+?))?(?: and tickets (.+?))? for version (.+)$/ do |name,passing,active,runner_name,category_name,tag_names,ticket_names,version_name|
   test = named_record name
   last_runner = runner_name ? named_record(runner_name) : nil
   project_version = ProjectVersion.where(project_id: test.project_id, name: version_name).first_or_create

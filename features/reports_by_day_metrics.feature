@@ -2,7 +2,7 @@
 Feature: Reports by day metrics
 
   Users should be able to retrieve the number of reports by day of an organization.
-  The users can filter the by project and/or by user.
+  The users can filter by project and/or by user.
   Finally, the users can retrieve between 1 and 120 days of data.
 
   The following result is provided:
@@ -11,31 +11,41 @@ Feature: Reports by day metrics
 
 
   Background:
+    # Create 1 organization with 2 users
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists
     And user lskywalker who is a member of Rebel Alliance exists
+
+    # Create 2 projects
     And project X-Wing exists within organization Rebel Alliance
+    And project Y-Wing exists within organization Rebel Alliance
+
+    # Create 9 result reports
     And test result report R1 was generated 2 days ago for organization Rebel Alliance
+    And test result report R2 was generated 2 days ago for organization Rebel Alliance
+    And test result report R3 was generated 1 day ago for organization Rebel Alliance
+    And test result report R4 was generated 1 day ago for organization Rebel Alliance
+    And test result report R5 was generated 1 day ago for organization Rebel Alliance
+    And test result report R6 was generated 1 day ago for organization Rebel Alliance
+    And test result report R7 was generated for organization Rebel Alliance
+    And test result report R8 was generated 1 day ago for organization Rebel Alliance
+    And test result report R9 was generated for organization Rebel Alliance
+
+    # Create 8 payloads for the test results for project X-Wing
     And test payload payload 1 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R1
     And test payload payload 2 sent by hsolo for version 1.0.0 of project X-Wing was used to generate report R1
-    And test result report R2 was generated 2 days ago for organization Rebel Alliance
     And test payload payload 3 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R2
-    And test result report R3 was generated 1 day ago for organization Rebel Alliance
     And test payload payload 4 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R3
-    And test result report R4 was generated 1 day ago for organization Rebel Alliance
     And test payload payload 5 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R4
-    And test result report R5 was generated 1 day ago for organization Rebel Alliance
     And test payload payload 6 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R5
-    And test result report R6 was generated 1 day ago for organization Rebel Alliance
     And test payload payload 7 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R6
-    And test result report R7 was generated for organization Rebel Alliance
     And test payload payload 8 sent by lskywalker for version 1.0.0 of project X-Wing was used to generate report R7
-    And project Y-Wing exists within organization Rebel Alliance
-    And test result report R8 was generated 1 day ago for organization Rebel Alliance
+
+    # Create 3 payloads for the test results for project Y-Wing
     And test payload payload 9 sent by hsolo for version 1.0.0 of project Y-Wing was used to generate report R8
     And test payload payload 10 sent by lskywalker for version 1.0.0 of project Y-Wing was used to generate report R8
-    And test result report R9 was generated for organization Rebel Alliance
     And test payload payload 11 sent by hsolo for version 1.0.0 of project Y-Wing was used to generate report R9
+
     And assuming reports by day metrics are calculated for 3 days by default
 
 

@@ -36,6 +36,8 @@
 //= require zero-clipboard
 //= require js-yaml
 //= require dropzone
+//= require tether
+//= require tether-drop
 //= require angular
 //= require angular-animate
 //= require angular-sanitize
@@ -54,6 +56,7 @@
 //= require angular-chart
 //= require angular-truncate
 //= require angular-scroll
+//= require drop-ng
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require ./boot
