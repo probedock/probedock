@@ -1,23 +1,22 @@
 @api @metrics
 Feature: Tests by categories
 
-  Users should be able to retrieve the number of tests by categories for latest project versions. When a project version
-  is not provided, we gather the data from the latest project versions based on creation date.
+  Users should be able to retrieve metrics about the number of tests by category in an organization.
 
-  The following filters are available:
-  - no filter (in fact, organization filter is applied and is mandatory for every filter)
-  - project version
-  - project
-  - user
-  - project and user
-  - project version and user
+  The metrics can be filtered by project in two different ways:
+  - by supplying a project version ID, the metrics will only be computed for the tests existing in that project version
+  - by supplying a project list, the metrics will be computed for all tests in the specified projects
+    (at the last created version for each project)
 
-  The following result is provided:
-  - name of the category
-  - the number of tests for this category
+  The metrics can also be filtered by a list of users, so that the metrics are only computed for
+  tests authored by these specific users.
 
-  In some cases, tests do not have a category. In this case, a dedicated property is available to get
-  the number of these tests.
+  The response includes an array of categories. For each category, the following information is provided:
+  - the name of the category
+  - the number of tests for the category
+
+  Some tests may have no category. The number of tests with no category is available as
+  a property on the response object.
 
 
 
@@ -224,7 +223,7 @@ Feature: Tests by categories
 
 
 
-  Scenario: A user should be able to retrieve the number of tests by categories from public organization
+  Scenario: A member from another organization should be able to retrieve the number of tests by categories from a public organization
     When hsolo sends a GET request to /api/metrics/testsByCategories?organizationId={@idOf: Old Republic}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -247,7 +246,7 @@ Feature: Tests by categories
 
 
 
-  Scenario: An anonymous user should be able to retrieve the number of tests by categories from public organization
+  Scenario: An anonymous user should be able to retrieve the number of tests by categories from a public organization
     When nobody sends a GET request to /api/metrics/testsByCategories?organizationId={@idOf: Old Republic}
     Then the response code should be 200
     And the response body should be the following JSON:
