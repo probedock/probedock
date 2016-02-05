@@ -24,7 +24,7 @@ ProbeDock::Application.routes.draw do
   end
 
   if Rails.env != 'production'
-    get '/templates/:name', to: 'home#template'
+    get '/templates/*path', to: 'home#template'
   end
 
   mount ProbeDock::API => '/api'

@@ -20,5 +20,6 @@
  *= require ./generic
  *= require ./transitions
  *= require ./loading-bar
+ *= require_tree ./styles
  *= require_tree ./modules
  */
