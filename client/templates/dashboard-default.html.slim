@@ -33,15 +33,9 @@
   .col-md-12
     tests-by-category-widget ng-if='currentOrganization' organization='currentOrganization' prefix='dashboard'
   .col-md-6.col-xs-12
-    recent-activity ng-if='currentOrganization' organization='currentOrganization'
+    recent-activity-widget ng-if='currentOrganization' organization='currentOrganization'
     tests-by-week-widget ng-if='currentOrganization' organization='currentOrganization' nb-weeks='30'
-    .dashboardTagCloud.panel.panel-default ng-controller='DashboardTagCloudCtrl' ng-if='orgIsActive()'
-      .panel-heading
-        h3.panel-title Test Tags
-      .panel-body
-        jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
-        .empty ng-show='tags && !tags.length'
-          em No tests have been tagged.
+    tag-cloud-widget organization='currentOrganization'
   .col-md-6.col-xs-12 ng-if='orgIsActive()'
     test-activity-chart ng-if='currentOrganization' organization='currentOrganization'
     test-contributions ng-if='currentOrganization' organization='currentOrganization'

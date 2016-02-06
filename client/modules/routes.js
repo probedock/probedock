@@ -6,8 +6,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('home', {
         url: '/',
-        controller: 'HomeCtrl',
-        templateUrl: '/templates/home.html'
+        controller: 'HomePageCtrl',
+        templateUrl: '/templates/pages/home/home.template.html'
       })
 
       .state('home.newOrg', {
@@ -17,7 +17,7 @@ angular.module('probedock.routes', [ 'ui.router' ])
       .state('error', {
         url: '/error/:type',
         controller: 'ErrorPageCtrl',
-        templateUrl: '/templates/error.html'
+        templateUrl: '/templates/pages/error/error.template.html'
       })
 
       .state('permalinks', {
@@ -34,8 +34,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('help.gettingStarted', {
         url: '/getting-started?organizationId&projectId',
-        controller: 'GettingStartedCtrl',
-        templateUrl: '/templates/getting-started.html'
+        controller: 'GettingStartedPageCtrl',
+        templateUrl: '/templates/pages/getting-started/started.template.html'
       })
 
       .state('newMembership', {
@@ -99,8 +99,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
       .state('org.dashboard', {
         url: '',
         abstract: true,
-        controller: 'DashboardCtrl',
-        templateUrl: '/templates/dashboard.html'
+        controller: 'DashboardPageCtrl',
+        templateUrl: '/templates/pages/dashboard/dashboard.template.html'
       })
 
       .state('org.dashboard.default', {

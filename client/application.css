@@ -21,5 +21,9 @@
  *= require ./transitions
  *= require ./loading-bar
  *= require_tree ./styles
+ *= require_tree ./services
+ *= require_tree ./pages
+ *= require_tree ./components
+ *= require_tree ./widgets
  *= require_tree ./modules
  */

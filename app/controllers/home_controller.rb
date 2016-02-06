@@ -25,7 +25,7 @@ class HomeController < ApplicationController
     return render_template_not_found unless params[:format] == 'html'
 
     # only accept alphanumeric characters, hyphens and underscores, separated by slashes
-    return render_template_not_found unless params[:path].to_s.match /\A[a-z0-9\-\_]+(\/[a-z0-9\-\_]+)*\Z/i
+    return render_template_not_found unless params[:path].to_s.match /\A[a-z0-9\-\_]+(\/[a-z0-9\-\_]+(?:\.[a-z0-9\-\_]+)*)*(?:\.template)?\Z/i
 
     begin
       render_template params[:path]
@@ -37,7 +37,12 @@ class HomeController < ApplicationController
   private
 
   def render_template path
-    render template: "templates/#{path}", layout: false
+    if path.match /\.template$/
+      render template: path, layout: false
+    else
+      # TODO: remove this once all templates have been migrated
+      render template: "templates/#{path}", layout: false
+    end
   end
 
   def render_template_not_found

@@ -31,16 +31,6 @@ angular.module('probedock', [
   'ui.gravatar',
   'ui.bootstrap',
   'ui.select',
-  'probedock.auth',
-  'probedock.contributions',
-  'probedock.dashboard',
-  'probedock.errors',
-  'probedock.format',
-  'probedock.forms',
-  'probedock.help',
-  'probedock.home',
-  'probedock.keys',
-  'probedock.nav',
   'probedock.orgs',
   'probedock.orgs.members',
   'probedock.permalinks',
@@ -60,7 +50,25 @@ angular.module('probedock', [
   'probedock.testsByCategoryWidget',
   'probedock.testsByWeekWidget',
   'probedock.userSelect',
-  'probedock.users'
+  'probedock.users',
+  // services
+  'probedock.auth',
+  'probedock.errors',
+  'probedock.format',
+  'probedock.forms',
+  // pages
+  'probedock.layout',
+  'probedock.dashboardPage',
+  'probedock.errorPage',
+  'probedock.gettingStartedPage',
+  'probedock.homePage',
+  // widgets
+  'probedock.recentActivityWidget',
+  'probedock.tagCloudWidget',
+  'probedock.testContributionsWidget',
+  'probedock.testKeyGeneratorWidget',
+  // components
+  'probedock.testKeyLabelComponent'
 ])
 
   // version 0.1.15

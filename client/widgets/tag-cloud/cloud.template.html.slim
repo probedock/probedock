@@ -1,0 +1,7 @@
+.tag-cloud-widget.panel.panel-default
+  .panel-heading
+    h3.panel-title Test Tags
+  .panel-body
+    jqcloud.cloud words='tags' auto-resize='true' ng-if='tags.length'
+    .empty ng-show='tags && !tags.length'
+      em No tests have been tagged.

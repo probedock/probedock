@@ -19,7 +19,7 @@
         .panel-body
           ul
             li {{ report.resultsCount | number }} test results
-            li Run in {{ report.duration | durationFormat }}
+            li Run in {{ report.duration | formatDuration }}
           .avatars.text-center
             user-avatar ng-repeat='runner in report.runners' user='runner' name-tooltip='true'
     .col-lg-2.col-md-3
@@ -105,7 +105,7 @@
               |  {{ result.runner.name }}
             li
               strong Duration:
-              |  {{ result.duration | durationFormat }}
+              |  {{ result.duration | formatDuration }}
           pre ng-if='result.message' {{ result.message }}
     p.empty
       span ng-if='noMoreResults' All results have been loaded.

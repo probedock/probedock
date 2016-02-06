@@ -1,3 +1,7 @@
+## Modular
+
+* Make layout nav & footer directives
+
 ## Features
 
 * status page
