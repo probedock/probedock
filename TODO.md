@@ -1,6 +1,8 @@
 ## Modular
 
 * Make layout nav & footer directives
+* Make profile access tokens & memberships widgets
+* Update project version directive to be able to select the ID (or another property) directly instead of an object
 
 ## Features
 

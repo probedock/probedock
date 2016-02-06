@@ -31,12 +31,12 @@
       '  guide to find out how to publish test results for your projects.
 .container-fluid ng-if='orgIsActive()'
   .col-md-12
-    tests-by-category-widget ng-if='currentOrganization' organization='currentOrganization' prefix='dashboard'
+    test-categories-bar-widget organization='currentOrganization' prefix='dashboard'
   .col-md-6.col-xs-12
-    recent-activity-widget ng-if='currentOrganization' organization='currentOrganization'
-    tests-by-week-widget ng-if='currentOrganization' organization='currentOrganization' nb-weeks='30'
+    recent-activity-widget organization='currentOrganization'
+    test-suite-size-widget organization='currentOrganization' nb-weeks='30'
     tag-cloud-widget organization='currentOrganization'
   .col-md-6.col-xs-12 ng-if='orgIsActive()'
-    test-activity-chart ng-if='currentOrganization' organization='currentOrganization'
-    test-contributions ng-if='currentOrganization' organization='currentOrganization'
-    test-key-generator ng-if='currentUser && orgIsActive() && currentMember()'
+    testing-activity-widget organization='currentOrganization'
+    test-contributions-widget organization='currentOrganization'
+    test-key-generator-widget ng-if='currentMember()'

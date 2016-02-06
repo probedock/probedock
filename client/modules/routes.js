@@ -22,8 +22,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('permalinks', {
         url: '/go/:target',
-        controller: 'PermalinksCtrl',
-        templateUrl: '/templates/permalinks.html'
+        controller: 'PermalinksPageCtrl',
+        templateUrl: '/templates/pages/permalinks/permalinks.template.html'
       })
 
       .state('help', {
@@ -58,7 +58,7 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('profile', {
         url: '/profile',
-        templateUrl: '/templates/profile.html'
+        templateUrl: '/templates/pages/profile/profile.template.html'
       })
 
       .state('profile.edit', {
@@ -78,8 +78,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('admin.settings', {
         url: '/settings',
-        controller: 'AppSettingsCtrl',
-        templateUrl: '/templates/app-settings.html'
+        controller: 'AppSettingsPageCtrl',
+        templateUrl: '/templates/pages/app-settings/settings.template.html'
       })
 
       .state('admin.users.show', {
@@ -163,8 +163,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('org.tests.show', {
         url: '/:testId',
-        controller: 'TestCtrl',
-        templateUrl: '/templates/test.html'
+        controller: 'TestDetailsPageCtrl',
+        templateUrl: '/templates/pages/test-details/details.template.html'
       })
 
       // Must be the last route to match any non-reserved word under /:orgName

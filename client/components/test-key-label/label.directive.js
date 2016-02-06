@@ -1,4 +1,4 @@
-angular.module('probedock.testKeyLabelComponent').directive('testKeyLabel', function() {
+angular.module('probedock.testKeyLabel').directive('testKeyLabel', function() {
   return {
     restrict: 'E',
     scope: {

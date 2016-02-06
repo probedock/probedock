@@ -1,4 +1,4 @@
-angular.module('probedock.testContributionsWidget').directive('testContributions', function() {
+angular.module('probedock.testContributionsWidget').directive('testContributionsWidget', function() {
   return {
     restrict: 'E',
     controller: 'TestContributionsCtrl',

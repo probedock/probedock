@@ -1,1 +1,1 @@
-angular.module('probedock.testKeyLabelComponent', []);
+angular.module('probedock.testKeyLabel', []);

@@ -1,4 +1,4 @@
-angular.module('probedock.testKeyGeneratorWidget').directive('testKeyGenerator', function() {
+angular.module('probedock.testKeyGeneratorWidget').directive('testKeyGeneratorWidget', function() {
   return {
     restrict: 'E',
     controller: 'TestKeyGeneratorWidgetCtrl',
