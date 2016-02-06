@@ -1,5 +1,5 @@
 nav.fade-in-out.ng-hide ng-show='numPages >= 2'
-  ul.pagination ng-controller='PaginationCtrl'
+  ul.pagination ng-controller='TablePaginationCtrl'
     li ng-class='{disabled: currentPage == 1}'
       a ng-click='selectPage(1)'
         span.glyphicon.glyphicon-step-backward

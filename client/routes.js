@@ -46,14 +46,14 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('register', {
         url: '/register?otp',
-        controller: 'UserRegistrationCtrl',
-        templateUrl: '/templates/user-registration.html'
+        controller: 'UserRegistrationPageCtrl',
+        templateUrl: '/templates/pages/user-registration/registration.template.html'
       })
 
       .state('confirmRegistration', {
         url: '/confirm-registration?otp',
-        controller: 'ConfirmUserRegistrationCtrl',
-        templateUrl: '/templates/user-confirm-registration.html'
+        controller: 'UserConfirmRegistrationPageCtrl',
+        templateUrl: '/templates/pages/user-confirm-registration/confirm.template.html'
       })
 
       .state('profile', {
@@ -73,7 +73,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('admin.users', {
         url: '/users',
-        templateUrl: '/templates/users.html'
+        controller: 'UserListPageCtrl',
+        templateUrl: '/templates/pages/user-list/list.template.html'
       })
 
       .state('admin.settings', {

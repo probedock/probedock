@@ -66,3 +66,4 @@
 //= require_tree ./components
 //= require_tree ./widgets
 //= require_tree ./modules
+//= require ./routes
