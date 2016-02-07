@@ -171,8 +171,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
       // Must be the last route to match any non-reserved word under /:orgName
       .state('org.projects.show', {
         url: '/:projectName',
-        controller: 'ProjectCtrl',
-        templateUrl: '/templates/project.html'
+        controller: 'ProjectDetailsPageCtrl',
+        templateUrl: '/templates/pages/project-details/details.template.html'
       })
     ;
 

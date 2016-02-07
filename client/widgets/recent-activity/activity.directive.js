@@ -1,14 +1,15 @@
 angular.module('probedock.recentActivityWidget').directive('recentActivityWidget', function() {
   return {
     restrict: 'E',
-    controller: 'RecentActivityCtrl',
+    controller: 'RecentActivityWidgetCtrl',
     controllerAs: 'ctrl',
     templateUrl: '/templates/widgets/recent-activity/activity.template.html',
     scope: {
-      organization: '='
+      organization: '=',
+      project: '=?'
     }
   };
-}).controller('RecentActivityCtrl', function(api, $scope) {
+}).controller('RecentActivityWidgetCtrl', function(api, $scope) {
 
   $scope.$watch('organization', function(value) {
     if (value) {
@@ -16,17 +17,33 @@ angular.module('probedock.recentActivityWidget').directive('recentActivityWidget
     }
   });
 
+  $scope.getNewTestsCount = function(report) {
+    if ($scope.project) {
+      return report.projectCounts.newTestsCount;
+    } else {
+      return report.newTestsCount;
+    }
+  };
+
   function fetchReports() {
+
+    var params = {};
+    if ($scope.project) {
+      params.projectId = $scope.project.id;
+      params.withProjectCountsFor = $scope.project.id;
+    } else {
+      params.organizationId = $scope.organization.id;
+    }
+
     return api({
       url: '/reports',
-      params: {
+      params: _.extend(params, {
         pageSize: 5,
-        organizationId: $scope.organization.id,
         withRunners: 1,
         withProjects: 1,
         withProjectVersions: 1,
         withCategories: 1
-      }
+      })
     }).then(showReports);
   }
 

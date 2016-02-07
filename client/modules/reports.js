@@ -308,47 +308,6 @@ angular.module('probedock.reports', [ 'ngSanitize', 'probedock.api', 'probedock.
     });
   })
 
-  .directive('reportHealthBar', function() {
-
-    function tooltipText(report, clickForDetails) {
-
-        var tooltipText = [],
-            numberPassed = report.passedResultsCount - report.inactivePassedResultsCount,
-            numberInactive = report.inactiveResultsCount,
-            numberFailed = report.resultsCount - numberPassed - numberInactive;
-
-        if (numberPassed) {
-          tooltipText.push(numberPassed + ' passed');
-        }
-        if (numberFailed) {
-          tooltipText.push(numberFailed + ' failed');
-        }
-        if (numberInactive) {
-          tooltipText.push(numberInactive + ' inactive');
-        }
-
-        tooltipText = tooltipText.join(', ');
-        if (clickForDetails) {
-          tooltipText += '. Click to see the detailed report.';
-        }
-
-        return tooltipText;
-    }
-
-    return {
-      restrict: 'E',
-      scope: {
-        report: '=',
-        clickForDetails: '@'
-      },
-      controller: function($attrs, reports, $scope) {
-        $scope.percentages = reports.percentages($scope.report);
-        $scope.tooltipText = tooltipText($scope.report, $attrs.clickForDetails !== undefined);
-      },
-      templateUrl: '/templates/report-health-bar.html'
-    };
-  })
-
   .directive('reportFilters', function($timeout) {
     return {
       link: function($scope, element, attrs) {

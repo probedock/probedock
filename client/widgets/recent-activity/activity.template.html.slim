@@ -1,6 +1,6 @@
-.panel.panel-default.recent-activity
+.recent-activity-widget.panel.panel-default
   .panel-heading
-    h3.panel-title Recent Activity
+    h3.panel-title Recent activity
   .panel-body ng-if='!reports || reports.length === 0'
     p.loading ng-if='!reports'
       em Loading...
@@ -18,9 +18,10 @@
       span.time.hidden-xs am-time-ago='report.endedAt'
       span.labels
         '
-        span ng-repeat='project in report.projects'
-          span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}'
-            a.label-link href='#' ui-sref='org.projects.show({ orgName: organization.name, projectName: project.name })' {{ project | projectName }} {{ version.name }}
+        span ng-repeat='reportProject in report.projects'
+          span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: reportProject.id}'
+            a.label-link href='#' ng-if='reportProject.id != project.id' ui-sref='org.projects.show({ orgName: organization.name, projectName: reportProject.name })' {{ reportProject | projectName }} {{ version.name }}
+            span ng-if='reportProject.id == project.id' {{ reportProject | projectName }} {{ version.name }}
           '
         span ng-repeat='category in report.categories'
           span.label.label-info {{ category }}
@@ -28,3 +29,12 @@
       .details
         a href='#' ui-sref='org.reports.show({ id: report.id })'
           report-health-bar report='report' click-for-details=true
+      .new-tests ng-if='getNewTestsCount(report) > 0'
+        span
+          i.glyphicon.glyphicon-plus
+          strong
+            '
+            span {{ getNewTestsCount(report) | number }}
+            '  new
+            ng-pluralize count='getNewTestsCount(report)' when='{one: "test was", other: "tests were"}'
+            '  added
