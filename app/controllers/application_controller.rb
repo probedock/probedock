@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 require 'exceptions'
+require 'templates'
 
 class ApplicationController < ActionController::Base
   protect_from_forgery

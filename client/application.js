@@ -68,3 +68,4 @@
 //= require_tree ./validations
 //= require_tree ./widgets
 //= require ./routes
+//= require ./templates
