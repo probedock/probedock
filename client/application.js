@@ -61,9 +61,10 @@
 //= require bootstrap-popover
 //= require ./boot
 //= require_tree ./initializers
-//= require_tree ./services
-//= require_tree ./pages
 //= require_tree ./components
+//= require_tree ./filters
+//= require_tree ./pages
+//= require_tree ./services
+//= require_tree ./validations
 //= require_tree ./widgets
-//= require_tree ./modules
 //= require ./routes

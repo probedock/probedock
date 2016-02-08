@@ -1,10 +1,9 @@
-angular.module('probedock.homePage').controller('HomePageCtrl', function(orgs, $scope, $state) {
-
+angular.module('probedock.homePage').controller('HomePageCtrl', function(orgEditModal, orgs, $scope, $state) {
   orgs.forwardData($scope);
 
   $scope.$on('$stateChangeSuccess', function(even, toState) {
     if (toState.name == 'home.newOrg') {
-      var modal = orgs.openForm($scope);
+      var modal = orgEditModal.open($scope);
 
       modal.result.then(function(org) {
         $state.go('org.dashboard.members', { orgName: org.name });

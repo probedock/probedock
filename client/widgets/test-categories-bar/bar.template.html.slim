@@ -22,9 +22,10 @@
                     button.btn.btn-primary ng-click='closeFilters()' Close
     h3.panel-title Tests by category
 
-  .panel-body ng-if='categories.length === 0'
+  .panel-body ng-if='!categories.length'
     .empty
-      em Loading...
+      em ng-if='!categories' Loading...
+      em ng-if='categories.length === 0' No tests have been run recently.
   .panel-body ng-if='categories.length > 0'
     table.category-descriptions
       tr.hidden-xs

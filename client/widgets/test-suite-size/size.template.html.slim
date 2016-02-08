@@ -1,29 +1,28 @@
-.panel.panel-default
+.test-suite-size-widget.panel.panel-default
   .panel-heading
     h3.panel-title Tests suite size
   .panel-body
-    .new-tests-line-chart
-      p.text-info ng-if='chart.data.length'
-        ng-pluralize count='totalCount' when='{"1": "There is ", "other": "There are "}'
-        strong ng-if='totalCount' {{ totalCount | number }}
-        span ng-if='totalCount === 0' no
-        ng-pluralize count='totalCount' when='{"1": " test in the ", "other": " tests in the "}'
-        span ng-if='project' project.
-        span ng-if='!project' organization.
-        '
-        span ng-if='totalCount || countDelta'
-          span ng-if='countDelta != totalCount'
-            strong ng-if='countDelta' {{ countDelta | number }}
-            span ng-if='countDelta === 0' None
-          span ng-if='countDelta == totalCount'
-            ng-pluralize count='countDelta' when='{"1": "It ", "other": "All "}'
-          ng-pluralize count='countDelta' when='{"1": " was ", "other": " were "}'
-          span ng-if='countDelta >= 0' added
-          span ng-if='countDelta < 0' removed
-          ng-pluralize count='nbWeeks' when='{"1": " over the last week.", "other": " over the last {{ nbWeeks }} weeks."}'
-      canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
-      form.form role='form' ng-if='chart.data.length'
-        .col-sm-6.col-xs-12 ng-if='!project'
-          project-select prefix='test-suite-size' organization='organization' model-object='chart.params'
-        .col-xs-12 ng-class='{"col-sm-6": !project }'
-          user-select prefix='test-suite-size' organization='organization' model-object='chart.params'
+    p.text-info ng-if='chart.data.length'
+      ng-pluralize count='totalCount' when='{"1": "There is ", "other": "There are "}'
+      strong ng-if='totalCount' {{ totalCount | number }}
+      span ng-if='totalCount === 0' no
+      ng-pluralize count='totalCount' when='{"1": " test in the ", "other": " tests in the "}'
+      span ng-if='project' project.
+      span ng-if='!project' organization.
+      '
+      span ng-if='totalCount || countDelta'
+        span ng-if='countDelta != totalCount'
+          strong ng-if='countDelta' {{ countDelta | number }}
+          span ng-if='countDelta === 0' None
+        span ng-if='countDelta == totalCount'
+          ng-pluralize count='countDelta' when='{"1": "It ", "other": "All "}'
+        ng-pluralize count='countDelta' when='{"1": " was ", "other": " were "}'
+        span ng-if='countDelta >= 0' added
+        span ng-if='countDelta < 0' removed
+        ng-pluralize count='nbWeeks' when='{"1": " over the last week.", "other": " over the last {{ nbWeeks }} weeks."}'
+    canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+    form.form role='form' ng-if='chart.data.length'
+      .col-sm-6.col-xs-12 ng-if='!project'
+        project-select prefix='test-suite-size' organization='organization' model-object='chart.params'
+      .col-xs-12 ng-class='{"col-sm-6": !project }'
+        user-select prefix='test-suite-size' organization='organization' model-object='chart.params'

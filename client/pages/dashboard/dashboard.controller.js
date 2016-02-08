@@ -1,5 +1,4 @@
 angular.module('probedock.dashboardPage').controller('DashboardPageCtrl', function(api, orgs, $scope, $stateParams) {
-
   orgs.forwardData($scope);
 
   $scope.orgIsActive = function() {

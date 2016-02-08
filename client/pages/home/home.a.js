@@ -1,1 +1,1 @@
-angular.module('probedock.homePage', [ 'probedock.orgs' ]);
+angular.module('probedock.homePage', [ 'probedock.orgEditModal', 'probedock.orgs' ]);

@@ -55,7 +55,6 @@ module.exports = function(grunt) {
           //{ nonull: true, src: 'bower_components/drop-ng/src/drop-ng.js', dest: 'vendor/assets/javascripts/drop-ng.js' },
           { nonull: true, src: 'bower_components/tether/dist/js/tether.js', dest: 'vendor/assets/javascripts/tether.js' },
           { nonull: true, src: 'bower_components/tether-drop/dist/js/drop.js', dest: 'vendor/assets/javascripts/tether-drop.js' },
-          // TODO: remove if unused
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },
           // stylesheets

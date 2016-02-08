@@ -1,1 +1,1 @@
-angular.module('probedock.testKeyGeneratorWidget', [ 'probedock.storage' ]);
+angular.module('probedock.testKeyGeneratorWidget', [ 'probedock.projects', 'probedock.storage' ]);

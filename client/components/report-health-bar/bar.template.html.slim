@@ -1,4 +1,4 @@
-.reportHealthBar.progress tooltip='{{ tooltipText }}'
+.report-health-bar.progress tooltip='{{ tooltipText }}'
   .progress-bar.progress-bar-success style='width: {{ percentages.passed }}%' ng-show='percentages.passed'
     | {{ report.passedResultsCount - report.inactivePassedResultsCount }}
   .progress-bar.progress-bar-danger style='width: {{ percentages.failed }}%' ng-show='percentages.failed'

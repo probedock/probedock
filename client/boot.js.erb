@@ -16,6 +16,7 @@
 // along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 
 angular.module('probedock', [
+  // libraries
   'angularMoment',
   'angular-jqcloud',
   'angular-loading-bar',
@@ -31,19 +32,11 @@ angular.module('probedock', [
   'ui.gravatar',
   'ui.bootstrap',
   'ui.select',
-  'probedock.orgs',
-  'probedock.orgs.members',
-  'probedock.projects',
-  'probedock.reports',
-  'probedock.routes',
   // services
   'probedock.auth',
   'probedock.errors',
-  'probedock.format',
-  'probedock.forms',
+  'probedock.orgs',
   'probedock.profile',
-  'probedock.tables',
-  'probedock.users',
   // pages
   'probedock.layout',
   'probedock.appSettingsPage',
@@ -51,14 +44,21 @@ angular.module('probedock', [
   'probedock.errorPage',
   'probedock.gettingStartedPage',
   'probedock.homePage',
+  'probedock.memberListPage',
+  'probedock.memberRegistrationPage',
   'probedock.permalinksPage',
   'probedock.profilePage',
   'probedock.projectDetailsPage',
+  'probedock.projectListPage',
+  'probedock.reportDetailsPage',
+  'probedock.reportListPage',
   'probedock.testDetailsPage',
   'probedock.userListPage',
   'probedock.userRegistrationPage',
   'probedock.userConfirmRegistrationPage',
   // widgets
+  'probedock.orgMemberDetailsWidget',
+  'probedock.projectDetailsWidget',
   'probedock.projectHealthWidget',
   'probedock.recentActivityWidget',
   'probedock.tagCloudWidget',
@@ -73,9 +73,22 @@ angular.module('probedock', [
   'probedock.projectSelect',
   'probedock.projectVersionSelect',
   'probedock.reportHealthBar',
+  'probedock.selectOnClick',
   'probedock.testKeyLabel',
   'probedock.userAvatar',
-  'probedock.userSelect'
+  'probedock.userSelect',
+  // filters
+  'probedock.formatDurationFilter',
+  'probedock.orgNameFilter',
+  'probedock.projectNameFilter',
+  // validations
+  'probedock.confirmationForValidation',
+  'probedock.uniqueOrgNameValidation',
+  'probedock.uniqueProjectNameValidation',
+  'probedock.uniqueUserEmailValidation',
+  'probedock.uniqueUserNameValidation',
+  // routes
+  'probedock.routes'
 ])
 
   // version 0.1.15

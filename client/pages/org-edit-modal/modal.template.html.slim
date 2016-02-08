@@ -1,0 +1,30 @@
+form#org-edit-modal novalidate=true name='orgForm' ng-submit='orgForm.$valid && save()'
+  .modal-header
+    .label.label-info.api-id.pull-right tooltip='Organization ID' tooltip-append-to-body='true' {{ organization.id }}
+    h3.modal-title ng-if='editedOrg.id' Edit {{ organization | orgName }}
+    h3.modal-title ng-if='!editedOrg.id' New Organization
+  .modal-body
+    .form-group ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
+      label for='orgName' Name
+      input#orgName.form-control type='string' name='name' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-org-name=true autofocus=true ng-model='editedOrg.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
+      p.help-block
+        | This is the identifier of the organization and is used in URLs.
+        |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
+      .alert.alert-danger ng-if='orgForm.name.$error.uniqueOrgName'
+        strong An organization with this name already exists.
+    .form-group
+      label for='orgDisplayName' Display name
+      input#orgDisplayName.form-control type='string' placeholder='{{ editedOrg.name }}' maxlength=50 ng-model='editedOrg.displayName'
+      p.help-block
+        | The is the name of the organization as shown in Probe Dock.
+    .checkbox
+      label
+        input type='checkbox' ng-model='editedOrg.public' Public
+      p.help-block
+        | When an organization is public, anyone can see its dashboard, projects and reports.
+        |  However, you still need to be a member of the organization to publish new test results.
+  .modal-footer.clearfix
+    .btn-group.pull-right
+      button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
+      button.btn.btn-warning type='button' ng-if='editedOrg.id' ng-click='reset()' ng-disabled='!changed()' Reset
+      button.btn.btn-primary type='submit' ng-disabled='orgForm.$invalid' Save

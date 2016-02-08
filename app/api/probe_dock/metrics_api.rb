@@ -346,7 +346,7 @@ module ProbeDock
         # Extract the number of tests without a category (last in the array, if present)
         # and remove it from the original array
         no_category_tests_count = 0
-        if categories_counts.last.name.nil?
+        if categories_counts.present? && categories_counts.last.name.nil?
           no_category_tests_count = categories_counts.last.categories_tests_count
           categories_counts.slice!(-1)
         end

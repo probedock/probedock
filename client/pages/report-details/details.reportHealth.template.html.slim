@@ -1,0 +1,7 @@
+.health.panel.panel-default
+  .panel-heading
+    h3.panel-title Health
+  .panel-body report-filters='report' report-filters-params='healthFilters' report-filters-selector='a'
+    p.empty.no-match No result matches the selected filters.
+    div ng-if='healthHtml' ng-bind-html='healthHtml' report-health-tooltips=true
+    .clearfix

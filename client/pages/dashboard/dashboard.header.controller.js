@@ -1,4 +1,4 @@
-angular.module('probedock.dashboardPage').controller('DashboardHeaderCtrl', function(orgs, $scope, $state, $stateParams) {
+angular.module('probedock.dashboardPage').controller('DashboardHeaderCtrl', function(orgEditModal, $scope, $state, $stateParams) {
 
   var modal;
   $scope.currentState = $state.current.name;
@@ -8,7 +8,7 @@ angular.module('probedock.dashboardPage').controller('DashboardHeaderCtrl', func
     $scope.currentState = toState.name;
 
     if (toState.name == 'org.dashboard.default.edit') {
-      modal = orgs.openForm($scope);
+      modal = orgEditModal.open($scope);
 
       modal.result.then(function() {
         $state.go('^', {}, { inherit: true });

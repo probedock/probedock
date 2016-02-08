@@ -40,8 +40,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('newMembership', {
         url: '/new-member?otp',
-        controller: 'NewMembershipCtrl',
-        templateUrl: '/templates/new-membership.html'
+        controller: 'MemberRegistrationPageCtrl',
+        templateUrl: '/templates/pages/member-registration/registration.template.html'
       })
 
       .state('register', {
@@ -106,7 +106,7 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('org.dashboard.default', {
         url: '',
-        templateUrl: '/templates/dashboard-default.html'
+        templateUrl: '/templates/pages/dashboard-default/default.template.html'
       })
 
       .state('org.dashboard.default.edit', {
@@ -115,8 +115,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('org.dashboard.members', {
         url: '/members',
-        controller: 'OrgMembersCtrl',
-        templateUrl: '/templates/dashboard-members.html'
+        controller: 'MemberListPageCtrl',
+        templateUrl: '/templates/pages/member-list/list.template.html'
       })
 
       .state('org.dashboard.members.new', {
@@ -134,8 +134,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('org.projects.list', {
         url: '/projects',
-        controller: 'ProjectsCtrl',
-        templateUrl: '/templates/projects.html'
+        controller: 'ProjectListPageCtrl',
+        templateUrl: '/templates/pages/project-list/list.template.html'
       })
 
       .state('org.projects.list.new', {
@@ -148,8 +148,8 @@ angular.module('probedock.routes', [ 'ui.router' ])
 
       .state('org.reports', {
         url: '/reports',
-        controller: 'ReportsCtrl',
-        templateUrl: '/templates/reports.html'
+        controller: 'ReportListPageCtrl',
+        templateUrl: '/templates/pages/report-list/list.template.html'
       })
 
       .state('org.reports.show', {

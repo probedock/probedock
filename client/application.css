@@ -15,15 +15,8 @@
  *= require angular-chart
  *= require angular-loading-bar
  *= require angular-ui-select
- *= require ./bootstrap
- *= require ./layout
- *= require ./generic
- *= require ./transitions
- *= require ./loading-bar
- *= require_tree ./styles
- *= require_tree ./services
+ *= require ./styles
  *= require_tree ./pages
  *= require_tree ./components
  *= require_tree ./widgets
- *= require_tree ./modules
  */
