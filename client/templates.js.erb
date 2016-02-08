@@ -18,6 +18,7 @@
 angular.module('probedock').run(function($templateCache) {
 
   <% if Rails.env == 'production' %>
+  <% require 'templates' %>
   <% environment.context_class.instance_eval { include ApplicationTemplateUtils } %>
 
   <% generate_template_scripts.each do |template| %>

@@ -74,10 +74,15 @@ http {
         rewrite (.*) $1.html break;
       }
 
-      # Pass request to app.
-      if (!-f $request_filename) {
+      # Pass API requests to app.
+      if ($uri ~ ^/api/) {
         proxy_pass http://probedock_cluster;
         break;
+      }
+
+      # Serve index otherwise.
+      if (!-f $request_filename) {
+        rewrite (.*) /index.html break;
       }
     }
   }

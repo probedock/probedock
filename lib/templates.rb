@@ -1,7 +1,10 @@
 module ApplicationTemplateUtils
   def generate_template_scripts
 
-    template_paths = Dir.glob Rails.root.join('client', '**', '*.html.slim')
+    template_paths = Dir.glob(Rails.root.join('client', '**', '*.html.slim')).reject do |path|
+      # Omit the index page
+      path == Rails.root.join('client', 'index.html.slim').to_s
+    end
 
     templates = template_paths.collect do |path|
       scope = Object.new
