@@ -5,7 +5,7 @@ Feature: New user registration
 
 
 
-  Scenario:
+  Scenario: A user should be able to register a new account
     When user registrations are enabled
     And the user visits /
     And clicks on the register button
