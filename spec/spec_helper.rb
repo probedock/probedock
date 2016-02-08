@@ -89,56 +89,9 @@ RSpec.configure do |config|
 
   # Run feature specs with `rake spec:features SPEC_OPTS='--tag type:feature'`.
   unless config.try(:inclusion_filter).try(:[], :type) == 'feature'
-
     config.filter_run_excluding type: :feature
   else
-
     config.use_transactional_fixtures = false
-
-    # Test server settings
-    config.add_setting :test_server_wait
-    config.add_setting :test_server_port
-    config.test_server_wait = 10
-    config.test_server_port = 3001
-    config.include TestServerHelper
-
-    # Start test server before all tests
-    config.before :suite do
-
-      puts
-      port = config.test_server_port
-      wait = config.test_server_wait
-      start_command = "bundle exec thin start -e test -p #{port} -d"
-      puts Paint["Starting test server with `#{start_command}`...", :magenta]
-      ENV['PROBEDOCK_CONFIG'] = 'probedock.test.yml'
-      raise 'Could not start test server' unless system start_command
-
-      ping = nil
-      ping_url = "http://localhost:#{config.test_server_port}/ping"
-      expected_version = "ProbeDock v#{ProbeDock::Application::VERSION} test"
-      puts Paint["Waiting #{wait} seconds for test server to start (no response from #{ping_url})...", :magenta]
-      wait.times do |i|
-
-        sleep 1
-
-        begin
-          ping = HTTParty.get ping_url
-          break
-        rescue
-          puts Paint["Waiting #{wait - i - 1} seconds for test server to start...", :magenta]
-        end
-      end
-
-      if ping and ping.body != expected_version
-        warn Paint["Test server at #{ping_url} has wrong version", :red, :bold]
-        raise "Expected #{ping_url} to respond with #{expected_version}, got #{ping.body}"
-      elsif ping
-        puts Paint["Successfully started test server on port #{port}.", :cyan, :bold]
-      else
-        warn Paint["Could not start test server on port #{port}.", :red, :bold]
-        raise "Could not reach test server at #{ping_url}"
-      end
-    end
 
     config.before :each, type: :feature do
       DatabaseCleaner.clean
@@ -151,18 +104,6 @@ RSpec.configure do |config|
 
     config.after :each, type: :feature do
       DatabaseCleaner.clean
-    end
-
-    # Stop test server after all tests
-    config.after :suite do
-      puts
-      puts Paint["Stopping test server...", :magenta]
-      port = config.test_server_port
-      if system "bundle exec thin stop -e test -p #{port}"
-        puts Paint["Successfully stopped test server.", :cyan, :bold]
-      else
-        puts Paint["Could not stop test server.", :red, :bold]
-      end
     end
   end
 end
