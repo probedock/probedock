@@ -19,6 +19,10 @@ class HomeController < ApplicationController
   caches_page :index
   append_view_path Rails.root.join('client')
 
+  def index
+    render template: 'index'
+  end
+
   def template
 
     # only accept html templates
