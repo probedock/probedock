@@ -5,7 +5,7 @@ namespace :spec do
       raise %/RAILS_ENV must be "test"/ unless Rails.env == 'test'
       config = Rails.application.config_for(:application)
 
-      start_command = "bundle exec thin start -e test -p #{config['port']} -d"
+      start_command = "NG_FORCE=true bundle exec thin start -e test -p #{config['port']} -d"
       puts Paint["Starting test server with `#{start_command}`...", :magenta]
       raise 'Could not start test server' unless system start_command
 

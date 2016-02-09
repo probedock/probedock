@@ -34,7 +34,7 @@ if Rails.env != 'production'
     Rake::Task['cucumber'].invoke
   end
 
-  Rake::Task['spec'].prerequisites.unshift('spec:server:start')
+  Rake::Task['spec'].prerequisites.unshift('spec:server:restart')
 
   require 'probedock-rspec'
   ProbeDockProbe::Tasks.new
