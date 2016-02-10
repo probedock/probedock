@@ -30,6 +30,8 @@ describe Settings::App, probedock: { tags: :unit } do
 
     it "should return a hash of the accessible attributes that are present", probedock: { key: '38774deef20d' } do
 
+      Settings::App.update_all user_registration_enabled: false
+
       # try with the defaults
       expect(Settings::App.first.serializable_hash).to eq({
         user_registration_enabled: false

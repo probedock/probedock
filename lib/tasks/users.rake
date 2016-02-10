@@ -160,4 +160,10 @@ namespace :users do
       puts Paint[%/User #{name} is now a technical user (unlinked emails: #{emails.collect(&:address).sort.join(', ')})/, :green]
     end
   end
+
+  desc %|Anonymize production data|
+  task anonymize: [ :environment ] do
+    n = User.where('password_digest IS NOT NULL').update_all password_digest: '$2a$10$dosjxExLYJe21YQT88Be4e9DCpnhHUN8nKCxszAV1hVJ59z9hIzc6'
+    puts Paint[%/Password of #{n} users set to "test"/, :green]
+  end
 end

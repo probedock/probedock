@@ -1,0 +1,46 @@
+.container-fluid
+  h1.text-center Profile
+  .col-lg-4.col-md-5.col-sm-6.col-xs-12
+    user-details-widget user='currentUser' mode='profile'
+  .col-lg-4.col-md-5.col-sm-6.col-xs-12
+    .profile-memberships.panel.panel-default ng-controller='ProfileMembershipsCtrl'
+      .panel-heading
+        h3.panel-title Memberships
+      .panel-body
+        p.empty ng-if='!memberships.length && !pendingMemberships.length' You are not in any organization.
+        div ng-if='pendingMemberships.length'
+          p.text-success You have been invited to join the following organizations:
+          ul.list-group
+            li.list-group-item.list-group-item-success.clearfix ng-repeat='membership in pendingMemberships'
+              button.btn.btn-success.btn-xs.pull-right tooltip='Join' ng-click='accept(membership)'
+                span.glyphicon.glyphicon-ok
+              a href='#' ng-if='membership.organization.public' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
+                | {{ membership.organization | orgName }}
+              span ng-if='!membership.organization.public' {{ membership.organization | orgName }}
+        div ng-if='memberships.length'
+          p You are part of the following organizations:
+          ul.list-group
+            li.list-group-item ng-repeat='membership in memberships | orderBy: "acceptedAt"'
+              a href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
+                | {{ membership.organization | orgName }}
+  .col-lg-4.col-md-5.col-sm-6.col-xs-12
+    .profile-access-tokens.panel.panel-default ng-controller='ProfileAccessTokensCtrl'
+      .panel-heading
+        h3.panel-title API Access Tokens
+      .panel-body.text-center
+        p Access tokens can be used to authenticate to the API with Bearer Token Authentication.
+        p
+          button.btn.btn-default type='button' ng-click='generate()' ng-disabled='busy'
+            span.glyphicon.glyphicon-lock
+            |  Generate an access token
+        .alert.alert-danger ng-show='generateError'
+          | An error occurred while generating the access token.
+        p.text-success ng-show='token'
+          | Here is your new access token! It will be valid for one year.
+        form role='form' ng-show='token'
+          .form-group
+            .input-group
+              input.form-control type='text' value='{{ token }}' readonly=true select-on-click=true
+              .input-group-btn
+                .btn.btn-primary clip-copy='token' tooltip='Click to copy'
+                  span.glyphicon.glyphicon-share

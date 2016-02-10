@@ -1,0 +1,77 @@
+doctype html
+html ng-app='probedock' ng-strict-di=true
+  head
+    title Probe Dock
+    base href='/'
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_include_tag 'application'
+    meta charset='UTF-8'
+    meta http-equiv='X-UA-Compatible' content='IE=edge'
+    meta name='viewport' content='width=device-width, initial-scale=1.0'
+  body
+    nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='LayoutNavCtrl'
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle.collapsed type='button' data-toggle='collapse' data-target='#menu' ng-click='navbarOpen = !navbarOpen'
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand href='/' Probe Dock
+        #menu.collapse.navbar-collapse collapse='!navbarOpen'
+          ul.nav.navbar-nav
+            li ng-if='organizations.length >= 2'
+              .btn-group.navbar-btn dropdown=true
+                button.btn.btn-primary.dropdown-toggle type='button' dropdown-toggle=true
+                  span ng-if='currentOrganization' {{ currentOrganization | orgName }}
+                  em ng-if='!currentOrganization' Select an organization
+                  '
+                  span.caret
+                ul.dropdown-menu role='menu'
+                  li ng-repeat='org in organizations | orderBy: "name.toLowerCase()"'
+                    a href='#' ui-sref='org.dashboard.default({ orgName: org.name })' {{ org | orgName }}
+            li ng-if='currentOrganization' ng-class='{active: baseStateIs("org.dashboard")}'
+              a href='#' ui-sref='org.dashboard.default({ orgName: currentOrganization.name })' Dashboard
+            li ng-if='currentOrganization' ng-class='{active: baseStateIs("org.reports")}'
+              a href='#' ui-sref='org.reports({ orgName: currentOrganization.name })' Reports
+            li ng-if='currentOrganization'  ng-class='{active: baseStateIs("org.projects.list")}'
+              a href='#' ui-sref='org.projects.list({ orgName: currentOrganization.name })' Projects
+            li.dropdown dropdown=true ng-class='{active: baseStateIs("help")}' ng-show='currentUser'
+              a.dropdown-toggle href='#' dropdown-toggle=true
+                | Help
+                span.caret
+              ul.dropdown-menu role='menu'
+                li
+                  a href='#' ui-sref='help.gettingStarted' Getting Started
+            li.dropdown dropdown=true ng-class='{active: baseStateIs("admin")}' ng-show='currentUserIs("admin")'
+              a.dropdown-toggle href='#' dropdown-toggle=true
+                | Admin
+                span.caret
+              ul.dropdown-menu role='menu'
+                li
+                  a ui-sref='admin.users' Users
+                li
+                  a ui-sref='admin.settings' Settings
+          ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
+            li ng-if='pendingMemberships.length'
+              button.btn.btn-success.navbar-btn.btn-sm tooltip='You have been invited to join an organization!' tooltip-append-to-body='true' tooltip-placement='bottom' ui-sref='profile'
+                span.glyphicon.glyphicon-exclamation-sign
+            li ng-if='currentUser' ng-class='{active: baseStateIs("profile")}'
+              a href='#' tooltip='Your profile' tooltip-placement='bottom' ui-sref='profile' {{ currentUser.name }}
+            li ng-if='!currentUser'
+              button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='openSignInDialog()'
+                span.glyphicon.glyphicon-log-in
+                |  Sign in
+            li ng-if='!currentUser'
+              button#register.btn.btn-success.navbar-btn.btn-sm type='button' ui-sref='register' ng-if='appSettings.userRegistrationEnabled'
+                span.glyphicon.glyphicon-user
+                |  Register
+            li ng-if='currentUser'
+              button#logout.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='signOut()'
+                span.glyphicon.glyphicon-log-out
+                |  Sign out
+    div ui-view=true
+    nav#footer.navbar.navbar-default.navbar-fixed-bottom.hidden-xs ng-controller='LayoutFooterCtrl'
+      .container.text-center
+        p.navbar-text.col-xs-12
+          a href='https://github.com/probedock/probedock' Probe Dock v{{ version }}

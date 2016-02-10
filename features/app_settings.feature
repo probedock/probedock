@@ -8,6 +8,7 @@ Feature: Application settings
 
   Scenario: A Probe Dock administrator should be able to update application settings.
     Given user yoda who is a Probe Dock admin exists
+    And user registrations are disabled
     When yoda sends a PATCH request with the following JSON to /api/appSettings:
       """
       {
@@ -35,6 +36,7 @@ Feature: Application settings
   Scenario: An organization admin should not be able to update application settings.
     Given organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
+    And user registrations are disabled
     When palpatine sends a PATCH request with the following JSON to /api/appSettings:
       """
       {
@@ -56,6 +58,7 @@ Feature: Application settings
   Scenario: An organization member should not be able to update application settings.
     Given organization Galactic Republic exists
     And user jjbinks who is a member of Galactic Republic exists
+    And user registrations are disabled
     When jjbinks sends a PATCH request with the following JSON to /api/appSettings:
       """
       {
@@ -75,6 +78,7 @@ Feature: Application settings
 
   @authorization
   Scenario: An anonymous user should not be able to update application settings.
+    Given user registrations are disabled
     When nobody sends a PATCH request with the following JSON to /api/appSettings:
       """
       {
@@ -94,6 +98,7 @@ Feature: Application settings
 
   Scenario: A Probe Dock administrator should be able to retrieve application settings.
     Given user yoda who is a Probe Dock admin exists
+    And user registrations are disabled
     When yoda sends a GET request to /api/appSettings
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -134,6 +139,7 @@ Feature: Application settings
   Scenario: An organization member should be able to retrieve application settings.
     Given organization Galactic Republic exists
     And user jjbinks who is a member of Galactic Republic exists
+    And user registrations are disabled
     When jjbinks sends a GET request to /api/appSettings
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -152,6 +158,7 @@ Feature: Application settings
 
 
   Scenario: An anonymous user should be able to retrieve application settings.
+    Given user registrations are disabled
     When nobody sends a GET request to /api/appSettings
     Then the response code should be 200
     And the response body should be the following JSON:

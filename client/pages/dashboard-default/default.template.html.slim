@@ -1,0 +1,42 @@
+.container ng-if='!orgIsActive()'
+  .jumbotron
+    h1 Welcome!
+    p
+      markdown:
+        This is the dashboard for **{{ currentOrganization | orgName }}**, where a summary of the latest test runs and other useful widgets will be displayed.
+        No test results have yet been published.
+    div ng-if='currentMember()'
+      div ng-if='!currentOrganization.projectsCount'
+        markdown:
+          The organization has no **projects** yet.
+          Each project must be registered in ProbeDock before you can publish the results of their test suites.
+      p ng-if='!currentOrganization.projectsCount && currentMemberIs("admin")'
+        button.btn.btn-success.btn-lg ui-sref='org.projects.list.new({ orgName: currentOrganization.name })'
+          span.glyphicon.glyphicon-plus
+          |  Add a project
+      div ng-if='!currentOrganization.membershipsCount'
+        markdown:
+          The organization has no **members** yet.
+          Members must be registered to publish test run results from their computer.
+      p ng-if='!currentOrganization.membershipsCount && currentMemberIs("admin")'
+        button.btn.btn-success.btn-lg ui-sref='org.dashboard.members.new({ orgName: currentOrganization.name })'
+          span.glyphicon.glyphicon-plus
+          |  Add a member
+.container ng-if='orgIsActive() && gettingStarted && currentUser'
+  .jumbotron
+    h1 Now run some tests!
+    p.lead
+      ' Head over to the
+      a ui-sref='help.gettingStarted({ organizationId: currentOrganization.id })' Getting Started
+      '  guide to find out how to publish test results for your projects.
+.container-fluid ng-if='orgIsActive()'
+  .col-md-12
+    test-categories-bar-widget organization='currentOrganization' prefix='dashboard'
+  .col-md-6.col-xs-12
+    recent-activity-widget organization='currentOrganization'
+    test-suite-size-widget organization='currentOrganization' nb-weeks='30'
+    tag-cloud-widget organization='currentOrganization'
+  .col-md-6.col-xs-12 ng-if='orgIsActive()'
+    testing-activity-widget organization='currentOrganization'
+    test-contributions-widget organization='currentOrganization'
+    test-key-generator-widget ng-if='currentMember()'
