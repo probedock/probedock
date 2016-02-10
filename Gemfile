@@ -106,7 +106,8 @@ end
 group :test do
   gem 'cucumber-rails', require: false
   gem 'capybara'
-  gem 'selenium-webdriver', '2.45.0'
+  gem 'selenium-webdriver', '2.51.0'
+  gem 'poltergeist'
   gem 'sqlite3'
   gem 'factory_girl'
   gem 'shoulda'

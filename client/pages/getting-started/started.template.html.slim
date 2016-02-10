@@ -1,0 +1,155 @@
+#getting-started.container
+  .page-header
+    h1 Getting started with Probe Dock
+  p.lead
+    ' This page walks you through the tasks you need to perform to publish test results to Probe Dock.
+    ' It will also generate configuration snippets for you.
+  ul
+    li ng-if='currentMemberIs("admin") && currentOrganization && !projectConfigSelection.projectId'
+      a href='#create-project' offset=100 du-smooth-scroll=true Create a project
+    li
+      a href='#personal-configuration' offset=100 du-smooth-scroll=true Set up your personal configuration file
+    li
+      a href='#project-configuration' offset=100 du-smooth-scroll=true Set up your project's configuration file
+    li
+      a href='#client-integration' offset=100 du-smooth-scroll=true Integrate a Probe Dock client with your project
+    li
+      a href='#run-the-tests' offset=100 du-smooth-scroll=true Run the tests!
+
+
+
+  section#create-project ng-if='currentMemberIs("admin") && currentOrganization && !projectConfigSelection.projectId'
+    h2 Create a project
+    p
+      ' To receive the results of your project's test suite, Probe Dock must know about that project.
+      ' Head over to the Projects page to create it.
+    a.btn.btn-primary ui-sref='org.projects({ orgName: currentOrganization.name })'
+      span.glyphicon.glyphicon-folder-open
+      | &nbsp;
+      |  Projects
+
+
+
+  section#personal-configuration
+    h2 Set up your personal configuration file
+    p
+      ' To publish test results to Probe Dock from your computer, you must have the server listed in a configuration file in your home folder, with valid API credentials.
+      ' Here's a starting configuration we just generated for you.
+      ' Copy and paste away!
+    div.text-success
+      strong
+        markdown:
+          This is something you only need to do *once* for this Probe Dock server.
+    tabset.clearfix
+      tab active='true'
+        tab-heading
+          span.glyphicon.glyphicon-file
+          |  Configuration
+        p
+          | Copy the following configuration to 
+          code ~/.probedock/config.yml
+          | :
+        form
+          .form-group
+            textarea.form-control rows=7 readonly=true select-on-click=true ng-model='homeYaml'
+          button.btn.btn-primary.pull-right clip-copy='homeYaml' tooltip='Copy to clipboard'
+            span.glyphicon.glyphicon-copy
+      tab
+        tab-heading
+          span.glyphicon.glyphicon-sunglasses
+          |  Shell Script
+        p This shell script will set up your personal configuration file.
+        form
+          .form-group
+            textarea.form-control rows=7 readonly=true select-on-click=true ng-model='homeScript'
+          button.copy.btn.btn-primary.pull-right clip-copy='homeScript' tooltip='Copy to clipboard'
+            span.glyphicon.glyphicon-copy
+        p
+          strong.text-warning If you already have a personal configuration file, this script will overwrite it. To add or update a Probe Dock server in an existing configuration file, go back to the Configuration tab and copy only the relevant section.
+
+
+
+  section#project-configuration
+    h2 Set up your project's configuration file
+    markdown:
+      **Each project** you want to track with Probe Dock also needs a configuration file.
+      This one contains the project's ID and version so that Probe Dock knows which project to assign the test results to.
+    p ng-if='!projectConfigSelection.orgs.length'
+      strong.text-warning
+        ' Unfortunately you are not a member of any organization registered here, so we can't generate a complete configuration for you.
+        ' Here's one with placeholders.
+    .row.selection ng-if='projectConfigSelection.orgs.length'
+      .col-md-6.col-xs-12
+        ui-select#projectConfigOrganization ng-model='projectConfigSelection.orgId' required=true
+          ui-select-match placeholder='Select an organization...' {{ $select.selected | orgName | characters: 30 }}
+          ui-select-choices repeat='org.id as org in projectConfigSelection.orgs | orderBy: "name.toLowerCase()"'
+            div ng-bind-html='org | orgName | highlight: $select.search'
+      .col-md-6.col-xs-12
+        ui-select#projectConfigProject ng-model='projectConfigSelection.projectId' required=true
+          ui-select-match placeholder='Select a project...' {{ $select.selected | projectName | characters: 30 }}
+          ui-select-choices repeat='project.id as project in projectConfigSelection.projects | orderBy: "name.toLowerCase()"'
+            div ng-bind-html='project | projectName | highlight: $select.search'
+    p ng-if='projectConfigSelection.orgId && projectConfigSelection.projects && !projectConfigSelection.projects.length'
+      strong.text-warning
+        ' This organization has no projects.
+    p ng-if='projectConfigSelection.orgId && projectConfigSelection.projectId'
+      strong.text-success
+        ' Your project's configuration is ready. Copy and paste away!
+    tabset.clearfix
+      tab active='true'
+        tab-heading
+          span.glyphicon.glyphicon-file
+          |  Configuration
+        p
+          | Copy the following configuration to 
+          code
+            | /path/to/your/project/probedock.yml
+          | :
+        form
+          .form-group
+            textarea.form-control rows=4 readonly=true select-on-click=true ng-model='projectYaml'
+          button.btn.btn-primary.pull-right clip-copy='projectYaml' tooltip='Copy to clipboard'
+            span.glyphicon.glyphicon-copy
+      tab
+        tab-heading
+          span.glyphicon.glyphicon-sunglasses
+          |  Shell Script
+        markdown:
+          This shell script will set up your project's configuration file.
+          Run it **from the project's root directory**.
+        form
+          .form-group
+            textarea.form-control rows=4 readonly=true select-on-click=true ng-model='projectScript'
+          button.btn.btn-primary.pull-right clip-copy='projectScript' tooltip='Copy to clipboard'
+            span.glyphicon.glyphicon-copy
+        p
+          strong.text-warning If your project already has a configuration file, this script will overwrite it.
+
+
+
+  section#client-integration
+    h2 Integrate a Probe Dock client with your project
+    p We cannot automatically generate this part of the configuration for you (yet).
+    p
+      ' The documentation repository for Probe Dock clients lists the available clients.
+      ' Go find the client for your test framework and read its integration guide.
+    a.btn.btn-primary href='https://github.com/probedock/probedock-probes'
+      span.glyphicon.glyphicon-link
+      |  Documentation for Probe Dock clients
+
+
+
+  section#run-the-tests
+    h2 Run the tests!
+    p
+      ' You're all set.
+      ' Run your test suite and the results will be published to Probe Dock.
+      ' The Probe Dock client will try to inform you if some configuration is missing or incorrect.
+    p
+      ' Once you've run the tests, you should see a new test run report in the
+      a ng-if='currentOrganization' ui-sref='org.dashboard.default({ orgName: currentOrganization.name })' Dashboard
+      span ng-if='!currentOrganization' Dashboard
+      '  or in the
+      a ng-if='currentOrganization' ui-sref='org.reports({ orgName: currentOrganization.name })' Reports
+      span ng-if='!currentOrganization' Reports
+      '  page.

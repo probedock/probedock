@@ -51,10 +51,10 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-chart.js/dist/angular-chart.js', dest: 'vendor/assets/javascripts/angular-chart.js' },
           { nonull: true, src: 'bower_components/angular-truncate/src/truncate.js', dest: 'vendor/assets/javascripts/angular-truncate.js' },
           { nonull: true, src: 'bower_components/angular-scroll/angular-scroll.js', dest: 'vendor/assets/javascripts/angular-scroll.js' },
-          { nonull: true, src: 'bower_components/drop-ng/src/drop-ng.js', dest: 'vendor/assets/javascripts/drop-ng.js' },
+          // FIXME: uncomment this once PR is merged: https://github.com/stevenh77/drop-ng/pull/15
+          //{ nonull: true, src: 'bower_components/drop-ng/src/drop-ng.js', dest: 'vendor/assets/javascripts/drop-ng.js' },
           { nonull: true, src: 'bower_components/tether/dist/js/tether.js', dest: 'vendor/assets/javascripts/tether.js' },
           { nonull: true, src: 'bower_components/tether-drop/dist/js/drop.js', dest: 'vendor/assets/javascripts/tether-drop.js' },
-          // TODO: remove if unused
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },
           // stylesheets

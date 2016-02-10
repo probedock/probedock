@@ -1,0 +1,42 @@
+.container-fluid ng-if='!project || !currentOrganization'
+  .page-header
+    h1
+      em Loading project data...
+.container-fluid ng-if='project && currentOrganization'
+  .page-header
+    h1 {{ project | projectName }}
+  .row
+    .col-md-12
+      test-categories-bar-widget organization='currentOrganization' project='project' prefix='project'
+    .col-lg-4.col-md-6.col-xs-12
+      .summary.panel.panel-default
+        .panel-heading.clearfix
+          .label.label-info.pull-right.api-id tooltip='Project ID' {{ project.id }}
+          h3.panel-title Details
+        .panel-body
+          div
+            p.lead ng-show='project.description' {{ project.description }}
+            dl
+              dt Number of Tests
+              dd {{ project.testsCount | number }}
+              dt Number of Test Runs
+              dd {{ project.reportsCount | number }}
+              dt Creation Date
+              dd {{ project.createdAt | amDateFormat:'llll' }}
+              dt Last Update
+              dd {{ project.updatedAt | amDateFormat:'llll' }}
+            p.text-info.text-center ng-if='!project.testsCount'
+              ' No test results have been published for this project.
+              ' Follow the
+              a ui-sref='help.gettingStarted({ organizationId: project.organizationId, projectId: project.id })'
+                strong Getting Started
+              '  guide to set it up.
+      test-contributions-widget project='project'
+      test-suite-size-widget project='project' organization='currentOrganization' nb-weeks='15'
+    .col-lg-4.col-md-6.col-xs-12
+      recent-activity-widget project='project' organization='currentOrganization'
+      test-payload-dropzone-widget ng-if='currentMember()' project='project' organization='currentOrganization'
+    .col-lg-4.col-md-6.col-xs-12
+      project-health-widget project='project'
+      testing-activity-widget  organization='currentOrganization' project='project' nb-days='20'
+

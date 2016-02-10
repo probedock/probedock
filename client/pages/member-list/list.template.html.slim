@@ -1,0 +1,26 @@
+.container ng-if='!currentOrganization.membershipsCount'
+  .jumbotron ng-show='!currentOrganization.membershipsCount'
+    h1 Members
+    markdown:
+      **{{ currentOrganization | orgName }}** has no members yet.
+    p ng-if='currentMemberIs("admin")' Only members can publish test results for the organization's projects.
+    button.btn.btn-success.btn-lg ng-if='currentMemberIs("admin")' ui-sref='org.dashboard.members.new({ orgName: currentOrganization.name })'
+      span.glyphicon.glyphicon-plus
+      |  Invite them!
+.container-fluid ng-if='memberships.length'
+  .col-lg-3.col-md-4.col-xs-12
+    .well
+      h1 Members
+      markdown:
+        This page lists the members of **{{ currentOrganization | orgName }}** and their role within the organization.
+      button.btn.btn-success ui-sref='org.dashboard.members.new' ng-if='currentMemberIs("admin")'
+        span.glyphicon.glyphicon-plus
+        |  Add a member
+  .col-lg-9.col-md-8.col-xs-12
+    #org-members
+      .membership.human-membership.col-sm-6.col-xs-12 ng-repeat='membership in humanMemberships() | orderBy: "-createdAt"'
+        org-member-details-widget membership='membership' on-delete='removeMembership(membership)'
+      .col-xs-12 ng-if='technicalMemberships().length'
+        h2 Technical users
+      .membership.technical-membership.col-sm-6.col-xs-12 ng-repeat='membership in technicalMemberships() | orderBy: "-createdAt"'
+        org-member-details-widget membership='membership' on-delete='removeMembership(membership)'
