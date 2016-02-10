@@ -3,6 +3,14 @@ namespace :spec do
     desc %|Start a dedicated server for acceptance tests|
     task :start do
       raise %/RAILS_ENV must be "test"/ unless Rails.env == 'test'
+
+      pid_file = Rails.root.join('tmp/pids/thin.pid')
+      if File.exists?(pid_file)
+        pid = File.read(pid_file)
+        puts Paint["A test server is already running with PID #{pid}", :magenta]
+        next
+      end
+
       config = Rails.application.config_for(:application)
 
       start_command = "NG_FORCE=true bundle exec thin start -e test -p #{config['port']} -d"
