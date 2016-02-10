@@ -17,15 +17,15 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class ProjectPolicy < ApplicationPolicy
   def create?
-    user.is?(:admin) || user.membership_in(record.organization).try(:is?, :admin)
+    admin? || user.membership_in(record.organization).try(:is?, :admin)
   end
 
   def index?
-    user.try(:is?, :admin) || organization.try(:public?) || user.try(:member_of?, organization)
+    admin? || public?(organization) || member_of?(organization)
   end
 
   def show?
-    user.try(:is?, :admin) || organization.try(:public?) || user.try(:member_of?, organization)
+    admin? || public?(organization) || member_of?(organization)
   end
 
   def update?

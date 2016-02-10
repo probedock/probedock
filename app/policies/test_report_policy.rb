@@ -17,11 +17,15 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class TestReportPolicy < ApplicationPolicy
   def index?
-    organization && (organization.public? || user.try(:is?, :admin) || user.try(:member_of?, organization))
+    organization && (public?(organization) || admin? || member_of?(organization))
   end
 
   def show?
-    record.organization.public? || user.try(:is?, :admin) || user.try(:member_of?, record.organization)
+    public?(record.organization) || admin? || member_of?(record.organization)
+  end
+
+  def data?
+    public?(record.organization) || admin? || member_of?(record.organization)
   end
 
   class Scope < Scope
