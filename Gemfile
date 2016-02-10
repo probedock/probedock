@@ -82,7 +82,6 @@ group :development do
 end
 
 group :development, :test do
-  gem 'capistrano'
   gem 'handlebars'
   gem 'dotenv-rails'
 
