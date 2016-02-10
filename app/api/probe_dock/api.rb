@@ -84,6 +84,7 @@ module ProbeDock
     mount ProjectVersionsApi
     mount RegistrationsApi
     mount ReportsApi
+    mount ResultsApi
     mount TagsApi
     mount TestKeysApi
     mount TestsApi
