@@ -49,13 +49,11 @@ module ProbeDock
         #
         # This method requires that the :projects table be available in the relation.
         def apply_projects_filter(rel)
-          filtered_rel = rel
-
           if array_param?(:projectIds)
-            filtered_rel = filtered_rel.where('projects.api_id IN (?)', params[:projectIds].collect(&:to_s))
+            rel = rel.where('projects.api_id IN (?)', params[:projectIds].collect(&:to_s))
           end
 
-          filtered_rel
+          rel
         end
 
         # Returns the specified relation filtered to match only the tests authored by the users specified in the :userIds query parameter.
@@ -64,27 +62,24 @@ module ProbeDock
         #
         # This method requires that the :project_tests table be available in the relation.
         def apply_users_filter(rel)
-          filtered_rel = rel
-
           if array_param?(:userIds)
             users = User.select(:id).where('api_id IN (?)', params[:userIds].collect(&:to_s)).to_a
 
-            filtered_rel = filtered_rel.joins('LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id')
+            rel = rel.joins('LEFT OUTER JOIN test_keys ON project_tests.key_id = test_keys.id')
 
             user_ids = users.collect(&:id)
-            filtered_rel = filtered_rel.where('(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids)
+            rel = rel.where('(test_keys.user_id IS NOT NULL AND test_keys.user_id IN (?)) OR (test_keys.user_id IS NULL AND project_tests.first_runner_id IN (?))', user_ids, user_ids)
           end
 
-          filtered_rel
+          rel
         end
 
         # Returns the specified relation filtered through both `apply_projects_filter` and `apply_users_filter`.
         # The original relation is not modified.
         def apply_projects_and_users_filters(rel)
-          filtered_rel = rel
-          filtered_rel = apply_projects_filter(filtered_rel)
-          filtered_rel = apply_users_filter(filtered_rel)
-          filtered_rel
+          rel = apply_projects_filter(rel)
+          rel = apply_users_filter(rel)
+          rel
         end
 
         # Returns the number of tests by interval since the specified date.
@@ -351,7 +346,7 @@ module ProbeDock
         # Extract the number of tests without a category (last in the array, if present)
         # and remove it from the original array
         no_category_tests_count = 0
-        if categories_counts.last.name.nil?
+        if categories_counts.present? && categories_counts.last.name.nil?
           no_category_tests_count = categories_counts.last.categories_tests_count
           categories_counts.slice!(-1)
         end

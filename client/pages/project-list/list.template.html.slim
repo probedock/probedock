@@ -1,0 +1,26 @@
+.container-fluid
+  .page-header
+    h1 {{ currentOrganization | orgName }}
+.container ng-hide='projects.length'
+  .jumbotron ng-show='!currentOrganization.projectsCount'
+    h1 Projects
+    markdown:
+      **{{ currentOrganization | orgName }}** has no projects yet.
+    button.btn.btn-success.btn-lg ng-if='currentMemberIs("admin")' ui-sref='org.projects.list.new({ orgName: currentOrganization.name })'
+      span.glyphicon.glyphicon-plus
+      |  Add one!
+.container-fluid ng-show='projects.length'
+  .col-xs-12.col-sm-4.col-md-3
+    .well
+      h1 Projects
+      markdown:
+        This page lists the projects of **{{ currentOrganization | orgName }}**.
+
+        You will find the project ID at the right of each project's header.
+        This ID is required to publish test results for a project.
+      a.btn.btn-success ng-if='currentMemberIs("admin")' ui-sref='org.projects.list.new'
+        span.glyphicon.glyphicon-plus
+        |  Add a new project
+  .col-xs-12.col-sm-8.col-md-9
+    .col-xs-12 ng-repeat='project in projects | orderBy: orderProject'
+      project-details-widget organization='currentOrganization' project='project'

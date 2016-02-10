@@ -11,6 +11,7 @@ before_script:
 env:
   global:
     - RAILS_ENV=test
+    - NG_FORCE=true
     - PROBEDOCK_TEST_DATABASE_NAME=probedock-test
     - PROBEDOCK_TEST_REDIS_URL=localhost:6379:1
     - PROBEDOCK_TEST_SECRET_KEY_BASE=54dbd7f0fc9ef70fb056af36fe73bf283f3e4d7a2f951d38e63021f32cda66db819b6d340120c38a4cea3393d16f2f67a1674b5fb469151639928552e7f89fc0

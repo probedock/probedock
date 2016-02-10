@@ -41,7 +41,7 @@ module ProbeDock
     end
 
     def root_url
-      routes.url_helpers.root_url protocol: config_for(:application)['protocol'], host: config_for(:application)['host'], port: config_for(:application)['port']
+      routes.url_helpers.root_url(protocol: config_for(:application)['protocol'], host: config_for(:application)['host'], port: config_for(:application)['port'])
     end
 
     VERSION = File.open(File.join(root, 'VERSION'), 'r').read
@@ -117,6 +117,7 @@ module ProbeDock
       port: config_for(:application)['port']
     }
 
+    config.assets.paths << Rails.root.join('client')
     %w(flash).each{ |dir| config.assets.paths << Rails.root.join('vendor', 'assets', dir) }
     %w(eot svg swf ttf woff woff2).each{ |ext| config.assets.precompile << "*.#{ext}" }
 

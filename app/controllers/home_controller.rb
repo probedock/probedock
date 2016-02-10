@@ -17,6 +17,11 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class HomeController < ApplicationController
   caches_page :index
+  append_view_path Rails.root.join('client')
+
+  def index
+    render template: 'index'
+  end
 
   def template
 
@@ -24,16 +29,25 @@ class HomeController < ApplicationController
     return render_template_not_found unless params[:format] == 'html'
 
     # only accept alphanumeric characters, hyphens and underscores, separated by slashes
-    return render_template_not_found unless params[:name].to_s.match /\A[a-z0-9\-\_]+(\.[a-z0-9\-\_]+)*\Z/i
+    return render_template_not_found unless params[:path].to_s.match /\A[a-z0-9\-\_]+(\/[a-z0-9\-\_]+(?:\.[a-z0-9\-\_]+)*)*(?:\.template)?\Z/i
 
     begin
-      render template: "templates/#{params[:name]}", layout: false
+      render_template params[:path]
     rescue ActionView::MissingTemplate
       render_template_not_found
     end
   end
 
   private
+
+  def render_template path
+    if path.match /\.template$/
+      render template: path, layout: false
+    else
+      # TODO: remove this once all templates have been migrated
+      render template: "templates/#{path}", layout: false
+    end
+  end
 
   def render_template_not_found
     render text: 'Template not found', status: :not_found

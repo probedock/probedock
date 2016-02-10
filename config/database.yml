@@ -7,10 +7,12 @@ default: &default
 
 development:
   <<: *default
+  host: localhost
   database: <%= ENV['PROBEDOCK_DATABASE_NAME'] %>
 
 test: &test
   <<: *default
+  host: localhost
   database: <%= ENV['PROBEDOCK_TEST_DATABASE_NAME'] %>
 
 production:

@@ -1,0 +1,39 @@
+.test-categories-bar-widget.panel.panel-default
+  .panel-heading.clearfix
+    a.btn.btn-default.btn-xs.pull-right href='#' role='button' tooltip='Filters'
+      i.glyphicon.glyphicon-filter
+      drop constrain-to-window='true' constrain-to-scroll-parent='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}' before-close='beforeClose()'
+        .panel.panel-default.test-categories-bar-widget-filters
+          .panel-heading
+            .h4.panel-title Filters
+          .panel-body
+            form.form role='form'
+              .col-md-12 ng-if='!project'
+                project-select prefix='tests-by-category' organization='organization' model-object='params'
+              .col-md-12 ng-if='project'
+                project-version-select prefix='tests-by-category' organization='organization' project='project' model-object='params' auto-select='true'
+              .col-md-12
+                user-select prefix='tests-by-category' organization='organization' model-object='params'
+              .col-md-12
+                .btn-group.btn-group-justified
+                  .btn-group
+                    button.btn.btn-warning ng-click='resetFilters()' Reset
+                  .btn-group
+                    button.btn.btn-primary ng-click='closeFilters()' Close
+    h3.panel-title Tests by category
+
+  .panel-body ng-if='!categories.length'
+    .empty
+      em ng-if='!categories' Loading...
+      em ng-if='categories.length === 0' No tests have been run recently.
+  .panel-body ng-if='categories.length > 0'
+    table.category-descriptions
+      tr.hidden-xs
+        td ng-repeat='category in categories'
+          test-categories-bar-category-description category='category' category-index='$index'
+      tr.hidden-sm.hidden-md.hidden-lg ng-repeat='category in categories'
+        td.short
+          test-categories-bar-category-description category='category' category-index='$index'
+
+    .progress.categories-bar
+      .progress-bar style="width: {{ category.percentage }}%; background-color: {{ getColor($index) }}" ng-repeat='category in categories'
