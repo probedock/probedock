@@ -252,6 +252,121 @@ Feature: Results
 
 
 
+  Scenario: A member from another organization should be able to get results of a report of a public organization ordered by run at.
+    When hsolo sends a GET request to /api/results?reportId={@idOf: C}&sort=runAt
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@valueOf(R3, id)",
+        "name": "Should be big enough",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 2,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.0",
+        "runAt": "@iso8601"
+      }, {
+        "id": "@valueOf(R4, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": false,
+        "active": true,
+        "message": null,
+        "duration": 6,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.0",
+        "runAt": "@iso8601"
+      }, {
+        "id": "@valueOf(R5, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 3,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.1",
+        "runAt": "@iso8601"
+      }, {
+        "id": "@valueOf(R9, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 9,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: pamidala",
+          "name": "pamidala",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.1",
+        "runAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   Scenario: An anonymous user should be able to get results of a report of a public organization.
     When nobody sends a GET request to /api/results?reportId={@idOf: C}
     Then the response code should be 200

@@ -17,7 +17,7 @@ Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) an
     run_at: date
   }
 
-  options[:test] = named_record_by_type test_name, ProjectTest
+  options[:test] = named_record test_name
 
   if passing
     options[:passed] = passing == 'passing'

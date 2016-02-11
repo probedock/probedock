@@ -39,9 +39,14 @@ module ProbeDock
       get do
         authorize! TestResult, :index
 
-        rel = TestResult
-          .order('test_results.active desc, test_results.passed, test_results.name, test_results.id')
-          .includes(:key, :category, :tags, :tickets, :runner, :test, { project_version: :project })
+        # Set the order clause
+        rel = if params[:sort].present? && params[:sort] == 'runAt'
+          TestResult.order('test_results.run_at')
+        else
+          TestResult.order('test_results.active desc, test_results.passed, test_results.name, test_results.id')
+        end
+
+        rel = rel.includes(:key, :category, :tags, :tickets, :runner, :test, { project_version: :project })
 
         # Filter by report
         if params[:reportId].present?

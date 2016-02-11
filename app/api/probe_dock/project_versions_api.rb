@@ -27,7 +27,7 @@ module ProbeDock
           elsif params[:projectId].present?
             Organization.active.joins(:projects).where('projects.api_id = ?', params[:projectId].to_s).first!
           elsif params[:testId].present?
-            ProjectTest.where(api_id: params[:testId]).first!.project.organization
+            Organization.active.joins(projects: :tests).where('project_tests.api_id = ?', params[:testId]).first!
           end
         end
       end
