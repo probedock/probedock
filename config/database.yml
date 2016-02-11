@@ -7,13 +7,17 @@ default: &default
 
 development:
   <<: *default
-  host: localhost
+  host: <%= ENV['PROBEDOCK_DATABASE_HOST'] || 'localhost' %>
   database: <%= ENV['PROBEDOCK_DATABASE_NAME'] %>
+  <%= ENV['PROBEDOCK_DATABASE_USERNAME'] ? "username: #{ENV['PROBEDOCK_DATABASE_USERNAME']}" : '' %>
+  <%= ENV['PROBEDOCK_DATABASE_PASSWORD'] ? "password: #{ENV['PROBEDOCK_DATABASE_PASSWORD']}" : '' %>
 
 test: &test
   <<: *default
-  host: localhost
+  host: <%= ENV['PROBEDOCK_TEST_DATABASE_HOST'] || 'localhost' %>
   database: <%= ENV['PROBEDOCK_TEST_DATABASE_NAME'] %>
+  <%= ENV['PROBEDOCK_TEST_DATABASE_USERNAME'] ? "username: #{ENV['PROBEDOCK_TEST_DATABASE_USERNAME']}" : '' %>
+  <%= ENV['PROBEDOCK_TEST_DATABASE_PASSWORD'] ? "password: #{ENV['PROBEDOCK_TEST_DATABASE_PASSWORD']}" : '' %>
 
 production:
   <<: *default

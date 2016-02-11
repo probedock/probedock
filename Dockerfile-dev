@@ -1,0 +1,13 @@
+FROM probedock/probedock-dev-docker-base
+
+WORKDIR /usr/src/app
+
+COPY Gemfile /usr/src/app/
+COPY Gemfile.lock /usr/src/app/
+
+RUN bundle install
+
+RUN rm -f Gemfile Gemfile.lock
+
+EXPOSE 3000
+CMD [ "bundle", "exec", "rails", "server", "--binding", "0.0.0.0" ]

@@ -1,0 +1,86 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    probedock_dir: "/vagrant"
+    probedock_data_dir: "/var/lib/probedock-dev"
+    probedock_repo: "https://github.com/probedock/probedock.git"
+  tasks:
+
+    # Retrieve system information
+    - name: get uname machine
+      shell: uname -m
+      register: uname_m_result
+      changed_when: false
+    - name: get uname kernel name
+      shell: uname -s
+      register: uname_s_result
+      changed_when: false
+    - name: get uname kernel release
+      shell: uname -r
+      register: uname_r_result
+      changed_when: false
+
+    # Docker requirements
+    - name: check if docker is installed
+      shell: which docker
+      register: docker_check_result
+      changed_when: docker_check_result.rc != 0
+      failed_when: false
+    - name: update apt sources
+      apt: update_cache=yes
+      when: docker_check_result.changed
+    - name: install required packages
+      apt: name={{ item }} state=present
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+      when: docker_check_result.changed
+    - name: add required apt keys
+      apt_key: keyserver="hkp://p80.pool.sks-keyservers.net:80" id="58118E89F3A912897C070ADBF76221572C52609D"
+      when: docker_check_result.changed
+    - name: add docker apt source
+      lineinfile: dest=/etc/apt/sources.list.d/docker.list regexp="^deb" line="deb https://apt.dockerproject.org/repo ubuntu-trusty main" state=present create=yes
+      when: docker_check_result.changed
+    - name: ensure lxc-docker is absent
+      apt: name=lxc-docker state=absent purge=yes
+      when: docker_check_result.changed
+    - name: update apt sources
+      apt: update_cache=yes
+      when: docker_check_result.changed
+
+    # Docker recommendations
+    - name: check if linux-image-extra is intalled
+      shell: dpkg -s linux-image-extra-{{ uname_r_result.stdout }}
+      register: linux_image_extra_check_result
+      changed_when: linux_image_extra_check_result.rc != 0
+      failed_when: false
+    - name: install linux-image-extra
+      apt: name=linux-image-extra-{{ uname_r_result.stdout }} state=present
+      when: linux_image_extra_check_result.changed
+
+    # Docker installation
+    - name: install docker-engine
+      apt: name=docker-engine state=present
+    - name: start docker engine
+      service: name=docker state=started
+    - name: add the vagrant user to the docker group
+      user: name=vagrant groups=docker append=yes
+
+    # Ansible docker requirements
+    - name: install python tools (i.e. easy install)
+      apt: name=python-setuptools state=present
+    - name: install docker-py
+      easy_install: name=docker-py state=present
+
+    # Docker compose installation
+    - get_url: url="https://github.com/docker/compose/releases/download/1.6.0/docker-compose-{{ uname_s_result.stdout }}-{{ uname_m_result.stdout }}" dest=/usr/local/bin/docker-compose mode=0755
+
+    - docker_image: path="{{ probedock_dir }}" name="probedock/probedock-dev" dockerfile="Dockerfile-dev" state=present
+    - template: src=env.j2 dest="{{ probedock_dir }}/.env"
+    - template: src=env-variable.j2 dest="{{ probedock_dir }}/.env-variable"
+    - template: src=docker-compose.yml.j2 dest="{{ probedock_dir }}/docker-compose.yml"
+    - file: path="{{ probedock_data_dir }}/postgresql/init-scripts" state=directory
+    - copy: src=postgresql-trust.sh dest="{{ probedock_data_dir }}/postgresql/init-scripts/postgresql-trust.sh"
+
+    # TODO: pre-pull postgres & redis images

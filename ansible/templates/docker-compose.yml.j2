@@ -1,0 +1,51 @@
+# vi: set ft=yaml :
+
+# Application in development mode.
+app:
+  image: "probedock/probedock-dev"
+  links:
+    - db
+    - cache
+  ports:
+    - "3000:3000"
+  volumes:
+    - "{{ probedock_dir }}:/usr/src/app"
+  env_file:
+    - "{{ probedock_dir }}/.env"
+    - "{{ probedock_dir }}/.env-variable"
+  environment:
+    RAILS_ENV: development
+
+# PostgreSQL database.
+db:
+  image: postgres:9.4
+  volumes:
+    - "{{ probedock_data_dir }}/postgresql/data:/var/lib/postgresql/data"
+    - "{{ probedock_data_dir }}/postgresql/init-scripts:/docker-entrypoint-initdb.d"
+  restart: always
+  environment:
+    POSTGRES_PASSWORD: admin
+
+# Redis in-memory database.
+cache:
+  image: redis:2.8
+  command: redis-server --appendonly yes
+  volumes:
+    - "{{ probedock_data_dir }}/redis/data:/data"
+  restart: always
+
+# Run a rake task.
+# This is meant to be run as a one-off task (with "run" instead of "up").
+task:
+  image: "probedock/probedock-dev"
+  command: rake -T
+  links:
+    - db
+    - cache
+  volumes:
+    - "{{ probedock_dir }}:/usr/src/app"
+  env_file:
+    - "{{ probedock_dir }}/.env"
+    - "{{ probedock_dir }}/.env-variable"
+  environment:
+    RAILS_ENV: development
