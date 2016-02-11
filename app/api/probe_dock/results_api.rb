@@ -25,13 +25,13 @@ module ProbeDock
       helpers do
         def current_organization
           @current_organization ||= if params[:reportId].present?
-            TestReport.where(api_id: params[:reportId]).first!.organization
+            Organization.active.joins(:reports).where('test_reports.api_id = ?', params[:reportId]).first!
           elsif params[:projectId].present?
-            Project.where(api_id: params[:projectId]).first!.organization
+            Organization.active.joins(:projects).where('projects.api_id = ?', params[:projectId]).first!
           elsif params[:projectVersionId].present?
-            ProjectVersion.where(api_id: params[:projectVersionId]).first!.project.organization
+            Organization.active.joins(projects: :versions).where('project_versions.api_id = ?', params[:projectVersionId]).first!
           elsif params[:testId].present?
-            ProjectTest.where(api_id: params[:testId]).first!.project.organization
+            Organization.active.joins(projects: :tests).where('project_tests.api_id = ?', params[:testId]).first!
           end
         end
       end
