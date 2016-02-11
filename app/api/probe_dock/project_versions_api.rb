@@ -26,6 +26,8 @@ module ProbeDock
             Organization.active.where(normalized_name: params[:organizationName].to_s.downcase).first!
           elsif params[:projectId].present?
             Organization.active.joins(:projects).where('projects.api_id = ?', params[:projectId].to_s).first!
+          elsif params[:testId].present?
+            ProjectTest.where(api_id: params[:testId]).first!.project.organization
           end
         end
       end
@@ -34,32 +36,36 @@ module ProbeDock
         authenticate
         authorize! ProjectVersion, :index
 
-        rel = policy_scope(ProjectVersion).order 'projects.name ASC, created_at DESC'
-        rel = rel.joins(:project)
+        project_versions_rel = policy_scope(ProjectVersion).order 'projects.name ASC, created_at DESC'
+        project_versions_rel = project_versions_rel.joins(:project)
 
-        rel = paginated rel do |rel|
+        project_versions_rel = paginated project_versions_rel do |paginated_rel|
 
           if params[:projectId].present?
-            rel = rel.where 'projects.api_id': params[:projectId]
+            paginated_rel = paginated_rel.where('projects.api_id': params[:projectId])
           end
 
           if current_organization.present?
-            rel = rel.where 'projects.organization_id': current_organization.id
+            paginated_rel = paginated_rel.where('projects.organization_id': current_organization.id)
+          end
+
+          if params[:testId].present?
+            paginated_rel = paginated_rel.joins(test_results: :test).where('project_tests.api_id = ?', params[:testId])
           end
 
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            rel = rel.where 'LOWER(name) LIKE ?', term, term
+            paginated_rel = paginated_rel.where('LOWER(name) LIKE ?', term, term)
           end
 
           if params[:name].present?
-            rel = rel.where name: params[:name].to_s.downcase
+            paginated_rel = paginated_rel.where(name: params[:name].to_s.downcase)
           end
 
-          rel
+          paginated_rel
         end
 
-        serialize load_resources(rel)
+        serialize load_resources(project_versions_rel)
       end
     end
   end
