@@ -1,66 +1,70 @@
+function linkFn(type) {
+  return function($scope) {
+    if (type) {
+      $scope.type = type;
+    }
+  };
+}
+
+function labelDirectiveFactory(attributeName, type) {
+  return {
+    restrict: 'E',
+    templateUrl: '/templates/components/test-data-label/label.template.html',
+    controller: 'TestDataLabelCtrl',
+    replace: true,
+    scope: {
+      label: '=' + attributeName
+    },
+    link: linkFn(type)
+  }
+}
+
+function labelsDirectiveFactory(collectionName, attributeName) {
+  return {
+    restrict: 'E',
+    template: '<' + attributeName + '-label ng-repeat="' + attributeName + ' in collection" ' + attributeName + '="' + attributeName + '" />',
+    replace: true,
+    scope: {
+      collection: '=' + collectionName
+    }
+  };
+}
+
 angular.module('probedock.testDataLabel').directive('testDataLabel', function() {
   return {
     restrict: 'E',
     controller: 'TestDataLabelCtrl',
     templateUrl: '/templates/components/test-data-label/label.template.html',
-    transclude: true,
     replace: true,
     scope: {
       label: '=',
-      type: '@',
-      modelProperty: '@'
+      type: '@'
     },
-    link: function($scope, element, attributes, ctrl, transclude) {
-      // Acts as fallback when no transcluded element is present. In Angular 1.5+, fallback
-      // element is available through the directive usage in template.
-      transclude(function(transcludeEl) {
-        if (transcludeEl.length > 0) {
-          $scope.show = false;
-        }
-      });
-    }
+    link: linkFn()
   };
-}).directive('categoryLabels', function() {
+}).directive('projectAndVersionLabel', function() {
   return {
-    category: 'E',
-    template: '<test-data-label ng-if="categories.length > 0" ng-repeat="category in categories" type="info" label="category" />',
+    restrict: 'E',
+    templateUrl: '/templates/components/test-data-label/project-and-version-label.template.html',
     replace: true,
     scope: {
-      categories: '='
-    }
-  };
-}).directive('tagLabels', function() {
-  return {
-    category: 'E',
-    template: '<test-data-label ng-if="tags.length > 0" ng-repeat="tag in tags" type="default" label="tag" />',
-    replace: true,
-    scope: {
-      tags: '='
-    }
-  };
-}).directive('ticketLabels', function() {
-  return {
-    category: 'E',
-    template: '<test-data-label ng-if="tickets.length > 0" ng-repeat="ticket in tickets" type="warning" label="ticket" />',
-    replace: true,
-    scope: {
-      tickets: '='
+      organization: '=',
+      project: '=',
+      projectVersion: '='
     }
   };
 })
-.controller('TestDataLabelCtrl', function($scope) {
-  $scope.show = true;
 
+.directive('categoryLabel', function() { return labelDirectiveFactory('category', 'info'); })
+.directive('ticketLabel', function() { return labelDirectiveFactory('ticket', 'warning'); })
+.directive('tagLabel', function() { return labelDirectiveFactory('tag', 'default'); })
+
+.directive('categoryLabels', function() { return labelsDirectiveFactory('categories', 'category') })
+.directive('tagLabels', function() { return labelsDirectiveFactory('tags', 'tag')})
+.directive('ticketLabels', function() { return labelsDirectiveFactory('tickets', 'ticket') })
+
+.controller('TestDataLabelCtrl', function($scope) {
   $scope.getTypeClass = function() {
     return $scope.type ? 'label-' + $scope.type : '';
-  };
-
-  $scope.getText = function() {
-    if (_.isString($scope.label)) {
-      return $scope.label;
-    }
-    else if (!_.isUndefined($scope.modelProperty)) {
-      return $scope.label[$scope.modelProperty];
-    }
   };
 });
