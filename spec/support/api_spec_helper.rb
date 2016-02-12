@@ -106,12 +106,8 @@ module ApiSpecHelper
     elsif m = value.match(/^@md5OfJson\((.*)\)$/)
       raw_value = extract_json @response_body, m[1]
       raw_value ? Digest::MD5.hexdigest(raw_value.to_s) : nil
-    elsif m = value.match(/^@idOf\((.*), (.*)\)$/)
-      named_record_by_type(m[1], m[2]).api_id
     elsif m = value.match(/^@idOf:\s?(.*)$/)
       named_record(m[1]).api_id
-    elsif m = value.match(/^@valueOf\((.*), (.*), (.*)\)$/)
-      named_record_by_type(m[1], m[2]).send(m[3])
     elsif m = value.match(/^@valueOf\((.*), (.*)\)$/)
       named_record(m[1]).send(m[2])
     elsif m = value.match(/^@date\((.*)\)$/)
