@@ -7,18 +7,17 @@
     .col-lg-4.col-md-6.col-xs-12
       .summary.panel.panel-default
         .panel-heading.clearfix
-          .label.label-info.pull-right.api-id ng-if='test.key' tooltip='Test key' {{ test.key }}
+          test-key-label.pull-right ng-if='test.key' key='test.key'
           h3.panel-title Details
         .panel-body.test-details
           p.loading ng-if='!test'
             em Loading...
           div ng-if='test'
             .labels.clearfix
-              .label.label-primary
-                a.label-link href='#' ui-sref='org.projects.show({ orgName: currentOrganization.name, projectName: test.project.name })' {{ test.project | projectName }} {{ test.projectVersion }}
-              .label.label-info ng-if='test.category' {{ test.category }}
-              .label.label-default ng-repeat='tag in test.tags' {{ tag }}
-              .label.label-warning ng-repeat='ticket in test.tickets' {{ ticket }}
+              project-and-version-label organization='currentOrganization' project='test.project' project-version='test.projectVersion'
+              category-label category='test.category'
+              tag-labels tags='test.tags'
+              ticket-labels tickets='test.tickets'
             dl
               dt
                 strong First run
@@ -31,13 +30,13 @@
               dd {{ test.resultsCount }}
               dd
                 strong Last status
-              dt.test-details-status
-                span.glyphicon.glyphicon-thumbs-up.test-details-passed ng-if='test.passing && test.active' tooltip='Passed' tooltip-append-to-body='true'
-                span.glyphicon.glyphicon-thumbs-down.test-details-failed ng-if='!test.passing && test.active' tooltip='Failed' tooltip-append-to-body='true'
-                span.glyphicon.glyphicon-ban-circle.test-details-inactive ng-if='!test.active' tooltip='Inactive' tooltip-append-to-body='true'
+              dt
+                result-status-icon result='test'
               dd
                 strong Contributors
               dd
                 user-avatar ng-if='test.contributions.length > 0' ng-repeat='contribution in test.contributions' user='contribution.user' tooltip='{{ contribution.user.name }}' tooltip-append-to-body='true'
                 p.empty ng-if='test.contributions.length === 0'
                   em No users are known to have contributed to this test.
+    .col-lg-4.col-md-6.col-xs-12
+      test-results-widget organization='currentOrganization' test='test'
