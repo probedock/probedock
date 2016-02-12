@@ -50,7 +50,8 @@ angular.module('probedock.dataLabel').directive('dataLabel', function() {
     scope: {
       organization: '=',
       project: '=',
-      projectVersion: '='
+      projectVersion: '=',
+      linkable: '='
     }
   };
 }).directive('testKeyLabel', function() {

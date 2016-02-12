@@ -16,12 +16,12 @@
           user-avatar user='runner' name-tooltip='true'
       '  ran some tests
       span.time.hidden-xs am-time-ago='report.endedAt'
+      '
       span.labels
         span ng-repeat='reportProject in report.projects'
-          test-data-label type='primary' ng-repeat='version in report.projectVersions'
-            a.label-link href='#' ng-if='reportProject.id != project.id' ui-sref='org.projects.show({ orgName: organization.name, projectName: reportProject.name })' {{ reportProject | projectName }} {{ version.name }}
-            span ng-if='reportProject.id == project.id' {{ reportProject | projectName }} {{ version.name }}
-        test-data-label type='info' ng-repeat='category in report.categories' label='category'
+          project-and-version-label ng-repeat='version in report.projectVersions' organization='organization' project='reportProject' project-version='version.name' linkable='reportProject.id != project.id'
+        '
+        category-labels categories='report.categories'
       .details
         a href='#' ui-sref='org.reports.show({ id: report.id })'
           report-health-bar report='report' click-for-details=true
