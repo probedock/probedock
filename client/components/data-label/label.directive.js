@@ -10,7 +10,7 @@ function labelDirectiveFactory(attributeName, type) {
   return {
     restrict: 'E',
     templateUrl: '/templates/components/test-data-label/label.template.html',
-    controller: 'TestDataLabelCtrl',
+    controller: 'DataLabelCtrl',
     replace: true,
     scope: {
       label: '=' + attributeName
@@ -30,10 +30,10 @@ function labelsDirectiveFactory(collectionName, attributeName) {
   };
 }
 
-angular.module('probedock.testDataLabel').directive('testDataLabel', function() {
+angular.module('probedock.dataLabel').directive('dataLabel', function() {
   return {
     restrict: 'E',
-    controller: 'TestDataLabelCtrl',
+    controller: 'DataLabelCtrl',
     templateUrl: '/templates/components/test-data-label/label.template.html',
     replace: true,
     scope: {
@@ -63,7 +63,7 @@ angular.module('probedock.testDataLabel').directive('testDataLabel', function() 
 .directive('tagLabels', function() { return labelsDirectiveFactory('tags', 'tag')})
 .directive('ticketLabels', function() { return labelsDirectiveFactory('tickets', 'ticket') })
 
-.controller('TestDataLabelCtrl', function($scope) {
+.controller('DataLabelCtrl', function($scope) {
   $scope.getTypeClass = function() {
     return $scope.type ? 'label-' + $scope.type : '';
   };
