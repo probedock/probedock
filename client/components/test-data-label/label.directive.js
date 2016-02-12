@@ -20,7 +20,35 @@ angular.module('probedock.testDataLabel').directive('testDataLabel', function() 
       });
     }
   };
-}).controller('TestDataLabelCtrl', function($scope) {
+}).directive('categoryLabels', function() {
+  return {
+    category: 'E',
+    template: '<test-data-label ng-if="categories.length > 0" ng-repeat="category in categories" type="info" label="category" />',
+    replace: true,
+    scope: {
+      categories: '='
+    }
+  };
+}).directive('tagLabels', function() {
+  return {
+    category: 'E',
+    template: '<test-data-label ng-if="tags.length > 0" ng-repeat="tag in tags" type="default" label="tag" />',
+    replace: true,
+    scope: {
+      tags: '='
+    }
+  };
+}).directive('ticketLabels', function() {
+  return {
+    category: 'E',
+    template: '<test-data-label ng-if="tickets.length > 0" ng-repeat="ticket in tickets" type="warning" label="ticket" />',
+    replace: true,
+    scope: {
+      tickets: '='
+    }
+  };
+})
+.controller('TestDataLabelCtrl', function($scope) {
   $scope.show = true;
 
   $scope.getTypeClass = function() {
