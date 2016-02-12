@@ -51,7 +51,12 @@ angular.module('probedock.dataLabel').directive('dataLabel', function() {
       organization: '=',
       project: '=',
       projectVersion: '=',
-      linkable: '='
+      linkable: '=?'
+    },
+    link: function($scope) {
+      if (_.isUndefined($scope.linkable)) {
+        $scope.linkable = true;
+      }
     }
   };
 }).directive('testKeyLabel', function() {
@@ -63,6 +68,14 @@ angular.module('probedock.dataLabel').directive('dataLabel', function() {
       onCopied: '&'
     },
     template: '<div class="test-key-label" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
+  };
+}).directive('apiIdLabel', function() {
+  return {
+    restrict: 'E',
+    scope: {
+      apiId: '='
+    },
+    template: '<div class="api-id-label" clip-copy="apiId">{{ apiId }}</div>'
   };
 })
 
