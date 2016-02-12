@@ -8,12 +8,12 @@
         h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}'
           a href='#' ui-sref='org.tests.show({ orgName: organization.name, testId: result.testId })' {{ result.name }}
         .labels.clearfix
-          '
-          .label.label-primary
+          test-data-label type='primary'
             a.label-link href='#' ui-sref='org.projects.show({ orgName: organization.name, projectName: result.project.name })' {{ result.project | projectName }} {{ result.projectVersion }}
-          |  <div class='label label-info' ng-if='result.category'>{{ result.category }}</div>
-          |  <div class='label label-default' ng-repeat='tag in result.tags'>{{ tag }}</div>
-          |  <div class='label label-warning' ng-repeat='ticket in result.tickets'>{{ ticket }}</div>
+          '
+          test-data-label ng-if='result.category' type='info' label='result.category'
+          test-data-label ng-if='result.tags.length > 0' ng-repeat='tag in result.tags' type='default' label='tag'
+          test-data-label ng-if='result.tickets.length > 0' ng-repeat='ticket in result.tickets' type='warning' label='ticket'
         ul.list-inline.details
           li
             strong Run:
