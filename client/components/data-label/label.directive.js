@@ -30,7 +30,7 @@ function labelsDirectiveFactory(collectionName, attributeName) {
   };
 }
 
-angular.module('probedock.dataLabel').directive('dataLabel', function() {
+angular.module('probedock.dataLabel').directive('simpleLabel', function() {
   return {
     restrict: 'E',
     controller: 'DataLabelCtrl',

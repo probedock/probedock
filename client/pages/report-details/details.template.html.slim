@@ -3,7 +3,7 @@
     span ng-if='report' Test Run Report - {{ report.createdAt | amDateFormat:'llll' }}
     span ng-if='!report' Test Run Report - Loading report data...
   .project-version-labels.clearfix
-    .label.label-primary ng-if='!report' Loading...
+    simple-label ng-if='!report' type='primary' label='Loading...'
     span ng-repeat='project in report.projects'
       project-and-version-label ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' organization='organization' project='project' project-version='version.name'
     category-labels categories='report.categories'
