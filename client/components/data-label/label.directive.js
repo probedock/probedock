@@ -9,7 +9,7 @@ function linkFn(type) {
 function labelDirectiveFactory(attributeName, type) {
   return {
     restrict: 'E',
-    templateUrl: '/templates/components/test-data-label/label.template.html',
+    templateUrl: '/templates/components/data-label/label.template.html',
     controller: 'DataLabelCtrl',
     replace: true,
     scope: {
@@ -34,7 +34,7 @@ angular.module('probedock.dataLabel').directive('dataLabel', function() {
   return {
     restrict: 'E',
     controller: 'DataLabelCtrl',
-    templateUrl: '/templates/components/test-data-label/label.template.html',
+    templateUrl: '/templates/components/data-label/label.template.html',
     replace: true,
     scope: {
       label: '=',
@@ -45,7 +45,7 @@ angular.module('probedock.dataLabel').directive('dataLabel', function() {
 }).directive('projectAndVersionLabel', function() {
   return {
     restrict: 'E',
-    templateUrl: '/templates/components/test-data-label/project-and-version-label.template.html',
+    templateUrl: '/templates/components/data-label/project-and-version-label.template.html',
     replace: true,
     scope: {
       organization: '=',
