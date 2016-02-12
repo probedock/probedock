@@ -5,9 +5,8 @@
   .project-version-labels.clearfix
     .label.label-primary ng-if='!report' Loading...
     span ng-repeat='project in report.projects'
-      test-data-label ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' type='primary'
-        a.label-link href='#' ui-sref='org.projects.show({ orgName: organization.name, projectName: project.name })' {{ project | projectName }} {{ version.name }}
-    test-data-label ng-repeat='category in report.categories' type='info' label='category'
+      project-and-version-label ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' organization='organization' project='project' project-version='version.name'
+    category-labels categories='report.categories'
   .row.overview
     .col-lg-2.col-md-3
       .summary.panel.panel-default
