@@ -4,13 +4,16 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     controller: 'ProjectVersionSelectCtrl',
     templateUrl: '/templates/components/project-version-select/select.template.html',
     scope: {
-      project: '=',
+      project: '=?',
+      test: '=?',
       modelObject: '=',
       modelProperty: '@',
       latestVersion: '=',
       prefix: '@',
       createNew: '=?',
-      autoSelect: '=?'
+      autoSelect: '=?',
+      allowClear: '=?',
+      placeholder: '@'
     }
   };
 }).controller('ProjectVersionSelectCtrl', function(api, $scope) {
@@ -22,6 +25,10 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     $scope.modelProperty = "projectVersion";
   }
 
+  if (_.isUndefined($scope.allowClear)) {
+    $scope.allowClear = false;
+  }
+
   $scope.config = {
     newVersion: false
   };
@@ -29,6 +36,12 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
   $scope.projectVersionChoices = [];
 
   $scope.$watch('project', function(value) {
+    if (value) {
+      fetchProjectVersionChoices();
+    }
+  });
+
+  $scope.$watch('test', function(value) {
     if (value) {
       fetchProjectVersionChoices();
     }
@@ -50,17 +63,27 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
   $scope.getPlaceholder = function() {
     if ($scope.latestVersion) {
       return "Latest version: " + $scope.latestVersion.name;
+    } else if (!_.isUndefined($scope.placeholder)) {
+      return $scope.placeholder;
     } else {
       return null;
     }
   };
 
   function fetchProjectVersionChoices() {
+    var params = {};
+
+    if ($scope.project) {
+      params.projectId = $scope.project.id;
+    }
+
+    if ($scope.test) {
+      params.testId = $scope.test.id;
+    }
+
     api({
       url: '/projectVersions',
-      params: {
-        projectId: $scope.project.id
-      }
+      params: params
     }).then(function(res) {
       $scope.projectVersionChoices = res.data;
 
