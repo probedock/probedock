@@ -42,10 +42,10 @@ angular.module('probedock.dataLabel').directive('simpleLabel', function() {
     },
     link: linkFn()
   };
-}).directive('projectAndVersionLabel', function() {
+}).directive('projectVersionLabel', function() {
   return {
     restrict: 'E',
-    templateUrl: '/templates/components/data-label/project-and-version-label.template.html',
+    templateUrl: '/templates/components/data-label/project-version-label.template.html',
     replace: true,
     scope: {
       organization: '=',

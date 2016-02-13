@@ -5,7 +5,7 @@
   .project-version-labels.clearfix
     simple-label ng-if='!report' type='primary' label='Loading...'
     span ng-repeat='project in report.projects'
-      project-and-version-label ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' organization='organization' project='project' project-version='version.name'
+      project-version-label ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' organization='organization' project='project' project-version='version.name'
     category-labels categories='report.categories'
   .row.overview
     .col-lg-2.col-md-3

@@ -8,7 +8,7 @@
         h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}'
           a href='#' ui-sref='org.tests.show({ orgName: organization.name, testId: result.testId })' {{ result.name }}
         .labels.clearfix
-          project-and-version-label organization='organization' project='result.project' project-version='result.projectVersion'
+          project-version-label organization='organization' project='result.project' project-version='result.projectVersion'
           category-label ng-if='result.category' category='result.category'
           tag-labels ng-if='result.tags.length > 0' tags='tags'
           ticket-labels ng-if='result.tickets.length > 0' tickets='tickets'
