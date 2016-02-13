@@ -24,6 +24,33 @@ RSpec.describe 'Payload processing' do
   let!(:project){ create :project, organization: organization }
   let!(:user){ create :org_member, organization: organization }
 
+  # If invalid unicode characters such as \u0000 are not stripped before insertion,
+  # PostgreSQL will be able to put the JSON into the contents column, but not to decode it.
+  # The payload processing job will fail with the following database error:
+  #     PG::UntranslatableCharacter: ERROR:  unsupported Unicode escape sequence
+  it "should remove invalid unicode characters", probedock: { key: '9mkg' } do
+
+    Project.where(id: project.id).update_all tests_count: ProjectTest.where(project_id: project.id).count
+
+    raw_payload = generate_raw_payload project, version: '1.2.3', results: [
+      # u0000 is not a valid unicode code point in a string
+      { n: "Lorem ipsum dolor sit \u0000\u0000amet\u0000 consectetuer \u0000adipiscing" },
+      { n: "Lorem ipsum\u0000\u0000" }
+    ]
+
+    store_preaction_state
+
+    # publish payload
+    with_resque do
+      api_post '/api/publish', raw_payload.to_json, user: user
+      expect_http_status_code 202
+      check_json_payload_response @response_body, project, user, raw_payload, bytes: MultiJson.dump(raw_payload).bytesize - 36 # removed bytes
+    end
+
+    # check payload & report
+    payload = check_json_payload @response_body, raw_payload, testsCount: 2, newTestsCount: 2
+  end
+
   it "should add similarly named results to the same test as the first one of those results that has a key", probedock: { key: 'gq5p' } do
 
     tests = []

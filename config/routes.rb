@@ -23,12 +23,11 @@ ProbeDock::Application.routes.draw do
     mount Resque::Server.new, at: '/resque'
   end
 
-  if Rails.env != 'production'
-    get '/templates/*path', to: 'home#template'
-  end
-
   mount ProbeDock::API => '/api'
 
-  get '/*path', to: 'home#index'
-  root to: 'home#index'
+  if Rails.env != 'production'
+    get '/templates/*path', to: 'home#template'
+    get '/*path', to: 'home#index'
+    root to: 'home#index'
+  end
 end
