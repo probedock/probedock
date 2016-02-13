@@ -10,8 +10,8 @@
         .labels.clearfix
           project-version-label organization='organization' project='result.project' project-version='result.projectVersion'
           category-label ng-if='result.category' category='result.category'
-          tag-labels ng-if='result.tags.length > 0' tags='tags'
-          ticket-labels ng-if='result.tickets.length > 0' tickets='tickets'
+          tag-labels ng-if='result.tags.length > 0' tags='result.tags'
+          ticket-labels ng-if='result.tickets.length > 0' tickets='result.tickets'
         ul.list-inline.details
           li
             strong Run:
