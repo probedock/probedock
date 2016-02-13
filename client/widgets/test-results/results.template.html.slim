@@ -1,0 +1,16 @@
+.test-results-widget.panel.panel-default
+  .panel-heading
+    h3.panel-title Results
+  .panel-body
+    p.empty ng-if='!loading && results.length === 0' Test has no result.
+    .row ng-if='loading || results.length > 0'
+      .col-md-12
+        a ng-repeat='result in results' class='{{ resultClass(result) }}' ng-click='open(result)'
+        a.more href='#' ng-if='!loading && pagination.hasMorePages' ng-click='fetchMore()' More...
+        span.loading ng-if='loading' Loading...
+        .clearfix
+    .row
+      .col-md-6
+        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
+      .col-md-6
+        user-select prefix='test-results' organization='organization' model-object='params' filter-by-label='Filter by runner' filter-all-label='All runners'
