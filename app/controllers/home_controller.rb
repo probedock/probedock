@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class HomeController < ApplicationController
-  caches_page :index
   append_view_path Rails.root.join('client')
 
   def index

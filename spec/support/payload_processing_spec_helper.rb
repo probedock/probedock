@@ -194,8 +194,8 @@ module PayloadProcessingSpecHelper
     })
   end
 
-  def check_json_payload_response body, project, runner, raw_payload
-    check_payload_response body, project, runner, raw_payload.merge(bytes: MultiJson.dump(raw_payload).bytesize)
+  def check_json_payload_response body, project, runner, raw_payload, options = {}
+    check_payload_response body, project, runner, raw_payload.merge(bytes: options.fetch(:bytes, MultiJson.dump(raw_payload).bytesize))
   end
 
   def check_payload_response body, project, runner, options = {}
