@@ -62,7 +62,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   $scope.getPlaceholder = function() {
     if ($scope.latestVersion) {
-      return "Latest version: " + $scope.latestVersion.name;
+      return "Latest created version: " + $scope.latestVersion.name;
     } else if (!_.isUndefined($scope.placeholder)) {
       return $scope.placeholder;
     } else {
@@ -85,7 +85,9 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       url: '/projectVersions',
       params: params
     }).then(function(res) {
-      $scope.projectVersionChoices = res.data;
+      $scope.projectVersionChoices = res.data.sort(function(v1, v2) {
+        return -_.compareVersion(v1.name, v2.name);
+      });
 
       if (res.data.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one
