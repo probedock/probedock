@@ -7,7 +7,9 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
       organization: '=',
       modelObject: '=',
       modelProperty: '@',
-      prefix: '@'
+      prefix: '@',
+      filterByLabel: '@',
+      filterAllLabel: '@'
     }
   };
 }).controller('UserSelectCtrl', function(api, $scope) {
@@ -17,6 +19,14 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
 
   if (!$scope.modelProperty) {
     $scope.modelProperty = "userIds";
+  }
+
+  if (_.isUndefined($scope.filterByLabel)) {
+    $scope.filterByLabel = 'Filter by user';
+  }
+
+  if (_.isUndefined($scope.filterAllLabel)) {
+    $scope.filterAllLabel = 'All users';
   }
 
   $scope.userChoices = [];
