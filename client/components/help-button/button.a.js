@@ -1,1 +1,1 @@
-angular.module('probedock.dataLabel', []);
+angular.module('probedock.helpButton', []);

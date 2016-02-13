@@ -11,11 +11,11 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
 }).controller('TestsResultsWidgetCtrl', function(api, $scope, testResultModal) {
 
   var page = 1;
-  var pageSize = 100;
 
   $scope.params = {};
   $scope.results = [];
   $scope.loading = true;
+  $scope.pageSize = 100;
 
   $scope.$watch('test', function(value) {
     if (value) {
@@ -69,7 +69,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
     var params = {
       sort: 'runAt',
       page: page,
-      pageSize: pageSize,
+      pageSize: $scope.pageSize,
       testId: $scope.test.id
     };
 
