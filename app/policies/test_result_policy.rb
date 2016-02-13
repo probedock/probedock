@@ -16,6 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class TestResultPolicy < ApplicationPolicy
+  def index?
+    admin? || public?(organization) || member_of?(organization)
+  end
+
   class Serializer < Serializer
     def to_builder options = {}
       Jbuilder.new do |json|

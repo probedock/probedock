@@ -81,8 +81,9 @@ angular.module('probedock.reportDetailsPage').directive('reportDetailsResults', 
       $scope.fetchingMoreResults = true;
 
       return api({
-        url: '/reports/' + $scope.report.id + '/results',
+        url: '/results',
         params: {
+          reportId: $scope.report.id,
           page: page,
           pageSize: pageSize
         }

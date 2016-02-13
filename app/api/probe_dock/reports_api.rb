@@ -138,15 +138,6 @@ module ProbeDock
             html: html
           }
         end
-
-        get :results do
-          authorize! record, :show
-
-          rel = record.results.order('active desc, passed, name, id').includes(:key, :category, :tags, :tickets, :runner, :test, { project_version: :project })
-          rel = paginated rel
-
-          serialize load_resources(rel)
-        end
       end
     end
   end

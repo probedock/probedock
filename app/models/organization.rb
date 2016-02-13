@@ -24,6 +24,7 @@ class Organization < ActiveRecord::Base
 
   has_many :memberships
   has_many :projects
+  has_many :reports, class_name: 'TestReport'
 
   scope :active, ->{ where active: true }
 

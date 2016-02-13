@@ -62,6 +62,7 @@ RSpec.describe Organization, type: :model, probedock: { tags: :unit } do
   end
 
   describe "validations" do
+    it(nil, probedock: { key: 'bejt' }){ should have_validations_on(:name, :display_name, :public_access) }
     it(nil, probedock: { key: 'swud' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: '5v9o' }){ should validate_length_of(:name).is_at_most(50) }
     it(nil, probedock: { key: '8f40' }){ should allow_value('foo', 'FoO', 'foo-bar', 'Foo-Bar-Baz').for(:name) }
@@ -78,10 +79,14 @@ RSpec.describe Organization, type: :model, probedock: { tags: :unit } do
   end
 
   describe "associations" do
+    it(nil, probedock: { key: '2k05' }){ should have_associations(:memberships, :projects, :reports) }
     it(nil, probedock: { key: 'rynz' }){ should have_many(:memberships) }
+    it(nil, probedock: { key: 'pjs5' }){ should have_many(:projects) }
+    it(nil, probedock: { key: 'itmq' }){ should have_many(:reports) }
   end
 
   describe "database table" do
+    it(nil, probedock: { key: 'hga0' }){ should have_db_columns(:id, :api_id, :name, :display_name, :normalized_name, :active, :public_access, :memberships_count, :projects_count, :created_at, :updated_at) }
     it(nil, probedock: { key: 'cqi4' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: '9hi0' }){ should have_db_column(:api_id).of_type(:string).with_options(null: false, limit: 5) }
     it(nil, probedock: { key: 'llfp' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
