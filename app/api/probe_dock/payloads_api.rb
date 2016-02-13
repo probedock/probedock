@@ -108,6 +108,11 @@ module ProbeDock
             raw_payload_content_type = request.content_type
           end
 
+          # strip invalid unicode characters
+          if raw_payload
+            raw_payload = raw_payload.gsub(/\\u0000/, '')
+          end
+
           # determine the payload type
           # also accept "text/json" and "text/xml" as that is sometimes the
           # content type of manually uploaded files
