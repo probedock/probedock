@@ -17,6 +17,8 @@
 
 angular.module('probedock').run(function($templateCache) {
 
+  var version = '0.1.15';
+
   <% if Rails.env == 'production' %>
   <% require 'templates' %>
   <% environment.context_class.instance_eval { include ApplicationTemplateUtils } %>
