@@ -3,7 +3,6 @@
   become: yes
   vars:
     probedock_dir: "/vagrant"
-    probedock_data_dir: "/var/lib/probedock-dev"
     probedock_repo: "https://github.com/probedock/probedock.git"
   tasks:
 
@@ -76,11 +75,40 @@
     # Docker compose installation
     - get_url: url="https://github.com/docker/compose/releases/download/1.6.0/docker-compose-{{ uname_s_result.stdout }}-{{ uname_m_result.stdout }}" dest=/usr/local/bin/docker-compose mode=0755
 
+    # Development environment
     - docker_image: path="{{ probedock_dir }}" name="probedock/probedock-dev" dockerfile="Dockerfile-dev" state=present
-    - template: src=env.j2 dest="{{ probedock_dir }}/.env"
-    - template: src=env-variable.j2 dest="{{ probedock_dir }}/.env-variable"
-    - template: src=docker-compose.yml.j2 dest="{{ probedock_dir }}/docker-compose.yml"
-    - file: path="{{ probedock_data_dir }}/postgresql/init-scripts" state=directory
-    - copy: src=postgresql-trust.sh dest="{{ probedock_data_dir }}/postgresql/init-scripts/postgresql-trust.sh"
+    - include: tasks/environment-configuration-files.yml
+      vars:
+        probedock_docker_image: probedock/probedock-dev
+        probedock_data_dir: /var/lib/probedock-development
+        rails_environment: development
+        redis_database_number: 0
+        rails_server_port: 3000
+        test_environment: yes
 
-    # TODO: pre-pull postgres & redis images
+    # Production environment
+    - docker_image: path="{{ probedock_dir }}" name="probedock/probedock" dockerfile="Dockerfile" state=present
+    - include: tasks/environment-configuration-files.yml
+      vars:
+        probedock_docker_image: probedock/probedock
+        probedock_data_dir: /var/lib/probedock-production
+        rails_environment: production
+        redis_database_number: 2
+        rails_server_port: 3002
+        test_environment: no
+
+    # Setup common to all environments
+
+    # Pre-pull docker images
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "postgres:9.4"
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "redis:2.8"
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "nginx:1.9"
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "aanand/wait"

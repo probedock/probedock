@@ -13,6 +13,8 @@ Vagrant.configure(2) do |config|
 
   # Forward port 3000
   config.vm.network 'forwarded_port', guest: 3000, host: 3000
+  config.vm.network 'forwarded_port', guest: 3001, host: 3001
+  config.vm.network 'forwarded_port', guest: 3002, host: 3002
 
   # Mount shared folder with NFS for saner filesystem speed
   config.vm.synced_folder '.', '/vagrant', nfs: true

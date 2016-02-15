@@ -1,0 +1,53 @@
+# vi: set ft=yaml :
+
+
+# Rails application.
+app:
+  image: "probedock/probedock-dev"
+  links:
+    - db
+    - cache
+  ports:
+    - "3000:3000"
+  volumes:
+    - "/vagrant:/usr/src/app"
+  env_file:
+    - "/vagrant/.env.development.vagrant"
+    - "/vagrant/.env-variable.development.vagrant"
+  environment:
+    RAILS_ENV: development
+
+# Run a rake task.
+# This is meant to be run as a one-off task (with "run" instead of "up").
+rake:
+  image: "probedock/probedock-dev"
+  entrypoint: rake
+  command: -T
+  links:
+    - db
+    - cache
+  volumes:
+    - "/vagrant:/usr/src/app"
+  env_file:
+    - "/vagrant/.env.development.vagrant"
+    - "/vagrant/.env-variable.development.vagrant"
+  environment:
+    RAILS_ENV: development
+
+# PostgreSQL database.
+db:
+  image: postgres:9.4
+  volumes:
+    - "/var/lib/probedock-development/postgresql/data:/var/lib/postgresql/data"
+    - "/var/lib/probedock-development/postgresql/init-scripts:/docker-entrypoint-initdb.d"
+  restart: always
+  environment:
+    POSTGRES_PASSWORD: admin
+
+# Redis in-memory database.
+cache:
+  image: redis:2.8
+  command: redis-server --appendonly yes
+  volumes:
+    - "/var/lib/probedock-development/redis/data:/data"
+  restart: always
