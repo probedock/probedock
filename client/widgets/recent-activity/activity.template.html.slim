@@ -8,10 +8,10 @@
       em No tests have been run recently.
   .list-group ng-if='reports.length'
     .list-group-item ng-repeat='report in reports'
-      span.singleRunner ng-if='report.runners.length == 1'
+      span.single-runner ng-if='report.runners.length == 1'
         user-avatar ng-if='report.runners.length == 1' user='report.runners[0]'
         strong.name {{ report.runners[0].name }}
-      span.multipleRunners ng-if='report.runners.length >= 2'
+      span.multiple-runners ng-if='report.runners.length >= 2'
         span.runner ng-repeat='runner in report.runners'
           user-avatar user='runner' name-tooltip='true'
       '  ran some tests
