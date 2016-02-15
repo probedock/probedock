@@ -1,5 +1,6 @@
 angular.module('probedock').config(function(gravatarServiceProvider) {
   gravatarServiceProvider.defaults = {
-    default: 'identicon' // Use retro style for auto-generated missing avatars
+     // Use auto-generated identicons (based on the e-mail) for users not registered on gravatar
+    default: 'identicon'
   };
 });
