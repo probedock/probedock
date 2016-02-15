@@ -1,40 +1,8 @@
-function linkFn(type) {
-  return function($scope) {
-    if (type) {
-      $scope.type = type;
-    }
-  };
-}
-
-function labelDirectiveFactory(attributeName, type) {
-  return {
-    restrict: 'E',
-    templateUrl: '/templates/components/data-label/label.template.html',
-    controller: 'DataLabelCtrl',
-    replace: true,
-    scope: {
-      label: '=' + attributeName
-    },
-    link: linkFn(type)
-  }
-}
-
-function labelsDirectiveFactory(collectionName, attributeName) {
-  return {
-    restrict: 'E',
-    template: '<' + attributeName + '-label ng-repeat="' + attributeName + ' in collection" ' + attributeName + '="' + attributeName + '" />',
-    replace: true,
-    scope: {
-      collection: '=' + collectionName
-    }
-  };
-}
-
-angular.module('probedock.dataLabel').directive('simpleLabel', function() {
+angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   return {
     restrict: 'E',
     controller: 'DataLabelCtrl',
-    templateUrl: '/templates/components/data-label/label.template.html',
+    templateUrl: '/templates/components/data-labels/data-label.template.html',
     replace: true,
     scope: {
       label: '=',
@@ -45,7 +13,7 @@ angular.module('probedock.dataLabel').directive('simpleLabel', function() {
 }).directive('projectVersionLabel', function() {
   return {
     restrict: 'E',
-    templateUrl: '/templates/components/data-label/project-version-label.template.html',
+    templateUrl: '/templates/components/data-labels/project-version-label.template.html',
     replace: true,
     scope: {
       organization: '=',
@@ -67,7 +35,7 @@ angular.module('probedock.dataLabel').directive('simpleLabel', function() {
       copied: '=',
       onCopied: '&'
     },
-    template: '<div class="test-key-label" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
+    template: '<div class="data-label test-key-label" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
   };
 }).directive('apiIdLabel', function() {
   return {
@@ -75,7 +43,7 @@ angular.module('probedock.dataLabel').directive('simpleLabel', function() {
     scope: {
       apiId: '='
     },
-    template: '<div class="api-id-label" clip-copy="apiId">{{ apiId }}</div>'
+    template: '<div class="data-label api-id-label" clip-copy="apiId" tooltip="Click to copy">{{ apiId }}</div>'
   };
 })
 
@@ -92,3 +60,35 @@ angular.module('probedock.dataLabel').directive('simpleLabel', function() {
     return $scope.type ? 'label-' + $scope.type : '';
   };
 });
+
+function linkFn(type) {
+  return function($scope) {
+    if (type) {
+      $scope.type = type;
+    }
+  };
+}
+
+function labelDirectiveFactory(attributeName, type) {
+  return {
+    restrict: 'E',
+    templateUrl: '/templates/components/data-labels/data-label.template.html',
+    controller: 'DataLabelCtrl',
+    replace: true,
+    scope: {
+      label: '=' + attributeName
+    },
+    link: linkFn(type)
+  }
+}
+
+function labelsDirectiveFactory(collectionName, attributeName) {
+  return {
+    restrict: 'E',
+    template: '<' + attributeName + '-label ng-repeat="' + attributeName + ' in collection" ' + attributeName + '="' + attributeName + '" />',
+    replace: true,
+    scope: {
+      collection: '=' + collectionName
+    }
+  };
+}
