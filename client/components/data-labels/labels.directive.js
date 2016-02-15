@@ -19,7 +19,8 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       organization: '=',
       project: '=',
       projectVersion: '=',
-      linkable: '=?'
+      versionOnly: '=',
+      linkable: '='
     },
     link: function($scope) {
       if (_.isUndefined($scope.linkable)) {
