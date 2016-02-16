@@ -17,7 +17,7 @@
           span ng-if='results.length == pagination.total' All the {{ results.length }} available results.
         a ng-repeat='result in results' class='{{ resultClass(result) }}' ng-click='open(result)' tooltip='Run at: {{ result.runAt | amDateFormat: "lll" }}. Click for more details.'
         .clearfix
-    .row ng-if='missingVersions'
+    .row ng-if='missingVersions.length > 0'
       .col-md-12
         p
           ' There is no result for
