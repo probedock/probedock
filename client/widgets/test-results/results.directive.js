@@ -109,9 +109,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
           }
         }).then(function(response) {
           if (response.data) {
-            $scope.missingVersions = response.data.sort(function(v1, v2) {
-              return -_.compareVersion(v1.name, v2.name);
-            });
+            $scope.missingVersions = _.sortVersions(response.data);
           }
         });
       }
