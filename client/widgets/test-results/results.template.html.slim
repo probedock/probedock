@@ -11,11 +11,10 @@
         p ng-if='loading' Loading...
         p ng-if='!loading'
           a.pull-right.more href='#' ng-if='!loading && nextChunk > 0' ng-click='fetchMore()'
-            ' Load older
-            ng-pluralize count='nextChunk' when='{"1": "result...", "other": "{} results..."}'
-          span There are {{ results.length }}
-          span ng-if='nextChunk > 0'  latest
-          span  results.
+            ng-pluralize count='nextChunk' when='{"1": "Load one more result...", "other": "Load {} more results..."}'
+          span ng-if='results.length == 1' There is only one available result.
+          span ng-if='results.length > 1 && results.length < pagination.total' The {{ results.length }} recent results on the {{ pagination.total }} available results.
+          span ng-if='results.length == pagination.total' All the {{ results.length }} available results.
         a ng-repeat='result in results' class='{{ resultClass(result) }}' ng-click='open(result)' tooltip='Run at: {{ result.runAt | amDateFormat: "lll" }}. Click for more details.'
         .clearfix
     .row ng-if='missingVersions'
