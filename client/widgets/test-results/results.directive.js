@@ -10,12 +10,12 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
   };
 }).controller('TestsResultsWidgetCtrl', function(api, $scope, testResultModal) {
 
-  var page = 1;
+  var page = 1,
+      pageSize = 50;
 
   $scope.params = {};
   $scope.results = [];
   $scope.loading = true;
-  $scope.pageSize = 100;
 
   $scope.$watch('test', function(value) {
     if (value) {
@@ -69,7 +69,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
     var params = {
       sort: 'runAt',
       page: page,
-      pageSize: $scope.pageSize,
+      pageSize: pageSize,
       testId: $scope.test.id
     };
 
@@ -89,8 +89,31 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
     }).then(function(response) {
       if (response.data) {
         $scope.pagination = response.pagination();
-        $scope.results = $scope.results.concat(response.data);
+
+        // Reverse and prepend the test results
+        $scope.results = response.data.reverse().concat($scope.results);
+
+        // Calculate the next number of results to load
+        var remainingResults = $scope.pagination.total - $scope.results.length;
+        $scope.nextChunk = remainingResults > pageSize ? pageSize : remainingResults;
+
         $scope.loading = false;
+      }
+
+      if (!$scope.missingVersions) {
+        return api({
+          url: '/metrics/versionsWithNoResult',
+          params: {
+            organizationId: $scope.organization.id,
+            testId: $scope.test.id
+          }
+        }).then(function(response) {
+          if (response.data) {
+            $scope.missingVersions = response.data.sort(function(v1, v2) {
+              return -_.compareVersion(v1.name, v2.name);
+            });
+          }
+        });
       }
     });
   }

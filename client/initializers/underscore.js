@@ -18,7 +18,7 @@ _.isBlank = function(value) {
 
 // Based on topic: http://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 _.compareVersion = function(v1, v2) {
-  var versionRegex = /(\d+)(.*)/;
+  var versionRegex = /(\d+)?(.*)?/;
 
   // Prepare parts for both versions
   var v1Parts = v1.split('.'),
@@ -37,6 +37,13 @@ _.compareVersion = function(v1, v2) {
     // Split the subparts to digit and string part
     var v1Subparts = versionRegex.exec(v1Parts[i]),
         v2Subparts = versionRegex.exec(v2Parts[i]);
+
+    // If no numeric part for both of subparts, we continue to evaluate otherwise we evaluate which one is not present
+    if (_.isNull(v1Subparts[i]) && _.isNull(v2Subparts[i])) {
+      continue;
+    } else if (_.isNull(v1Subparts[i]) || _.isNull(v2Subparts[i])) {
+      return v1Subparts[i] ? 1 : -1;
+    }
 
     // Check if numeric parts are equals
     if (v1Subparts[1] == v2Subparts[1]) {

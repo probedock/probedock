@@ -3,18 +3,29 @@
     help-button
       p Shows results for different versions. By default, the results for all the versions are displayed.
       p The list of versions shows only the versions for which results are available. The versions without results are not displayed.
-      p The {{ pageSize }} latest test results are shown then you can load more results.
-    h3.panel-title Results
+    h3.panel-title Result history
   .panel-body
     p.empty ng-if='!loading && results.length === 0' Test has no result.
     .row ng-if='loading || results.length > 0'
       .col-md-12
-        a ng-repeat='result in results' class='{{ resultClass(result) }}' ng-click='open(result)'
-        a.more href='#' ng-if='!loading && pagination.hasMorePages' ng-click='fetchMore()' More...
-        span.loading ng-if='loading' Loading...
+        p ng-if='loading' Loading...
+        p ng-if='!loading'
+          a.pull-right.more href='#' ng-if='!loading && nextChunk > 0' ng-click='fetchMore()'
+            ' Load older
+            ng-pluralize count='nextChunk' when='{"1": "result...", "other": "{} results..."}'
+          span There are {{ results.length }}
+          span ng-if='nextChunk > 0'  latest
+          span  results.
+        a ng-repeat='result in results' class='{{ resultClass(result) }}' ng-click='open(result)' tooltip='Run at: {{ result.runAt | amDateFormat: "lll" }}. Click for more details.'
         .clearfix
+    .row ng-if='missingVersions'
+      .col-md-12
+        p
+          ' There is no result for
+          ng-pluralize count='missingVersions.length' when='{"1": "this version:", "other": "these versions:"}'
+          project-version-label ng-repeat='missingVersion in missingVersions' project-version='missingVersion.name'
     .row
       .col-md-6
-        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions with results'
+        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
       .col-md-6
         user-select prefix='test-results' organization='organization' model-object='params' filter-by-label='Filter by runner' filter-all-label='All runners'
