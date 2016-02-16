@@ -16,6 +16,7 @@ _.isBlank = function(value) {
   return !_.isPresent(value);
 };
 
+// FIXME: Replace this comparator function by server side implementation
 // Based on topic: http://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 _.compareVersion = function(v1, v2) {
   var versionRegex = /(\d+)?(.*)?/;
@@ -74,6 +75,7 @@ _.compareVersion = function(v1, v2) {
   return 0;
 };
 
+// FIXME: Replace this sort function by server side implementation
 _.sortVersions = function(collection) {
   return collection.sort(function(v1, v2) {
     return -_.compareVersion(v1.name, v2.name);
