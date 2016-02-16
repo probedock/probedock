@@ -13,6 +13,7 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
 }).directive('projectVersionLabel', function() {
   return {
     restrict: 'E',
+    controller: 'ProjectVersionLabelCtrl',
     templateUrl: '/templates/components/data-labels/project-version-label.template.html',
     replace: true,
     scope: {
@@ -20,7 +21,8 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       project: '=',
       projectVersion: '=',
       versionOnly: '=',
-      linkable: '='
+      linkable: '=',
+      truncate: '='
     },
     link: function($scope) {
       if (_.isUndefined($scope.linkable)) {
@@ -28,7 +30,8 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       }
     }
   };
-}).directive('testKeyLabel', function() {
+})
+.directive('testKeyLabel', function() {
   return {
     restrict: 'E',
     scope: {
@@ -60,10 +63,36 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   $scope.getTypeClass = function() {
     return $scope.type ? 'label-' + $scope.type : '';
   };
+})
+.controller('ProjectVersionLabelCtrl', function($scope, projectNameFilter) {
+  if (!$scope.labelSize) {
+    $scope.labelSize = 30;
+  }
+
+  $scope.getTooltip = function () {
+    return $scope.versionOnly ? $scope.projectVersion : projectNameFilter($scope.project) + ' ' + $scope.projectVersion;
+  };
+
+  $scope.tooltipEnabled = function () {
+    return !$scope.truncate && $scope.getTooltip().length > $scope.labelSize;
+  };
+
+  $scope.getLabel = function () {
+    var str = $scope.getTooltip();
+
+    if (!$scope.truncate && str.length > $scope.labelSize) {
+      var halfLength = $scope.labelSize / 2;
+
+      return str.substr(0, 0 + halfLength) + '...' + str.substr(str.length - halfLength);
+    }
+    else {
+      return str;
+    }
+  };
 });
 
 function linkFn(type) {
-  return function($scope) {
+  return function($scope, el) {
     if (type) {
       $scope.type = type;
     }

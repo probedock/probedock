@@ -1,0 +1,8 @@
+span.report-data-label
+  span ng-repeat='reportProject in projects'
+    project-version-label ng-repeat='version in report.projectVersions | filter: { projectId: reportProject.id }' organization='organization' project='reportProject' project-version='version.name' linkable='reportProject.id != project.id' truncate='!hasMore()' version-only='showVersionsOnly'
+  '
+  category-labels categories='report.categories'
+  '
+  span ng-if='hasMore()'
+    a.more href='#' ng-click='showMore()' More...

@@ -34,9 +34,8 @@
               td.duration.hidden-xs.hidden-sm {{ report.duration | formatDuration:2 }}
               td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
               td.details.hidden-xs
-                span ng-repeat='project in report.projects'
-                  project-version-label ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' organization='currentOrganization' project='project' project-version='version.name'
-                category-labels categories='report.categories'
+                report-data-labels organization='organization' report='report'
+
           tfoot
             tr
               td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
