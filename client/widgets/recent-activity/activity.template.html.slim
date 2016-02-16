@@ -19,7 +19,7 @@
       '
       span.labels
         span ng-repeat='reportProject in report.projects'
-          project-version-label ng-repeat='version in report.projectVersions' organization='organization' project='reportProject' project-version='version.name' linkable='reportProject.id != project.id'
+          project-version-label ng-repeat='version in report.projectVersions | filter: { projectId: reportProject.id }' organization='organization' project='reportProject' project-version='version.name' linkable='reportProject.id != project.id'
         '
         category-labels categories='report.categories'
       .details
