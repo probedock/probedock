@@ -23,7 +23,7 @@ Feature: Versions with no result for a test
     And test payload A1 sent by hsolo for version 1.2.2 of project X-Wing was used to generate report A
 
     # Create 1 test in 1 version
-    And test "Engine should be powered" was created by hsolo with key esbp for version 1.2.2 of project X-Wing
+    And test "Engine should be powered" was created 2 days ago by hsolo with key esbp for version 1.2.2 of project X-Wing
 
     # Create test results for the test
     And result R1 for test "Engine should be powered" was run by hsolo for payload A1 with version 1.2.2
@@ -38,7 +38,7 @@ Feature: Versions with no result for a test
     And test payload B1 sent by borgana for version 2.0 of project Senate was used to generate report B
 
     # Create 1 test in 1 version
-    And test "Senate should be big enough" was created by borgana with key ssbbe for version 2.0 of project Senate
+    And test "Senate should be big enough" was created 2 days ago by borgana with key ssbbe for version 2.0 of project Senate
 
     # Create test results for the test
     And result R2 for test "Senate should be big enough" was run by borgana for payload B1 with version 2.0
