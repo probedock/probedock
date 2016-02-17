@@ -26,6 +26,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
   $scope.$watch('params', function(value) {
     if (!_.isEmpty(value)) {
       initFetchResults();
+      fetchMissingVersions();
     }
   }, true);
 
@@ -99,18 +100,18 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
 
         $scope.loading = false;
       }
+    });
+  }
 
-      if (!$scope.missingVersions) {
-        return api({
-          url: '/metrics/versionsWithNoResult',
-          params: {
-            organizationId: $scope.organization.id,
-            testId: $scope.test.id
-          }
-        }).then(function(response) {
-          $scope.missingVersions = projectVersions.sort(response.data);
-        });
+  function fetchMissingVersions() {
+    return api({
+      url: '/metrics/versionsWithNoResult',
+      params: {
+        organizationId: $scope.organization.id,
+        testId: $scope.test.id
       }
+    }).then(function(response) {
+      $scope.missingVersions = projectVersions.sort(response.data);
     });
   }
 });
