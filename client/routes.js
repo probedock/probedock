@@ -3,42 +3,6 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
   .config(function($stateProvider, $urlRouterProvider) {
     var titleElementLimit = 25;
 
-    function buildTitle($stateParams) {
-      var title = 'Probe Dock';
-
-      if ($stateParams.orgName) {
-        title += ' > ';
-
-        if ($stateParams.orgName.length > titleElementLimit) {
-          title += $stateParams.orgName.substr(0, titleElementLimit - 3) + '...'
-        }
-        else {
-          title += $stateParams.orgName;
-        }
-      }
-
-      _.each([].slice.call(arguments, 1), function(part) {
-        title += ' > ';
-
-        var realPart;
-        if (part.charAt(0) == ':') {
-          realPart = $stateParams[part.substr(1)];
-        }
-        else {
-          realPart = part;
-        }
-
-        if (realPart.length > titleElementLimit) {
-          title += realPart.substr(0, titleElementLimit - 3) + '...';
-        }
-        else {
-          title += realPart;
-        }
-      });
-
-      return title;
-    }
-
     $stateProvider
 
       .state('home', {
@@ -110,7 +74,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'UserConfirmRegistrationPageCtrl',
         templateUrl: '/templates/pages/user-confirm-registration/confirm.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Register confirmation'); }
+          $title: function($stateParams) { return buildTitle($stateParams, 'Confirm registration'); }
         }
       })
 
@@ -292,6 +256,38 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
       $injector.get('$state').go('home');
     });
 
+    function buildTitle($stateParams) {
+      var title = 'Probe Dock';
+
+      if ($stateParams.orgName) {
+        title += ' > ';
+
+        if ($stateParams.orgName.length > titleElementLimit) {
+          title += $stateParams.orgName.substr(0, titleElementLimit - 3) + '...'
+        } else {
+          title += $stateParams.orgName;
+        }
+      }
+
+      _.each(arguments.slice(1), function(part) {
+        title += ' > ';
+
+        var realPart;
+        if (part.charAt(0) == ':') {
+          realPart = $stateParams[part.substr(1)];
+        } else {
+          realPart = part;
+        }
+
+        if (realPart.length > titleElementLimit) {
+          title += realPart.substr(0, titleElementLimit - 3) + '...';
+        } else {
+          title += realPart;
+        }
+      });
+
+      return title;
+    }
   })
 
 ;
