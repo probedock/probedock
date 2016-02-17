@@ -8,8 +8,8 @@ angular.module('probedock.reportDataLabels').directive('reportDataLabels', funct
       report: '=',
       organization: '=',
       nbProjectsToShow: '=?',
-      projectFilter: '=?',
-      showVersionsOnly: '=?'
+      forProject: '=?',
+      versionsOnly: '=?'
     }
   };
 })
@@ -18,12 +18,12 @@ angular.module('probedock.reportDataLabels').directive('reportDataLabels', funct
     $scope.nbProjectsToShow = 5;
   }
 
-  if (!$scope.showVersionsOnly) {
-    $scope.showVersionsOnly = false;
+  if (!$scope.versionsOnly) {
+    $scope.versionsOnly = false;
   }
 
-  $scope.filteredProjects = $scope.projectFilter ? _.where($scope.report.projects, { id: $scope.projectFilter.id }) : $scope.report.projects;
-  $scope.projects = $scope.filteredProjects.slice(0, $scope.nbProjectsToShow);
+  var filteredProjects = $scope.forProject ? _.where($scope.report.projects, { id: $scope.forProject.id }) : $scope.report.projects;
+  $scope.projects = filteredProjects.slice(0, $scope.nbProjectsToShow);
 
   $scope.hasMore = function() {
     return $scope.report.projects.length > $scope.projects.length;
@@ -31,6 +31,6 @@ angular.module('probedock.reportDataLabels').directive('reportDataLabels', funct
 
   $scope.showMore = function() {
     $scope.projects = $scope.report.projects;
-    $scope.showVersionsOnly = false;
+    $scope.versionsOnly = false;
   };
 });

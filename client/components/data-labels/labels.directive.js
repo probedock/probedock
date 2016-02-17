@@ -21,12 +21,7 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       projectVersion: '=',
       versionOnly: '=?',
       linkable: '=?',
-      truncate: '='
-    },
-    link: function($scope) {
-      if (_.isUndefined($scope.linkable)) {
-        $scope.linkable = true;
-      }
+      truncate: '=?'
     }
   };
 })
@@ -64,6 +59,14 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   };
 })
 .controller('ProjectVersionLabelCtrl', function($scope, projectNameFilter) {
+  if (_.isUndefined($scope.linkable)) {
+    $scope.linkable = true;
+  }
+
+  if (_.isUndefined($scope.truncate)) {
+    $scope.truncate = true;
+  }
+
   if (!$scope.labelSize) {
     $scope.labelSize = 30;
   }
@@ -73,18 +76,17 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   };
 
   $scope.tooltipEnabled = function () {
-    return !$scope.truncate && $scope.getTooltip().length > $scope.labelSize;
+    return $scope.truncate && $scope.getTooltip().length > $scope.labelSize;
   };
 
   $scope.getLabel = function () {
     var str = $scope.getTooltip();
 
-    if (!$scope.truncate && str.length > $scope.labelSize) {
+    if ($scope.truncate && str.length > $scope.labelSize) {
       var halfLength = $scope.labelSize / 2;
 
       return str.substr(0, 0 + halfLength) + '...' + str.substr(str.length - halfLength);
-    }
-    else {
+    } else {
       return str;
     }
   };
