@@ -1,7 +1,7 @@
 @api @metrics
-Feature: Versions with no result for a test
+Feature: Retrieve the versions for a test where there is no results.
 
-  Retrieve the versions where there is no result for the test.
+  This will allow identifying tests that are not executed for some versions.
 
 
   Background:

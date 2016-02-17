@@ -7,8 +7,7 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
     scope: {
       label: '=',
       type: '@'
-    },
-    link: linkFn()
+    }
   };
 }).directive('projectVersionLabel', function() {
   return {
@@ -20,8 +19,8 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       organization: '=',
       project: '=',
       projectVersion: '=',
-      versionOnly: '=',
-      linkable: '=',
+      versionOnly: '=?',
+      linkable: '=?',
       truncate: '='
     },
     link: function($scope) {
@@ -55,9 +54,9 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
 .directive('ticketLabel', function() { return labelDirectiveFactory('ticket', 'warning'); })
 .directive('tagLabel', function() { return labelDirectiveFactory('tag', 'default'); })
 
-.directive('categoryLabels', function() { return labelsDirectiveFactory('categories', 'category') })
-.directive('tagLabels', function() { return labelsDirectiveFactory('tags', 'tag')})
-.directive('ticketLabels', function() { return labelsDirectiveFactory('tickets', 'ticket') })
+.directive('categoryLabels', function() { return labelsDirectiveFactory('categories', 'category'); })
+.directive('tagLabels', function() { return labelsDirectiveFactory('tags', 'tag'); })
+.directive('ticketLabels', function() { return labelsDirectiveFactory('tickets', 'ticket'); })
 
 .controller('DataLabelCtrl', function($scope) {
   $scope.getTypeClass = function() {
@@ -92,8 +91,8 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
 });
 
 function linkFn(type) {
-  return function($scope, el) {
-    if (type) {
+  return function($scope) {
+    if (!$scope.type) {
       $scope.type = type;
     }
   };
