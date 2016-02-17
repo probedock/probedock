@@ -447,8 +447,9 @@ module ProbeDock
       get :versionsWithNoResult do
         authorize!(:organization, :data)
 
-        project_versions_rel = policy_scope(ProjectVersion).order('project_versions.created_at DESC')
-        project_versions_rel = project_versions_rel.joins(project: [:tests, :organization])
+        project_versions_rel = policy_scope(ProjectVersion)
+          .order('project_versions.created_at DESC')
+          .joins(project: [:tests, :organization])
           .where('organizations.api_id = ?', current_organization.api_id)
           .where('project_tests.api_id = ?', params[:testId].to_s)
           .where('not exists(select id from test_results where test_results.project_version_id = project_versions.id and test_results.test_id = project_tests.id)')

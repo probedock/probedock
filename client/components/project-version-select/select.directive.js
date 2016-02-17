@@ -16,7 +16,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       placeholder: '@'
     }
   };
-}).controller('ProjectVersionSelectCtrl', function(api, $scope) {
+}).controller('ProjectVersionSelectCtrl', function(api, $scope, projectVersions) {
   if (!$scope.prefix) {
     throw new Error("The prefix attribute on project-version-select directive is not set.");
   }
@@ -26,7 +26,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
   }
 
   if (_.isUndefined($scope.allowClear)) {
-    $scope.allowClear = false;
+    $scope.allowClear = !_.isUndefined($scope.latestVersion);
   }
 
   $scope.config = {
@@ -85,7 +85,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       url: '/projectVersions',
       params: params
     }).then(function(res) {
-      $scope.projectVersionChoices = _.sortVersions(res.data);
+      $scope.projectVersionChoices = projectVersions.sort(res.data);
 
       if (res.data.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one

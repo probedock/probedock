@@ -1,1 +1,1 @@
-angular.module('probedock.testResultsWidget', [ 'probedock.api', 'probedock.testResultModal' ]);
+angular.module('probedock.testResultsWidget', [ 'probedock.api', 'probedock.projectVersions', 'probedock.testResultModal' ]);

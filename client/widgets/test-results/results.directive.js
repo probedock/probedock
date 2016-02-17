@@ -8,7 +8,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
       test: '='
     }
   };
-}).controller('TestsResultsWidgetCtrl', function(api, $scope, testResultModal) {
+}).controller('TestsResultsWidgetCtrl', function(api, $scope, projectVersions, testResultModal) {
 
   var page = 1,
       pageSize = 50;
@@ -108,9 +108,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
             testId: $scope.test.id
           }
         }).then(function(response) {
-          if (response.data) {
-            $scope.missingVersions = _.sortVersions(response.data);
-          }
+          $scope.missingVersions = projectVersions.sort(response.data);
         });
       }
     });
