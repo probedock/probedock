@@ -75,7 +75,7 @@ module SpecApiHelper
 
     get path, options[:query] || {}, headers
 
-    @response_body = MultiJson.load response.body, mode: :strict
+    @response_body = MultiJson.load response.body, mode: :strict unless options[:empty_body]
   end
 
   def api_post path, body, options = {}
