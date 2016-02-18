@@ -269,7 +269,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         }
       }
 
-      _.each(arguments.slice(1), function(part) {
+      _.each(Array.prototype.slice.call(arguments, 1), function(part) {
         title += ' > ';
 
         var realPart;
