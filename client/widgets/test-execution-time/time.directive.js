@@ -117,13 +117,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
     $scope.chart.labels.length = 0;
 
     _.each($scope.results, function(result) {
-      //if ($scope.results[0] == result || $scope.results[$scope.results.length - 1] == result) {
-      //  console.log(result.runAt);
-      //  $scope.chart.labels.push(moment(result.runAt).format('DD.MM.YYYY<br />HH:mm:ss'));
-      //}
-      //else {
-        $scope.chart.labels.push('');
-      //}
+      $scope.chart.labels.push('');
       series.push(result.duration);
     });
   }
