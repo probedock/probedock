@@ -73,7 +73,7 @@ module SpecApiHelper
     headers = options[:headers] || {}
     headers['Authorization'] = "Bearer #{options[:user].generate_auth_token}" if options[:user]
 
-    get path, {}, headers
+    get path, options[:query] || {}, headers
 
     @response_body = MultiJson.load response.body, mode: :strict
   end

@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
-RSpec::Matchers.define :be_empty_array do
+RSpec::Matchers.define :be_empty_json_array do
 
   match do |actual|
 
@@ -27,14 +27,12 @@ RSpec::Matchers.define :be_empty_array do
       raise "Unsupported assertion subject #{actual.inspect}"
     end
 
-    @not_an_array = !@res.is_a?(Array)
-    not_empty = @not_an_array && !@res.empty?
-
-    @not_an_array || not_empty
+    @not_an_array = @res.nil? || !@res.is_a?(Array)
+    @res.empty? unless @not_an_array
   end
 
   failure_message do |actual|
-    return "#{@res} is not an array" if @not_an_array
-    "#{@res} is not empty"
+    return "JSON '#{@res}' is not an array" if @not_an_array
+    "JSON '#{@res}' is not empty"
   end
 end
