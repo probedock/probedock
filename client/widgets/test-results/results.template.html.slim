@@ -5,6 +5,7 @@
       p By default, results are shown for all versions of the project. You may use the version dropdown to see only the test results received for a specific version. If there are versions for which the test was never run, they will not be available to filter, but will be listed below the results.
     h3.panel-title Result history
   .panel-body
+    p.empty ng-if='!loading && results.length === 0' No results match the current filters.
     .row ng-if='loading || results.length > 0'
       .col-md-12
         p ng-if='loading' Loading...
