@@ -57,7 +57,7 @@ RSpec.describe ProbeDock::ProjectsApi do
   end
 
   describe 'GET /api/projects' do
-    it 'should return an empty array when no project exists' do
+    it 'should return an empty array when no project exists', probedock: { key: 'vi1n' } do
       api_get '/api/projects', query: { organizationId: organization.api_id }, user: user
       expect(response).to be_empty_json_array
     end
