@@ -1,0 +1,30 @@
+.test-execution-time-widget.panel.panel-default
+  .panel-heading
+    help-button
+      p This widget shows the test execution time evolution for this specific test in chronological order (from older to newer). By default, only the latest {{ pageSize }} results are shown. If you choose to load older results, they will be added to the beginning of the curve as they are older. Only a maximum of {{ maxResults }} results can be shown.
+      p By default, results are shown for all versions of the project. You may use the version dropdown to see only the test results received for a specific version. If there are versions for which the test was never run, they will not be available to filter.
+    h3.panel-title Time execution evolution
+  .panel-body
+    p.empty ng-if='!loading && results.length === 0' No results match the current filters.
+    .row.chart-row ng-if='loading || results.length > 0'
+      .col-md-12
+        p ng-if='loading' Loading...
+        p ng-if='!loading'
+          a.pull-right.more href='#' ng-if='!loading && nextChunk > 0' ng-click='fetchMore()'
+            ng-pluralize count='nextChunk' when='{"1": "Load one more result...", "other": "Load {} more results..."}'
+          span ng-if='results.length == 1' There is only one available result.
+          span ng-if='results.length > 1 && results.length < total' Showing the latest {{ results.length }} results ouf of a maximum of {{ total }} results.
+          span ng-if='results.length == total && total == pagination.total' Showing all {{ results.length }} results.
+          span ng-if='results.length == total && total < pagination.total' Reached the maximum of {{ results.length }} results.
+        canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+        .pull-left
+          .text-center {{ results[0].runAt | amDateFormat: 'HH:mm:ss' }}
+          .text-center {{ results[0].runAt | amDateFormat: 'DD.MM.YYYY' }}
+        .pull-right
+          .text-center {{ results[results.length - 1].runAt | amDateFormat: 'HH:mm:ss' }}
+          .text-center {{ results[results.length - 1].runAt | amDateFormat: 'DD.MM.YYYY' }}
+    .row
+      .col-md-6
+        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
+      .col-md-6
+        user-select prefix='test-results' organization='organization' model-object='params' field-label='Filter by runner' field-placeholder='All runners'
