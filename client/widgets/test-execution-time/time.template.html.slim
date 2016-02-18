@@ -12,17 +12,18 @@
         p ng-if='!loading'
           a.pull-right.more href='#' ng-if='!loading && nextChunk > 0' ng-click='fetchMore()'
             ng-pluralize count='nextChunk' when='{"1": "Load one more result...", "other": "Load {} more results..."}'
-          span ng-if='results.length == 1' There is only one available result.
+          span ng-if='results.length == 1' There is only one available result and its execution time is {{ results[0].duration }}ms.
           span ng-if='results.length > 1 && results.length < total' Showing the latest {{ results.length }} results ouf of a maximum of {{ total }} results.
-          span ng-if='results.length == total && total == pagination.total' Showing all {{ results.length }} results.
-          span ng-if='results.length == total && total < pagination.total' Reached the maximum of {{ results.length }} results.
-        canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
-        .pull-left
-          .text-center {{ results[0].runAt | amDateFormat: 'HH:mm:ss' }}
-          .text-center {{ results[0].runAt | amDateFormat: 'DD.MM.YYYY' }}
-        .pull-right
-          .text-center {{ results[results.length - 1].runAt | amDateFormat: 'HH:mm:ss' }}
-          .text-center {{ results[results.length - 1].runAt | amDateFormat: 'DD.MM.YYYY' }}
+          span ng-if='results.length > 1 && results.length == total && total == pagination.total' Showing all {{ results.length }} results.
+          span ng-if='results.length > 1 && results.length == total && total < pagination.total' Reached the maximum of {{ results.length }} results.
+        div ng-if='results.length > 1'
+          canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+          .pull-left
+            .text-center {{ results[0].runAt | amDateFormat: 'HH:mm:ss' }}
+            .text-center {{ results[0].runAt | amDateFormat: 'DD.MM.YYYY' }}
+          .pull-right
+            .text-center {{ results[results.length - 1].runAt | amDateFormat: 'HH:mm:ss' }}
+            .text-center {{ results[results.length - 1].runAt | amDateFormat: 'DD.MM.YYYY' }}
     .row
       .col-md-6
         project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
