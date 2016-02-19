@@ -5,7 +5,7 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
     templateUrl: '/templates/components/data-labels/data-label.template.html',
     replace: true,
     scope: {
-      label: '=',
+      label: '@',
       type: '@'
     }
   };
