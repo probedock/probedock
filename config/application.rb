@@ -41,7 +41,12 @@ module ProbeDock
     end
 
     def root_url
-      routes.url_helpers.root_url(protocol: config_for(:application)['protocol'], host: config_for(:application)['host'], port: config_for(:application)['port'])
+      url = "#{config_for(:application)['protocol']}://#{config_for(:application)['host']}"
+
+      port = config_for(:application)['port']
+      url = "#{url}:#{port}" if port != 80 && port != 443
+
+      url
     end
 
     VERSION = File.open(File.join(root, 'VERSION'), 'r').read
