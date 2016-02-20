@@ -16,7 +16,7 @@ class UserMailer < ApplicationMailer
   private
 
   def otp_url path, otp_param, otp
-    join_url_parts(root_url, path) + '?' + otp_param.to_s + '=' + url_encode(otp.to_s)
+    join_url_parts(Rails.application.root_url, path) + '?' + otp_param.to_s + '=' + url_encode(otp.to_s)
   end
 
   def join_url_parts *parts
