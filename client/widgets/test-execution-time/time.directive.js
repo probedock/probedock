@@ -22,7 +22,6 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
     data: [],
     labels: [],
     options: {
-      pointHitDetectionRadius: 5,
       showTooltips: false,
       pointDot: false,
       datasetFill: false,
