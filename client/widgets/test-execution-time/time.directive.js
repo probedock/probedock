@@ -26,16 +26,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
       showTooltips: false,
       pointDot: false,
       datasetFill: false,
-      scaleShowVerticalLines: false,
-
-      /*
-       * Fix for space issue in the Y axis labels
-       * see: https://github.com/nnnick/Chart.js/issues/729
-       * see: http://stackoverflow.com/questions/26498171/how-do-i-prevent-the-scale-labels-from-being-cut-off-in-chartjs
-       */
-      scaleLabel: function (object) {
-        return '  ' + object.value;
-      }
+      scaleShowVerticalLines: false
     }
   };
 
