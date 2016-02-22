@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160213183932) do
+ActiveRecord::Schema.define(version: 20160222133533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,16 +98,17 @@ ActiveRecord::Schema.define(version: 20160213183932) do
   add_index "project_versions", ["name", "project_id"], name: "index_project_versions_on_name_and_project_id", unique: true, using: :btree
 
   create_table "projects", force: :cascade do |t|
-    t.string   "api_id",          limit: 12,             null: false
-    t.string   "name",            limit: 50,             null: false
+    t.string   "api_id",          limit: 12,              null: false
+    t.string   "name",            limit: 50,              null: false
     t.string   "display_name",    limit: 50
-    t.string   "normalized_name", limit: 50,             null: false
+    t.string   "normalized_name", limit: 50,              null: false
     t.text     "description"
-    t.integer  "organization_id",                        null: false
-    t.integer  "tests_count",                default: 0, null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.integer  "organization_id",                         null: false
+    t.integer  "tests_count",                 default: 0, null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.integer  "last_report_id"
+    t.string   "repo_url",        limit: 100
   end
 
   add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
