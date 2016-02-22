@@ -27,7 +27,7 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       reset();
     });
   } else {
-    $scope.project.organizationId = orgs.currentOrganization.id
+    $scope.project.organizationId = orgs.currentOrganization.id;
     reset();
   }
 

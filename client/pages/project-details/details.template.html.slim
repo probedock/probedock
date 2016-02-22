@@ -2,8 +2,13 @@
   .page-header
     h1
       em Loading project data...
-.container-fluid ng-if='project && currentOrganization'
+.container-fluid.project-details ng-if='project && currentOrganization'
   .page-header
+    .btn-group.pull-right role='group' aria-label='Project Controls'
+      a.btn.btn-primary ng-if='project.repoUrl' href='{{ project.repoUrl }}' tooltip='Open repository' tooltip-append-to-body='true' target='_blank'
+        project-repo-icon project='project'
+      button.btn.btn-warning tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.projects.show.edit({ projectName: project.name, id: project.id })' ng-class='{active: currentState == "org.projects.show.edit"}'
+        span.glyphicon.glyphicon-pencil
     h1 {{ project | projectName }}
   .row
     .col-md-12
@@ -25,6 +30,9 @@
               dd {{ project.createdAt | amDateFormat:'llll' }}
               dt Last Update
               dd {{ project.updatedAt | amDateFormat:'llll' }}
+              dt ng-if='project.repoUrl' Code repository
+              dd ng-if='project.repoUrl'
+                a href='{{ project.repoUrl }}' target='_blank' {{ project.repoUrl }}
             p.text-info.text-center ng-if='!project.testsCount'
               ' No test results have been published for this project.
               ' Follow the
