@@ -12,8 +12,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
 
   var page = 1;
 
-  $scope.pageSize = 25;
-  $scope.maxResults = 100;
+  $scope.pageSize = 50;
 
   $scope.params = {};
   $scope.results = [];
@@ -53,9 +52,15 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
     }
   }, true);
 
+  $scope.fetchNext = function() {
+    if (page > 1) {
+      page--;
+      fetchResults();
+    }
+  };
 
-  $scope.fetchMore = function() {
-    if ($scope.pagination.hasMorePages) {
+  $scope.fetchPrev = function() {
+    if (page < $scope.pagination.numberOfPages) {
       page++;
       fetchResults();
     }
@@ -96,13 +101,43 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
       if (response.data) {
         $scope.pagination = response.pagination();
 
-        // Reverse and prepend the test results
-        $scope.results = response.data.reverse().concat($scope.results);
+        var results = response.data.reverse();
 
-        // Calculate the next number of results to load
-        $scope.total = $scope.pagination.total > $scope.maxResults ? $scope.maxResults : $scope.pagination.total;
-        var remainingResults = $scope.total - $scope.results.length;
-        $scope.nextChunk = remainingResults > $scope.pageSize ? $scope.pageSize : remainingResults;
+        // Check if the received results must be completed by the previous ones
+        // and then complete by previous ones
+        if (results.length < $scope.pageSize) {
+          results = results.concat($scope.results.slice(0, $scope.pageSize - results.length));
+        }
+
+        $scope.results = results;
+
+        // Shortcuts to show prev/next buttons
+        $scope.hasNext = $scope.pagination.page > 1;
+        $scope.hasPrev = $scope.pagination.page < $scope.pagination.numberOfPages;
+
+        // Extract the min, max and sum of durations
+        $scope.stats = _.reduce($scope.results, function(memo, result) {
+          memo.sum += result.duration;
+
+          if (memo.maxDuration == null) {
+            memo.maxDuration = result.duration;
+            memo.minDuration = result.duration;
+            return memo;
+          }
+
+          if (result.duration > memo.maxDuration) {
+            memo.maxDuration = result.duration;
+          }
+
+          if (result.duration < memo.minDuration) {
+            memo.minDuration = result.duration;
+          }
+
+          return memo;
+        }, {minDuration: null, maxDuration: null, sum: 0});
+
+        // Calculate the average of durations
+        $scope.stats.averageDuration = $scope.stats.sum / $scope.results.length;
 
         showResults();
 
@@ -112,13 +147,15 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
   }
 
   function showResults() {
-    var series = [];
-    $scope.chart.data = [ series ];
+    var series = [],
+        avgSeries = [];
+    $scope.chart.data = [ series, avgSeries ];
     $scope.chart.labels.length = 0;
 
     _.each($scope.results, function(result) {
       $scope.chart.labels.push('');
       series.push(result.duration);
+      avgSeries.push($scope.stats.averageDuration);
     });
   }
 });
