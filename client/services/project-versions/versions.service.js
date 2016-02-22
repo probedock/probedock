@@ -66,7 +66,7 @@ angular.module('probedock.projectVersions').factory('projectVersions', function(
     sort: function(collection) {
       if (_.isArray(collection)) {
         return collection.sort(function(v1, v2) {
-          return compareVersion(v1.name, v2.name);
+          return -compareVersion(v1.name, v2.name);
         });
       }
 
