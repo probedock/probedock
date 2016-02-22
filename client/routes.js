@@ -174,6 +174,10 @@ angular.module('probedock.routes', [ 'ui.router' ])
         controller: 'ProjectDetailsPageCtrl',
         templateUrl: '/templates/pages/project-details/details.template.html'
       })
+
+      .state('org.projects.show.edit', {
+        url: '/edit?id'
+      })
     ;
 
     $urlRouterProvider.otherwise(function($injector) {
