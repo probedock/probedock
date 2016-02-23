@@ -43,7 +43,7 @@ class TestPayloadValidations < Errapi::SingleValidator
       # test tags
       validates 'g', type: :array
       validates_each 'g' do
-        validates type: :string, trim: true, length: 50
+        validates type: :string, trim: true, length: 50, format: { with: Tag::NAME_REGEXP }
       end
 
       # issue tracker tickets

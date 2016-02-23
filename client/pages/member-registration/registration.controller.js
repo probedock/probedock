@@ -81,7 +81,7 @@ angular.module('probedock.memberRegistrationPage').controller('MemberRegistratio
         ignoreForbidden: true
       }
     }).then(function(res) {
-      $scope.existingMembership = res.data.length ? res.data[0] : null;
+      $scope.existingMembership = res.data.length && !res.data[0].acceptedAt ? res.data[0] : null;
     });
   }
 });
