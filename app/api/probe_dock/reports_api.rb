@@ -59,7 +59,7 @@ module ProbeDock
       get do
         authorize! TestReport, :index
 
-        rel = policy_scope(TestReport).order 'created_at DESC'
+        rel = policy_scope(TestReport).order 'test_reports.created_at DESC'
 
         rel = paginated rel do |rel|
 
@@ -73,15 +73,37 @@ module ProbeDock
 
           if params[:after]
             ref = TestReport.select('id, created_at').where(api_id: params[:after].to_s).first!
-            rel = rel.where 'created_at > ?', ref.created_at
+            rel = rel.where 'test_reports.created_at > ?', ref.created_at
           end
+
+          rel = rel.joins(:runners) if array_param?(:runnerIds)
+          rel = rel.joins(:projects) if array_param?(:projectIds)
+          rel = rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || params[:projectId].present?
+          rel = rel.joins(results: :category) if array_param?(:categoryNames)
 
           group = false
           if params[:projectId].present?
             project = Project.where(organization_id: current_organization.id, api_id: params[:projectId].to_s).first!
             authorize! project, :show
-            rel = rel.joins(test_payloads: :project_version).where('project_versions.project_id = ?', project.id)
+            rel = rel.where('project_versions.project_id = ?', project.id)
             group = true
+          end
+
+          if array_param?(:runnerIds)
+            rel = rel.where('users.api_id in (?)', params[:runnerIds].collect(&:to_s).to_a)
+          end
+
+          if array_param?(:projectIds)
+            rel = rel.where('projects.api_id in (?)', params[:projectIds].collect(&:to_s).to_a)
+          end
+
+          if array_param?(:projectVersionIds)
+            rel = rel.where('project_versions.api_id in (?)', params[:projectVersionIds].collect(&:to_s).to_a)
+          end
+
+          # FIXME: This filter is clearly slower than the others
+          if array_param?(:categoryNames)
+            rel = rel.where('categories.name in (?)', params[:categoryNames].collect(&:to_s).to_a)
           end
 
           @pagination_filtered_count = rel.count 'distinct test_reports.id'
