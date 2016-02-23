@@ -18,11 +18,15 @@ angular.module('probedock.tables').factory('tables', function(api) {
           pageSize: table.pagination.number
         });
 
-        $scope.$broadcast(name + '.refresh');
+        if (table.search.filter) {
+          $scope.$broadcast(name + '.filter');
+        } else {
+          $scope.$broadcast(name + '.refresh');
+        }
 
         api({
           url: options.url,
-          params: params
+          params: _.extend(params, table.search.predicateObject)
         }).then(updatePagination).then(updateRecords);
 
         function updatePagination(res) {
@@ -32,7 +36,13 @@ angular.module('probedock.tables').factory('tables', function(api) {
 
         function updateRecords(res) {
           list.records = res.data;
-          $scope.$broadcast(name + '.refreshed', list, table);
+
+          if (table.search.filter) {
+            table.search.filter = false;
+            $scope.$broadcast(name + '.filtered', list, table);
+          } else {
+            $scope.$broadcast(name + '.refreshed', list, table);
+          }
           list.initialized = true;
         }
       };
