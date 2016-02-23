@@ -11,12 +11,20 @@
               th.results.clearfix
                 | Results
                 .pull-right
+                  span ng-show='filtering' ng-animate='{show: "animate-show", hide: "animate-hide"}' filtering...
                   span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
                   refresh-table
-              th.runners Runner(s)
+              th.runners
+                / TODO: Use the label and placeholder to specify runner in place of user
+                user-select filter='filters.runnerIds' prefix='report-list' organization='currentOrganization' model-object='filters' model-property='runnerIds' no-label='true' placeholder='Filter by runner'
               th.duration.hidden-xs.hidden-sm Duration
               th.date.hidden-xs.hidden-sm.hidden-md Date
-              th.details.hidden-xs Details
+              th.details.hidden-xs
+                project-select filter='filters.projectIds' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by project'
+              th.details.hidden-xs
+                project-version-select filter='filters.projectVersionIds' prefix='report-list' organization='currentOrganization' model-object='filters' multiple='true' no-label='true' placeholder='Filter by version'
+              th.details.hidden-xs
+                category-select filter='filters.categoryNames' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by category'
           tbody
             tr.empty ng-show='!reportsList.initialized'
               td colspan=5 Loading...
@@ -33,7 +41,7 @@
                   span.name.hidden-xs  {{ runner.name }}
               td.duration.hidden-xs.hidden-sm {{ report.duration | formatDuration:2 }}
               td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
-              td.details.hidden-xs
+              td.details.hidden-xs colspan='3'
                 span ng-repeat='project in report.projects'
                   span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: project.id}'
                     a.label-link href='#' ui-sref='org.projects.show({ orgName: currentOrganization.name, projectName: project.name })' {{ project.name }} {{ version.name }}

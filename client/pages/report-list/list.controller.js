@@ -4,6 +4,8 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
   var hideNoNewReportsPromise,
       latestReport;
 
+  $scope.filters = {};
+
   tables.create($scope, 'reportsList', {
     url: '/reports',
     pageSize: 15,
@@ -14,6 +16,14 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
       withProjectVersions: 1,
       withCategories: 1
     }
+  });
+
+  $scope.$on('reportsList.filter', function() {
+    $scope.filtering = true;
+  });
+
+  $scope.$on('reportsList.filtered', function() {
+    $scope.filtering = false;
   });
 
   $scope.$on('reportsList.refresh', function() {
