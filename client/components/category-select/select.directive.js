@@ -1,8 +1,8 @@
-angular.module('probedock.userSelect').directive('userSelect', function() {
+angular.module('probedock.categorySelect').directive('categorySelect', function() {
   return {
     restrict: 'E',
-    controller: 'UserSelectCtrl',
-    templateUrl: '/templates/components/user-select/select.template.html',
+    controller: 'CategorySelectCtrl',
+    templateUrl: '/templates/components/category-select/select.template.html',
     scope: {
       organization: '=',
       modelObject: '=',
@@ -12,43 +12,43 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
       noLabel: '@'
     }
   };
-}).controller('UserSelectCtrl', function(api, $scope) {
+}).controller('CategorySelectCtrl', function(api, $scope) {
   if (!$scope.prefix) {
-    throw new Error("The prefix attribute on user-select directive is not set.");
-  }
-
-  if (!$scope.modelProperty) {
-    $scope.modelProperty = "userIds";
+    throw new Error("The prefix attribute on category-select directive is not set.");
   }
 
   if (_.isUndefined($scope.noLabel)) {
     $scope.noLabel = false;
   }
 
-  $scope.userChoices = [];
+  if (!$scope.modelProperty) {
+    $scope.modelProperty = "categoryNames";
+  }
+
+  $scope.categoryChoices = [];
 
   $scope.getPlaceholder = function() {
     if ($scope.placeholder) {
       return $scope.placeholder;
     } else {
-      return 'All users';
+      return 'All categories';
     }
   };
 
   $scope.$watch('organization', function(value) {
     if (value) {
-      fetchUserChoices();
+      fetchChoices();
     }
   });
 
-  function fetchUserChoices() {
+  function fetchChoices() {
     api({
-      url: '/users',
+      url: '/categories',
       params: {
         organizationId: $scope.organization.id
       }
     }).then(function(res) {
-      $scope.userChoices = res.data;
+      $scope.categoryChoices = res.data;
     });
   }
 });

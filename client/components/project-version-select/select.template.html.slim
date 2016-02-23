@@ -1,5 +1,6 @@
 .form-group
-  label for='{{ prefix }}-project-version-select' Version
+  label ng-if='!noLabel && multiple' for='{{ prefix }}-project-version-select-multiple' Version
+  label ng-if='!noLabel && !multiple' for='{{ prefix }}-project-version-select' Version
 
   / check box to choose whether to create a new version or not
   label.new-switch.pull-right ng-if='createNew'
@@ -8,10 +9,16 @@
     ' create a new version
 
   / dropdown menu to select an existing version
-  ui-select id='{{ prefix }}-project-version-select' ng-if='!config.newVersion && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true
+  ui-select id='{{ prefix }}-project-version-select' ng-if='!multiple && !config.newVersion && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true
     ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='{{ !!latestVersion }}' {{ $select.selected.name }}
     ui-select-choices repeat='projectVersion in projectVersionChoices | filter: $select.search'
       span ng-bind-html='projectVersion.name | highlight: $select.search'
+
+  / Multiple select dropdown menu to select an existing version
+  ui-select id='{{ prefix }}-project-version-select-multiple' ng-if='multiple && !config.newVersion && modelProperty' ng-model='modelObject[modelProperty]' multiple=true reset-search-input=true
+    ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='{{ !!latestVersion }}' {{ $item.name }}
+    ui-select-choices repeat='projectVersion.id as projectVersion in projectVersionChoices | filter: $select.search'
+      span ng-bind-html='projectVersion.name'
 
   / free input field to create a new version
   input.form-control type='text' ng-if='config.newVersion' ng-model='modelObject[modelProperty].name'

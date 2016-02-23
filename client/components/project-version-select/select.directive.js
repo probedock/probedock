@@ -4,13 +4,17 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     controller: 'ProjectVersionSelectCtrl',
     templateUrl: '/templates/components/project-version-select/select.template.html',
     scope: {
+      organization: '=',
       project: '=',
       modelObject: '=',
       modelProperty: '@',
       latestVersion: '=',
       prefix: '@',
       createNew: '=?',
-      autoSelect: '=?'
+      autoSelect: '=?',
+      multiple: '@',
+      placeholder: '@',
+      noLabel: '@'
     }
   };
 }).controller('ProjectVersionSelectCtrl', function(api, $scope) {
@@ -19,7 +23,15 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
   }
 
   if (!$scope.modelProperty) {
-    $scope.modelProperty = "projectVersion";
+    if ($scope.multiple) {
+      $scope.modelProperty = 'projectVersionIds';
+    } else {
+      $scope.modelProperty = 'projectVersion'
+    }
+  }
+
+  if (_.isUndefined($scope.noLabel)) {
+    $scope.noLabel = false;
   }
 
   $scope.config = {
@@ -28,8 +40,14 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   $scope.projectVersionChoices = [];
 
-  $scope.$watch('project', function(value) {
+  $scope.$watch('organization', function(value) {
     if (value) {
+      fetchProjectVersionChoices();
+    }
+  });
+
+  $scope.$watch('project', function(value) {
+    if (value && !$scope.organization) {
       fetchProjectVersionChoices();
     }
   });
@@ -48,19 +66,31 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
   });
 
   $scope.getPlaceholder = function() {
-    if ($scope.latestVersion) {
+    if ($scope.placeholder) {
+      return $scope.placeholder;
+    } else if ($scope.latestVersion) {
       return "Latest version: " + $scope.latestVersion.name;
+    } else if ($scope.multiple) {
+      return 'All versions';
     } else {
       return null;
     }
   };
 
   function fetchProjectVersionChoices() {
+    var params = {};
+
+    if ($scope.organization) {
+      params.organizationId = $scope.organization.id;
+    }
+
+    if ($scope.project) {
+      params.projectId = $scope.project.id;
+    }
+
     api({
       url: '/projectVersions',
-      params: {
-        projectId: $scope.project.id
-      }
+      params: params
     }).then(function(res) {
       $scope.projectVersionChoices = res.data;
 
