@@ -23,7 +23,7 @@
               th.details.hidden-xs
                 project-version-select filter='filters.projectVersionNames' prefix='report-list' organization='currentOrganization' model-object='filters' model-property='projectVersionNames' multiple='true' no-label='true' placeholder='Filter by version' unique-by='name' extract='name'
               th.details.hidden-xs
-                category-select filter='filters.categoryNames' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by category'
+                category-select filter='filters.categoryNames' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by category' multiple='true'
           tbody
             tr.empty ng-show='!reportsList.initialized'
               td colspan=5 Loading...

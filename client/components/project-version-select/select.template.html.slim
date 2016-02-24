@@ -1,3 +1,4 @@
+/ version selection
 .form-group
   label ng-if='!noLabel && !multiple' for='{{ prefix }}-project-version-select-single' Version
   label ng-if='!noLabel && multiple' for='{{ prefix }}-project-version-select-multiple' Version
@@ -21,4 +22,4 @@
       span ng-bind-html='projectVersion.name | highlight: $select.search'
 
   / free input field to create a new version
-  input.form-control type='text' ng-if='config.newVersion' ng-model='modelObject[modelProperty].name'
+  input.form-control type='text' ng-if='config.newVersion' ng-model='modelObject[modelProperty]'

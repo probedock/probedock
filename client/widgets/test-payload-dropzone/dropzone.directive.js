@@ -74,9 +74,6 @@ angular.module('probedock.testPayloadDropzoneWidget').directive('testPayloadDrop
 
   // UI configuration
   $scope.formConfig = {
-    // if false, display a dropdown menu to select an existing category,
-    // otherwise, display a free input field to create a new one
-    newCategory: false,
     // whether to show the drop zone
     uploadEnabled: true
   };
@@ -103,8 +100,8 @@ angular.module('probedock.testPayloadDropzoneWidget').directive('testPayloadDrop
       delete $scope.uploadHeaders['Probe-Dock-Project-Version'];
     }
 
-    if (params.category) {
-      $scope.uploadHeaders['Probe-Dock-Category'] = params.category;
+    if (params.categoryName) {
+      $scope.uploadHeaders['Probe-Dock-Category'] = params.categoryName;
     } else {
       delete $scope.uploadHeaders['Probe-Dock-Category'];
     }
@@ -137,28 +134,12 @@ angular.module('probedock.testPayloadDropzoneWidget').directive('testPayloadDrop
   $scope.$watchGroup([ 'project', 'organization' ], function(values) {
     if (values[0] && values[1]) {
       setUpHeaders();
-      fetchCategories();
     }
   });
 
   function setUpHeaders() {
     _.extend($scope.uploadHeaders, {
       'Probe-Dock-Project-Id': $scope.project.id
-    });
-  }
-
-  function fetchCategories() {
-    api({
-      url: '/categories',
-      params: {
-        organizationId: $scope.organization.id
-      }
-    }).then(function(res) {
-      $scope.categories = res.data;
-
-      // if there is no existing category, automatically switch
-      // to the free input field to create a new one
-      $scope.formConfig.newCategory = !res.data.length;
     });
   }
 });

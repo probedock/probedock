@@ -3,7 +3,6 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     restrict: 'E',
     controller: 'ProjectVersionSelectCtrl',
     templateUrl: '/templates/components/project-version-select/select.template.html',
-    //priority: -1,
     scope: {
       organization: '=',
       project: '=',
@@ -65,10 +64,10 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       // create a new object if a new version is to be created
       $scope.modelObject[$scope.modelProperty] = {};
       // pre-fill it with either the previously selected version, or 1.0.0
-      $scope.modelObject[$scope.modelProperty].name = previousVersion ? previousVersion.name : '1.0.0';
+      $scope.modelObject[$scope.modelProperty] = previousVersion ? previousVersion : '1.0.0';
     } else if (value === false && $scope.projectVersionChoices.length && $scope.autoSelect) {
       // auto-select the first existing version when disabling creation of a new version
-      $scope.modelObject[$scope.modelProperty] = $scope.projectVersionChoices[0];
+      $scope.modelObject[$scope.modelProperty] = $scope.projectVersionChoices[0][$scope.extract];
     }
   });
 
@@ -111,7 +110,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
       if ($scope.projectVersionChoices.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one
-        $scope.modelObject[$scope.modelProperty] = $scope.projectVersionChoices[0];
+        $scope.modelObject[$scope.modelProperty] = $scope.projectVersionChoices[0][$scope.extract];
       } else if (!$scope.projectVersionChoices.length && $scope.createNew) {
         // if there are no existing versions and version creation is
         // enabled, automatically switch to the free input field
