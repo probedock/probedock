@@ -91,14 +91,14 @@ angular.module('probedock.testPayloadDropzoneWidget').directive('testPayloadDrop
   $scope.$watch('uploadParams', function(params) {
 
     // only show the drop zone if a project version is present
-    $scope.formConfig.uploadEnabled = params && params.projectVersion;
+    $scope.formConfig.uploadEnabled = params && params.projectVersionName;
 
     if (!params) {
       return;
     }
 
-    if (params.projectVersion) {
-      $scope.uploadHeaders['Probe-Dock-Project-Version'] = params.projectVersion.name;
+    if (params.projectVersionName) {
+      $scope.uploadHeaders['Probe-Dock-Project-Version'] = params.projectVersionName;
     } else {
       delete $scope.uploadHeaders['Probe-Dock-Project-Version'];
     }

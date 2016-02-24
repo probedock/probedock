@@ -24,16 +24,9 @@ angular.module('probedock.tables').factory('tables', function(api) {
           $scope.$broadcast(name + '.refresh');
         }
 
-        var criteria;
-        if (options.processCriteria && table.search.predicateObject) {
-          criteria = options.processCriteria(table.search.predicateObject)
-        } else {
-          criteria = table.search.predicateObject;
-        }
-
         api({
           url: options.url,
-          params: _.extend(params, criteria)
+          params: _.extend(params, table.search.predicateObject)
         }).then(updatePagination).then(updateRecords);
 
         function updatePagination(res) {

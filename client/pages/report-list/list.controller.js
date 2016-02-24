@@ -15,18 +15,6 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
       withProjects: 1,
       withProjectVersions: 1,
       withCategories: 1
-    },
-    processCriteria: function(predicateObject) {
-      // Transform the project versions to an array of project version names
-      if (predicateObject.projectVersions) {
-        predicateObject.projectVersionNames = _.reduce(predicateObject.projectVersions, function(memo, projectVersion) {
-          memo.push(projectVersion.name);
-          return memo;
-        }, []);
-        delete predicateObject.projectVersions;
-      }
-
-      return predicateObject;
     }
   });
 

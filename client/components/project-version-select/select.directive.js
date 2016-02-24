@@ -3,6 +3,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     restrict: 'E',
     controller: 'ProjectVersionSelectCtrl',
     templateUrl: '/templates/components/project-version-select/select.template.html',
+    //priority: -1,
     scope: {
       organization: '=',
       project: '=',
@@ -15,7 +16,8 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       multiple: '@',
       placeholder: '@',
       noLabel: '@',
-      uniqueBy: '@'
+      uniqueBy: '@',
+      extract: '@'
     }
   };
 }).controller('ProjectVersionSelectCtrl', function(api, $scope) {
@@ -25,10 +27,14 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   if (!$scope.modelProperty) {
     if ($scope.multiple) {
-      $scope.modelProperty = 'projectVersions';
+      $scope.modelProperty = 'projectVersionIds';
     } else {
-      $scope.modelProperty = 'projectVersion'
+      $scope.modelProperty = 'projectVersionId'
     }
+  }
+
+  if (_.isUndefined($scope.extract)) {
+    $scope.extract = 'id';
   }
 
   if (_.isUndefined($scope.noLabel)) {

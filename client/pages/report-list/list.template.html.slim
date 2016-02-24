@@ -15,14 +15,13 @@
                   span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
                   refresh-table
               th.runners
-                / TODO: Use the label and placeholder to specify runner in place of user
                 user-select filter='filters.runnerIds' prefix='report-list' organization='currentOrganization' model-object='filters' model-property='runnerIds' no-label='true' placeholder='Filter by runner'
               th.duration.hidden-xs.hidden-sm Duration
               th.date.hidden-xs.hidden-sm.hidden-md Date
               th.details.hidden-xs
                 project-select filter='filters.projectIds' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by project'
               th.details.hidden-xs
-                project-version-select filter='filters.projectVersions' prefix='report-list' organization='currentOrganization' model-object='filters' multiple='true' no-label='true' placeholder='Filter by version' unique-by='name'
+                project-version-select filter='filters.projectVersionNames' prefix='report-list' organization='currentOrganization' model-object='filters' model-property='projectVersionNames' multiple='true' no-label='true' placeholder='Filter by version' unique-by='name' extract='name'
               th.details.hidden-xs
                 category-select filter='filters.categoryNames' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by category'
           tbody
