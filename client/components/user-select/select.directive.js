@@ -37,16 +37,22 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
 
   $scope.$watch('organization', function(value) {
     if (value) {
-      fetchUserChoices();
+      $scope.fetchUserChoices();
     }
   });
 
-  function fetchUserChoices() {
+  $scope.fetchUserChoices = function(userName) {
+    var params = {
+      organizationId: $scope.organization.id
+    };
+
+    if (userName) {
+      params.search = userName;
+    }
+
     api({
       url: '/users',
-      params: {
-        organizationId: $scope.organization.id
-      }
+      params: params
     }).then(function(res) {
       $scope.userChoices = res.data;
     });

@@ -14,7 +14,8 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       autoSelect: '=?',
       multiple: '@',
       placeholder: '@',
-      noLabel: '@'
+      noLabel: '@',
+      uniqueBy: '@'
     }
   };
 }).controller('ProjectVersionSelectCtrl', function(api, $scope) {
@@ -24,7 +25,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   if (!$scope.modelProperty) {
     if ($scope.multiple) {
-      $scope.modelProperty = 'projectVersionIds';
+      $scope.modelProperty = 'projectVersions';
     } else {
       $scope.modelProperty = 'projectVersion'
     }
@@ -42,13 +43,13 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   $scope.$watch('organization', function(value) {
     if (value) {
-      fetchProjectVersionChoices();
+      $scope.fetchProjectVersionChoices();
     }
   });
 
   $scope.$watch('project', function(value) {
     if (value && !$scope.organization) {
-      fetchProjectVersionChoices();
+      $scope.fetchProjectVersionChoices();
     }
   });
 
@@ -77,7 +78,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     }
   };
 
-  function fetchProjectVersionChoices() {
+  $scope.fetchProjectVersionChoices = function(version) {
     var params = {};
 
     if ($scope.organization) {
@@ -88,16 +89,24 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       params.projectId = $scope.project.id;
     }
 
+    if (version) {
+      params.search = version;
+    }
+
     api({
       url: '/projectVersions',
       params: params
     }).then(function(res) {
-      $scope.projectVersionChoices = res.data;
+      if ($scope.uniqueBy) {
+        $scope.projectVersionChoices = _.uniq(res.data, function(projectVersion) { return projectVersion[$scope.uniqueBy]; });
+      } else {
+        $scope.projectVersionChoices = res.data;
+      }
 
-      if (res.data.length && $scope.autoSelect) {
+      if ($scope.projectVersionChoices.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one
-        $scope.modelObject[$scope.modelProperty] = res.data[0];
-      } else if (!res.data.length && $scope.createNew) {
+        $scope.modelObject[$scope.modelProperty] = $scope.projectVersionChoices[0];
+      } else if (!$scope.projectVersionChoices.length && $scope.createNew) {
         // if there are no existing versions and version creation is
         // enabled, automatically switch to the free input field
         $scope.config.newVersion = true;

@@ -37,16 +37,22 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
 
   $scope.$watch('organization', function(value) {
     if (value) {
-      fetchChoices();
+      $scope.fetchCategoryChoices();
     }
   });
 
-  function fetchChoices() {
+  $scope.fetchCategoryChoices = function(categoryName) {
+    var params = {
+      organizationId: $scope.organization.id
+    };
+
+    if (categoryName) {
+      params.categoryName = categoryName;
+    }
+
     api({
       url: '/categories',
-      params: {
-        organizationId: $scope.organization.id
-      }
+      params: params
     }).then(function(res) {
       $scope.categoryChoices = res.data;
     });

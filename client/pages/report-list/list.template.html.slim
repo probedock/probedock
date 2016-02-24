@@ -22,7 +22,7 @@
               th.details.hidden-xs
                 project-select filter='filters.projectIds' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by project'
               th.details.hidden-xs
-                project-version-select filter='filters.projectVersionIds' prefix='report-list' organization='currentOrganization' model-object='filters' multiple='true' no-label='true' placeholder='Filter by version'
+                project-version-select filter='filters.projectVersions' prefix='report-list' organization='currentOrganization' model-object='filters' multiple='true' no-label='true' placeholder='Filter by version' unique-by='name'
               th.details.hidden-xs
                 category-select filter='filters.categoryNames' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by category'
           tbody
@@ -51,7 +51,7 @@
                   '
           tfoot
             tr
-              td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
+              td.clearfix colspan=7 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
       tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' active='activeTabs[reportTab.id]' ng-controller='ReportListTabCtrl'
         tab-heading {{ reportTime() }}
         report-details report='report' organization='currentOrganization'

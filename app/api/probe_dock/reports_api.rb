@@ -78,7 +78,7 @@ module ProbeDock
 
           rel = rel.joins(:runners) if array_param?(:runnerIds)
           rel = rel.joins(:projects) if array_param?(:projectIds)
-          rel = rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || params[:projectId].present?
+          rel = rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || params[:projectId].present?
           rel = rel.joins(results: :category) if array_param?(:categoryNames)
 
           group = false
@@ -99,6 +99,10 @@ module ProbeDock
 
           if array_param?(:projectVersionIds)
             rel = rel.where('project_versions.api_id in (?)', params[:projectVersionIds].collect(&:to_s).to_a)
+          end
+
+          if array_param?(:projectVersionNames)
+            rel = rel.where('project_versions.name in (?)', params[:projectVersionNames].collect(&:to_s).to_a)
           end
 
           # FIXME: This filter is clearly slower than the others
