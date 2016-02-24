@@ -15,11 +15,11 @@
       .col-md-12
         p
           span ng-if='results.length == 1' There is only one available result and its execution time is {{ results[0].duration | formatDuration }}.
-          span ng-if='results.length > 1' Showing {{ results.length }} results out of {{ pagination.total }} available results.
-    .row.chart-row ng-if='results.length > 0'
+          span ng-if='results.length > 1' Showing results {{ range.down }}-{{ range.up }} out of {{ pagination.total }} available results.
+    .row.chart-row ng-if='results.length > 1'
       .col-md-12
         canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
-    .row.stats-row ng-if='results.length > 0'
+    .row.stats-row ng-if='results.length > 1'
       table
         tr
           td.text-center rowspan='3'

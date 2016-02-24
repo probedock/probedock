@@ -11,6 +11,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
 }).controller('TestExecutionTimeWidgetCtrl', function(api, $scope, projectVersions) {
 
   var page = 1;
+  var reset = true;
 
   $scope.pageSize = 50;
 
@@ -57,7 +58,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
   };
 
   function initFetchResults() {
-    $scope.results = [];
+    reset = true;
     page = 1;
     fetchResults();
   }
@@ -94,7 +95,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
 
       // Check if the received results must be completed by the previous ones
       // and then complete by previous ones
-      if (results.length < $scope.pageSize) {
+      if (!reset && results.length < $scope.pageSize) {
         results = results.concat($scope.results.slice(0, $scope.pageSize - results.length));
       }
 
@@ -128,9 +129,18 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
       // Calculate the average of durations
       $scope.stats.averageDuration = $scope.stats.sum / $scope.results.length;
 
+      // Calculate the range of results shown
+      var base = $scope.pagination.total - ((page - 1) * $scope.pageSize);
+      var corr = base < $scope.pageSize ? $scope.pageSize - base : 0;
+      $scope.range = {
+        up: base + corr,
+        down : base - $scope.pageSize + corr + 1,
+      };
+
       showResults();
 
       $scope.loading = false;
+      reset = false;
     });
   }
 
