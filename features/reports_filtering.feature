@@ -51,7 +51,7 @@ Feature: Various filters to get reports
 
 
 
-  Scenario: An organization member should be able to get a report of a private organization filtered by runner.
+  Scenario: An organization member should be able to get reports of a private organization filtered by runner.
     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&runnerId={@idOf: lskywalker}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -73,7 +73,7 @@ Feature: Various filters to get reports
 
 
 
-  Scenario: An organization member should be able to get a report of a private organization filtered by runners.
+  Scenario: An organization member should be able to get reports of a private organization filtered by runners.
     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&runnerIds[]={@idOf: lskywalker}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -95,7 +95,7 @@ Feature: Various filters to get reports
 
 
 
-  Scenario: An organization member should be able to get a report of a private organization filtered by projects.
+  Scenario: An organization member should be able to get reports of a private organization filtered by projects.
     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: Y-Wing}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -117,7 +117,7 @@ Feature: Various filters to get reports
 
 
 
-  Scenario: An organization member should be able to get a report of a private organization filtered by project versions.
+  Scenario: An organization member should be able to get reports of a private organization filtered by project versions.
     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectVersionIds[]={@idOf: 3.2.1}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -139,7 +139,7 @@ Feature: Various filters to get reports
 
 
 
-  Scenario: An organization member should be able to get a report of a private organization filtered by project version names.
+  Scenario: An organization member should be able to get reports of a private organization filtered by project version names.
     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectVersionNames[]=3.2.1
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -161,7 +161,7 @@ Feature: Various filters to get reports
 
 
 
-  Scenario: An organization member should be able to get a report of a private organization filtered by category names.
+  Scenario: An organization member should be able to get reports of a private organization filtered by category names.
     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&categoryNames[]=c1
     Then the response should be HTTP 200 with the following JSON:
       """
