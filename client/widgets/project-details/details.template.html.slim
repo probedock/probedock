@@ -25,6 +25,24 @@
       testing-activity-widget type='projects' organization='organization' project='project' nb-days='15'
     .col-lg-3.col-md-3.col-sm-12 ng-if='stateChart'
       .latest-state
-        p.text-info Results of the last run
+        p.text-info Results of the last run by:
+        .runners.text-center
+          span ng-if='technicalUser'
+            user-avatar user='technicalUser'
+            strong.name {{ technicalUser.name }}
+          span ng-if='runners' ng-repeat='runner in runners'
+            user-avatar user='runner'
+            strong.name {{ runner.name }}
+            span ng-if='!$last'
+              | ,
         a href='#' ui-sref='org.reports.show({ id: project.lastReportId })'
           canvas.chart.chart-pie height='200' data='stateChart.data' labels='stateChart.labels' colours='stateChart.colors'
+        div
+          strong
+            ng-pluralize count='report.projectVersions.length' when='{"1": "Version", "other": "Versions"}'
+            ' :
+          // FIXME: Replace by the label directive from PR <= 36
+          span ng-repeat='version in report.projectVersions | filter: {projectId: project.id}'
+            span {{ version.name }}
+            span ng-if='!$last'
+              ' ,

@@ -86,43 +86,51 @@ module ProbeDock
         authenticate
         authorize! User, :index
 
-        rel = User.order 'LOWER(users.name) ASC'
+        users_rel = if params[:sort].present? && params[:sort] == 'createdAt'
+          User.order 'users.created_at ASC'
+        else
+          User.order 'LOWER(users.name) ASC'
+        end
 
-        rel = paginated rel do |rel|
+        users_rel = paginated users_rel do |paginated_rel|
           if params[:email].present?
             email = Email.where(address: params[:email].to_s.downcase).first
             if email.present? && email.user_id.present?
-              rel = rel.where 'users.id = ?', email.user_id
+              paginated_rel = paginated_rel.where 'users.id = ?', email.user_id
             else
-              rel = rel.none
+              paginated_rel = paginated_rel.none
             end
+          end
+
+          if params[:technical].present?
+            paginated_rel = paginated_rel.where('users.technical = ?', true_flag?(:technical))
           end
 
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            rel = rel.where 'LOWER(users.name) LIKE ?', term
+            paginated_rel = paginated_rel.where 'LOWER(users.name) LIKE ?', term
           end
 
           if params[:name].present?
-            rel = rel.where 'users.name = ?', params[:name].to_s
+            paginated_rel = paginated_rel.where 'users.name = ?', params[:name].to_s
           end
 
           group = false
           if params[:organizationId].present?
             organization = Organization.where(api_id: params[:organizationId].to_s).first!
             authorize! organization, :show
-            rel = rel.joins(memberships: :organization).where('organizations.api_id = ?', params[:organizationId].to_s)
+            paginated_rel = paginated_rel.joins(memberships: :organization).where('organizations.api_id = ?', params[:organizationId].to_s)
             group = true
           end
 
-          @pagination_filtered_count = rel.count 'distinct users.id'
+          @pagination_filtered_count = paginated_rel.count 'distinct users.id'
 
-          rel = rel.group 'users.id' if group
+          paginated_rel = paginated_rel.group 'users.id' if group
 
-          rel
+          paginated_rel
         end
 
-        serialize load_resources(rel)
+        serialize load_resources(users_rel)
       end
 
       namespace '/:id' do

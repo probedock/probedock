@@ -12,7 +12,49 @@ angular.module('probedock.projectDetailsWidget').directive('projectDetailsWidget
   orgs.addAuthFunctions($scope);
 
   if ($scope.project && $scope.project.lastReportId) {
-    fetchReport();
+    //fetchReport();
+    fetchOldestTechnicalUser();
+  }
+
+  function fetchOldestTechnicalUser() {
+    return api({
+      url: '/users',
+      params: {
+        sort: 'createdAt',
+        technical: true,
+        pageSize: 1,
+        page: 1
+      }
+    }).then(function(res) {
+      if (res.data.length == 1) {
+        $scope.technicalUser = res.data[0];
+        fetchReportByTechnicalUser();
+      }
+      else {
+        fetchReport();
+      }
+    });
+  }
+
+  function fetchReportByTechnicalUser() {
+    return api({
+      url: '/reports/',
+      params: {
+        withProjectCountsFor: $scope.project.id,
+        organizationId: $scope.organization.id,
+        runnerId: $scope.technicalUser.id,
+        pageSize: 1,
+        page: 1
+      }
+    }).then(function(res) {
+      if (res.data.lenght == 1) {
+        return showChart(res.data);
+      }
+      else {
+        $scope.technicalUser = null;
+        return fetchReport();
+      }
+    });
   }
 
   function fetchReport() {
@@ -22,11 +64,13 @@ angular.module('probedock.projectDetailsWidget').directive('projectDetailsWidget
         withProjectCountsFor: $scope.project.id
       }
     }).then(function(res) {
+      $scope.runners = res.data.runners;
       return showChart(res.data);
     });
   }
 
   function showChart(report) {
+    $scope.report = report;
 
     var numberPassed = report.projectCounts.passedResultsCount - report.projectCounts.inactivePassedResultsCount,
         numberInactive = report.projectCounts.inactiveResultsCount,
