@@ -134,7 +134,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
       var corr = base < $scope.pageSize ? $scope.pageSize - base : 0;
       $scope.range = {
         up: base + corr,
-        down : base - $scope.pageSize + corr + 1,
+        down : base - $scope.pageSize + corr + 1
       };
 
       showResults();

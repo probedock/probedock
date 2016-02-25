@@ -23,7 +23,9 @@
       table
         tr
           td.text-center rowspan='3'
-            button.btn.btn-link ng-disabled='!hasPrev' ng-click='fetchPrev()' tooltip='Show older results'
+            button.btn.btn-link type='button' ng-if='hasPrev' ng-click='fetchPrev()' tooltip='Show older results'
+              i.glyphicon.glyphicon-chevron-left
+            button.btn.btn-link type='button' ng-if='!hasPrev' disabled=true
               i.glyphicon.glyphicon-chevron-left
           td.text-center
             strong Oldest
@@ -33,7 +35,9 @@
           td.text-center
             strong Latest
           td.text-center rowspan='3'
-            button.btn.btn-link ng-disabled='!hasNext' ng-click='fetchNext()' tooltip='Show recent results'
+            button.btn.btn-link type='button' ng-if='hasNext' ng-click='fetchNext()' tooltip='Show recent results'
+              i.glyphicon.glyphicon-chevron-right
+            button.btn.btn-link type='button' ng-if='!hasNext' disabled=true
               i.glyphicon.glyphicon-chevron-right
         tr
           td.text-center {{ results[0].runAt | amDateFormat: 'DD.MM.YYYY' }}
