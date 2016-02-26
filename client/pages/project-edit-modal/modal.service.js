@@ -1,10 +1,25 @@
 angular.module('probedock.projectEditModal').service('projectEditModal', function($modal) {
   return {
-    open: function($scope) {
+    /**
+     * Opens a modal to create or edit a project.
+     *
+     * * If called with a `project` option, it will edit that project.
+     * * If called with a `projectId` option, it will fetch that project from the API and edit it.
+     * * Otherwise, it will create a new project.
+     *
+     * Returns a promise that will be resolved with the created/edited project, or rejected if canceled.
+     * If the cancelation is due to a state change, the error will be "stateChange".
+     */
+    open: function($scope, options) {
+      options = _.extend({}, options);
+
+      var scope = $scope.$new();
+      _.extend(scope, _.pick(options, 'project', 'projectId'));
+
       var modal = $modal.open({
         templateUrl: '/templates/pages/project-edit-modal/modal.template.html',
         controller: 'ProjectEditModalCtrl',
-        scope: $scope
+        scope: scope
       });
 
       $scope.$on('$stateChangeStart', function() {
@@ -14,19 +29,24 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       return modal;
     }
   };
-}).controller('ProjectEditModalCtrl', function(api, forms, $modalInstance, orgs, $scope, $stateParams) {
+}).controller('ProjectEditModalCtrl', function(api, forms, $modalInstance, orgs, $scope) {
 
-  $scope.project = {};
+  $scope.project = $scope.project || {};
   $scope.editedProject = {};
 
-  if ($stateParams.id) {
+  if ($scope.project && $scope.project.id) {
+    // Edit the specified project.
+    reset();
+  } if ($scope.projectId) {
+    // Fetch and edit a project.
     api({
-      url: '/projects/' + $stateParams.id
+      url: '/projects/' + $scope.projectId
     }).then(function(res) {
       $scope.project = res.data;
       reset();
     });
   } else {
+    // Create a new project.
     $scope.project.organizationId = orgs.currentOrganization.id;
     reset();
   }

@@ -176,7 +176,7 @@ angular.module('probedock.routes', [ 'ui.router' ])
       })
 
       .state('org.projects.show.edit', {
-        url: '/edit?id'
+        url: '/edit'
       })
     ;
 

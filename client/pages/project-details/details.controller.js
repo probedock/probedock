@@ -1,20 +1,5 @@
-angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtrl', function(api, orgs, projectEditModal, $scope, $state, $stateParams) {
+angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtrl', function(api, orgs, projectEditModal, $scope, $state, states, $stateParams) {
   orgs.forwardData($scope);
-
-  $scope.$on('$stateChangeSuccess', function(event, toState) {
-    if (toState.name.match(/^org\.projects\.show\.edit$/)) {
-      var modal = projectEditModal.open($scope);
-
-      modal.result.then(function(project) {
-        $scope.project = project;
-        $state.go('^', {}, { inherit: true });
-      }, function(reason) {
-        if (reason != 'stateChange') {
-          $state.go('^', {}, { inherit: true });
-        }
-      });
-    }
-  });
 
   api({
     url: '/projects',
@@ -25,6 +10,8 @@ angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtr
   }).then(function(response) {
     if (response.data[0]) {
       project = response.data[0];
+
+      registerOnEditProject(project);
 
       return api({
         url: '/reports',
@@ -38,4 +25,22 @@ angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtr
       });
     }
   });
+
+  /**
+   * Will open the edit project modal if the state is or changes to "org.projects.show.edit".
+   */
+  function registerOnEditProject(project) {
+    states.onState($scope, 'org.projects.show.edit', function(toState) {
+      var modal = projectEditModal.open($scope, { project: project });
+
+      modal.result.then(function(updatedProject) {
+        $scope.project = updatedProject;
+        $state.go('^', {}, { inherit: true });
+      }, function(reason) {
+        if (reason != 'stateChange') {
+          $state.go('^', {}, { inherit: true });
+        }
+      });
+    });
+  }
 });
