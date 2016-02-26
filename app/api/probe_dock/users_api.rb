@@ -86,11 +86,7 @@ module ProbeDock
         authenticate
         authorize! User, :index
 
-        users_rel = if params[:sort].present? && params[:sort] == 'createdAt'
-          User.order 'users.created_at ASC'
-        else
-          User.order 'LOWER(users.name) ASC'
-        end
+        users_rel = User.order 'LOWER(users.name) ASC'
 
         users_rel = paginated users_rel do |paginated_rel|
           if params[:email].present?
@@ -100,10 +96,6 @@ module ProbeDock
             else
               paginated_rel = paginated_rel.none
             end
-          end
-
-          if params[:technical].present?
-            paginated_rel = paginated_rel.where('users.technical = ?', true_flag?(:technical))
           end
 
           if params[:search].present?

@@ -76,7 +76,7 @@ module ProbeDock
             rel = rel.where 'test_reports.created_at > ?', ref.created_at
           end
 
-          rel = rel.joins(:runners) if array_param?(:runnerIds) || params[:runnerId].present?
+          rel = rel.joins(:runners) if array_param?(:runnerIds) || params[:technical]
           rel = rel.joins(:projects) if array_param?(:projectIds)
           rel = rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || params[:projectId].present?
           rel = rel.joins(results: :category) if array_param?(:categoryNames)
@@ -89,12 +89,12 @@ module ProbeDock
             group = true
           end
 
-          if params[:runnerId].present?
-            rel = rel.joins(:runners).where('users.api_id = ?', params[:runnerId].to_s)
-          end
-
           if array_param?(:runnerIds)
             rel = rel.where('users.api_id in (?)', params[:runnerIds].collect(&:to_s).to_a)
+          end
+
+          if params[:technical].present?
+            rel = rel.where('users.technical = ?', true_flag?(:technical))
           end
 
           if array_param?(:projectIds)
