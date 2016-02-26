@@ -68,8 +68,17 @@ module SpecApiHelper
     end
   end
 
+  # Returns the parsed API response body from the specified object.
+  #
+  # Can be called indifferently with the response object from tests, a raw response body string,
+  # or with a response body that has already been parsed (Array or Hash):
+  #
+  # * If it is already an Array or Hash, it is returned as is.
+  # * If it is a String, it is parsed as JSON.
+  # * If it responds to :body, its body is parsed as JSON.
+  # * Otherwise an error is raised.
   def parse_api_response_body(object)
-    res = if object.kind_of?(Hash)
+    res = if object.kind_of?(Array) || object.kind_of?(Hash)
       object
     elsif object.kind_of?(String)
       MultiJson.load(object)
