@@ -5,30 +5,27 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
     templateUrl: '/templates/components/data-labels/data-label.template.html',
     replace: true,
     scope: {
-      label: '=',
+      label: '@',
       type: '@'
-    },
-    link: linkFn()
+    }
   };
 }).directive('projectVersionLabel', function() {
   return {
     restrict: 'E',
+    controller: 'ProjectVersionLabelCtrl',
     templateUrl: '/templates/components/data-labels/project-version-label.template.html',
     replace: true,
     scope: {
       organization: '=',
       project: '=',
       projectVersion: '=',
-      versionOnly: '=',
-      linkable: '='
-    },
-    link: function($scope) {
-      if (_.isUndefined($scope.linkable)) {
-        $scope.linkable = true;
-      }
+      versionOnly: '=?',
+      linkable: '=?',
+      truncate: '=?'
     }
   };
-}).directive('testKeyLabel', function() {
+})
+.directive('testKeyLabel', function() {
   return {
     restrict: 'E',
     scope: {
@@ -52,19 +49,52 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
 .directive('ticketLabel', function() { return labelDirectiveFactory('ticket', 'warning'); })
 .directive('tagLabel', function() { return labelDirectiveFactory('tag', 'default'); })
 
-.directive('categoryLabels', function() { return labelsDirectiveFactory('categories', 'category') })
-.directive('tagLabels', function() { return labelsDirectiveFactory('tags', 'tag')})
-.directive('ticketLabels', function() { return labelsDirectiveFactory('tickets', 'ticket') })
+.directive('categoryLabels', function() { return labelsDirectiveFactory('categories', 'category'); })
+.directive('tagLabels', function() { return labelsDirectiveFactory('tags', 'tag'); })
+.directive('ticketLabels', function() { return labelsDirectiveFactory('tickets', 'ticket'); })
 
 .controller('DataLabelCtrl', function($scope) {
   $scope.getTypeClass = function() {
     return $scope.type ? 'label-' + $scope.type : '';
   };
+})
+.controller('ProjectVersionLabelCtrl', function($scope, projectNameFilter) {
+  if (_.isUndefined($scope.linkable)) {
+    $scope.linkable = true;
+  }
+
+  if (_.isUndefined($scope.truncate)) {
+    $scope.truncate = true;
+  }
+
+  if (!$scope.labelSize) {
+    $scope.labelSize = 30;
+  }
+
+  $scope.getTooltip = function () {
+    return $scope.versionOnly ? $scope.projectVersion : projectNameFilter($scope.project) + ' ' + $scope.projectVersion;
+  };
+
+  $scope.tooltipEnabled = function () {
+    return $scope.truncate && $scope.getTooltip().length > $scope.labelSize;
+  };
+
+  $scope.getLabel = function () {
+    var str = $scope.getTooltip();
+
+    if ($scope.truncate && str.length > $scope.labelSize) {
+      var halfLength = $scope.labelSize / 2;
+
+      return str.substr(0, 0 + halfLength) + '...' + str.substr(str.length - halfLength);
+    } else {
+      return str;
+    }
+  };
 });
 
 function linkFn(type) {
   return function($scope) {
-    if (type) {
+    if (!$scope.type) {
       $scope.type = type;
     }
   };

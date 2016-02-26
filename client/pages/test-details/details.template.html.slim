@@ -14,7 +14,7 @@
             em Loading...
           div ng-if='test'
             .labels.clearfix
-              project-version-label organization='currentOrganization' project='test.project' project-version='test.projectVersion'
+              project-version-label organization='currentOrganization' project='test.project' project-version='test.projectVersion' truncate='false'
               category-label category='test.category'
               tag-labels tags='test.tags'
               ticket-labels tickets='test.tickets'
@@ -31,7 +31,7 @@
               dd
                 strong Last status
               dt
-                result-status-icon result='test'
+                result-status-icon test='test'
               dd
                 strong Contributors
               dd
@@ -40,3 +40,5 @@
                   em No users are known to have contributed to this test.
     .col-lg-4.col-md-6.col-xs-12
       test-results-widget organization='currentOrganization' test='test'
+    .col-lg-4.col-md-6.col-xs-12
+      test-execution-time-widget organization='currentOrganization' test='test'

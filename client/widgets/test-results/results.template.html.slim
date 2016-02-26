@@ -1,0 +1,34 @@
+.test-results-widget.panel.panel-default
+  .panel-heading
+    help-button
+      p This widget shows the test results received for this specific test in chronological order (from older to newer). By default, only the latest {{ pageSize }} results are shown. If you choose to load older results, they will be added to the beginning of the list as they are older.
+      p By default, results are shown for all versions of the project. You may use the version dropdown to see only the test results received for a specific version. If there are versions for which the test was never run, they will not be available to filter, but will be listed below the results.
+    h3.panel-title Result history
+  .panel-body
+    .row ng-if='loading'
+      .col-md-12
+        p Loading...
+    .row ng-if='!loading && results.length === 0'
+      .col-md-12
+        p.empty No results match the current filters.
+    .row ng-if='!loading && results.length > 0'
+      .col-md-12
+        p
+          a.pull-right.more href='#' ng-if='nextChunk > 0' ng-click='fetchMore()'
+            ng-pluralize count='nextChunk' when='{"1": "Load one more result...", "other": "Load {} more results..."}'
+          span ng-if='results.length == 1' There is only one available result.
+          span ng-if='results.length > 1 && results.length < pagination.total' Showing the latest {{ results.length }} results ouf of {{ pagination.total }} available results.
+          span ng-if='results.length == pagination.total' Showing all {{ results.length }} results.
+        a ng-repeat='result in results' class='{{ resultClass(result) }}' ng-click='open(result)' tooltip='Run at: {{ result.runAt | amDateFormat: "lll" }}. Click for more details.'
+        .clearfix
+    .row ng-if='missingVersions.length'
+      .col-md-12
+        p
+          ' There is no result for
+          ng-pluralize count='missingVersions.length' when='{"1": "this version:", "other": "these versions:"}'
+          project-version-label ng-repeat='missingVersion in missingVersions' project-version='missingVersion.name'
+    .row
+      .col-md-6
+        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
+      .col-md-6
+        user-select prefix='test-results' organization='organization' model-object='params' field-label='Filter by runner' field-placeholder='All runners'
