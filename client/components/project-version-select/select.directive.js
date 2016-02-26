@@ -12,11 +12,12 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       prefix: '@',
       createNew: '=?',
       autoSelect: '=?',
-      multiple: '@',
+      multiple: '=?',
       placeholder: '@',
       noLabel: '@',
       uniqueBy: '@',
-      extract: '@'
+      extract: '@',
+      allowClear: '=?'
     }
   };
 }).controller('ProjectVersionSelectCtrl', function(api, $scope) {
@@ -38,6 +39,10 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   if (_.isUndefined($scope.noLabel)) {
     $scope.noLabel = false;
+  }
+
+  if (_.isUndefined($scope.allowClear)) {
+    $scope.allowClear = true;
   }
 
   $scope.config = {

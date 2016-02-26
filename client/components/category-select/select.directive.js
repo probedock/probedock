@@ -12,7 +12,7 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
       autoSelect: '=?',
       placeholder: '@',
       noLabel: '@',
-      multiple: '@',
+      multiple: '=?',
       extract: '@'
     }
   };
