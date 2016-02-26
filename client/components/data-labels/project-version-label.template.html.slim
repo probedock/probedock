@@ -1,6 +1,5 @@
-span.data-label
+span.data-label tooltip='{{ getTooltip() }}' tooltip-enable='tooltipEnabled()'
   '
-  span.label.label-primary ng-if='!versionOnly'
-    a.label-link ng-if='linkable' href='#' ui-sref='org.projects.show({ orgName: organization.name, projectName: project.name })' {{ project | projectName }} {{ projectVersion }}
-    span ng-if='!linkable' {{ project | projectName }} {{ projectVersion }}
-  span.label.label-primary ng-if='versionOnly'  {{ projectVersion }}
+  span.label.label-primary
+    a.label-link ng-if='linkable' href='#' ui-sref='org.projects.show({ orgName: organization.name, projectName: project.name })' {{ getLabel() }}
+    span ng-if='!linkable' {{ getLabel() }}

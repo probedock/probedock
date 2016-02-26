@@ -4,9 +4,7 @@
     span ng-if='!report' Test Run Report - Loading report data...
   .project-version-labels.clearfix
     simple-label ng-if='!report' type='primary' label='Loading...'
-    span ng-repeat='project in report.projects'
-      project-version-label ng-repeat='version in report.projectVersions | filter: {projectId: project.id}' organization='organization' project='project' project-version='version.name'
-    category-labels categories='report.categories'
+    report-data-labels ng-if='report' organization='organization' report='report'
   .row.overview
     .col-lg-2.col-md-3
       .summary.panel.panel-default

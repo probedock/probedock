@@ -10,8 +10,9 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
   };
 }).controller('TestsResultsWidgetCtrl', function(api, $scope, projectVersions, testResultModal) {
 
-  var page = 1,
-      pageSize = 50;
+  var page = 1;
+
+  $scope.pageSize = 50;
 
   $scope.params = {};
   $scope.results = [];
@@ -70,7 +71,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
     var params = {
       sort: 'runAt',
       page: page,
-      pageSize: pageSize,
+      pageSize: $scope.pageSize,
       testId: $scope.test.id
     };
 
@@ -96,7 +97,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
 
         // Calculate the next number of results to load
         var remainingResults = $scope.pagination.total - $scope.results.length;
-        $scope.nextChunk = remainingResults > pageSize ? pageSize : remainingResults;
+        $scope.nextChunk = remainingResults > $scope.pageSize ? $scope.pageSize : remainingResults;
 
         $scope.loading = false;
       }

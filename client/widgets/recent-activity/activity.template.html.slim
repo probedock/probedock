@@ -18,10 +18,7 @@
       span.time.hidden-xs am-time-ago='report.endedAt'
       '
       span.labels
-        span ng-repeat='reportProject in report.projects'
-          project-version-label ng-repeat='version in report.projectVersions | filter: { projectId: reportProject.id }' organization='organization' project='reportProject' project-version='version.name' linkable='reportProject.id != project.id'
-        '
-        category-labels categories='report.categories'
+        report-data-labels organization='organization' report='report' for-project='project' versions-only='project'
       .details
         a href='#' ui-sref='org.reports.show({ id: report.id })'
           report-health-bar report='report' click-for-details=true
