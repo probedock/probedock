@@ -36,10 +36,11 @@ module ProbeDock
         authenticate
         authorize! ProjectVersion, :index
 
-        project_versions_rel = policy_scope(ProjectVersion).order 'projects.name ASC, created_at DESC'
+        project_versions_rel = policy_scope(ProjectVersion).order('projects.name ASC, project_versions.created_at DESC')
         project_versions_rel = project_versions_rel.joins(:project)
 
         project_versions_rel = paginated project_versions_rel do |paginated_rel|
+          group = false
 
           if params[:projectId].present?
             paginated_rel = paginated_rel.where('projects.api_id': params[:projectId])
@@ -50,7 +51,8 @@ module ProbeDock
           end
 
           if params[:testId].present?
-            paginated_rel = paginated_rel.joins(test_results: :test).where('project_tests.api_id = ?', params[:testId])
+            paginated_rel = paginated_rel.joins(test_descriptions: :test).where('project_tests.api_id = ?', params[:testId])
+            group = true
           end
 
           if params[:search].present?
@@ -61,6 +63,8 @@ module ProbeDock
           if params[:name].present?
             paginated_rel = paginated_rel.where(name: params[:name].to_s.downcase)
           end
+
+          paginated_rel = paginated_rel.group('project_versions.id, projects.name') if group
 
           paginated_rel
         end

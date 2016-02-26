@@ -258,20 +258,20 @@ Feature: Results
     And the response body should be the following JSON:
       """
       [{
-        "id": "@valueOf(R3, id)",
-        "name": "Should be big enough",
+        "id": "@valueOf(R9, id)",
+        "name": "Voting system should have three buttons",
         "testId": "@alphanumeric",
         "passed": true,
         "active": true,
         "message": null,
-        "duration": 2,
+        "duration": 9,
         "newTest": false,
         "tags": [],
         "tickets": [],
         "customData": {},
         "runner": {
-          "id": "@idOf: borgana",
-          "name": "borgana",
+          "id": "@idOf: pamidala",
+          "name": "pamidala",
           "technical": false,
           "primaryEmailMd5": "@string"
         },
@@ -281,33 +281,7 @@ Feature: Results
           "displayName": "Senate",
           "organizationId": "@idOf: Old Republic"
         },
-        "projectVersion": "1.0.0",
-        "runAt": "@iso8601"
-      }, {
-        "id": "@valueOf(R4, id)",
-        "name": "Voting system should have three buttons",
-        "testId": "@alphanumeric",
-        "passed": false,
-        "active": true,
-        "message": null,
-        "duration": 6,
-        "newTest": false,
-        "tags": [],
-        "tickets": [],
-        "customData": {},
-        "runner": {
-          "id": "@idOf: borgana",
-          "name": "borgana",
-          "technical": false,
-          "primaryEmailMd5": "@string"
-        },
-        "project": {
-          "id": "@idOf: Senate",
-          "name": "senate",
-          "displayName": "Senate",
-          "organizationId": "@idOf: Old Republic"
-        },
-        "projectVersion": "1.0.0",
+        "projectVersion": "1.0.1",
         "runAt": "@iso8601"
       }, {
         "id": "@valueOf(R5, id)",
@@ -336,20 +310,20 @@ Feature: Results
         "projectVersion": "1.0.1",
         "runAt": "@iso8601"
       }, {
-        "id": "@valueOf(R9, id)",
+        "id": "@valueOf(R4, id)",
         "name": "Voting system should have three buttons",
         "testId": "@alphanumeric",
-        "passed": true,
+        "passed": false,
         "active": true,
         "message": null,
-        "duration": 9,
+        "duration": 6,
         "newTest": false,
         "tags": [],
         "tickets": [],
         "customData": {},
         "runner": {
-          "id": "@idOf: pamidala",
-          "name": "pamidala",
+          "id": "@idOf: borgana",
+          "name": "borgana",
           "technical": false,
           "primaryEmailMd5": "@string"
         },
@@ -359,7 +333,33 @@ Feature: Results
           "displayName": "Senate",
           "organizationId": "@idOf: Old Republic"
         },
-        "projectVersion": "1.0.1",
+        "projectVersion": "1.0.0",
+        "runAt": "@iso8601"
+      }, {
+        "id": "@valueOf(R3, id)",
+        "name": "Should be big enough",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 2,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.0",
         "runAt": "@iso8601"
       }]
       """
