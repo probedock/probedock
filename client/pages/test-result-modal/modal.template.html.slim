@@ -1,0 +1,87 @@
+.modal-header
+  h3.modal-title Result details
+.modal-body.test-result-modal-body
+  p ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}' {{ result.name }}
+  table.table.hidden-sm.hidden-xs
+    thead
+      tr
+        th.text-center Version
+        th.text-center ng-if='result.key' Test key
+        th.text-center ng-if='result.category' Category
+        th.text-center ng-if='result.tags.length > 0' Tags
+        th.text-center ng-if='result.tickets.length > 0' Tickets
+    tbody
+      tr
+        td.text-center
+          project-version-label project-version='result.projectVersion'
+        td.text-center ng-if='result.key'
+          test-key-label key='test.key'
+        td.text-center ng-if='result.category'
+          category-label category='result.category'
+        td.text-center ng-if='result.tags.length > 0'
+          tag-labels tags='result.tags'
+        td.text-center ng-if='result.tickets.length > 0'
+          ticket-labels tickets='result.tickets'
+
+  table.table.hidden-sm.hidden-xs
+    thead
+      tr
+        th Run
+        th By
+        th.text-right Duration
+        th.text-right Status
+    tbody
+      tr
+        td.text-vertical-middle {{ result.runAt | amDateFormat: 'lll' }}
+        td.text-vertical-middle
+          user-avatar user='result.runner'
+          '
+          | {{ result.runner.name }}
+        td.text-vertical-middle.text-right {{ result.duration | formatDuration }}
+        td.text-vertical-middle.text-right
+          result-status-icon result='result'
+
+    table.small-table.table.visble-sm.hidden-md.hidden-lg
+      tbody
+        tr
+          th Version
+          td
+            project-version-label project-version='result.projectVersion'
+        tr ng-if='result.key'
+          th Test key
+          td
+            test-key-label key='test.key'
+        tr ng-if='result.category'
+          th Category
+          td
+            category-label category='result.category'
+        tr ng-if='result.tags.length > 0'
+          th Tags
+          td
+            tag-labels tags='result.tags'
+        tr ng-if='result.tickets.length > 0'
+          th Tickets
+          td
+            ticket-labels tickets='result.tickets'
+        tr
+          th Run
+          td {{ result.runAt | amDateFormat: 'lll' }}
+        tr
+          th By
+          td
+            user-avatar user='result.runner'
+            '
+            | {{ result.runner.name }}
+        tr
+          th Duration
+          td {{ result.duration | formatDuration }}
+        tr
+          th Status
+          td
+            result-status-icon result='result'
+
+  pre ng-if='result.message' {{ result.message }}
+
+.modal-footer.clearfix
+  .btn-group.pull-right
+    button.btn.btn-default type='button' ng-click='$dismiss()' Close

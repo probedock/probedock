@@ -1,0 +1,27 @@
+@import '../../styles/mixins.css.styl'
+
+.test-results-widget
+  .row:first-of-type
+    margin-bottom 15px
+  .form-group
+    margin-bottom 0
+  a
+    cursor pointer
+    &.p, &.f, &.i
+      display block
+      float left
+      width 10px
+      height 10px
+      @media (min-width: 768px)
+        width 20px
+        height 20px
+      margin 0 0 1px 1px
+    &.p
+      @extend .passedTest
+    &.f
+      @extend .failedTest
+    &.i
+      @extend .inactiveTest
+
+  .more, .loading
+    margin-left 4px

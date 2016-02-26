@@ -24,6 +24,7 @@
     "angular-smart-table": "~2.0.2",
     "angular-truncate": "*",
     "angular-ui-router": "~0.2.11",
+    "angular-ui-router-title": "~0.0.4",
     "angular-ui-select": "~0.13.2",
     "bootstrap": "~3.3.0",
     "drop-ng": "git@github.com:stevenh77/drop-ng.git#b3f30fb275a60ae351ba7624a2c6b1d6dd78136a",

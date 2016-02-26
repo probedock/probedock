@@ -1,6 +1,6 @@
 form#org-edit-modal novalidate=true name='orgForm' ng-submit='orgForm.$valid && save()'
   .modal-header
-    .label.label-info.api-id.pull-right tooltip='Organization ID' tooltip-append-to-body='true' {{ organization.id }}
+    api-id-label.pull-right tooltip='Organization ID' tooltip-append-to-body='true' api-id='organization.id'
     h3.modal-title ng-if='editedOrg.id' Edit {{ organization | orgName }}
     h3.modal-title ng-if='!editedOrg.id' New Organization
   .modal-body
