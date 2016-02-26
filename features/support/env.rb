@@ -87,6 +87,7 @@ Dir[Rails.root.join('features/support/**/*.rb')].each { |f| require f }
 Dir[Rails.root.join('spec/support/**/*_spec_helper.rb')].each { |f| require f }
 Dir[Rails.root.join('spec/support/**/*_expectations.rb')].each { |f| require f }
 require Rails.root.join('spec/support/errapi.rb')
+require Rails.root.join('spec/support/api_helpers.rb')
 
 World(ApiSpecHelper)
 World(ChangeSpecHelper)
@@ -96,6 +97,7 @@ World(JobSpecHelper)
 World(MailerSpecHelper)
 World(ModelExpectations)
 World(NamedRecordsSpecHelper)
+World(SpecApiHelper)
 
 unless Rails.env == 'test'
   raise "Cucumber tests should only be run in the test environment (current environment is #{Rails.env.inspect})"

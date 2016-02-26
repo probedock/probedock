@@ -118,8 +118,10 @@ module ProbeDock
         # * Otherwise, nil is returned.
         def current_project_version
           if params[:projectVersionId].present?
+            # Trigger a 404 if there is no result
             ProjectVersion.where('api_id = ?', params[:projectVersionId]).first!
           elsif params[:projectId]
+            # No version for a project is valid and just tell the user there is no activity for this project
             ProjectVersion.joins(:project).where('projects.api_id = ?', params[:projectId]).order('created_at DESC').first
           else
             nil
@@ -211,8 +213,11 @@ module ProbeDock
       get :projectHealth do
         authorize!(:organization, :data)
 
+        # Try to retrieve a version based on projectVersionId or projectId params.
+        # A 404 is returned when projectVersionId is specified but no version is retrieved.
         project_version = current_project_version
 
+        # This default object means there is no project activity yet (no version -> no result)
         if project_version.blank?
           return {
             testsCount: 0,

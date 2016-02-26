@@ -18,7 +18,7 @@
             ng-pluralize count='nextChunk' when='{"1": "Load one more result...", "other": "Load {} more results..."}'
           span ng-if='results.length == 1' There is only one available result.
           span ng-if='results.length > 1 && results.length < pagination.total' Showing the latest {{ results.length }} results ouf of {{ pagination.total }} available results.
-          span ng-if='results.length == pagination.total' Showing all {{ results.length }} results.
+          span ng-if='results.length > 1 && results.length == pagination.total' Showing all {{ results.length }} results.
         a ng-repeat='result in results' class='{{ resultClass(result) }}' ng-click='open(result)' tooltip='Run at: {{ result.runAt | amDateFormat: "lll" }}. Click for more details.'
         .clearfix
     .row ng-if='missingVersions.length'
