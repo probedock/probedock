@@ -32,7 +32,7 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
     fetchReportByTechnicalUser();
   }
 
-  $scope.$watch('params', function (value) {
+  $scope.$watch('params', function (newParams, oldParams) {
     // Make sure to fetch report when params have been updated
     if (!avoidFetchByParams && !paramsManuallyUpdated) {
       fetchReport();
@@ -63,8 +63,7 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
         paramsManuallyUpdated = true;
         $scope.params.projectVersionId = res.data[0].id;
         return fetchReportByTechnicalUser();
-      }
-      else {
+      } else {
         return fetchReport();
       }
     });
@@ -124,7 +123,11 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
       url: url,
       params: params
     }).then(function(res) {
-      return processData(_.isArray(res.data) ? res.data[0] : res.data);
+      if (res.data.length == 0 && $scope.params.runnerId) {
+        $scope.params.runnerId = null;
+      } else {
+        return processData(_.isArray(res.data) ? res.data[0] : res.data);
+      }
     });
   }
 

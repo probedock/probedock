@@ -1,15 +1,18 @@
 .test-run-state
   p ng-if='loading'
-    em Loading health data...
+    em Loading report...
   p ng-if='!loading && !report && filtersDisabled'
     em No recent activity.
   p ng-if='!loading && !report && !filtersDisabled'
-    em No health data for the criteria.
+    em No report matching the criteria.
   div ng-if='report'
     p.text-info
       // FIXME: Replace by the label directive from PR <= 36
-      span ng-if='!filtersDisabled' ng-repeat='version in report.projectVersions | filter: { id: params.projectVersionId }' Results for version {{ version.name }} of the last run by:
-      span ng-if='filtersDisabled' Results of the last run by:
+      ng-pluralize count='report.resultsCount' when='{"1": "One result", "other": "{} results"}'
+      '  of the last report
+      span ng-if='!filtersDisabled' ng-repeat='version in report.projectVersions | filter: { id: params.projectVersionId }'
+        ' for version {{ version.name }}
+      | sent by:
     .runners.text-center
       span ng-repeat='runner in report.runners'
         user-avatar user='runner'
@@ -19,6 +22,8 @@
 
     a href='#' ui-sref='org.reports.show({ id: project.lastReportId })'
       canvas.chart.chart-pie height='{{ chartHeight ? chartHeight : 200 }}' data='stateChart.data' labels='stateChart.labels' colours='stateChart.colors'
+
+    .run-date {{ report.endedAt | amDateFormat:'llll' }}
 
     .versions ng-if='filtersDisabled'
       strong
