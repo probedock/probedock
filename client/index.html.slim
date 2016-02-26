@@ -3,6 +3,29 @@ html ng-app='probedock' ng-strict-di=true
   head data-version=Rails.application.version
     title ng-bind='$title' Probe Dock
     base href='/'
+
+    = favicon_link_tag 'fi/favicon.ico', rel: 'shortcut icon'
+    = favicon_link_tag 'fi/favicon.ico', rel: 'icon', sizes:'16x16 32x32 64x64'
+    = favicon_link_tag 'fi/favicon-160.png', rel: 'icon', type: 'image/png', sizes: '160x160'
+    = favicon_link_tag 'fi/favicon-192.png', rel: 'icon', type: 'image/png', sizes: '192x192'
+    = favicon_link_tag 'fi/favicon-96.png', rel: 'icon', type: 'image/png', sizes: '96x96'
+    = favicon_link_tag 'fi/favicon-64.png', rel: 'icon', type: 'image/png', sizes: '64x64'
+    = favicon_link_tag 'fi/favicon-32.png', rel: 'icon', type: 'image/png', sizes: '32x32'
+    = favicon_link_tag 'fi/favicon-16.png', rel: 'icon', type: 'image/png', sizes: '16x16'
+    = favicon_link_tag 'fi/favicon-57.png', rel: 'apple-touch-icon'
+    = favicon_link_tag 'fi/favicon-114.png', rel: 'apple-touch-icon', sizes: '114x114'
+    = favicon_link_tag 'fi/favicon-72.png', rel: 'apple-touch-icon', sizes: '72x72'
+    = favicon_link_tag 'fi/favicon-144.png', rel: 'apple-touch-icon', sizes: '144x144'
+    = favicon_link_tag 'fi/favicon-60.png', rel: 'apple-touch-icon', sizes: '60x60'
+    = favicon_link_tag 'fi/favicon-120.png', rel: 'apple-touch-icon', sizes: '120x120'
+    = favicon_link_tag 'fi/favicon-76.png', rel: 'apple-touch-icon', sizes: '76x76'
+    = favicon_link_tag 'fi/favicon-152.png', rel: 'apple-touch-icon', sizes: '152x152'
+    = favicon_link_tag 'fi/favicon-180.png', rel: 'apple-touch-icon', sizes: '180x180'
+
+    meta name='msapplication-TileColor' content='#FFFFFF'
+    = tag 'meta', name: 'msapplication-TileImage', content: image_url('fi/favicon-144.png')
+    = tag 'meta', name: 'msapplication-config', content: image_url('fi/browserconfig.xml')
+
     = stylesheet_link_tag 'application', media: 'all'
     = javascript_include_tag 'application'
     meta charset='UTF-8'
