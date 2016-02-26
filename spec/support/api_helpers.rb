@@ -68,6 +68,18 @@ module SpecApiHelper
     end
   end
 
+  def parse_api_response_body(object)
+    res = if object.kind_of?(Hash)
+      object
+    elsif object.kind_of?(String)
+      MultiJson.load(object)
+    elsif object.respond_to?(:body)
+      MultiJson.load(object.body)
+    else
+      raise "Unsupported assertion subject #{object.inspect}"
+    end
+  end
+
   def api_get path, options = {}
 
     headers = options[:headers] || {}

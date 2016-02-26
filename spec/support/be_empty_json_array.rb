@@ -18,15 +18,7 @@
 RSpec::Matchers.define :be_empty_json_array do
 
   match do |actual|
-
-    @res = if actual.kind_of? String
-      MultiJson.load actual
-    elsif actual.respond_to? :body
-      MultiJson.load actual.body
-    else
-      raise "Unsupported assertion subject #{actual.inspect}"
-    end
-
+    @res = parse_api_response_body( actual)
     @not_an_array = @res.nil? || !@res.is_a?(Array)
     @res.empty? unless @not_an_array
   end
