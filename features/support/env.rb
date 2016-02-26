@@ -60,6 +60,20 @@ end
 # See https://github.com/cucumber/cucumber-rails/blob/master/features/choose_javascript_database_strategy.feature
 Cucumber::Rails::Database.javascript_strategy = :truncation
 
+########
+# Keep these lines to help debugging when it helps to take a look to the database
+########
+# DatabaseCleaner.strategy = DatabaseCleaner::NullStrategy
+#
+# class NullStrategy < Cucumber::Rails::Database::Strategy
+#   def before_js
+#     super DatabaseCleaner::NullStrategy
+#   end
+# end
+#
+# Cucumber::Rails::Database.javascript_strategy = NullStrategy
+########
+
 World(FactoryGirl::Syntax::Methods)
 Dir[Rails.root.join('spec/factories/**/*.rb')].each { |f| require f }
 
@@ -73,6 +87,7 @@ Dir[Rails.root.join('features/support/**/*.rb')].each { |f| require f }
 Dir[Rails.root.join('spec/support/**/*_spec_helper.rb')].each { |f| require f }
 Dir[Rails.root.join('spec/support/**/*_expectations.rb')].each { |f| require f }
 require Rails.root.join('spec/support/errapi.rb')
+require Rails.root.join('spec/support/api_helpers.rb')
 
 World(ApiSpecHelper)
 World(ChangeSpecHelper)
@@ -82,6 +97,7 @@ World(JobSpecHelper)
 World(MailerSpecHelper)
 World(ModelExpectations)
 World(NamedRecordsSpecHelper)
+World(SpecApiHelper)
 
 unless Rails.env == 'test'
   raise "Cucumber tests should only be run in the test environment (current environment is #{Rails.env.inspect})"
