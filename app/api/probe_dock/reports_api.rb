@@ -108,8 +108,6 @@ module ProbeDock
 
           @pagination_filtered_count = rel.count('distinct test_reports.id')
 
-          rel = rel.group('test_reports.id') if group
-
           rel
         end
 
