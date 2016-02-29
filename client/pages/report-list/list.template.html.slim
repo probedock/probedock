@@ -7,7 +7,7 @@
         tab-heading Latest Reports
         table.latest-reports.table.table-striped.table-hover st-pipe='reportsList.refresh' st-table='reportsList.records'
           thead
-            tr
+            tr filters='reportsList.params'
               th.results.clearfix
                 | Results
                 .pull-right
@@ -15,15 +15,15 @@
                   span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
                   refresh-table
               th.runners
-                user-select filter='filters.runnerIds' prefix='report-list' organization='currentOrganization' model-object='filters' model-property='runnerIds' no-label='true' placeholder='Filter by runner'
+                user-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='runnerIds' no-label='true' placeholder='Filter by runner'
               th.duration.hidden-xs.hidden-sm Duration
               th.date.hidden-xs.hidden-sm.hidden-md Date
               th.details.hidden-xs
-                project-select filter='filters.projectIds' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by project'
+                project-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' no-label='true' placeholder='Filter by project'
               th.details.hidden-xs
-                project-version-select filter='filters.projectVersionNames' prefix='report-list' organization='currentOrganization' model-object='filters' model-property='projectVersionNames' multiple='true' no-label='true' placeholder='Filter by version' unique-by='name' extract='name'
+                project-version-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='projectVersionNames' multiple='true' no-label='true' placeholder='Filter by version' unique-by='name' extract='name'
               th.details.hidden-xs
-                category-select filter='filters.categoryNames' prefix='report-list' organization='currentOrganization' model-object='filters' no-label='true' placeholder='Filter by category' multiple='true'
+                category-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' no-label='true' placeholder='Filter by category' multiple='true'
           tbody
             tr.empty ng-show='!reportsList.initialized'
               td colspan=7 Loading...
