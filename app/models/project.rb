@@ -31,7 +31,7 @@ class Project < ActiveRecord::Base
   validates :name, presence: true, uniqueness: { scope: :organization_id, case_sensitive: false }, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)*\Z/i }
   validates :display_name, length: { maximum: 50, allow_blank: true }
   validates :organization, presence: true
-  validates :repo_url, url: { allow_blank: true }, length: { maximum: 100, allow_blank: true }
+  validates :repo_url, url: { allow_blank: true }, length: { maximum: 255, allow_blank: true }
   validate :name_must_not_be_reserved
 
   private

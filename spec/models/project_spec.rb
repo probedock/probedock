@@ -40,7 +40,7 @@ describe Project do
     it(nil, probedock: { key: 'uuoy' }){ should validate_length_of(:display_name).is_at_most(50) }
     it(nil, probedock: { key: 'jjm9' }){ should allow_value('', nil).for(:display_name) }
     it(nil, probedock: { key: 's3g2' }){ should validate_presence_of(:organization) }
-    it(nil, probedock: { key: 'k0ts' }){ should validate_length_of(:repo_url).is_at_most(100) }
+    it(nil, probedock: { key: 'k0ts' }){ should validate_length_of(:repo_url).is_at_most(255) }
     it(nil, probedock: { key: '0xqz' }){ should allow_value('http://localhost.localdomain', 'https://example.com').for(:repo_url) }
     it(nil, probedock: { key: 'ubaw' }){ should_not allow_value('foo', 'bar').for(:repo_url) }
 
@@ -71,7 +71,7 @@ describe Project do
     it(nil, probedock: { key: '89de5255730b' }){ should have_db_column(:tests_count).of_type(:integer).with_options(null: false, default: 0) }
     it(nil, probedock: { key: '20bb321bfa30' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probedock: { key: 'acf557d6db43' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
-    it(nil, probedock: { key: 'cw4k' }){ should have_db_column(:repo_url).of_type(:string).with_options(null: true, limit: 100) }
+    it(nil, probedock: { key: 'cw4k' }){ should have_db_column(:repo_url).of_type(:string).with_options(null: true, limit: 255) }
     it(nil, probedock: { key: '6c8efd97b251' }){ should have_db_index(:api_id).unique(true) }
     it(nil, probedock: { key: 'vxb0' }){ should have_db_index([:normalized_name, :organization_id]).unique(true) }
   end

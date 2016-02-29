@@ -108,7 +108,7 @@ ActiveRecord::Schema.define(version: 20160222133533) do
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
     t.integer  "last_report_id"
-    t.string   "repo_url",        limit: 100
+    t.string   "repo_url",        limit: 255
   end
 
   add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
