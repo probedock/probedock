@@ -11,7 +11,7 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
       createNew: '=?',
       autoSelect: '=?',
       placeholder: '@',
-      noLabel: '@',
+      noLabel: '=',
       multiple: '@',
       extract: '@'
     }
@@ -76,7 +76,7 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
     };
 
     if (categoryName) {
-      params.categoryName = categoryName;
+      params.search = categoryName;
     }
 
     api({

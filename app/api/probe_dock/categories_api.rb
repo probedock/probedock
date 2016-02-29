@@ -33,17 +33,17 @@ module ProbeDock
       end
 
       get do
-        authorize! :organization, :data
+        authorize!(:organization, :data)
 
         rel = Category
 
-        rel = paginated rel do |paginated_rel|
+        rel = paginated(rel) do |paginated_rel|
           if current_organization
             # filter by organization
-            paginated_rel = paginated_rel.where 'categories.organization_id = ?', current_organization.id
+            paginated_rel = paginated_rel.where('categories.organization_id = ?', current_organization.id)
           else
             # join with organizations to be able to sort by organization name
-            paginated_rel = paginated_rel.joins :organization
+            paginated_rel = paginated_rel.joins(:organization)
           end
 
           if params[:search].present?

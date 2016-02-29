@@ -59,38 +59,34 @@ module ProbeDock
       get do
         authorize! TestReport, :index
 
-        rel = policy_scope(TestReport).order 'test_reports.created_at DESC'
+        rel = policy_scope(TestReport).order('test_reports.created_at DESC')
 
-        rel = paginated rel do |rel|
+        rel = paginated(rel) do |rel|
 
           if params[:uid]
-            rel = rel.where uid: params[:uid].to_s
+            rel = rel.where(uid: params[:uid].to_s)
           end
 
           if params[:payloadId]
-            rel = rel.joins(:test_payloads).where 'test_payloads.api_id = ?', params[:payloadId].to_s
+            rel = rel.joins(:test_payloads).where('test_payloads.api_id = ?', params[:payloadId].to_s)
           end
 
           if params[:after]
             ref = TestReport.select('id, created_at').where(api_id: params[:after].to_s).first!
-            rel = rel.where 'test_reports.created_at > ?', ref.created_at
+            rel = rel.where('test_reports.created_at > ?', ref.created_at)
           end
 
           rel = rel.joins(:runners) if array_param?(:runnerIds)
-          rel = rel.joins(:projects) if array_param?(:projectIds)
-          rel = rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || params[:projectId].present?
+          rel = rel.joins(:projects) if array_param?(:projectIds) || params[:projectId].present?
+          rel = rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
           rel = rel.joins(results: :category) if array_param?(:categoryNames)
-
-          group = false
-          if params[:projectId].present?
-            project = Project.where(organization_id: current_organization.id, api_id: params[:projectId].to_s).first!
-            authorize! project, :show
-            rel = rel.where('project_versions.project_id = ?', project.id)
-            group = true
-          end
 
           if array_param?(:runnerIds)
             rel = rel.where('users.api_id in (?)', params[:runnerIds].collect(&:to_s).to_a)
+          end
+
+          if params[:projectId].present?
+            rel = rel.where('projects.api_id = ?', params[:projectId].to_a)
           end
 
           if array_param?(:projectIds)
@@ -110,9 +106,9 @@ module ProbeDock
             rel = rel.where('categories.name in (?)', params[:categoryNames].collect(&:to_s).to_a)
           end
 
-          @pagination_filtered_count = rel.count 'distinct test_reports.id'
+          @pagination_filtered_count = rel.count('distinct test_reports.id')
 
-          rel = rel.group 'test_reports.id' if group
+          rel = rel.group('test_reports.id') if group
 
           rel
         end
