@@ -9,19 +9,20 @@ angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtr
     }
   }).then(function(response) {
     if (response.data[0]) {
-      project = response.data[0];
+      // Make sure the reportsCount is always defined
+      $scope.project = _.extend(response.data[0], { reportsCount: null });
 
-      registerOnEditProject(project);
+      registerOnEditProject();
 
+      // Retrieve the number of reports for this project
       return api({
         url: '/reports',
         params: {
-          projectId: project.id
+          projectId: $scope.project.id
         }
       }).then(function(response) {
-        $scope.project = _.extend(project, {
-          reportsCount: response.pagination().filteredTotal
-        });
+        // Update the number of reports
+        $scope.project.reportsCount = response.pagination().filteredTotal;
       });
     }
   });
@@ -29,9 +30,9 @@ angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtr
   /**
    * Will open the edit project modal if the state is or changes to "org.projects.show.edit".
    */
-  function registerOnEditProject(project) {
+  function registerOnEditProject() {
     states.onState($scope, 'org.projects.show.edit', function(toState) {
-      var modal = projectEditModal.open($scope, { project: project });
+      var modal = projectEditModal.open($scope, { project: $scope.project });
 
       modal.result.then(function(updatedProject) {
         $scope.project = updatedProject;

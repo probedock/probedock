@@ -18,7 +18,7 @@ form novalidate=true role='form' name='projectForm' ng-submit='projectForm.$vali
         | The is the name of the project as shown in ProbeDock.
     .form-group
       label for='projectRepoUrl' Repository URL
-      input#projectRepoUrl.form-control type='string' placeholder='{{ editedProject.repoUrl || "Project repository" }}' maxlength=100 ng-model='editedProject.repoUrl'
+      input#projectRepoUrl.form-control type='string' placeholder='Project repository' maxlength=255 ng-model='editedProject.repoUrl'
       p.help-block
         | This is the link to your project repository.
     .form-group

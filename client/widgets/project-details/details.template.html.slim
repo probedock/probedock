@@ -18,7 +18,7 @@
         dt Creation Date
         dd {{ project.createdAt | amDateFormat:'llll' }}
         dt ng-if='project.repoUrl' Code repository
-        dd ng-if='project.repoUrl'
+        dd.repo-link ng-if='project.repoUrl'
           a href='{{ project.repoUrl }}' target='_blank' {{ project.repoUrl }}
       p.text-info.text-center ng-if='!project.testsCount'
         ' No test results have been published for this project.
