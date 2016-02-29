@@ -9,6 +9,7 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
       modelProperty: '@',
       prefix: '@',
       placeholder: '@',
+      label: '@',
       noLabel: '@'
     }
   };
@@ -25,15 +26,15 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
     $scope.noLabel = false;
   }
 
-  $scope.userChoices = [];
+  if (_.isUndefined($scope.label)) {
+    $scope.label = 'Filter by user';
+  }
 
-  $scope.getPlaceholder = function() {
-    if ($scope.placeholder) {
-      return $scope.placeholder;
-    } else {
-      return 'All users';
-    }
-  };
+  if (_.isUndefined($scope.placeholder)) {
+    $scope.placeholder = 'All users';
+  }
+
+  $scope.userChoices = [];
 
   $scope.$watch('organization', function(value) {
     if (value) {

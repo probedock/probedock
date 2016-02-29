@@ -42,6 +42,7 @@
 //= require angular-animate
 //= require angular-sanitize
 //= require angular-ui-router
+//= require angular-ui-router-title
 //= require angular-ui-bootstrap-tpls
 //= require angular-ui-select
 //= require angular-local-storage

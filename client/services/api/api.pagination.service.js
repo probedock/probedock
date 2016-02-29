@@ -20,7 +20,7 @@ angular.module('probedock.api').factory('apiPagination', function($log) {
     var value = res.headers(header);
     if (!value) {
       if (required) {
-        throw new Error('Exected response to have the ' + header + ' header');
+        throw new Error('Expected response to have the ' + header + ' header');
       } else {
         return undefined;
       }

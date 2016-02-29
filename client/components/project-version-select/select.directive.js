@@ -5,7 +5,8 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     templateUrl: '/templates/components/project-version-select/select.template.html',
     scope: {
       organization: '=',
-      project: '=',
+      project: '=?',
+      test: '=?',
       modelObject: '=',
       modelProperty: '@',
       latestVersion: '=',
@@ -16,10 +17,11 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       placeholder: '@',
       noLabel: '@',
       uniqueBy: '@',
-      extract: '@'
+      extract: '@',
+      allowClear: '=?'
     }
   };
-}).controller('ProjectVersionSelectCtrl', function(api, $scope) {
+}).controller('ProjectVersionSelectCtrl', function(api, $scope, projectVersions) {
   if (!$scope.prefix) {
     throw new Error("The prefix attribute on project-version-select directive is not set.");
   }
@@ -40,6 +42,10 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     $scope.noLabel = false;
   }
 
+  if (_.isUndefined($scope.allowClear)) {
+    $scope.allowClear = !_.isUndefined($scope.latestVersion);
+  }
+
   $scope.config = {
     newVersion: false
   };
@@ -55,6 +61,12 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
   $scope.$watch('project', function(value) {
     if (value && !$scope.organization) {
       $scope.fetchProjectVersionChoices();
+    }
+  });
+
+  $scope.$watch('test', function(value) {
+    if (value) {
+      fetchProjectVersionChoices();
     }
   });
 
@@ -98,6 +110,10 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       params.search = version;
     }
 
+    if ($scope.test) {
+      params.testId = $scope.test.id;
+    }
+
     api({
       url: '/projectVersions',
       params: params
@@ -107,6 +123,8 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       } else {
         $scope.projectVersionChoices = res.data;
       }
+
+      $scope.projectVersionChoices = projectVersions.sort(res.data);
 
       if ($scope.projectVersionChoices.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one

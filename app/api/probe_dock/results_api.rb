@@ -41,7 +41,7 @@ module ProbeDock
 
         # Set the order clause
         rel = if params[:sort].present? && params[:sort] == 'runAt'
-          TestResult.order('test_results.run_at')
+          TestResult.order('test_results.run_at desc')
         else
           TestResult.order('test_results.active desc, test_results.passed, test_results.name, test_results.id')
         end

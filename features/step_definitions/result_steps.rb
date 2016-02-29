@@ -52,7 +52,6 @@ Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) an
 
   test_result = add_named_record(name, create(:test_result, options))
 
-
   test_description = TestDescription.where(test_id: test.id).where(project_version_id: project_version.id).first
 
   if !test_description
