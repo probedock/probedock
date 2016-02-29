@@ -86,7 +86,7 @@ module ProbeDock
           end
 
           if params[:projectId].present?
-            rel = rel.where('projects.api_id = ?', params[:projectId].to_a)
+            rel = rel.where('projects.api_id = ?', params[:projectId].to_s)
           end
 
           if array_param?(:projectIds)
