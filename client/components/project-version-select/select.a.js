@@ -1,1 +1,1 @@
-angular.module('probedock.projectVersionSelect', [ 'probedock.api' ]);
+angular.module('probedock.projectVersionSelect', [ 'probedock.api', 'probedock.projectVersions' ]);

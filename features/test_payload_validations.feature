@@ -320,6 +320,43 @@ Feature: Test payload validations
 
 
 
+  Scenario: A JSON payload with spaces in tag should be refused
+    Given private organization Rebel Alliance exists
+    And user hsolo who is a member of Rebel Alliance exists
+    And project X-Wing exists within organization Rebel Alliance
+    And hsolo sends a POST request with the following JSON to /api/publish:
+      """
+      {
+        "projectId": "{@idOf: X-Wing}",
+        "version": "0.4.6",
+        "duration": 1529,
+        "results": [
+          {
+            "n": "Lorem ipsum dolor sit amet consectetuer adipiscing elit proin",
+            "p": true,
+            "d": 2058,
+            "c": "RSpec",
+            "g": [ "tag with spaces" ],
+            "t": [ "JIRA-857" ],
+            "a": {
+              "lorem.ipsum.dolor": "lorem ipsum dolor sit"
+            }
+          }
+        ],
+        "reports": [
+          {
+            "uid": "32d4d802-c436-11e5-9912-ba0be0483c18"
+          }
+        ]
+      }
+      """
+    Then the response should be HTTP 422 with the following errors:
+      | reason        | locationType | location       | message                            |
+      | invalidFormat | json         | /results/0/g/0 | This value is of the wrong format. |
+    And nothing should have been added or deleted
+
+
+
   Scenario: A JSON payload with values that are out of bounds should be refused
     Given private organization Rebel Alliance exists
     And user hsolo who is a member of Rebel Alliance exists

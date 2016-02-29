@@ -19,6 +19,4 @@
           span {{ contribution.user.name }}
         td {{ contribution.testsCount }}
         td
-          span ng-repeat='category in contribution.categories'
-            span.label.label-info {{ category }}
-            '
+          category-labels categories='contribution.categories'

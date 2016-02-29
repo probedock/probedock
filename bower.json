@@ -1,6 +1,6 @@
 {
   "name": "probedock",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "homepage": "https://github.com/probedock/probedock",
   "description": "Test tracking and analysis tool.",
   "authors": [
@@ -15,7 +15,7 @@
     "angular-base64": "~2.0.2",
     "angular-bootstrap": "~0.12.1",
     "angular-chart.js": "~0.7.0",
-    "angular-gravatar": "~0.3.1",
+    "angular-gravatar": "~0.4.1",
     "angular-jqcloud": "~1.0.0",
     "angular-loading-bar": "~0.7.1",
     "angular-moment": "~0.10.0",
@@ -24,6 +24,7 @@
     "angular-smart-table": "~2.0.2",
     "angular-truncate": "*",
     "angular-ui-router": "~0.2.11",
+    "angular-ui-router-title": "~0.0.4",
     "angular-ui-select": "~0.13.2",
     "bootstrap": "~3.3.0",
     "drop-ng": "git@github.com:stevenh77/drop-ng.git#b3f30fb275a60ae351ba7624a2c6b1d6dd78136a",

@@ -11,3 +11,4 @@ en:
     not_numeric: "This value is not a number."
     not_greater_than_or_equal_to: "This value is too small."
     not_an_integer: "This value is not an integer."
+    invalid_format: "This value is of the wrong format."
