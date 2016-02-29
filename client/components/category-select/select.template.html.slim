@@ -1,7 +1,7 @@
 / category selection
 .form-group
-  label ng-if='!noLabel && !multiple' for='{{ prefix }}-category-select-single' Category
-  label ng-if='!noLabel && multiple' for='{{ prefix }}-category-select-multiple' Category
+  label ng-if='!noLabel && !multiple' for='{{ prefix }}-category-select-single' {{ label }}
+  label ng-if='!noLabel && multiple' for='{{ prefix }}-category-select-multiple' {{ label }}
 
   / check box to choose whether to create a new category or not
   label.new-switch.pull-right ng-if='createNew'

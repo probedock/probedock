@@ -48,6 +48,12 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     }
   });
 
+  $scope.filtersClass = 'hidden-xs';
+
+  $scope.toggleFilters = function() {
+    $scope.filtersClass = $scope.filtersClass == 'hidden-xs' ? '' : 'hidden-xs';
+  };
+
   $scope.reportTabs = [];
   $scope.activeTabs = {};
 

@@ -11,6 +11,7 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
       createNew: '=?',
       autoSelect: '=?',
       placeholder: '@',
+      label: '@',
       noLabel: '=',
       multiple: '@',
       extract: '@'
@@ -35,6 +36,10 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
 
   if (_.isUndefined($scope.noLabel)) {
     $scope.noLabel = false;
+  }
+
+  if (_.isUndefined($scope.label)) {
+    $scope.label = 'Category';
   }
 
   $scope.config = {

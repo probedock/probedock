@@ -1,7 +1,7 @@
 / version selection
 .form-group
-  label ng-if='!noLabel && !multiple' for='{{ prefix }}-project-version-select-single' Version
-  label ng-if='!noLabel && multiple' for='{{ prefix }}-project-version-select-multiple' Version
+  label ng-if='!noLabel && !multiple' for='{{ prefix }}-project-version-select-single' {{ label }}
+  label ng-if='!noLabel && multiple' for='{{ prefix }}-project-version-select-multiple' {{ label }}
 
   / check box to choose whether to create a new version or not
   label.new-switch.pull-right ng-if='createNew'

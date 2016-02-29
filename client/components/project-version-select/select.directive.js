@@ -14,6 +14,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       createNew: '=?',
       autoSelect: '=?',
       placeholder: '@',
+      label: '@',
       noLabel: '=',
       multiple: '=',
       uniqueBy: '@',
@@ -40,6 +41,10 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   if (_.isUndefined($scope.noLabel)) {
     $scope.noLabel = false;
+  }
+
+  if (_.isUndefined($scope.label)) {
+    $scope.label = 'Version';
   }
 
   if (_.isUndefined($scope.allowClear)) {
