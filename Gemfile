@@ -71,7 +71,7 @@ group :production do
   gem 'unicorn-rails'
 end
 
-group :development do
+group :development, :vagrant do
   gem 'spring'
   gem 'quiet_assets' # used to silence asset logs
   gem 'silencer' # used to silence status polling logs
@@ -81,7 +81,7 @@ group :development do
   gem 'web-console', '~> 2.0'
 end
 
-group :development, :test do
+group :development, :vagrant, :test do
   gem 'handlebars'
   gem 'dotenv-rails'
 

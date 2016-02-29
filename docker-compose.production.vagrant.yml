@@ -19,13 +19,11 @@ app:
   links:
     - db
     - cache
-
   volumes:
     - "/var/lib/probedock-production/app/public:/usr/src/app/public"
     - "/var/lib/probedock-production/app/tmp:/usr/src/app/tmp"
   env_file:
-    - "/vagrant/.env.development.vagrant"
-    - "/vagrant/.env-variable.development.vagrant"
+    - "/vagrant/.env.production.vagrant"
   environment:
     RAILS_ENV: production
 
@@ -42,8 +40,7 @@ rake:
     - "/var/lib/probedock-production/app/public:/usr/src/app/public"
     - "/var/lib/probedock-production/app/tmp:/usr/src/app/tmp"
   env_file:
-    - "/vagrant/.env.development.vagrant"
-    - "/vagrant/.env-variable.development.vagrant"
+    - "/vagrant/.env.production.vagrant"
   environment:
     RAILS_ENV: production
 

@@ -1,0 +1,8 @@
+COMMAND="rake $@"
+
+if [ "$USER" == vagrant ]; then
+  $COMMAND
+else
+  echo "Running \`$COMMAND\` in vagrant machine..."
+  vagrant ssh -c "cd /vagrant && $COMMAND"
+fi

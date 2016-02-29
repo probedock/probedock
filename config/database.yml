@@ -5,12 +5,15 @@ default: &default
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 5
 
-development:
+development: &development
   <<: *default
-  host: <%= ENV['PROBEDOCK_DATABASE_HOST'] || 'localhost' %>
+  <%= ENV['PROBEDOCK_DATABASE_HOST'] ? "host: #{ENV['PROBEDOCK_DATABASE_HOST']}" : '' %>
   database: <%= ENV['PROBEDOCK_DATABASE_NAME'] %>
   <%= ENV['PROBEDOCK_DATABASE_USERNAME'] ? "username: #{ENV['PROBEDOCK_DATABASE_USERNAME']}" : '' %>
   <%= ENV['PROBEDOCK_DATABASE_PASSWORD'] ? "password: #{ENV['PROBEDOCK_DATABASE_PASSWORD']}" : '' %>
+
+vagrant:
+  <<: *development
 
 test: &test
   <<: *default

@@ -1,6 +1,5 @@
 # vi: set ft=yaml :
 
-{% if rails_environment == 'production' %}
 # Nginx web server.
 web:
   image: nginx:1.9
@@ -8,12 +7,11 @@ web:
   links:
     - app
   ports:
-    - "{{ rails_server_port }}:80"
+    - "{{ web_port }}:80"
   volumes:
     - "{{ probedock_data_dir }}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
     - "{{ probedock_data_dir }}/app/public:/var/lib/probedock/public"
   restart: always
-{% endif %}
 
 # Rails application.
 app:
@@ -21,19 +19,13 @@ app:
   links:
     - db
     - cache
-{% if rails_environment != 'production' %}
-  ports:
-    - "{{ rails_server_port }}:3000"{% endif %}
-
   volumes:
-    {% if rails_environment == 'production' %}- "{{ probedock_data_dir }}/app/public:/usr/src/app/public"
-    - "{{ probedock_data_dir }}/app/tmp:/usr/src/app/tmp"{% else %}- "{{ probedock_dir }}:/usr/src/app"{% endif %}
-
+    - "{{ probedock_data_dir }}/app/public:/usr/src/app/public"
+    - "{{ probedock_data_dir }}/app/tmp:/usr/src/app/tmp"
   env_file:
-    - "{{ probedock_dir }}/.env.development.vagrant"
-    - "{{ probedock_dir }}/.env-variable.development.vagrant"
+    - "{{ probedock_dir }}/.env.production.vagrant"
   environment:
-    RAILS_ENV: {{ rails_environment }}
+    RAILS_ENV: production
 
 # Run a rake task.
 # This is meant to be run as a one-off task (with "run" instead of "up").
@@ -45,14 +37,12 @@ rake:
     - db
     - cache
   volumes:
-    {% if rails_environment == 'production' %}- "{{ probedock_data_dir }}/app/public:/usr/src/app/public"
-    - "{{ probedock_data_dir }}/app/tmp:/usr/src/app/tmp"{% else %}- "{{ probedock_dir }}:/usr/src/app"{% endif %}
-
+    - "{{ probedock_data_dir }}/app/public:/usr/src/app/public"
+    - "{{ probedock_data_dir }}/app/tmp:/usr/src/app/tmp"
   env_file:
-    - "{{ probedock_dir }}/.env.development.vagrant"
-    - "{{ probedock_dir }}/.env-variable.development.vagrant"
+    - "{{ probedock_dir }}/.env.production.vagrant"
   environment:
-    RAILS_ENV: {{ rails_environment }}
+    RAILS_ENV: production
 
 # PostgreSQL database.
 db:
