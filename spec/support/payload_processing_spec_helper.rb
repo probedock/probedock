@@ -173,7 +173,8 @@ module PayloadProcessingSpecHelper
       resultsCount: raw_payload[:results].length,
       passedResultsCount: raw_payload[:results].select{ |r| r.fetch :p, true }.length,
       inactiveResultsCount: raw_payload[:results].reject{ |r| r.fetch :v, true }.length,
-      inactivePassedResultsCount: raw_payload[:results].select{ |r| r.fetch(:p, true) && !r.fetch(:v, true) }.length
+      inactivePassedResultsCount: raw_payload[:results].select{ |r| r.fetch(:p, true) && !r.fetch(:v, true) }.length,
+      categories: raw_payload[:results].collect{ |r| r[:c] }.compact.uniq
     })
   end
 
@@ -190,7 +191,8 @@ module PayloadProcessingSpecHelper
       inactivePassedResultsCount: options.fetch(:inactivePassedResultsCount, 0),
       testsCount: options.fetch(:testsCount, 0),
       newTestsCount: options.fetch(:newTestsCount, 0),
-      rawContents: options[:rawContents]
+      rawContents: options[:rawContents],
+      categories: options.fetch(:categories, [])
     })
   end
 

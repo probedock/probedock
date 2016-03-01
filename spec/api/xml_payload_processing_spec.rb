@@ -136,7 +136,8 @@ trace]]>
     # check payload & report
     payload = check_payload @response_body, rawContents: raw_payload,
                             testsCount: 3, newTestsCount: 3,
-                            resultsCount: 3, passedResultsCount: 2, inactiveResultsCount: 1, inactivePassedResultsCount: 1
+                            resultsCount: 3, passedResultsCount: 2, inactiveResultsCount: 1, inactivePassedResultsCount: 1,
+                            categories: [ 'RSpec' ]
 
     check_report payload, organization: organization
 
@@ -298,11 +299,13 @@ trace]]>
 
     # check payloads
     first_payload = check_payload @first_response_body, rawContents: first_raw_payload,
-                                  testsCount: 1, newTestsCount: 1, resultsCount: 1, passedResultsCount: 1
+                                  testsCount: 1, newTestsCount: 1, resultsCount: 1, passedResultsCount: 1,
+                                  categories: [ 'RSpec' ]
 
     second_payload = check_payload @response_body, rawContents: second_raw_payload,
                                    testsCount: 2, newTestsCount: 2,
-                                   resultsCount: 2, passedResultsCount: 1, inactiveResultsCount: 1, inactivePassedResultsCount: 1
+                                   resultsCount: 2, passedResultsCount: 1, inactiveResultsCount: 1, inactivePassedResultsCount: 1,
+                                   categories: [ 'Cucumber' ]
 
     # check database changes
     expect_changes test_payloads: 2, test_reports: 1, test_results: 3, project_versions: 1, project_tests: 3, test_descriptions: 3, categories: 2

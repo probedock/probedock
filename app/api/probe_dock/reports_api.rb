@@ -80,10 +80,10 @@ module ProbeDock
           paginated_rel = paginated_rel.joins(:projects) if array_param?(:projectIds) || params[:projectId].present?
 
           if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || array_param?(:categoryNames)
-            combined_joins = []
-            combined_joins << :project_version if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
-            combined_joins << :categories if array_param?(:categoryNames)
-            paginated_rel = paginated_rel.joins(test_payloads: combined_joins)
+            payload_joins = []
+            payload_joins << :project_version if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
+            payload_joins << :categories if array_param?(:categoryNames)
+            paginated_rel = paginated_rel.joins(test_payloads: payload_joins)
           end
 
           if array_param?(:runnerIds)
