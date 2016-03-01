@@ -41,6 +41,8 @@ Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) an
       add_named_record(category_name, category)
     end
 
+    payload.categories << category
+
     options[:category] = category
   end
 

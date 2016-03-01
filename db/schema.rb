@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160213183932) do
+ActiveRecord::Schema.define(version: 20160301140746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,13 @@ ActiveRecord::Schema.define(version: 20160213183932) do
   end
 
   add_index "categories", ["name", "organization_id"], name: "index_categories_on_name_and_organization_id", unique: true, using: :btree
+
+  create_table "categories_test_payloads", id: false, force: :cascade do |t|
+    t.integer "category_id",     null: false
+    t.integer "test_payload_id", null: false
+  end
+
+  add_index "categories_test_payloads", ["category_id", "test_payload_id"], name: "index_categories_test_payloads_on_category_and_payload", unique: true, using: :btree
 
   create_table "emails", force: :cascade do |t|
     t.string  "address", limit: 255,                 null: false
@@ -98,16 +105,17 @@ ActiveRecord::Schema.define(version: 20160213183932) do
   add_index "project_versions", ["name", "project_id"], name: "index_project_versions_on_name_and_project_id", unique: true, using: :btree
 
   create_table "projects", force: :cascade do |t|
-    t.string   "api_id",          limit: 12,             null: false
-    t.string   "name",            limit: 50,             null: false
+    t.string   "api_id",          limit: 12,              null: false
+    t.string   "name",            limit: 50,              null: false
     t.string   "display_name",    limit: 50
-    t.string   "normalized_name", limit: 50,             null: false
+    t.string   "normalized_name", limit: 50,              null: false
     t.text     "description"
-    t.integer  "organization_id",                        null: false
-    t.integer  "tests_count",                default: 0, null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.integer  "organization_id",                         null: false
+    t.integer  "tests_count",                 default: 0, null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.integer  "last_report_id"
+    t.string   "repo_url",        limit: 255
   end
 
   add_index "projects", ["api_id"], name: "index_projects_on_api_id", unique: true, using: :btree
@@ -312,6 +320,8 @@ ActiveRecord::Schema.define(version: 20160213183932) do
   add_index "users", ["primary_email_id"], name: "index_users_on_primary_email_id", unique: true, using: :btree
 
   add_foreign_key "categories", "organizations"
+  add_foreign_key "categories_test_payloads", "categories"
+  add_foreign_key "categories_test_payloads", "test_payloads"
   add_foreign_key "emails", "users", on_delete: :nullify
   add_foreign_key "memberships", "emails", column: "organization_email_id"
   add_foreign_key "memberships", "organizations"

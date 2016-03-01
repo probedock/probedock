@@ -59,59 +59,63 @@ module ProbeDock
       get do
         authorize! TestReport, :index
 
-        rel = policy_scope(TestReport).order('test_reports.created_at DESC')
+        test_report_rel = policy_scope(TestReport).order('test_reports.created_at DESC')
 
-        rel = paginated(rel) do |rel|
+        test_report_rel = paginated(test_report_rel) do |paginated_rel|
 
           if params[:uid]
-            rel = rel.where(uid: params[:uid].to_s)
+            paginated_rel = paginated_rel.where(uid: params[:uid].to_s)
           end
 
           if params[:payloadId]
-            rel = rel.joins(:test_payloads).where('test_payloads.api_id = ?', params[:payloadId].to_s)
+            paginated_rel = paginated_rel.joins(:test_payloads).where('test_payloads.api_id = ?', params[:payloadId].to_s)
           end
 
           if params[:after]
             ref = TestReport.select('id, created_at').where(api_id: params[:after].to_s).first!
-            rel = rel.where('test_reports.created_at > ?', ref.created_at)
+            paginated_rel = paginated_rel.where('test_reports.created_at > ?', ref.created_at)
           end
 
-          rel = rel.joins(:runners) if array_param?(:runnerIds)
-          rel = rel.joins(:projects) if array_param?(:projectIds) || params[:projectId].present?
-          rel = rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
-          rel = rel.joins(results: :category) if array_param?(:categoryNames)
+          paginated_rel = paginated_rel.joins(:runners) if array_param?(:runnerIds)
+          paginated_rel = paginated_rel.joins(:projects) if array_param?(:projectIds) || params[:projectId].present?
+
+          if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || array_param?(:categoryNames)
+            combined_joins = []
+            combined_joins << :project_version if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
+            combined_joins << :categories if array_param?(:categoryNames)
+            paginated_rel = paginated_rel.joins(test_payloads: combined_joins)
+          end
 
           if array_param?(:runnerIds)
-            rel = rel.where('users.api_id in (?)', params[:runnerIds].collect(&:to_s).to_a)
+            paginated_rel = paginated_rel.where('users.api_id in (?)', params[:runnerIds].collect(&:to_s).to_a)
           end
 
           if params[:projectId].present?
-            rel = rel.where('projects.api_id = ?', params[:projectId].to_s)
+            paginated_rel = paginated_rel.where('projects.api_id = ?', params[:projectId].to_s)
           end
 
           if array_param?(:projectIds)
-            rel = rel.where('projects.api_id in (?)', params[:projectIds].collect(&:to_s).to_a)
+            paginated_rel = paginated_rel.where('projects.api_id in (?)', params[:projectIds].collect(&:to_s).to_a)
           end
 
           if array_param?(:projectVersionIds)
-            rel = rel.where('project_versions.api_id in (?)', params[:projectVersionIds].collect(&:to_s).to_a)
+            paginated_rel = paginated_rel.where('project_versions.api_id in (?)', params[:projectVersionIds].collect(&:to_s).to_a)
           end
 
           if array_param?(:projectVersionNames)
-            rel = rel.where('project_versions.name in (?)', params[:projectVersionNames].collect(&:to_s).to_a)
+            paginated_rel = paginated_rel.where('project_versions.name in (?)', params[:projectVersionNames].collect(&:to_s).to_a)
           end
 
-          # FIXME: This filter is clearly slower than the others
           if array_param?(:categoryNames)
-            rel = rel.where('categories.name in (?)', params[:categoryNames].collect(&:to_s).to_a)
+            paginated_rel = paginated_rel.where('categories.name in (?)', params[:categoryNames].collect(&:to_s).to_a)
           end
 
-          @pagination_filtered_count = rel.count('distinct test_reports.id')
+          @pagination_filtered_count = paginated_rel.count('distinct test_reports.id')
 
-          rel
+          paginated_rel
         end
 
-        serialize load_resources(rel)
+        serialize load_resources(test_report_rel)
       end
 
       namespace '/:id' do
