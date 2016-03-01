@@ -21,7 +21,7 @@
               .col-md-12
                 table.latest-reports.table.table-striped.table-hover
                   thead
-                    tr
+                    tr.hidden-xs
                       th.results.clearfix
                         | Results
                         .pull-right
@@ -35,23 +35,43 @@
                       th.duration.hidden-xs.hidden-sm Duration
                       th.date.hidden-xs.hidden-sm.hidden-md Date
                       th.details.hidden-xs Details
+                    tr.visible-xs
+                      th
+                        | Results
+                        .pull-right
+                          span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
+                          .btn-group
+                            refresh-table
+                            a.btn.btn-primary.btn-xs tooltip='Filters' tooltip-append-to-body='true' ng-click='toggleFilters()'
+                              span.glyphicon.glyphicon-search
                   tbody
                     tr.empty ng-show='!reportsList.initialized'
                       td colspan=5 Loading...
                     tr.empty ng-show='!reportsList.records.length && reportsList.initialized'
                       td colspan=5
                         em No tests have been run recently.
-                    tr ng-repeat='report in reportsList.records'
+                    tr.hidden-xs ng-repeat='report in reportsList.records'
                       td.results
                         a href='#' ui-sref='org.reports.show({ id: report.id })'
                           report-health-bar report='report' click-for-details=true
                       td.runners
                         span ng-repeat='runner in report.runners.slice(0, 3)'
-                          user-avatar user='runner'
+                          user-avatar.hidden-xs user='runner'
+                          user-avatar.visible-xs user='runner' name-tooltip='true'
                           span.name.hidden-xs  {{ runner.name }}
                       td.duration.hidden-xs.hidden-sm {{ report.duration | formatDuration:2 }}
-                      td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
-                      td.details.hidden-xs
+                      td.date.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
+                      td.details
+                        report-data-labels organization='organization' report='report'
+                    tr.visible-xs ng-repeat='report in reportsList.records'
+                      td.report-small colspan=5
+                        a.report-health-bar href='#' ui-sref='org.reports.show({ id: report.id })'
+                          report-health-bar report='report' click-for-details=true
+                        span.runner ng-repeat='runner in report.runners.slice(0, 3)'
+                          user-avatar user='runner' name-tooltip='true'
+                        span.duration {{ report.duration | formatDuration:2 }}
+                        ' ,
+                        span.date {{ report.createdAt | amDateFormat:'llll' }}
                         report-data-labels organization='organization' report='report'
                   tfoot
                     tr
