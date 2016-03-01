@@ -5,7 +5,7 @@
         project-repo-icon project='project'
       a.btn.btn-warning ui-sref='org.projects.list.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
         span.glyphicon.glyphicon-pencil
-    api-id-label.pull-right api-id='project.id' tooltip='Project ID'
+    api-id-label.pull-right api-id='project.id' copy-tooltip='Project ID (click to copy)'
     h3.panel-title
       strong
         a href='#' ui-sref='org.projects.show({ projectName: project.name })' {{ project | projectName }}

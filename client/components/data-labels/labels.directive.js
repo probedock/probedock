@@ -39,9 +39,15 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   return {
     restrict: 'E',
     scope: {
-      apiId: '='
+      apiId: '=',
+      copyTooltip: '@'
     },
-    template: '<div class="data-label api-id-label" clip-copy="apiId" tooltip="Click to copy">{{ apiId }}</div>'
+    controller: function($scope) {
+      if (_.isUndefined($scope.copyTooltip)) {
+        $scope.copyTooltip = 'Click to copy';
+      }
+    },
+    template: '<div class="data-label api-id-label" clip-copy="apiId" tooltip="{{ copyTooltip }}">{{ apiId }}</div>'
   };
 })
 
