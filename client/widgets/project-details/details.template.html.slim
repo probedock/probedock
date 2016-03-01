@@ -1,6 +1,8 @@
 .project-details-widget.panel.panel-default
   .panel-heading.clearfix
     .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
+      a.btn.btn-primary ng-if='project.repoUrl' href='{{ project.repoUrl }}' tooltip='Open repository' tooltip-append-to-body='true' target='_blank'
+        project-repo-icon project='project'
       a.btn.btn-warning ui-sref='org.projects.list.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
         span.glyphicon.glyphicon-pencil
     api-id-label.pull-right api-id='project.id' tooltip='Project ID'
@@ -15,6 +17,9 @@
         dd {{ project.testsCount - project.deprecatedTestsCount }}
         dt Creation Date
         dd {{ project.createdAt | amDateFormat:'llll' }}
+        dt ng-if='project.repoUrl' Code repository
+        dd.repo-link ng-if='project.repoUrl'
+          a href='{{ project.repoUrl }}' target='_blank' {{ project.repoUrl }}
       p.text-info.text-center ng-if='!project.testsCount'
         ' No test results have been published for this project.
         ' Follow the

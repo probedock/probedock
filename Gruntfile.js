@@ -66,6 +66,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/dropzone/dist/dropzone.css', dest: 'vendor/assets/stylesheets/dropzone.css' },
           // fonts
           { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
+          { nonull: true, cwd: 'bower_components/font-awesome/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
           // flash
           { nonull: true, src: 'bower_components/zeroclipboard/dist/ZeroClipboard.swf', dest: 'vendor/assets/flash/zero-clipboard.swf' }
         ]
@@ -82,6 +83,20 @@ module.exports = function(grunt) {
               .replace(/url\(\'\@\{icon-font-path\}\@\{icon-font-name\}/g, 'asset-url(\'glyphicons-halflings-regular')
               .replace(/\@\{icon-font-svg-id\}/g, 'glyphicons_halflingsregular')
               .replace(/\/\*\#.*\*\//, '');
+          }
+        }
+      },
+
+      fontAwesome: {
+        expand: true,
+        cwd: 'bower_components/font-awesome/less',
+        src: ['**/*less'],
+        dest: 'vendor/assets/stylesheets/font-awesome/',
+        options: {
+          process: function (content) {
+            return content
+              .replace(/url\(\'@\{fa-font-path\}\//g, 'asset-url(\'')
+              .replace(/(\?|&)v=@\{fa-version\}/g, '');
           }
         }
       }
@@ -108,5 +123,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-raml2boot');
 
   grunt.registerTask('default', [ 'jshint' ]);
-  grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap' ]);
+  grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap', 'copy:fontAwesome' ]);
 };
