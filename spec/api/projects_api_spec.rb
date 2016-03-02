@@ -21,9 +21,9 @@ RSpec.describe ProbeDock::ProjectsApi do
   let(:organization){ create :organization }
   let(:user){ create :org_admin, organization: organization }
 
-  describe "POST /api/projects" do
+  describe 'POST /api/projects' do
 
-    it "should create a project" do
+    it 'should create a project' do
 
       expect do
         api_post '/api/projects', { name: 'probedock', organizationId: organization.api_id }.to_json, user: user
@@ -42,7 +42,7 @@ RSpec.describe ProbeDock::ProjectsApi do
       })
     end
 
-    it "should not create an invalid project" do
+    it 'should not create an invalid project' do
 
       expect do
         api_post '/api/projects', { organizationId: organization.api_id, description: 's' * 1001 }.to_json, user: user
@@ -53,6 +53,13 @@ RSpec.describe ProbeDock::ProjectsApi do
         { reason: 'null', location: '/name', locationType: 'json', message: /cannot be null/ },
         { reason: 'tooLong', location: '/description', locationType: 'json', message: /too long/ }
       ])
+    end
+  end
+
+  describe 'GET /api/projects' do
+    it 'should return an empty array when no project exists', probedock: { key: 'vi1n' } do
+      api_get '/api/projects', query: { organizationId: organization.api_id }, user: user
+      expect(response).to be_empty_json_array
     end
   end
 end

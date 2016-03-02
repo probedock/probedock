@@ -15,22 +15,3 @@ _.isPresent = function(value) {
 _.isBlank = function(value) {
   return !_.isPresent(value);
 };
-
-// Code from: http://stackoverflow.com/a/6491621
-_.deepFind = function(obj, path) {
-  path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-  path = path.replace(/^\./, '');           // strip a leading dot
-
-  var a = path.split('.');
-
-  for (var i = 0, n = a.length; i < n; ++i) {
-    var k = a[i];
-    if (k in obj) {
-      obj = obj[k];
-    } else {
-      return;
-    }
-  }
-
-  return obj;
-};

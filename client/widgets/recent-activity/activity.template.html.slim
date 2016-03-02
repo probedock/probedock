@@ -8,24 +8,17 @@
       em No tests have been run recently.
   .list-group ng-if='reports.length'
     .list-group-item ng-repeat='report in reports'
-      span.singleRunner ng-if='report.runners.length == 1'
+      span.single-runner ng-if='report.runners.length == 1'
         user-avatar ng-if='report.runners.length == 1' user='report.runners[0]'
         strong.name {{ report.runners[0].name }}
-      span.multipleRunners ng-if='report.runners.length >= 2'
+      span.multiple-runners ng-if='report.runners.length >= 2'
         span.runner ng-repeat='runner in report.runners'
           user-avatar user='runner' name-tooltip='true'
       '  ran some tests
       span.time.hidden-xs am-time-ago='report.endedAt'
+      '
       span.labels
-        '
-        span ng-repeat='reportProject in report.projects'
-          span.label.label-primary ng-repeat='version in report.projectVersions | filter: {projectId: reportProject.id}'
-            a.label-link href='#' ng-if='reportProject.id != project.id' ui-sref='org.projects.show({ orgName: organization.name, projectName: reportProject.name })' {{ reportProject | projectName }} {{ version.name }}
-            span ng-if='reportProject.id == project.id' {{ reportProject | projectName }} {{ version.name }}
-          '
-        span ng-repeat='category in report.categories'
-          span.label.label-info {{ category }}
-          '
+        report-data-labels organization='organization' report='report' for-project='project' versions-only='project' linkable='linkToVersion'
       .details
         a href='#' ui-sref='org.reports.show({ id: report.id })'
           report-health-bar report='report' click-for-details=true

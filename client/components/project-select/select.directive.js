@@ -9,7 +9,7 @@ angular.module('probedock.projectSelect').directive('projectSelect', function() 
       modelProperty: '@',
       prefix: '@',
       placeholder: '@',
-      noLabel: '@'
+      noLabel: '=?'
     }
   };
 }).controller('ProjectSelectCtrl', function(api, $scope) {
@@ -17,23 +17,12 @@ angular.module('probedock.projectSelect').directive('projectSelect', function() 
     throw new Error("The prefix attribute on project-select directive is not set.");
   }
 
-  if (!$scope.modelProperty) {
-    $scope.modelProperty = "projectIds";
-  }
-
-  if (_.isUndefined($scope.noLabel)) {
-    $scope.noLabel = false;
-  }
-
-  $scope.projectChoices = [];
-
-  $scope.getPlaceholder = function() {
-    if ($scope.placeholder) {
-      return $scope.placeholder;
-    } else {
-      return 'All projects';
-    }
-  };
+  _.defaults($scope, {
+    modelProperty: 'projectIds',
+    placeholder: 'All projects',
+    noLabel: false,
+    projectChoices: []
+  });
 
   $scope.$watch('organization', function(value) {
     if (value) {

@@ -37,6 +37,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-animate/angular-animate.js', dest: 'vendor/assets/javascripts/angular-animate.js' },
           { nonull: true, src: 'bower_components/angular-sanitize/angular-sanitize.js', dest: 'vendor/assets/javascripts/angular-sanitize.js' },
           { nonull: true, src: 'bower_components/angular-ui-router/release/angular-ui-router.js', dest: 'vendor/assets/javascripts/angular-ui-router.js' },
+          { nonull: true, src: 'bower_components/angular-ui-router-title/angular-ui-router-title.js', dest: 'vendor/assets/javascripts/angular-ui-router-title.js' },
           { nonull: true, src: 'bower_components/angular-bootstrap/ui-bootstrap-tpls.js', dest: 'vendor/assets/javascripts/angular-ui-bootstrap-tpls.js' },
           { nonull: true, src: 'bower_components/a0-angular-storage/dist/angular-storage.js', dest: 'vendor/assets/javascripts/angular-local-storage.js' },
           { nonull: true, src: 'bower_components/angular-moment/angular-moment.js', dest: 'vendor/assets/javascripts/angular-moment.js' },
@@ -65,6 +66,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/dropzone/dist/dropzone.css', dest: 'vendor/assets/stylesheets/dropzone.css' },
           // fonts
           { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
+          { nonull: true, cwd: 'bower_components/font-awesome/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
           // flash
           { nonull: true, src: 'bower_components/zeroclipboard/dist/ZeroClipboard.swf', dest: 'vendor/assets/flash/zero-clipboard.swf' }
         ]
@@ -81,6 +83,20 @@ module.exports = function(grunt) {
               .replace(/url\(\'\@\{icon-font-path\}\@\{icon-font-name\}/g, 'asset-url(\'glyphicons-halflings-regular')
               .replace(/\@\{icon-font-svg-id\}/g, 'glyphicons_halflingsregular')
               .replace(/\/\*\#.*\*\//, '');
+          }
+        }
+      },
+
+      fontAwesome: {
+        expand: true,
+        cwd: 'bower_components/font-awesome/less',
+        src: ['**/*less'],
+        dest: 'vendor/assets/stylesheets/font-awesome/',
+        options: {
+          process: function (content) {
+            return content
+              .replace(/url\(\'@\{fa-font-path\}\//g, 'asset-url(\'')
+              .replace(/(\?|&)v=@\{fa-version\}/g, '');
           }
         }
       }
@@ -107,5 +123,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-raml2boot');
 
   grunt.registerTask('default', [ 'jshint' ]);
-  grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap' ]);
+  grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap', 'copy:fontAwesome' ]);
 };

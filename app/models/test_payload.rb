@@ -25,6 +25,7 @@ class TestPayload < ActiveRecord::Base
   has_many :results, class_name: 'TestResult'
   has_and_belongs_to_many :test_keys
   has_and_belongs_to_many :test_reports
+  has_and_belongs_to_many :categories
 
   scope :waiting_for_processing, -> { select((column_names - %w(contents) + [ "contents->'projectId' as raw_project", "contents->'version' as raw_project_version", "contents->'duration' as raw_duration", "contents->'reports' as raw_reports" ])).where(state: :created).order('received_at ASC') }
 

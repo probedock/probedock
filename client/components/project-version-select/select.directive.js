@@ -5,51 +5,40 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     templateUrl: '/templates/components/project-version-select/select.template.html',
     scope: {
       organization: '=',
-      project: '=',
+      project: '=?',
+      test: '=?',
       modelObject: '=',
       modelProperty: '@',
       latestVersion: '=',
       prefix: '@',
       createNew: '=?',
       autoSelect: '=?',
-      multiple: '=?',
       placeholder: '@',
-      noLabel: '@',
+      label: '@',
+      noLabel: '=?',
+      multiple: '=?',
       uniqueBy: '@',
       extract: '@',
       allowClear: '=?'
     }
   };
-}).controller('ProjectVersionSelectCtrl', function(api, $scope) {
+}).controller('ProjectVersionSelectCtrl', function(api, $scope, projectVersions) {
   if (!$scope.prefix) {
     throw new Error("The prefix attribute on project-version-select directive is not set.");
   }
 
-  if (!$scope.modelProperty) {
-    if ($scope.multiple) {
-      $scope.modelProperty = 'projectVersionIds';
-    } else {
-      $scope.modelProperty = 'projectVersionId'
-    }
-  }
-
-  if (_.isUndefined($scope.extract)) {
-    $scope.extract = 'id';
-  }
-
-  if (_.isUndefined($scope.noLabel)) {
-    $scope.noLabel = false;
-  }
-
-  if (_.isUndefined($scope.allowClear)) {
-    $scope.allowClear = true;
-  }
-
-  $scope.config = {
-    newVersion: false
-  };
-
-  $scope.projectVersionChoices = [];
+  _.defaults($scope, {
+    modelProperty: $scope.multiple ? 'projectVersionIds' : 'projectVersionId',
+    label: 'Version',
+    allowClear: true,
+    multiple: false,
+    noLabel: false,
+    extract: 'id',
+    config: {
+      newVersion: false
+    },
+    projectVersionChoices: []
+  });
 
   $scope.$watch('organization', function(value) {
     if (value) {
@@ -60,6 +49,12 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
   $scope.$watch('project', function(value) {
     if (value && !$scope.organization) {
       $scope.fetchProjectVersionChoices();
+    }
+  });
+
+  $scope.$watch('test', function(value) {
+    if (value) {
+      fetchProjectVersionChoices();
     }
   });
 
@@ -103,6 +98,10 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       params.search = version;
     }
 
+    if ($scope.test) {
+      params.testId = $scope.test.id;
+    }
+
     api({
       url: '/projectVersions',
       params: params
@@ -112,6 +111,8 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       } else {
         $scope.projectVersionChoices = res.data;
       }
+
+      $scope.projectVersionChoices = projectVersions.sort(res.data);
 
       if ($scope.projectVersionChoices.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one

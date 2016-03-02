@@ -1,9 +1,8 @@
 .project-health-widget.panel.panel-default
   .panel-heading
-    h3.panel-title Project health
-    // FIXME: Wait PR <= 36
     help-button
       p This widget show the results of the latest report for the most recent version and the oldest technical user in the organization. If there is no technical user, a fallback is done to show the most recent version for any runner.
       p You can use the version and runner filters to change the report. When the filters are applied, the most recent report is retrieved corresponding to the criteria. If there is no report corresponding to the selected runner, the runner criteria is relaxed and then the most recent report for the version is retrieved.
+    h3.panel-title Project health
   .panel-body
-    test-run-state-widget organization='organization' project='project' use-latest-version='true' chart-height='125'
+    test-run-state-widget organization='organization' project='project' use-latest-version='true' chart-height='125' link-to-version='linkToVersion'

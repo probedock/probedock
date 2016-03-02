@@ -1,0 +1,58 @@
+.test-execution-time-widget.panel.panel-default
+  .panel-heading
+    help-button
+      p This widget shows the execution time history for this specific test in chronological order (from older runs to newer). By default, it only shows the execution time of the latest {{ pageSize }} results. If you choose to load older results, they will be added to the beginning of the curve as they are older. Only a maximum of {{ maxResults }} results can be shown.
+      p By default, the execution time history is shown across all versions of the project. You may use the version dropdown to display only the history of a specific version. If there are versions for which the test was never run, they will not be available to filter.
+    h3.panel-title Execution time
+  .panel-body
+    .row ng-if='loading'
+      .col-md-12
+        p Loading...
+    .row ng-if='!loading && results.length === 0'
+      .col-md-12
+        p.empty No results match the current filters.
+    .row ng-if='!loading'
+      .col-md-12
+        p
+          span ng-if='results.length == 1' There is only one available result and its execution time is {{ results[0].duration | formatDuration }}.
+          span ng-if='results.length > 1' Showing results {{ range.down }}-{{ range.up }} out of {{ pagination.total }} available results.
+    .row.chart-row ng-if='results.length > 1'
+      .col-md-12
+        canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+    .row.stats-row ng-if='results.length > 1'
+      table
+        tr
+          td.text-center rowspan='3'
+            button.btn.btn-link type='button' ng-if='hasPrev' ng-click='fetchPrev()' tooltip='Show older results'
+              i.glyphicon.glyphicon-chevron-left
+            button.btn.btn-link type='button' ng-if='!hasPrev' disabled=true
+              i.glyphicon.glyphicon-chevron-left
+          td.text-center
+            strong Oldest
+          td
+            strong Max:
+          td.text-right {{ stats.maxDuration | formatDuration: 1 }}
+          td.text-center
+            strong Latest
+          td.text-center rowspan='3'
+            button.btn.btn-link type='button' ng-if='hasNext' ng-click='fetchNext()' tooltip='Show recent results'
+              i.glyphicon.glyphicon-chevron-right
+            button.btn.btn-link type='button' ng-if='!hasNext' disabled=true
+              i.glyphicon.glyphicon-chevron-right
+        tr
+          td.text-center {{ results[0].runAt | amDateFormat: 'DD.MM.YYYY' }}
+          td
+            strong Min:
+          td.text-right {{ stats.minDuration | formatDuration: 1 }}
+          td.text-center {{ results[results.length - 1].runAt | amDateFormat: 'DD.MM.YYYY' }}
+        tr
+          td.text-center {{ results[0].runAt | amDateFormat: 'HH:mm:ss' }}
+          td
+            strong Avg:
+          td.text-right {{ stats.averageDuration | formatDuration: 1 }}
+          td.text-center {{ results[results.length - 1].runAt | amDateFormat: 'HH:mm:ss' }}
+    .row
+      .col-md-6
+        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
+      .col-md-6
+        user-select prefix='test-results' organization='organization' model-object='params' label='Filter by runner' placeholder='All runners' multiple='true'

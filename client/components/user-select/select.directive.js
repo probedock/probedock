@@ -9,10 +9,10 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
       modelProperty: '@',
       prefix: '@',
       placeholder: '@',
-      noLabel: '@',
       multiple: '=?',
       allowClear: '=?',
-      label: '@'
+      label: '@',
+      noLabel: '=?'
     }
   };
 }).controller('UserSelectCtrl', function(api, $scope) {
@@ -20,39 +20,15 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
     throw new Error("The prefix attribute on user-select directive is not set.");
   }
 
-  if (_.isUndefined($scope.multiple)) {
-    $scope.multiple = true;
-  }
-
-  if (_.isUndefined($scope.allowClear)) {
-    $scope.allowClear = true;
-  }
-
-  if (!$scope.modelProperty) {
-    if ($scope.multiple) {
-      $scope.modelProperty = 'userIds';
-    } else {
-      $scope.modelProperty = 'userId';
-    }
-  }
-
-  if (_.isUndefined($scope.label)) {
-    $scope.label = 'Filter by user';
-  }
-
-  if (_.isUndefined($scope.noLabel)) {
-    $scope.noLabel = false;
-  }
-
-  $scope.userChoices = [];
-
-  $scope.getPlaceholder = function() {
-    if (!_.isUndefined($scope.placeholder)) {
-      return $scope.placeholder;
-    } else {
-      return 'All users';
-    }
-  };
+  _.defaults($scope, {
+    modelProperty: $scope.multiple ? 'userIds' : 'userId',
+    placeholder: 'All users',
+    label: 'Filter by user',
+    allowClear: true,
+    multiple: false,
+    noLabel: false,
+    userChoices: []
+  });
 
   $scope.$watch('organization', function(value) {
     if (value) {

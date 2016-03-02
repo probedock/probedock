@@ -19,19 +19,20 @@ require 'spec_helper'
 
 describe Category do
 
-  context "validations" do
+  context 'validations' do
+    it(nil, probedock: { key: 'd9r4' }){ should have_validations_on(:name, :organization)}
     it(nil, probedock: { key: 'ba6a34e19289' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: '5e7b05650570' }){ should validate_length_of(:name).is_at_most(50) }
 
-    context "with an existing category" do
+    context 'with an existing category' do
       let!(:category){ create :category }
 
       it(nil, probedock: { key: '4fe83eacb8be' }){ should validate_uniqueness_of(:name).scoped_to(:organization_id) }
 
-      context "with quick validation" do
+      context 'with quick validation' do
         before(:each){ subject.quick_validation = true }
 
-        it "should not validate the uniqueness of name", probedock: { key: 'dd74d78ce79b' } do
+        it 'should not validate the uniqueness of name', probedock: { key: 'dd74d78ce79b' } do
           subject.name = category.name
           subject.organization = category.organization
           expect{ subject.save! }.to raise_unique_error
@@ -40,12 +41,18 @@ describe Category do
     end
   end
 
-  context "associations" do
+  context 'associations' do
+    it(nil, probedock: { key: 'dk4z' }){ should have_associations(:organization, :test_descriptions, :test_results, :test_payloads) }
+    it(nil, probedock: { key: 'wnlv' }){ should belong_to(:organization) }
     it(nil, probedock: { key: '5a536979f346' }){ should have_many(:test_descriptions) }
+    it(nil, probedock: { key: '7e3k' }){ should have_many(:test_results) }
+    it(nil, probedock: { key: 'mo4v' }){ should have_and_belong_to_many(:test_payloads) }
   end
 
   context "database table" do
+    it(nil, probedock: { key: '2sfh' }){ should have_db_columns(:id, :organization_id, :name, :created_at, )}
     it(nil, probedock: { key: '4c2d12b4392b' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
+    it(nil, probedock: { key: '1dnz' }){ should have_db_column(:organization_id).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: '36105d8b309b' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probedock: { key: '45ec9284a110' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probedock: { key: '542503b7d3f5' }){ should have_db_index([ :name, :organization_id ]).unique(true) }

@@ -7,11 +7,12 @@
     em No report matching the criteria.
   div ng-if='report'
     p.text-info
-      // FIXME: Replace by the label directive from PR <= 36
       ng-pluralize count='report.resultsCount' when='{"1": "One result", "other": "{} results"}'
       '  of the last report
       span ng-if='!filtersDisabled' ng-repeat='version in report.projectVersions | filter: { id: params.projectVersionId }'
-        ' for version {{ version.name }}
+        ' for version
+        project-version-label organization='organization' project='project' project-version='version.name' version-only='true' linkable='linkToVersion'
+        '
       | sent by:
     .runners.text-center
       span ng-repeat='runner in report.runners'
@@ -28,12 +29,8 @@
     .versions ng-if='filtersDisabled'
       strong
         ng-pluralize count='report.projectVersions.length' when='{"1": "Version:", "other": "Versions:"}'
-      // FIXME: Replace by the label directive from PR <= 36
       span ng-repeat='version in report.projectVersions | filter: { projectId: project.id }'
-        '
-        span {{ version.name }}
-        span ng-if='!$last'
-          ' ,
+        project-version-label organization='organization' project='project' project-version='version.name' version-only='true'
 
   form.form role='form' ng-if='!filtersDisabled'
     .col-md-6

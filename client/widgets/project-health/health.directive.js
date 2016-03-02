@@ -2,9 +2,15 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
   return {
     restrict: 'E',
     templateUrl: '/templates/widgets/project-health/health.template.html',
+    controller: 'ProjectHealthWidgetCtrl',
     scope: {
       organization: '=',
-      project: '='
+      project: '=',
+      linkToVersion: '='
     }
   };
+}).controller('ProjectHealthWidgetCtrl', function($scope) {
+  _.defaults($scope, {
+    linkToVersion: true
+  });
 });

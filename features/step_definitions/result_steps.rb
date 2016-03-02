@@ -41,6 +41,8 @@ Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) an
       add_named_record(category_name, category)
     end
 
+    payload.categories << category
+
     options[:category] = category
   end
 
@@ -51,7 +53,6 @@ Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) an
   end
 
   test_result = add_named_record(name, create(:test_result, options))
-
 
   test_description = TestDescription.where(test_id: test.id).where(project_version_id: project_version.id).first
 

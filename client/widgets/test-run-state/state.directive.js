@@ -8,14 +8,16 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
       project: '=',
       filtersDisabled: '=?',
       useLatestVersion: '=?',
-      chartHeight: '@'
+      chartHeight: '@',
+      linkToVersion: '=?'
     }
   };
 }).controller('TestRunStateWidgetCtrl', function(api, $scope) {
   // Set default configuration for the directive
   _.defaults($scope, {
     filtersDisabled: false,
-    useLatestVersion: false
+    useLatestVersion: false,
+    linkToVersion: true
   });
 
   var avoidFetchByParams = true;
