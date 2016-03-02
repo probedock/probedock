@@ -129,7 +129,7 @@ module ProbeDock
     config.generators.assets = false
     config.generators.helper = false
 
-    %w(api policies validations).each do |name|
+    %w(api policies validations validators).each do |name|
       config.paths.add File.join('app', name), glob: File.join('**', '*.rb')
       config.autoload_paths += Dir[Rails.root.join('app', name, '*')]
     end

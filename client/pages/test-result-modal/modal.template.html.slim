@@ -28,8 +28,8 @@
       tr
         th Run
         th By
-        th.text-right Duration
-        th.text-right Status
+        th.text-center Duration
+        th.text-center Status
     tbody
       tr
         td.text-vertical-middle {{ result.runAt | amDateFormat: 'lll' }}
@@ -37,9 +37,9 @@
           user-avatar user='result.runner'
           '
           | {{ result.runner.name }}
-        td.text-vertical-middle.text-right {{ result.duration | formatDuration }}
-        td.text-vertical-middle.text-right
-          result-status-icon result='result'
+        td.text-vertical-middle.text-center {{ result.duration | formatDuration }}
+        td.text-vertical-middle.text-center
+          test-status-icon result='result'
 
     table.small-table.table.visble-sm.hidden-md.hidden-lg
       tbody
@@ -78,7 +78,7 @@
         tr
           th Status
           td
-            result-status-icon result='result'
+            test-status-icon result='result'
 
   pre ng-if='result.message' {{ result.message }}
 

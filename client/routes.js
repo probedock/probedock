@@ -250,6 +250,10 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
           $title: function($stateParams) { return buildTitle($stateParams, 'Projects', ':projectName'); }
         }
       })
+
+      .state('org.projects.show.edit', {
+        url: '/edit'
+      })
     ;
 
     $urlRouterProvider.otherwise(function($injector) {

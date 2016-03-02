@@ -10,9 +10,9 @@ angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', fu
     }
   }).then(showProjects);
 
-  $scope.$on('$stateChangeSuccess', function(event, toState) {
+  $scope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {
     if (toState.name.match(/^org.projects.list.(?:new|edit)$/)) {
-      modal = projectEditModal.open($scope);
+      modal = projectEditModal.open($scope, { projectId: toStateParams.id });
 
       modal.result.then(function(project) {
         api.pushOrUpdate($scope.projects, project);
