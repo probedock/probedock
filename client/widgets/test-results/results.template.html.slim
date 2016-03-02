@@ -11,7 +11,7 @@
     .row ng-if='!loading && results.length === 0'
       .col-md-12
         p.empty No results match the current filters.
-    .row ng-if='!loading && results.length > 0'
+    .row ng-if='results.length > 0'
       .col-md-12
         p
           a.pull-right.more href='#' ng-if='nextChunk > 0' ng-click='fetchMore()'
