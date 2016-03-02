@@ -17,16 +17,16 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
   _.defaults($scope, {
     filtersDisabled: false,
     useLatestVersion: false,
-    linkToVersion: true
+    linkToVersion: true,
+    chartHeight: 200,
+    params: {
+      projectVersionId: null,
+      runnerId: null
+    }
   });
 
   var avoidFetchByParams = true;
   var paramsManuallyUpdated = false;
-
-  $scope.params = {
-    projectVersionId: null,
-    runnerId: null
-  };
 
   if ($scope.useLatestVersion) {
     fetchLatestVersion();
