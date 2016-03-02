@@ -11,7 +11,7 @@ angular.module('probedock.testStatusIcon').directive('testStatusIcon', function(
 }).controller('TestStatusIconCtrl', function($scope) {
   $scope.ready = false;
 
-  $scope.$watch('result', function (value) {
+  $scope.$watch('test', function (value) {
     if (value) {
       $scope.passed = $scope.result.passing && $scope.result.active;
       $scope.failed = !$scope.result.passing && $scope.result.active;
@@ -20,7 +20,7 @@ angular.module('probedock.testStatusIcon').directive('testStatusIcon', function(
     }
   });
 
-  $scope.$watch('test', function (value) {
+  $scope.$watch('result', function (value) {
     if (value) {
       $scope.passed = $scope.test.passed && $scope.test.active;
       $scope.failed = !$scope.test.passed && $scope.test.active;
