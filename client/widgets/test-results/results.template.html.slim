@@ -5,16 +5,17 @@
       p By default, results are shown for all versions of the project. You may use the version dropdown to see only the test results received for a specific version. If there are versions for which the test was never run, they will not be available to filter, but will be listed below the results.
     h3.panel-title Result history
   .panel-body
-    .row ng-if='loading'
+    .row ng-if='loading && results.length === 0'
       .col-md-12
         p Loading...
     .row ng-if='!loading && results.length === 0'
       .col-md-12
         p.empty No results match the current filters.
-    .row ng-if='!loading && results.length > 0'
+    .row.row-labels ng-if='results.length > 0'
       .col-md-12
         p
-          a.pull-right.more href='#' ng-if='nextChunk > 0' ng-click='fetchMore()'
+          p.pull-right ng-if='loading && results.length > 0' Loading...
+          a.pull-right.more href='#' ng-if='!loading && nextChunk > 0' ng-click='fetchMore()'
             ng-pluralize count='nextChunk' when='{"1": "Load one more result...", "other": "Load {} more results..."}'
           span ng-if='results.length == 1' There is only one available result.
           span ng-if='results.length > 1 && results.length < pagination.total' Showing the latest {{ results.length }} results ouf of {{ pagination.total }} available results.
@@ -27,7 +28,7 @@
           ' There is no result for
           ng-pluralize count='missingVersions.length' when='{"1": "this version:", "other": "these versions:"}'
           project-version-label ng-repeat='missingVersion in missingVersions' project-version='missingVersion.name'
-    .row
+    .row ng-if='results.length > 0'
       .col-md-6
         project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
       .col-md-6

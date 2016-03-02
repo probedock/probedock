@@ -11,20 +11,20 @@ angular.module('probedock.testStatusIcon').directive('testStatusIcon', function(
 }).controller('TestStatusIconCtrl', function($scope) {
   $scope.ready = false;
 
-  $scope.$watch('result', function (value) {
+  $scope.$watch('test', function (value) {
     if (value) {
-      $scope.passed = $scope.result.passing && $scope.result.active;
-      $scope.failed = !$scope.result.passing && $scope.result.active;
-      $scope.active = !$scope.result.active;
+      $scope.passed = $scope.test.passing && $scope.test.active;
+      $scope.failed = !$scope.test.passing && $scope.test.active;
+      $scope.active = !$scope.test.active;
       $scope.ready = true;
     }
   });
 
-  $scope.$watch('test', function (value) {
+  $scope.$watch('result', function (value) {
     if (value) {
-      $scope.passed = $scope.test.passed && $scope.test.active;
-      $scope.failed = !$scope.test.passed && $scope.test.active;
-      $scope.active = !$scope.test.active;
+      $scope.passed = $scope.result.passed && $scope.result.active;
+      $scope.failed = !$scope.result.passed && $scope.result.active;
+      $scope.active = !$scope.result.active;
       $scope.ready = true;
     }
   });
