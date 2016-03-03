@@ -153,6 +153,9 @@
       become: yes
       become_user: vagrant
       tags: [rbenv]
+    - name: configure rubygems
+      copy: src=gemrc dest="/home/vagrant/.gemrc" owner=vagrant group=vagrant
+      tags: [rbenv]
     - name: install ruby dependencies
       apt: name={{ item }} state=present
       with_items:
@@ -177,15 +180,17 @@
       register: install_ruby_result
       tags: [rbenv]
     - name: install bundler
-      gem: name=bundler executable={{ rbenv_path }}/shims/gem
+      shell: gem install bundler chdir=/vagrant
       environment:
         RBENV_VERSION: "{{ ruby_version }}"
+        PATH: "{{ rbenv_path }}/bin:{{ rbenv_path }}/shims:{{ ansible_env.PATH }}"
       become: yes
       become_user: vagrant
       tags: [rbenv]
     - name: rehash rbenv
-      shell: rbenv rehash chdir=/home/vagrant
+      shell: rbenv rehash chdir=/vagrant
       environment:
+        RBENV_VERSION: "{{ ruby_version }}"
         PATH: "{{ rbenv_path }}/bin:{{ rbenv_path }}/shims:{{ ansible_env.PATH }}"
       changed_when: false
       tags: [rbenv]
