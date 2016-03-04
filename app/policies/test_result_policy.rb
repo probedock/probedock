@@ -21,7 +21,13 @@ class TestResultPolicy < ApplicationPolicy
   end
 
   class Serializer < Serializer
-    def to_builder options = {}
+    include ScmHelper
+
+    def to_builder(options = {})
+      payload = options[:payloads].find{ |p| p.id == record.test_payload_id } if options[:payloads]
+
+      source_url = build_source_url(record, record.project_version.project, payload)
+
       Jbuilder.new do |json|
         json.id record.id
         json.name record.name
@@ -40,6 +46,10 @@ class TestResultPolicy < ApplicationPolicy
         json.project serialize(record.project_version.project, link: true)
         json.projectVersion record.project_version.name
         json.runAt record.run_at.iso8601(3)
+        json.sourceUrl source_url if source_url
+        if options[:with_scm]
+          json.scm build_scm_data(payload)
+        end
       end
     end
   end

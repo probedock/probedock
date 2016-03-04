@@ -26,7 +26,30 @@ class TestPayload < ActiveRecord::Base
   has_and_belongs_to_many :test_keys
   has_and_belongs_to_many :test_reports
 
-  scope :waiting_for_processing, -> { select((column_names - %w(contents) + [ "contents->'projectId' as raw_project", "contents->'version' as raw_project_version", "contents->'duration' as raw_duration", "contents->'reports' as raw_reports" ])).where(state: :created).order('received_at ASC') }
+  scope :waiting_for_processing, -> do
+    select((column_names - %w(contents) + [
+      "contents->'projectId' as raw_project",
+      "contents->'version' as raw_project_version",
+      "contents->'duration' as raw_duration",
+      "contents->'reports' as raw_reports"
+    ])).where(state: :created).order('received_at ASC')
+  end
+
+  # Scope to retrieve the payloads with the SCM data
+  scope :with_scm_data, -> do
+    select((column_names - %w(contents) + [
+      "contents->'context'->'scm.name' as scm_name",
+      "contents->'context'->'scm.version' as scm_version",
+      "contents->'context'->'scm.commit' as scm_commit",
+      "contents->'context'->'scm.branch' as scm_branch",
+      "contents->'context'->'scm.dirty' as scm_branch",
+      "contents->'context'->'scm.remote.name' as scm_remote_name",
+      "contents->'context'->'scm.remote.url.fetch' as scm_remote_fetch_url",
+      "contents->'context'->'scm.remote.url.push' as scm_remote_push_url",
+      "contents->'context'->'scm.remote.ahead' as scm_remote_ahead",
+      "contents->'context'->'scm.remote.behind' as scm_remote_behind"
+    ]))
+  end
 
   include SimpleStates
   states :created, :processing, :processed, :failed
