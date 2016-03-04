@@ -16,14 +16,6 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     }
   });
 
-  $scope.$on('reportsList.filter', function() {
-    $scope.filtering = true;
-  });
-
-  $scope.$on('reportsList.filtered', function() {
-    $scope.filtering = false;
-  });
-
   $scope.$on('reportsList.refresh', function() {
     $scope.noNewReports = false;
     if (hideNoNewReportsPromise) {
