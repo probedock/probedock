@@ -8,8 +8,9 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
       modelObject: '=',
       modelProperty: '@',
       prefix: '@',
-      fieldLabel: '@',
-      fieldPlaceholder: '@'
+      placeholder: '@',
+      label: '@',
+      noLabel: '=?'
     }
   };
 }).controller('UserSelectCtrl', function(api, $scope) {
@@ -21,28 +22,38 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
     $scope.modelProperty = "userIds";
   }
 
-  if (_.isUndefined($scope.fieldLabel)) {
-    $scope.fieldLabel = 'Filter by user';
+  if (_.isUndefined($scope.noLabel)) {
+    $scope.noLabel = false;
   }
 
-  if (_.isUndefined($scope.fieldPlaceholder)) {
-    $scope.fieldPlaceholder = 'All users';
+  if (_.isUndefined($scope.label)) {
+    $scope.label = 'Filter by user';
+  }
+
+  if (_.isUndefined($scope.placeholder)) {
+    $scope.placeholder = 'All users';
   }
 
   $scope.userChoices = [];
 
   $scope.$watch('organization', function(value) {
     if (value) {
-      fetchUserChoices();
+      $scope.fetchUserChoices();
     }
   });
 
-  function fetchUserChoices() {
+  $scope.fetchUserChoices = function(userName) {
+    var params = {
+      organizationId: $scope.organization.id
+    };
+
+    if (userName) {
+      params.search = userName;
+    }
+
     api({
       url: '/users',
-      params: {
-        organizationId: $scope.organization.id
-      }
+      params: params
     }).then(function(res) {
       $scope.userChoices = res.data;
     });

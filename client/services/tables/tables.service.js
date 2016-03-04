@@ -5,7 +5,8 @@ angular.module('probedock.tables').factory('tables', function(api) {
 
       var list = $scope[name] = {
         initialized: false,
-        records: []
+        records: [],
+        params: {}
       };
 
       list.refresh = function(table) {
@@ -13,7 +14,7 @@ angular.module('probedock.tables').factory('tables', function(api) {
         table.pagination.start = table.pagination.start || 0;
         table.pagination.number = table.pagination.number || options.pageSize || 15;
 
-        var params = _.extend({}, options.params, {
+        var params = _.extend({}, options.params, list.params, {
           page: table.pagination.start / table.pagination.number + 1,
           pageSize: table.pagination.number
         });
@@ -32,6 +33,7 @@ angular.module('probedock.tables').factory('tables', function(api) {
 
         function updateRecords(res) {
           list.records = res.data;
+
           $scope.$broadcast(name + '.refreshed', list, table);
           list.initialized = true;
         }

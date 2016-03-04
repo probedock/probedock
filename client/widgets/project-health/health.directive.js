@@ -36,8 +36,8 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
   function fetchMetrics() {
     var params = {};
 
-    if ($scope.chart.params.projectVersion) {
-      params.projectVersionId = $scope.chart.params.projectVersion.id;
+    if ($scope.chart.params.projectVersionId) {
+      params.projectVersionId = $scope.chart.params.projectVersionId;
     } else {
       params.projectId = $scope.project.id;
     }

@@ -5,40 +5,77 @@
     tabset type='pills'
       tab ui-sref='org.reports' active='activeTabs.latest'
         tab-heading Latest Reports
-        table.latest-reports.table.table-striped.table-hover st-pipe='reportsList.refresh' st-table='reportsList.records'
-          thead
-            tr
-              th.results.clearfix
-                | Results
-                .pull-right
-                  span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
-                  refresh-table
-              th.runners Runner(s)
-              th.duration.hidden-xs.hidden-sm Duration
-              th.date.hidden-xs.hidden-sm.hidden-md Date
-              th.details.hidden-xs Details
-          tbody
-            tr.empty ng-show='!reportsList.initialized'
-              td colspan=5 Loading...
-            tr.empty ng-show='!reportsList.records.length && reportsList.initialized'
-              td colspan=5
-                em No tests have been run recently.
-            tr ng-repeat='report in reportsList.records'
-              td.results
-                a href='#' ui-sref='org.reports.show({ id: report.id })'
-                  report-health-bar report='report' click-for-details=true
-              td.runners
-                span ng-repeat='runner in report.runners.slice(0, 3)'
-                  user-avatar user='runner'
-                  span.name.hidden-xs  {{ runner.name }}
-              td.duration.hidden-xs.hidden-sm {{ report.duration | formatDuration:2 }}
-              td.date.hidden-xs.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
-              td.details.hidden-xs
-                report-data-labels organization='organization' report='report'
-
-          tfoot
-            tr
-              td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
+        .row st-pipe='reportsList.refresh' st-table='reportsList.records'
+          .col-md-12
+            .well.filters st-filters='reportsList.params' class='{{ filtersClass }}'
+              .row
+                .col-lg-3.col-md-6
+                  user-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='runnerIds' placeholder='All Runners'
+                .col-lg-3.col-md-6
+                  project-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params'
+                .col-lg-3.col-md-6
+                  project-version-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='projectVersionNames' multiple='true' unique-by='name' extract='name' label='Filter by version'
+                .col-lg-3.col-md-6
+                  category-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' multiple='true' label='Filter by category'
+            .row
+              .col-md-12
+                table.latest-reports.table.table-striped.table-hover
+                  thead
+                    tr.hidden-xs
+                      th.results.clearfix
+                        | Results
+                        .pull-right
+                          span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
+                          refresh-table
+                      th.runners
+                        | Runners
+                        .pull-right.visible-xs
+                          a.btn.btn-primary.btn-xs tooltip='Filters' tooltip-append-to-body='true' ng-click='toggleFilters()'
+                            span.glyphicon.glyphicon-search
+                      th.duration.hidden-xs.hidden-sm Duration
+                      th.date.hidden-xs.hidden-sm.hidden-md Date
+                      th.details.hidden-xs Details
+                    tr.visible-xs
+                      th
+                        | Results
+                        .pull-right
+                          span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
+                          .btn-group
+                            refresh-table
+                            a.btn.btn-primary.btn-xs tooltip='Filters' tooltip-append-to-body='true' ng-click='toggleFilters()'
+                              span.glyphicon.glyphicon-search
+                  tbody
+                    tr.empty ng-show='!reportsList.initialized'
+                      td colspan=5 Loading...
+                    tr.empty ng-show='!reportsList.records.length && reportsList.initialized'
+                      td colspan=5
+                        em No tests have been run recently.
+                    tr.hidden-xs ng-repeat='report in reportsList.records'
+                      td.results
+                        a href='#' ui-sref='org.reports.show({ id: report.id })'
+                          report-health-bar report='report' click-for-details=true
+                      td.runners
+                        span ng-repeat='runner in report.runners.slice(0, 3)'
+                          user-avatar.hidden-xs user='runner'
+                          user-avatar.visible-xs user='runner' name-tooltip='true'
+                          span.name.hidden-xs  {{ runner.name }}
+                      td.duration.hidden-xs.hidden-sm {{ report.duration | formatDuration:2 }}
+                      td.date.hidden-sm.hidden-md {{ report.createdAt | amDateFormat:'llll' }}
+                      td.details
+                        report-data-labels organization='organization' report='report'
+                    tr.visible-xs ng-repeat='report in reportsList.records'
+                      td.report-small colspan=5
+                        a.report-health-bar href='#' ui-sref='org.reports.show({ id: report.id })'
+                          report-health-bar report='report' click-for-details=true
+                        span.runner ng-repeat='runner in report.runners.slice(0, 3)'
+                          user-avatar user='runner' name-tooltip='true'
+                        span.duration {{ report.duration | formatDuration:2 }}
+                        ' ,
+                        span.date {{ report.createdAt | amDateFormat:'llll' }}
+                        report-data-labels organization='organization' report='report'
+                  tfoot
+                    tr
+                      td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
       tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' active='activeTabs[reportTab.id]' ng-controller='ReportListTabCtrl'
         tab-heading {{ reportTime() }}
         report-details report='report' organization='currentOrganization'

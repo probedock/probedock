@@ -21,6 +21,7 @@ class Category < ActiveRecord::Base
   belongs_to :organization
   has_many :test_descriptions
   has_many :test_results
+  has_and_belongs_to_many :test_payloads
 
   strip_attributes
   validates :name, presence: true, uniqueness: { scope: :organization_id, unless: :quick_validation }, length: { maximum: 50 }

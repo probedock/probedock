@@ -57,7 +57,7 @@ module ProbeDock
 
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            paginated_rel = paginated_rel.where('LOWER(name) LIKE ?', term, term)
+            paginated_rel = paginated_rel.where('LOWER(project_versions.name) LIKE ?', term)
           end
 
           if params[:name].present?
