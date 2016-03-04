@@ -15,8 +15,8 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       autoSelect: '=?',
       placeholder: '@',
       label: '@',
-      noLabel: '=',
-      multiple: '=',
+      noLabel: '=?',
+      multiple: '=?',
       uniqueBy: '@',
       extract: '@',
       allowClear: '=?'

@@ -9,7 +9,7 @@ angular.module('probedock.projectSelect').directive('projectSelect', function() 
       modelProperty: '@',
       prefix: '@',
       placeholder: '@',
-      noLabel: '='
+      noLabel: '=?'
     }
   };
 }).controller('ProjectSelectCtrl', function(api, $scope) {

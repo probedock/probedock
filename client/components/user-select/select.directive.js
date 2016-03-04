@@ -10,7 +10,7 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
       prefix: '@',
       placeholder: '@',
       label: '@',
-      noLabel: '='
+      noLabel: '=?'
     }
   };
 }).controller('UserSelectCtrl', function(api, $scope) {
