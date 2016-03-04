@@ -7,7 +7,7 @@ angular.module('probedock.tables').directive('stFilters', function () {
     },
     link: function ($scope, element, attr, ctrl) {
       $scope.$watch('stFilters', function () {
-        ctrl.pipe();
+        ctrl.slice(0, ctrl.tableState().pagination.number);
       }, true);
     }
   };
