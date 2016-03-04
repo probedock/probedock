@@ -7,34 +7,38 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
       organization: '=',
       project: '=',
       filtersDisabled: '=?',
-      useLatestVersion: '=?',
       chartHeight: '@',
       linkToVersion: '=?'
     }
   };
 }).controller('TestRunStateWidgetCtrl', function(api, $scope) {
+  var avoidFetchByParams = true;
+  var paramsManuallyUpdated = false;
+
+  // Empty state chart to show when there is no data
+  var emptyStateChart = {
+    labels: [ '' ],
+    data: [ 1 ],
+    colors: [ '#7a7a7a' ]
+  };
+
   // Set default configuration for the directive
   _.defaults($scope, {
     filtersDisabled: false,
-    useLatestVersion: false,
     linkToVersion: true,
     chartHeight: 200,
     params: {
       projectVersionId: null,
       runnerId: null
-    }
+    },
+    stateChart: emptyStateChart
   });
 
-  var avoidFetchByParams = true;
-  var paramsManuallyUpdated = false;
-
-  if ($scope.useLatestVersion) {
-    fetchLatestVersion();
-  } else if ($scope.project) {
+  if ($scope.project) {
     fetchReportByTechnicalUser();
   }
 
-  $scope.$watch('params', function (newParams, oldParams) {
+  $scope.$watch('params', function () {
     // Make sure to fetch report when params have been updated
     if (!avoidFetchByParams && !paramsManuallyUpdated) {
       fetchReport();
@@ -42,34 +46,6 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
       paramsManuallyUpdated = false;
     }
   }, true);
-
-  /**
-   * Retrieve the latest version of a project. If not found,
-   * fallback to a standard lookup for a report.
-   * @returns {*} A promise
-   */
-  function fetchLatestVersion() {
-    $scope.loading = true;
-
-    return api({
-      url: '/projectVersions',
-      params: {
-        projectId: $scope.project.id,
-        sort: 'createdAt',
-        pageSize: 1,
-        page: 1
-      }
-    }).then(function(res) {
-      if (res.data.length == 1) {
-        // Manually update the project version to make sure the UI shows the correct filters
-        paramsManuallyUpdated = true;
-        $scope.params.projectVersionId = res.data[0].id;
-        return fetchReportByTechnicalUser();
-      } else {
-        return fetchReport();
-      }
-    });
-  }
 
   /**
    * Retrieve the latest report done by a technical user for the $scope.params. If not
@@ -125,11 +101,7 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
       url: url,
       params: params
     }).then(function(res) {
-      if (res.data.length == 0 && $scope.params.runnerId) {
-        $scope.params.runnerId = null;
-      } else {
-        return processData(_.isArray(res.data) ? res.data[0] : res.data);
-      }
+      return processData(_.isArray(res.data) ? res.data[0] : res.data);
     });
   }
 
@@ -142,10 +114,18 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
     $scope.report = report;
 
     if ($scope.report) {
-      // Update the runner if the filters are enabled
-      if (!$scope.filtersDisabled && !$scope.params.runnerId) {
-        paramsManuallyUpdated = true;
-        $scope.params.runnerId = $scope.report.runners[0].id;
+      if (!$scope.filtersDisabled) {
+        // Update the project version id if the filters are enabled
+        if (!$scope.params.projectVersionId) {
+          paramsManuallyUpdated = true;
+          $scope.params.projectVersionId = _.findWhere($scope.report.projectVersions, { projectId: $scope.project.id });
+        }
+
+        // Update the runner if the filters are enabled
+        if (!$scope.params.runnerId) {
+          paramsManuallyUpdated = true;
+          $scope.params.runnerId = $scope.report.runners[0].id;
+        }
       }
 
       // Calculate the metrics
@@ -159,6 +139,8 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
         data: [numberPassed, numberFailed, numberInactive],
         colors: ['#62c462', '#ee5f5b', '#fbb450']
       };
+    } else { // Empty chart
+      $scope.stateChart = emptyStateChart;
     }
 
     // Restore flags

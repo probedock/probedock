@@ -1,39 +1,45 @@
 .test-run-state
-  p ng-if='loading && !report'
-    em Loading report...
-  p ng-if='!loading && !report && filtersDisabled'
-    em No recent activity.
-  p ng-if='!loading && !report && !filtersDisabled'
-    em No report matching the criteria.
-  div ng-if='report'
-    .row
-      .col-md-6
-        a href='#' ui-sref='org.reports.show({ id: project.lastReportId })'
-          canvas.chart.chart-pie height='{{ chartHeight }}' data='stateChart.data' labels='stateChart.labels' colours='stateChart.colors'
-      .col-md-6.info
-        p ng-if='loading'
-          em Loading report...
-        p.text-info ng-if='!loading'
-          ng-pluralize> count='report.resultsCount' when='{"1": "One result", "other": "{} results"}'
-          | in the report
-        .runners
-          span
-            strong>
-              ng-pluralize count='report.runners.length' when='{"1": "Runner:", "other": "Runners:"}'
-          span ng-repeat='runner in report.runners'
-            user-avatar user='runner'
-            strong.name {{ runner.name }}
-            span ng-if='!$last'
-              | ,
-        .versions
-          strong>
-            ng-pluralize count='report.projectVersions.length' when='{"1": "Version:", "other": "Versions:"}'
-          span ng-repeat='version in report.projectVersions | filter: { projectId: project.id }'
-            project-version-label organization='organization' project='project' project-version='version.name' version-only='true'
-        .run-date
-          strong> Run on:
-          span {{ report.endedAt | amDateFormat:'llll' }}
+  .row
+    / Pie chart
+    .col-md-6
+      a href='#' ui-sref='org.reports.show({ id: project.lastReportId })'
+        canvas.chart.chart-pie height='{{ chartHeight }}' data='stateChart.data' labels='stateChart.labels' colours='stateChart.colors'
 
+    / Report data
+    .col-md-6.info ng-if='report'
+      p.text-info
+        ng-pluralize> count='report.resultsCount' when='{"1": "One result", "other": "{} results"}'
+        | in the report
+      .runners
+        span
+          strong>
+            ng-pluralize count='report.runners.length' when='{"1": "Runner:", "other": "Runners:"}'
+        span ng-repeat='runner in report.runners'
+          user-avatar user='runner'
+          strong.name {{ runner.name }}
+          span> ng-if='!$last' ,
+      .versions
+        strong>
+          ng-pluralize count='report.projectVersions.length' when='{"1": "Version:", "other": "Versions:"}'
+        span ng-repeat='version in report.projectVersions | filter: { projectId: project.id }'
+          project-version-label organization='organization' project='project' project-version='version.name' version-only='true'
+      .run-date
+        strong> Run on:
+        span {{ report.endedAt | amDateFormat:'llll' }}
+
+    / Loading message
+    .col-md-6.info ng-if='loading'
+      p
+        em Loading report...
+
+    / No report message contextualized by the filters enabled/disabled
+    .col-md-6.info ng-if='!report'
+      p ng-if='!loading && filtersDisabled'
+        em No recent activity.
+      p ng-if='!loading && !filtersDisabled'
+        em This runner has never run tests for this version.
+
+  / Filter by version and runner
   form.form role='form' ng-if='!filtersDisabled'
     .col-md-6
       project-version-select prefix='test-run-state' organization='organization' project='project' model-object='params' latest-version='latestVersion' allow-clear='false'
