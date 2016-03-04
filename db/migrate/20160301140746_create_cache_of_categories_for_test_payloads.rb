@@ -14,7 +14,7 @@ class CreateCacheOfCategoriesForTestPayloads < ActiveRecord::Migration
     # set categories for payloads
     TestPayload.select(:id, :state).find_in_batches batch_size: 500 do |payloads|
 
-      say_with_time "set categories for payloads #{i + 1}-#{i + payloads.length} (out of #{total})`" do
+      say_with_time "set categories for payloads #{i + 1}-#{i + payloads.length} (out of #{total})" do
         payloads.each do |payload|
           payload.categories = Category.joins(test_results: :test_payload).where('test_payloads.id = ?', payload.id).uniq.to_a
         end
