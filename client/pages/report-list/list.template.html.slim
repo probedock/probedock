@@ -7,7 +7,7 @@
         tab-heading Latest Reports
         .row st-pipe='reportsList.refresh' st-table='reportsList.records'
           .col-md-12
-            .well.filters filters='reportsList.params' class='{{ filtersClass }}'
+            .well.filters st-filters='reportsList.params' class='{{ filtersClass }}'
               .row
                 .col-lg-3.col-md-6
                   user-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='runnerIds' placeholder='All Runners' multiple='true'
