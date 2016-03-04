@@ -82,6 +82,8 @@ module TestPayloadProcessing
 
           @test_payload.duration = duration if duration.present?
 
+          @test_payload.categories = @cache.categories.values
+
           @test_payload.finish_processing!
 
           # Mark test keys as used.

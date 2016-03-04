@@ -1,0 +1,25 @@
+/ category selection
+.form-group
+  label ng-if='!noLabel && !multiple' for='{{ prefix }}-category-select-single' {{ label }}
+  label ng-if='!noLabel && multiple' for='{{ prefix }}-category-select-multiple' {{ label }}
+
+  / check box to choose whether to create a new category or not
+  label.new-switch.pull-right ng-if='createNew'
+    input type='checkbox' ng-model='config.newCategory' ng-disabled='!categoryChoices.length'
+    '
+    ' create a new category
+
+  / Single dropdown menu to select an existing category
+  ui-select id='{{ prefix }}-category-select-single' ng-if='!multiple && !config.newCategory && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true
+    ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='true' {{ $select.selected.name }}
+    ui-select-choices repeat='category[extract] as category in categoryChoices' refresh='fetchCategoryChoices($select.search)' refresh-delay='250'
+      span ng-bind-html='category.name | highlight: $select.search'
+
+  / Multiple select dropdown menu to select existing categories
+  ui-select id='{{ prefix }}-category-select-multiple' ng-if='multiple && !config.newCategory && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true multiple=true
+    ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='true' {{ $item.name }}
+    ui-select-choices repeat='category[extract] as category in categoryChoices' refresh='fetchCategoryChoices($select.search)' refresh-delay='250'
+      span ng-bind-html='category.name | highlight: $select.search'
+
+  / free input field to create a new category
+  input.form-control type='text' ng-if='config.newCategory' ng-model='modelObject[modelProperty]'

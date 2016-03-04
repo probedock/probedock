@@ -154,6 +154,7 @@ module ModelExpectations
     @errors.compare payload.inactive_passed_results_count, data.fetch(:inactivePassedResultsCount, 0), :inactive_passed_results_count
     @errors.compare payload.tests_count, data.fetch(:testsCount, 0), :tests_count
     @errors.compare payload.new_tests_count, data.fetch(:newTestsCount, 0), :new_tests_count
+    @errors.compare payload.categories.collect(&:name).sort, data.fetch(:categories, []).sort, :categories
 
     if data.key? :contents
       @errors.compare payload.contents, data[:contents].with_indifferent_access, :contents

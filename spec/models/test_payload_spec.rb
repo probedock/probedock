@@ -19,16 +19,52 @@ require 'spec_helper'
 
 describe TestPayload, probedock: { tags: :unit } do
 
-  context "associations" do
-    it(nil, probedock: { key: '1fiq' }){ should have_associations(:project_version, :runner, :results, :test_keys, :test_reports) }
+  context 'validations' do
+    it(nil, probedock: { key: 'my91' }){ should have_validations_on(:runner, :project_version, :contents_bytesize, :state, :received_at, :results_count, :passed_results_count, :inactive_results_count, :inactive_passed_results_count)}
+
+    it(nil, probedock: { key: 'egbw' }){ should validate_presence_of(:runner) }
+
+    context 'if processable' do
+      before { allow(subject).to receive(:processed?).and_return(true) }
+      it(nil, probedock: { key: '15i0' }){ should validate_presence_of(:project_version) }
+    end
+
+    context 'if not processable' do
+      before { allow(subject).to receive(:processed).and_return(false) }
+      it(nil, probedock: { key: 'qjs3' }){ should_not validate_presence_of(:project_version) }
+    end
+
+    it(nil, probedock: { key: 'pqi9' }){ should validate_presence_of(:contents_bytesize) }
+    it(nil, probedock: { key: 'a248' }){ should validate_numericality_of(:contents_bytesize).only_integer.is_greater_than(0) }
+
+    it(nil, probedock: { key: '3s9s' }){ should validate_inclusion_of(:state).in_array(%w'created processing processed failed') }
+
+    it(nil, probedock: { key: 'ogz5' }){ should validate_presence_of(:received_at) }
+
+    it(nil, probedock: { key: 'ppz1' }){ should validate_presence_of(:results_count) }
+    it(nil, probedock: { key: 'ht4l' }){ should validate_numericality_of(:results_count).only_integer.is_greater_than_or_equal_to(0) }
+
+    it(nil, probedock: { key: 'rgso' }){ should validate_presence_of(:passed_results_count) }
+    it(nil, probedock: { key: '9spq' }){ should validate_numericality_of(:passed_results_count).only_integer.is_greater_than_or_equal_to(0) }
+
+    it(nil, probedock: { key: '007p' }){ should validate_presence_of(:inactive_results_count) }
+    it(nil, probedock: { key: '7slp' }){ should validate_numericality_of(:inactive_results_count).only_integer.is_greater_than_or_equal_to(0) }
+
+    it(nil, probedock: { key: 'jejl' }){ should validate_presence_of(:inactive_passed_results_count) }
+    it(nil, probedock: { key: 'tve9' }){ should validate_numericality_of(:inactive_passed_results_count).only_integer.is_greater_than_or_equal_to(0) }
+  end
+
+  context 'associations' do
+    it(nil, probedock: { key: '1fiq' }){ should have_associations(:project_version, :runner, :results, :test_keys, :test_reports, :categories) }
     it(nil, probedock: { key: '00q1' }){ should belong_to(:project_version) }
     it(nil, probedock: { key: 'ce9d6c2604ef' }){ should belong_to(:runner) }
     it(nil, probedock: { key: 'tg2e' }){ should have_many(:results) }
     it(nil, probedock: { key: 'dd735c4e26be' }){ should have_and_belong_to_many(:test_keys) }
     it(nil, probedock: { key: 'ytnc' }){ should have_and_belong_to_many(:test_reports) }
+    it(nil, probedock: { key: '85p5' }){ should have_and_belong_to_many(:categories) }
   end
 
-  context "database table" do
+  context 'database table' do
     it(nil, probedock: { key: 'ofxi' }){ should have_db_columns(:id, :api_id, :contents, :contents_bytesize, :raw_contents, :duration, :state, :backtrace, :project_version_id, :runner_id, :tests_count, :new_tests_count, :results_count, :passed_results_count, :inactive_results_count, :inactive_passed_results_count, :ended_at, :created_at, :updated_at, :received_at, :processing_at, :processed_at) }
     it(nil, probedock: { key: '38b8aaf117c3' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: 'sile' }){ should have_db_column(:api_id).of_type(:string).with_options(null: false, limit: 36) }

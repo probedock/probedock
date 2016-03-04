@@ -25,6 +25,7 @@ class TestPayload < ActiveRecord::Base
   has_many :results, class_name: 'TestResult'
   has_and_belongs_to_many :test_keys
   has_and_belongs_to_many :test_reports
+  has_and_belongs_to_many :categories
 
   scope :waiting_for_processing, -> do
     select((column_names - %w(contents) + [

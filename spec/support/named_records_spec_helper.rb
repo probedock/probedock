@@ -27,4 +27,8 @@ module NamedRecordsSpecHelper
     raise "Unknown named record #{name.inspect}" unless record
     record
   end
+
+  def named_record_exists name
+    !@named_records.try(:[], name).nil?
+  end
 end

@@ -7,7 +7,9 @@ angular.module('probedock.projectSelect').directive('projectSelect', function() 
       organization: '=',
       modelObject: '=',
       modelProperty: '@',
-      prefix: '@'
+      prefix: '@',
+      placeholder: '@',
+      noLabel: '=?'
     }
   };
 }).controller('ProjectSelectCtrl', function(api, $scope) {
@@ -19,20 +21,38 @@ angular.module('probedock.projectSelect').directive('projectSelect', function() 
     $scope.modelProperty = "projectIds";
   }
 
+  if (_.isUndefined($scope.noLabel)) {
+    $scope.noLabel = false;
+  }
+
   $scope.projectChoices = [];
+
+  $scope.getPlaceholder = function() {
+    if ($scope.placeholder) {
+      return $scope.placeholder;
+    } else {
+      return 'All projects';
+    }
+  };
 
   $scope.$watch('organization', function(value) {
     if (value) {
-      fetchProjectChoices();
+      $scope.fetchProjectChoices();
     }
   });
 
-  function fetchProjectChoices() {
+  $scope.fetchProjectChoices = function(projectName) {
+    var params = {
+      organizationId: $scope.organization.id
+    };
+
+    if (projectName) {
+      params.search = projectName;
+    }
+
     api({
       url: '/projects',
-      params: {
-        organizationId: $scope.organization.id
-      }
+      params: params
     }).then(function(res) {
       $scope.projectChoices = res.data;
     });
