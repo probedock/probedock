@@ -5,9 +5,6 @@
 # https://docs.vagrantup.com.
 Vagrant.configure(2) do |config|
 
-  # Ubuntu 14 LTS
-  config.vm.box = 'ubuntu/trusty64'
-
   # Configure fixed IP
   config.vm.network 'private_network', ip: '192.168.50.4'
 
@@ -25,13 +22,23 @@ Vagrant.configure(2) do |config|
     v.memory = 2048
   end
 
-  # Provision with ansible
-  # See ansible/vagrant-playbook.yml
-  config.vm.provision 'ansible' do |ansible|
-    ansible.playbook = 'ansible/vagrant-playbook.yml'
-    ansible.tags = ENV['ANSIBLE_TAGS'].split(',') if ENV.key?('ANSIBLE_TAGS')
-    ansible.skip_tags = ENV['ANSIBLE_SKIP_TAGS'].split(',') if ENV.key?('ANSIBLE_SKIP_TAGS')
-    ansible.verbose = ENV['ANSIBLE_VERBOSE'] if ENV['ANSIBLE_VERBOSE']
-    ansible.extra_vars = {}
+  config.vm.define 'development', primary: true do |dev|
+    dev.vm.box = 'probedock/probedock'
+  end
+
+  config.vm.define 'provisioning', autostart: false do |prov|
+
+    # Ubuntu 14 LTS
+    prov.vm.box = 'ubuntu/trusty64'
+
+    # Provision with ansible
+    # See ansible/vagrant-playbook.yml
+    prov.vm.provision 'ansible' do |ansible|
+      ansible.playbook = 'ansible/vagrant-playbook.yml'
+      ansible.tags = ENV['ANSIBLE_TAGS'].split(',') if ENV.key?('ANSIBLE_TAGS')
+      ansible.skip_tags = ENV['ANSIBLE_SKIP_TAGS'].split(',') if ENV.key?('ANSIBLE_SKIP_TAGS')
+      ansible.verbose = ENV['ANSIBLE_VERBOSE'] if ENV['ANSIBLE_VERBOSE']
+      ansible.extra_vars = {}
+    end
   end
 end
