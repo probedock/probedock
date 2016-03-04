@@ -4,8 +4,6 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
   var hideNoNewReportsPromise,
       latestReport;
 
-  $scope.filters = {};
-
   tables.create($scope, 'reportsList', {
     url: '/reports',
     pageSize: 15,
