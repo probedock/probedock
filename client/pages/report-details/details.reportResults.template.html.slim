@@ -7,9 +7,8 @@
         test-key-label.pull-right ng-if='result.key' key='result.key'
         h4 ng-class='{"text-success": result.passed && result.active, "text-danger": !result.passed && result.active, "text-warning": !result.active}'
           a href='#' ui-sref='org.tests.show({ orgName: organization.name, testId: result.testId })' {{ result.name }}
-          a< ng-if='result.sourceUrl' href='{{ result.sourceUrl }}' target='_blank'
-            i.fa.fa-link
         .labels.clearfix
+          source-url-label ng-if='result.sourceUrl' url='result.sourceUrl'
           project-version-label organization='organization' project='result.project' project-version='result.projectVersion'
           category-label ng-if='result.category' category='result.category'
           tag-labels ng-if='result.tags.length > 0' tags='result.tags'

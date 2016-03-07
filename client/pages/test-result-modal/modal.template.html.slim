@@ -30,6 +30,7 @@
         th By
         th.text-center Duration
         th.text-center Status
+        th.text-center ng-if='result.sourceUrl' Source
     tbody
       tr
         td.text-vertical-middle {{ result.runAt | amDateFormat: 'lll' }}
@@ -40,6 +41,8 @@
         td.text-vertical-middle.text-center {{ result.duration | formatDuration }}
         td.text-vertical-middle.text-center
           test-status-icon result='result'
+        td.text-vertical-middle.text-center ng-if='result.sourceUrl'
+          source-url-label url='result.sourceUrl'
 
     table.small-table.table.visble-sm.hidden-md.hidden-lg
       tbody
@@ -79,6 +82,10 @@
           th Status
           td
             test-status-icon result='result'
+        tr ng-if='result.sourceUrl'
+          th Source
+          td
+            source-url-label url='result.sourceUrl'
 
   pre ng-if='result.message' {{ result.message }}
 

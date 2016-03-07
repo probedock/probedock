@@ -24,8 +24,16 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       truncate: '=?'
     }
   };
-})
-.directive('testKeyLabel', function() {
+}).directive('sourceUrlLabel', function() {
+  return {
+    restrict: 'E',
+    templateUrl: '/templates/components/data-labels/source-url-label.template.html',
+    replace: true,
+    scope: {
+      url: '='
+    }
+  };
+}).directive('testKeyLabel', function() {
   return {
     restrict: 'E',
     scope: {
