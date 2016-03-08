@@ -25,7 +25,6 @@ class TestResultPolicy < ApplicationPolicy
 
     def to_builder(options = {})
       payload = options[:payloads].find{ |p| p.id == record.test_payload_id } if options[:payloads]
-
       source_url = build_source_url(record, record.project_version.project, payload)
 
       Jbuilder.new do |json|

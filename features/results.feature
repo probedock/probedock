@@ -24,20 +24,20 @@ Feature: Results
     # Create 1 report with 2 payloads
     And test result report A was generated for organization Rebel Alliance
     And contextualized test payload A1 sent by hsolo for version 1.2.2 of project X-Wing was used to generate report A with context:
-    """
-    {
-      "scm.name": "Git",
-      "scm.version": "2.7.1",
-      "scm.dirty": true,
-      "scm.branch": "star-fighter",
-      "scm.commit": "abcdef",
-      "scm.remote.name": "origin",
-      "scm.remote.url.fetch": "https://github.com/probedock/probedock",
-      "scm.remote.url.push": "https://github.com/probedock/probedock",
-      "scm.remote.ahead": 1,
-      "scm.remote.behind": 2
-    }
-    """
+      """
+      {
+        "scm.name": "Git",
+        "scm.version": "2.7.1",
+        "scm.dirty": true,
+        "scm.branch": "star-fighter",
+        "scm.commit": "abcdef",
+        "scm.remote.name": "origin",
+        "scm.remote.url.fetch": "https://github.com/probedock/probedock",
+        "scm.remote.url.push": "https://github.com/probedock/probedock",
+        "scm.remote.ahead": 1,
+        "scm.remote.behind": 2
+      }
+      """
     And test payload A2 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report A
 
     # Create 1 report with 1 payload
@@ -51,12 +51,12 @@ Feature: Results
 
     # Create test results for the two tests and same version and the two first payloads
     And enriched result R1 for test "Engine should be powered" is new and passing and was run by hsolo and took 20 seconds to run for payload A1 with version 1.2.2 and custom values:
-    """
-    {
-      "file.path": "somewhere/on/file/system.js",
-      "file.line": 12
-    }
-    """
+      """
+      {
+        "file.path": "somewhere/on/file/system.js",
+        "file.line": 12
+      }
+      """
     And result R2 for test "Shields must resist to lasers" is new and passing and was run by hsolo for payload A2 with version 1.2.3
 
     # Create a test results for first test and third payload

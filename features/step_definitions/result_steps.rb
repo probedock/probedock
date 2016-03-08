@@ -68,7 +68,9 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
       active: test_result.active,
       passing: test_result.passed,
       last_run_at: test_result.run_at,
-      last_duration: test_result.duration
+      last_duration: test_result.duration,
+      custom_values: test_result.custom_values,
+      last_result: test_result
     }
 
     if category
@@ -76,6 +78,16 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
     end
 
     create(:test_description, description_options)
+  else
+    test_description.last_runner = runner
+    test_description.active = test_result.active
+    test_description.passing = test_result.passed
+    test_description.last_run_at = test_result.run_at
+    test_description.last_duration = test_result.duration
+    test_description.custom_values = test_result.custom_values
+    test_description.last_result = test_result
+
+    test_description.save!
   end
 end
 
