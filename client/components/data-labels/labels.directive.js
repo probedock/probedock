@@ -27,10 +27,13 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
 }).directive('sourceUrlLabel', function() {
   return {
     restrict: 'E',
+    controller: 'SourceUrlLabelCtrl',
     templateUrl: '/templates/components/data-labels/source-url-label.template.html',
     replace: true,
     scope: {
-      url: '='
+      url: '=',
+      scm: '=?',
+      tooltipPlacement: '@'
     }
   };
 }).directive('testKeyLabel', function() {
@@ -103,6 +106,57 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
     } else {
       return str;
     }
+  };
+})
+.controller('SourceUrlLabelCtrl', function($scope) {
+  _.defaults($scope, {
+    tooltipPlacement: 'top'
+  });
+
+  $scope.isDirty = function() {
+    // Check if SCM data are present
+    if ($scope.scm) {
+      // Check if dirty is set
+      if (!_.isUndefined($scope.scm.dirty)) {
+        return $scope.scm.dirty;
+      } else if (!_.isUndefined($scope.scm.remote)) { // Check if remote data are present to consider the commit as dirty or not
+        if (!_.isUndefined($scope.scm.remote.behind)) { // Check if commit is behind remote
+          return $scope.scm.remote.behind > 0;
+        } else if (!_.isUndefined($scope.scm.remote.ahead)) { // Check if commit is ahead remote
+          return $scope.scm.remote.ahead > 0;
+        }
+      }
+    }
+
+    // The commit is not behind/ahead remote or dirty (not commited...)
+    return false;
+  };
+
+  $scope.getTooltip = function() {
+    var tooltip = "Show source file.";
+
+    // Add tooltip content if SCM data are present
+    if ($scope.scm) {
+      // Add dirty info if the dirty flag is set
+      if (!_.isUndefined($scope.scm.dirty) && $scope.scm.dirty) {
+        tooltip += " The test was probably run on a commit not pushed.";
+      }
+
+      // Add ahead/behind info if remote data are present
+      if ($scope.scm.remote) {
+        // Add ahead info if present
+        if ($scope.scm.remote.ahead && $scope.scm.remote.ahead > 0) {
+          tooltip += "The commit is ahead of " + $scope.scm.remote.ahead + " from remote.";
+        }
+
+        // Add behind info if present
+        if ($scope.scm.remote.behind && $scope.scm.remote.behind > 0) {
+          tooltip += "The commit is behind of " + $scope.scm.remote.behind + " from remote.";
+        }
+      }
+    }
+
+    return tooltip;
   };
 });
 

@@ -1,4 +1,5 @@
 span.data-label
-  span.label.label-primary
-    a.source-url href='{{ url }}' target='_blank' tooltip='Show source file'
-      repo-icon url='url'
+  span.label.label-primary tooltip='{{ getTooltip() }}' tooltip-placement='{{ tooltipPlacement }}'
+    a.source-url href='{{ url }}' target='_blank'
+      repo-icon> url='url'
+      i.source-dirty.fa.fa-exclamation-triangle< ng-if='isDirty()'
