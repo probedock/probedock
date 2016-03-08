@@ -43,7 +43,7 @@ class TestPayload < ActiveRecord::Base
       "contents->'context'->'scm.version' as scm_version",
       "contents->'context'->'scm.commit' as scm_commit",
       "contents->'context'->'scm.branch' as scm_branch",
-      "contents->'context'->'scm.dirty' as scm_branch",
+      "contents->'context'->'scm.dirty' as scm_dirty",
       "contents->'context'->'scm.remote.name' as scm_remote_name",
       "contents->'context'->'scm.remote.url.fetch' as scm_remote_fetch_url",
       "contents->'context'->'scm.remote.url.push' as scm_remote_push_url",

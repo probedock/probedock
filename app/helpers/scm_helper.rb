@@ -16,12 +16,8 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module ScmHelper
   def build_source_url(result, project, payload)
-    puts project.repo_url
-    puts result.custom_values
     if project.repo_url && result.custom_values['file.path']
       matched_type = /.*(github|bitbucket)\.com\/.*/.match(project.repo_url)
-
-      puts matched_type
 
       if matched_type
         send('build_' +  matched_type[1] + '_url', project.repo_url, result, payload)
@@ -34,6 +30,8 @@ module ScmHelper
     scm[:name] = payload.scm_name if payload.scm_name.present?
     scm[:version] = payload.scm_version if payload.scm_version.present?
     scm[:branch] = payload.scm_branch if payload.scm_branch.present?
+    scm[:commit] = payload.scm_commit if payload.scm_commit.present?
+    scm[:dirty] = payload.scm_dirty if payload.scm_dirty.present?
 
     # Create the remote node only if there is at least one attribute present
     if %w(name fetch_url push_url ahead behind).any?{ |attr| payload.send 'scm_remote_' + attr }
@@ -58,7 +56,7 @@ module ScmHelper
   def build_github_url(repo_url, result, payload)
     # <repo_url>/blob/<commit>/<file_path>(#L<file_line>)
     path = join(repo_url, 'blob', payload.scm_commit, result.custom_values['file.path'])
-    path = path + '#L' + result.custom_values['file.line'] if result.custom_values['file.line']
+    path = "#{path}#L#{result.custom_values['file.line']}" if result.custom_values['file.line']
     path
   end
 
@@ -71,7 +69,7 @@ module ScmHelper
   def build_bitbucket_url(repo_url, result, payload)
     # <repo_url>/src/<commit>/<file_path>(#file_name)-<file_line>
     path = join(repo_url, 'src', payload.scm_commit, result.custom_values['file.path'])
-    path = path + '#' + result.custom_values['file.path'].gsub(/.*\//, '') + '-' + result.custom_values['file.line'] if result.custom_values['file.line']
+    path = "#{path}##{result.custom_values['file.path'].gsub(/.*\//, '')}-#{result.custom_values['file.line']}" if result.custom_values['file.line']
     path
   end
 

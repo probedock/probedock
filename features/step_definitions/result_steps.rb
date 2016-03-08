@@ -1,4 +1,4 @@
-Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version (.+)$/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version|
+def create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, custom_values)
   runner = named_record(runner_name)
   project_version = named_record(project_version)
   payload = named_record(payload_name)
@@ -46,6 +46,10 @@ Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) an
     options[:category] = category
   end
 
+  if custom_values
+    options[:custom_values] = MultiJson.load(custom_values)
+  end
+
   options[:payload_index] = if payload_index
     payload_index
   else
@@ -73,4 +77,12 @@ Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) an
 
     create(:test_description, description_options)
   end
+end
+
+Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version (.+)$/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version|
+  create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, nil)
+end
+
+Given /^enriched result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version (.+?) and custom values:/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version, custom_values|
+  create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, custom_values)
 end
