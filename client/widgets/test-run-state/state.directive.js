@@ -31,7 +31,8 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
       projectVersionId: null,
       runnerId: null
     },
-    stateChart: emptyStateChart
+    stateChart: emptyStateChart,
+    showChart: false
   });
 
   if ($scope.project) {
@@ -118,7 +119,7 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
         // Update the project version id if the filters are enabled
         if (!$scope.params.projectVersionId) {
           paramsManuallyUpdated = true;
-          $scope.params.projectVersionId = _.findWhere($scope.report.projectVersions, { projectId: $scope.project.id });
+          $scope.params.projectVersionId = _.findWhere($scope.report.projectVersions, { projectId: $scope.project.id }).id;
         }
 
         // Update the runner if the filters are enabled
@@ -146,6 +147,7 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
     // Restore flags
     $scope.loading = false;
     avoidFetchByParams = false;
+    $scope.showChart = true;
   }
 
   /**
