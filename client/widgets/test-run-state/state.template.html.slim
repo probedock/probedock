@@ -22,7 +22,7 @@
         strong>
           ng-pluralize count='report.projectVersions.length' when='{"1": "Version:", "other": "Versions:"}'
         span ng-repeat='version in report.projectVersions | filter: { projectId: project.id }'
-          project-version-label organization='organization' project='project' project-version='version.name' version-only='true'
+          project-version-label organization='organization' project='project' project-version='version.name' version-only='true' linkable='linkable'
       .run-date
         strong> Run on:
         span {{ report.endedAt | amDateFormat:'llll' }}

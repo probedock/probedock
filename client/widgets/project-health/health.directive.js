@@ -6,11 +6,11 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
     scope: {
       organization: '=',
       project: '=',
-      linkToVersion: '='
+      linkable: '='
     }
   };
 }).controller('ProjectHealthWidgetCtrl', function($scope) {
   _.defaults($scope, {
-    linkToVersion: true
+    linkable: true
   });
 });

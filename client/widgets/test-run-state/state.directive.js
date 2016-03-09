@@ -8,7 +8,7 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
       project: '=',
       filtersDisabled: '=?',
       chartHeight: '@',
-      linkToVersion: '=?'
+      linkable: '=?'
     }
   };
 }).controller('TestRunStateWidgetCtrl', function(api, $scope) {
@@ -25,7 +25,7 @@ angular.module('probedock.testRunStateWidget').directive('testRunStateWidget', f
   // Set default configuration for the directive
   _.defaults($scope, {
     filtersDisabled: false,
-    linkToVersion: true,
+    linkable: true,
     chartHeight: 200,
     params: {
       projectVersionId: null,
