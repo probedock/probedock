@@ -1,11 +1,14 @@
-.project-health-widget.panel.panel-default
-  .panel-heading
-    help-button
-      p
-        ' This widget shows the state of the latest test run by a technical user of the organization.
-        ' If no technical user has run any tests, the latest test run by a human user is shown instead.
-      p
-        ' You can use the version and runner filters to show the latest test run for a given version or run by a specific user.
-    h3.panel-title Project health
-  .panel-body
-    test-run-state-widget organization='organization' project='project' linkable='linkable'
+div.project-health-widget
+  .panel.panel-default ng-if='!compact'
+    .panel-heading
+      help-button
+        p
+          ' This widget shows the state of the latest test run by a technical user of the organization.
+          ' If no technical user has run any tests, the latest test run by a human user is shown instead.
+        p
+          ' You can use the version and runner filters to show the latest test run for a given version or run by a specific user.
+      h3.panel-title Project health
+    .panel-body
+      ng-include src='"/templates/widgets/project-health/health.content.template.html"'
+
+  ng-include ng-if='compact' src='"/templates/widgets/project-health/health.content.template.html"'
