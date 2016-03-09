@@ -9,6 +9,6 @@ div.project-health-widget
           ' You can use the version and runner filters to show the latest test run for a given version or run by a specific user.
       h3.panel-title Project health
     .panel-body
-      ng-include src='"/templates/widgets/project-health/health.content.template.html"'
+      project-health-content organization='organization' project='project' linkable='linkable' filters-disabled='filtersDisabled' chart-height='{{ chartHeight }}'
 
-  ng-include ng-if='compact' src='"/templates/widgets/project-health/health.content.template.html"'
+  project-health-content ng-if='compact' organization='organization' project='project' linkable='linkable' filters-disabled='filtersDisabled' chart-height='{{ chartHeight }}'

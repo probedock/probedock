@@ -12,9 +12,30 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
       chartHeight: '@'
     }
   };
+}).directive('projectHealthContent', function() {
+  return {
+    restrict: 'E',
+    templateUrl: '/templates/widgets/project-health/health.content.template.html',
+    controller: 'ProjectHealthContentCtrl',
+    scope: {
+      organization: '=',
+      project: '=',
+      linkable: '=?',
+      filtersDisabled: '=?',
+      chartHeight: '@'
+    }
+  };
 }).controller('ProjectHealthWidgetCtrl', function($scope, api) {
+  // Set default configuration for the directive
+  _.defaults($scope, {
+    compact: false,
+    linkable: true,
+    filtersDisabled: false,
+    chartHeight: 200
+  });
+}).controller('ProjectHealthContentCtrl', function($scope, api) {
   var avoidFetchByParams = true;
-  var paramsManuallyUpdated = false;
+  var paramsProgrammaticallyUpdated = false;
 
   // Empty state chart to show when there is no data
   var emptyStateChart = {
@@ -26,7 +47,6 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
   // Set default configuration for the directive
   _.defaults($scope, {
     linkable: true,
-    compact: false,
     filtersDisabled: false,
     chartHeight: 200,
     params: {
@@ -43,10 +63,10 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
 
   $scope.$watch('params', function () {
     // Make sure to fetch report when params have been updated
-    if (!avoidFetchByParams && !paramsManuallyUpdated) {
+    if (!avoidFetchByParams && !paramsProgrammaticallyUpdated) {
       fetchReport();
-    } else if (paramsManuallyUpdated) { // Reset the manual flag
-      paramsManuallyUpdated = false;
+    } else if (paramsProgrammaticallyUpdated) { // Reset the manual flag
+      paramsProgrammaticallyUpdated = false;
     }
   }, true);
 
@@ -68,7 +88,7 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
         var technicalRunner = _.find(res.data[0].runners, function(runner) { return runner.technical; });
 
         // Manually update the params to make sure the UI show the correct filter
-        paramsManuallyUpdated = true;
+        paramsProgrammaticallyUpdated = true;
         $scope.params.runnerId = technicalRunner.id;
 
         return processData(res.data[0]);
@@ -86,25 +106,11 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
   function fetchReport() {
     $scope.loading = true;
 
-    // Use the reports API if there is any criteria
-    var url, params;
-    if ($scope.params.projectVersionId || $scope.params.runnerId) {
-      url = '/reports';
-      params = buildReportsParams();
-    } else if ($scope.project.lastReportId) { // Lookup by lastReportId
-      url = '/reports/' + $scope.project.lastReportId;
-      params = {
-        withProjectCountsFor: $scope.project.id
-      };
-    } else { // No data can be retrieved
-      return processData(null);
-    }
-
     return api({
-      url: url,
-      params: params
+      url: '/reports',
+      params: buildReportsParams()
     }).then(function(res) {
-      return processData(_.isArray(res.data) ? res.data[0] : res.data);
+      return processData(res.data[0]);
     });
   }
 
@@ -120,13 +126,13 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
       if (!$scope.filtersDisabled) {
         // Update the project version id if the filters are enabled
         if (!$scope.params.projectVersionId) {
-          paramsManuallyUpdated = true;
+          paramsProgrammaticallyUpdated = true;
           $scope.params.projectVersionId = _.findWhere($scope.report.projectVersions, { projectId: $scope.project.id }).id;
         }
 
         // Update the runner if the filters are enabled
         if (!$scope.params.runnerId) {
-          paramsManuallyUpdated = true;
+          paramsProgrammaticallyUpdated = true;
           $scope.params.runnerId = $scope.report.runners[0].id;
         }
       }
@@ -164,6 +170,7 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
       withProjectVersions: 1,
       withProjectCountsFor: $scope.project.id,
       organizationId: $scope.organization.id,
+      projectId: $scope.project.id,
       pageSize: 1,
       page: 1
     };
@@ -171,8 +178,6 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
     // Filtered by project version id
     if ($scope.params.projectVersionId) {
       extendedParams.projectVersionIds = [ $scope.params.projectVersionId ];
-    } else {
-      extendedParams.projectIds = [ $scope.project.id ];
     }
 
     // Filtered by runner id
@@ -183,4 +188,4 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
     // Extend common parameters with base parameters if any
     return _.extend(extendedParams, baseParams || {});
   }
-});
+});;
