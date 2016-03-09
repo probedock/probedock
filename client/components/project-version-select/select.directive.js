@@ -54,7 +54,7 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
 
   $scope.$watch('test', function(value) {
     if (value) {
-      fetchProjectVersionChoices();
+      $scope.fetchProjectVersionChoices();
     }
   });
 

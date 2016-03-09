@@ -84,15 +84,15 @@ module ProbeDock
 
       get do
         authenticate
-        authorize! User, :index
+        authorize!(User, :index)
 
-        users_rel = User.order 'LOWER(users.name) ASC'
+        users_rel = User.order('LOWER(users.name) ASC')
 
-        users_rel = paginated users_rel do |paginated_rel|
+        users_rel = paginated(users_rel) do |paginated_rel|
           if params[:email].present?
             email = Email.where(address: params[:email].to_s.downcase).first
             if email.present? && email.user_id.present?
-              paginated_rel = paginated_rel.where 'users.id = ?', email.user_id
+              paginated_rel = paginated_rel.where('users.id = ?', email.user_id)
             else
               paginated_rel = paginated_rel.none
             end
@@ -100,24 +100,24 @@ module ProbeDock
 
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            paginated_rel = paginated_rel.where 'LOWER(users.name) LIKE ?', term
+            paginated_rel = paginated_rel.where('LOWER(users.name) LIKE ?', term)
           end
 
           if params[:name].present?
-            paginated_rel = paginated_rel.where 'users.name = ?', params[:name].to_s
+            paginated_rel = paginated_rel.where('users.name = ?', params[:name].to_s)
           end
 
           group = false
           if params[:organizationId].present?
             organization = Organization.where(api_id: params[:organizationId].to_s).first!
-            authorize! organization, :show
+            authorize!(organization, :show)
             paginated_rel = paginated_rel.joins(memberships: :organization).where('organizations.api_id = ?', params[:organizationId].to_s)
             group = true
           end
 
-          @pagination_filtered_count = paginated_rel.count 'distinct users.id'
+          @pagination_filtered_count = paginated_rel.count('distinct users.id')
 
-          paginated_rel = paginated_rel.group 'users.id' if group
+          paginated_rel = paginated_rel.group('users.id') if group
 
           paginated_rel
         end

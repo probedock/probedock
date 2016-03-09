@@ -1,8 +1,11 @@
 .project-health-widget.panel.panel-default
   .panel-heading
     help-button
-      p This widget show the results of the latester report for a technical user in the organization. If there is no technical user, a human user is retrieved in place.
-      p You can use the version and runner filters to change the report. When the filters are applied, the most recent report is retrieved corresponding to the criteria.
+      p
+        ' This widget shows the state of the latest test run by a technical user of the organization.
+        ' If no technical user has run any tests, the latest test run by a human user is shown instead.
+      p
+        ' You can use the version and runner filters to show the latest test run for a given version or run by a specific user.
     h3.panel-title Project health
   .panel-body
     test-run-state-widget organization='organization' project='project' link-to-version='linkToVersion'
