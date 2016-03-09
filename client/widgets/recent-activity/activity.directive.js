@@ -7,7 +7,7 @@ angular.module('probedock.recentActivityWidget').directive('recentActivityWidget
     scope: {
       organization: '=',
       project: '=?',
-      linkToVersion: '=?'
+      linkable: '=?'
     }
   };
 }).controller('RecentActivityWidgetCtrl', function(api, $scope) {
