@@ -30,12 +30,6 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
     userChoices: []
   });
 
-  $scope.$watch('organization', function(value) {
-    if (value) {
-      $scope.fetchUserChoices();
-    }
-  });
-
   $scope.fetchUserChoices = function(userName) {
     var params = {
       organizationId: $scope.organization.id

@@ -35,12 +35,6 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
     categoryChoices: []
   });
 
-  $scope.$watch('organization', function(value) {
-    if (value) {
-      $scope.fetchCategoryChoices();
-    }
-  });
-
   $scope.$watch('config.newCategory', function(value) {
     if (value) {
       var previousCategory = $scope.modelObject[$scope.modelProperty];

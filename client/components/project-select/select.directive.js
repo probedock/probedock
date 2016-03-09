@@ -24,12 +24,6 @@ angular.module('probedock.projectSelect').directive('projectSelect', function() 
     projectChoices: []
   });
 
-  $scope.$watch('organization', function(value) {
-    if (value) {
-      $scope.fetchProjectChoices();
-    }
-  });
-
   $scope.fetchProjectChoices = function(projectName) {
     var params = {
       organizationId: $scope.organization.id

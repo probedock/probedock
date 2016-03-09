@@ -40,24 +40,6 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     projectVersionChoices: []
   });
 
-  $scope.$watch('organization', function(value) {
-    if (value) {
-      $scope.fetchProjectVersionChoices();
-    }
-  });
-
-  $scope.$watch('project', function(value) {
-    if (value && !$scope.organization) {
-      $scope.fetchProjectVersionChoices();
-    }
-  });
-
-  $scope.$watch('test', function(value) {
-    if (value) {
-      $scope.fetchProjectVersionChoices();
-    }
-  });
-
   $scope.$watch('config.newVersion', function(value) {
     if (value) {
       var previousVersion = $scope.modelObject[$scope.modelProperty];
@@ -106,13 +88,15 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       url: '/projectVersions',
       params: params
     }).then(function(res) {
+      // Process the choices
+      var projectVersionChoices;
       if ($scope.uniqueBy) {
-        $scope.projectVersionChoices = _.uniq(res.data, function(projectVersion) { return projectVersion[$scope.uniqueBy]; });
+        projectVersionChoices = _.uniq(res.data, function(projectVersion) { return projectVersion[$scope.uniqueBy]; });
       } else {
-        $scope.projectVersionChoices = res.data;
+        projectVersionChoices = res.data;
       }
 
-      $scope.projectVersionChoices = projectVersions.sort(res.data);
+      $scope.projectVersionChoices = projectVersions.sort(projectVersionChoices);
 
       if ($scope.projectVersionChoices.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one

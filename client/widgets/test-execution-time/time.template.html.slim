@@ -51,7 +51,7 @@
             strong Avg:
           td.text-right {{ stats.averageDuration | formatDuration: 1 }}
           td.text-center {{ results[results.length - 1].runAt | amDateFormat: 'HH:mm:ss' }}
-    .row ng-if='results.length > 0'
+    .row ng-if='started'
       .col-md-6
         project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
       .col-md-6
