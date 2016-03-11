@@ -27,12 +27,22 @@ class ProjectTestPolicy < ApplicationPolicy
   end
 
   class Serializer < Serializer
+    include ScmHelper
+
     def to_builder options = {}
+      last_result = record.description.last_result
+      payload = options[:payloads].find{ |p| p.id == last_result.test_payload_id } if options[:payloads]
+
+      unless payload
+        raise "Expected options[:payloads] to contain test payload with ID #{last_result.test_payload_id}"
+      end
+
+      source_url = build_source_url(last_result, record.project, payload)
 
       Jbuilder.new do |json|
         json.id record.api_id
         json.name record.name
-        json.category record.description.category.name
+        json.category record.description.category.name if record.description.category
         json.key record.key.key if record.key.present?
         json.resultsCount record.results_count
         json.firstRunAt record.first_run_at.iso8601(3)
@@ -44,6 +54,10 @@ class ProjectTestPolicy < ApplicationPolicy
         json.tickets record.description.tickets.collect(&:name)
         json.contributions serialize(record.description.contributions.to_a) if options[:with_contributions]
         json.project serialize(record.project) if options[:with_project]
+        json.sourceUrl source_url if source_url
+        if options[:with_scm]
+          json.scm build_scm_data(payload)
+        end
       end
     end
   end

@@ -5,7 +5,8 @@ angular.module('probedock.testDetailsPage').controller('TestDetailsPageCtrl', fu
     url: '/tests/' + $stateParams.testId,
     params: {
       withProject: 1,
-      withContributions: 1
+      withContributions: 1,
+      withScm: 1
     }
   }).then(function(response) {
     $scope.test = response.data;

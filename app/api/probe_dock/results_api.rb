@@ -34,6 +34,19 @@ module ProbeDock
             Organization.active.joins(projects: :tests).where('project_tests.api_id = ?', params[:testId]).first!
           end
         end
+
+        def serialization_options(results)
+          # Make sure this will not process the retrieval of payloads multiple times
+          return @serialization_options if @serialization_options
+
+          records = results.kind_of?(Array) ? results : [ results ]
+
+          # Serialization options with the payloads containing the SCM data
+          @serialization_options = {
+            with_scm: true_flag?(:withScm),
+            payloads: TestPayload.with_scm_data.where('test_payloads.id in (?)', records.collect(&:test_payload_id))
+          }
+        end
       end
 
       get do

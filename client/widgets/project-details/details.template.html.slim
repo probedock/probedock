@@ -2,7 +2,7 @@
   .panel-heading.clearfix
     .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
       a.btn.btn-primary ng-if='project.repoUrl' href='{{ project.repoUrl }}' tooltip='Open repository' tooltip-append-to-body='true' target='_blank'
-        project-repo-icon project='project'
+        repo-icon url='project.repoUrl'
       a.btn.btn-warning ui-sref='org.projects.list.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
         span.glyphicon.glyphicon-pencil
     api-id-label.pull-right api-id='project.id' copy-tooltip='Project ID (click to copy)'
@@ -29,4 +29,4 @@
     .col-lg-4.col-md-6.col-sm-12 ng-if='project && project.lastReportId'
       testing-activity-widget type='projects' organization='organization' project='project' nb-days='15'
     .col-lg-5.col-md-6.col-sm-12 ng-if='project.lastReportId'
-      project-health-widget organization='organization' project='project' filters-disabled='true' chart-height='280' compact='true'
+      project-health-widget.project-health-widget organization='organization' project='project' filters-disabled='true' chart-height='280' compact='true'

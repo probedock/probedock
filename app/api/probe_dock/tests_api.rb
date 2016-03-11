@@ -33,10 +33,20 @@ module ProbeDock
           rel.includes :project
         end
 
-        def serialization_options tests
-          @serialization_options ||= {
+        def serialization_options(tests)
+          # Make sure this will not process the retrieval of payloads multiple times
+          return @serialization_options if @serialization_options
+
+          records = tests.kind_of?(Array) ? tests : [ tests ]
+
+          # Serialization options with the payloads containing the SCM data
+          @serialization_options = {
             with_project: true_flag?(:withProject),
-            with_contributions: true_flag?(:withContributions)
+            with_contributions: true_flag?(:withContributions),
+            with_scm: true_flag?(:withScm),
+            payloads: TestPayload.with_scm_data
+              .joins(:results)
+              .where('test_results.test_payload_id IN (?)', records.collect{ |t| t.description.last_result.test_payload_id })
           }
         end
       end

@@ -14,6 +14,7 @@
             em Loading...
           div ng-if='test'
             .labels.clearfix
+              source-url-label ng-if='test.sourceUrl' url='test.sourceUrl' scm='test.scm' tooltip-placement='right'
               project-version-label organization='currentOrganization' project='test.project' project-version='test.projectVersion' truncate='false'
               category-label category='test.category'
               tag-labels tags='test.tags'
