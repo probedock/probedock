@@ -10,8 +10,8 @@
 
     form
 
-      project-version-select prefix='test-payload-dropzone' organization='organization' project='project' model-object='uploadParams' model-property='projectVersionName' extract='name' create-new='true' auto-select='true'
-      category-select prefix='test-payload-dropzone' organization='organization' model-object='uploadParams' create-new='true'
+      project-version-select prefix='test-payload-dropzone' organization='organization' project='project' model-object='uploadParams' model-property='projectVersionName' extract='name' create-new='true' auto-select='true' label='Version'
+      category-select prefix='test-payload-dropzone' organization='organization' model-object='uploadParams' create-new='true' label='Category'
 
       / file drop zone
       .dropzone ng-show='formConfig.uploadEnabled'

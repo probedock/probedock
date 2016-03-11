@@ -77,8 +77,8 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
       testId: $scope.test.id
     };
 
-    if ($scope.params.projectVersion) {
-      params.projectVersionId = $scope.params.projectVersion.id
+    if ($scope.params.projectVersionId) {
+      params.projectVersionId = $scope.params.projectVersionId
     }
 
     if ($scope.params.userIds) {
