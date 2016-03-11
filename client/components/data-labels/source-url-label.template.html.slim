@@ -1,0 +1,5 @@
+span.data-label>
+  span.label.label-primary tooltip='{{ getTooltip() }}' tooltip-placement='{{ tooltipPlacement }}'
+    a.source-url href='{{ url }}' target='_blank'
+      repo-icon url='url'
+      i.source-dirty.fa.fa-exclamation-triangle ng-if='isNotPushed()'

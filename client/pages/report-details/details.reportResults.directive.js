@@ -85,7 +85,8 @@ angular.module('probedock.reportDetailsPage').directive('reportDetailsResults', 
         params: {
           reportId: $scope.report.id,
           page: page,
-          pageSize: pageSize
+          pageSize: pageSize,
+          withScm: 1
         }
       });
     }

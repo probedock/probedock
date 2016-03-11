@@ -24,8 +24,19 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       truncate: '=?'
     }
   };
-})
-.directive('testKeyLabel', function() {
+}).directive('sourceUrlLabel', function() {
+  return {
+    restrict: 'E',
+    controller: 'SourceUrlLabelCtrl',
+    templateUrl: '/templates/components/data-labels/source-url-label.template.html',
+    replace: true,
+    scope: {
+      url: '=',
+      scm: '=?',
+      tooltipPlacement: '@'
+    }
+  };
+}).directive('testKeyLabel', function() {
   return {
     restrict: 'E',
     scope: {
@@ -89,6 +100,59 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
     } else {
       return str;
     }
+  };
+})
+.controller('SourceUrlLabelCtrl', function($scope) {
+  _.defaults($scope, {
+    tooltipPlacement: 'top'
+  });
+
+  $scope.isNotPushed = function() {
+    // Check if SCM data are present
+    if ($scope.scm) {
+      // Check if dirty is set (modifications not commited)
+      if ($scope.scm.dirty) {
+        return true;
+      } else {
+        // If remote data present and ahead info present and commit is ahead of remote, consider the commit not pushed on remote
+        return !_.isUndefined($scope.scm.remote) && !_.isUndefined($scope.scm.remote.ahead) && $scope.scm.remote.ahead > 0;
+      }
+    }
+
+    // The commit is pushed to remote or SCM data not available
+    return false;
+  };
+
+  $scope.getTooltip = function() {
+
+    var tooltip = "Show source file.";
+
+    var warnings = [];
+
+    if ($scope.scm) {
+
+      // Warn the user that there were uncommitted local changes if the dirty flag is set.
+      if (!_.isUndefined($scope.scm.dirty) && $scope.scm.dirty) {
+        warnings.push('there were uncommitted local changes');
+      }
+
+      if ($scope.scm.remote) {
+
+        // Warn the user that the commit was not pushed if scm.remote.ahead is present.
+        if ($scope.scm.remote.ahead && $scope.scm.remote.ahead > 0) {
+          warnings.push('the current commit was not pushed');
+        }
+      }
+    }
+
+    var numberOfWarnings = warnings.length;
+    if (numberOfWarnings) {
+      tooltip += ' ATTENTION! When the test was run: ';
+      tooltip += warnings.join(', ');
+      tooltip += '. The linked file might not yet exist or the line number could be incorrect.';
+    }
+
+    return tooltip;
   };
 });
 

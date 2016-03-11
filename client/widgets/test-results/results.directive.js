@@ -71,6 +71,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
     }
 
     var params = {
+      withScm: 1,
       sort: 'runAt',
       page: page,
       pageSize: $scope.pageSize,
