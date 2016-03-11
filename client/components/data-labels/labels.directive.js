@@ -127,27 +127,32 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   };
 
   $scope.getTooltip = function() {
+
     var tooltip = "Show source file.";
 
-    // Add tooltip content if SCM data are present
+    var warnings = [];
+
     if ($scope.scm) {
-      // Add dirty info if the dirty flag is set
+
+      // Warn the user that there were uncommitted local changes if the dirty flag is set.
       if (!_.isUndefined($scope.scm.dirty) && $scope.scm.dirty) {
-        tooltip += " The test was probably run on a commit not pushed.";
+        warnings.push('there were uncommitted local changes');
       }
 
-      // Add ahead/behind info if remote data are present
       if ($scope.scm.remote) {
-        // Add ahead info if present
-        if ($scope.scm.remote.ahead && $scope.scm.remote.ahead > 0) {
-          tooltip += "The commit is ahead of " + $scope.scm.remote.ahead + " from remote.";
-        }
 
-        // Add behind info if present
-        if ($scope.scm.remote.behind && $scope.scm.remote.behind > 0) {
-          tooltip += "The commit is behind of " + $scope.scm.remote.behind + " from remote.";
+        // Warn the user that the commit was not pushed if scm.remote.ahead is present.
+        if ($scope.scm.remote.ahead && $scope.scm.remote.ahead > 0) {
+          warnings.push('the current commit was not pushed');
         }
       }
+    }
+
+    var numberOfWarnings = warnings.length;
+    if (numberOfWarnings) {
+      tooltip += ' ATTENTION! When the test was run: ';
+      tooltip += warnings.join(', ');
+      tooltip += '. The linked file might not yet exist or the line number could be incorrect.';
     }
 
     return tooltip;
