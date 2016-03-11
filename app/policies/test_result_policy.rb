@@ -24,7 +24,11 @@ class TestResultPolicy < ApplicationPolicy
     include ScmHelper
 
     def to_builder(options = {})
-      payload = options[:payloads].find{ |p| p.id == record.test_payload_id } if options[:payloads]
+      unless options[:payloads]
+        raise "Expected options[:payloads] to contain test payload with ID #{last_result.test_payload_id}"
+      end
+
+      payload = options[:payloads].find{ |p| p.id == record.test_payload_id }
       source_url = build_source_url(record, record.project_version.project, payload)
 
       Jbuilder.new do |json|

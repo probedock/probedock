@@ -107,22 +107,19 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
     tooltipPlacement: 'top'
   });
 
-  $scope.isDirty = function() {
+  $scope.isNotPushed = function() {
     // Check if SCM data are present
     if ($scope.scm) {
-      // Check if dirty is set
+      // Check if dirty is set (modifications not commited)
       if (!_.isUndefined($scope.scm.dirty)) {
         return $scope.scm.dirty;
-      } else if (!_.isUndefined($scope.scm.remote)) { // Check if remote data are present to consider the commit as dirty or not
-        if (!_.isUndefined($scope.scm.remote.behind)) { // Check if commit is behind remote
-          return $scope.scm.remote.behind > 0;
-        } else if (!_.isUndefined($scope.scm.remote.ahead)) { // Check if commit is ahead remote
-          return $scope.scm.remote.ahead > 0;
-        }
+      } else {
+        // If remote data present and ahead info present and commit is ahead of remote, consider the commit not pushed on remote
+        return !_.isUndefined($scope.scm.remote) && !_.isUndefined($scope.scm.remote.ahead) && $scope.scm.remote.ahead > 0;
       }
     }
 
-    // The commit is not behind/ahead remote or dirty (not commited...)
+    // The commit is pushed to remote or SCM data not available
     return false;
   };
 
