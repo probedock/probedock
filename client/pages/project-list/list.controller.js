@@ -1,12 +1,9 @@
 angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', function(api, orgs, projectEditModal, $scope, $state, $stateParams) {
   orgs.forwardData($scope);
-  //
-  //fetchProjects();
-  //
+
   $scope.$watch('projectName', function(value, oldValue) {
     if (value || value !== oldValue) {
-      //fetchProjects();
-      filterProjects();
+      $scope.$emit('projects.filtered');
     }
   });
 
@@ -26,7 +23,7 @@ angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', fu
   });
 
   $scope.orderProject = function(project) {
-    return (project.project.displayName || project.project.name).toLowerCase();
+    return (project.displayName || project.name).toLowerCase();
   };
 
   $scope.page = 0;
@@ -51,35 +48,20 @@ angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', fu
       url: '/projects',
       params: params
     }).then(function(response) {
-      $scope.projects = $scope.projects.concat(prepareProjects(response.data));
+      $scope.projects = $scope.projects.concat(response.data);
       $scope.total = response.pagination().total;
       $scope.disableScroll = $scope.page >= response.pagination().numberOfPages;
       $scope.loading = false;
     });
   };
 
-  function prepareProjects(projects) {
-    return _.map(projects, function(project) {
-      return {
-        show:  isProjectShowable(project),
-        project: project
-      }
-    });
-  }
-
-  function filterProjects() {
-    _.each($scope.projects, function(project) {
-      project.show = isProjectShowable(project.project);
-    });
-  }
-
-  function isProjectShowable(project) {
+  $scope.isVisible = function(project) {
     if ($scope.projectName) {
-      var displayName = project.displayName ? project.displayName.toLowerCase() : '';
+      var displayName = project.displayName ? project.displayName.toLowerCase() : project.name.toLowerCase();
       var search = $scope.projectName.toLowerCase();
       return displayName.indexOf(search) > -1;
     } else {
       return true;
     }
-  }
+  };
 });
