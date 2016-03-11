@@ -111,8 +111,8 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
     // Check if SCM data are present
     if ($scope.scm) {
       // Check if dirty is set (modifications not commited)
-      if (!_.isUndefined($scope.scm.dirty)) {
-        return $scope.scm.dirty;
+      if ($scope.scm.dirty) {
+        return true;
       } else {
         // If remote data present and ahead info present and commit is ahead of remote, consider the commit not pushed on remote
         return !_.isUndefined($scope.scm.remote) && !_.isUndefined($scope.scm.remote.ahead) && $scope.scm.remote.ahead > 0;
