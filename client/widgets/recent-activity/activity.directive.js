@@ -6,10 +6,15 @@ angular.module('probedock.recentActivityWidget').directive('recentActivityWidget
     templateUrl: '/templates/widgets/recent-activity/activity.template.html',
     scope: {
       organization: '=',
-      project: '=?'
+      project: '=?',
+      linkable: '=?'
     }
   };
 }).controller('RecentActivityWidgetCtrl', function(api, $scope) {
+
+  _.defaults($scope, {
+    linkToVersion: true
+  });
 
   $scope.$watch('organization', function(value) {
     if (value) {

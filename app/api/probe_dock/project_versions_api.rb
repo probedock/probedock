@@ -36,7 +36,14 @@ module ProbeDock
         authenticate
         authorize! ProjectVersion, :index
 
-        project_versions_rel = policy_scope(ProjectVersion).order('projects.name ASC, project_versions.created_at DESC')
+        project_versions_rel = policy_scope(ProjectVersion)
+
+        if params[:sort].present? && params[:sort] == 'createdAt'
+          project_versions_rel = project_versions_rel.order('project_versions.created_at DESC')
+        else
+          project_versions_rel = project_versions_rel.order('projects.name ASC, project_versions.created_at DESC')
+        end
+
         project_versions_rel = project_versions_rel.joins(:project)
 
         project_versions_rel = paginated project_versions_rel do |paginated_rel|

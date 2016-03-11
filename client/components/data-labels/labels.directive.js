@@ -65,17 +65,11 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   };
 })
 .controller('ProjectVersionLabelCtrl', function($scope, projectNameFilter) {
-  if (_.isUndefined($scope.linkable)) {
-    $scope.linkable = true;
-  }
-
-  if (_.isUndefined($scope.truncate)) {
-    $scope.truncate = true;
-  }
-
-  if (!$scope.labelSize) {
-    $scope.labelSize = 30;
-  }
+  _.defaults($scope, {
+    linkable: true,
+    truncate: true,
+    labelSize: 30
+  });
 
   $scope.getTooltip = function () {
     return $scope.versionOnly ? $scope.projectVersion : projectNameFilter($scope.project) + ' ' + $scope.projectVersion;
