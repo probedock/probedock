@@ -44,7 +44,7 @@ Feature: Test
 
     # Create a result for each test with the report and payload for X-Wing project
     And test result report A was generated for organization Rebel Alliance
-    And contextualized test payload A1 sent by hsolo for version 1.0.0 of project X-Wing was used to generate report A with context:
+    And test payload A1 sent by hsolo for version 1.0.0 of project X-Wing was used to generate report A with context:
       """
       {
         "scm.name": "Git",
@@ -59,7 +59,7 @@ Feature: Test
         "scm.remote.behind": 2
       }
       """
-    And enriched result R1 for test "Ion engine should provide thrust" is new and passing and was run by hsolo and took 20 seconds to run for payload A1 with version 1.0.0 and custom values:
+    And result R1 for test "Ion engine should provide thrust" is new and passing and was run by hsolo and took 20 seconds to run for payload A1 with version 1.0.0 and custom values:
       """
       {
         "file.path": "somewhere/on/file/system.js",

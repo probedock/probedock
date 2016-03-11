@@ -38,7 +38,7 @@ describe ScmHelper do
       let(:result) { build(:result) }
       let(:payload) { build(:test_payload) }
 
-      it('should not be possible to build the source URL when repo is missing', probedock: { key: 'ryiv' }) do
+      it 'should not build the source URL when repo is missing', probedock: { key: 'ryiv' } do
         expect(build_source_url(result, project, payload)).to be_nil
       end
     end
@@ -48,7 +48,7 @@ describe ScmHelper do
       let(:payload) { build(:test_payload) }
       let(:project) { build(:project, repo_url: 'https://localhost.localdomain') }
 
-      it('should not be possible to build the source URL when repo URL is not recognised', probedock: { key: 'z111' }) do
+      it 'should not build the source URL when repo URL is not recognised', probedock: { key: 'z111' } do
         expect(build_source_url(result, project, payload)).to be_nil
       end
     end
@@ -61,11 +61,11 @@ describe ScmHelper do
         TestPayload.with_scm_data.first
       end
 
-      it('should be possible to build the source URL', probedock: { key: '4os3' }) do
+      it 'should build the source URL', probedock: { key: '4os3' } do
         expect(build_source_url(result, project, payload)).to eq('https://github.com/probedock/galactic-empire/blob/9f4b549ce75ebe92ac1bc4b697934ca1c64d7deb/path/to/the/file#L12')
       end
 
-      it('should not be possible to build the source url when commit or file path is missing', probedock: { key: 'ythc' }) do
+      it 'should not build the source url when commit or file path is missing', probedock: { key: 'ythc' } do
         result.custom_values['file.path'] = nil
         expect(build_source_url(result, project, payload)).to be_nil
 
@@ -74,7 +74,7 @@ describe ScmHelper do
         expect(build_source_url(result, project, payload)).to be_nil
       end
 
-      it('should be possible to build the source URL without the line when missing', probedock: { key: 'xdwl' }) do
+      it 'should build the source URL without the line when missing', probedock: { key: 'xdwl' } do
         result.custom_values['file.line'] = nil
         expect(build_source_url(result, project, payload)).to eq('https://github.com/probedock/galactic-empire/blob/9f4b549ce75ebe92ac1bc4b697934ca1c64d7deb/path/to/the/file')
       end
@@ -88,11 +88,11 @@ describe ScmHelper do
         TestPayload.with_scm_data.first
       end
 
-      it('should be possible to build the source URL', probedock: { key: 'lupe' }) do
+      it 'should build the source URL', probedock: { key: 'lupe' } do
         expect(build_source_url(result, project, payload)).to eq('https://gitlab.com/probedock/galactic-empire/blob/9f4b549ce75ebe92ac1bc4b697934ca1c64d7deb/path/to/the/file#L12')
       end
 
-      it('should not be possible to build the source url when commit or file path is missing', probedock: { key: '6hmz' }) do
+      it 'should not build the source url when commit or file path is missing', probedock: { key: '6hmz' } do
         result.custom_values['file.path'] = nil
         expect(build_source_url(result, project, payload)).to be_nil
 
@@ -101,7 +101,7 @@ describe ScmHelper do
         expect(build_source_url(result, project, payload)).to be_nil
       end
 
-      it('should be possible to build the source URL without the line when missing', probedock: { key: '6wtu' }) do
+      it 'should build the source URL without the line when missing', probedock: { key: '6wtu' } do
         result.custom_values['file.line'] = nil
         expect(build_source_url(result, project, payload)).to eq('https://gitlab.com/probedock/galactic-empire/blob/9f4b549ce75ebe92ac1bc4b697934ca1c64d7deb/path/to/the/file')
       end
@@ -115,11 +115,11 @@ describe ScmHelper do
         TestPayload.with_scm_data.first
       end
 
-      it('should be possible to build the source URL', probedock: { key: '1vv1' }) do
+      it 'should build the source URL', probedock: { key: '1vv1' } do
         expect(build_source_url(result, project, payload)).to eq('https://bitbucket.com/probedock/galactic-empire/src/9f4b549ce75ebe92ac1bc4b697934ca1c64d7deb/path/to/the/file#file-12')
       end
 
-      it('should not be possible to build the source url when commit or file path is missing', probedock: { key: 'p8o6' }) do
+      it 'should not build the source url when commit or file path is missing', probedock: { key: 'p8o6' } do
         result.custom_values['file.path'] = nil
         expect(build_source_url(result, project, payload)).to be_nil
 
@@ -128,7 +128,7 @@ describe ScmHelper do
         expect(build_source_url(result, project, payload)).to be_nil
       end
 
-      it('should be possible to build the source URL without the line when missing', probedock: { key: '0tbs' }) do
+      it 'should build the source URL without the line when missing', probedock: { key: '0tbs' } do
         result.custom_values['file.line'] = nil
         expect(build_source_url(result, project, payload)).to eq('https://bitbucket.com/probedock/galactic-empire/src/9f4b549ce75ebe92ac1bc4b697934ca1c64d7deb/path/to/the/file')
       end
@@ -142,7 +142,7 @@ describe ScmHelper do
         TestPayload.with_scm_data.first
       end
 
-      it('should build an empty SCM data when no data is present', probedock: { key: 'vvzh' }) do
+      it 'should build an empty SCM data when no data is present', probedock: { key: 'vvzh' } do
         expect(build_scm_data(payload)).to eq({})
       end
     end
@@ -172,7 +172,7 @@ describe ScmHelper do
       ]
 
       definitions.each do |definition|
-        it("should only contain #{definition[:name]} when present", probedock: { key: "#{definition[:key]}" }) do
+        it "should only contain #{definition[:name]} when present", probedock: { key: "#{definition[:key]}" } do
           expect(build_scm_data(create_payload(definition[:context]))).to eq(definition[:check])
         end
       end
@@ -184,7 +184,7 @@ describe ScmHelper do
         TestPayload.with_scm_data.first
       end
 
-      it('should contain all the data', probedock: { key: '7q1i' }) do
+      it 'should contain all the data', probedock: { key: '7q1i' } do
         expect(build_scm_data(payload)).to eq({
           name: 'git',
           version: '1.2.3',

@@ -23,7 +23,7 @@ Feature: Results
 
     # Create 1 report with 2 payloads
     And test result report A was generated for organization Rebel Alliance
-    And contextualized test payload A1 sent by hsolo for version 1.2.2 of project X-Wing was used to generate report A with context:
+    And test payload A1 sent by hsolo for version 1.2.2 of project X-Wing was used to generate report A with context:
       """
       {
         "scm.name": "Git",
@@ -50,7 +50,7 @@ Feature: Results
     And test "Shields must resist to lasers" was created by hsolo with key bbbb for version 1.2.2 of project X-Wing
 
     # Create test results for the two tests and same version and the two first payloads
-    And enriched result R1 for test "Engine should be powered" is new and passing and was run by hsolo and took 20 seconds to run for payload A1 with version 1.2.2 and custom values:
+    And result R1 for test "Engine should be powered" is new and passing and was run by hsolo and took 20 seconds to run for payload A1 with version 1.2.2 and custom values:
       """
       {
         "file.path": "somewhere/on/file/system.js",

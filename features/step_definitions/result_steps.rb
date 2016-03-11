@@ -91,10 +91,10 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
   end
 end
 
-Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version (.+)$/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version|
+Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version ([^\s]+)$/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version|
   create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, nil)
 end
 
-Given /^enriched result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version (.+?) and custom values:/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version, custom_values|
+Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version ([^\s]+) and custom values:/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version, custom_values|
   create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, custom_values)
 end
