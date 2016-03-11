@@ -13,23 +13,23 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
   var page = 1;
   var reset = true;
 
-  $scope.pageSize = 50;
-
-  $scope.params = {};
-  $scope.results = [];
-  $scope.loading = true;
-
-  $scope.chart = {
-    data: [],
-    labels: [],
-    options: {
-      showTooltips: false,
-      pointDot: false,
-      datasetFill: false,
-      scaleShowVerticalLines: false
+  _.defaults($scope, {
+    pageSize: 50,
+    params: {},
+    results: [],
+    loading: true,
+    started: false,
+    chart: {
+      data: [],
+      labels: [],
+      options: {
+        showTooltips: false,
+        pointDot: false,
+        datasetFill: false,
+        scaleShowVerticalLines: false
+      }
     }
-  };
-
+  });
 
   $scope.$watch('test', function(value) {
     if (value) {
@@ -140,6 +140,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
       showResults();
 
       $scope.loading = false;
+      $scope.started = true;
       reset = false;
     });
   }

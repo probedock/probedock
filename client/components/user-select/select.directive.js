@@ -9,6 +9,8 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
       modelProperty: '@',
       prefix: '@',
       placeholder: '@',
+      multiple: '=?',
+      allowClear: '=?',
       label: '@',
       noLabel: '=?'
     }
@@ -18,28 +20,14 @@ angular.module('probedock.userSelect').directive('userSelect', function() {
     throw new Error("The prefix attribute on user-select directive is not set.");
   }
 
-  if (!$scope.modelProperty) {
-    $scope.modelProperty = "userIds";
-  }
-
-  if (_.isUndefined($scope.noLabel)) {
-    $scope.noLabel = false;
-  }
-
-  if (_.isUndefined($scope.label)) {
-    $scope.label = 'Filter by user';
-  }
-
-  if (_.isUndefined($scope.placeholder)) {
-    $scope.placeholder = 'All users';
-  }
-
-  $scope.userChoices = [];
-
-  $scope.$watch('organization', function(value) {
-    if (value) {
-      $scope.fetchUserChoices();
-    }
+  _.defaults($scope, {
+    modelProperty: $scope.multiple ? 'userIds' : 'userId',
+    placeholder: 'All users',
+    label: 'Filter by user',
+    allowClear: true,
+    multiple: false,
+    noLabel: false,
+    userChoices: []
   });
 
   $scope.fetchUserChoices = function(userName) {

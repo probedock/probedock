@@ -20,9 +20,16 @@ Given /user (\w+) who is an admin of (.+) exists/ do |user_name,organization_nam
   add_named_record user_name, create(:org_admin, name: user_name, organization: org)
 end
 
-Given /user (\w+) who is a technical user of (.+) exists/ do |user_name,organization_name|
+Given /user (\w+) who is a technical user of (.+) exists(?: since (\d*) ((?:day|week)s?) ago)?/ do |user_name,organization_name,interval_count,interval|
   org = Organization.where(name: organization_name.downcase.gsub(/\s+/, '-')).first!
-  add_named_record user_name, create(:technical_user, name: user_name, organization: org)
+
+  date = if interval_count
+    interval_count.to_i.send(interval).ago
+  else
+    Time.now
+  end
+
+  add_named_record user_name, create(:technical_user, name: user_name, organization: org, created_at: date, updated_at: date)
 end
 
 Given /user (\w+) is(?: also)? a member of (.+)/ do |user_name,organization_name|

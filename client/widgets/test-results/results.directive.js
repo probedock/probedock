@@ -12,11 +12,13 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
 
   var page = 1;
 
-  $scope.pageSize = 50;
-
-  $scope.params = {};
-  $scope.results = [];
-  $scope.loading = true;
+  _.defaults($scope, {
+    pageSize: 50,
+    params: {},
+    results: [],
+    loading: true,
+    started: false
+  });
 
   $scope.$watch('test', function(value) {
     if (value) {
@@ -102,6 +104,8 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
 
         $scope.loading = false;
       }
+
+      $scope.started = true;
     });
   }
 

@@ -27,52 +27,17 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
     throw new Error("The prefix attribute on project-version-select directive is not set.");
   }
 
-  if (!$scope.modelProperty) {
-    if ($scope.multiple) {
-      $scope.modelProperty = 'projectVersionIds';
-    } else {
-      $scope.modelProperty = 'projectVersionId'
-    }
-  }
-
-  if (_.isUndefined($scope.extract)) {
-    $scope.extract = 'id';
-  }
-
-  if (_.isUndefined($scope.noLabel)) {
-    $scope.noLabel = false;
-  }
-
-  if (_.isUndefined($scope.label)) {
-    $scope.label = 'Version';
-  }
-
-  if (_.isUndefined($scope.allowClear)) {
-    $scope.allowClear = !_.isUndefined($scope.latestVersion);
-  }
-
-  $scope.config = {
-    newVersion: false
-  };
-
-  $scope.projectVersionChoices = [];
-
-  $scope.$watch('organization', function(value) {
-    if (value) {
-      $scope.fetchProjectVersionChoices();
-    }
-  });
-
-  $scope.$watch('project', function(value) {
-    if (value && !$scope.organization) {
-      $scope.fetchProjectVersionChoices();
-    }
-  });
-
-  $scope.$watch('test', function(value) {
-    if (value) {
-      fetchProjectVersionChoices();
-    }
+  _.defaults($scope, {
+    modelProperty: $scope.multiple ? 'projectVersionIds' : 'projectVersionId',
+    label: 'Version',
+    allowClear: true,
+    multiple: false,
+    noLabel: false,
+    extract: 'id',
+    config: {
+      newVersion: false
+    },
+    projectVersionChoices: []
   });
 
   $scope.$watch('config.newVersion', function(value) {
@@ -123,13 +88,15 @@ angular.module('probedock.projectVersionSelect').directive('projectVersionSelect
       url: '/projectVersions',
       params: params
     }).then(function(res) {
+      // Process the choices
+      var projectVersionChoices;
       if ($scope.uniqueBy) {
-        $scope.projectVersionChoices = _.uniq(res.data, function(projectVersion) { return projectVersion[$scope.uniqueBy]; });
+        projectVersionChoices = _.uniq(res.data, function(projectVersion) { return projectVersion[$scope.uniqueBy]; });
       } else {
-        $scope.projectVersionChoices = res.data;
+        projectVersionChoices = res.data;
       }
 
-      $scope.projectVersionChoices = projectVersions.sort(res.data);
+      $scope.projectVersionChoices = projectVersions.sort(projectVersionChoices);
 
       if ($scope.projectVersionChoices.length && $scope.autoSelect) {
         // if versions are found, automatically select the first one
