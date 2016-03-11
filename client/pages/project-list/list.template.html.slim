@@ -27,7 +27,7 @@
         .form-group.input-group
           span.input-group-addon
             span.glyphicon.glyphicon-search
-          input.form-control type='text' name='search' value='{{ projectName }}' ng-model='projectName' placeholder='Project name'
+          input.form-control type='text' name='search' value='{{ projectName }}' ng-model='projectName' placeholder='Project name' size='40'
     div infinite-scroll='fetchProjects()' infinite-scroll-disabled='disableScroll' infinite-scroll-distance='0' infinite-scroll-use-document-bottom='true' infinite-scroll-listen-for-event='projects.filtered'
       div ng-repeat='project in projects | orderBy: orderProject'
         project-details-widget ng-show='isVisible(project)' organization='currentOrganization' project='project'
