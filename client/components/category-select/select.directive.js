@@ -13,7 +13,7 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
       placeholder: '@',
       label: '@',
       noLabel: '=?',
-      multiple: '@',
+      multiple: '=?',
       extract: '@'
     }
   };
@@ -22,36 +22,17 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
     throw new Error("The prefix attribute on category-select directive is not set.");
   }
 
-  if (!$scope.modelProperty) {
-    if ($scope.multiple) {
-      $scope.modelProperty = 'categoryNames';
-    } else {
-      $scope.modelProperty = 'categoryName'
-    }
-  }
-
-  if (_.isUndefined($scope.extract)) {
-    $scope.extract = 'name';
-  }
-
-  if (_.isUndefined($scope.noLabel)) {
-    $scope.noLabel = false;
-  }
-
-  if (_.isUndefined($scope.label)) {
-    $scope.label = 'Category';
-  }
-
-  $scope.config = {
-    newCategory: false
-  };
-
-  $scope.categoryChoices = [];
-
-  $scope.$watch('organization', function(value) {
-    if (value) {
-      $scope.fetchCategoryChoices();
-    }
+  _.defaults($scope, {
+    modelProperty: $scope.multiple ? 'categoryNames' : 'categoryName',
+    placeholder: 'All categories',
+    label: 'Category',
+    extract: 'name',
+    multiple: false,
+    noLabel: false,
+    config: {
+      newCategory: false
+    },
+    categoryChoices: []
   });
 
   $scope.$watch('config.newCategory', function(value) {
@@ -66,14 +47,6 @@ angular.module('probedock.categorySelect').directive('categorySelect', function(
       $scope.modelObject[$scope.modelProperty] = $scope.categoryChoices[0][$scope.extract];
     }
   });
-
-  $scope.getPlaceholder = function() {
-    if ($scope.placeholder) {
-      return $scope.placeholder;
-    } else {
-      return 'All categories';
-    }
-  };
 
   $scope.fetchCategoryChoices = function(categoryName) {
     var params = {

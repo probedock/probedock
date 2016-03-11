@@ -11,13 +11,13 @@
 
   / Single dropdown menu to select an existing version
   ui-select id='{{ prefix }}-project-version-select-single' ng-if='!multiple && !config.newVersion && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true
-    ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='{{ !!latestVersion }}' {{ $select.selected.name }}
+    ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='{{ allowClear }}' {{ $select.selected.name }}
     ui-select-choices repeat='projectVersion[extract] as projectVersion in projectVersionChoices' refresh='fetchProjectVersionChoices($select.search)' refresh-delay='250'
       span ng-bind-html='projectVersion.name | highlight: $select.search'
 
   / Multiple select dropdown menu to select existing versions
   ui-select id='{{ prefix }}-project-version-select-multiple' ng-if='multiple && !config.newVersion && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true multiple=true
-    ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='{{ !!latestVersion }}' {{ $item.name }}
+    ui-select-match placeholder='{{ getPlaceholder() }}' allow-clear='{{ allowClear }}' {{ $item.name }}
     ui-select-choices repeat='projectVersion[extract] as projectVersion in projectVersionChoices' refresh='fetchProjectVersionChoices($select.search)' refresh-delay='250'
       span ng-bind-html='projectVersion.name | highlight: $select.search'
 

@@ -270,6 +270,48 @@ Feature: Project version
 
 
 
+  Scenario: An organization member should be able to get project versions in his organization only sorted by creation date
+    And project version 1.0.2 exists for project X-Wing since 6 days ago
+    When hsolo sends a GET request to /api/projectVersions?organizationId={@idOf: Rebel Alliance}&sort=createdAt
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: 1.0.0",
+        "name": "1.0.0",
+        "projectId": "@idOf: X-Wing",
+        "createdAt": "@iso8601"
+      }, {
+        "id": "@idOf: 1.0.1",
+        "name": "1.0.1",
+        "projectId": "@idOf: X-Wing",
+        "createdAt": "@iso8601"
+      }, {
+        "id": "@idOf: c",
+        "name": "c",
+        "projectId": "@idOf: Y-Wing",
+        "createdAt": "@iso8601"
+      }, {
+        "id": "@idOf: b",
+        "name": "b",
+        "projectId": "@idOf: Y-Wing",
+        "createdAt": "@iso8601"
+      }, {
+        "id": "@idOf: 1.0.2",
+        "name": "1.0.2",
+        "projectId": "@idOf: X-Wing",
+        "createdAt": "@iso8601"
+      }, {
+        "id": "@idOf: a",
+        "name": "a",
+        "projectId": "@idOf: Y-Wing",
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   @authorization
   Scenario: A user should not be able to get project versions without specifying the organization
     When hsolo sends a GET request to /api/projectVersions

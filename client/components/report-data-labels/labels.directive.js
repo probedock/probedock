@@ -9,18 +9,17 @@ angular.module('probedock.reportDataLabels').directive('reportDataLabels', funct
       organization: '=',
       nbProjectsToShow: '=?',
       forProject: '=?',
-      versionsOnly: '=?'
+      versionsOnly: '=?',
+      linkable: '=?'
     }
   };
 })
 .controller('ReportDataLabelsCtrl', function($scope) {
-  if (!$scope.nbProjectsToShow) {
-    $scope.nbProjectsToShow = 5;
-  }
-
-  if (!$scope.versionsOnly) {
-    $scope.versionsOnly = false;
-  }
+  _.defaults($scope, {
+    nbProjectsToShow: 5,
+    versionOnly: false,
+    linkable: true
+  });
 
   var filteredProjects = $scope.forProject ? _.where($scope.report.projects, { id: $scope.forProject.id }) : $scope.report.projects;
   $scope.projects = filteredProjects.slice(0, $scope.nbProjectsToShow);
