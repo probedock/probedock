@@ -76,9 +76,7 @@ module ScmHelper
   def join(*paths, separator: '/')
     paths = paths.compact.reject(&:empty?)
     last = paths.length - 1
-    paths.each_with_index.map { |path, index|
-      expand(path, index, last, separator)
-    }.join
+    paths.each_with_index.map { |path, index| expand(path, index, last, separator) }.join
   end
 
   def expand(path, current, last, separator)
