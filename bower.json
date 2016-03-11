@@ -34,7 +34,7 @@
     "js-yaml": "~3.3.0",
     "jvent": "~0.2.0",
     "ng-clip": "~0.2.4",
-    "ngInfiniteScroll": "~1.2.0",
+    "ngInfiniteScroll": "~1.2.2",
     "normalize.css": "~3.0.2",
     "tether": "~1.1.1",
     "tether-drop": "~1.4.2",
