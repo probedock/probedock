@@ -40,7 +40,7 @@ angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', fu
     $scope.page++;
     var params = {
       organizationName: $stateParams.orgName,
-      pageSize: 1,
+      pageSize: 10,
       page: $scope.page
     };
 
