@@ -25,8 +25,8 @@
     .row ng-if='missingVersions.length'
       .col-md-12
         p
-          ' There is no result for
-          ng-pluralize count='missingVersions.length' when='{"1": "this version:", "other": "these versions:"}'
+          span> There is no result for
+          ng-pluralize> count='missingVersions.length' when='{"1": "this version:", "other": "these versions:"}'
           project-version-label ng-repeat='missingVersion in missingVersions' project-version='missingVersion.name'
     .row ng-if='started'
       .col-md-6
