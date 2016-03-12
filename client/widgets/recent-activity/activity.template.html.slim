@@ -8,26 +8,24 @@
       em No tests have been run recently.
   .list-group ng-if='reports.length'
     .list-group-item ng-repeat='report in reports'
-      span.single-runner ng-if='report.runners.length == 1'
+      span.single-runner> ng-if='report.runners.length == 1'
         user-avatar ng-if='report.runners.length == 1' user='report.runners[0]'
         strong.name {{ report.runners[0].name }}
-      span.multiple-runners ng-if='report.runners.length >= 2'
+      span.multiple-runners> ng-if='report.runners.length >= 2'
         span.runner ng-repeat='runner in report.runners'
           user-avatar user='runner' name-tooltip='true'
-      '  ran some tests
-      span.time.hidden-xs am-time-ago='report.endedAt'
-      '
-      span.labels
+      | ran some tests
+      span.time.hidden-xs<> am-time-ago='report.endedAt'
+      span.labels<>
         report-data-labels organization='organization' report='report' for-project='project' versions-only='project' linkable='linkable'
       .details
         a href='#' ui-sref='org.reports.show({ id: report.id })'
           report-health-bar report='report' click-for-details=true
       .new-tests ng-if='getNewTestsCount(report) > 0'
         span
-          i.glyphicon.glyphicon-plus
+          i.glyphicon.glyphicon-plus>
           strong
-            '
-            span {{ getNewTestsCount(report) | number }}
-            '  new
-            ng-pluralize count='getNewTestsCount(report)' when='{one: "test was", other: "tests were"}'
-            '  added
+            span> {{ getNewTestsCount(report) | number }}
+            | new
+            ng-pluralize<> count='getNewTestsCount(report)' when='{one: "test was", other: "tests were"}'
+            | added

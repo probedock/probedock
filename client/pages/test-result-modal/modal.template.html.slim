@@ -35,8 +35,7 @@
       tr
         td.text-vertical-middle {{ result.runAt | amDateFormat: 'lll' }}
         td.text-vertical-middle
-          user-avatar user='result.runner'
-          '
+          user-avatar> user='result.runner'
           | {{ result.runner.name }}
         td.text-vertical-middle.text-center {{ result.duration | formatDuration }}
         td.text-vertical-middle.text-center
@@ -72,8 +71,7 @@
         tr
           th By
           td
-            user-avatar user='result.runner'
-            '
+            user-avatar> user='result.runner'
             | {{ result.runner.name }}
         tr
           th Duration
