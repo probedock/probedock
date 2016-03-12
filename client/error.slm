@@ -1,0 +1,11 @@
+doctype html
+html lang='en'
+  head
+    meta charset='UTF-8'
+    meta name='viewport' content='width=device-width'
+    title= this.title
+    script src='http://localhost:35729/livereload.js'
+  body
+    h1= this.message
+    h2= this.error.status
+    pre= this.error.stack

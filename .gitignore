@@ -6,6 +6,10 @@
 /ansible/deploy*
 /ansible/production-inventory
 /bower_components
+/client/bower_components
+/client/node_modules
+/client/public
+/client/vendor
 /db/test.*
 /doc/*.html
 /docker/app/Gem*

@@ -1,0 +1,63 @@
+manifests:
+  css:
+    paths:
+      - public
+    assets:
+      - vendor/stylesheets/normalize
+      - vendor/stylesheets/jqcloud2
+      - vendor/stylesheets/dropzone
+      - vendor/stylesheets/angular-chart
+      - vendor/stylesheets/angular-loading-bar
+      - vendor/stylesheets/angular-ui-select
+      - styles/bootstrap
+      - styles/font-awesome
+      - styles/**/*
+      - pages/**/*
+      - components/**/*
+      - widgets/**/*
+  js:
+    paths:
+      - public
+    assets:
+      - vendor/javascripts/underscore
+      - vendor/javascripts/jquery
+      - vendor/javascripts/moment
+      - vendor/javascripts/jvent
+      - vendor/javascripts/jqcloud2
+      - vendor/javascripts/chart
+      - vendor/javascripts/zero-clipboard
+      - vendor/javascripts/js-yaml
+      - vendor/javascripts/dropzone
+      - vendor/javascripts/tether
+      - vendor/javascripts/tether-drop
+      - vendor/javascripts/angular
+      - vendor/javascripts/angular-animate
+      - vendor/javascripts/angular-sanitize
+      - vendor/javascripts/angular-ui-router
+      - vendor/javascripts/angular-ui-router-title
+      - vendor/javascripts/angular-ui-bootstrap-tpls
+      - vendor/javascripts/angular-ui-select
+      - vendor/javascripts/angular-local-storage
+      - vendor/javascripts/angular-moment
+      - vendor/javascripts/angular-base64
+      - vendor/javascripts/angular-smart-table
+      - vendor/javascripts/angular-gravatar
+      - vendor/javascripts/angular-ng-infinite-scroll
+      - vendor/javascripts/angular-jqcloud
+      - vendor/javascripts/angular-ng-clip
+      - vendor/javascripts/angular-loading-bar
+      - vendor/javascripts/angular-chart
+      - vendor/javascripts/angular-truncate
+      - vendor/javascripts/angular-scroll
+      - vendor/javascripts/drop-ng
+      - vendor/javascripts/bootstrap-tooltip
+      - vendor/javascripts/bootstrap-popover
+      - new-boot
+      - initializers/**/*
+      - components/**/*
+      - filters/**/*
+      - pages/**/*
+      - services/**/*
+      - validations/**/*
+      - widgets/**/*
+      - routes

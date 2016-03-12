@@ -1,33 +1,38 @@
 doctype html
 html ng-app='probedock' ng-strict-di=true
-  head data-version=Rails.application.version
+  head data-version='1.0.0'
     title ng-bind='$title' Probe Dock
     base href='/'
 
-    = favicon_link_tag 'fi/favicon.ico', rel: 'shortcut icon'
-    = favicon_link_tag 'fi/favicon.ico', rel: 'icon', sizes:'16x16 32x32 64x64'
-    = favicon_link_tag 'fi/favicon-160.png', rel: 'icon', type: 'image/png', sizes: '160x160'
-    = favicon_link_tag 'fi/favicon-192.png', rel: 'icon', type: 'image/png', sizes: '192x192'
-    = favicon_link_tag 'fi/favicon-96.png', rel: 'icon', type: 'image/png', sizes: '96x96'
-    = favicon_link_tag 'fi/favicon-64.png', rel: 'icon', type: 'image/png', sizes: '64x64'
-    = favicon_link_tag 'fi/favicon-32.png', rel: 'icon', type: 'image/png', sizes: '32x32'
-    = favicon_link_tag 'fi/favicon-16.png', rel: 'icon', type: 'image/png', sizes: '16x16'
-    = favicon_link_tag 'fi/favicon-57.png', rel: 'apple-touch-icon'
-    = favicon_link_tag 'fi/favicon-114.png', rel: 'apple-touch-icon', sizes: '114x114'
-    = favicon_link_tag 'fi/favicon-72.png', rel: 'apple-touch-icon', sizes: '72x72'
-    = favicon_link_tag 'fi/favicon-144.png', rel: 'apple-touch-icon', sizes: '144x144'
-    = favicon_link_tag 'fi/favicon-60.png', rel: 'apple-touch-icon', sizes: '60x60'
-    = favicon_link_tag 'fi/favicon-120.png', rel: 'apple-touch-icon', sizes: '120x120'
-    = favicon_link_tag 'fi/favicon-76.png', rel: 'apple-touch-icon', sizes: '76x76'
-    = favicon_link_tag 'fi/favicon-152.png', rel: 'apple-touch-icon', sizes: '152x152'
-    = favicon_link_tag 'fi/favicon-180.png', rel: 'apple-touch-icon', sizes: '180x180'
+    link href='images/fi/favicon.ico' rel='shortcut icon' type='image/x-icon'
+    link href='images/fi/favicon.ico' rel='shortcut icon' type='image/x-icon' sizes='16x16 32x32 64x64'
+    link href='images/fi/favicon-160.png' rel='icon' type='image/png' sizes='160x160'
+    link href='images/fi/favicon-192.png' rel='icon' type='image/png' sizes='192x192'
+    link href='images/fi/favicon-96.png' rel='icon' type='image/png' sizes='96x96'
+    link href='images/fi/favicon-64.png' rel='icon' type='image/png' sizes='64x64'
+    link href='images/fi/favicon-32.png' rel='icon' type='image/png' sizes='32x32'
+    link href='images/fi/favicon-16.png' rel='icon' type='image/png' sizes='16x16'
+    link href='images/fi/favicon-57.png' rel='apple-touch-icon' type='image/x-icon'
+    link href='images/fi/favicon-114.png' rel='apple-touch-icon' type='image/x-icon' sizes='114x114'
+    link href='images/fi/favicon-72.png' rel='apple-touch-icon' type='image/x-icon' sizes='72x72'
+    link href='images/fi/favicon-144.png' rel='apple-touch-icon' type='image/x-icon' sizes='144x144'
+    link href='images/fi/favicon-60.png' rel='apple-touch-icon' type='image/x-icon' sizes='60x60'
+    link href='images/fi/favicon-120.png' rel='apple-touch-icon' type='image/x-icon' sizes='120x120'
+    link href='images/fi/favicon-76.png' rel='apple-touch-icon' type='image/x-icon' sizes='76x76'
+    link href='images/fi/favicon-152.png' rel='apple-touch-icon' type='image/x-icon' sizes='152x152'
+    link href='images/fi/favicon-180.png' rel='apple-touch-icon' type='image/x-icon' sizes='180x180'
 
     meta name='msapplication-TileColor' content='#FFFFFF'
-    = tag 'meta', name: 'msapplication-TileImage', content: image_url('fi/favicon-144.png')
-    = tag 'meta', name: 'msapplication-config', content: image_url('fi/browserconfig.xml')
+    meta name='msapplication-TileImage' content='images/fi/favicon-144.png'
+    meta name='msapplication-config' content='images/fi/browserconfig.xml'
 
-    = stylesheet_link_tag 'application', media: 'all'
-    = javascript_include_tag 'application'
+    / TODO client: fix assets
+    == this.css()
+    == this.js()
+
+    - if this.liveReloadUrl
+      script src=this.liveReloadUrl
+
     meta charset='UTF-8'
     meta http-equiv='X-UA-Compatible' content='IE=edge'
     meta name='viewport' content='width=device-width, initial-scale=1.0'
@@ -47,8 +52,7 @@ html ng-app='probedock' ng-strict-di=true
               .btn-group.navbar-btn dropdown=true
                 button.btn.btn-primary.dropdown-toggle type='button' dropdown-toggle=true
                   span ng-if='currentOrganization' {{ currentOrganization | orgName }}
-                  em ng-if='!currentOrganization' Select an organization
-                  '
+                  em> ng-if='!currentOrganization' Select an organization
                   span.caret
                 ul.dropdown-menu role='menu'
                   li ng-repeat='org in organizations | orderBy: "name.toLowerCase()"'
