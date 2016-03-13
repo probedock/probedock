@@ -99,8 +99,8 @@ angular.module('probedock', [
 ])
 
   // version 0.1.24
-  .constant('version', '0.1.0')
-  .constant('environment', 'development')
+  .constant('version', '{{ version }}')
+  .constant('environment', '{{ env }}')
   .constant('zeroClipboardFlash', '/vendor/flash/zero-clipboard.swf')
 
   // enable debug log unless in production

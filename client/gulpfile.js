@@ -3,6 +3,7 @@ var _ = require('underscore'),
     clean = require('gulp-clean'),
     fs = require('fs'),
     gulp = require('gulp'),
+    gulpif = require('gulp-if'),
     ngAnnotate = require('gulp-ng-annotate'),
     nodemon = require('gulp-nodemon'),
     plumber = require('gulp-plumber'),
@@ -23,7 +24,8 @@ var _ = require('underscore'),
 var PluginError = util.PluginError;
 
 var gulpPlugins = require('./lib/gulp'),
-    log = gulpPlugins.log;
+    log = gulpPlugins.log,
+    handlebars = gulpPlugins.handlebars;
 
 var markdown = require('slm-markdown');
 markdown.register(slm.template);
@@ -74,7 +76,15 @@ var assetTypes = {
       'widgets/**/*.js'
     ],
     compile: function(chain) {
-      return chain.pipe(ngAnnotate());
+
+      function isHandlebarTemplate(file) {
+        var relativePath = path.relative(__dirname, file.path);
+        return relativePath == 'new-boot.js';
+      }
+
+      return chain
+        .pipe(gulpif(isHandlebarTemplate, handlebars({ locals: templateLocals })))
+        .pipe(ngAnnotate());
     }
   },
   less: {

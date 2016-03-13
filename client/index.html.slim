@@ -1,6 +1,6 @@
 doctype html
 html ng-app='probedock' ng-strict-di=true
-  head data-version='1.0.0'
+  head data-version=this.version
     title ng-bind='$title' Probe Dock
     base href='/'
 
@@ -26,7 +26,6 @@ html ng-app='probedock' ng-strict-di=true
     meta name='msapplication-TileImage' content='images/fi/favicon-144.png'
     meta name='msapplication-config' content='images/fi/browserconfig.xml'
 
-    / TODO client: fix assets
     == this.css()
     == this.js()
 
