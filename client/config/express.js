@@ -21,7 +21,7 @@ module.exports = function(app, config) {
 
   var backendProxy = proxy(config.backendProxyHost, {
     forwardPath: function(req, res) {
-      return '/api/' + require('url').parse(req.url).path;
+      return '/api' + require('url').parse(req.url).path;
     }
   });
 
