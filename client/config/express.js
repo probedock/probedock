@@ -19,7 +19,7 @@ module.exports = function(app, config) {
   app.set('views', config.root);
   app.set('view engine', 'slm');
 
-  var backendProxy = proxy(config.backendHost, {
+  var backendProxy = proxy(config.backendProxyHost, {
     forwardPath: function(req, res) {
       return '/api/' + require('url').parse(req.url).path;
     }

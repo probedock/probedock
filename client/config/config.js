@@ -8,7 +8,7 @@ var config = {
   development: {
     root: rootPath,
     port: 3000,
-    backendHost: 'localhost:3010',
+    backendProxyHost: 'localhost:3010',
     liveReloadPort: liveReloadPort,
     liveReloadUrl: 'http://localhost:' + liveReloadPort + '/livereload.js'
   },
@@ -16,7 +16,11 @@ var config = {
   test: {
     root: rootPath,
     port: 3000,
-    backendHost: 'localhost:3010'
+    backendProxyHost: 'localhost:3010'
+  },
+
+  production: {
+    root: rootPath
   }
 };
 
