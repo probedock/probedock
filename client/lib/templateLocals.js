@@ -1,12 +1,12 @@
 var _ = require('underscore'),
-    assets = require('./assets'),
+    manifests = require('./manifests'),
     config = require('../config/config');
 
 var root = config.root;
 
-function assetTags(type) {
+function manifestAssetTags(type) {
 
-  var assetList = assets.getAssets(type);
+  var assetList = manifests.getAssets(type);
 
   return _.map(assetList, function(asset) {
     if (type == 'css') {
@@ -19,10 +19,10 @@ function assetTags(type) {
 
 module.exports = _.extend({}, config, {
   css: function() {
-    return assetTags('css');
+    return manifestAssetTags('css');
   },
 
   js: function() {
-    return assetTags('js');
+    return manifestAssetTags('js');
   }
 });

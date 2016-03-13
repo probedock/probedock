@@ -20,9 +20,9 @@ exports.getAssets = function(type) {
 };
 
 function updateAssets() {
-  var assetsConfig = yml.safeLoad(fs.readFileSync(config.root + '/assets.yml', { encoding: 'utf-8' }));
+  var manifestsConfig = yml.safeLoad(fs.readFileSync(config.root + '/manifests.yml', { encoding: 'utf-8' }));
 
-  _.each(assetsConfig.manifests || [], function(manifest, name) {
+  _.each(manifestsConfig.manifests || [], function(manifest, name) {
 
     var type = manifest.type || name,
         extensionRegexp = new RegExp('\\.' + type + '$');
