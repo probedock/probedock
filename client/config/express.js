@@ -4,7 +4,6 @@ var _ = require('underscore'),
     config = require('./config'),
     cookieParser = require('cookie-parser'),
     express = require('express'),
-    templateLocals = require('../lib/templateLocals'),
     favicon = require('serve-favicon'),
     fs = require('fs'),
     glob = require('glob'),
@@ -13,8 +12,6 @@ var _ = require('underscore'),
     proxy = require('express-http-proxy');
 
 module.exports = function(app, config) {
-
-  _.extend(app.locals, templateLocals);
 
   app.set('views', config.root);
   app.set('view engine', 'slm');
@@ -82,5 +79,4 @@ module.exports = function(app, config) {
         title: 'error'
       });
   });
-
 };

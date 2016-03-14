@@ -1,14 +1,16 @@
+base: public
 manifests:
   css:
     paths:
       - public
+      - public/vendor/stylesheets
     assets:
-      - vendor/stylesheets/normalize
-      - vendor/stylesheets/jqcloud2
-      - vendor/stylesheets/dropzone
-      - vendor/stylesheets/angular-chart
-      - vendor/stylesheets/angular-loading-bar
-      - vendor/stylesheets/angular-ui-select
+      - normalize
+      - jqcloud2
+      - dropzone
+      - angular-chart
+      - angular-loading-bar
+      - angular-ui-select
       - styles/bootstrap
       - styles/font-awesome
       - styles/**/*
@@ -18,40 +20,41 @@ manifests:
   js:
     paths:
       - public
+      - public/vendor/javascripts
     assets:
-      - vendor/javascripts/underscore
-      - vendor/javascripts/jquery
-      - vendor/javascripts/moment
-      - vendor/javascripts/jvent
-      - vendor/javascripts/jqcloud2
-      - vendor/javascripts/chart
-      - vendor/javascripts/zero-clipboard
-      - vendor/javascripts/js-yaml
-      - vendor/javascripts/dropzone
-      - vendor/javascripts/tether
-      - vendor/javascripts/tether-drop
-      - vendor/javascripts/angular
-      - vendor/javascripts/angular-animate
-      - vendor/javascripts/angular-sanitize
-      - vendor/javascripts/angular-ui-router
-      - vendor/javascripts/angular-ui-router-title
-      - vendor/javascripts/angular-ui-bootstrap-tpls
-      - vendor/javascripts/angular-ui-select
-      - vendor/javascripts/angular-local-storage
-      - vendor/javascripts/angular-moment
-      - vendor/javascripts/angular-base64
-      - vendor/javascripts/angular-smart-table
-      - vendor/javascripts/angular-gravatar
-      - vendor/javascripts/angular-ng-infinite-scroll
-      - vendor/javascripts/angular-jqcloud
-      - vendor/javascripts/angular-ng-clip
-      - vendor/javascripts/angular-loading-bar
-      - vendor/javascripts/angular-chart
-      - vendor/javascripts/angular-truncate
-      - vendor/javascripts/angular-scroll
-      - vendor/javascripts/drop-ng
-      - vendor/javascripts/bootstrap-tooltip
-      - vendor/javascripts/bootstrap-popover
+      - underscore
+      - jquery
+      - moment
+      - jvent
+      - jqcloud2
+      - chart
+      - zero-clipboard
+      - js-yaml
+      - dropzone
+      - tether
+      - tether-drop
+      - angular
+      - angular-animate
+      - angular-sanitize
+      - angular-ui-router
+      - angular-ui-router-title
+      - angular-ui-bootstrap-tpls
+      - angular-ui-select
+      - angular-local-storage
+      - angular-moment
+      - angular-base64
+      - angular-smart-table
+      - angular-gravatar
+      - angular-ng-infinite-scroll
+      - angular-jqcloud
+      - angular-ng-clip
+      - angular-loading-bar
+      - angular-chart
+      - angular-truncate
+      - angular-scroll
+      - drop-ng
+      - bootstrap-tooltip
+      - bootstrap-popover
       - new-boot
       - initializers/**/*
       - components/**/*
