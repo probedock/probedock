@@ -9,7 +9,7 @@
     button.btn.btn-success.btn-lg ng-if='currentMemberIs("admin")' ui-sref='org.projects.list.new({ orgName: currentOrganization.name })'
       span.glyphicon.glyphicon-plus
       |  Add one!
-.container-fluid ng-show='currentOrganization.projectsCount > 1'
+.container-fluid ng-show='currentOrganization.projectsCount >= 1'
   .col-xs-12.col-sm-4.col-md-3
     .well
       h1 Projects
