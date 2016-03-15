@@ -4,25 +4,27 @@ var _ = require('underscore'),
 
 var root = config.root;
 
-function manifestAssetTags(type) {
+function manifestAssetTags(manifest) {
 
-  var assetList = manifests.getAssets(type);
+  var assetList = manifest.files;
 
   return _.map(assetList, function(asset) {
-    if (type == 'css') {
+    if (manifest.type == 'css') {
       return '<link rel="stylesheet" media="all" href="/' + asset.path + '">';
-    } else if (type == 'js') {
+    } else if (manifest.type == 'js') {
       return '<script src="/' + asset.path + '"></script>';
     }
   }).join("\n");
 }
 
-module.exports = _.extend({}, config, {
-  css: function() {
-    return manifestAssetTags('css');
-  },
+module.exports = function(assetManager) {
+  return _.extend({}, config, {
+    css: function() {
+      return manifestAssetTags(assetManager.getManifest('css'));
+    },
 
-  js: function() {
-    return manifestAssetTags('js');
-  }
-});
+    js: function() {
+      return manifestAssetTags(assetManager.getManifest('js'));
+    }
+  });
+};

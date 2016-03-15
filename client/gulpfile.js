@@ -9,14 +9,16 @@ var _ = require('underscore'),
     plumber = require('gulp-plumber'),
     less = require('gulp-less'),
     livereload = require('gulp-livereload'),
+    manifests = require('./lib/manifests'),
     minimatch = require('minimatch'),
+    p = require('bluebird'),
     path = require('path'),
     rename = require('gulp-rename'),
     runSequence = require('run-sequence'),
     slm = require('slm'),
     gslm = require('gulp-slm'),
     stylus = require('gulp-stylus'),
-    templateLocals = require('./lib/templateLocals'),
+    templateLocalsFactory = require('./lib/templateLocals'),
     through = require('through2'),
     util = require('gulp-util'),
     watch = require('gulp-watch');
@@ -31,6 +33,9 @@ var markdown = require('slm-markdown');
 markdown.register(slm.template);
 
 var root = __dirname;
+
+var assetManager = manifests.assetManager(),
+    templateLocals = templateLocalsFactory(assetManager);
 
 function buildAutoPrefixer() {
   return autoPrefixer();
@@ -136,10 +141,6 @@ function getAssetType(type) {
   return assetTypes[type];
 }
 
-function getCompiledAssetPath(originalPath) {
-  return path.join(root, 'public', path.relative(root, originalPath).replace(/\.[a-zA-Z]+$/, ''));
-}
-
 function compile(type) {
 
   var assetType = getAssetType(type),
@@ -184,10 +185,34 @@ function compileChain(chain, type) {
   return chain;
 }
 
+function getCompiledAssetPath(originalPath) {
+
+  var assetType = _.find(assetTypes, function(assetType) {
+    if (path.extname(originalPath) == '.' + assetType.extension) {
+      return assetType;
+    }
+  });
+
+  if (!assetType) {
+    return null;
+  }
+
+  var compiledAssetPath = path.join(root, 'public', path.relative(root, originalPath));
+  if (assetType.compiledExtension != assetType.extension) {
+    compiledAssetPath = compiledAssetPath.replace(new RegExp('\\.' + assetType.extension + '$'), '');
+  }
+
+  return compiledAssetPath;
+}
+
 function deleteAsset(filePath) {
 
-  var compiledAssetPath = getCompiledAssetPath(filePath),
-      relativePath = path.relative(root, compiledAssetPath);
+  var compiledAssetPath = getCompiledAssetPath(filePath);
+  if (!compiledAssetPath) {
+    return null;
+  }
+
+  var relativePath = path.relative(root, compiledAssetPath);
 
   try {
     fs.unlinkSync(compiledAssetPath);
@@ -195,11 +220,17 @@ function deleteAsset(filePath) {
   } catch (err) {
     util.log(util.colors.yellow('could not delete ' + relativePath));
   }
+
+  return compiledAssetPath;
 }
 
 gulp.task('clean', function() {
   return gulp.src('public/*', { read: false })
     .pipe(clean());
+});
+
+gulp.task('init-assets', function() {
+  return assetManager.init();
 });
 
 _.each(assetTypes, function(assetType, type) {
@@ -209,7 +240,7 @@ _.each(assetTypes, function(assetType, type) {
 });
 
 gulp.task('compile', function(callback) {
-  runSequence([ 'compile-js', 'compile-less', 'compile-styl' ], 'compile-slm', callback);
+  runSequence([ 'compile-js', 'compile-less', 'compile-styl' ], 'init-assets', 'compile-slm', callback);
 });
 
 var staticAssets = [
@@ -326,22 +357,54 @@ gulp.task('copy-vendor', function() {
 
 gulp.task('copy', [ 'copy-images', 'copy-vendor' ]);
 
-gulp.task('watch', _.reduce(assetTypes, function(memo, assetType, type) {
-  memo.push('watch-' + type);
-  return memo;
-}, []));
+gulp.task('watch', function(callback) {
+  runSequence('init-assets', _.reduce(assetTypes, function(memo, assetType, type) {
+    memo.push('watch-' + type);
+    return memo;
+  }, []), callback);
+});
 
 _.each(assetTypes, function(assetType, type) {
   gulp.task('watch-' + type, function() {
     return watch(assetType.paths, function(file) {
       if (file.event == 'add' || file.event == 'change') {
-        compileChain(gulp.src(file.path, { base: root }).pipe(plumber()), type).pipe(livereload());
+        compileChain(gulp.src(file.path, { base: root }).pipe(plumber()), type)
+          .pipe(through.obj(function(compiledFile, enc, cb) {
+            if (file.event != 'add') {
+              cb(null, compiledFile);
+            } else {
+              assetManager.add([ compiledFile.path ]).then(function() {
+                cb(null, compiledFile);
+              }, cb);
+            }
+          }))
+          .pipe(through.obj(function(compiledFile, enc, cb) {
+            smartLivereload(file);
+            cb(null, compiledFile);
+          }));
       } else {
-        deleteAsset(file.path);
+        var compiledFilePath = deleteAsset(file.path);
+        assetManager.remove([ compiledFilePath ]).then(function() {
+          smartLivereload(file);
+        });
       }
     });
   });
 });
+
+var changesTimeout = null;
+
+function smartLivereload(file) {
+  if (changesTimeout) {
+    clearTimeout(changesTimeout);
+  }
+
+  changesTimeout = setTimeout(function() {
+    changesTimeout = null;
+    console.log('Live-reloading after 250ms');
+    livereload.reload();
+  }, 250);
+}
 
 gulp.task('develop', function() {
   livereload.listen();

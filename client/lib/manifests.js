@@ -19,24 +19,80 @@ function AssetManager(options) {
 }
 
 _.extend(AssetManager.prototype, {
+  getManifest: function(name) {
+    return this.manifests[name];
+  },
+
   init: function() {
     return p.resolve()
       .then(_.partial(ensureConfigLoaded, this))
       .then(_.partial(ensureAssetsScanned, this))
-      .then(_.bind(function() {
-        writeFile('assets.json', JSON.stringify(_.reduce(this.manifests, function(memo, manifest) {
-          memo[manifest.name] = manifest.files;
-          return memo;
-        }, {})));
-      }, this));
+      .return(this);
   },
 
   add: function(files) {
-    
+
+    var manifests = this.manifests;
+
+    _.each(files, function(file) {
+      _.each(manifests, function(manifest) {
+        _.each(manifest.assets, function(assetConfig) {
+
+          var loadPath = _.find(manifest.paths, function(loadPath) {
+            var pattern = path.join(loadPath.root, loadPath.base, assetConfig.path);
+            return minimatch(file, pattern);
+          });
+
+          if (loadPath) {
+
+            var relativePath = path.relative(loadPath.base, file);
+            if (_.findWhere(assetConfig.files, { path: relativePath })) {
+              return;
+            }
+
+            assetConfig.files.push({
+              path: relativePath
+            });
+
+            assetConfig.files.sort();
+
+            console.log('Added ' + relativePath + ' to ' + assetConfig.path + ' in manifest ' + manifest.name);
+          }
+        });
+      });
+    });
+
+    return p.resolve();
   },
 
   remove: function(files) {
-    
+
+    var manifests = this.manifests;
+
+    _.each(files, function(file) {
+      _.each(manifests, function(manifest) {
+        _.each(manifest.assets, function(assetConfig) {
+
+          var loadPath = _.find(manifest.paths, function(loadPath) {
+            var pattern = path.join(loadPath.root, loadPath.base, assetConfig.path);
+            return minimatch(file, pattern);
+          });
+
+          if (loadPath) {
+
+            var relativePath = path.relative(loadPath.base, file),
+                matchingFile = _.findWhere(assetConfig.files, { path: relativePath }),
+                index = assetConfig.files.indexOf(matchingFile);
+
+            assetConfig.files.splice(index, 1);
+
+            console.log('Removed ' + relativePath + ' from ' + assetConfig.path + ' in manifest ' + manifest.name);
+          }
+        });
+      });
+    });
+
+    return p.resolve();
   }
 });
 
@@ -60,16 +116,16 @@ function scanAssets(manager) {
 function scanManifestAssets(manifest) {
   return p.all(_.map(manifest.assets, function(assetConfig) {
     return scanAssetConfig(assetConfig, manifest);
-  })).then(function(results) {
-    manifest.files = [];
+  })).then(function() {
+    updateManifestFiles(manifest);
+  });
+}
 
-    _.each(results, function(result) {
-      manifest.files = manifest.files.concat(_.map(result.files, function(file) {
-        return {
-          path: path.relative(result.loadPath.base, file)
-        };
-      }));
-    });
+function updateManifestFiles(manifest) {
+  manifest.files = [];
+
+  _.each(manifest.assets, function(assetConfig) {
+    manifest.files = manifest.files.concat(assetConfig.files);
   });
 }
 
@@ -96,7 +152,13 @@ function scanAssetConfig(assetConfig, manifest) {
       throw new Error('No asset found for ' + JSON.stringify(assetConfig));
     }
 
-    return result;
+    assetConfig.files = _.map(result.files, function(file) {
+      return {
+        path: path.relative(result.loadPath.base, file)
+      };
+    });
+
+    return assetConfig;
   });
 }
 
