@@ -23,8 +23,6 @@ var _ = require('underscore'),
     util = require('gulp-util'),
     watch = require('gulp-watch');
 
-var awesome = 'demo';
-
 var PluginError = util.PluginError;
 
 var gulpPlugins = require('./lib/gulp'),
