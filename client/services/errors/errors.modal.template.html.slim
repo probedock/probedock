@@ -4,8 +4,8 @@
 
   // status code & text
   p.text-danger
-    ' The server responded with status code
-    strong
+    | The server responded with status code
+    strong<
       | {{ statusCode }}
       span ng-if='statusText'  {{ statusText }}
     | .
@@ -23,7 +23,7 @@
         td
           span ng-if='error.location' {{ error.location }}
           span ng-if='!error.location'
-            ' -
+            | -
 
 .modal-footer
   button.btn.btn-default.pull-right ng-click='$close()' Close

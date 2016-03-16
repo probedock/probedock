@@ -5,9 +5,8 @@
 
   / check box to choose whether to create a new version or not
   label.new-switch.pull-right ng-if='createNew'
-    input type='checkbox' ng-model='config.newVersion' ng-disabled='!projectVersionChoices.length'
-    '
-    ' create a new version
+    input> type='checkbox' ng-model='config.newVersion' ng-disabled='!projectVersionChoices.length'
+    | create a new version
 
   / Single dropdown menu to select an existing version
   ui-select id='{{ prefix }}-project-version-select-single' ng-if='!multiple && !config.newVersion && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true

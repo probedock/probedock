@@ -26,9 +26,9 @@
   .jumbotron
     h1 Now run some tests!
     p.lead
-      ' Head over to the
-      a ui-sref='help.gettingStarted({ organizationId: currentOrganization.id })' Getting Started
-      '  guide to find out how to publish test results for your projects.
+      | Head over to the
+      a<> ui-sref='help.gettingStarted({ organizationId: currentOrganization.id })' Getting Started
+      | guide to find out how to publish test results for your projects.
 .container-fluid ng-if='orgIsActive()'
   .col-md-12
     test-categories-bar-widget organization='currentOrganization' prefix='dashboard'

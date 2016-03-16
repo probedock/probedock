@@ -2,8 +2,8 @@
   .page-header
     h1 Getting started with Probe Dock
   p.lead
-    ' This page walks you through the tasks you need to perform to publish test results to Probe Dock.
-    ' It will also generate configuration snippets for you.
+    | This page walks you through the tasks you need to perform to publish test results to Probe Dock.
+    |  It will also generate configuration snippets for you.
   ul
     li ng-if='currentMemberIs("admin") && currentOrganization && !projectConfigSelection.projectId'
       a href='#create-project' offset=100 du-smooth-scroll=true Create a project
@@ -21,8 +21,8 @@
   section#create-project ng-if='currentMemberIs("admin") && currentOrganization && !projectConfigSelection.projectId'
     h2 Create a project
     p
-      ' To receive the results of your project's test suite, Probe Dock must know about that project.
-      ' Head over to the Projects page to create it.
+      | To receive the results of your project's test suite, Probe Dock must know about that project.
+      |  Head over to the Projects page to create it.
     a.btn.btn-primary ui-sref='org.projects({ orgName: currentOrganization.name })'
       span.glyphicon.glyphicon-folder-open
       | &nbsp;
@@ -33,9 +33,9 @@
   section#personal-configuration
     h2 Set up your personal configuration file
     p
-      ' To publish test results to Probe Dock from your computer, you must have the server listed in a configuration file in your home folder, with valid API credentials.
-      ' Here's a starting configuration we just generated for you.
-      ' Copy and paste away!
+      | To publish test results to Probe Dock from your computer, you must have the server listed in a configuration file in your home folder, with valid API credentials.
+      |  Here's a starting configuration we just generated for you.
+      |  Copy and paste away!
     div.text-success
       strong
         markdown:
@@ -76,8 +76,8 @@
       This one contains the project's ID and version so that Probe Dock knows which project to assign the test results to.
     p ng-if='!projectConfigSelection.orgs.length'
       strong.text-warning
-        ' Unfortunately you are not a member of any organization registered here, so we can't generate a complete configuration for you.
-        ' Here's one with placeholders.
+        | Unfortunately you are not a member of any organization registered here, so we can't generate a complete configuration for you.
+        |  Here's one with placeholders.
     .row.selection ng-if='projectConfigSelection.orgs.length'
       .col-md-6.col-xs-12
         ui-select#projectConfigOrganization ng-model='projectConfigSelection.orgId' required=true
@@ -91,10 +91,10 @@
             div ng-bind-html='project | projectName | highlight: $select.search'
     p ng-if='projectConfigSelection.orgId && projectConfigSelection.projects && !projectConfigSelection.projects.length'
       strong.text-warning
-        ' This organization has no projects.
+        | This organization has no projects.
     p ng-if='projectConfigSelection.orgId && projectConfigSelection.projectId'
       strong.text-success
-        ' Your project's configuration is ready. Copy and paste away!
+        | Your project's configuration is ready. Copy and paste away!
     tabset.clearfix
       tab active='true'
         tab-heading
@@ -131,8 +131,8 @@
     h2 Integrate a Probe Dock client with your project
     p We cannot automatically generate this part of the configuration for you (yet).
     p
-      ' The documentation repository for Probe Dock clients lists the available clients.
-      ' Go find the client for your test framework and read its integration guide.
+      | The documentation repository for Probe Dock clients lists the available clients.
+      |  Go find the client for your test framework and read its integration guide.
     a.btn.btn-primary href='https://github.com/probedock/probedock-probes'
       span.glyphicon.glyphicon-link
       |  Documentation for Probe Dock clients
@@ -142,14 +142,14 @@
   section#run-the-tests
     h2 Run the tests!
     p
-      ' You're all set.
-      ' Run your test suite and the results will be published to Probe Dock.
-      ' The Probe Dock client will try to inform you if some configuration is missing or incorrect.
+      | You're all set.
+      |  Run your test suite and the results will be published to Probe Dock.
+      |  The Probe Dock client will try to inform you if some configuration is missing or incorrect.
     p
-      ' Once you've run the tests, you should see a new test run report in the
-      a ng-if='currentOrganization' ui-sref='org.dashboard.default({ orgName: currentOrganization.name })' Dashboard
-      span ng-if='!currentOrganization' Dashboard
-      '  or in the
-      a ng-if='currentOrganization' ui-sref='org.reports({ orgName: currentOrganization.name })' Reports
-      span ng-if='!currentOrganization' Reports
-      '  page.
+      | Once you've run the tests, you should see a new test run report in the
+      a<> ng-if='currentOrganization' ui-sref='org.dashboard.default({ orgName: currentOrganization.name })' Dashboard
+      span<> ng-if='!currentOrganization' Dashboard
+      | or in the
+      a<> ng-if='currentOrganization' ui-sref='org.reports({ orgName: currentOrganization.name })' Reports
+      span<> ng-if='!currentOrganization' Reports
+      | page.
