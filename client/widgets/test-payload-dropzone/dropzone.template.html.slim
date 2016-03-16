@@ -4,9 +4,9 @@
   .panel-body
 
     p
-      ' You may manually publish standard xUnit XML test reports here.
-      ' Select the project version and optionally a test category,
-      ' then drop your generated xUnit report file into the box below.
+      | You may manually publish standard xUnit XML test reports here.
+      |  Select the project version and optionally a test category,
+      |  then drop your generated xUnit report file into the box below.
 
     form
 
@@ -17,17 +17,13 @@
       .dropzone ng-show='formConfig.uploadEnabled'
 
       / success message
-      p.text-success ng-if='success'
-        ' Your payload was accepted and will be processed shortly.
+      p.text-success ng-if='success' Your payload was accepted and will be processed shortly.
 
       / error message
       p.text-danger ng-if='error'
-        strong ng-if='!serverError'
-          ' {{ error }}
-        strong ng-if='serverError'
-          ' Your payload was refused.
+        strong> ng-if='!serverError' {{ error }}
+        strong> ng-if='serverError' Your payload was refused.
 
-          / button to display the details of an unexpected server response
-          button.btn.btn-danger.btn-xs.pull-right ng-click='showErrorDetails()'
-            span.glyphicon.glyphicon-question-sign
-            '  More details
+        / button to display the details of an unexpected server response
+        button.btn.btn-danger.btn-xs.pull-right ng-click='showErrorDetails()'
+          span.glyphicon.glyphicon-question-sign< More details

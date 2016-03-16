@@ -70,8 +70,8 @@
                         span.runner ng-repeat='runner in report.runners.slice(0, 3)'
                           user-avatar user='runner' name-tooltip='true'
                         span.duration {{ report.duration | formatDuration:2 }}
-                        ' ,
-                        span.date {{ report.createdAt | amDateFormat:'llll' }}
+                        | ,
+                        span.date< {{ report.createdAt | amDateFormat:'llll' }}
                         report-data-labels organization='currentOrganization' report='report'
                   tfoot
                     tr

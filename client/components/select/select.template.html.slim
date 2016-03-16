@@ -6,7 +6,7 @@
   / check box to choose whether to create a new item
   label.new-switch.pull-right ng-if='createNew'
     input> type='checkbox' ng-model='config.newItem' ng-disabled='!choices.length'
-    ' {{ labelNew }}
+    | {{ labelNew }}
 
   / Single dropdown menu to select an existing item
   ui-select id='{{ prefix }}-select-single' ng-if='!multiple && !config.newItem && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true

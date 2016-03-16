@@ -3,10 +3,10 @@ div.project-health-widget
     .panel-heading
       help-button
         p
-          ' This widget shows the state of the latest test run by a technical user of the organization.
-          ' If no technical user has run any tests, the latest test run by a human user is shown instead.
+          | This widget shows the state of the latest test run by a technical user of the organization.
+          |  If no technical user has run any tests, the latest test run by a human user is shown instead.
         p
-          ' You can use the version and runner filters to show the latest test run for a given version or run by a specific user.
+          | You can use the version and runner filters to show the latest test run for a given version or run by a specific user.
       h3.panel-title Project health
     .panel-body
       project-health-content organization='organization' project='project' linkable='linkable' filters-disabled='filtersDisabled' chart-height='{{ chartHeight }}'

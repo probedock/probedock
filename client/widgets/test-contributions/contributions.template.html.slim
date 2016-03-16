@@ -14,8 +14,7 @@
         td colspan=3 No test results have been published yet.
       tr ng-repeat='contribution in contributions'
         td
-          user-avatar user='contribution.user'
-          '
+          user-avatar> user='contribution.user'
           span {{ contribution.user.name }}
         td {{ contribution.testsCount }}
         td
