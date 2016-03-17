@@ -68,7 +68,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: A}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -91,7 +91,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -114,7 +114,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: C}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -137,7 +137,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: C}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -160,7 +160,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: D}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -183,7 +183,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -206,7 +206,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -230,7 +230,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
