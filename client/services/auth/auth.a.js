@@ -4,16 +4,6 @@ angular.module('probedock.auth', [ 'base64', 'probedock.storage' ])
     $httpProvider.interceptors.push('authInterceptor');
   })
 
-  .run(function(auth, $rootScope) {
-    $rootScope.currentUserIs = function() {
-
-      var currentUser = $rootScope.currentUser,
-          roles = Array.prototype.slice.call(arguments);
-
-      return currentUser && _.isArray(currentUser.roles) && _.intersection(currentUser.roles, roles).length == roles.length;
-    };
-  })
-
   .run(function(auth, $rootScope, $state) {
 
     $rootScope.$on('auth.unauthorized', function(event, err) {
