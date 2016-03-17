@@ -23,8 +23,6 @@ class OrganizationTableInfo
       test_results_count: TestPayload.select('SUM(results_count) AS test_results_count, \'created\' as state').joins(project_version: :project).where('projects.organization_id = ?', organization.id).take.test_results_count
     }
 
-    puts stats
-
     sql = 'SELECT' +
       ' table_name AS name,' +
       ' (SELECT reltuples::BIGINT FROM pg_class WHERE relname=table_name) AS count' +
