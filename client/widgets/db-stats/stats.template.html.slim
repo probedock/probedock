@@ -1,0 +1,42 @@
+.db-stats.panel.panel-default
+  .panel-heading
+    help-button
+      p Help will be there
+    h3.panel-title DB table metrics
+  .panel-body
+    .row ng-if='loading && stats.length === 0'
+      .col-md-12
+        p Loading...
+    .row.row-labels ng-if='stats.length > 0'
+      .col-md-12
+        table.table
+          thead
+            tr
+              th.name.text-vertical-middle.db-stats-right-border rowspan='2' Name
+              th.text-center.db-stats-right-border colspan='2' Records
+              th.text-center colspan='4' Disk space
+            tr
+              th.rows.text-right Rows
+              th.rows-proportion.text-right.db-stats-right-border %
+              th.table-size.text-right Table
+              th.indexes-size.text-right Indexes
+              th.total-size.text-right Total
+              th.total-size-proportion.text-right %
+          tbody
+            tr ng-repeat='stat in stats'
+              td.name.db-stats-right-border {{ stat.name }}
+              td.rows.text-right {{ stat.rowsCount | currency:'':0 }}
+              td.rows-proportion.text-right.db-stats-right-border {{ stat.rowsProportion | number:2 }}%
+              td.table-size.text-right {{ stat.tableSize | currency:'':0 }}
+              td.indexes-size.text-right {{ stat.indexesSize | currency:'':0 }}
+              td.total-size.text-right {{ stat.totalSize | currency:'':0 }}
+              td.total-size-proportion.text-right {{ stat.totalSizeProportion | number:2 }}%
+          tfooter
+            tr
+              th.name.db-stats-right-border Total
+              th.rows.text-right {{ total.rowsCount | currency:'':0 }}
+              th.rows-proportion.text-right.db-stats-right-border 100%
+              th.table-size.text-right {{ total.tableSize | currency:'':0 }}
+              th.indexes-size.text-right {{ total.indexesSize | currency:'':0 }}
+              th.total-size.text-right {{ total.totalSize | currency:'':0 }}
+              th.total-size-proportion.text-right 100%
