@@ -6,28 +6,7 @@ class OrganizationTableInfo
     @total_counts = total_counts
   end
 
-  def self.stats(organization)
-    # We set a dummy existing state to make sure the query does not crash (related to gem simple_states)
-    results_count = TestPayload
-      .select('SUM(results_count) AS test_results_count, max(state) as state')
-      .joins(project_version: :project)
-      .where('projects.organization_id = ?', organization.id)
-      .take.test_results_count
-
-    stats = {
-      id: organization.api_id,
-      name: organization.name,
-      display_name: organization.display_name,
-      test_payloads_count: TestPayload.joins(project_version: :project).where('projects.organization_id = ?', organization.id).count,
-      projects_count: Project.where('organization_id = ?', organization.id).count,
-      project_tests_count: ProjectTest.joins(:project).where('projects.organization_id = ?', organization.id).count,
-      test_results_count: results_count.nil? ? 0 : results_count
-    }
-
-    OrganizationTableInfo.new(stats, total_counts)
-  end
-
-  def self.top_stats(quantity)
+  def self.top_stats(top: 0, organization: nil)
     # Retrieve the results count, payloads count and organization info for the top most consuming organizations
     org_payloads_and_results_count = Organization
       .select('
@@ -41,7 +20,16 @@ class OrganizationTableInfo
       ')
       .group('organizations.id')
       .order('test_results_count DESC NULLS LAST')
-      .limit(quantity)
+
+    # Add where clause to scope to specific organization
+    if organization
+      org_payloads_and_results_count = org_payloads_and_results_count.where('organizations.id = ?', organization.id)
+    end
+
+    # Add a limit to do the top n
+    if top > 0
+      org_payloads_and_results_count = org_payloads_and_results_count.limit(top)
+    end
 
     # Collect the ids
     org_ids = org_payloads_and_results_count.collect(&:id)
