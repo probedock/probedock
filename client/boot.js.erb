@@ -21,22 +21,25 @@ angular.module('probedock', [
   'angular-jqcloud',
   'angular-loading-bar',
   'chart.js',
+  'drop-ng',
   'duScroll',
   'infinite-scroll',
-  'drop-ng',
-  'ngClipboard',
-  'ngSanitize',
   'ngAnimate',
+  'ngClipboard',
+  'ngInflection',
+  'ngSanitize',
   'smart-table',
   'truncate',
-  'ui.gravatar',
   'ui.bootstrap',
+  'ui.gravatar',
   'ui.select',
+
   // services
   'probedock.auth',
   'probedock.errors',
   'probedock.orgs',
   'probedock.profile',
+
   // pages
   'probedock.layout',
   'probedock.appSettingsPage',
@@ -57,6 +60,7 @@ angular.module('probedock', [
   'probedock.userListPage',
   'probedock.userRegistrationPage',
   'probedock.userConfirmRegistrationPage',
+
   // widgets
   'probedock.orgMemberDetailsWidget',
   'probedock.orgStatsWidget',
@@ -73,6 +77,7 @@ angular.module('probedock', [
   'probedock.testResultsWidget',
   'probedock.testSuiteSizeWidget',
   'probedock.userDetailsWidget',
+
   // components
   'probedock.dataLabels',
   'probedock.helpButton',
@@ -83,17 +88,20 @@ angular.module('probedock', [
   'probedock.selectOnClick',
   'probedock.testStatusIcon',
   'probedock.userAvatar',
+
   // filters
   'probedock.firstLetterUppercaseFilter',
   'probedock.formatDurationFilter',
   'probedock.orgNameFilter',
   'probedock.projectNameFilter',
+
   // validations
   'probedock.confirmationForValidation',
   'probedock.uniqueOrgNameValidation',
   'probedock.uniqueProjectNameValidation',
   'probedock.uniqueUserEmailValidation',
   'probedock.uniqueUserNameValidation',
+
   // routes
   'probedock.routes'
 ])
