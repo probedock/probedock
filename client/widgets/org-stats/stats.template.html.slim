@@ -15,18 +15,18 @@
         table.table
           thead
             tr
-              th.text-vertical-middle rowspan='2' Name
+              th.name.text-vertical-middle rowspan='2' Name
               th.text-center colspan='{{ currentUserIs("admin") ? 3 : 2 }}' Records
             tr
-              th.text-right Rows
-              th.text-right %
-              th.text-right ng-if='currentUserIs("admin")' Total
+              th.rows.text-right Rows
+              th.proportion.text-right %
+              th.total.text-right ng-if='currentUserIs("admin")' Total
           tbody
             tr ng-repeat='stat in stats'
-              td {{ stat.name | capitalize }}
-              td.text-right {{ stat.rowsCount | currency:'':0 }}
-              td.text-right {{ stat.proportion | number: 2 }}%
-              td.text-right ng-if='currentUserIs("admin")' {{ stat.total | currency:'':0 }}
+              td.name {{ stat.name | capitalize }}
+              td.rows.text-right {{ stat.rowsCount | currency:'':0 }}
+              td.proportion.text-right {{ stat.proportion | number: 2 }}%
+              td.total.text-right ng-if='currentUserIs("admin")' {{ stat.total | currency:'':0 }}
     .row ng-if='started'
       .col-md-12
-        organization-select prefix='org-stats' organization='organization' model-object='params' allow-clear='false'
+        organization-select prefix='org-stats' organization='organization' model-object='params' allow-clear='false' administered='true'

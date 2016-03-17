@@ -2,7 +2,10 @@ angular.module('probedock.select')
 
 // Select directives
 .directive('categorySelect', function() { return createSelectDirective('CategorySelectCtrl', defaultsAttributes); })
-.directive('organizationSelect', function() { return createSelectDirective('OrganizationSelectCtrl', defaultsAttributes); })
+.directive('organizationSelect', function() { return createSelectDirective('OrganizationSelectCtrl', _.extend(defaultsAttributes, {
+    administered: '=?'
+  }));
+})
 .directive('projectSelect', function() { return createSelectDirective('ProjectSelectCtrl', defaultsAttributes); })
 .directive('projectVersionSelect', function() {
   return createSelectDirective('ProjectVersionSelectCtrl', _.extend(defaultsAttributes, {
@@ -34,13 +37,22 @@ angular.module('probedock.select')
     defaults: {
       modelProperty: $scope.multiple ? 'organizationIds' : 'organizationId',
       label: 'Filter by organization',
-      placeholder: 'All organizations'
+      placeholder: 'All organizations',
+      administered: false
     },
     fetchUrl: '/organizations',
 
     showItem: function(organization) {
       // Apply the org name filter
       return orgNameFilter(organization);
+    },
+
+    handleParams: function($scope, params) {
+      // Set the param only if true, if false, we do not want to filter by administered
+      if ($scope.administered) {
+        params.administered = 1;
+      }
+      return params;
     }
   });
 }).controller('ProjectSelectCtrl', function(api, $scope, projectNameFilter) {

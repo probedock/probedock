@@ -35,6 +35,7 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
       if (response.data) {
         $scope.stats = [];
 
+        // Prepare the data to show in a table way
         _.each([ 'payloads', 'projects', 'tests', 'results' ], function(name) {
           var stat = {
             name: name,
@@ -42,6 +43,7 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
             proportion: response.data.organization[name + 'Count'] / response.data[name + 'Count'] * 100
           };
 
+          // Add the total only if super-admin
           if ($scope.currentUserIs('admin')) {
             stat.total = response.data[name + 'Count'];
           }
@@ -49,7 +51,12 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
           $scope.stats.push(stat);
         });
 
-        $scope.stats = _.sortBy($scope.stats, 'rowsCount');
+        // Apply a filter on the total if the user is super-admin
+        if ($scope.currentUserIs('admin')) {
+          $scope.stats = _.sortBy($scope.stats, function(stat) { return -stat.total; });
+        } else {
+          $scope.stats = _.sortBy($scope.stats, function(stat) { return -stat.rowsCount; });
+        }
 
         $scope.loading = false;
       }
