@@ -1,0 +1,32 @@
+.org-stats.panel.panel-default
+  .panel-heading
+    help-button
+      p Help will be there
+    h3.panel-title Organization DB stats
+  .panel-body
+    .row ng-if='loading && stats.length === 0'
+      .col-md-12
+        p Loading...
+    .row ng-if='!loading && stats.length === 0'
+      .col-md-12
+        p.empty No results match the current filters.
+    .row.row-labels ng-if='stats.length > 0'
+      .col-md-12
+        table.table
+          thead
+            tr
+              th.text-vertical-middle rowspan='2' Name
+              th.text-center colspan='{{ currentUserIs("admin") ? 3 : 2 }}' Records
+            tr
+              th.text-right Rows
+              th.text-right %
+              th.text-right ng-if='currentUserIs("admin")' Total
+          tbody
+            tr ng-repeat='stat in stats'
+              td {{ stat.name | firstLetterUppercase }}
+              td.text-right {{ stat.rowsCount | currency:'':0 }}
+              td.text-right {{ stat.proportion | number: 2 }}%
+              td.text-right ng-if='currentUserIs("admin")' {{ stat.total | currency:'':0 }}
+    .row ng-if='started'
+      .col-md-12
+        organization-select prefix='org-stats' organization='organization' model-object='params' allow-clear='false'
