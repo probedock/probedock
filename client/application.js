@@ -40,6 +40,7 @@
 //= require js-yaml
 //= require jvent
 //= require moment
+//= require pretty-bytes
 //= require tether
 //= require tether-drop
 //= require underscore
@@ -58,6 +59,7 @@
 //= require angular-ng-clip
 //= require angular-ng-infinite-scroll
 //= require angular-ng-inflection
+//= require angular-pretty-bytes
 //= require angular-sanitize
 //= require angular-scroll
 //= require angular-smart-table

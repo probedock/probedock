@@ -24,9 +24,9 @@
           tbody
             tr ng-repeat='stat in stats'
               td.name {{ stat.name | capitalize }}
-              td.rows.text-right {{ stat.rowsCount | currency:'':0 }}
+              td.rows.text-right {{ stat.rowsCount | number }}
               td.proportion.text-right {{ stat.proportion | number: 2 }}%
-              td.total.text-right ng-if='currentUserIs("admin")' {{ stat.total | currency:'':0 }}
+              td.total.text-right ng-if='currentUserIs("admin")' {{ stat.total | number }}
     .row ng-if='started'
       .col-md-12
         organization-select prefix='org-stats' organization='organization' model-object='params' allow-clear='false' administered='true'

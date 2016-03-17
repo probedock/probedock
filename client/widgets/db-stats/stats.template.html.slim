@@ -25,18 +25,18 @@
           tbody
             tr ng-repeat='stat in stats'
               td.name.db-stats-right-border {{ stat.name }}
-              td.rows.text-right {{ stat.rowsCount | currency:'':0 }}
+              td.rows.text-right {{ stat.rowsCount | number }}
               td.rows-proportion.text-right.db-stats-right-border {{ stat.rowsProportion | number:2 }}%
-              td.table-size.text-right {{ stat.tableSize | currency:'':0 }}
-              td.indexes-size.text-right {{ stat.indexesSize | currency:'':0 }}
-              td.total-size.text-right {{ stat.totalSize | currency:'':0 }}
+              td.table-size.text-right {{ stat.tableSize | prettyBytes }}
+              td.indexes-size.text-right {{ stat.indexesSize | prettyBytes }}
+              td.total-size.text-right {{ stat.totalSize | prettyBytes }}
               td.total-size-proportion.text-right {{ stat.totalSizeProportion | number:2 }}%
           tfooter
             tr
               th.name.db-stats-right-border Total
-              th.rows.text-right {{ total.rowsCount | currency:'':0 }}
+              th.rows.text-right {{ total.rowsCount | number }}
               th.rows-proportion.text-right.db-stats-right-border 100%
-              th.table-size.text-right {{ total.tableSize | currency:'':0 }}
-              th.indexes-size.text-right {{ total.indexesSize | currency:'':0 }}
-              th.total-size.text-right {{ total.totalSize | currency:'':0 }}
+              th.table-size.text-right {{ total.tableSize | prettyBytes }}
+              th.indexes-size.text-right {{ total.indexesSize | prettyBytes }}
+              th.total-size.text-right {{ total.totalSize | prettyBytes }}
               th.total-size-proportion.text-right 100%
