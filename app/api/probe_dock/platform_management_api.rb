@@ -39,7 +39,12 @@ module ProbeDock
 
       get :orgStats do
         authorize!(:organization_table_info, :show)
-        serialize OrganizationTableInfo.stats(@current_organization)
+
+        if params[:top].present?
+          serialize(OrganizationTableInfo.top_stats(params[:top].to_i))
+        else
+          serialize(OrganizationTableInfo.stats(@current_organization))
+        end
       end
     end
   end

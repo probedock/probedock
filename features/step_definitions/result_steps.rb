@@ -4,6 +4,9 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
   payload = named_record(payload_name)
   test = named_record(test_name)
 
+  payload.results_count += 1
+  payload.save
+
   date = if interval_count
     interval_count.to_i.send(interval).ago
   else

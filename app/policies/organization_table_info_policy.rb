@@ -16,22 +16,25 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class OrganizationTableInfoPolicy < ApplicationPolicy
   def show?
-    org_admin?(organization)
+    admin? || org_admin?(organization)
   end
 
   class Serializer < Serializer
     def to_builder options = {}
       Jbuilder.new do |json|
-        json.organization do
-          json.payloadsCount record.payloads_count
-          json.projectsCount record.projects_count
-          json.testsCount record.tests_count
-          json.resultsCount record.results_count
+        json.organizations record.organizations_counts do |organization_counts|
+          json.id organization_counts[:id]
+          json.name organization_counts[:name]
+          json.displayName organization_counts[:display_name] unless organization_counts[:display_name].nil?
+          json.payloadsCount organization_counts[:test_payloads_count]
+          json.projectsCount organization_counts[:projects_count]
+          json.testsCount organization_counts[:project_tests_count]
+          json.resultsCount organization_counts[:test_results_count]
         end
-        json.payloadsCount record.total_payloads_count
-        json.projectsCount record.total_projects_count
-        json.testsCount record.total_tests_count
-        json.resultsCount record.total_results_count
+        json.payloadsCount record.total_counts[:test_payloads_count]
+        json.projectsCount record.total_counts[:projects_count]
+        json.testsCount record.total_counts[:project_tests_count]
+        json.resultsCount record.total_counts[:test_results_count]
       end
     end
   end
