@@ -10,7 +10,7 @@
 
   / Single dropdown menu to select an existing item
   ui-select id='{{ prefix }}-select-single' ng-if='!multiple && !config.newItem && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true
-    ui-select-match placeholder='{{ placeholder }}' allow-clear='{{ allowClear }}' {{ $select.selected.name }}
+    ui-select-match placeholder='{{ placeholder }}' allow-clear='{{ allowClear }}' {{ showItem($select.selected) }}
     ui-select-choices repeat='item[extract] as item in choices' refresh='fetchChoices($select.search)' refresh-delay='250'
       span ng-bind-html='showItem(item) | highlight: $select.search'
 

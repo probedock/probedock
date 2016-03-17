@@ -2,6 +2,7 @@ angular.module('probedock.select')
 
 // Select directives
 .directive('categorySelect', function() { return createSelectDirective('CategorySelectCtrl', defaultsAttributes); })
+.directive('organizationSelect', function() { return createSelectDirective('OrganizationSelectCtrl', defaultsAttributes); })
 .directive('projectSelect', function() { return createSelectDirective('ProjectSelectCtrl', defaultsAttributes); })
 .directive('projectVersionSelect', function() {
   return createSelectDirective('ProjectVersionSelectCtrl', _.extend(defaultsAttributes, {
@@ -23,7 +24,24 @@ angular.module('probedock.select')
       labelNew: 'create new category.',
       extract: 'name'
     },
-    fetchUrl: '/categories'
+    fetchUrl: '/categories',
+  });
+}).controller('OrganizationSelectCtrl', function(api, $scope, orgNameFilter) {
+  // Always disable the create new feature on organization select
+  $scope.createNew = false;
+
+  setupController($scope, api, {
+    defaults: {
+      modelProperty: $scope.multiple ? 'organizationIds' : 'organizationId',
+      label: 'Filter by organization',
+      placeholder: 'All organizations'
+    },
+    fetchUrl: '/organizations',
+
+    showItem: function(organization) {
+      // Apply the org name filter
+      return orgNameFilter(organization);
+    }
   });
 }).controller('ProjectSelectCtrl', function(api, $scope, projectNameFilter) {
   setupController($scope, api, {
@@ -193,7 +211,7 @@ function setupController($scope, api, options) {
     $scope.showItem = options.showItem;
   } else {
     $scope.showItem = function(item) {
-      return item[$scope.showProperty];
+      return item ? item[$scope.showProperty] : '';
     }
   }
 
