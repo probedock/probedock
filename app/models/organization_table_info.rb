@@ -15,7 +15,7 @@ class OrganizationTableInfo
 
   def self.stats(organization)
     # We set a dummy existing state to make sure the query does not crash (related to gem simple_states)
-    results_count = TestPayload.select('SUM(results_count) AS test_results_count, \'created\' as state').joins(project_version: :project).where('projects.organization_id = ?', organization.id).take.test_results_count
+    results_count = TestPayload.select('SUM(results_count) AS test_results_count, max(state) as state').joins(project_version: :project).where('projects.organization_id = ?', organization.id).take.test_results_count
 
     stats = {
       test_payloads_count: TestPayload.joins(project_version: :project).where('projects.organization_id = ?', organization.id).count,
