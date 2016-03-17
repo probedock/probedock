@@ -39,8 +39,8 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
         _.each([ 'payloads', 'projects', 'tests', 'results' ], function(name) {
           var stat = {
             name: name,
-            rowsCount: response.data.organization[name + 'Count'],
-            proportion: response.data.organization[name + 'Count'] / response.data[name + 'Count'] * 100
+            rowsCount: response.data.organizations[0][name + 'Count'],
+            proportion: response.data.organizations[0][name + 'Count'] / response.data[name + 'Count'] * 100
           };
 
           // Add the total only if super-admin
