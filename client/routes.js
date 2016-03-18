@@ -108,6 +108,15 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         }
       })
 
+      .state('admin.management', {
+        url: '/management',
+        controller: 'ManagementPageCtrl',
+        templateUrl: '/templates/pages/management/management.template.html',
+        resolve: {
+          $title: function($stateParams) { return buildTitle($stateParams, 'Management'); }
+        }
+      })
+
       .state('admin.settings', {
         url: '/settings',
         controller: 'AppSettingsPageCtrl',
