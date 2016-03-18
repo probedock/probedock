@@ -47,7 +47,8 @@ Feature: Platform management
         "payloadsCount": "@number",
         "projectsCount": "@number",
         "testsCount": "@number",
-        "resultsCount": "@number"
+        "resultsCount": "@number",
+        "resultsTrend": [ 0, 0, 0, 0, 0 ]
       }
       """
 
@@ -109,7 +110,8 @@ Feature: Platform management
         "payloadsCount": "@number",
         "projectsCount": "@number",
         "testsCount": "@number",
-        "resultsCount": "@number"
+        "resultsCount": "@number",
+        "resultsTrend": [ 0, 0, 0, 0, 0 ]
       }
       """
 

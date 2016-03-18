@@ -109,12 +109,12 @@ class OrganizationTableInfo
       }
     end
 
-    OrganizationTableInfo.new(stats, total_counts)
+    OrganizationTableInfo.new(stats, total_counts(weeks))
   end
 
   private
 
-  def self.total_counts
+  def self.total_counts(weeks)
     sql = 'SELECT' +
       ' table_name AS name,' +
       ' (SELECT reltuples::BIGINT FROM pg_class WHERE relname=table_name) AS count' +
@@ -128,9 +128,38 @@ class OrganizationTableInfo
         ' AND table_name IN (\'test_payloads\', \'projects\', \'project_tests\', \'test_results\')' +
     ') AS all_tables'
 
-    ActiveRecord::Base.connection.execute(sql).to_a.inject({}) do |memo, table_stats|
+    res = ActiveRecord::Base.connection.execute(sql).to_a.inject({}) do |memo, table_stats|
       memo["#{table_stats['name']}_count".to_sym] = table_stats['count'].to_i
       memo
     end
+
+    # Retrieve the results trends for all organizations
+    results_trends_count = Organization
+      .select("
+        SUM(test_payloads.results_count) AS test_results_count,
+        date_trunc('week', test_payloads.processed_at) AS trend_date
+      ")
+      .joins('
+        LEFT OUTER JOIN "projects" ON "projects"."organization_id" = "organizations"."id"
+        LEFT OUTER JOIN "project_versions" ON "project_versions"."project_id" = "projects"."id"
+        LEFT OUTER JOIN"test_payloads" ON "test_payloads"."project_version_id" = "project_versions"."id"
+      ')
+      .group("date_trunc('week', test_payloads.processed_at)")
+      .order('trend_date ASC')
+      .where("date_trunc('week', test_payloads.processed_at) >= ?", weeks.weeks.ago.at_beginning_of_week)
+
+    # Collect the results trend
+    res[:results_trend] = []
+    (0..weeks - 1).each do |week_idx|
+      week_date = (week_idx + 1).weeks.ago.at_beginning_of_week
+
+      # Try to find the data for the current week date
+      week_trend = results_trends_count.find{ |trend| trend.trend_date == week_date }
+
+      # Check if the DB returned data for the week date, otherwise consider as 0
+      res[:results_trend] << (week_trend.nil? ? 0 : week_trend.test_results_count)
+    end
+
+    res
   end
 end
