@@ -36,6 +36,7 @@ class OrganizationTableInfoPolicy < ApplicationPolicy
         json.projectsCount record.total_counts[:projects_count]
         json.testsCount record.total_counts[:project_tests_count]
         json.resultsCount record.total_counts[:test_results_count]
+        json.resultsTrend record.total_counts[:results_trend]
       end
     end
   end
