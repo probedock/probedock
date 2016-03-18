@@ -2,8 +2,8 @@
   .panel-heading.clearfix
     .btn-group.btn-group-xs.pull-right ng-if='numberOfKeys'
       button.btn.btn-warning ng-click='release()'
-        span.glyphicon.glyphicon-remove
-        |  Release unused keys
+        span.glyphicon.glyphicon-remove>
+        | Release unused keys
     h3.panel-title Test Keys
   .panel-body
     markdown:
@@ -15,14 +15,13 @@
       Read the documentation of each [Probe Dock probe](https://github.com/probedock/probedock-probes) to find out how to assign keys to tests.
     form.form-inline name='generatorForm' novalidate=true ng-submit='generate()'
       button.btn.btn-success type='submit' ng-disabled='generatorForm.$invalid'
-        span.glyphicon.glyphicon-plus
-        |  Generate
-      .form-group
+        span.glyphicon.glyphicon-plus<>
+        | Generate
+      .form-group>
         label.sr-only for='keyNumber' Number of test keys
         input#keyNumber.form-control type='number' min=1 max=25 ng-model='generator.number' required=true
-      |
-      ng-pluralize count='generator.number' when='{"one": "test key", "other": "test keys"}'
-      |  for project
+      ng-pluralize> count='generator.number' when='{"one": "test key", "other": "test keys"}'
+      | for project
       .form-group
         / TODO: Replace this select by the general project-select
         label.sr-only for='keyProject' Project
