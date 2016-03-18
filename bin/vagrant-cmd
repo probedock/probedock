@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-
-ARGS="$@"
-APP_LINKS="--link postgres:postgres --link redis:redis --link probedock-server:probedock-server --volume /vagrant:/app"
-
-vagrant ssh -c "docker run --rm $APP_LINKS probedock $ARGS"

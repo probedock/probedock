@@ -1,0 +1,87 @@
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+
+user nginx;
+worker_processes 5;
+daemon off;
+
+error_log /dev/stderr info;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                  '$status $body_bytes_sent "$http_referer" '
+                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+  access_log /dev/stdout main;
+
+  sendfile on;
+  server_tokens off;
+
+  keepalive_timeout 65;
+
+  gzip on;
+
+  upstream probedock_cluster {
+    server probedock{{ rails_environment }}_app_1:3000;
+  }
+
+  server {
+    listen 80 default_server;
+    server_name _;
+
+    root /var/lib/probedock/public;
+
+    location / {
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_set_header Host $http_host;
+      proxy_redirect off;
+
+      set $maintenance 0;
+
+      # Set maintenance mode if maintenance directory exists...
+      if (-d $document_root/maintenance) {
+        set $maintenance 1;
+      }
+
+      # but serve everything under the public maintenance directory.
+      if ($uri ~ ^/maintenance/) {
+        set $maintenance 0;
+      }
+
+      # If maintenance mode is set, serve the maintenance page.
+      if ($maintenance) {
+        rewrite (.*) /maintenance/maintenance.html last;
+      }
+
+      # Serve cached index if it exists.
+      if (-f $request_filename/index.html) {
+        rewrite (.*) $1/index.html break;
+      }
+
+      # Serve cached page if it exists.
+      if (-f $request_filename.html) {
+        rewrite (.*) $1.html break;
+      }
+
+      # Pass API requests to app.
+      if ($uri ~ ^/api/) {
+        proxy_pass http://probedock_cluster;
+        break;
+      }
+
+      # Serve index otherwise.
+      if (!-f $request_filename) {
+        rewrite (.*) /index.html break;
+      }
+    }
+  }
+}

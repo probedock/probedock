@@ -1,0 +1,6 @@
+- template: src=docker-compose.yml.j2 dest="{{ probedock_dir }}/docker-compose.{{ rails_environment }}.vagrant.yml"
+- template: src=env.j2 dest="{{ probedock_dir }}/.env.{{ rails_environment }}.vagrant"
+- file: path="{{ probedock_data_dir }}/postgresql/init-scripts" state=directory
+- copy: src=postgresql-trust.sh dest="{{ probedock_data_dir }}/postgresql/init-scripts/postgresql-trust.sh"
+- file: path="{{ probedock_data_dir }}/nginx" state=directory
+- template: src=nginx.conf.j2 dest="{{ probedock_data_dir }}/nginx/nginx.conf"

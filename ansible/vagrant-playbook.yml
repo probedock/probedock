@@ -1,14 +1,254 @@
 ---
 - hosts: all
-  sudo: yes
+  become: yes
   vars:
-    deploy_private_key: "{{ lookup('file', 'deploy_id_rsa') }}"
-    deploy_public_key: "{{ lookup('file', 'deploy_id_rsa.pub') }}"
-  vars_files:
-    - versions.yml
-  roles:
-    - role: docker-user
-      user_name: vagrant
-    - role: probedock
+    probedock_dir: "/vagrant"
+    probedock_repo: "https://github.com/probedock/probedock.git"
+    rbenv_path: /home/vagrant/.rbenv
+    ruby_version: 2.2.1
   tasks:
-    - authorized_key: user=root key="{{ lookup('file', public_key_file) }}"
+
+    # Retrieve system information
+    - name: get uname machine
+      shell: uname -m
+      register: uname_m_result
+      changed_when: false
+    - name: get uname kernel name
+      shell: uname -s
+      register: uname_s_result
+      changed_when: false
+    - name: get uname kernel release
+      shell: uname -r
+      register: uname_r_result
+      changed_when: false
+
+    # Python installation
+    - name: install python
+      apt: name={{ item }} state=present
+      with_items:
+        - python2.7
+        - python2.7-dev
+      tags: [python]
+
+    # Node.js installation
+    - name: download nodejs
+      get_url: url=https://nodejs.org/dist/v4.3.1/node-v4.3.1-linux-x64.tar.xz dest=/root
+      register: download_nodejs_result
+      tags: [nodejs]
+    - name: install nodejs
+      shell: tar -C /usr/local --strip-components 1 -xf node-v4.3.1-linux-x64.tar.xz chdir=/root
+      when: download_nodejs_result.changed
+      tags: [nodejs]
+    - name: update npm
+      npm: name=npm global=yes state=latest
+      when: download_nodejs_result.changed
+      tags: [nodejs]
+
+    # Docker requirements
+    - name: check if docker is installed
+      shell: which docker
+      register: docker_check_result
+      changed_when: docker_check_result.rc != 0
+      failed_when: false
+    - name: update apt sources
+      apt: update_cache=yes
+      when: docker_check_result.changed
+    - name: install required packages
+      apt: name={{ item }} state=present
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+      when: docker_check_result.changed
+    - name: add required apt keys
+      apt_key: keyserver="hkp://p80.pool.sks-keyservers.net:80" id="58118E89F3A912897C070ADBF76221572C52609D"
+      when: docker_check_result.changed
+    - name: add docker apt source
+      lineinfile: dest=/etc/apt/sources.list.d/docker.list regexp="^deb" line="deb https://apt.dockerproject.org/repo ubuntu-trusty main" state=present create=yes
+      when: docker_check_result.changed
+    - name: ensure lxc-docker is absent
+      apt: name=lxc-docker state=absent purge=yes
+      when: docker_check_result.changed
+    - name: update apt sources
+      apt: update_cache=yes
+      when: docker_check_result.changed
+
+    # Docker recommendations
+    - name: check if linux-image-extra is intalled
+      shell: dpkg -s linux-image-extra-{{ uname_r_result.stdout }}
+      register: linux_image_extra_check_result
+      changed_when: linux_image_extra_check_result.rc != 0
+      failed_when: false
+    - name: install linux-image-extra
+      apt: name=linux-image-extra-{{ uname_r_result.stdout }} state=present
+      when: linux_image_extra_check_result.changed
+
+    # Docker installation
+    - name: install docker-engine
+      apt: name=docker-engine state=present
+    - name: start docker engine
+      service: name=docker state=started
+    - name: add the vagrant user to the docker group
+      user: name=vagrant groups=docker append=yes
+
+    # Ansible docker requirements
+    - name: install python tools (i.e. easy install)
+      apt: name=python-setuptools state=present
+    - name: install docker-py
+      easy_install: name=docker-py state=present
+
+    # PostgreSQL installation
+    - name: install postgresql
+      apt: name={{ item }} state=present
+      with_items:
+        - postgresql
+        - postgresql-contrib
+        - libpq-dev
+      tags: [postgresql]
+    - name: trust Unix domain socket connections
+      replace: dest=/etc/postgresql/9.3/main/pg_hba.conf regexp="^local(.*)peer$" replace="local\1trust"
+      register: trust_postgresql
+      tags: [postgresql]
+    - name: reload postgresql configuration
+      service: name=postgresql state=reloaded
+      when: trust_postgresql.changed
+      tags: [postgresql]
+    - name: install psycopg2
+      easy_install: name=psycopg2 state=present
+      tags: [postgresql]
+    - name: create vagrant user
+      postgresql_user: name=vagrant role_attr_flags=CREATEDB state=present
+      tags: [postgresql]
+
+    # Redis installation
+    - name: install redis
+      apt: name=redis-server state=present
+      tags: [redis]
+
+    # Ruby installation (with rbenv)
+    - name: install rbenv
+      git: repo=https://github.com/rbenv/rbenv.git dest={{ rbenv_path }} version=v1.0.0
+      become: yes
+      become_user: vagrant
+      register: install_rbenv_result
+      tags: [rbenv]
+    - name: configure rbenv's dynamic bash extensions
+      command: ./src/configure chdir={{ rbenv_path }}
+      when: install_rbenv_result.changed
+      tags: [rbenv]
+    - name: install rbenv's dynamic bash extensions
+      command: /usr/bin/make -C src chdir={{ rbenv_path }}
+      when: install_rbenv_result.changed
+      tags: [rbenv]
+    - name: add rbenv to the PATH
+      lineinfile: dest=/home/vagrant/.bash_profile regexp="\$HOME\/\.rbenv\/bin" line="export PATH=\"$HOME/.rbenv/bin:$PATH\"" create=yes owner=vagrant group=vagrant state=present
+      tags: [rbenv]
+    - name: add rbenv shims to the PATH
+      lineinfile: dest=/home/vagrant/.bash_profile regexp="\$HOME\/\.rbenv\/shims" line="export PATH=\"$HOME/.rbenv/shims:$PATH\"" create=yes owner=vagrant group=vagrant state=present
+      tags: [rbenv]
+    - name: make rbenv plugins directory
+      file: path={{ rbenv_path }}/plugins owner=vagrant group=vagrant state=directory
+      tags: [rbenv]
+    - name: install ruby-build
+      git: repo=https://github.com/rbenv/ruby-build.git dest={{ rbenv_path }}/plugins/ruby-build update=no
+      become: yes
+      become_user: vagrant
+      tags: [rbenv]
+    - name: configure rubygems
+      copy: src=gemrc dest="/home/vagrant/.gemrc" owner=vagrant group=vagrant
+      tags: [rbenv]
+    - name: install ruby dependencies
+      apt: name={{ item }} state=present
+      with_items:
+        - autoconf
+        - bison
+        - build-essential
+        - libssl-dev
+        - libyaml-dev
+        - libreadline6-dev
+        - zlib1g-dev
+        - libncurses5-dev
+        - libffi-dev
+        - libgdbm3
+        - libgdbm-dev
+      tags: [rbenv]
+    - name: install ruby
+      shell: rbenv install {{ ruby_version }} chdir=/home/vagrant creates={{ rbenv_path }}/versions/{{ ruby_version }}
+      environment:
+        PATH: "{{ rbenv_path }}/bin:{{ rbenv_path }}/shims:{{ ansible_env.PATH }}"
+      become: yes
+      become_user: vagrant
+      register: install_ruby_result
+      tags: [rbenv]
+    - name: install bundler
+      shell: gem install bundler chdir=/vagrant
+      environment:
+        RBENV_VERSION: "{{ ruby_version }}"
+        PATH: "{{ rbenv_path }}/bin:{{ rbenv_path }}/shims:{{ ansible_env.PATH }}"
+      become: yes
+      become_user: vagrant
+      tags: [rbenv]
+    - name: rehash rbenv
+      shell: rbenv rehash chdir=/vagrant
+      environment:
+        RBENV_VERSION: "{{ ruby_version }}"
+        PATH: "{{ rbenv_path }}/bin:{{ rbenv_path }}/shims:{{ ansible_env.PATH }}"
+      changed_when: false
+      tags: [rbenv]
+
+    # Development setup
+    - name: install dependencies
+      apt: name={{ item }} state=present
+      with_items:
+        - sqlite3
+        - libsqlite3-dev
+      tags: [development]
+    - name: install gems
+      bundler: chdir={{ probedock_dir }} executable={{ rbenv_path }}/shims/bundler state=present
+      become: yes
+      become_user: vagrant
+      tags: [development]
+    - name: set up environment configuration file
+      template: src=env.j2 dest="{{ probedock_dir }}/.env.vagrant" force=no
+      vars:
+        rails_environment: vagrant
+        database_name: probedock
+        database_username: vagrant
+        cache_host: localhost
+        cache_database_number: 0
+        app_port: 3000
+        test_environment: true
+      tags: [development]
+
+    # Docker compose installation
+    - get_url: url="https://github.com/docker/compose/releases/download/1.6.0/docker-compose-{{ uname_s_result.stdout }}-{{ uname_m_result.stdout }}" dest=/usr/local/bin/docker-compose mode=0755
+
+    # Production environment
+    - docker_image: path="{{ probedock_dir }}" name="probedock/probedock" dockerfile="Dockerfile" state=present
+    - include: tasks/docker-configuration-files.yml
+      vars:
+        probedock_docker_image: probedock/probedock
+        probedock_data_dir: /var/lib/probedock-production
+        rails_environment: production
+        database_host: db
+        database_name: probedock-production
+        database_username: postgres
+        database_password: admin
+        cache_host: cache
+        cache_database_number: 2
+        app_port: 3000
+        web_port: 3002
+        test_environment: no
+
+    # Pre-pull docker images
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "postgres:9.4"
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "redis:2.8"
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "nginx:1.9"
+    - include: tasks/docker-pull.yml
+      vars:
+        image: "aanand/wait"

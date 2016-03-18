@@ -1,0 +1,7 @@
+- name: check if docker image {{ image }} is present
+  shell: docker images -q {{ image }} | wc -l
+  register: docker_image_check_result
+  changed_when: docker_image_check_result.stdout | int <= 0
+- name: pull docker image {{ image }}
+  shell: docker pull {{ image }}
+  when: docker_image_check_result.changed

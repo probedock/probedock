@@ -1,0 +1,63 @@
+# vi: set ft=yaml :
+
+# Nginx web server.
+web:
+  image: nginx:1.9
+  command: nginx
+  links:
+    - app
+  ports:
+    - "{{ web_port }}:80"
+  volumes:
+    - "{{ probedock_data_dir }}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+    - "{{ probedock_data_dir }}/app/public:/var/lib/probedock/public"
+  restart: always
+
+# Rails application.
+app:
+  image: "{{ probedock_docker_image }}"
+  links:
+    - db
+    - cache
+  volumes:
+    - "{{ probedock_data_dir }}/app/public:/usr/src/app/public"
+    - "{{ probedock_data_dir }}/app/tmp:/usr/src/app/tmp"
+  env_file:
+    - "{{ probedock_dir }}/.env.production.vagrant"
+  environment:
+    RAILS_ENV: production
+
+# Run a rake task.
+# This is meant to be run as a one-off task (with "run" instead of "up").
+rake:
+  image: "{{ probedock_docker_image }}"
+  entrypoint: rake
+  command: -T
+  links:
+    - db
+    - cache
+  volumes:
+    - "{{ probedock_data_dir }}/app/public:/usr/src/app/public"
+    - "{{ probedock_data_dir }}/app/tmp:/usr/src/app/tmp"
+  env_file:
+    - "{{ probedock_dir }}/.env.production.vagrant"
+  environment:
+    RAILS_ENV: production
+
+# PostgreSQL database.
+db:
+  image: postgres:9.4
+  volumes:
+    - "{{ probedock_data_dir }}/postgresql/data:/var/lib/postgresql/data"
+    - "{{ probedock_data_dir }}/postgresql/init-scripts:/docker-entrypoint-initdb.d"
+  restart: always
+  environment:
+    POSTGRES_PASSWORD: admin
+
+# Redis in-memory database.
+cache:
+  image: redis:2.8
+  command: redis-server --appendonly yes
+  volumes:
+    - "{{ probedock_data_dir }}/redis/data:/data"
+  restart: always

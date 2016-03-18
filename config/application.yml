@@ -5,6 +5,13 @@ development:
   mail_from: <%= ENV['PROBEDOCK_MAIL_FROM'] %>
   mail_from_name: <%= ENV['PROBEDOCK_MAIL_FROM_NAME'] %>
 
+vagrant:
+  protocol: <%= ENV['PROBEDOCK_APP_PROTOCOL'] %>
+  host: <%= ENV['PROBEDOCK_APP_HOST'] %>
+  port: <%= ENV['PROBEDOCK_APP_PORT'] %>
+  mail_from: <%= ENV['PROBEDOCK_MAIL_FROM'] %>
+  mail_from_name: <%= ENV['PROBEDOCK_MAIL_FROM_NAME'] %>
+
 test:
   protocol: <%= ENV['PROBEDOCK_TEST_APP_PROTOCOL'] %>
   host: <%= ENV['PROBEDOCK_TEST_APP_HOST'] %>
