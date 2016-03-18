@@ -38,11 +38,36 @@ angular.module('probedock.dbStatsWidget').directive('dbStatsWidget', function() 
           $scope.total.totalSize += stat.totalSize;
         });
 
-        // Calculate the proportions
+        var totalCumulativeTrends = [];
+        // Calculate the proportions and cumulative trends
         _.each(stats, function(stat) {
           stat.rowsProportion = stat.rowsCount / $scope.total.rowsCount * 100;
           stat.totalSizeProportion = stat.totalSize / $scope.total.totalSize * 100;
+
+          // Some table does not have trends
+          if (stat.rowsCountTrend) {
+            var cumulativeCountTrend = [];
+            // Caclulate the cumulative trend
+            _.reduce(stat.rowsCountTrend, function(memo, trend, idx) {
+              memo += trend;
+              cumulativeCountTrend.push(memo);
+
+              // Update the total cumulative trend
+              if (totalCumulativeTrends[idx]) {
+                totalCumulativeTrends[idx] += memo;
+              } else {
+                totalCumulativeTrends[idx] = memo
+              }
+
+              return memo;
+            }, 0);
+
+            // Replace the the trend by the cumulative
+            stat.rowsCountTrend = cumulativeCountTrend;
+          }
         });
+
+        $scope.total.rowsCountTrend = totalCumulativeTrends;
 
         // Update the view
         $scope.stats = stats;
