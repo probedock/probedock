@@ -15,10 +15,10 @@
         table.table
           thead
             tr
-              th.name rowspan=2 Name
-              th.projects.text-right rowspan=2 Projects
-              th.tests.text-right rowspan=2 Tests
-              th.payloads.text-right rowspan=2 Payloads
+              th.name.db-stats-right-border rowspan=2 Name
+              th.projects.text-center.db-stats-right-border rowspan=2 Projects
+              th.tests.text-center.db-stats-right-border rowspan=2 Tests
+              th.payloads.text-center.db-stats-right-border rowspan=2 Payloads
               th.results.text-center colspan=3 Results
             tr
               th.results-count.text-right Rows
@@ -26,29 +26,29 @@
               th.results-trend.text-center Trend
           tbody
             tr ng-repeat='stat in stats'
-              td.name {{ stat | orgName }}
-              td.projects.text-right {{ stat.projectsCount | number }}
-              td.tests.text-right {{ stat.testsCount | number }}
-              td.payloads.text-right {{ stat.payloadsCount | number }}
+              td.name.db-stats-right-border {{ stat | orgName }}
+              td.projects.text-right.db-stats-right-border {{ stat.projectsCount | number }}
+              td.tests.text-right.db-stats-right-border {{ stat.testsCount | number }}
+              td.payloads.text-right.db-stats-right-border {{ stat.payloadsCount | number }}
               td.results-count.text-right {{ stat.resultsCount | number }}
-              td.results-prop.text-right {{ stat.resultsProp | number:2 }}
+              td.results-prop.text-right {{ stat.resultsProp | number:2 }}%
               td.results-trend.text-center
                 sparkline ng-if='stat.resultsTrend' data='stat.resultsTrend'
           tfoot
             tr
-              td.name Top total
-              td.projects.text-right {{ topStats.projectsCount | number }}
-              td.tests.text-right {{ topStats.testsCount | number }}
-              td.payloads.text-right {{ topStats.payloadsCount | number }}
+              td.name.db-stats-right-border Top total
+              td.projects.text-right.db-stats-right-border {{ topStats.projectsCount | number }}
+              td.tests.text-right.db-stats-right-border {{ topStats.testsCount | number }}
+              td.payloads.text-right.db-stats-right-border {{ topStats.payloadsCount | number }}
               td.results-count.text-right {{ topStats.resultsCount | number }}
-              td.results-prop.text-right {{ topStats.resultsProp | number:2 }}
+              td.results-prop.text-right {{ topStats.resultsProp | number:2 }}%
               td.results-trend.text-center
                 sparkline data='topStats.resultsTrend'
             tr
-              td.name Total
-              td.projects.text-right {{ total.projectsCount | number }}
-              td.tests.text-right {{ total.testsCount | number }}
-              td.payloads.text-right {{ total.payloadsCount | number }}
+              td.name.db-stats-right-border Total
+              td.projects.text-right.db-stats-right-border {{ total.projectsCount | number }}
+              td.tests.text-right.db-stats-right-border {{ total.testsCount | number }}
+              td.payloads.text-right.db-stats-right-border {{ total.payloadsCount | number }}
               td.results-count.text-right {{ total.resultsCount | number }}
               td.results-prop.text-right 100%
               td.results-trend.text-right Test
