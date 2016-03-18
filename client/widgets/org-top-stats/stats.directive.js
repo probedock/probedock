@@ -28,7 +28,7 @@ angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', fun
         $scope.stats = response.data.organizations;
         $scope.total = _.omit(response.data, 'organizations');
 
-        $scope.top = _.reduce(response.data.organizations, function(memo, orgStats) {
+        $scope.topStats = _.reduce(response.data.organizations, function(memo, orgStats) {
           memo.payloadsCount += orgStats.payloadsCount;
           memo.projectsCount += orgStats.projectsCount;
           memo.testsCount += orgStats.testsCount;

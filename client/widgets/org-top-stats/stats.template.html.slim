@@ -2,7 +2,7 @@
   .panel-heading
     help-button
       p Help will be there
-    h3.panel-title Organization DB stats
+    h3.panel-title Top {{ params.top }} of organization DB stats
   .panel-body
     .row ng-if='loading && stats.length === 0'
       .col-md-12
@@ -30,10 +30,10 @@
           tfooter
             tr
               td.name Top total
-              td.projects.text-right {{ top.projectsCount | number }}
-              td.tests.text-right {{ top.testsCount | number }}
-              td.payloads.text-right {{ top.payloadsCount | number }}
-              td.results.text-right {{ top.resultsCount | number }}
+              td.projects.text-right {{ topStats.projectsCount | number }}
+              td.tests.text-right {{ topStats.testsCount | number }}
+              td.payloads.text-right {{ topStats.payloadsCount | number }}
+              td.results.text-right {{ topStats.resultsCount | number }}
             tr
               td.name Total
               td.projects.text-right {{ total.projectsCount | number }}
