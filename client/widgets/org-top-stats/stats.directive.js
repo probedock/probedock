@@ -25,17 +25,45 @@ angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', fun
       params: $scope.params
     }).then(function(response) {
       if (response.data) {
-        $scope.stats = response.data.organizations;
+        var orgsStats = response.data.organizations;
+
+        // Keep the total without organizations
         $scope.total = _.omit(response.data, 'organizations');
 
-        $scope.topStats = _.reduce(response.data.organizations, function(memo, orgStats) {
+        // Calculate the cumulative trends and the proportion of results
+        _.each(orgsStats, function(stat) {
+          var cumulativeTrends = [];
+
+          _.reduce(stat.resultsTrend, function(memo, trend, idx) {
+            memo += trend;
+            cumulativeTrends.push(memo);
+            return memo;
+          }, 0);
+
+          stat.resultsTrend = cumulativeTrends;
+          stat.resultsProp = stat.resultsCount / $scope.total.resultsCount * 100;
+        });
+
+        // Calculate the total for the top n organizations with the trends corresponding to them
+        $scope.topStats = _.reduce(orgsStats, function(memo, orgStats) {
           memo.payloadsCount += orgStats.payloadsCount;
           memo.projectsCount += orgStats.projectsCount;
           memo.testsCount += orgStats.testsCount;
           memo.resultsCount += orgStats.resultsCount;
-          return memo;
-        }, { payloadsCount: 0, projectsCount: 0, testsCount:0, resultsCount: 0 });
+          memo.resultsProp += orgStats.resultsProp;
 
+          // Cumulative trends for the top n organizations
+          _.each(orgStats.resultsTrend, function(trend, idx) {
+            memo.resultsTrend[idx] += trend;
+          });
+
+          return memo;
+        }, {
+          payloadsCount: 0, projectsCount: 0, testsCount:0, resultsCount: 0, resultsProp: 0,
+          resultsTrend: _.map(new Array(orgsStats[0].resultsTrend.length), function(item) { return 0; })
+        });
+
+        $scope.stats = orgsStats;
         $scope.loading = false;
       }
 

@@ -1,4 +1,4 @@
-.org-stats.panel.panel-default
+.org-top-stats.panel.panel-default
   .panel-heading
     help-button
       p Help will be there
@@ -15,29 +15,41 @@
         table.table
           thead
             tr
-              th.name Name
-              th.projects.text-right Projects
-              th.tests.text-right Tests
-              th.payloads.text-right Payloads
-              th.results.text-right Results
+              th.name rowspan=2 Name
+              th.projects.text-right rowspan=2 Projects
+              th.tests.text-right rowspan=2 Tests
+              th.payloads.text-right rowspan=2 Payloads
+              th.results.text-center colspan=3 Results
+            tr
+              th.results-count.text-right Rows
+              th.results-prop.text-right %
+              th.results-trend.text-center Trend
           tbody
             tr ng-repeat='stat in stats'
               td.name {{ stat | orgName }}
               td.projects.text-right {{ stat.projectsCount | number }}
               td.tests.text-right {{ stat.testsCount | number }}
               td.payloads.text-right {{ stat.payloadsCount | number }}
-              td.results.text-right {{ stat.resultsCount | number }}
-          tfooter
+              td.results-count.text-right {{ stat.resultsCount | number }}
+              td.results-prop.text-right {{ stat.resultsProp | number:2 }}
+              td.results-trend.text-center
+                sparkline ng-if='stat.resultsTrend' data='stat.resultsTrend'
+          tfoot
             tr
               td.name Top total
               td.projects.text-right {{ topStats.projectsCount | number }}
               td.tests.text-right {{ topStats.testsCount | number }}
               td.payloads.text-right {{ topStats.payloadsCount | number }}
-              td.results.text-right {{ topStats.resultsCount | number }}
+              td.results-count.text-right {{ topStats.resultsCount | number }}
+              td.results-prop.text-right {{ topStats.resultsProp | number:2 }}
+              td.results-trend.text-center
+                sparkline data='topStats.resultsTrend'
             tr
               td.name Total
               td.projects.text-right {{ total.projectsCount | number }}
               td.tests.text-right {{ total.testsCount | number }}
               td.payloads.text-right {{ total.payloadsCount | number }}
-              td.results.text-right {{ total.resultsCount | number }}
+              td.results-count.text-right {{ total.resultsCount | number }}
+              td.results-prop.text-right 100%
+              td.results-trend.text-right Test
 
