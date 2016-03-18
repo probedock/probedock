@@ -24,6 +24,7 @@ class PlatformTableInfoPolicy < ApplicationPolicy
       Jbuilder.new do |json|
         json.name record.name
         json.rowsCount record.rows
+        json.rowsCountTrend = record.rows_trend
         json.tableSize record.table_size
         json.indexesSize record.indexes_size
         json.totalSize record.total_size
