@@ -41,7 +41,8 @@ Feature: Platform management
           "payloadsCount": "@number",
           "projectsCount": "@number",
           "testsCount": "@number",
-          "resultsCount": "@number"
+          "resultsCount": "@number",
+          "resultsTrend": [ 0, 0, 0, 0, 0 ]
         }],
         "payloadsCount": "@number",
         "projectsCount": "@number",
@@ -84,7 +85,8 @@ Feature: Platform management
           "payloadsCount": 1,
           "projectsCount": 1,
           "testsCount": 2,
-          "resultsCount": 2
+          "resultsCount": 2,
+          "resultsTrend": [ 0, 0, 0, 0, 0 ]
         }, {
           "id": "{@idOf: Rebel Alliance}",
           "name": "rebel-alliance",
@@ -92,7 +94,8 @@ Feature: Platform management
           "payloadsCount": 1,
           "projectsCount": 1,
           "testsCount": 1,
-          "resultsCount": 1
+          "resultsCount": 1,
+          "resultsTrend": [ 0, 0, 0, 0, 0 ]
         }, {
           "id": "{@idOf: Galactic Empire}",
           "name": "galactic-empire",
@@ -100,7 +103,8 @@ Feature: Platform management
           "payloadsCount": 0,
           "projectsCount": 0,
           "testsCount": 0,
-          "resultsCount": 0
+          "resultsCount": 0,
+          "resultsTrend": [ 0, 0, 0, 0, 0 ]
         }],
         "payloadsCount": "@number",
         "projectsCount": "@number",
