@@ -51,5 +51,6 @@
               td.payloads.text-right.db-stats-right-border {{ total.payloadsCount | number }}
               td.results-count.text-right {{ total.resultsCount | number }}
               td.results-prop.text-right 100%
-              td.results-trend.text-right Test
+              td.results-trend.text-right
+                sparkline data='total.resultsTrend'
 

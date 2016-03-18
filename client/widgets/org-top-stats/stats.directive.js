@@ -27,21 +27,28 @@ angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', fun
       if (response.data) {
         var orgsStats = response.data.organizations;
 
-        // Keep the total without organizations
-        $scope.total = _.omit(response.data, 'organizations');
+        // Keep the total without organizations and udpate the trend to have cumulative trend
+        var total = _.omit(response.data, 'organizations');
+        var totalCumulativeTrends = [];
+        _.reduce(total.resultsTrend, function(memo, trend) {
+          memo += trend;
+          totalCumulativeTrends.push(memo);
+          return memo;
+        }, 0);
+        total.resultsTrend = totalCumulativeTrends;
 
         // Calculate the cumulative trends and the proportion of results
         _.each(orgsStats, function(stat) {
           var cumulativeTrends = [];
 
-          _.reduce(stat.resultsTrend, function(memo, trend, idx) {
+          _.reduce(stat.resultsTrend, function(memo, trend) {
             memo += trend;
             cumulativeTrends.push(memo);
             return memo;
           }, 0);
 
           stat.resultsTrend = cumulativeTrends;
-          stat.resultsProp = stat.resultsCount / $scope.total.resultsCount * 100;
+          stat.resultsProp = stat.resultsCount / total.resultsCount * 100;
         });
 
         // Calculate the total for the top n organizations with the trends corresponding to them
@@ -63,6 +70,7 @@ angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', fun
           resultsTrend: _.map(new Array(orgsStats[0].resultsTrend.length), function(item) { return 0; })
         });
 
+        $scope.total = total;
         $scope.stats = orgsStats;
         $scope.loading = false;
       }

@@ -4,9 +4,7 @@ angular.module('probedock.sparkline').directive('sparkline', function() {
     controller: 'SparklineCtrl',
     templateUrl: '/templates/components/sparkline/sparkline.template.html',
     scope: {
-      data: '=?',
-      sparkWidth: '@',
-      sparkHeight: '@'
+      data: '=?'
     }
   };
 }).controller('SparklineCtrl', function($scope) {
@@ -17,8 +15,6 @@ angular.module('probedock.sparkline').directive('sparkline', function() {
   _.defaults($scope, {
     datasets: [ $scope.data ],
     labels: new Array($scope.data.length),
-    sparkHeight: $scope.sparkHeight ? $scope.sparkHeight : 30,
-    sparkWidth: $scope.sparkWidth ? $scope.sparkWidth : 150,
     options: {
       animation: false,
       showTooltips: false,
