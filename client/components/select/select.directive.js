@@ -20,7 +20,7 @@ angular.module('probedock.select')
       modelProperty: $scope.multiple ? 'categoryName' : 'categoryNames',
       label: 'Filter by category',
       placeholder: 'All categories',
-      labelNew: 'create new category.',
+      labelNew: 'create new category',
       extract: 'name'
     },
     fetchUrl: '/categories'
@@ -31,11 +31,11 @@ angular.module('probedock.select')
       modelProperty: $scope.multiple ? 'projectIds' : 'projectId',
       label: 'Filter by project',
       placeholder: 'All projects',
-      labelNew: 'create new project.'
+      labelNew: 'create new project'
     },
     fetchUrl: '/projects',
 
-    showItem: function(project) {
+    formatItem: function(project) {
       // Apply the project name filter
       return projectNameFilter(project);
     }
@@ -45,7 +45,7 @@ angular.module('probedock.select')
     defaults: {
       modelProperty: $scope.multiple ? 'projectVersionIds' : 'projectVersionId',
       label: 'Filter by version',
-      labelNew: 'create new version.',
+      labelNew: 'create new version',
       placeholder: $scope.placeholder ? $scope.placeholder : ($scope.latestVersion ? 'Latest version: ' + $scope.latestVersion.name : 'All versions'),
       defaultNewItem: '1.0.0'
     },
@@ -119,11 +119,11 @@ var defaultsAttributes = {
  * Define the standard default values for the select directive
  */
 var defaults = {
-  showProperty: 'name', // Attribute name to use to show the item in the select field
-  allowClear: true,     // It is allowed to unselect items
-  multiple: false,      // She select fields are single selection
-  noLabel: false,       // The label is visible
-  extract: 'id'         // Use the ID to identify items
+  displayedProperty: 'name', // Attribute name to use to show the item in the select field
+  allowClear: true,          // It is allowed to unselect items
+  multiple: false,           // She select fields are single selection
+  noLabel: false,            // The label is visible
+  extract: 'id'              // Use the ID to identify items
 };
 
 /**
@@ -151,19 +151,13 @@ function createSelectDirective(controllerName, attributes) {
  */
 function setupController($scope, api, options) {
   if (!$scope.prefix) {
-    throw new Error("The prefix attribute on select directive is not set.");
-  }
-
-  if (!options) {
-    throw new Error("No options defined to setup the select controller.");
-  }
-
-  if (!options.defaults) {
-    throw new Error("No defaults provided to setup the select controller.");
-  }
-
-  if (!options.fetchUrl) {
-    throw new Error("The fetchUrl must be provided.");
+    throw new Error("Prefix must be provided.");
+  } else if (!options) {
+    throw new Error("Options must be provided.");
+  } else if (!options.defaults) {
+    throw new Error("Defaults must be provided.");
+  } else if (!options.fetchUrl) {
+    throw new Error("FetchUrl must be provided.");
   }
 
   // Setup the default options and values for the controller
@@ -188,13 +182,13 @@ function setupController($scope, api, options) {
   });
 
   // Define a function to show the item value in the select. If no function
-  // is defined, a lookup on a property given by showProperty is done.
-  if (options.showItem) {
-    $scope.showItem = options.showItem;
+  // is defined, a lookup on a property given by displayedProperty is done.
+  if (options.formatItem) {
+    $scope.formatItem = options.formatItem;
   } else {
-    $scope.showItem = function(item) {
-      return item[$scope.showProperty];
-    }
+    $scope.formatItem = function(item) {
+      return item ? item[$scope.displayedProperty] : '';
+    };
   }
 
   $scope.fetchChoices = function(search) {
