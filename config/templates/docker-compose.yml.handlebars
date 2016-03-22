@@ -112,7 +112,7 @@ task:
   volumes:
     - "{{ PROBEDOCK_RELEASE_PATH }}/public:/usr/src/app/public"
     - "{{ PROBEDOCK_RELEASE_PATH }}/tmp:/usr/src/app/tmp"
-  restart: no
+  restart: "no"
   environment:
     RAILS_ENV: production
     PROBEDOCK_DATABASE_HOST: db
