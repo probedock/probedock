@@ -21,9 +21,9 @@
                 span.glyphicon.glyphicon-flash tooltip='Busy workers'
               td.text-left {{ resqueStats.workers.working | number }}
             tr
-              td.text-right.pending
+              td.text-right.success
                 span.glyphicon.glyphicon-hourglass tooltip='Free workers'
-              td.text-left {{ resqueStats.workers.total - resqueStats.workers.total | number }}
+              td.text-left {{ resqueStats.workers.total - resqueStats.workers.working | number }}
             tr
               td.text-right.success
                 span.glyphicon.glyphicon-equalizer tooltip='Total workers'
