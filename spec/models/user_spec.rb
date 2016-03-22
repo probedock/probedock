@@ -115,10 +115,9 @@ describe User, probedock: { tags: :unit } do
       expect{ claims = JSON::JWT.decode subject, Rails.application.secrets.jwt_secret }.not_to raise_error
 
       expect(claims['iss']).to eq(user.api_id)
-      expect(claims['exp'] - 1.year.from_now.to_i).to be <= 0
-      expect(claims['exp'] - 1.year.from_now.to_i).to be >= -5
       expect(claims['nbf'] - Time.now.to_i).to be <= 0
       expect(claims['nbf'] - Time.now.to_i).to be >= -5
+      expect(claims.key?('exp')).to be(false)
     end
   end
 
