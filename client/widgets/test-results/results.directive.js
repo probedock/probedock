@@ -60,7 +60,6 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
   };
 
   function initFetchResults() {
-    //$scope.results = [];
     page = 1;
     fetchResults(true);
   }
