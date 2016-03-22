@@ -34,7 +34,7 @@ module ProbeDock
 
       get :dbStats do
         authorize!(:platform_table_info, :show)
-        serialize PlatformTableInfo.stats
+        serialize(PlatformTableInfo.stats)
       end
 
       get :orgStats do
@@ -45,6 +45,11 @@ module ProbeDock
         else
           serialize(OrganizationTableInfo.top_stats(organization: @current_organization))
         end
+      end
+
+      get :resqueStats do
+        authorize!(:resque_info, :show)
+        serialize(ResqueInfo.stats)
       end
     end
   end

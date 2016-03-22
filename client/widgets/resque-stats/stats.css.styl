@@ -1,0 +1,29 @@
+@import '../../styles/mixins.css.styl'
+
+.resque-stats
+  h5:first-of-type
+    margin-top 0
+
+  table
+    margin-bottom 0
+
+    td, th
+      vertical-align middle !important
+
+  .jobs, .workers
+    width 100%
+
+    td
+      vertical-align middle
+      padding-right 15px
+      font-size 1.7em
+      width 50%
+
+    .success
+      color passed-color
+
+    .failed
+      color failed-color
+
+    .pending
+      color inactive-color

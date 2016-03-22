@@ -1,0 +1,63 @@
+.resque-stats.panel.panel-default
+  .panel-heading
+    help-button
+      p Help will be there
+    h3.panel-title Resque stats
+  .panel-body
+    .row ng-if='loading && !resqueStats'
+      .col-md-12
+        p Loading...
+    .row ng-if='!loading && !resqueStats'
+      .col-md-12
+        p.empty No resque data available.
+    .row ng-if='resqueStats'
+      .col-lg-4.col-sm-12
+        h5
+          strong Workers
+        table.workers
+          tbody
+            tr
+              td.text-right.pending
+                span.glyphicon.glyphicon-flash tooltip='Busy workers'
+              td.text-left {{ resqueStats.workers.working | number }}
+            tr
+              td.text-right.pending
+                span.glyphicon.glyphicon-hourglass tooltip='Free workers'
+              td.text-left {{ resqueStats.workers.total - resqueStats.workers.total | number }}
+            tr
+              td.text-right.success
+                span.glyphicon.glyphicon-equalizer tooltip='Total workers'
+              td.text-left {{ resqueStats.workers.total | number }}
+      .col-lg-4.col-sm-12
+        h5
+          strong Jobs
+        table.jobs
+          tbody
+            tr
+              td.text-right.failed
+                span.glyphicon.glyphicon-warning-sign tooltip='Failed jobs'
+              td.text-left {{ resqueStats.jobs.failed | number }}
+            tr
+              td.text-right.pending
+                span.glyphicon.glyphicon-time tooltip='Pending jobs'
+              td.text-left {{ resqueStats.jobs.pending | number }}
+            tr
+              td.text-right.success
+                span.glyphicon.glyphicon-thumbs-up tooltip='Successful jobs'
+              td.text-left {{ resqueStats.jobs.processed - resqueStats.jobs.failed | number }}
+            tr
+              td.text-right.success
+                span.glyphicon.glyphicon-stats tooltip='Processed jobs'
+              td.text-left {{ resqueStats.jobs.processed | number }}
+      .col-lg-4.col-sm-12
+        h5
+          strong Queues
+        table.table
+          thead
+            tr
+              th.name.text-vertical-middle Name
+              th.rows.text-right Messages
+          tbody
+            tr ng-repeat='queue in resqueStats.queues'
+              td.name {{ queue.name | capitalize }}
+              td.rows-count.text-right {{ queue.size | number }}
