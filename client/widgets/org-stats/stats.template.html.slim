@@ -22,8 +22,8 @@
               th.rows-count.text-right Count
               th.rows-prop.text-right %
               th.rows-trend.text-center Trend
-              th.total-count.text-right Count
-              th.total-trend.text-center Trend
+              th.total-count.text-right ng-if='currentUserIs("admin")' Count
+              th.total-trend.text-center ng-if='currentUserIs("admin")' Trend
           tbody
             tr ng-repeat='stat in stats'
               td.name {{ stat.name | capitalize }}
@@ -32,7 +32,7 @@
               td.rows-trend.text-center
                 sparkline ng-if='stat.resultsTrend' data='stat.resultsTrend'
               td.total-count.text-right ng-if='currentUserIs("admin")' {{ stat.total | number }}
-              td.total-trend.text-center
+              td.total-trend.text-center ng-if='currentUserIs("admin")'
                 sparkline ng-if='stat.totalResultsTrend' data='stat.totalResultsTrend'
     .row ng-if='started'
       .col-md-12

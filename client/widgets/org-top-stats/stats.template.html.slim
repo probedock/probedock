@@ -43,7 +43,7 @@
               td.results-count.text-right {{ topStats.resultsCount | number }}
               td.results-prop.text-right {{ topStats.resultsProp | number:2 }}%
               td.results-trend.text-center
-                sparkline data='topStats.resultsTrend'
+                sparkline ng-if='topStats.resultsTrend' data='topStats.resultsTrend'
             tr
               td.name.db-stats-right-border Total
               td.projects.text-right.db-stats-right-border {{ total.projectsCount | number }}
@@ -52,5 +52,5 @@
               td.results-count.text-right {{ total.resultsCount | number }}
               td.results-prop.text-right 100%
               td.results-trend.text-right
-                sparkline data='total.resultsTrend'
+                sparkline ng-if='total.resultsTrend' data='total.resultsTrend'
 
