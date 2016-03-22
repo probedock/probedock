@@ -70,6 +70,9 @@ angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', fun
           resultsTrend: _.map(new Array(orgsStats[0].resultsTrend.length), function(item) { return 0; })
         });
 
+        // Make sure the sum is not > 100%
+        $scope.topStats.resultsProp = $scope.topStats.resultsProp > 100 ? 100 : $scope.topStats.resultsProp;
+
         $scope.total = total;
         $scope.stats = orgsStats;
         $scope.loading = false;

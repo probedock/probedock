@@ -47,10 +47,10 @@
             tr
               th.name.db-stats-right-border Total
               th.rows.text-right {{ total.rowsCount | number }}
-              th.rows-proportion.hidden-md.hidden-sm.hidden-xs 100%
+              th.rows-proportion.text-right.hidden-md.hidden-sm.hidden-xs {{ 100 | number:2 }}%
               td.rows-trend.text-center.db-stats-right-border
                 sparkline ng-if='total.rowsCountTrend' data='total.rowsCountTrend'
               th.table-size.text-right.hidden-md.hidden-sm.hidden-xs {{ total.tableSize | prettyBytes }}
               th.indexes-size.text-right.hidden-md.hidden-sm.hidden-xs {{ total.indexesSize | prettyBytes }}
               th.total-size.text-right {{ total.totalSize | prettyBytes }}
-              th.total-size-proportion.text-right.hidden-md.hidden-sm.hidden-xs 100%
+              th.total-size-proportion.text-right.hidden-md.hidden-sm.hidden-xs {{ 100 | number:2 }}%
