@@ -9,7 +9,8 @@ angular.module('probedock.api').factory('apiPagination', function($log) {
       length: res.data.length
     };
 
-    pagination.numberOfPages = Math.ceil((pagination.filteredTotal || pagination.total) / pagination.pageSize);
+    // Check if the filters have been applied
+    pagination.numberOfPages = Math.ceil((pagination.filteredTotal !== undefined ? pagination.filteredTotal : pagination.total) / pagination.pageSize);
     pagination.hasMorePages = pagination.page * pagination.pageSize < (pagination.filteredTotal !== undefined ? pagination.filteredTotal : pagination.total) && pagination.length !== 0;
 
     return pagination;
