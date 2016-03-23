@@ -1,0 +1,24 @@
+/ item selection
+.form-group
+  label ng-if='!noLabel && !multiple' for='{{ prefix }}-select-single' {{ label }}
+  label ng-if='!noLabel && multiple' for='{{ prefix }}-select-multiple' {{ label }}
+
+  / check box to choose whether to create a new item
+  label.new-switch.pull-right ng-if='createNew'
+    input> type='checkbox' ng-model='config.newItem' ng-disabled='!choices.length'
+    | {{ labelNew }}
+
+  / Single dropdown menu to select an existing item
+  ui-select id='{{ prefix }}-select-single' ng-if='!multiple && !config.newItem && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true
+    ui-select-match placeholder='{{ placeholder }}' allow-clear='{{ allowClear }}' {{ formatItem($select.selected) }}
+    ui-select-choices repeat='item[extract] as item in choices' refresh='fetchChoices($select.search)' refresh-delay='250'
+      span ng-bind-html='formatItem(item) | highlight: $select.search'
+
+  / Multiple select dropdown menu to select existing items
+  ui-select id='{{ prefix }}-select-multiple' ng-if='multiple && !config.newItem && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true multiple=true
+    ui-select-match placeholder='{{ placeholder }}' allow-clear='{{ allowClear }}' {{ $item.name }}
+    ui-select-choices repeat='item[extract] as item in choices' refresh='fetchChoices($select.search)' refresh-delay='250'
+      span ng-bind-html='formatItem(item) | highlight: $select.search'
+
+  / free input field to create a new item
+  input.form-control type='text' ng-if='config.newItem' ng-model='modelObject[modelProperty]'

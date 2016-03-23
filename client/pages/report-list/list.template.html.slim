@@ -10,13 +10,13 @@
             .well.filters st-filters='reportsList.params' class='{{ filtersClass }}'
               .row
                 .col-lg-3.col-md-6
-                  user-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='runnerIds' placeholder='All Runners' multiple='true'
+                  user-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='runnerIds' placeholder='All Runners' multiple='true' label='Filter by runner'
                 .col-lg-3.col-md-6
-                  project-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params'
+                  project-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' multiple='true'
                 .col-lg-3.col-md-6
-                  project-version-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='projectVersionNames' multiple='true' unique-by='name' extract='name' label='Filter by version'
+                  project-version-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='projectVersionNames' multiple='true' unique-by='name' extract='name'
                 .col-lg-3.col-md-6
-                  category-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' multiple='true' label='Filter by category'
+                  category-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' multiple='true'
             .row
               .col-md-12
                 table.latest-reports.table.table-striped.table-hover

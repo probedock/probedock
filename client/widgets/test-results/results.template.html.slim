@@ -30,6 +30,6 @@
           project-version-label ng-repeat='missingVersion in missingVersions' project-version='missingVersion.name'
     .row ng-if='started'
       .col-md-6
-        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true' placeholder='All versions'
+        project-version-select prefix='test-results' organization='organization' test='test' model-object='params' allow-clear='true'
       .col-md-6
         user-select prefix='test-results' organization='organization' model-object='params' label='Filter by runner' placeholder='All runners' multiple='true'
