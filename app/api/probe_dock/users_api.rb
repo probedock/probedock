@@ -21,23 +21,25 @@ module ProbeDock
     namespace :users do
       helpers do
         def parse_user
-          parse_object :name, :primaryEmail, :active, :technical, :organizationId, :password, :passwordConfirmation
+          parse_object(:name, :primaryEmail, :active, :technical, :organizationId, :password, :passwordConfirmation)
         end
 
         def current_otp_record
-          @current_otp_record ||= if params.key? :membershipOtp
+          @current_otp_record ||= if params.key?(:membershipOtp)
             Membership.where('otp IS NOT NULL').where(otp: params[:membershipOtp].to_s).where('expires_at > ?', Time.now).first
           end
         end
 
         def with_serialization_includes rel
-          rel = rel.includes :memberships if true_flag? :withTechnicalMembership
+          rel = rel.includes(:memberships) if true_flag?(:withTechnicalMembership)
+          rel = rel.includes(:organizations) if true_flag?(:withOrganizations)
           rel
         end
 
         def serialization_options *args
           {
-            with_technical_membership: true_flag?(:withTechnicalMembership)
+            with_technical_membership: true_flag?(:withTechnicalMembership),
+            with_organizations: true_flag?(:withOrganizations)
           }
         end
       end
@@ -47,10 +49,10 @@ module ProbeDock
 
         data = parse_user
         email = data.delete(:primary_email).try(:to_s).try(:downcase)
-        org_id = data.delete :organization_id
+        org_id = data.delete(:organization_id)
         data[:password_confirmation] ||= ''
 
-        user = User.new data
+        user = User.new(data)
         user.active = true
 
         User.transaction do
@@ -60,10 +62,10 @@ module ProbeDock
             user.memberships << Membership.new(user: user, organization: org)
           end
 
-          authorize! user, :create
+          authorize!(user, :create)
 
           if email.present? && email != current_otp_record.try(:organization_email).try(:address)
-            authorize! user, :update_email
+            authorize!(user, :update_email)
             user.primary_email = Email.where(address: email).first_or_initialize
             user.primary_email.user = user
           elsif current_otp_record.kind_of? Membership
@@ -73,7 +75,7 @@ module ProbeDock
           end
 
           create_record user do
-            if current_otp_record.kind_of? Membership
+            if current_otp_record.kind_of?(Membership)
               current_otp_record.user = user
               current_otp_record.save!
             end
@@ -140,37 +142,37 @@ module ProbeDock
 
         get do
           authenticate!
-          authorize! record, :show
-          serialize record
+          authorize!(record, :show)
+          serialize(record)
         end
 
         patch do
           authenticate
-          authorize! record, :update
+          authorize!(record, :update)
 
           User.transaction do
 
             updates = parse_user
 
-            if updates.key? :name
-              authorize! record, :update_name
+            if updates.key?(:name)
+              authorize!(record, :update_name)
               record.name = updates[:name]
             end
 
             if updates.key?(:active) && !!updates[:active] != record.active
-              authorize! record, :update_active
+              authorize!(record, :update_active)
               record.active = !!updates[:active]
             end
 
             # FIXME: only allow to set primary email if among existing emails
             if updates.key?(:primary_email) && updates[:primary_email] != record.primary_email.address
-              authorize! record, :update_email
+              authorize!(record, :update_email)
               record.primary_email = Email.where(address: updates[:primary_email].to_s.downcase).first_or_initialize
               record.primary_email.user = record
             end
 
-            if updates.key? :password
-              authorize! record, :update_password
+            if updates.key?(:password)
+              authorize!(record, :update_password)
               record.password = updates[:password]
               record.password_confirmation = updates[:password_confirmation] || ''
             end
@@ -181,7 +183,7 @@ module ProbeDock
 
         delete do
           authenticate!
-          authorize! record, :destroy
+          authorize!(record, :destroy)
           record.destroy
           status 204
           nil

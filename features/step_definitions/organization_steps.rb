@@ -10,14 +10,26 @@ Given /^public organization (.+) exists/ do |name|
   add_named_record(name, create(:organization, options))
 end
 
-Given /user (\w+) who is a member of (.+) exists/ do |user_name,organization_name|
+Given /user (\w+)(?: with primary email (.+?))? who is a member of (.+) exists/ do |user_name,primary_email,organization_name|
   org = Organization.where(name: organization_name.downcase.gsub(/\s+/, '-')).first!
-  add_named_record(user_name, create(:org_member, name: user_name, organization: org))
+
+  if primary_email
+    email = create(:email, address: primary_email)
+    add_named_record(user_name, create(:org_member, name: user_name, organization: org, primary_email: email))
+  else
+    add_named_record(user_name, create(:org_member, name: user_name, organization: org))
+  end
 end
 
-Given /user (\w+) who is an admin of (.+) exists/ do |user_name,organization_name|
+Given /user (\w+)(?: with primary email (.+?))? who is an admin of (.+) exists/ do |user_name,primary_email,organization_name|
   org = Organization.where(name: organization_name.downcase.gsub(/\s+/, '-')).first!
-  add_named_record(user_name, create(:org_admin, name: user_name, organization: org))
+
+  if primary_email
+    email = create(:email, address: primary_email)
+    add_named_record(user_name, create(:org_admin, name: user_name, organization: org, primary_email: email))
+  else
+    add_named_record(user_name, create(:org_admin, name: user_name, organization: org))
+  end
 end
 
 Given /user (\w+) who is a technical user of (.+) exists(?: since (\d*) ((?:day|week)s?) ago)?/ do |user_name,organization_name,interval_count,interval|
