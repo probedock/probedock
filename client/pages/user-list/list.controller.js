@@ -5,7 +5,10 @@ angular.module('probedock.userListPage').controller('UserListPageCtrl', function
 
   tables.create($scope, 'usersList', {
     url: '/users',
-    pageSize: 15
+    pageSize: 15,
+    params: {
+      withOrganizations: 1
+    }
   });
 
   users.forward($scope, 'update', { prefix: 'users.' });

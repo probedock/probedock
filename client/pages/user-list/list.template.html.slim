@@ -9,6 +9,7 @@
           tr
             th colspan=2 User
             th.hidden-xs.hidden-sm.hidden-md E-mail
+            th Organizations
             th.hidden-xs Registered since
             th
         tbody
@@ -20,22 +21,20 @@
               a ui-sref='admin.users.show({ id: user.id })' {{ user.name }}
             td.email.hidden-xs.hidden-sm.hidden-md
               span ng-if='user.primaryEmail' {{ user.primaryEmail }}
-              span ng-if='!user.primaryEmail'
-                | -
-            td.registeredAt.hidden-xs
-              | {{ user.createdAt | amDateFormat:'ll' }}
-              |  
-              | ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
+              span ng-if='!user.primaryEmail' -
+            td.organizations
+              simple-label type='default' ng-repeat='organization in user.organizations' label='{{ organization | orgName }}'
+            td.registeredAt.hidden-xs {{ user.createdAt | amDateFormat:'ll' }} ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
             td.actions
               .btn-group.btn-group-sm
                 a.btn.btn-danger ng-click='delete(user)' tooltip='Delete User' tooltip-append-to-body='true'
                   span.glyphicon.glyphicon-remove
         tfoot
           tr
-            td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
+            td.clearfix colspan=6 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
     tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
       tab-heading
-        | {{ userTab.user.name }} 
+        | {{ userTab.user.name }}
         a ng-click='removeTab(userTab)'
           span.glyphicon.glyphicon-remove
       .col-md-6.col-xs-12
