@@ -9,18 +9,18 @@ Feature: Users
 
     # Create private organization with 2 users
     And private organization Rebel Alliance exists
-    And user hsolo with primary email hsolo@localhost.localdomain who is a member of Rebel Alliance exists
-    And user lskywalker with primary email lskywalker@localhost.localdomain who is a member of Rebel Alliance exists
+    And user hsolo with primary email han.solo@localhost.localdomain who is a member of Rebel Alliance exists
+    And user lskywalker with primary email luke.skywalker@localhost.localdomain who is a member of Rebel Alliance exists
 
     # Create public organization with 2 users
     And public organization Old Republic exists
-    And user borgana with primary email borgana@localhost.localdomain who is a member of Old Republic exists
-    And user pamidala with primary email pamidala@localhost.localdomain who is a member of Old Republic exists
+    And user borgana with primary email bail.organa@localhost.localdomain who is a member of Old Republic exists
+    And user pamidala with primary email padme.amidala@localhost.localdomain who is a member of Old Republic exists
     And user c3po who is a technical user of Old Republic exists
 
     # Create public organization with 3 users
     And public organization Galactic Empire exists
-    And user dvader with primary email dvader@localhost.localdomain who is a member of Galactic Empire exists
+    And user dvader with primary email dark.vader@localhost.localdomain who is a member of Galactic Empire exists
     And user palpatine with primary email palpatine@localhost.localdomain who is a member of Galactic Empire exists
     And user borgana is also a member of Galactic Empire
 
@@ -36,9 +36,9 @@ Feature: Users
         "name": "borgana",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "borgana@localhost.localdomain",
+        "primaryEmail": "bail.organa@localhost.localdomain",
         "emails": [{
-          "address": "borgana@localhost.localdomain",
+          "address": "bail.organa@localhost.localdomain",
           "active": false
         }],
         "active": true,
@@ -57,9 +57,9 @@ Feature: Users
         "name": "dvader",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "dvader@localhost.localdomain",
+        "primaryEmail": "dark.vader@localhost.localdomain",
         "emails": [{
-          "address": "dvader@localhost.localdomain",
+          "address": "dark.vader@localhost.localdomain",
           "active": false
         }],
         "active": true,
@@ -109,9 +109,9 @@ Feature: Users
         "name": "pamidala",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "pamidala@localhost.localdomain",
+        "primaryEmail": "padme.amidala@localhost.localdomain",
         "emails": [{
-          "address": "pamidala@localhost.localdomain",
+          "address": "padme.amidala@localhost.localdomain",
           "active": false
         } ],
         "active": true,
@@ -210,9 +210,9 @@ Feature: Users
         "name": "borgana",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "borgana@localhost.localdomain",
+        "primaryEmail": "bail.organa@localhost.localdomain",
         "emails": [{
-          "address": "borgana@localhost.localdomain",
+          "address": "bail.organa@localhost.localdomain",
           "active": false
         }],
         "active": true,
@@ -239,9 +239,9 @@ Feature: Users
         "name": "dvader",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "dvader@localhost.localdomain",
+        "primaryEmail": "dark.vader@localhost.localdomain",
         "emails": [{
-          "address": "dvader@localhost.localdomain",
+          "address": "dark.vader@localhost.localdomain",
           "active": false
         }],
         "active": true,
@@ -291,9 +291,9 @@ Feature: Users
         "name": "pamidala",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "pamidala@localhost.localdomain",
+        "primaryEmail": "padme.amidala@localhost.localdomain",
         "emails": [{
-          "address": "pamidala@localhost.localdomain",
+          "address": "padme.amidala@localhost.localdomain",
           "active": false
         } ],
         "active": true,
@@ -315,9 +315,9 @@ Feature: Users
         "name": "borgana",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "borgana@localhost.localdomain",
+        "primaryEmail": "bail.organa@localhost.localdomain",
         "emails": [{
-          "address": "borgana@localhost.localdomain",
+          "address": "bail.organa@localhost.localdomain",
           "active": false
         }],
          "organizations": [{
@@ -365,9 +365,9 @@ Feature: Users
         "name": "dvader",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "dvader@localhost.localdomain",
+        "primaryEmail": "dark.vader@localhost.localdomain",
         "emails": [{
-          "address": "dvader@localhost.localdomain",
+          "address": "dark.vader@localhost.localdomain",
           "active": false
         }],
         "organizations": [{
@@ -388,9 +388,9 @@ Feature: Users
         "name": "hsolo",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "hsolo@localhost.localdomain",
+        "primaryEmail": "han.solo@localhost.localdomain",
         "emails": [{
-          "address": "hsolo@localhost.localdomain",
+          "address": "han.solo@localhost.localdomain",
           "active": false
         }],
         "organizations": [{
@@ -411,9 +411,9 @@ Feature: Users
         "name": "lskywalker",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "lskywalker@localhost.localdomain",
+        "primaryEmail": "luke.skywalker@localhost.localdomain",
         "emails": [{
-          "address": "lskywalker@localhost.localdomain",
+          "address": "luke.skywalker@localhost.localdomain",
           "active": false
         }],
         "organizations": [{
@@ -473,9 +473,9 @@ Feature: Users
         "name": "pamidala",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "pamidala@localhost.localdomain",
+        "primaryEmail": "padme.amidala@localhost.localdomain",
         "emails": [{
-          "address": "pamidala@localhost.localdomain",
+          "address": "padme.amidala@localhost.localdomain",
           "active": false
         }],
         "organizations": [{
@@ -498,7 +498,7 @@ Feature: Users
 
 
   Scenario: An organization member should be able to retrieve a user by its email.
-    When borgana sends a GET request to /api/users?email=lskywalker@localhost.localdomain
+    When borgana sends a GET request to /api/users?email=luke.skywalker@localhost.localdomain
     Then the response code should be 200
     And the response body should be the following JSON:
       """
@@ -535,6 +535,44 @@ Feature: Users
 
 
 
+  Scenario: An organization member should be able to retrieve a user by its email through search.
+    When borgana sends a GET request to /api/users?search=han
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: hsolo",
+        "name": "hsolo",
+        "technical": false,
+        "primaryEmailMd5": "@md5",
+        "active": true,
+        "roles": [],
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: An organization member should be able to retrieve a user by its name through name.
+    When borgana sends a GET request to /api/users?name=hsolo
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: hsolo",
+        "name": "hsolo",
+        "technical": false,
+        "primaryEmailMd5": "@md5",
+        "active": true,
+        "roles": [],
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   Scenario: An organization member should be able to retrieve users filtered by organization.
     When borgana sends a GET request to /api/users?organizationId={@idOf: Old Republic}
     Then the response code should be 200
@@ -545,9 +583,9 @@ Feature: Users
         "name": "borgana",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "borgana@localhost.localdomain",
+        "primaryEmail": "bail.organa@localhost.localdomain",
         "emails": [{
-          "address": "borgana@localhost.localdomain",
+          "address": "bail.organa@localhost.localdomain",
           "active": false
         }],
         "active": true,
@@ -566,9 +604,9 @@ Feature: Users
         "name": "pamidala",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "primaryEmail": "pamidala@localhost.localdomain",
+        "primaryEmail": "padme.amidala@localhost.localdomain",
         "emails": [{
-          "address": "pamidala@localhost.localdomain",
+          "address": "padme.amidala@localhost.localdomain",
           "active": false
         } ],
         "active": true,

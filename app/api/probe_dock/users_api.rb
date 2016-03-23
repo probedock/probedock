@@ -91,6 +91,8 @@ module ProbeDock
         users_rel = User.order('LOWER(users.name) ASC')
 
         users_rel = paginated(users_rel) do |paginated_rel|
+          group = false
+
           if params[:email].present?
             email = Email.where(address: params[:email].to_s.downcase).first
             if email.present? && email.user_id.present?
@@ -102,14 +104,14 @@ module ProbeDock
 
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            paginated_rel = paginated_rel.where('LOWER(users.name) LIKE ?', term)
+            paginated_rel = paginated_rel.joins(:emails).where('LOWER(users.name) LIKE ? OR emails.address like ?', term, term)
+            group = true
           end
 
           if params[:name].present?
             paginated_rel = paginated_rel.where('users.name = ?', params[:name].to_s)
           end
 
-          group = false
           if params[:organizationId].present?
             organization = Organization.where(api_id: params[:organizationId].to_s).first!
             authorize!(organization, :show)
