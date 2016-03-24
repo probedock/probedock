@@ -66,14 +66,16 @@ html ng-app='probedock' ng-strict-di=true
               ul.dropdown-menu role='menu'
                 li
                   a href='#' ui-sref='help.gettingStarted' Getting Started
-            li.dropdown dropdown=true ng-class='{active: baseStateIs("admin")}' ng-show='currentUserIs("admin")'
+            li.dropdown dropdown=true ng-class='{active: baseStateIs("admin")}' ng-show='currentUserIs("admin") || currentMemberIs("admin")'
               a.dropdown-toggle href='#' dropdown-toggle=true
                 | Admin
                 span.caret
               ul.dropdown-menu role='menu'
-                li
+                li ng-if='currentUserIs("admin")'
                   a ui-sref='admin.users' Users
                 li
+                  a ui-sref='admin.management' Management
+                li ng-if='currentUserIs("admin")'
                   a ui-sref='admin.settings' Settings
           ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
             li ng-if='pendingMemberships.length'
