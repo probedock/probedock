@@ -39,6 +39,7 @@
 //= require tether
 //= require tether-drop
 //= require pretty-bytes
+//= require inflection
 //= require angular
 //= require angular-animate
 //= require angular-sanitize
@@ -58,6 +59,7 @@
 //= require angular-chart
 //= require angular-truncate
 //= require angular-scroll
+//= require angular-ng-inflection
 //= require angular-pretty-bytes
 //= require drop-ng
 //= require bootstrap-tooltip
