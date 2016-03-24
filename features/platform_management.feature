@@ -11,19 +11,63 @@ Feature: Platform management
     - Results
 
 
+
   Scenario: A Probe Dock administrator should retrieve the DB stats
     Given user palpatine who is a Probe Dock admin exists
     When palpatine sends a GET request to /api/platformManagement/dbStats
     Then the response code should be 200
-    # TODO: Test there is a JSON array with any number of records and test each to have the same structure
-    # [{
-    #   "name": "@string",
-    #   "rowsCount": "@number",
-    #   "tableSize": "@number",
-    #   "indexesSize": "@number",
-    #   "totalSize": "@number"
-    # }]
-#    And the response body should be the following JSON:
+    And the response body should be a JSON array with the following tables:
+      """
+        app_settings
+        categories
+        categories_test_payloads
+        emails
+        memberships
+        organizations
+        project_tests
+        project_versions
+        projects
+        schema_migrations
+        tags
+        tags_test_descriptions
+        tags_test_results
+        test_contributions
+        test_descriptions
+        test_descriptions_tickets
+        test_keys
+        test_keys_payloads
+        test_payloads
+        test_payloads_reports
+        test_reports
+        test_result_contributors
+        test_results
+        test_results_tickets
+        tickets
+        user_registrations
+        users
+      """
+    And the following tables contains trends:
+      """
+        categories
+        memberships
+        organizations
+        projects
+        project_tests
+        project_versions
+        registrations
+        tags
+        test_contributions
+        test_descriptions
+        test_keys
+        test_payloads
+        test_reports
+        test_results
+        tickets
+        user_registrations
+        users
+      """
+    And nothing should have been added or deleted
+
 
 
   Scenario: An organization administrator should retrieve the organization stats
@@ -51,6 +95,8 @@ Feature: Platform management
         "resultsTrend": [ 0, 0, 0, 0, 0 ]
       }
       """
+    And nothing should have been added or deleted
+
 
 
   Scenario: An organization administrator should retrieve the top five organization stats
@@ -114,6 +160,8 @@ Feature: Platform management
         "resultsTrend": [ 0, 0, 0, 0, 0 ]
       }
       """
+    And nothing should have been added or deleted
+
 
 
   @authorization
