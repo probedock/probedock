@@ -32,7 +32,7 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
       url: '/platformManagement/orgStats',
       params: $scope.params
     }).then(function(response) {
-      if (response.data) {
+      if (response.data.organizations[0]) {
         $scope.org = response.data.organizations[0];
         $scope.stats = [];
 
@@ -82,8 +82,6 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
 
         $scope.loading = false;
       }
-
-      $scope.started = true;
     });
   }
 });
