@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class OrganizationTableInfoPolicy < ApplicationPolicy
-  def show?
+  def index?
     admin? || org_admin?(organization)
   end
 
@@ -23,7 +23,7 @@ class OrganizationTableInfoPolicy < ApplicationPolicy
     def to_builder options = {}
       Jbuilder.new do |json|
         json.organizations record.organizations_counts do |organization_counts|
-          json.id organization_counts[:id]
+          json.id organization_counts[:api_id]
           json.name organization_counts[:name]
           json.displayName organization_counts[:display_name] unless organization_counts[:display_name].nil?
           json.payloadsCount organization_counts[:test_payloads_count]
