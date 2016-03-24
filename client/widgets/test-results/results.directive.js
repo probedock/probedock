@@ -55,17 +55,16 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
   $scope.fetchMore = function() {
     if ($scope.pagination.hasMorePages) {
       page++;
-      fetchResults();
+      fetchResults(false);
     }
   };
 
   function initFetchResults() {
-    $scope.results = [];
     page = 1;
-    fetchResults();
+    fetchResults(true);
   }
 
-  function fetchResults() {
+  function fetchResults(replace) {
     if (_.isUndefined($scope.test)) {
       return;
     }
@@ -96,7 +95,7 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
         $scope.pagination = response.pagination();
 
         // Reverse and prepend the test results
-        $scope.results = response.data.reverse().concat($scope.results);
+        $scope.results = replace ? response.data.reverse() : response.data.reverse().concat($scope.results);
 
         // Calculate the next number of results to load
         var remainingResults = $scope.pagination.total - $scope.results.length;
