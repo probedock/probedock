@@ -183,6 +183,30 @@ Feature: Platform management
 
 
 
+
+  Scenario: A Probe Dock super admin should be able to retrieve the resque stats
+    Given user palpatine who is a Probe Dock admin exists
+    When palpatine sends a GET request to /api/platformManagement/resqueStats
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      {
+        "jobs": {
+          "pending": 0,
+          "processed": 0,
+          "failed": 0
+        },
+        "workers": {
+          "total": 0,
+          "working": 0
+        },
+        "queues": []
+      }
+      """
+    And nothing should have been added or deleted
+
+
+
   @authorization
   Scenario: An organization member should not be able to retrieve DB stats
     Given organization Galactic Empire exists

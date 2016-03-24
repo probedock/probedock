@@ -46,6 +46,11 @@ module ProbeDock
           serialize(OrganizationTableInfo.top_stats(organization: @current_organization))
         end
       end
+
+      get :resqueStats do
+        authorize!(:resque_info, :show)
+        serialize(ResqueInfo.stats)
+      end
     end
   end
 end
