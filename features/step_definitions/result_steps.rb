@@ -1,10 +1,15 @@
-def create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, custom_values)
+def create_test_result(name, test_name, new_test, passing, active, category_name, first, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, custom_values)
   runner = named_record(runner_name)
   project_version = named_record(project_version)
   payload = named_record(payload_name)
   test = named_record(test_name)
 
   payload.results_count += 1
+  payload.tests_count += 1
+  payload.passed_results_count += 1 if passing
+  payload.inactive_results_count += 1 unless active
+  payload.inactive_passed_results_count += 1 if passing && !active
+  payload.new_tests_count += 1 if first
   payload.save
 
   date = if interval_count
@@ -94,10 +99,10 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
   end
 end
 
-Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version ([^\s]+)$/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version|
-  create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, nil)
+Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was (first )?run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version ([^\s]+)$/ do |name,test_name,new_test,passing,active,category_name,first,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version|
+  create_test_result(name, test_name, new_test, passing, active, category_name, first, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, nil)
 end
 
-Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version ([^\s]+) and custom values:/ do |name,test_name,new_test,passing,active,category_name,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version, custom_values|
-  create_test_result(name, test_name, new_test, passing, active, category_name, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, custom_values)
+Given /^result (.*) for test "(.+)"(?: is(?: (new) and)?(?: (passing|failing) and)?(?: (active|inactive) and)?)?(?: has category (.+?) and)? was (first )?run(?: (\d*) ((?:day|week)s?) ago)? by (.+?)(?: and took (\d+) second(?:s) to run)? for payload (.+?)(?: at index (\d+))? with version ([^\s]+) and custom values:/ do |name,test_name,new_test,passing,active,category_name,first,interval_count,interval,runner_name,execution_time,payload_name,payload_index,project_version, custom_values|
+  create_test_result(name, test_name, new_test, passing, active, category_name, first, interval_count, interval, runner_name, execution_time, payload_name, payload_index, project_version, custom_values)
 end

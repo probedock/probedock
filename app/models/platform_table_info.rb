@@ -10,11 +10,11 @@ class PlatformTableInfo
     @total_size = table_stats['total_size'].to_i
   end
 
-  def self.stats(weeks: 5)
+  def self.stats(trends_weeks: 5)
     # This query retrieve all the table where the column created_at is present
     created_at_tables_sql = %{
       SELECT
-        c.relname as name
+        c.relname AS name
       FROM
         pg_class AS c
       INNER JOIN
@@ -24,9 +24,9 @@ class PlatformTableInfo
         AND c.relkind = 'r'
     }
 
-    starting_date = weeks.weeks.ago.at_beginning_of_week
+    starting_date = trends_weeks.weeks.ago.at_beginning_of_week
 
-    # We want to prepare the SQL queries to count the rows in the retrieved tables
+    # We want to build the SQL queries to count the rows in the retrieved tables
     rows_count_queries = {}
     ActiveRecord::Base.connection.execute(created_at_tables_sql).to_a.each do |row|
       # We do an exception for test results table to make some performance improvement
@@ -39,13 +39,13 @@ class PlatformTableInfo
           .joins('
             LEFT OUTER JOIN "projects" ON "projects"."organization_id" = "organizations"."id"
             LEFT OUTER JOIN "project_versions" ON "project_versions"."project_id" = "projects"."id"
-            LEFT OUTER JOIN"test_payloads" ON "test_payloads"."project_version_id" = "project_versions"."id"
+            LEFT OUTER JOIN "test_payloads" ON "test_payloads"."project_version_id" = "project_versions"."id"
           ')
           .group("date_trunc('week', test_payloads.processed_at)")
           .order('trend_date ASC')
           .where("date_trunc('week', test_payloads.processed_at) >= ?", starting_date)
       else
-        # We prepare the SQL statement
+        # We build the SQL query
         %{
           SELECT
             COUNT(created_at) AS count,
@@ -79,7 +79,7 @@ class PlatformTableInfo
         WHERE
           table_schema LIKE 'public'
       ) AS all_tables
-      ORDER BY total_size DESC
+      ORDER BY total_size DESC, name ASC
     }
 
     # Consolidate the stats data by adding the rows count for the trend
@@ -100,7 +100,7 @@ class PlatformTableInfo
 
         # Collect the results trend
         table_counts_trend = []
-        (0..weeks - 1).each do |week_idx|
+        (0..trends_weeks - 1).each do |week_idx|
           week_date = (week_idx + 1).weeks.ago.at_beginning_of_week
 
           # Try to find the data for the current week date

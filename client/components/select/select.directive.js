@@ -21,7 +21,7 @@ angular.module('probedock.select')
 .controller('CategorySelectCtrl', function(api, $scope) {
   setupController($scope, api, {
     defaults: {
-      modelProperty: $scope.multiple ? 'categoryName' : 'categoryNames',
+      modelProperty: defaultModelProperty($scope, 'categoryName', 'category'),
       label: 'Filter by category',
       placeholder: 'All categories',
       labelNew: 'create new category',
@@ -35,7 +35,7 @@ angular.module('probedock.select')
 
   setupController($scope, api, {
     defaults: {
-      modelProperty: $scope.multiple ? 'organizationIds' : 'organizationId',
+      modelProperty: defaultModelProperty($scope, 'organizationId', 'organization'),
       label: 'Filter by organization',
       placeholder: 'All organizations',
       administered: false
@@ -58,7 +58,7 @@ angular.module('probedock.select')
 }).controller('ProjectSelectCtrl', function(api, $scope, projectNameFilter) {
   setupController($scope, api, {
     defaults: {
-      modelProperty: $scope.multiple ? 'projectIds' : 'projectId',
+      modelProperty: defaultModelProperty($scope, 'projectId', 'project'),
       label: 'Filter by project',
       placeholder: 'All projects',
       labelNew: 'create new project'
@@ -73,7 +73,7 @@ angular.module('probedock.select')
 }).controller('ProjectVersionSelectCtrl', function(api, $scope, projectVersions) {
   setupController($scope, api, {
     defaults: {
-      modelProperty: $scope.multiple ? 'projectVersionIds' : 'projectVersionId',
+      modelProperty: defaultModelProperty($scope, 'projectVersionId', 'projectVersion'),
       label: 'Filter by version',
       labelNew: 'create new version',
       placeholder: $scope.placeholder ? $scope.placeholder : ($scope.latestVersion ? 'Latest version: ' + $scope.latestVersion.name : 'All versions'),
@@ -116,7 +116,7 @@ angular.module('probedock.select')
 
   setupController($scope, api, {
     defaults: {
-      modelProperty: $scope.multiple ? 'userIds' : 'userId',
+      modelProperty: defaultModelProperty($scope, 'userId', 'user'),
       label: 'Filter by user',
       placeholder: 'All users',
       extract: 'id'
@@ -221,6 +221,11 @@ function setupController($scope, api, options) {
     };
   }
 
+  // Extract the item property or item itself
+  $scope.itemExtract = function(item) {
+    return $scope.extract == '@model' ? item : item[$scope.extract];
+  };
+
   $scope.fetchChoices = function(search) {
     var params = {};
 
@@ -260,5 +265,22 @@ function setupController($scope, api, options) {
         $scope.config.newItem = true;
       }
     });
+  }
+}
+
+/**
+ * Build a default property name for the selected item based on
+ * the single vs. multiple selection and the extracted mode @model or not
+ *
+ * @param $scope The scope to retrieve the configuration .multiple and .extract
+ * @param singularPropertyName The singular form of the property name
+ * @param singularExtractPropertyName The singular form of the extract property name
+ * @returns {String} The default property name
+ */
+function defaultModelProperty($scope, singularPropertyName, singularExtractPropertyName) {
+  if ($scope.extract == '@model') {
+    return $scope.multiple ? inflection.pluralize(singularExtractPropertyName) : singularExtractPropertyName;
+  } else {
+    return $scope.multiple ? inflection.pluralize(singularPropertyName) : singularPropertyName;
   }
 }
