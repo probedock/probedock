@@ -2,22 +2,25 @@
   .panel-heading
     help-button
       p Help will be there
-    h3.panel-title Organization DB stats
+    h3.panel-title Organization stats
   .panel-body
-    .row ng-if='loading && stats.length === 0'
+    .row ng-if='loading && !stats && params.organization'
       .col-md-12
-        p Loading...
+        p.loading Loading...
+    .row ng-if='!loading && !params.organization'
+      .col-md-12
+        p.empty Select an organization to view its DB stats.
     .row ng-if='!loading && stats.length === 0'
       .col-md-12
         p.empty No results match the current filters.
     .row.row-labels ng-if='stats.length > 0'
       .col-md-12
         table.table
-          thead.hidden-md.hidden-sm.hidden-xs
+          theadmodel
             tr
               th.name.text-vertical-middle rowspan=2 Name
-              th.rows.text-center colspan=3 Organization DB rows
-              th.total.text-center colspan=2 ng-if='currentUserIs("admin")' Total DB rows
+              th.rows.text-center colspan=3 {{ params.organization | orgName }}
+              th.total.text-center colspan=2 ng-if='currentUserIs("admin")' Total
             tr
               th.rows-count.text-right Count
               th.rows-prop.text-right %
@@ -27,8 +30,8 @@
           thead.hidden-lg
             tr
               th.name.text-vertical-middle rowspan=2 Name
-              th.rows.text-center colspan=2 Organization DB rows
-              th.total.text-center colspan=2 ng-if='currentUserIs("admin")' Total DB rows
+              th.rows.text-center colspan=2 {{ params.organization | orgName }}
+              th.total.text-center colspan=2 ng-if='currentUserIs("admin")' Total
             tr
               th.rows-count.text-right Count
               th.rows-trend.text-center Trend
@@ -44,6 +47,6 @@
               td.total-count.text-right ng-if='currentUserIs("admin")' {{ stat.total | number }}
               td.total-trend.text-center ng-if='currentUserIs("admin")'
                 sparkline ng-if='stat.totalResultsTrend' data='stat.totalResultsTrend'
-    .row ng-if='started'
+    .row
       .col-md-12
-        organization-select prefix='org-stats' organization='organization' model-object='params' allow-clear='false' administered='true'
+        organization-select prefix='org-stats' organization='organization' extract='@model' model-object='params' allow-clear='false' administered='true'

@@ -18,7 +18,7 @@ Then /the response body should be a JSON array with the following tables:/ do |t
   end
 end
 
-Then /the following tables contains trends:/ do |tables|
+Then /the following tables should contain trends:/ do |tables|
   raise 'No response body found' unless @response_body
 
   expected_table_names = tables.split("\n").collect{ |name| name.strip }

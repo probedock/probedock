@@ -46,7 +46,7 @@ Feature: Platform management
         user_registrations
         users
       """
-    And the following tables contains trends:
+    And the following tables should contain trends:
       """
         categories
         memberships
@@ -124,11 +124,11 @@ Feature: Platform management
     And test "Should have traps on board" was created by hsolo with key shtob for version 2.0.0 of project Millennium Falcon
     And test "Should be rebuilt" was created by ackbar with key sbr for version 3.0.0 of project New Senate
     And test "Voting system should be reworked" was created by ackbar with key vssr for version 3.0.0 of project New Senate
-    And result R1 for test "Should be big enough" is passing and was run by borgana and took 2 seconds to run for payload A1 with version 1.0.0
-    And result R2 for test "Voting system should have three buttons" is failing and was run by borgana and took 6 seconds to run for payload A1 with version 1.0.0
-    And result R3 for test "Should have traps on board" is passing and was run by hsolo for payload B1 with version 2.0.0
-    And result R4 for test "Should be rebuilt" is passing and was run by ackbar and took 2 seconds to run for payload C1 with version 3.0.0
-    And result R5 for test "Voting system should be reworked" is failing and was run by ackbar and took 6 seconds to run for payload C1 with version 3.0.0
+    And result R1 for test "Should be big enough" is passing and was first run by borgana and took 2 seconds to run for payload A1 with version 1.0.0
+    And result R2 for test "Voting system should have three buttons" is failing and was first run by borgana and took 6 seconds to run for payload A1 with version 1.0.0
+    And result R3 for test "Should have traps on board" is passing and was first run by hsolo for payload B1 with version 2.0.0
+    And result R4 for test "Should be rebuilt" is passing and was first run by ackbar and took 2 seconds to run for payload C1 with version 3.0.0
+    And result R5 for test "Voting system should be reworked" is failing and was first run by ackbar and took 6 seconds to run for payload C1 with version 3.0.0
     And user palpatine who is a Probe Dock admin exists
     When palpatine sends a GET request to /api/platformManagement/orgStats?top=5
     Then the response code should be 200

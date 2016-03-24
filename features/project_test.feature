@@ -149,7 +149,7 @@ Feature: Test
           "displayName": "@valueOf(X-Wing, display_name)",
           "organizationId": "@idOf: Rebel Alliance",
           "repoUrl": "https://github.com/probedock/probedock",
-          "testsCount": 0,
+          "testsCount": 2,
           "createdAt": "@iso8601",
           "updatedAt": "@iso8601"
         },
@@ -201,7 +201,7 @@ Feature: Test
           "displayName": "@valueOf(X-Wing, display_name)",
           "organizationId": "@idOf: Rebel Alliance",
           "repoUrl": "https://github.com/probedock/probedock",
-          "testsCount": 0,
+          "testsCount": 2,
           "createdAt": "@iso8601",
           "updatedAt": "@iso8601"
         },

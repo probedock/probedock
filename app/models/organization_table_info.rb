@@ -15,7 +15,7 @@ class OrganizationTableInfo
         organizations.name,
         organizations.display_name,
         organizations.projects_count,
-        SUM(projects.tests_count) AS tests_count,
+        SUM(test_payloads.new_tests_count) AS tests_count,
         SUM(test_payloads.results_count) AS test_results_count, COUNT(test_payloads.id) AS test_payloads_count
       ')
       .joins('

@@ -11,13 +11,13 @@
   / Single dropdown menu to select an existing item
   ui-select id='{{ prefix }}-select-single' ng-if='!multiple && !config.newItem && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true
     ui-select-match placeholder='{{ placeholder }}' allow-clear='{{ allowClear }}' {{ formatItem($select.selected) }}
-    ui-select-choices repeat='item[extract] as item in choices' refresh='fetchChoices($select.search)' refresh-delay='250'
+    ui-select-choices repeat='itemExtract(item) as item in choices' refresh='fetchChoices($select.search)' refresh-delay='250'
       span ng-bind-html='formatItem(item) | highlight: $select.search'
 
   / Multiple select dropdown menu to select existing items
   ui-select id='{{ prefix }}-select-multiple' ng-if='multiple && !config.newItem && modelProperty' ng-model='modelObject[modelProperty]' reset-search-input=true multiple=true
     ui-select-match placeholder='{{ placeholder }}' allow-clear='{{ allowClear }}' {{ formatItem($item) }}
-    ui-select-choices repeat='item[extract] as item in choices' refresh='fetchChoices($select.search)' refresh-delay='250'
+    ui-select-choices repeat='itemExtract(item) as item in choices' refresh='fetchChoices($select.search)' refresh-delay='250'
       span ng-bind-html='formatItem(item) | highlight: $select.search'
 
   / free input field to create a new item
