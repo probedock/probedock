@@ -2,12 +2,12 @@
   .panel-heading
     help-button
       p Help will be there
-    h3.panel-title DB table metrics
+    h3.panel-title Database size
   .panel-body
-    .row ng-if='loading && stats.length === 0'
+    .row ng-if='loading && !stats'
       .col-md-12
-        p Loading...
-    .row.row-labels ng-if='stats.length > 0'
+        p.loading Loading...
+    .row.row-labels ng-if='stats'
       .col-md-12
         table.table
           thead.hidden-md.hidden-sm.hidden-xs
@@ -16,7 +16,7 @@
               th.text-center.db-stats-right-border colspan='3' Records
               th.text-center colspan='4' Disk space
             tr
-              th.rows.text-right Rows
+              th.rows.text-right Count
               th.rows-proportion.text-right %
               th.rows-trend.text-center.db-stats-right-border Trend
               th.table-size.text-right Table
@@ -29,7 +29,7 @@
               th.text-center.db-stats-right-border colspan='2' Records
               th.text-center Disk space
             tr
-              th.rows.text-right Rows
+              th.rows.text-right Count
               th.rows-trend.text-center.db-stats-right-border Trend
               th.total-size.text-right Total
           tbody
@@ -43,7 +43,7 @@
               td.indexes-size.text-right.hidden-md.hidden-sm.hidden-xs {{ stat.indexesSize | prettyBytes }}
               td.total-size.text-right {{ stat.totalSize | prettyBytes }}
               td.total-size-proportion.text-right.hidden-md.hidden-sm.hidden-xs {{ stat.totalSizeProportion | number:2 }}%
-          tfooter
+          tfoot
             tr
               th.name.db-stats-right-border Total
               th.rows.text-right {{ total.rowsCount | number }}

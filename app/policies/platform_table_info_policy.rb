@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 class PlatformTableInfoPolicy < ApplicationPolicy
-  def show?
+  def index?
     admin?
   end
 
@@ -24,7 +24,7 @@ class PlatformTableInfoPolicy < ApplicationPolicy
       Jbuilder.new do |json|
         json.name record.name
         json.rowsCount record.rows
-        json.rowsCountTrend record.rows_trend
+        json.rowsCountTrend record.rows_trend if record.rows_trend
         json.tableSize record.table_size
         json.indexesSize record.indexes_size
         json.totalSize record.total_size

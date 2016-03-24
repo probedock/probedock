@@ -4,7 +4,7 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
     controller: 'OrgStatsWidgetCtrl',
     templateUrl: '/templates/widgets/org-stats/stats.template.html',
     scope: {
-      organization: '='
+      organization: '=?'
     }
   };
 }).controller('OrgStatsWidgetCtrl', function(api, $scope, orgs) {
@@ -12,27 +12,34 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
 
   _.defaults($scope, {
     params: {
-      organizationId: $scope.organization.id
+      organization: $scope.organization
     },
-    loading: true
+    loading: false
   });
 
-  $scope.$watch('params', function(value) {
-    if (!_.isEmpty(value)) {
+  $scope.$watch('params', function(newParams) {
+    if (!_.isUndefined(newParams.organization)) {
+      console.log('here', newParams)
       fetchStats();
     }
   }, true);
 
-  fetchStats();
+  if ($scope.params.organization) {
+    console.log('there', $scope.params)
+    fetchStats();
+    $scope.started = true;
+  }
 
   function fetchStats() {
     $scope.loading = true;
 
     return api({
       url: '/platformManagement/orgStats',
-      params: $scope.params
+      params: {
+        organizationId: $scope.params.organization.id
+      }
     }).then(function(response) {
-      if (response.data) {
+      if (response.data.organizations[0]) {
         $scope.org = response.data.organizations[0];
         $scope.stats = [];
 
@@ -82,8 +89,6 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
 
         $scope.loading = false;
       }
-
-      $scope.started = true;
     });
   }
 });

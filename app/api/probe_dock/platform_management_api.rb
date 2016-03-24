@@ -33,12 +33,12 @@ module ProbeDock
       end
 
       get :dbStats do
-        authorize!(:platform_table_info, :show)
-        serialize(PlatformTableInfo.stats)
+        authorize!(:platform_table_info, :index)
+        serialize PlatformTableInfo.stats
       end
 
       get :orgStats do
-        authorize!(:organization_table_info, :show)
+        authorize!(:organization_table_info, :index)
 
         if params[:top].present?
           serialize(OrganizationTableInfo.top_stats(top: params[:top].to_i))

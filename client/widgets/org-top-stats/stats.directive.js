@@ -24,61 +24,57 @@ angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', fun
       url: '/platformManagement/orgStats',
       params: $scope.params
     }).then(function(response) {
-      if (response.data) {
-        var orgsStats = response.data.organizations;
+      var orgsStats = response.data.organizations;
 
-        // Keep the total without organizations and udpate the trend to have cumulative trend
-        var total = _.omit(response.data, 'organizations');
-        var totalCumulativeTrends = [];
-        _.reduce(total.resultsTrend, function(memo, trend) {
+      // Keep the total without organizations and udpate the trend to have cumulative trend
+      var total = _.omit(response.data, 'organizations');
+      var totalCumulativeTrends = [];
+      _.reduce(total.resultsTrend, function(memo, trend) {
+        memo += trend;
+        totalCumulativeTrends.push(memo);
+        return memo;
+      }, 0);
+      total.resultsTrend = totalCumulativeTrends;
+
+      // Calculate the cumulative trends and the proportion of results
+      _.each(orgsStats, function(stat) {
+        var cumulativeTrends = [];
+
+        _.reduce(stat.resultsTrend, function(memo, trend) {
           memo += trend;
-          totalCumulativeTrends.push(memo);
+          cumulativeTrends.push(memo);
           return memo;
         }, 0);
-        total.resultsTrend = totalCumulativeTrends;
 
-        // Calculate the cumulative trends and the proportion of results
-        _.each(orgsStats, function(stat) {
-          var cumulativeTrends = [];
+        stat.resultsTrend = cumulativeTrends;
+        stat.resultsProp = stat.resultsCount / total.resultsCount * 100;
+      });
 
-          _.reduce(stat.resultsTrend, function(memo, trend) {
-            memo += trend;
-            cumulativeTrends.push(memo);
-            return memo;
-          }, 0);
+      // Calculate the total for the top n organizations with the trends corresponding to them
+      $scope.topStats = _.reduce(orgsStats, function(memo, orgStats) {
+        memo.payloadsCount += orgStats.payloadsCount;
+        memo.projectsCount += orgStats.projectsCount;
+        memo.testsCount += orgStats.testsCount;
+        memo.resultsCount += orgStats.resultsCount;
+        memo.resultsProp += orgStats.resultsProp;
 
-          stat.resultsTrend = cumulativeTrends;
-          stat.resultsProp = stat.resultsCount / total.resultsCount * 100;
+        // Cumulative trends for the top n organizations
+        _.each(orgStats.resultsTrend, function(trend, idx) {
+          memo.resultsTrend[idx] += trend;
         });
 
-        // Calculate the total for the top n organizations with the trends corresponding to them
-        $scope.topStats = _.reduce(orgsStats, function(memo, orgStats) {
-          memo.payloadsCount += orgStats.payloadsCount;
-          memo.projectsCount += orgStats.projectsCount;
-          memo.testsCount += orgStats.testsCount;
-          memo.resultsCount += orgStats.resultsCount;
-          memo.resultsProp += orgStats.resultsProp;
+        return memo;
+      }, {
+        payloadsCount: 0, projectsCount: 0, testsCount:0, resultsCount: 0, resultsProp: 0,
+        resultsTrend: _.map(new Array(orgsStats[0].resultsTrend.length), function(item) { return 0; })
+      });
 
-          // Cumulative trends for the top n organizations
-          _.each(orgStats.resultsTrend, function(trend, idx) {
-            memo.resultsTrend[idx] += trend;
-          });
+      // Make sure the sum is not > 100%
+      $scope.topStats.resultsProp = $scope.topStats.resultsProp > 100 ? 100 : $scope.topStats.resultsProp;
 
-          return memo;
-        }, {
-          payloadsCount: 0, projectsCount: 0, testsCount:0, resultsCount: 0, resultsProp: 0,
-          resultsTrend: _.map(new Array(orgsStats[0].resultsTrend.length), function(item) { return 0; })
-        });
-
-        // Make sure the sum is not > 100%
-        $scope.topStats.resultsProp = $scope.topStats.resultsProp > 100 ? 100 : $scope.topStats.resultsProp;
-
-        $scope.total = total;
-        $scope.stats = orgsStats;
-        $scope.loading = false;
-      }
-
-      $scope.started = true;
+      $scope.total = total;
+      $scope.stats = orgsStats;
+      $scope.loading = false;
     });
   }
 });

@@ -86,7 +86,7 @@ module ProbeDock
           end
 
           # Retrieve the organization for which the user is an admin
-          if params.key?(:administered)
+          if params.key?(:administered) && !current_user.try(:admin?)
             # Force a user to be connected
             authenticate!
 
