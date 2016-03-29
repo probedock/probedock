@@ -207,7 +207,7 @@ function setupController($scope, api, options) {
       $scope.modelObject[$scope.modelProperty] = previousItem ? previousItem : $scope.defaultNewItem;
     } else if (value === false && $scope.choices.length && $scope.autoSelect) {
       // auto-select the first existing item when disabling creation of a new item
-      $scope.modelObject[$scope.modelProperty] = $scope.choices[0][$scope.extract];
+      $scope.modelObject[$scope.modelProperty] = $scope.itemExtract($scope.choices[0]);
     }
   });
 
@@ -258,7 +258,7 @@ function setupController($scope, api, options) {
 
       if ($scope.choices.length && $scope.autoSelect) {
         // if items are found, automatically select the first one
-        $scope.modelObject[$scope.modelProperty] = $scope.choices[0][$scope.extract];
+        $scope.modelObject[$scope.modelProperty] = $scope.itemExtract($scope.choices[0]);
       } else if (!$scope.choices.length && $scope.createNew) {
         // if there are no existing items and item creation is
         // enabled, automatically switch to the free input field
