@@ -44,7 +44,7 @@ FactoryGirl.define do
 
     factory :org_member, aliases: [ :member ] do
       after :create do |user,evaluator|
-        create :membership, user: user, organization: evaluator.organization, roles: evaluator.organization_roles
+        user.memberships << create(:membership, user: user, organization: evaluator.organization, roles: evaluator.organization_roles)
         user.reload
       end
 
@@ -53,14 +53,18 @@ FactoryGirl.define do
           organization_roles [ :admin ]
         end
       end
+    end
 
-      factory :technical_user do
-        technical true
-        password nil
-        password_digest nil
-        primary_email_id nil
-        emails []
+    factory :technical_user do
+      before :create do |user, evaluator|
+        user.memberships << build(:membership, user: user, organization: evaluator.organization, roles: evaluator.organization_roles)
       end
+
+      technical true
+      password nil
+      password_digest nil
+      primary_email_id nil
+      emails []
     end
   end
 end

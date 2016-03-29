@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   attr_accessor :technical_validation_disabled
 
   before_create :set_identifier
+  before_save :normalize_name
   after_save :complete_registration
 
   has_secure_password validations: false
@@ -48,7 +49,9 @@ class User < ActiveRecord::Base
 
   strip_attributes except: :password_digest
   # TODO: validate min name length
-  validates :name, presence: true, uniqueness: true, length: { maximum: 25, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
+  validates :name, presence: true, length: { maximum: 25, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
+  validates :name, uniqueness: { unless: :technical }
+  validate :technical_user_is_unique_in_org, on: :create, if: :technical
   # TODO: validate min password length
   validates :primary_email, presence: { unless: :technical }, absence: { if: :technical }
   validates :primary_email_id, uniqueness: { if: :primary_email_id }
@@ -108,6 +111,21 @@ class User < ActiveRecord::Base
       registration.update_attribute :completed, true
       self.primary_email.update_attribute :active, true
       registration.organization.update_attribute :active, true if registration.organization.present?
+    end
+  end
+
+  def technical_user_is_unique_in_org
+    # This validation make the assumption a technical user has only and only one membership at the creation
+    if User.joins(:organizations).where(name: name, 'organizations.id': memberships.first.organization.id).count > 0
+      errors.add :name, :must_be_unique_by_org
+    end
+  end
+
+  def normalize_name
+    self.normalized_name = if self.human?
+      "human-#{name.downcase}"
+    else
+      "technical-#{memberships.first.organization.normalized_name}-#{name.downcase}"
     end
   end
 end
