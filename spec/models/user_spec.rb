@@ -183,7 +183,7 @@ describe User, probedock: { tags: :unit } do
         organization = create(:organization)
         create(:technical_user, name: 'tech', organization: organization)
         second_tech_user = build(:technical_user, name: 'tech', organization: organization)
-        # second_tech_user.memberships << build(:membership, user: second_tech_user, organization: organization)
+        second_tech_user.memberships << build(:membership, user: second_tech_user, organization: organization)
         second_tech_user
       end
       it(nil, probedock: { key: 'iwzr' }) do
