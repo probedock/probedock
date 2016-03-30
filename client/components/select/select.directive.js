@@ -17,7 +17,7 @@ angular.module('probedock.select')
 .controller('CategorySelectCtrl', function(api, $scope) {
   setupController($scope, api, {
     defaults: {
-      modelProperty: $scope.multiple ? 'categoryName' : 'categoryNames',
+      modelProperty: $scope.multiple ? 'categoryNames' : 'categoryName',
       label: 'Filter by category',
       placeholder: 'All categories',
       labelNew: 'create new category',

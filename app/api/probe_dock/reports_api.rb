@@ -62,6 +62,7 @@ module ProbeDock
         test_report_rel = policy_scope(TestReport).order('test_reports.created_at DESC')
 
         test_report_rel = paginated(test_report_rel) do |paginated_rel|
+          group = false
 
           if params[:uid]
             paginated_rel = paginated_rel.where(uid: params[:uid].to_s)
@@ -114,9 +115,15 @@ module ProbeDock
 
           if array_param?(:categoryNames)
             paginated_rel = paginated_rel.where('categories.name in (?)', params[:categoryNames].collect(&:to_s).to_a)
+            group = true
           end
 
-          @pagination_filtered_count = paginated_rel.count('distinct test_reports.id')
+          if group
+            paginated_rel = paginated_rel.group('test_reports.id')
+            @pagination_filtered_count = paginated_rel.select('COUNT(test_reports.id) AS cnt').first.cnt
+          else
+            @pagination_filtered_count = paginated_rel.count('DISTINCT test_reports.id')
+          end
 
           paginated_rel
         end
