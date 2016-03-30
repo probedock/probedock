@@ -118,12 +118,9 @@ module ProbeDock
             group = true
           end
 
-          if group
-            paginated_rel = paginated_rel.group('test_reports.id')
-            @pagination_filtered_count = paginated_rel.select('COUNT(test_reports.id) AS cnt').first.cnt
-          else
-            @pagination_filtered_count = paginated_rel.count('DISTINCT test_reports.id')
-          end
+          @pagination_filtered_count = paginated_rel.count('DISTINCT test_reports.id')
+
+          paginated_rel = paginated_rel.group('test_reports.id') if group
 
           paginated_rel
         end
