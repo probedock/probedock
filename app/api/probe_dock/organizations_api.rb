@@ -72,6 +72,10 @@ module ProbeDock
             rel = rel.where(normalized_name: params[:name].to_s.downcase)
           end
 
+          if params[:active].present?
+            rel = rel.where(active: true_flag?(:active))
+          end
+
           if params.key?(:public)
             rel = rel.where(public_access: true_flag?(:public))
           end
