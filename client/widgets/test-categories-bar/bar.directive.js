@@ -36,8 +36,8 @@ angular.module('probedock.testCategoriesBarWidget').directive('testCategoriesBar
   var ignoreChartParams = true;
   $scope.$watch('params', function(value) {
     if (value && !ignoreChartParams) {
-      if (!$scope.latestVersion && $scope.params.projectVersion) {
-        $scope.latestVersion = $scope.params.projectVersion;
+      if (!$scope.latestVersionId && $scope.params.projectVersionId) {
+        $scope.latestVersionId = $scope.params.projectVersionId;
       }
 
       fetchMetrics();
@@ -65,14 +65,14 @@ angular.module('probedock.testCategoriesBarWidget').directive('testCategoriesBar
     $scope.params = {
       projectIds: [],
       userIds: [],
-      projectVersion: $scope.latestVersion
+      projectVersionId: $scope.latestVersionId
     }
   };
 
   $scope.getColor = testCategoriesBar.getColor;
 
   function fetchMetrics() {
-    if ($scope.project && !$scope.params.projectVersion) {
+    if ($scope.project && !$scope.params.projectVersionId) {
       $scope.params.projectIds = [$scope.project.id];
     }
 
@@ -80,8 +80,8 @@ angular.module('probedock.testCategoriesBarWidget').directive('testCategoriesBar
       userIds: $scope.params.userIds
     };
 
-    if ($scope.params.projectVersion) {
-      params.projectVersionId = $scope.params.projectVersion.id;
+    if ($scope.params.projectVersionId) {
+      params.projectVersionId = $scope.params.projectVersionId;
     } else {
       params.projectIds = $scope.params.projectIds;
     }
