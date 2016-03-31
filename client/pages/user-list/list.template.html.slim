@@ -8,12 +8,12 @@
         .well.filters
           .row st-filters='usersList.params'
             .col-md-4
-              organization-select prefix='users-list' placeholder='Filter by organization' model-object='usersList.params'
+              organization-select prefix='users-list' placeholder='All organizations' model-object='usersList.params'
+            .col-md-4
+              simple-select prefix='users-list-states' select-choices='states' label='Filter by state' placeholder='States' model-object='usersList.params' model-property='active' displayed-property='name' extract='active'
             .col-md-4
               label Search
               input.form-control type='text' name='search' value='{{ usersList.params.search }}' ng-model='usersList.params.search' placeholder='User name or email'
-            .col-md-4
-              simple-select prefix='users-list-states' select-choices='states' placeholder='Filter by state' model-object='usersList.params' model-property='active' displayed-property='name' extract='active'
         table.table.table-hover
           thead
             tr
@@ -24,6 +24,9 @@
               th.hidden-xs Registered since
               th
           tbody
+            tr ng-if='!loading && usersList.records.length == 0'
+              td colspan=7
+                p.empty No users matching the criteria.
             tr ng-repeat='user in usersList.records'
               td.text-center.hidden-xs
                 i.active.glyphicon.glyphicon-ok tooltip='Active' ng-if='user.active'
@@ -45,13 +48,13 @@
                     span.glyphicon.glyphicon-remove
           tfoot
             tr
-              td.clearfix colspan=6 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
+              td.clearfix colspan=7 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
     tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
       tab-heading
         | {{ userTab.user.name }}
         a ng-click='removeTab(userTab)'
           span.glyphicon.glyphicon-remove
       .col-md-6.col-xs-12
-        user-details-widget user='userTab.user'
+        user-details-widget user='userTab.user' complete='true'
     li.instructions ng-if='!userTabs.length'
       .message Select a user from the list to show more information
