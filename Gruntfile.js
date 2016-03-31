@@ -60,7 +60,8 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-ui-router/release/angular-ui-router.js', dest: 'vendor/assets/javascripts/angular-ui-router.js' },
           { nonull: true, src: 'bower_components/angular-ui-router-title/angular-ui-router-title.js', dest: 'vendor/assets/javascripts/angular-ui-router-title.js' },
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.js', dest: 'vendor/assets/javascripts/angular-ui-select.js' },
-          { nonull: true, src: 'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js', dest: 'vendor/assets/javascripts/angular-ng-infinite-scroll.js' },
+          // Wait for this PR to be merged or this fix applied to master: https://github.com/sroze/ngInfiniteScroll/pull/187 (related also to: https://github.com/sroze/ngInfiniteScroll/issues/235)
+          //{ nonull: true, src: 'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js', dest: 'vendor/assets/javascripts/angular-ng-infinite-scroll.js' },
           { nonull: true, src: 'bower_components/ngInflection/dist/ngInflection.js', dest: 'vendor/assets/javascripts/angular-ng-inflection.js' },
           { nonull: true, src: 'bower_components/ng-clip/src/ngClip.js', dest: 'vendor/assets/javascripts/angular-ng-clip.js' },
 
