@@ -9,11 +9,11 @@
           .panel-body
             form.form role='form'
               .col-md-12 ng-if='!project'
-                project-select prefix='tests-by-category' organization='organization' model-object='params'
+                project-select prefix='tests-by-category' organization='organization' model-object='params' multiple='true'
               .col-md-12 ng-if='project'
-                project-version-select prefix='tests-by-category' organization='organization' project='project' model-object='params' auto-select='true'
+                project-version-select prefix='tests-by-category' organization='organization' project='project' model-object='params' auto-select='true' allow-clear='false'
               .col-md-12
-                user-select prefix='tests-by-category' organization='organization' model-object='params'
+                user-select prefix='tests-by-category' organization='organization' model-object='params' multiple='true'
               .col-md-12
                 .btn-group.btn-group-justified
                   .btn-group
