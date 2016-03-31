@@ -8,7 +8,7 @@
         .well.filters
           .row st-filters='usersList.params'
             .col-md-4
-              organization-select prefix='users-list' placeholder='All organizations' model-object='usersList.params'
+              organization-select prefix='users-list' placeholder='All organizations' model-object='usersList.params' only-active='false'
             .col-md-4
               simple-select prefix='users-list-states' select-choices='states' label='Filter by state' placeholder='States' model-object='usersList.params' model-property='active' displayed-property='name' extract='active'
             .col-md-4
