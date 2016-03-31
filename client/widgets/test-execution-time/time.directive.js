@@ -105,8 +105,10 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
       $scope.hasNext = $scope.pagination.page > 1;
       $scope.hasPrev = $scope.pagination.page < $scope.pagination.numberOfPages;
 
+      var xSum =0, ySum = 0, xySum = 0, xxSum = 0;
+
       // Extract the min, max and sum of durations
-      $scope.stats = _.reduce($scope.results, function(memo, result) {
+      $scope.stats = _.reduce($scope.results, function(memo, result, idx) {
         memo.sum += result.duration;
 
         if (memo.maxDuration == null) {
@@ -123,8 +125,24 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
           memo.minDuration = result.duration;
         }
 
+        // Calculate the different sum for the next part of the regression calculation
+        xSum += idx;
+        ySum += result.duration;
+        xySum += idx * result.duration;
+        xxSum += idx * idx;
+
         return memo;
       }, {minDuration: null, maxDuration: null, sum: 0});
+
+      // Calculate the regression coefs
+      var a = ($scope.results.length * xySum - xSum * ySum) / ($scope.results.length * xxSum - xSum * xSum);
+      var b = (ySum - a * xSum) / $scope.results.length;
+
+      // Calculate the points of the regression line
+      $scope.regression = [];
+      for (var i = 0; i < $scope.results.length; i++) {
+        $scope.regression.push(a * i + b);
+      }
 
       // Calculate the average of durations
       $scope.stats.averageDuration = $scope.stats.sum / $scope.results.length;
@@ -148,7 +166,7 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
   function showResults() {
     var series = [],
         avgSeries = [];
-    $scope.chart.data = [ series, avgSeries ];
+    $scope.chart.data = [ series, avgSeries, $scope.regression ];
     $scope.chart.labels.length = 0;
 
     _.each($scope.results, function(result) {
