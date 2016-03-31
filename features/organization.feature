@@ -8,7 +8,7 @@ Feature: Organization
 
   Background:
     # Create three organizations
-    Given public organization Old Republic exists
+    Given public organization Old Republic exists and is inactive
     And private organization Rebel Alliance exists
     And private organization Galactic Empire exists
 
@@ -19,7 +19,7 @@ Feature: Organization
 
 
 
-  Scenario: A user should only be able to retrieve the organization where he is an admin.
+  Scenario: A user should only be able to retrieve the organizations where he is an admin.
     When borgana sends a GET request to /api/organizations?administered=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -48,7 +48,7 @@ Feature: Organization
 
 
 
-  Scenario: A super admin should be able all the organization administered or not.
+  Scenario: A super admin should be able to retrieve all the organizations administered.
     And user master who is a Probe Dock admin exists
     When master sends a GET request to /api/organizations?administered=true
     Then the response code should be 200
@@ -77,6 +77,27 @@ Feature: Organization
         "name": "rebel-alliance",
         "displayName": "Rebel Alliance",
         "public": false,
+        "projectsCount": 0,
+        "membershipsCount": 1,
+        "createdAt": "@iso8601",
+        "updatedAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: A super admin should be able to retrieve all the inactive organizations.
+    And user master who is a Probe Dock admin exists
+    When master sends a GET request to /api/organizations?active=false
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: Old Republic",
+        "name": "old-republic",
+        "displayName": "Old Republic",
+        "public": true,
         "projectsCount": 0,
         "membershipsCount": 1,
         "createdAt": "@iso8601",
