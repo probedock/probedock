@@ -10,7 +10,7 @@ Feature: Users
     # Create private organization with 2 users
     And private organization Rebel Alliance exists
     And user hsolo with primary email han.solo@localhost.localdomain who is a member of Rebel Alliance exists
-    And user lskywalker with primary email luke.skywalker@localhost.localdomain who is a member of Rebel Alliance exists
+    And user lskywalker with primary email luke.skywalker@localhost.localdomain who is a member of Rebel Alliance exists and is inactive
 
     # Create public organization with 2 users
     And public organization Old Republic exists
@@ -78,7 +78,7 @@ Feature: Users
         "name": "lskywalker",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "active": true,
+        "active": false,
         "roles": [],
         "createdAt": "@iso8601"
       }, {
@@ -165,7 +165,7 @@ Feature: Users
         "name": "lskywalker",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "active": true,
+        "active": false,
         "roles": [],
         "createdAt": "@iso8601"
       }, {
@@ -260,7 +260,7 @@ Feature: Users
         "name": "lskywalker",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "active": true,
+        "active": false,
         "roles": [],
         "createdAt": "@iso8601"
       }, {
@@ -426,7 +426,7 @@ Feature: Users
           "createdAt": "@iso8601",
           "updatedAt": "@iso8601"
         }],
-        "active": true,
+        "active": false,
         "roles": [],
         "createdAt": "@iso8601"
       }, {
@@ -507,7 +507,7 @@ Feature: Users
         "name": "lskywalker",
         "technical": false,
         "primaryEmailMd5": "@md5",
-        "active": true,
+        "active": false,
         "roles": [],
         "createdAt": "@iso8601"
       }]
@@ -565,6 +565,25 @@ Feature: Users
         "technical": false,
         "primaryEmailMd5": "@md5",
         "active": true,
+        "roles": [],
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: An organization member should be able to retrieve inactive users.
+    When borgana sends a GET request to /api/users?active=false
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: lskywalker",
+        "name": "lskywalker",
+        "technical": false,
+        "primaryEmailMd5": "@md5",
+        "active": false,
         "roles": [],
         "createdAt": "@iso8601"
       }]

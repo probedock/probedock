@@ -1,6 +1,7 @@
 angular.module('probedock.select')
 
 // Select directives
+.directive('simpleSelect', function() { return createSelectDirective('SimpleSelectCtrl', defaultsAttributes); })
 .directive('categorySelect', function() { return createSelectDirective('CategorySelectCtrl', defaultsAttributes); })
 .directive('organizationSelect', function() { return createSelectDirective('OrganizationSelectCtrl', _.extend(defaultsAttributes, {
     administered: '=?', // Retrieve the organization where the signed user is admin
@@ -19,6 +20,9 @@ angular.module('probedock.select')
 .directive('userSelect', function() { return createSelectDirective('UserSelectCtrl', defaultsAttributes); })
 
 // Select controllers
+.controller('SimpleSelectCtrl', function(api, $scope) {
+  setupController($scope, api, { defaults: {} });
+})
 .controller('CategorySelectCtrl', function(api, $scope) {
   setupController($scope, api, {
     defaults: {
@@ -137,20 +141,22 @@ angular.module('probedock.select')
  * Define the default attributes that the *-select directive have at least
  */
 var defaultsAttributes = {
-  organization: '=',  // The organization for data scoping
-  modelObject: '=',   // The model object relates to an object where the selected values will be stored
-  modelProperty: '@', // Property name on the model object to store the selected values
-  prefix: '@',        // Prefix to created unique HTML IDs for labels and select fields
-  createNew: '=?',    // Enable the possibility to create a new item
-  autoSelect: '=?',   // Do an automatic selection on the first item when no other value is provided through the model object
-  placeholder: '@',   // Placeholder text shown in the select field
-  label: '@',         // The label text associated with the select field
-  noLabel: '=?',      // When set to true, the label is not shown
-  multiple: '=?',     // Switch between single and multiple select field
-  extract: '@',       // Name of the property to extract and use in the select field (Ex: id)
-  allowClear: '=?',   // Enable the possibility to remove a selection
-  labelNew: '@',      // The label text for the creation of a new item
-  defaultNewItem: '@' // The default text value for the creation of a new item
+  organization: '=',     // The organization for data scoping
+  selectChoices: '=?',   // Force to use an external list of choices rather than fetching it from an API call
+  modelObject: '=',      // The model object relates to an object where the selected values will be stored
+  modelProperty: '@',    // Property name on the model object to store the selected values
+  prefix: '@',           // Prefix to created unique HTML IDs for labels and select fields
+  createNew: '=?',       // Enable the possibility to create a new item
+  autoSelect: '=?',      // Do an automatic selection on the first item when no other value is provided through the model object
+  placeholder: '@',      // Placeholder text shown in the select field
+  label: '@',            // The label text associated with the select field
+  noLabel: '=?',         // When set to true, the label is not shown
+  multiple: '=?',        // Switch between single and multiple select field
+  extract: '@',          // Name of the property to extract and use in the select field (Ex: id)
+  allowClear: '=?',      // Enable the possibility to remove a selection
+  labelNew: '@',         // The label text for the creation of a new item
+  defaultNewItem: '@',   // The default text value for the creation of a new item
+  displayedProperty: '@' // Attribute name to use to show the item in the select field
 };
 
 /**
@@ -194,7 +200,7 @@ function setupController($scope, api, options) {
     throw new Error("Options must be provided.");
   } else if (!options.defaults) {
     throw new Error("Defaults must be provided.");
-  } else if (!options.fetchUrl) {
+  } else if (!options.fetchUrl && !$scope.selectChoices) {
     throw new Error("FetchUrl must be provided.");
   }
 
@@ -203,7 +209,7 @@ function setupController($scope, api, options) {
     config: {
       newItem: false
     },
-    choices: []
+    choices: $scope.selectChoices ? $scope.selectChoices : []
   }, _.defaults(options.defaults, defaults)));
 
   $scope.$watch('config.newItem', function(value) {
@@ -215,7 +221,7 @@ function setupController($scope, api, options) {
       $scope.modelObject[$scope.modelProperty] = previousItem ? previousItem : $scope.defaultNewItem;
     } else if (value === false && $scope.choices.length && $scope.autoSelect) {
       // auto-select the first existing item when disabling creation of a new item
-      $scope.modelObject[$scope.modelProperty] = $scope.choices[0][$scope.extract];
+      $scope.modelObject[$scope.modelProperty] = $scope.itemExtract($scope.choices[0]);
     }
   });
 
@@ -231,50 +237,56 @@ function setupController($scope, api, options) {
 
   // Extract the item property or item itself
   $scope.itemExtract = function(item) {
-    return $scope.extract == '@model' ? item : item[$scope.extract];
+    if (item) {
+      return $scope.extract == '@model' ? item : item[$scope.extract];
+    } else {
+      return '';
+    }
   };
 
   $scope.fetchChoices = function(search) {
-    var params = {};
+    if (!$scope.selectChoices) {
+      var params = {};
 
-    // Always scope by organization
-    if ($scope.organization) {
-      params.organizationId = $scope.organization.id;
-    }
-
-    // Add search param if available
-    if (search) {
-      params.search = search;
-    }
-
-    // Process additional parameters if required
-    if (options.handleParams) {
-      params = options.handleParams($scope, params);
-    }
-
-    // Do the API call
-    api({
-      url: options.fetchUrl,
-      params: params
-    }).then(function(res) {
-      // Check if there is any results processing to do
-      if (options.processResults) {
-        $scope.choices = options.processResults(res);
-      } else {
-        $scope.choices = res.data;
+      // Always scope by organization
+      if ($scope.organization) {
+        params.organizationId = $scope.organization.id;
       }
 
-      if ($scope.choices.length && $scope.autoSelect) {
-        // if items are found, automatically select the first one
-        $scope.modelObject[$scope.modelProperty] = $scope.choices[0][$scope.extract];
-      } else if (!$scope.choices.length && $scope.createNew) {
-        // if there are no existing items and item creation is
-        // enabled, automatically switch to the free input field
-        $scope.config.newItem = true;
+      // Add search param if available
+      if (search) {
+        params.search = search;
       }
-    });
+
+      // Process additional parameters if required
+      if (options.handleParams) {
+        params = options.handleParams($scope, params);
+      }
+
+      // Do the API call
+      api({
+        url: options.fetchUrl,
+        params: params
+      }).then(function (res) {
+        // Check if there is any results processing to do
+        if (options.processResults) {
+          $scope.choices = options.processResults(res);
+        } else {
+          $scope.choices = res.data;
+        }
+
+        if ($scope.choices.length && $scope.autoSelect) {
+          // if items are found, automatically select the first one
+          $scope.modelObject[$scope.modelProperty] = $scope.itemExtract($scope.choices[0]);
+        } else if (!$scope.choices.length && $scope.createNew) {
+          // if there are no existing items and item creation is
+          // enabled, automatically switch to the free input field
+          $scope.config.newItem = true;
+        }
+      });
+    }
   }
-}
+};
 
 /**
  * Build a default property name for the selected item based on
