@@ -112,6 +112,10 @@ module ProbeDock
             paginated_rel = paginated_rel.where('users.name = ?', params[:name].to_s)
           end
 
+          if params[:active].present?
+            paginated_rel = paginated_rel.where('users.active = ?', true_flag?(:active))
+          end
+
           if params[:organizationId].present?
             organization = Organization.where(api_id: params[:organizationId].to_s).first!
             authorize!(organization, :show)

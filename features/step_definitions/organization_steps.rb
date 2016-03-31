@@ -10,15 +10,23 @@ Given /^public organization (.+) exists/ do |name|
   add_named_record(name, create(:organization, options))
 end
 
-Given /user (\w+)(?: with primary email (.+?))? who is a member of (.+) exists/ do |user_name,primary_email,organization_name|
+Given /user (\w+)(?: with primary email (.+?))? who is a member of (.+) exists( and is inactive)?/ do |user_name,primary_email,organization_name,inactive|
   org = Organization.where(name: organization_name.downcase.gsub(/\s+/, '-')).first!
+
+  options = {
+    name: user_name,
+    organization: org,
+    active: inactive.nil?
+  }
+
+  options[:password] = nil unless options[:active]
 
   if primary_email
     email = create(:email, address: primary_email)
-    add_named_record(user_name, create(:org_member, name: user_name, organization: org, primary_email: email))
-  else
-    add_named_record(user_name, create(:org_member, name: user_name, organization: org))
+    options[:primary_email] = email
   end
+
+  add_named_record(user_name, create(:org_member, options))
 end
 
 Given /user (\w+)(?: with primary email (.+?))? who is an admin of (.+) exists/ do |user_name,primary_email,organization_name|

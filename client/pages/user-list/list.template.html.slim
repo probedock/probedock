@@ -7,14 +7,17 @@
       div st-pipe='usersList.refresh' st-table='usersList.records'
         .well.filters
           .row st-filters='usersList.params'
-            .col-md-6
+            .col-md-4
               organization-select prefix='users-list' placeholder='Filter by organization' model-object='usersList.params'
-            .col-md-6
+            .col-md-4
               label Search
               input.form-control type='text' name='search' value='{{ usersList.params.search }}' ng-model='usersList.params.search' placeholder='User name or email'
+            .col-md-4
+              simple-select prefix='users-list-states' select-choices='states' placeholder='Filter by state' model-object='usersList.params' model-property='active' displayed-property='name' extract='active'
         table.table.table-hover
           thead
             tr
+              th.text-center.hidden-xs Active
               th colspan=2 User
               th.hidden-xs.hidden-sm.hidden-md E-mail
               th Organizations
@@ -22,6 +25,9 @@
               th
           tbody
             tr ng-repeat='user in usersList.records'
+              td.text-center.hidden-xs
+                i.active.glyphicon.glyphicon-ok tooltip='Active' ng-if='user.active'
+                i.inactive.glyphicon.glyphicon-remove tooltip='Inactive' ng-if='!user.active'
               td.avatar
                 a href='#' ui-sref='admin.users.show({ id: user.id })'
                   user-avatar user='user'

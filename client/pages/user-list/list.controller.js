@@ -1,5 +1,13 @@
 angular.module('probedock.userListPage').controller('UserListPageCtrl', function($q, $scope, $state, states, tables, users) {
 
+  $scope.states = [{
+    active: 1,
+    name: 'Active'
+  },{
+    active: 0,
+    name: 'Inactive'
+  }];
+
   $scope.userTabs = [];
   $scope.activeTabs = {};
 
