@@ -3,7 +3,8 @@ angular.module('probedock.select')
 // Select directives
 .directive('categorySelect', function() { return createSelectDirective('CategorySelectCtrl', defaultsAttributes); })
 .directive('organizationSelect', function() { return createSelectDirective('OrganizationSelectCtrl', _.extend(defaultsAttributes, {
-    administered: '=?'
+    administered: '=?', // Retrieve the organization where the signed user is admin
+    onlyActive: '=?'    // Retrieve only the active organizations, if false, all the organizations are retrieved
   }));
 })
 .directive('projectSelect', function() { return createSelectDirective('ProjectSelectCtrl', defaultsAttributes); })
@@ -38,7 +39,8 @@ angular.module('probedock.select')
       modelProperty: defaultModelProperty($scope, 'organizationId', 'organization'),
       label: 'Filter by organization',
       placeholder: 'All organizations',
-      administered: false
+      administered: false,
+      onlyActive: true
     },
     fetchUrl: '/organizations',
 
@@ -52,6 +54,12 @@ angular.module('probedock.select')
       if ($scope.administered) {
         params.administered = 1;
       }
+
+      // Force to retrieve the active organizations only if set to true, otherwise return all organizations
+      if ($scope.onlyActive) {
+        params.active = 1;
+      }
+
       return params;
     }
   });
