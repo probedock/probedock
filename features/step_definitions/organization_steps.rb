@@ -5,7 +5,7 @@ Given /^(private )?organization (.+) exists( and is inactive)?/ do |public_acces
   add_named_record(name, create(:organization, options))
 end
 
-Given /^public organization (.+) exists( and is inactive)/ do |name,inactive|
+Given /^public organization (.+) exists( and is inactive)?/ do |name,inactive|
   options = { name: name.downcase.gsub(/\s+/, '-'), public_access: true }
   options[:display_name] = name if name != options[:name]
   options[:active] = inactive.nil?
