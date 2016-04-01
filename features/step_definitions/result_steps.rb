@@ -36,12 +36,11 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
   if category_name
     category = named_record(category_name) if named_record_exists(category_name)
 
-    unless category
+    if category.nil?
       category = create(:category, name: category_name)
       add_named_record(category_name, category)
+      payload.categories << category
     end
-
-    payload.categories << category
 
     options[:category] = category
   end

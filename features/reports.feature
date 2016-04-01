@@ -119,6 +119,43 @@ Feature: Reports
 
 
 
+  @regression
+  Scenario: An organization member should be able to retrieve reports filtered by category name without data duplication.
+    Given private organization Rebel Alliance exists
+    And project X-Wing exists within organization Rebel Alliance
+    And project version 1.2.3 exists for project X-Wing
+    And user hsolo who is a member of Rebel Alliance exists
+    And test result report RP1 was generated for organization Rebel Alliance
+    And test payload P1 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report RP1
+    And test payload P2 sent by hsolo for version 1.2.3 of project X-Wing was used to generate report RP1
+    And test "Engine should be powered" was created by hsolo with key aaaa for version 1.2.3 of project X-Wing
+    And test "Shields must resist to lasers" was created by hsolo with key bbbb for version 1.2.3 of project X-Wing
+    And result R1 for test "Engine should be powered" is new and passing and has category C1 and was run by hsolo and took 20 seconds to run for payload P1 with version 1.2.3
+    And result R2 for test "Shields must resist to lasers" is new and passing and has category C1 and was run by hsolo for payload P1 with version 1.2.3
+    And result R3 for test "Engine should be powered" is passing and has category C2 and was run by hsolo and took 10 seconds to run for payload P2 with version 1.2.3
+    And result R4 for test "Shields must resist to lasers" is passing and has category C2 and was run by hsolo and took 8 seconds to run for payload P2 with version 1.2.3
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&categoryNames[]=C1
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: RP1",
+        "duration": "@valueOf(RP1, duration)",
+        "resultsCount": 0,
+        "passedResultsCount": 0,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   @authorization
   Scenario: An anonymous user should not be able to get a report of a private organization by ID.
     Given private organization Rebel Alliance exists
