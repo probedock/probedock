@@ -27,6 +27,11 @@ module CucumberSpecHelper
     if data_type.match /^(xml|json)$/i
       type = data_type.downcase.to_sym
       content_type = "application/#{type}"
+    else
+      matched_type = data_type.match /.*\+(xml|json)$/i
+      unless matched_type.nil?
+        type = matched_type[1].downcase.to_sym
+      end
     end
 
     # parse & interpolate data

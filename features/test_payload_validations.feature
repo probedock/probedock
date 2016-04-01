@@ -13,7 +13,7 @@ Feature: Test payload validations
     And hsolo sends a POST request with the following JSON to /api/publish:
       """
       {
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "version": "0.4.6",
         "duration": 1529,
         "results": [
@@ -81,7 +81,7 @@ Feature: Test payload validations
     And hsolo sends a POST request with the following application/vnd.probedock.payload.v1+json data to /api/publish:
       """
       {
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "version": "0.4.6",
         "duration": 1529,
         "results": [
@@ -132,7 +132,7 @@ Feature: Test payload validations
     And hsolo sends a POST request with the following application/vnd.probe-dock.payload.v1+json data to /api/publish:
       """
       {
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "version": "0.4.6",
         "duration": 1529,
         "results": [
@@ -252,7 +252,7 @@ Feature: Test payload validations
     And hsolo sends a POST request with the following JSON to /api/publish:
       """
       {
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "version": "0.4.6",
         "duration": 1529,
         "results": []
@@ -327,7 +327,7 @@ Feature: Test payload validations
     And hsolo sends a POST request with the following JSON to /api/publish:
       """
       {
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "version": "0.4.6",
         "duration": 1529,
         "results": [
@@ -364,7 +364,7 @@ Feature: Test payload validations
     And hsolo sends a POST request with the following JSON to /api/publish:
       """
       {
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "version": "1.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6.2.3.4.5.6",
         "duration": -23,
         "results": [
