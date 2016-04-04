@@ -19,7 +19,7 @@ module ScmHelper
     if project.repo_url && result.custom_values['file.path']
       matched_type = /.*(github|gitlab|bitbucket)\.com\/.*/.match(project.repo_url)
 
-      if project.repo_url_pattern
+      if !project.repo_url_pattern.blank?
         build_patterned_url(project.repo_url, project.repo_url_pattern, result, payload)
       elsif matched_type
         send('build_' +  matched_type[1] + '_url', project.repo_url, result, payload)
