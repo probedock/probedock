@@ -79,15 +79,19 @@ module ProbeDock
 
           paginated_rel = paginated_rel.joins(:runners) if array_param?(:runnerIds) || params[:technical]
           paginated_rel = paginated_rel.joins(:projects) if array_param?(:projectIds) || params[:projectId].present?
-          paginated_rel = paginated_rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
-          paginated_rel = paginated_rel.joins(results: :category) if array_param?(:categoryNames)
+
+          report_joins = []
+          report_joins << :runners if array_param?(:runnerIds) || params[:technical]
+          report_joins << :projects if array_param?(:projectIds) || params[:projectId].present?
 
           if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || array_param?(:categoryNames)
             payload_joins = []
             payload_joins << :project_version if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
             payload_joins << :categories if array_param?(:categoryNames)
-            paginated_rel = paginated_rel.joins(test_payloads: payload_joins)
+            report_joins << { test_payloads: payload_joins }
           end
+
+          paginated_rel = paginated_rel.joins(report_joins)
 
           if array_param?(:runnerIds)
             paginated_rel = paginated_rel.where('users.api_id in (?)', params[:runnerIds].collect(&:to_s).to_a)
