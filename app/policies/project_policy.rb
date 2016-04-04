@@ -54,6 +54,7 @@ class ProjectPolicy < ApplicationPolicy
         json.displayName record.display_name if record.display_name.present?
         json.organizationId record.organization.api_id
         json.repoUrl record.repo_url if record.repo_url.present?
+        json.repoUrlPattern record.repo_url_pattern if record.repo_url_pattern.present?
         json.lastReportId record.last_report.api_id if record.last_report.present?
 
         unless options[:link]

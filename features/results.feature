@@ -1724,6 +1724,337 @@ Feature: Results
 
 
 
+  Scenario: An organization member should be able to get results of a report in a private organization with scm data.
+    And the project X-Wing updated with the repo url pattern {{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
+    When hsolo sends a GET request to /api/results?reportId={@idOf: A}&withScm=true
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@valueOf(R1, id)",
+        "name": "Engine should be powered",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 20,
+        "newTest": true,
+        "tags": [],
+        "tickets": [],
+        "customData": {
+          "file.path": "somewhere/on/file/system.js",
+          "file.line": 12
+        },
+        "runner": {
+          "id": "@idOf: hsolo",
+          "name": "hsolo",
+          "technical": false,
+          "primaryEmailMd5": "@string",
+          "primaryEmail": "@email"
+        },
+        "project": {
+          "id": "@idOf: X-Wing",
+          "name": "x-wing",
+          "displayName": "X-Wing",
+          "organizationId": "@idOf: Rebel Alliance",
+          "repoUrl": "https://github.com/probedock/probedock",
+          "repoUrlPattern": "{{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}"
+        },
+        "projectVersion": "1.2.2",
+        "runAt": "@iso8601",
+        "sourceUrl": "https://github.com/probedock/probedock/star-fighter/abcdef/somewhere/on/file/system.js#L12",
+        "scm": {
+          "name": "Git",
+          "version": "2.7.1",
+          "branch": "star-fighter",
+          "commit": "abcdef",
+          "dirty": true,
+          "remote": {
+            "name": "origin",
+            "ahead": 1,
+            "behind": 2,
+            "url": {
+              "fetch": "https://github.com/probedock/probedock",
+              "push": "https://github.com/probedock/probedock"
+            }
+          }
+        }
+      },{
+        "id": "@valueOf(R2, id)",
+        "name": "Shields must resist to lasers",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 750,
+        "newTest": true,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: hsolo",
+          "name": "hsolo",
+          "technical": false,
+          "primaryEmailMd5": "@string",
+          "primaryEmail": "@email"
+        },
+        "project": {
+          "id": "@idOf: X-Wing",
+          "name": "x-wing",
+          "displayName": "X-Wing",
+          "organizationId": "@idOf: Rebel Alliance",
+          "repoUrl": "https://github.com/probedock/probedock",
+          "repoUrlPattern": "{{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}"
+        },
+        "projectVersion": "1.2.3",
+        "runAt": "@iso8601",
+        "scm": {}
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: A member from another organization should be able to get results of a report of a public organization with scm data.
+    And the project X-Wing updated with the repo url pattern {{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
+    When hsolo sends a GET request to /api/results?reportId={@idOf: C}&withScm=true
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@valueOf(R4, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": false,
+        "active": true,
+        "message": null,
+        "duration": 6,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.0",
+        "runAt": "@iso8601",
+        "scm": {}
+      }, {
+        "id": "@valueOf(R3, id)",
+        "name": "Should be big enough",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 2,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.0",
+        "runAt": "@iso8601",
+        "scm": {}
+      }, {
+        "id": "@valueOf(R5, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 3,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.1",
+        "runAt": "@iso8601",
+        "scm": {}
+      }, {
+        "id": "@valueOf(R9, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 9,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: pamidala",
+          "name": "pamidala",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.1",
+        "runAt": "@iso8601",
+        "scm": {}
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  Scenario: An anonymous user should be able to get results of a report of a public organization with scm data.
+    And the project X-Wing updated with the repo url pattern {{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
+    When nobody sends a GET request to /api/results?reportId={@idOf: C}&withScm=true
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@valueOf(R4, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": false,
+        "active": true,
+        "message": null,
+        "duration": 6,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.0",
+        "runAt": "@iso8601",
+        "scm": {}
+      }, {
+        "id": "@valueOf(R3, id)",
+        "name": "Should be big enough",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 2,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.0",
+        "runAt": "@iso8601",
+        "scm": {}
+      }, {
+        "id": "@valueOf(R5, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 3,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: borgana",
+          "name": "borgana",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.1",
+        "runAt": "@iso8601",
+        "scm": {}
+      }, {
+        "id": "@valueOf(R9, id)",
+        "name": "Voting system should have three buttons",
+        "testId": "@alphanumeric",
+        "passed": true,
+        "active": true,
+        "message": null,
+        "duration": 9,
+        "newTest": false,
+        "tags": [],
+        "tickets": [],
+        "customData": {},
+        "runner": {
+          "id": "@idOf: pamidala",
+          "name": "pamidala",
+          "technical": false,
+          "primaryEmailMd5": "@string"
+        },
+        "project": {
+          "id": "@idOf: Senate",
+          "name": "senate",
+          "displayName": "Senate",
+          "organizationId": "@idOf: Old Republic"
+        },
+        "projectVersion": "1.0.1",
+        "runAt": "@iso8601",
+        "scm": {}
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   @authorization
   Scenario: An anonymous user should not be able to get results of a report in a private organization.
     When nobody sends a GET request to /api/results?reportId={@idOf: A}
