@@ -54,9 +54,9 @@ Feature: Various filters to get reports
 
     # Results for filtering
     And result R1 for test "Engine should be powered" is new and passing and was run by lskywalker and took 20 seconds to run for payload A1 with version 1.2.3
-    And result R2 for test "Shields must resist to lasers" is new and passing and was run by hsolo and took 20 seconds to run for payload B1 with version 1.0.0
-    And result R3 for test "Engine should be powered" is passing and was run by hsolo and took 20 seconds to run for payload C1 with version 3.2.1
-    And result R4 for test "Engine should be powered" is passing and has category c1 and was run by hsolo and took 20 seconds to run for payload D1 with version 1.2.3
+    And result R2 for test "Shields must resist to lasers" is passing and was run by hsolo and took 20 seconds to run for payload B1 with version 1.0.0
+    And result R3 for test "Engine should be powered" is failing and was run by hsolo and took 20 seconds to run for payload C1 with version 3.2.1
+    And result R4 for test "Engine should be powered" is passing and inactive and has category c1 and was run by hsolo and took 20 seconds to run for payload D1 with version 1.2.3
 
 
 
@@ -68,11 +68,11 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: A}",
         "duration": "@integer",
-        "resultsCount": 0,
-        "passedResultsCount": 0,
+        "resultsCount": 1,
+        "passedResultsCount": 1,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
-        "newTestsCount": 0,
+        "newTestsCount": 1,
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
@@ -91,8 +91,8 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
-        "passedResultsCount": 0,
+        "resultsCount": 1,
+        "passedResultsCount": 1,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
         "newTestsCount": 0,
@@ -114,7 +114,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: C}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -137,7 +137,7 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: C}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
@@ -160,10 +160,10 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: D}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
         "passedResultsCount": 0,
-        "inactiveResultsCount": 0,
-        "inactivePassedResultsCount": 0,
+        "inactiveResultsCount": 1,
+        "inactivePassedResultsCount": 1,
         "newTestsCount": 0,
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
@@ -183,8 +183,8 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
-        "passedResultsCount": 0,
+        "resultsCount": 1,
+        "passedResultsCount": 1,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
         "newTestsCount": 0,
@@ -206,8 +206,8 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
-        "passedResultsCount": 0,
+        "resultsCount": 1,
+        "passedResultsCount": 1,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
         "newTestsCount": 0,
@@ -230,11 +230,280 @@ Feature: Various filters to get reports
       [{
         "id": "{@idOf: B}",
         "duration": "@integer",
-        "resultsCount": 0,
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  @search
+  Scenario: An organization member should be able to get a list of reports with passing tests.
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&status[]=passed
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "{@idOf: B}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }, {
+        "id": "{@idOf: A}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 1,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  @search
+  Scenario: An organization member should be able to get a list of reports with inactive tests.
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&status[]=inactive
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "{@idOf: D}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 0,
+        "inactiveResultsCount": 1,
+        "inactivePassedResultsCount": 1,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  @search
+  Scenario: An organization member should be able to get a list of reports with failing tests.
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&status[]=failed
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "{@idOf: C}",
+        "duration": "@integer",
+        "resultsCount": 1,
         "passedResultsCount": 0,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
         "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  @search
+  Scenario: An organization member should be able to get a list of reports with passed, failed and inactive tests.
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&status[]=inactive&status[]=failed&status[]=passed
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "{@idOf: D}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 0,
+        "inactiveResultsCount": 1,
+        "inactivePassedResultsCount": 1,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }, {
+        "id": "{@idOf: C}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 0,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }, {
+        "id": "{@idOf: B}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }, {
+        "id": "{@idOf: A}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 1,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "{@idOf: Rebel Alliance}"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  @search
+   Scenario: An organization member should be able to get a list of reports with existing tests.
+     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&kind[]=existing
+     Then the response should be HTTP 200 with the following JSON:
+       """
+       [{
+         "id": "{@idOf: D}",
+         "duration": "@integer",
+         "resultsCount": 1,
+         "passedResultsCount": 0,
+         "inactiveResultsCount": 1,
+         "inactivePassedResultsCount": 1,
+         "newTestsCount": 0,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "{@idOf: Rebel Alliance}"
+       }, {
+         "id": "{@idOf: C}",
+         "duration": "@integer",
+         "resultsCount": 1,
+         "passedResultsCount": 0,
+         "inactiveResultsCount": 0,
+         "inactivePassedResultsCount": 0,
+         "newTestsCount": 0,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "{@idOf: Rebel Alliance}"
+       }, {
+         "id": "{@idOf: B}",
+         "duration": "@integer",
+         "resultsCount": 1,
+         "passedResultsCount": 1,
+         "inactiveResultsCount": 0,
+         "inactivePassedResultsCount": 0,
+         "newTestsCount": 0,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "{@idOf: Rebel Alliance}"
+       }]
+       """
+     And nothing should have been added or deleted
+
+
+
+  @search
+   Scenario: An organization member should be able to get a list of reports with new and existing tests.
+     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&kind[]=new&kind[]=existing
+     Then the response should be HTTP 200 with the following JSON:
+       """
+       [{
+         "id": "{@idOf: D}",
+         "duration": "@integer",
+         "resultsCount": 1,
+         "passedResultsCount": 0,
+         "inactiveResultsCount": 1,
+         "inactivePassedResultsCount": 1,
+         "newTestsCount": 0,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "{@idOf: Rebel Alliance}"
+       }, {
+         "id": "{@idOf: C}",
+         "duration": "@integer",
+         "resultsCount": 1,
+         "passedResultsCount": 0,
+         "inactiveResultsCount": 0,
+         "inactivePassedResultsCount": 0,
+         "newTestsCount": 0,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "{@idOf: Rebel Alliance}"
+       }, {
+         "id": "{@idOf: B}",
+         "duration": "@integer",
+         "resultsCount": 1,
+         "passedResultsCount": 1,
+         "inactiveResultsCount": 0,
+         "inactivePassedResultsCount": 0,
+         "newTestsCount": 0,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "{@idOf: Rebel Alliance}"
+       }, {
+         "id": "{@idOf: A}",
+         "duration": "@integer",
+         "resultsCount": 1,
+         "passedResultsCount": 1,
+         "inactiveResultsCount": 0,
+         "inactivePassedResultsCount": 0,
+         "newTestsCount": 1,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "{@idOf: Rebel Alliance}"
+       }]
+       """
+     And nothing should have been added or deleted
+
+
+
+  @search
+  Scenario: An organization member should be able to get a list of reports with new tests.
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&kind[]=new
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "{@idOf: A}",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 1,
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",

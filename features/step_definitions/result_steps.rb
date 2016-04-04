@@ -19,13 +19,16 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
     test: test
   }
 
-  if passing
-    options[:passed] = passing == 'passing'
-  end
 
-  if active
-    options[:active] = active == 'active'
-  end
+  # Set results status
+  options[:passed] = !passing || passing == 'passing'
+  options[:active] = !active || active == 'active'
+
+  # Update the counts related to states
+  payload.results_count += 1
+  payload.passed_results_count += 1 if options[:passed] && options[:active]
+  payload.inactive_results_count += 1 unless options[:active]
+  payload.inactive_passed_results_count += 1 if !options[:active] && options[:passed]
 
   options[:new_test] = new_test == 'new'
 
@@ -57,6 +60,12 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
   end
 
   test_result = add_named_record(name, create(:test_result, options))
+
+  # Update the payload tests count and new tests count
+  payload.tests_count = TestResult.where('test_payload_id = ?', payload.id).count
+  payload.new_tests_count = TestResult.where('test_payload_id = ? AND new_test = true', payload.id).count
+
+  payload.save!
 
   test_description = TestDescription.where(test_id: test.id).where(project_version_id: project_version.id).first
 
