@@ -19,7 +19,8 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       var modal = $modal.open({
         templateUrl: '/templates/pages/project-edit-modal/modal.template.html',
         controller: 'ProjectEditModalCtrl',
-        scope: scope
+        scope: scope,
+        size: 'lg'
       });
 
       $scope.$on('$stateChangeStart', function() {
@@ -30,6 +31,8 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
     }
   };
 }).controller('ProjectEditModalCtrl', function(api, forms, $modalInstance, orgs, $scope) {
+
+  $scope.repoUrlPatternPlaceholder = 'Ex: {{ commit }}/{{ filePath }}#L{{ fileLine }}';
 
   $scope.project = $scope.project || {};
   $scope.editedProject = {};
