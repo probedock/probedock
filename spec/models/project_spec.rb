@@ -32,7 +32,7 @@ describe Project do
   end
 
   describe 'validations' do
-    it(nil, probedock: { key: 'wv1d' }){ should have_validations_on(:name, :display_name, :organization, :repo_url) }
+    it(nil, probedock: { key: 'wv1d' }){ should have_validations_on(:name, :display_name, :organization, :repo_url, :repo_url_pattern) }
     it(nil, probedock: { key: '439478e8b142' }){ should validate_presence_of(:name) }
     it(nil, probedock: { key: '38a831c819f7' }){ should validate_length_of(:name).is_at_most(50) }
     it(nil, probedock: { key: '2ujf' }){ should allow_value('foo', 'FoO', 'foo-bar', 'Foo-Bar-Baz').for(:name) }
@@ -43,6 +43,7 @@ describe Project do
     it(nil, probedock: { key: 'k0ts' }){ should validate_length_of(:repo_url).is_at_most(255) }
     it(nil, probedock: { key: '0xqz' }){ should allow_value('http://localhost.localdomain', 'https://example.com').for(:repo_url) }
     it(nil, probedock: { key: 'ubaw' }){ should_not allow_value('foo', 'bar').for(:repo_url) }
+    it(nil, probedock: { key: 'h4l8' }){ should validate_length_of(:repo_url_pattern).is_at_most(255) }
 
     describe 'with an existing project' do
       before(:each){ create :project }
@@ -60,7 +61,7 @@ describe Project do
   end
 
   describe 'database table' do
-    it(nil, probedock: { key: 'cng3' }){ should have_db_columns(:id, :organization_id, :last_report_id, :api_id, :name, :display_name, :normalized_name, :description, :tests_count, :created_at, :updated_at, :repo_url) }
+    it(nil, probedock: { key: 'cng3' }){ should have_db_columns(:id, :organization_id, :last_report_id, :api_id, :name, :display_name, :normalized_name, :description, :tests_count, :created_at, :updated_at, :repo_url, :repo_url_pattern) }
     it(nil, probedock: { key: '354227570c24' }){ should have_db_column(:id).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: 'gr1x' }){ should have_db_column(:organization_id).of_type(:integer).with_options(null: false) }
     it(nil, probedock: { key: 'ben8' }){ should have_db_column(:last_report_id).of_type(:integer).with_options(null: true) }
@@ -72,6 +73,7 @@ describe Project do
     it(nil, probedock: { key: '20bb321bfa30' }){ should have_db_column(:created_at).of_type(:datetime).with_options(null: false) }
     it(nil, probedock: { key: 'acf557d6db43' }){ should have_db_column(:updated_at).of_type(:datetime).with_options(null: false) }
     it(nil, probedock: { key: 'cw4k' }){ should have_db_column(:repo_url).of_type(:string).with_options(null: true, limit: 255) }
+    it(nil, probedock: { key: 'a8we' }){ should have_db_column(:repo_url_pattern).of_type(:string).with_options(null: true, limit: 255) }
     it(nil, probedock: { key: '6c8efd97b251' }){ should have_db_index(:api_id).unique(true) }
     it(nil, probedock: { key: 'vxb0' }){ should have_db_index([:normalized_name, :organization_id]).unique(true) }
   end

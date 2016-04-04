@@ -4,7 +4,9 @@ form novalidate=true role='form' name='projectForm' ng-submit='projectForm.$vali
     h3.modal-title ng-if='!editedProject.id' New Project
   .modal-body
     .form-group ng-class='{"has-error": projectForm.name.$dirty && projectForm.name.$invalid}'
-      label for='projectName' Name
+      label for='projectName'
+        | Name
+        span.required< *
       input#projectName.form-control type='string' name='name' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-project-name=true autofocus=true ng-model='editedProject.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
         | This is the identifier of the project and is used in URLs.
@@ -16,16 +18,25 @@ form novalidate=true role='form' name='projectForm' ng-submit='projectForm.$vali
       input#projectDisplayName.form-control type='string' placeholder='{{ editedProject.name || "The same as the name by default" }}' maxlength=50 ng-model='editedProject.displayName'
       p.help-block
         | The is the name of the project as shown in ProbeDock.
-    .form-group
+    .form-group ng-class='{"has-error": projectForm.repoUrl.$dirty && projectForm.repoUrl.$invalid}'
       label for='projectRepoUrl' Repository URL
-      input#projectRepoUrl.form-control type='string' placeholder='Project repository' maxlength=255 ng-model='editedProject.repoUrl'
+      input#projectRepoUrl.form-control type='string' name='repoUrl' placeholder='Project repository' maxlength=255 ng-model='editedProject.repoUrl' project-repo-url=true
       p.help-block
-        | This is the link to your project repository.
+        | This is the link to your project repository. This link is used to build links from test results to source code.
+        |  The URL should starts with http or https.
+    .form-group ng-class='{"has-error": projectForm.repoUrl.$dirty && projectForm.repoUrl.$invalid}'
+      label for='projectRepoUrlPattern' Source file URL pattern
+      input#projectRepoUrlPattern.form-control type='string' name='repoUrlPattern' maxlength=255 ng-model='editedProject.repoUrlPattern' placeholder='{{ repoUrlPatternPlaceholder }}'
+      p.help-block
+        | This pattern allow you to provide a specific pattern to build your source files URL. You have the following available replacements:
+        strong<> ng-non-bindable=true {{ repoUrl }}, {{ branch }}, {{ commit }} , {{ filePath}} and {{ fileLine }}.
+        | If not provided, we have defaults for URL containing: github.com, gitlab.com or bitbucket.com.
     .form-group
       label for='projectDescription' Description
       textarea#projectDescription.form-control placeholder='Detailed description' maxlength=1000 ng-model='editedProject.description'
       p.help-block
         | A detailed description of the project, up to 1000 characters.
+    p * required fields
   .modal-footer.clearfix
     .btn-group.pull-right
       button.btn.btn-default type='button' ng-click='$dismiss()' Cancel

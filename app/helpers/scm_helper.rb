@@ -19,7 +19,9 @@ module ScmHelper
     if project.repo_url && result.custom_values['file.path']
       matched_type = /.*(github|gitlab|bitbucket)\.com\/.*/.match(project.repo_url)
 
-      if matched_type
+      if !project.repo_url_pattern.blank?
+        build_patterned_url(project.repo_url, project.repo_url_pattern, result, payload)
+      elsif matched_type
         send('build_' +  matched_type[1] + '_url', project.repo_url, result, payload)
       end
     end
@@ -52,6 +54,29 @@ module ScmHelper
   end
 
   private
+
+  def build_patterned_url(repo_url, repo_url_pattern, result, payload)
+    # Make sure the URL is complete
+    url = if repo_url_pattern.match(/\{\{\s*repoUrl\s*\}\}/)
+      repo_url_pattern.gsub(/\{\{\s*repoUrl\s*\}\}/, repo_url)
+    else
+      repo_url + repo_url_pattern
+    end
+
+    # Replace the branch
+    url = url.gsub(/\{\{\s*branch\s*\}\}/, payload.scm_branch) if payload.scm_branch.present?
+
+    # Replace the commit
+    url = url.gsub(/\{\{\s*commit\s*\}\}/, payload.scm_commit) if payload.scm_commit.present?
+
+    # Replace the file
+    url = url.gsub(/\{\{\s*filePath\s*\}\}/, result.custom_values['file.path']) if result.custom_values['file.path']
+
+    # Replace the line
+    url = url.gsub(/\{\{\s*fileLine\s*\}\}/, result.custom_values['file.line'].to_s) if result.custom_values['file.line']
+
+    url
+  end
 
   def build_github_url(repo_url, result, payload)
     # <repo_url>/blob/<commit>/<file_path>(#L<file_line>)

@@ -32,6 +32,7 @@ class Project < ActiveRecord::Base
   validates :display_name, length: { maximum: 50, allow_blank: true }
   validates :organization, presence: true
   validates :repo_url, url: { allow_blank: true }, length: { maximum: 255, allow_blank: true }
+  validates :repo_url_pattern, length: { maximum: 255, allow_blank: true }
   validate :name_must_not_be_reserved
 
   private
