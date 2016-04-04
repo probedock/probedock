@@ -7,11 +7,18 @@
       div st-pipe='usersList.refresh' st-table='usersList.records'
         .well.filters
           .row st-filters='usersList.params'
-            .col-md-4
+            .col-md-2
+              .form-group
+                label Filter by status
+                div
+                  .btn-group
+                    label.btn.btn-success btn-checkbox=true ng-model='statuses.active' tooltip='Click to filter active users' tooltip-append-to-body='true'
+                      span.glyphicon.glyphicon-ok
+                    label.btn.btn-danger btn-checkbox=true ng-model='statuses.inactive' tooltip='Click to filter inactive users' tooltip-append-to-body='true'
+                      span.glyphicon.glyphicon-remove
+            .col-md-5
               organization-select prefix='users-list' placeholder='All organizations' model-object='usersList.params' only-active='false'
-            .col-md-4
-              simple-select prefix='users-list-states' select-choices='states' label='Filter by state' placeholder='States' model-object='usersList.params' model-property='active' displayed-property='name' extract='active'
-            .col-md-4
+            .col-md-5
               label Search
               input.form-control type='text' name='search' value='{{ usersList.params.search }}' ng-model='usersList.params.search' placeholder='User name or email'
         table.table.table-hover
