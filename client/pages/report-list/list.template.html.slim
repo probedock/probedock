@@ -10,6 +10,23 @@
             .well.filters st-filters='reportsList.params' class='{{ filtersClass }}'
               .row
                 .col-lg-3.col-md-6
+                  .form-group
+                    label Filter by result
+                    div
+                      .btn-group
+                        label.btn.btn-success btn-checkbox=true ng-model='statuses.passed' tooltip='Click to show/hide passed results' tooltip-append-to-body='true'
+                          span.glyphicon.glyphicon-thumbs-up
+                        label.btn.btn-danger btn-checkbox=true ng-model='statuses.failed' tooltip='Click to show/hide failed results' tooltip-append-to-body='true'
+                          span.glyphicon.glyphicon-thumbs-down
+                        label.btn.btn-warning btn-checkbox=true ng-model='statuses.inactive' tooltip='Click to show/hide inactive results' tooltip-append-to-body='true'
+                          span.glyphicon.glyphicon-ban-circle
+                      .btn-group<
+                        label.btn.btn-default btn-checkbox=true ng-model='kinds.existing' tooltip='Click to show/hide results of existing tests' tooltip-append-to-body='true'
+                          span.glyphicon.glyphicon-time
+                        label.btn.btn-default btn-checkbox=true ng-model='kinds.new' tooltip='Click to show/hide results of new tests' tooltip-append-to-body='true'
+                          span.glyphicon.glyphicon-plus
+              .row
+                .col-lg-3.col-md-6
                   user-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='runnerIds' placeholder='All Runners' multiple='true' label='Filter by runner'
                 .col-lg-3.col-md-6
                   project-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' multiple='true'

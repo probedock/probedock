@@ -4,14 +4,6 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
   payload = named_record(payload_name)
   test = named_record(test_name)
 
-  payload.results_count += 1
-  payload.tests_count += 1
-  payload.passed_results_count += 1 if passing
-  payload.inactive_results_count += 1 unless active
-  payload.inactive_passed_results_count += 1 if passing && !active
-  payload.new_tests_count += 1 if first
-  payload.save
-
   date = if interval_count
     interval_count.to_i.send(interval).ago
   else
@@ -27,15 +19,17 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
     test: test
   }
 
-  if passing
-    options[:passed] = passing == 'passing'
-  end
+  # Set results status
+  options[:passed] = !passing || passing == 'passing'
+  options[:active] = !active || active == 'active'
 
-  if active
-    options[:active] = active == 'active'
-  end
+  # Update the counts related to states
+  payload.results_count += 1
+  payload.passed_results_count += 1 if options[:passed] && options[:active]
+  payload.inactive_results_count += 1 unless options[:active]
+  payload.inactive_passed_results_count += 1 if !options[:active] && options[:passed]
 
-  options[:new_test] = new_test == 'new'
+  options[:new_test] = new_test == 'new' || !first.nil?
 
   if execution_time
     options[:duration] = execution_time.to_i
@@ -65,6 +59,12 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
   end
 
   test_result = add_named_record(name, create(:test_result, options))
+
+  # Update the payload tests count and new tests count
+  payload.tests_count = TestResult.where('test_payload_id = ?', payload.id).count
+  payload.new_tests_count = TestResult.where('test_payload_id = ? AND new_test = true', payload.id).count
+
+  payload.save!
 
   test_description = TestDescription.where(test_id: test.id).where(project_version_id: project_version.id).first
 
