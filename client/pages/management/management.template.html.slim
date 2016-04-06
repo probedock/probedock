@@ -4,6 +4,6 @@
   .row
     .col-lg-6.col-md-12
       org-stats-widget organization='currentOrganization'
-      resque-stats-widget ng-if='currentUserIs("admin")'
     .col-lg-6.col-md-12 ng-if='currentUserIs("admin")'
+      resque-stats-widget ng-if='currentUserIs("admin")'
       db-stats-widget
