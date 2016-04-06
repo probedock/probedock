@@ -34,12 +34,14 @@
 //= require bootstrap-tooltip
 //= require bootstrap-popover
 //= require chart
+//= require d3
 //= require dropzone
 //= require inflection
 //= require jqcloud2
 //= require js-yaml
 //= require jvent
 //= require moment
+//= require nvd3
 //= require pretty-bytes
 //= require tether
 //= require tether-drop
@@ -56,6 +58,7 @@
 //= require angular-loading-bar
 //= require angular-local-storage
 //= require angular-moment
+//= require angular-nvd3
 //= require angular-ng-clip
 //= require angular-ng-infinite-scroll
 //= require angular-ng-inflection

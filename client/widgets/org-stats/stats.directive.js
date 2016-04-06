@@ -1,92 +1,97 @@
-angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function() {
+angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', function() {
   return {
     restrict: 'E',
-    controller: 'OrgStatsWidgetCtrl',
-    templateUrl: '/templates/widgets/org-stats/stats.template.html',
+    controller: 'OrgTopStatsWidgetCtrl',
+    templateUrl: '/templates/widgets/org-top-stats/stats.template.html',
     scope: {
-      organization: '=?'
+      top: '=?'
     }
   };
-}).controller('OrgStatsWidgetCtrl', function(api, $scope, orgs) {
+}).controller('OrgTopStatsWidgetCtrl', function(api, $scope, orgs) {
   orgs.addAuthFunctions($scope);
 
   _.defaults($scope, {
     params: {
-      organization: $scope.organization
+      top: $scope.top ? $scope.top : 5,
+      organization: null
     },
     loading: false
   });
 
-  $scope.$watch('params', function(newParams) {
-    if (!_.isUndefined(newParams.organization)) {
+  $scope.$watch('params', function(newParams, oldParams) {
+    if (!_.isUndefined(newParams.organization) || newParams.organization != oldParams.organization) {
       fetchStats();
     }
   }, true);
 
-  if ($scope.params.organization) {
-    fetchStats();
-    $scope.started = true;
-  }
+  fetchStats();
 
   function fetchStats() {
     $scope.loading = true;
 
+    var params = {};
+
+    if ($scope.params.organization) {
+      params.organizationId = $scope.params.organization.id;
+    } else {
+      params.top = $scope.top;
+    }
+
     return api({
       url: '/platformManagement/orgStats',
-      params: {
-        organizationId: $scope.params.organization.id
-      }
+      params: params
     }).then(function(response) {
-      if (response.data.organizations[0]) {
-        $scope.org = response.data.organizations[0];
-        $scope.stats = [];
+      var orgsStats = response.data.organizations;
 
-        // Prepare the data to show in a table way
-        _.each([ 'payloads', 'projects', 'tests', 'results' ], function(name) {
-          var stat = {
-            name: name,
-            rowsCount: response.data.organizations[0][name + 'Count'],
-            proportion: response.data.organizations[0][name + 'Count'] / response.data[name + 'Count'] * 100
-          };
+      // Keep the total without organizations and udpate the trend to have cumulative trend
+      var total = _.omit(response.data, 'organizations');
+      var totalCumulativeTrends = [];
+      _.reduce(total.resultsTrend, function(memo, trend) {
+        memo += trend;
+        totalCumulativeTrends.push(memo);
+        return memo;
+      }, 0);
+      total.resultsTrend = totalCumulativeTrends;
 
-          // Store results trend
-          if (name == 'results') {
-            // Cumulative trends for the organization
-            var cumulativeTrend = [];
-            _.reduce(response.data.organizations[0].resultsTrend, function(memo, trend) {
-              memo += trend;
-              cumulativeTrend.push(memo);
-              return memo;
-            }, 0);
-            stat.resultsTrend = cumulativeTrend;
+      // Calculate the cumulative trends and the proportion of results
+      _.each(orgsStats, function(stat) {
+        var cumulativeTrends = [];
 
-            // Cumulative trends for the total
-            var totalCumulativeTrend = [];
-            _.reduce(response.data.resultsTrend, function(memo, trend) {
-              memo += trend;
-              totalCumulativeTrend.push(memo);
-              return memo;
-            }, 0);
-            stat.totalResultsTrend = totalCumulativeTrend;
-          }
+        _.reduce(stat.resultsTrend, function(memo, trend) {
+          memo += trend;
+          cumulativeTrends.push(memo);
+          return memo;
+        }, 0);
 
-          // Add the total only if super-admin
-          if ($scope.currentUserIs('admin')) {
-            stat.total = response.data[name + 'Count'];
-          }
+        stat.resultsTrend = cumulativeTrends;
+        stat.resultsProp = stat.resultsCount / total.resultsCount * 100;
+      });
 
-          $scope.stats.push(stat);
+      // Calculate the total for the top n organizations with the trends corresponding to them
+      $scope.topStats = _.reduce(orgsStats, function(memo, orgStats) {
+        memo.payloadsCount += orgStats.payloadsCount;
+        memo.projectsCount += orgStats.projectsCount;
+        memo.testsCount += orgStats.testsCount;
+        memo.resultsCount += orgStats.resultsCount;
+        memo.resultsProp += orgStats.resultsProp;
+
+        // Cumulative trends for the top n organizations
+        _.each(orgStats.resultsTrend, function(trend, idx) {
+          memo.resultsTrend[idx] += trend;
         });
 
-        // Apply a filter on the total if the user is super-admin
-        if ($scope.currentUserIs('admin')) {
-          $scope.stats = _.sortBy($scope.stats, function(stat) { return -stat.total; });
-        } else {
-          $scope.stats = _.sortBy($scope.stats, function(stat) { return -stat.rowsCount; });
-        }
+        return memo;
+      }, {
+        payloadsCount: 0, projectsCount: 0, testsCount:0, resultsCount: 0, resultsProp: 0,
+        resultsTrend: _.map(new Array(orgsStats[0].resultsTrend.length), function(item) { return 0; })
+      });
 
-        $scope.loading = false;
-      }
+      // Make sure the sum is not > 100%
+      $scope.topStats.resultsProp = $scope.topStats.resultsProp > 100 ? 100 : $scope.topStats.resultsProp;
+
+      $scope.total = total;
+      $scope.stats = orgsStats;
+      $scope.loading = false;
     });
   }
 });
