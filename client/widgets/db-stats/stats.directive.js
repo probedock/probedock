@@ -3,14 +3,25 @@ angular.module('probedock.dbStatsWidget').directive('dbStatsWidget', function() 
     restrict: 'E',
     controller: 'DbStatsWidgetCtrl',
     templateUrl: '/templates/widgets/db-stats/stats.template.html',
-    scope: {}
+    scope: {
+      top: '@'
+    }
   };
 }).controller('DbStatsWidgetCtrl', function(api, $scope) {
   _.defaults($scope, {
+    top: 5,
     loading: true
   });
 
   fetchStats();
+
+  $scope.hasMore = function() {
+    return $scope.stats.length > $scope.currentStats.length;
+  };
+
+  $scope.more = function() {
+    $scope.currentStats = $scope.stats;
+  };
 
   function fetchStats() {
     $scope.loading = true;
@@ -68,6 +79,7 @@ angular.module('probedock.dbStatsWidget').directive('dbStatsWidget', function() 
 
       // Update the view
       $scope.stats = stats;
+      $scope.currentStats = stats.slice(0, $scope.top);
       $scope.loading = false;
     });
   }

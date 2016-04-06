@@ -14,14 +14,12 @@
             tr
               th.name.db-stats-right-border rowspan='2' Name
               th.text-center.db-stats-right-border colspan='3' Records
-              th.text-center colspan='4' Disk space
+              th.text-center colspan='2' Disk space
             tr
               th.rows.text-right Count
               th.rows-proportion.text-right %
               th.rows-trend.text-center.db-stats-right-border Trend
-              th.table-size.text-right Table
-              th.indexes-size.text-right Indexes
-              th.total-size.text-right Total
+              th.total-size.text-right Size
               th.total-size-proportion.text-right %
           thead.hidden-lg
             tr
@@ -31,18 +29,21 @@
             tr
               th.rows.text-right Count
               th.rows-trend.text-center.db-stats-right-border Trend
-              th.total-size.text-right Total
+              th.total-size.text-right Size
           tbody
-            tr ng-repeat='stat in stats'
+            tr ng-repeat='stat in currentStats'
               td.name.db-stats-right-border {{ stat.name }}
               td.rows.text-right {{ stat.rowsCount | number }}
               td.rows-proportion.text-right.hidden-md.hidden-sm.hidden-xs {{ stat.rowsProportion | number:2 }}%
               td.rows-trend.text-center.db-stats-right-border
                 sparkline ng-if='stat.rowsCountTrend' data='stat.rowsCountTrend'
-              td.table-size.text-right.hidden-md.hidden-sm.hidden-xs {{ stat.tableSize | prettyBytes }}
-              td.indexes-size.text-right.hidden-md.hidden-sm.hidden-xs {{ stat.indexesSize | prettyBytes }}
-              td.total-size.text-right {{ stat.totalSize | prettyBytes }}
+              td.total-size.text-right tooltip='Table: {{ stat.tableSize | prettyBytes }}, Indexes: {{ stat.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ stat.totalSize | prettyBytes }}
               td.total-size-proportion.text-right.hidden-md.hidden-sm.hidden-xs {{ stat.totalSizeProportion | number:2 }}%
+            tr.more-tables ng-if='hasMore()'
+              td.text-right.hidden-md.hidden-sm.hidden-xs colspan=6
+                a href='#' ng-click='more()' Show all the {{ stats.length }} tables
+              td.text-right.hidden-lg colspan=4
+                a href='#' ng-click='more()' Show all the {{ stats.length }} tables
           tfoot
             tr
               th.name.db-stats-right-border Total
@@ -50,7 +51,5 @@
               th.rows-proportion.text-right.hidden-md.hidden-sm.hidden-xs {{ 100 | number:2 }}%
               td.rows-trend.text-center.db-stats-right-border
                 sparkline ng-if='total.rowsCountTrend' data='total.rowsCountTrend'
-              th.table-size.text-right.hidden-md.hidden-sm.hidden-xs {{ total.tableSize | prettyBytes }}
-              th.indexes-size.text-right.hidden-md.hidden-sm.hidden-xs {{ total.indexesSize | prettyBytes }}
-              th.total-size.text-right {{ total.totalSize | prettyBytes }}
+              th.total-size.text-right tooltip='Table: {{ total.tableSize | prettyBytes }}, Indexes: {{ total.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ total.totalSize | prettyBytes }}
               th.total-size-proportion.text-right.hidden-md.hidden-sm.hidden-xs {{ 100 | number:2 }}%

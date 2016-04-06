@@ -1,22 +1,25 @@
-angular.module('probedock.orgTopStatsWidget').directive('orgTopStatsWidget', function() {
+angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function() {
   return {
     restrict: 'E',
-    controller: 'OrgTopStatsWidgetCtrl',
-    templateUrl: '/templates/widgets/org-top-stats/stats.template.html',
+    controller: 'OrgStatsWidgetCtrl',
+    templateUrl: '/templates/widgets/org-stats/stats.template.html',
     scope: {
+      organization: '=?',
       top: '=?'
     }
   };
-}).controller('OrgTopStatsWidgetCtrl', function(api, $scope, orgs) {
+}).controller('OrgStatsWidgetCtrl', function(api, $scope, orgs) {
   orgs.addAuthFunctions($scope);
 
   _.defaults($scope, {
     params: {
       top: $scope.top ? $scope.top : 5,
-      organization: null
+      organization: $scope.currentUserIs('admin') ? null : $scope.organization
     },
     loading: false
   });
+
+  console.log($scope.params);
 
   $scope.$watch('params', function(newParams, oldParams) {
     if (!_.isUndefined(newParams.organization) || newParams.organization != oldParams.organization) {
