@@ -27,6 +27,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/Chart.js/Chart.js', dest: 'vendor/assets/javascripts/chart.js' },
+          { nonull: true, src: 'bower_components/d3/d3.js', dest: 'vendor/assets/javascripts/d3.js' },
           { nonull: true, src: 'bower_components/drop-ng/src/drop-ng.js', dest: 'vendor/assets/javascripts/drop-ng.js' },
           { nonull: true, src: 'bower_components/dropzone/dist/dropzone.js', dest: 'vendor/assets/javascripts/dropzone.js' },
           { nonull: true, src: 'bower_components/inflection/lib/inflection.js', dest: 'vendor/assets/javascripts/inflection.js' },
@@ -35,6 +36,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/jquery/dist/jquery.js', dest: 'vendor/assets/javascripts/jquery.js' },
           { nonull: true, src: 'bower_components/jvent/dist/jvent.js', dest: 'vendor/assets/javascripts/jvent.js' },
           { nonull: true, src: 'bower_components/moment/moment.js', dest: 'vendor/assets/javascripts/moment.js' },
+          { nonull: true, src: 'bower_components/nvd3/build/nv.d3.js', dest: 'vendor/assets/javascripts/nvd3.js' },
           { nonull: true, src: 'bower_components/pretty-bytes/pretty-bytes.js', dest: 'vendor/assets/javascripts/pretty-bytes.js' },
           { nonull: true, src: 'bower_components/tether/dist/js/tether.js', dest: 'vendor/assets/javascripts/tether.js' },
           { nonull: true, src: 'bower_components/tether-drop/dist/js/drop.js', dest: 'vendor/assets/javascripts/tether-drop.js' },
@@ -52,6 +54,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-jqcloud/angular-jqcloud.js', dest: 'vendor/assets/javascripts/angular-jqcloud.js' },
           { nonull: true, src: 'bower_components/angular-loading-bar/build/loading-bar.js', dest: 'vendor/assets/javascripts/angular-loading-bar.js' },
           { nonull: true, src: 'bower_components/angular-moment/angular-moment.js', dest: 'vendor/assets/javascripts/angular-moment.js' },
+          { nonull: true, src: 'bower_components/angular-nvd3/dist/angular-nvd3.js', dest: 'vendor/assets/javascripts/angular-nvd3.js' },
           { nonull: true, src: 'bower_components/angular-pretty-bytes/angular-pretty-bytes.js', dest: 'vendor/assets/javascripts/angular-pretty-bytes.js' },
           { nonull: true, src: 'bower_components/angular-sanitize/angular-sanitize.js', dest: 'vendor/assets/javascripts/angular-sanitize.js' },
           { nonull: true, src: 'bower_components/angular-scroll/angular-scroll.js', dest: 'vendor/assets/javascripts/angular-scroll.js' },
@@ -72,6 +75,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/dropzone/dist/dropzone.css', dest: 'vendor/assets/stylesheets/dropzone.css' },
           { nonull: true, src: 'bower_components/jqcloud2/dist/jqcloud.css', dest: 'vendor/assets/stylesheets/jqcloud2.css' },
           { nonull: true, src: 'bower_components/normalize.css/normalize.css', dest: 'vendor/assets/stylesheets/normalize.css' },
+          { nonull: true, src: 'bower_components/nvd3/build/nv.d3.css', dest: 'vendor/assets/stylesheets/nvd3.css' },
 
           // fonts
           { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },

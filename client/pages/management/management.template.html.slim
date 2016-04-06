@@ -1,16 +1,9 @@
 .container-fluid.management
   .page-header
     h1 Management
-  .row ng-if='currentUserIs("admin")'
+  .row
     .col-lg-6.col-md-12
-      org-top-stats-widget
-    .col-lg-6.col-md-12
-      resque-stats-widget
       org-stats-widget organization='currentOrganization'
-  .row ng-if='currentUserIs("admin")'
-    .col-md-12
+    .col-lg-6.col-md-12 ng-if='currentUserIs("admin")'
+      resque-stats-widget ng-if='currentUserIs("admin")'
       db-stats-widget
-  .row ng-if='!currentUserIs("admin")'
-    .col-md-6
-    .col-md-6
-      org-stats-widget organization='currentOrganization'
