@@ -51,9 +51,9 @@ Feature: Retrieve the versions for a test where there is no results.
     And the response body should be the following JSON:
       """
       [{
-        "id": "{@idOf: 1.2.3}",
+        "id": "@idOf: 1.2.3",
         "name": "1.2.3",
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "createdAt": "@iso8601"
       }]
       """
@@ -67,9 +67,9 @@ Feature: Retrieve the versions for a test where there is no results.
     And the response body should be the following JSON:
       """
       [{
-        "id": "{@idOf: 2.1}",
+        "id": "@idOf: 2.1",
         "name": "2.1",
-        "projectId": "{@idOf: Senate}",
+        "projectId": "@idOf: Senate",
         "createdAt": "@iso8601"
       }]
       """
@@ -83,9 +83,9 @@ Feature: Retrieve the versions for a test where there is no results.
     And the response body should be the following JSON:
       """
       [{
-        "id": "{@idOf: 2.1}",
+        "id": "@idOf: 2.1",
         "name": "2.1",
-        "projectId": "{@idOf: Senate}",
+        "projectId": "@idOf: Senate",
         "createdAt": "@iso8601"
       }]
       """
