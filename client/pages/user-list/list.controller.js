@@ -1,5 +1,21 @@
 angular.module('probedock.userListPage').controller('UserListPageCtrl', function($q, $scope, $state, states, tables, users) {
 
+  $scope.states = [{
+    active: 1,
+    name: 'Active'
+  },{
+    active: 0,
+    name: 'Inactive'
+  }];
+
+  $scope.types = [{
+    technical: true,
+    name: 'Technical'
+  },{
+    technical: false,
+    name: 'Human'
+  }];
+
   $scope.userTabs = [];
   $scope.activeTabs = {};
 
@@ -12,21 +28,6 @@ angular.module('probedock.userListPage').controller('UserListPageCtrl', function
   });
 
   users.forward($scope, 'update', { prefix: 'users.' });
-
-  $scope.statuses = {
-    active: false,
-    inactive: false
-  };
-
-  $scope.$watch('statuses', function() {
-    if ($scope.statuses.active && !$scope.statuses.inactive) { // Active users
-      $scope.usersList.params.active = 1;
-    } else if (!$scope.statuses.active && $scope.statuses.inactive) { // Inactive users
-      $scope.usersList.params.active = 0;
-    } else { // No filters means active and inactive
-      delete $scope.usersList.params.active;
-    }
-  }, true);
 
   $scope.$on('users.update', function(event, user) {
 

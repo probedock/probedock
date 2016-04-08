@@ -637,6 +637,26 @@ Feature: Users
 
 
 
+  Scenario: An organization member should be able to retrieve by type of users.
+    When borgana sends a GET request to /api/users?technical=true
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: c3po",
+        "name": "c3po",
+        "technical": true,
+        "organizationId": "@idOf: Old Republic",
+        "active": true,
+        "roles": [],
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  @authorization
   Scenario: An organization member should not be able to retrieve users from another organization when filtered by organization.
     When borgana sends a GET request to /api/users?organizationId={@idOf: Rebel Alliance}
     Then the response should be HTTP 403 with the following errors:
