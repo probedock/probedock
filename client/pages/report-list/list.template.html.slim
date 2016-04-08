@@ -10,23 +10,6 @@
             .well.filters st-filters='reportsList.params' class='{{ filtersClass }}'
               .row
                 .col-lg-3.col-md-6
-                  .form-group
-                    label Filter by result
-                    div
-                      .btn-group
-                        label.btn.btn-success btn-checkbox=true ng-model='statuses.passed' tooltip='Reports with passed tests' tooltip-append-to-body='true'
-                          span.glyphicon.glyphicon-thumbs-up
-                        label.btn.btn-danger btn-checkbox=true ng-model='statuses.failed' tooltip='Reports with failed tests' tooltip-append-to-body='true'
-                          span.glyphicon.glyphicon-thumbs-down
-                        label.btn.btn-warning btn-checkbox=true ng-model='statuses.inactive' tooltip='Reports with inactive tests' tooltip-append-to-body='true'
-                          span.glyphicon.glyphicon-ban-circle
-                      .btn-group<
-                        label.btn.btn-default btn-checkbox=true ng-model='kinds.existing' tooltip='Reports with existing tests' tooltip-append-to-body='true'
-                          span.glyphicon.glyphicon-time
-                        label.btn.btn-default btn-checkbox=true ng-model='kinds.new' tooltip='Reports with new tests' tooltip-append-to-body='true'
-                          span.glyphicon.glyphicon-plus
-              .row
-                .col-lg-3.col-md-6
                   user-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='runnerIds' placeholder='All Runners' multiple='true' label='Filter by runner'
                 .col-lg-3.col-md-6
                   project-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' multiple='true'
@@ -34,6 +17,20 @@
                   project-version-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' model-property='projectVersionNames' multiple='true' unique-by='name' extract='name'
                 .col-lg-3.col-md-6
                   category-select prefix='report-list' organization='currentOrganization' model-object='reportsList.params' multiple='true'
+              .row
+                .col-md-12
+                  .select-status
+                    span.select-label Show the reports containing at least one
+                    ui-select<> id='reports-list-status' ng-model='selectParams.status' reset-search-input=true
+                      ui-select-match allow-clear='false' {{ $select.selected.name }}
+                      ui-select-choices repeat='item.status as item in statuses'
+                        span ng-bind-html='item.name | highlight: $select.search'
+                    span.select-label results or containing at least one
+                    ui-select<> id='reports-list-kinds' ng-model='selectParams.kind' reset-search-input=true
+                      ui-select-match allow-clear='false' {{ $select.selected.name }}
+                      ui-select-choices repeat='item.kind as item in kinds'
+                        span ng-bind-html='item.name | highlight: $select.search'
+                    span.select-label tests.
             .row
               .col-md-12
                 table.latest-reports.table.table-striped.table-hover
