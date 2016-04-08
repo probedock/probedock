@@ -76,7 +76,7 @@ Feature: Creation of a project
         "name": "project",
         "repoUrl": "http://localhost.localdomain",
         "repoUrlPattern": "/blob/{{ commit }}/{{ file }}#L{{ line }}",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }
       """
     Then the response should be HTTP 201 with the following JSON:
@@ -85,7 +85,7 @@ Feature: Creation of a project
         "id": "@alphanumeric",
         "name": "project",
         "displayName": "Project",
-        "organizationId": "{@idOf: Rebel Alliance}",
+        "organizationId": "@idOf: Rebel Alliance",
         "repoUrl": "http://localhost.localdomain",
         "repoUrlPattern": "/blob/{{ commit }}/{{ file }}#L{{ line }}",
         "testsCount": 0,
