@@ -44,6 +44,11 @@
                 a href='#' ng-click='more()' Show all the {{ stats.length }} tables
               td.text-right.hidden-lg colspan=4
                 a href='#' ng-click='more()' Show all the {{ stats.length }} tables
+            tr.more-tables ng-if='!hasMore()'
+              td.text-right.hidden-md.hidden-sm.hidden-xs colspan=6
+                a href='#' ng-click='less()' Show less tables
+              td.text-right.hidden-lg colspan=4
+                a href='#' ng-click='less()' Show less tables
           tfoot
             tr
               th.name.db-stats-right-border Total

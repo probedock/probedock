@@ -23,6 +23,10 @@ angular.module('probedock.dbStatsWidget').directive('dbStatsWidget', function() 
     $scope.currentStats = $scope.stats;
   };
 
+  $scope.less = function() {
+    $scope.currentStats = $scope.stats.slice(0, $scope.top)
+  };
+
   function fetchStats() {
     $scope.loading = true;
 

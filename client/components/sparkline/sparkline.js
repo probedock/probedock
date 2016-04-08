@@ -1,4 +1,4 @@
-angular.module('probedock.sparkline').directive('sparkline', function() {
+angular.module('probedock.sparkline').directive('sparkline', function($timeout) {
   return {
     restrict: 'E',
     controller: 'SparklineCtrl',
@@ -7,6 +7,14 @@ angular.module('probedock.sparkline').directive('sparkline', function() {
       data: '=?',
       displayTickLine: '=?',
       displayDots: '=?'
+    },
+    link: function($scope, elem, attrs, ctrl) {
+      // Dirty hack to make sure the trend line is resized the first
+      // time it is displayed as there is no window resize event and the
+      // trend line does not take 100% width every time.
+      $timeout(function() {
+        delete $scope.options.chart.width;
+      }, 200);
     }
   };
 }).controller('SparklineCtrl', function($scope, numberFilter) {
@@ -34,7 +42,7 @@ angular.module('probedock.sparkline').directive('sparkline', function() {
       chart:{
         type: 'sparklinePlus',
         height: 30,
-        width: 200,
+        width: 100,
         margin: {
           top: 2,
           bottom: 2,

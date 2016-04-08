@@ -19,8 +19,6 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
     loading: false
   });
 
-  console.log($scope.params);
-
   $scope.$watch('params', function(newParams, oldParams) {
     if (!_.isUndefined(newParams.organization) || newParams.organization != oldParams.organization) {
       fetchStats();
