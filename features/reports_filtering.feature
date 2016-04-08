@@ -241,8 +241,8 @@ Feature: Various filters to get reports
       [{
         "id": "@idOf: B",
         "duration": "@integer",
-        "resultsCount": 0,
-        "passedResultsCount": 0,
+        "resultsCount": 1,
+        "passedResultsCount": 1,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
         "newTestsCount": 0,
@@ -265,15 +265,15 @@ Feature: Various filters to get reports
       [{
         "id": "@idOf: E",
         "duration": "@integer",
-        "resultsCount": 1,
-        "passedResultsCount": 1,
+        "resultsCount": 4,
+        "passedResultsCount": 4,
         "inactiveResultsCount": 0,
         "inactivePassedResultsCount": 0,
-        "newTestsCount": 0,
+        "newTestsCount": 2,
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }]
       """
     And nothing should have been added or deleted
@@ -286,7 +286,19 @@ Feature: Various filters to get reports
     Then the response should be HTTP 200 with the following JSON:
       """
       [{
-        "id": "{@idOf: B}",
+        "id": "@idOf: E",
+        "duration": "@integer",
+        "resultsCount": 4,
+        "passedResultsCount": 4,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 2,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance"
+      }, {
+        "id": "@idOf: B",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 1,
@@ -296,9 +308,9 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }, {
-        "id": "{@idOf: A}",
+        "id": "@idOf: A",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 1,
@@ -308,7 +320,7 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }]
       """
     And nothing should have been added or deleted
@@ -321,7 +333,7 @@ Feature: Various filters to get reports
     Then the response should be HTTP 200 with the following JSON:
       """
       [{
-        "id": "{@idOf: D}",
+        "id": "@idOf: D",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 0,
@@ -331,7 +343,7 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }]
       """
     And nothing should have been added or deleted
@@ -344,7 +356,7 @@ Feature: Various filters to get reports
     Then the response should be HTTP 200 with the following JSON:
       """
       [{
-        "id": "{@idOf: C}",
+        "id": "@idOf: C",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 0,
@@ -367,7 +379,19 @@ Feature: Various filters to get reports
     Then the response should be HTTP 200 with the following JSON:
       """
       [{
-        "id": "{@idOf: D}",
+        "id": "@idOf: E",
+        "duration": "@integer",
+        "resultsCount": 4,
+        "passedResultsCount": 4,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 2,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance"
+      }, {
+        "id": "@idOf: D",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 0,
@@ -377,9 +401,9 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }, {
-        "id": "{@idOf: C}",
+        "id": "@idOf: C",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 0,
@@ -389,9 +413,9 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }, {
-        "id": "{@idOf: B}",
+        "id": "@idOf: B",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 1,
@@ -401,9 +425,9 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }, {
-        "id": "{@idOf: A}",
+        "id": "@idOf: A",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 1,
@@ -413,7 +437,7 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }]
       """
     And nothing should have been added or deleted
@@ -426,7 +450,19 @@ Feature: Various filters to get reports
      Then the response should be HTTP 200 with the following JSON:
        """
        [{
-         "id": "{@idOf: D}",
+         "id": "@idOf: E",
+         "duration": "@integer",
+         "resultsCount": 4,
+         "passedResultsCount": 4,
+         "inactiveResultsCount": 0,
+         "inactivePassedResultsCount": 0,
+         "newTestsCount": 2,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "@idOf: Rebel Alliance"
+       }, {
+         "id": "@idOf: D",
          "duration": "@integer",
          "resultsCount": 1,
          "passedResultsCount": 0,
@@ -436,9 +472,9 @@ Feature: Various filters to get reports
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
-         "organizationId": "{@idOf: Rebel Alliance}"
+         "organizationId": "@idOf: Rebel Alliance"
        }, {
-         "id": "{@idOf: C}",
+         "id": "@idOf: C",
          "duration": "@integer",
          "resultsCount": 1,
          "passedResultsCount": 0,
@@ -448,9 +484,9 @@ Feature: Various filters to get reports
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
-         "organizationId": "{@idOf: Rebel Alliance}"
+         "organizationId": "@idOf: Rebel Alliance"
        }, {
-         "id": "{@idOf: B}",
+         "id": "@idOf: B",
          "duration": "@integer",
          "resultsCount": 1,
          "passedResultsCount": 1,
@@ -460,7 +496,7 @@ Feature: Various filters to get reports
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
-         "organizationId": "{@idOf: Rebel Alliance}"
+         "organizationId": "@idOf: Rebel Alliance"
        }]
        """
      And nothing should have been added or deleted
@@ -473,7 +509,19 @@ Feature: Various filters to get reports
     Then the response should be HTTP 200 with the following JSON:
       """
       [{
-        "id": "{@idOf: A}",
+         "id": "@idOf: E",
+         "duration": "@integer",
+         "resultsCount": 4,
+         "passedResultsCount": 4,
+         "inactiveResultsCount": 0,
+         "inactivePassedResultsCount": 0,
+         "newTestsCount": 2,
+         "startedAt": "@iso8601",
+         "endedAt": "@iso8601",
+         "createdAt": "@iso8601",
+         "organizationId": "@idOf: Rebel Alliance"
+       }, {
+        "id": "@idOf: A",
         "duration": "@integer",
         "resultsCount": 1,
         "passedResultsCount": 1,
@@ -483,7 +531,7 @@ Feature: Various filters to get reports
         "startedAt": "@iso8601",
         "endedAt": "@iso8601",
         "createdAt": "@iso8601",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }]
       """
     And nothing should have been added or deleted
@@ -496,7 +544,19 @@ Feature: Various filters to get reports
      Then the response should be HTTP 200 with the following JSON:
        """
        [{
-         "id": "{@idOf: D}",
+          "id": "@idOf: E",
+          "duration": "@integer",
+          "resultsCount": 4,
+          "passedResultsCount": 4,
+          "inactiveResultsCount": 0,
+          "inactivePassedResultsCount": 0,
+          "newTestsCount": 2,
+          "startedAt": "@iso8601",
+          "endedAt": "@iso8601",
+          "createdAt": "@iso8601",
+          "organizationId": "@idOf: Rebel Alliance"
+        }, {
+         "id": "@idOf: D",
          "duration": "@integer",
          "resultsCount": 1,
          "passedResultsCount": 0,
@@ -506,9 +566,9 @@ Feature: Various filters to get reports
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
-         "organizationId": "{@idOf: Rebel Alliance}"
+         "organizationId": "@idOf: Rebel Alliance"
        }, {
-         "id": "{@idOf: C}",
+         "id": "@idOf: C",
          "duration": "@integer",
          "resultsCount": 1,
          "passedResultsCount": 0,
@@ -518,9 +578,9 @@ Feature: Various filters to get reports
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
-         "organizationId": "{@idOf: Rebel Alliance}"
+         "organizationId": "@idOf: Rebel Alliance"
        }, {
-         "id": "{@idOf: B}",
+         "id": "@idOf: B",
          "duration": "@integer",
          "resultsCount": 1,
          "passedResultsCount": 1,
@@ -530,9 +590,9 @@ Feature: Various filters to get reports
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
-         "organizationId": "{@idOf: Rebel Alliance}"
+         "organizationId": "@idOf: Rebel Alliance"
        }, {
-         "id": "{@idOf: A}",
+         "id": "@idOf: A",
          "duration": "@integer",
          "resultsCount": 1,
          "passedResultsCount": 1,
@@ -542,7 +602,7 @@ Feature: Various filters to get reports
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
-         "organizationId": "{@idOf: Rebel Alliance}"
+         "organizationId": "@idOf: Rebel Alliance"
        }]
        """
      And nothing should have been added or deleted

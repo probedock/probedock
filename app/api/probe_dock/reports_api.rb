@@ -146,7 +146,10 @@ module ProbeDock
               end
             end
 
-            paginated_rel = paginated_rel.where(complete_clause)
+            unless complete_clause.empty?
+              group = true
+              paginated_rel = paginated_rel.where(complete_clause)
+            end
           end
 
           @pagination_filtered_count = paginated_rel.count('distinct test_reports.id')
