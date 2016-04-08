@@ -79,7 +79,7 @@ Feature: Platform management
       """
       {
         "organizations": [{
-          "id": "{@idOf: Galactic Empire}",
+          "id": "@idOf: Galactic Empire",
           "name": "galactic-empire",
           "displayName": "Galactic Empire",
           "payloadsCount": "@number",
@@ -136,7 +136,7 @@ Feature: Platform management
       """
       {
         "organizations": [{
-          "id": "{@idOf: New Republic}",
+          "id": "@idOf: New Republic",
           "name": "new-republic",
           "displayName": "New Republic",
           "payloadsCount": 1,
@@ -145,7 +145,7 @@ Feature: Platform management
           "resultsCount": 2,
           "resultsTrend": [ 0, 0, 0, 0, 0 ]
         }, {
-          "id": "{@idOf: Old Republic}",
+          "id": "@idOf: Old Republic",
           "name": "old-republic",
           "displayName": "Old Republic",
           "payloadsCount": 1,
@@ -154,7 +154,7 @@ Feature: Platform management
           "resultsCount": 2,
           "resultsTrend": [ 0, 0, 0, 0, 0 ]
         }, {
-          "id": "{@idOf: Rebel Alliance}",
+          "id": "@idOf: Rebel Alliance",
           "name": "rebel-alliance",
           "displayName": "Rebel Alliance",
           "payloadsCount": 1,
@@ -163,7 +163,7 @@ Feature: Platform management
           "resultsCount": 1,
           "resultsTrend": [ 0, 0, 0, 0, 0 ]
         }, {
-          "id": "{@idOf: Galactic Empire}",
+          "id": "@idOf: Galactic Empire",
           "name": "galactic-empire",
           "displayName": "Galactic Empire",
           "payloadsCount": 0,
