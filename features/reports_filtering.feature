@@ -609,6 +609,41 @@ Feature: Various filters to get reports
 
 
 
+  @search
+  Scenario: An organization member should be able to get a list of reports with new tests.
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&kind[]=new
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "@idOf: E",
+        "duration": "@integer",
+        "resultsCount": 4,
+        "passedResultsCount": 4,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 2,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance"
+      }, {
+        "id": "@idOf: A",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 1,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   @authorization
   Scenario: A member of another organization should not be able to get a list report with a project id of a private organization.
     When hsolo sends a GET request to /api/reports?projectId={@idOf: Star Destroyer}
