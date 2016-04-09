@@ -71,12 +71,16 @@ html ng-app='probedock' ng-strict-di=true
                 | Admin
                 span.caret
               ul.dropdown-menu role='menu'
+                li
+                  a ui-sref='org.dashboard.members({ orgName: currentOrganization.name })' Members
                 li ng-if='currentUserIs("admin")'
                   a ui-sref='admin.users' Users
                 li
                   a ui-sref='admin.management' Management
                 li ng-if='currentUserIs("admin")'
                   a ui-sref='admin.settings' Settings
+                li
+                  a ui-sref='org.dashboard.default.edit({ orgName: currentOrganization.name })' Edit organization
           ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
             li ng-if='pendingMemberships.length'
               button.btn.btn-success.navbar-btn.btn-sm tooltip='You have been invited to join an organization!' tooltip-append-to-body='true' tooltip-placement='bottom' ui-sref='profile'

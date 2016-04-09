@@ -173,7 +173,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'MemberListPageCtrl',
         templateUrl: '/templates/pages/member-list/list.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Dashboard', 'Organization members'); }
+          $title: function($stateParams) { return buildTitle($stateParams, 'Organization members'); }
         }
       })
 
