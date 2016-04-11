@@ -80,8 +80,6 @@ module ProbeDock
           end
 
           create_record membership do
-            Rails.logger.info Rails.application.config.action_mailer.smtp_settings.inspect
-            Rails.logger.info Rails.application.config.action_mailer.default_options.inspect
             UserMailer.new_membership_email(membership).deliver_later if data[:user_id].blank?
           end
         end
