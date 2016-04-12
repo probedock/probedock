@@ -44,7 +44,12 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       copied: '=',
       onCopied: '&'
     },
-    template: '<div class="data-label test-key-label" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
+    controller: function($scope) {
+      $scope.isBlank = function() {
+        return _.isString($scope.key) ? _.isBlank($scope.key) : _.isBlank($scope.key.key);
+      }
+    },
+    template: '<div class="data-label test-key-label" ng-if="!isBlank()" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
   };
 }).directive('apiIdLabel', function() {
   return {
@@ -57,8 +62,12 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
       if (_.isUndefined($scope.copyTooltip)) {
         $scope.copyTooltip = 'Click to copy';
       }
+
+      $scope.isBlank = function() {
+        return _.isBlank($scope.apiId);
+      }
     },
-    template: '<div class="data-label api-id-label" clip-copy="apiId" tooltip="{{ copyTooltip }}">{{ apiId }}</div>'
+    template: '<div class="data-label api-id-label" ng-if="!isBlank()" clip-copy="apiId" tooltip="{{ copyTooltip }}">{{ apiId }}</div>'
   };
 })
 
@@ -74,6 +83,10 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
   $scope.getTypeClass = function() {
     return $scope.type ? 'label-' + $scope.type : '';
   };
+
+  $scope.isBlank = function() {
+    return _.isBlank($scope.label);
+  }
 })
 .controller('ProjectVersionLabelCtrl', function($scope, projectNameFilter) {
   _.defaults($scope, {
