@@ -16,7 +16,7 @@ Feature: Platform management
     Given user palpatine who is a Probe Dock admin exists
     When palpatine sends a GET request to /api/platformManagement/dbStats
     Then the response code should be 200
-    And the response body should be a JSON array with the following tables:
+    And the response should contain DB stats for the following tables:
       """
         app_settings
         categories
