@@ -9,24 +9,24 @@ Feature: Users
 
     # Create private organization with 2 users
     And private organization Rebel Alliance exists
-    And user hsolo with primary email han.solo@localhost.localdomain who is a member of Rebel Alliance exists
-    And user lskywalker with primary email luke.skywalker@localhost.localdomain who is a member of Rebel Alliance exists and is inactive
+    And user hsolo who is a member of Rebel Alliance exists with primary email han.solo@localhost.localdomain
+    And user lskywalker who is a member of Rebel Alliance exists with primary email luke.skywalker@localhost.localdomain and is inactive
 
     # Create public organization with 2 users
     And public organization Old Republic exists
-    And user borgana with primary email bail.organa@localhost.localdomain who is a member of Old Republic exists
-    And user pamidala with primary email padme.amidala@localhost.localdomain who is a member of Old Republic exists
+    And user borgana who is a member of Old Republic exists with primary email bail.organa@localhost.localdomain
+    And user pamidala who is a member of Old Republic exists with primary email padme.amidala@localhost.localdomain
     And user c3po who is a technical user of Old Republic exists
 
     # Create public organization with 3 users
     And public organization Galactic Empire exists
-    And user dvader with primary email dark.vader@localhost.localdomain who is a member of Galactic Empire exists
-    And user palpatine with primary email palpatine@localhost.localdomain who is a member of Galactic Empire exists
+    And user dvader who is a member of Galactic Empire exists with primary email dark.vader@localhost.localdomain
+    And user palpatine who is a member of Galactic Empire exists with primary email palpatine@localhost.localdomain
     And user borgana is also a member of Galactic Empire
 
 
 
-  Scenario: An organization member should be able to retrieve all users with only details for his organizations.
+  Scenario: An organization member should be able to retrieve all users with only details for his organizations
     When borgana sends a GET request to /api/users
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -123,7 +123,7 @@ Feature: Users
 
 
 
-  Scenario: An anonymous user should be able to retrieve all users without details.
+  Scenario: An anonymous user should be able to retrieve all users without details
     When nobody sends a GET request to /api/users
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -200,7 +200,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve all users with only details for his organizations and technical memberships.
+  Scenario: An organization member should be able to retrieve all users with only details for his organizations and technical memberships
     When borgana sends a GET request to /api/users?withTechnicalMembership=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -305,7 +305,7 @@ Feature: Users
 
 
 
-  Scenario: Only Probe Dock admins should be able to retrieve all users with only details for organizations where they are member and organization memberships.
+  Scenario: Only Probe Dock admins should be able to retrieve all users with only details for organizations and memberships
     When master sends a GET request to /api/users?withOrganizations=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -497,7 +497,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve a user by its email.
+  Scenario: An organization member should be able to retrieve a user by e-mail
     When borgana sends a GET request to /api/users?email=luke.skywalker@localhost.localdomain
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -516,7 +516,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve a user by its user name.
+  Scenario: An organization member should be able to search a user by name
     When borgana sends a GET request to /api/users?search=hsolo
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -535,7 +535,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve a user by its email through search.
+  Scenario: An organization member should be able to search a user by e-mail
     When borgana sends a GET request to /api/users?search=han
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -554,7 +554,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve a user by its name through name.
+  Scenario: An organization member should be able to retrieve a user by name
     When borgana sends a GET request to /api/users?name=hsolo
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -573,7 +573,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve inactive users.
+  Scenario: An organization member should be able to retrieve inactive users
     When borgana sends a GET request to /api/users?active=false
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -592,7 +592,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve users filtered by organization.
+  Scenario: An organization member should be able to retrieve the users in his organization
     When borgana sends a GET request to /api/users?organizationId={@idOf: Old Republic}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -637,7 +637,7 @@ Feature: Users
 
 
 
-  Scenario: An organization member should be able to retrieve by type of users.
+  Scenario: An organization member should be able to retrieve technical users
     When borgana sends a GET request to /api/users?technical=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -657,7 +657,7 @@ Feature: Users
 
 
   @authorization
-  Scenario: An organization member should not be able to retrieve users from another organization when filtered by organization.
+  Scenario: An organization member should not be able to retrieve users from another organization
     When borgana sends a GET request to /api/users?organizationId={@idOf: Rebel Alliance}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |

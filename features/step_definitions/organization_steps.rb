@@ -12,7 +12,7 @@ Given /^public organization (.+) exists( and is inactive)?/ do |name,inactive|
   add_named_record(name, create(:organization, options))
 end
 
-Given /user (\w+)(?: with primary email (.+?))? who is a member of (.+) exists( and is inactive)?/ do |user_name,primary_email,organization_name,inactive|
+Given /user (\w+) who is a member of (.+) exists(?: with primary email (.+?))?(?: and is (inactive))?$/ do |user_name,organization_name,primary_email,inactive|
   org = Organization.where(name: organization_name.downcase.gsub(/\s+/, '-')).first!
 
   options = {
@@ -31,7 +31,7 @@ Given /user (\w+)(?: with primary email (.+?))? who is a member of (.+) exists( 
   add_named_record(user_name, create(:org_member, options))
 end
 
-Given /user (\w+)(?: with primary email (.+?))? who is an admin of (.+) exists/ do |user_name,primary_email,organization_name|
+Given /user (\w+) who is an admin of (.+) exists(?: with primary email (.+?))?$/ do |user_name,organization_name,primary_email|
   org = Organization.where(name: organization_name.downcase.gsub(/\s+/, '-')).first!
 
   if primary_email
