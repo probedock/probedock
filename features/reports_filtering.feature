@@ -387,7 +387,7 @@ Feature: Various filters to get reports
 
   @search
    Scenario: An organization member should be able to get a list of reports with existing tests.
-     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&kind[]=existing
+     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&newTests=false
      Then the response should be HTTP 200 with the following JSON:
        """
        [{
@@ -422,65 +422,6 @@ Feature: Various filters to get reports
          "inactiveResultsCount": 0,
          "inactivePassedResultsCount": 0,
          "newTestsCount": 0,
-         "startedAt": "@iso8601",
-         "endedAt": "@iso8601",
-         "createdAt": "@iso8601",
-         "organizationId": "@idOf: Rebel Alliance"
-       }]
-       """
-     And nothing should have been added or deleted
-
-
-
-  @search
-   Scenario: An organization member should be able to get a list of reports with new and existing tests.
-     When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&kind[]=new&kind[]=existing
-     Then the response should be HTTP 200 with the following JSON:
-       """
-       [{
-         "id": "@idOf: D",
-         "duration": "@integer",
-         "resultsCount": 1,
-         "passedResultsCount": 0,
-         "inactiveResultsCount": 1,
-         "inactivePassedResultsCount": 1,
-         "newTestsCount": 0,
-         "startedAt": "@iso8601",
-         "endedAt": "@iso8601",
-         "createdAt": "@iso8601",
-         "organizationId": "@idOf: Rebel Alliance"
-       }, {
-         "id": "@idOf: C",
-         "duration": "@integer",
-         "resultsCount": 1,
-         "passedResultsCount": 0,
-         "inactiveResultsCount": 0,
-         "inactivePassedResultsCount": 0,
-         "newTestsCount": 0,
-         "startedAt": "@iso8601",
-         "endedAt": "@iso8601",
-         "createdAt": "@iso8601",
-         "organizationId": "@idOf: Rebel Alliance"
-       }, {
-         "id": "@idOf: B",
-         "duration": "@integer",
-         "resultsCount": 1,
-         "passedResultsCount": 1,
-         "inactiveResultsCount": 0,
-         "inactivePassedResultsCount": 0,
-         "newTestsCount": 0,
-         "startedAt": "@iso8601",
-         "endedAt": "@iso8601",
-         "createdAt": "@iso8601",
-         "organizationId": "@idOf: Rebel Alliance"
-       }, {
-         "id": "@idOf: A",
-         "duration": "@integer",
-         "resultsCount": 1,
-         "passedResultsCount": 1,
-         "inactiveResultsCount": 0,
-         "inactivePassedResultsCount": 0,
-         "newTestsCount": 1,
          "startedAt": "@iso8601",
          "endedAt": "@iso8601",
          "createdAt": "@iso8601",
@@ -493,7 +434,7 @@ Feature: Various filters to get reports
 
   @search
   Scenario: An organization member should be able to get a list of reports with new tests.
-    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&kind[]=new
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&newTests=true
     Then the response should be HTTP 200 with the following JSON:
       """
       [{
