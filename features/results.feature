@@ -92,7 +92,7 @@ Feature: Results
 
 
 
-  Scenario: An organization member should be able to get results of a report in a private organization.
+  Scenario: An organization member should be able to get results of a report in a private organization
     When hsolo sends a GET request to /api/results?reportId={@idOf: A}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -163,7 +163,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report of a public organization.
+  Scenario: A member from another organization should be able to get results of a report of a public organization
     When hsolo sends a GET request to /api/results?reportId={@idOf: C}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -278,7 +278,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report of a public organization ordered by run at.
+  Scenario: A member from another organization should be able to get results of a report of a public organization ordered by run at
     When hsolo sends a GET request to /api/results?reportId={@idOf: C}&sort=runAt
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -393,7 +393,7 @@ Feature: Results
 
 
 
-  Scenario: An anonymous user should be able to get results of a report of a public organization.
+  Scenario: An anonymous user should be able to get results of a report of a public organization
     When nobody sends a GET request to /api/results?reportId={@idOf: C}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -508,7 +508,7 @@ Feature: Results
 
 
 
-  Scenario: An organization member should be able to get results of a report in a private organization by test id.
+  Scenario: An organization member should be able to get results of a report in a private organization by test id
     When hsolo sends a GET request to /api/results?testId={@idOf: Engine should be powered}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -607,7 +607,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report of a public organization.
+  Scenario: A member from another organization should be able to get results of a report of a public organization
     When hsolo sends a GET request to /api/results?testId={@idOf: Should be big enough}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -644,7 +644,7 @@ Feature: Results
 
 
 
-  Scenario: An anonymous user should be able to get results of a report of a public organization.
+  Scenario: An anonymous user should be able to get results of a report of a public organization
     When nobody sends a GET request to /api/results?testId={@idOf: Should be big enough}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -681,7 +681,7 @@ Feature: Results
 
 
 
-  Scenario: An organization member should be able to get results of a report in a private organization by project version.
+  Scenario: An organization member should be able to get results of a report in a private organization by project version
     When hsolo sends a GET request to /api/results?projectVersionId={@idOf: 1.2.2}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -724,7 +724,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report from a public organization by project version.
+  Scenario: A member from another organization should be able to get results of a report from a public organization by project version
     When hsolo sends a GET request to /api/results?projectVersionId={@idOf: 1.0.0}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -787,7 +787,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report from a public organization by project version.
+  Scenario: A member from another organization should be able to get results of a report from a public organization by project version
     When nobody sends a GET request to /api/results?projectVersionId={@idOf: 1.0.1}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -876,7 +876,7 @@ Feature: Results
 
 
 
-  Scenario: An organization member should be able to get results of a report in a private organization by project.
+  Scenario: An organization member should be able to get results of a report in a private organization by project
     When hsolo sends a GET request to /api/results?projectId={@idOf: X-Wing}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1003,7 +1003,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report from a public organization by project.
+  Scenario: A member from another organization should be able to get results of a report from a public organization by project
     When hsolo sends a GET request to /api/results?projectId={@idOf: Senate}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1144,7 +1144,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report from a public organization by project.
+  Scenario: A member from another organization should be able to get results of a report from a public organization by project
     When nobody sends a GET request to /api/results?projectId={@idOf: Senate}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1285,7 +1285,7 @@ Feature: Results
 
 
 
-  Scenario: An organization member should be able to get results of a report in a private organization by runners.
+  Scenario: An organization member should be able to get results of a report in a private organization by runners
     When hsolo sends a GET request to /api/results?reportId={@idOf: B}&runnerIds[]={@idOf: lskywalker}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1324,7 +1324,7 @@ Feature: Results
 
 
 
-  Scenario: A member of another organization should be able to get results of a report from a public organization by runners.
+  Scenario: A member of another organization should be able to get results of a report from a public organization by runners
     When hsolo sends a GET request to /api/results?reportId={@idOf: C}&runnerIds[]={@idOf: pamidala}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1361,7 +1361,7 @@ Feature: Results
 
 
 
-  Scenario: An anonymous user should be able to get results of a report from a public organization by runners.
+  Scenario: An anonymous user should be able to get results of a report from a public organization by runners
     When nobody sends a GET request to /api/results?reportId={@idOf: C}&runnerIds[]={@idOf: pamidala}
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1398,7 +1398,7 @@ Feature: Results
 
 
 
-  Scenario: An organization member should be able to get results of a report in a private organization with scm data.
+  Scenario: An organization member should be able to get results of a report in a private organization with scm data
     When hsolo sends a GET request to /api/results?reportId={@idOf: A}&withScm=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1486,7 +1486,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report of a public organization with scm data.
+  Scenario: A member from another organization should be able to get results of a report of a public organization with scm data
     When hsolo sends a GET request to /api/results?reportId={@idOf: C}&withScm=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1605,7 +1605,7 @@ Feature: Results
 
 
 
-  Scenario: An anonymous user should be able to get results of a report of a public organization with scm data.
+  Scenario: An anonymous user should be able to get results of a report of a public organization with scm data
     When nobody sends a GET request to /api/results?reportId={@idOf: C}&withScm=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -1724,7 +1724,7 @@ Feature: Results
 
 
 
-  Scenario: An organization member should be able to get results of a report in a private organization with scm data.
+  Scenario: An organization member should be able to get results of a report in a private organization with scm data
     And the project X-Wing updated with the repo url pattern {{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
     When hsolo sends a GET request to /api/results?reportId={@idOf: A}&withScm=true
     Then the response code should be 200
@@ -1815,7 +1815,7 @@ Feature: Results
 
 
 
-  Scenario: A member from another organization should be able to get results of a report of a public organization with scm data.
+  Scenario: A member from another organization should be able to get results of a report of a public organization with scm data
     And the project X-Wing updated with the repo url pattern {{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
     When hsolo sends a GET request to /api/results?reportId={@idOf: C}&withScm=true
     Then the response code should be 200
@@ -1935,7 +1935,7 @@ Feature: Results
 
 
 
-  Scenario: An anonymous user should be able to get results of a report of a public organization with scm data.
+  Scenario: An anonymous user should be able to get results of a report of a public organization with scm data
     And the project X-Wing updated with the repo url pattern {{repoUrl}}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
     When nobody sends a GET request to /api/results?reportId={@idOf: C}&withScm=true
     Then the response code should be 200
@@ -2056,7 +2056,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get results of a report in a private organization.
+  Scenario: An anonymous user should not be able to get results of a report in a private organization
     When nobody sends a GET request to /api/results?reportId={@idOf: A}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -2066,7 +2066,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: A member of another organization should not be able to get results of a report in a private organization.
+  Scenario: A member of another organization should not be able to get results of a report in a private organization
     Given public organization Galactic Republic exists
     And user palpatine who is a member of Galactic Republic exists
     When palpatine sends a GET request to /api/results?reportId={@idOf: A}
@@ -2078,7 +2078,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get results of a report in a private organization by test.
+  Scenario: An anonymous user should not be able to get results of a report in a private organization by test
     When nobody sends a GET request to /api/results?testId={@idOf: Engine should be powered}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -2088,7 +2088,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: A member of another organization should not be able to get results of a report in a private organization by test.
+  Scenario: A member of another organization should not be able to get results of a report in a private organization by test
     Given public organization Galactic Republic exists
     And user palpatine who is a member of Galactic Republic exists
     When palpatine sends a GET request to /api/results?testId={@idOf: Engine should be powered}
@@ -2100,7 +2100,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get results of a report in a private organization by project.
+  Scenario: An anonymous user should not be able to get results of a report in a private organization by project
     When nobody sends a GET request to /api/results?projectId={@idOf: X-Wing}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -2110,7 +2110,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: A member of another organization should not be able to get results of a report in a private organization by project.
+  Scenario: A member of another organization should not be able to get results of a report in a private organization by project
     Given public organization Galactic Republic exists
     And user palpatine who is a member of Galactic Republic exists
     When palpatine sends a GET request to /api/results?projectId={@idOf: X-Wing}
@@ -2122,7 +2122,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get results of a report in a private organization by project version.
+  Scenario: An anonymous user should not be able to get results of a report in a private organization by project version
     When nobody sends a GET request to /api/results?projectVersionId={@idOf: 1.2.3}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -2132,7 +2132,7 @@ Feature: Results
 
 
   @authorization
-  Scenario: A member of another organization should not be able to get results of a report in a private organization by project version.
+  Scenario: A member of another organization should not be able to get results of a report in a private organization by project version
     Given public organization Galactic Republic exists
     And user palpatine who is a member of Galactic Republic exists
     When palpatine sends a GET request to /api/results?projectVersionId={@idOf: 1.2.3}

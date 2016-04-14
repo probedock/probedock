@@ -37,7 +37,7 @@ Feature: Categories list
 
 
 
-  Scenario: An anonymous user should be able to list the categories of a public organization.
+  Scenario: An anonymous user should be able to list the categories of a public organization
     When nobody sends a GET request to /api/categories?organizationId={@idOf: Rebel Alliance}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -72,7 +72,7 @@ Feature: Categories list
 
 
 
-  Scenario: An organization member should be able to list the categories of a public organization.
+  Scenario: An organization member should be able to list the categories of a public organization
     When lskywalker sends a GET request to /api/categories?organizationId={@idOf: Rebel Alliance}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -107,7 +107,7 @@ Feature: Categories list
 
 
 
-  Scenario: An organization member should be able to list the categories of a private organization.
+  Scenario: An organization member should be able to list the categories of a private organization
     When palpatine sends a GET request to /api/categories?organizationId={@idOf: Galactic Empire}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -130,7 +130,7 @@ Feature: Categories list
 
 
 
-  Scenario: A Probe Dock administrator should be able to list the categories of all organizations.
+  Scenario: A Probe Dock administrator should be able to list the categories of all organizations
     Given user yoda who is a Probe Dock admin exists
     When yoda sends a GET request to /api/categories
     Then the response should be HTTP 200 with the following JSON:
@@ -178,7 +178,7 @@ Feature: Categories list
 
 
 
-  Scenario: An anonymous user should be able to see that there are no categories in a public organization.
+  Scenario: An anonymous user should be able to see that there are no categories in a public organization
     When nobody sends a GET request to /api/categories?organizationId={@idOf: Commerce Guild}
     Then the response should be HTTP 200 with the following JSON:
       """
@@ -189,7 +189,7 @@ Feature: Categories list
 
 
   @authorization
-  Scenario: An anonymous user should not be able to list the categories of a private organization.
+  Scenario: An anonymous user should not be able to list the categories of a private organization
     When nobody sends a GET request to /api/categories?organizationId={@idOf: Galactic Empire}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -199,7 +199,7 @@ Feature: Categories list
 
 
   @authorization
-  Scenario: An organization member should not be able to list the categories of another private organization.
+  Scenario: An organization member should not be able to list the categories of another private organization
     When lskywalker sends a GET request to /api/categories?organizationId={@idOf: Galactic Empire}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -209,7 +209,7 @@ Feature: Categories list
 
 
   @authorization
-  Scenario: An anonymous user should not be able to list the categories of all organizations.
+  Scenario: An anonymous user should not be able to list the categories of all organizations
     When nobody sends a GET request to /api/categories
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -219,7 +219,7 @@ Feature: Categories list
 
 
   @authorization
-  Scenario: An organization member should not be able to list the categories of all organizations.
+  Scenario: An organization member should not be able to list the categories of all organizations
     When lskywalker sends a GET request to /api/categories
     Then the response should be HTTP 403 with the following errors:
       | message                                        |

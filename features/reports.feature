@@ -6,7 +6,7 @@ Feature: Reports
 
 
 
-  Scenario: An organization member should be able to get a report of a private organization by ID.
+  Scenario: An organization member should be able to get a report of a private organization by ID
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And project version 1.2.3 exists for project X-Wing
@@ -63,7 +63,7 @@ Feature: Reports
 
 
 
-  Scenario: An anonymous user should be able to get a report of a public organization by ID.
+  Scenario: An anonymous user should be able to get a report of a public organization by ID
     Given public organization Galactic Republic exists
     And project Star Destroyer exists within organization Galactic Republic
     And project version 1.2.3 exists for project Star Destroyer
@@ -120,7 +120,7 @@ Feature: Reports
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get a report of a private organization by ID.
+  Scenario: An anonymous user should not be able to get a report of a private organization by ID
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And test result report A was generated for organization Rebel Alliance
@@ -133,7 +133,7 @@ Feature: Reports
 
 
   @authorization
-  Scenario: A member of another organization should not be able to get a report of a private organization by ID.
+  Scenario: A member of another organization should not be able to get a report of a private organization by ID
     Given private organization Rebel Alliance exists
     And public organization Galactic Republic exists
     And project X-Wing exists within organization Rebel Alliance

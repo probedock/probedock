@@ -14,7 +14,7 @@ Feature: Technical users
 
 
 
-  Scenario: An organization admin should be able to create a technical user.
+  Scenario: An organization admin should be able to create a technical user
     Given organization Initech exists
     And user blumbergh who is an admin of Initech exists
     When blumbergh sends a POST request with the following JSON to /api/users:
@@ -51,7 +51,7 @@ Feature: Technical users
 
 
   @serialization
-  Scenario: An organization admin should be able to create a technical user and get the associated membership in one request.
+  Scenario: An organization admin should be able to create a technical user and get the associated membership in one request
     Given organization Initech exists
     And user blumbergh who is an admin of Initech exists
     When blumbergh sends a POST request with the following JSON to /api/users?withTechnicalMembership=1:
@@ -96,7 +96,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization member should not be able to create a technical user.
+  Scenario: An organization member should not be able to create a technical user
     Given organization Initech exists
     And user pgibbons who is a member of Initech exists
     When pgibbons sends a POST request with the following JSON to /api/users:
@@ -115,7 +115,7 @@ Feature: Technical users
 
 
   @validation
-  Scenario: An organization admin should not be able to create a technical user with a password.
+  Scenario: An organization admin should not be able to create a technical user with a password
     Given organization Initech exists
     And user blumbergh who is an admin of Initech exists
     When blumbergh sends a POST request with the following JSON to /api/users:
@@ -135,7 +135,7 @@ Feature: Technical users
 
 
   @authentication
-  Scenario: A technical user should not be able to log in.
+  Scenario: A technical user should not be able to log in
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     When milton authenticates by sending a POST request to /api/authentication with Basic password foo
@@ -147,7 +147,7 @@ Feature: Technical users
 
 
   @validation
-  Scenario: An administrator should not be able to invite a technical user to another organization.
+  Scenario: An administrator should not be able to invite a technical user to another organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And organization Chotchkies exists
@@ -166,7 +166,7 @@ Feature: Technical users
 
 
 
-  Scenario: An organization admin should be able to update a technical user of the organization.
+  Scenario: An organization admin should be able to update a technical user of the organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And user blumbergh who is an admin of Initech exists
@@ -203,7 +203,7 @@ Feature: Technical users
 
 
   @serialization
-  Scenario: An organization admin should be able to update a technical user of the organization and get the associated membership in one request.
+  Scenario: An organization admin should be able to update a technical user of the organization and get the associated membership in one request
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And user blumbergh who is an admin of Initech exists
@@ -248,7 +248,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization member should not be able to update a technical user of the organization.
+  Scenario: An organization member should not be able to update a technical user of the organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And user pgibbons who is a member of Initech exists
@@ -267,7 +267,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization admin should not be able to update a technical user of another organization.
+  Scenario: An organization admin should not be able to update a technical user of another organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And organization Chotchkies exists
@@ -286,7 +286,7 @@ Feature: Technical users
 
 
 
-  Scenario: An organization admin should be able to delete a technical user of the organization.
+  Scenario: An organization admin should be able to delete a technical user of the organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And user blumbergh who is an admin of Initech exists
@@ -298,7 +298,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization member should not be able to delete a technical user of the organization.
+  Scenario: An organization member should not be able to delete a technical user of the organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And user pgibbons who is a member of Initech exists
@@ -311,7 +311,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization admin should not be able to delete a technical user of another organization.
+  Scenario: An organization admin should not be able to delete a technical user of another organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And organization Chotchkies exists
@@ -325,7 +325,7 @@ Feature: Technical users
 
 
   @authentication
-  Scenario: An organization admin should be able to create an authentication token for a technical user of the organization.
+  Scenario: An organization admin should be able to create an authentication token for a technical user of the organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And user blumbergh who is an admin of Initech exists
@@ -348,7 +348,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization member should not be able to create an authentication token for a technical user of the organization.
+  Scenario: An organization member should not be able to create an authentication token for a technical user of the organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And user pgibbons who is a member of Initech exists
@@ -366,7 +366,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization member should not be able to create an authentication token for a technical user of another organization.
+  Scenario: An organization member should not be able to create an authentication token for a technical user of another organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And organization Chotchkies exists
@@ -385,7 +385,7 @@ Feature: Technical users
 
 
   @authorization
-  Scenario: An organization admin should not be able to create an authentication token for a technical user of another organization.
+  Scenario: An organization admin should not be able to create an authentication token for a technical user of another organization
     Given organization Initech exists
     And user milton who is a technical user of Initech exists
     And organization Chotchkies exists
@@ -404,7 +404,7 @@ Feature: Technical users
 
 
   @serialization
-  Scenario: An admin should be able to list users and get the membership associated to technical users in one request.
+  Scenario: An admin should be able to list users and get the membership associated to technical users in one request
     Given organization Initech exists
     And user pgibbons who is a member of Initech exists
     And user milton who is a technical user of Initech exists

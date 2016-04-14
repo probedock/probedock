@@ -9,7 +9,7 @@ Feature: User registration
 
 
 
-  Scenario: A new user should be able to register and create an organization.
+  Scenario: A new user should be able to register and create an organization
     Given user registrations are enabled
     When nobody sends a POST request with the following JSON to /api/registrations:
       """
@@ -84,7 +84,7 @@ Feature: User registration
 
 
 
-  Scenario: A new user should not be able to register if user registrations are disabled.
+  Scenario: A new user should not be able to register if user registrations are disabled
     Given user registrations are disabled
     When nobody sends a POST request with the following JSON to /api/registrations:
       """
@@ -108,7 +108,7 @@ Feature: User registration
 
 
   @validation
-  Scenario: A new user should not be able to register with the same name as an existing user or create an organization with the same name as an existing organization.
+  Scenario: A new user should not be able to register with the same name as an existing user or create an organization with the same name as an existing organization
     Given organization Galactic Republic exists
     And user palpatine who is an admin of Galactic Republic exists
     And user registrations are enabled
@@ -135,7 +135,7 @@ Feature: User registration
 
 
   @otp
-  Scenario: A new user should be able to retrieve the registration he created with the OTP he received in the registration e-mail.
+  Scenario: A new user should be able to retrieve the registration he created with the OTP he received in the registration e-mail
     Given user borgana registered with e-mail bail.organa@galactic-republic.org and created private organization Rebel Alliance
     When nobody sends a GET request to /api/registrations?otp={@registrationOtpOf: borgana}
     Then the response code should be 200
@@ -169,7 +169,7 @@ Feature: User registration
 
 
   @authorization
-  Scenario: An anonymous user should not be able to retrieve a user registration.
+  Scenario: An anonymous user should not be able to retrieve a user registration
     Given user borgana registered with e-mail bail.organa@galactic-republic.org and created private organization Rebel Alliance
     When nobody sends a GET request to /api/registrations
     Then the response should be HTTP 403 with the following errors:
@@ -179,7 +179,7 @@ Feature: User registration
 
 
 
-  Scenario: A new user should be able to set his password and activate his account with the OTP he received in the registration e-mail.
+  Scenario: A new user should be able to set his password and activate his account with the OTP he received in the registration e-mail
     Given user borgana registered with e-mail bail.organa@galactic-republic.org and created private organization Rebel Alliance
     When nobody sends a PATCH request with the following JSON to /api/users/{@idOf: borgana}?registrationOtp={@registrationOtpOf: borgana}:
       """
@@ -237,7 +237,7 @@ Feature: User registration
 
 
   @authorization
-  Scenario: A new user should not be able to rename his account when activating it.
+  Scenario: A new user should not be able to rename his account when activating it
     Given user borgana registered with e-mail bail.organa@galactic-republic.org and created private organization Rebel Alliance
     When nobody sends a PATCH request with the following JSON to /api/users/{@idOf: borgana}?registrationOtp={@registrationOtpOf: borgana}:
       """
@@ -279,7 +279,7 @@ Feature: User registration
 
 
   @search
-  Scenario: An anonymous user should be able to check if a username is already taken.
+  Scenario: An anonymous user should be able to check if a username is already taken
     Given user borgana exists with e-mail bail.organa@galactic-republic.org
     When nobody sends a GET request to /api/users?name=borgana
     Then the response code should be 200
@@ -302,7 +302,7 @@ Feature: User registration
 
 
   @search
-  Scenario: An anonymous user should be able to check if a username is free.
+  Scenario: An anonymous user should be able to check if a username is free
     Given user palpatine exists with e-mail supreme-chancellor@galactic-republic.org
     When nobody sends a GET request to /api/users?name=borgana
     Then the response code should be 200
@@ -315,7 +315,7 @@ Feature: User registration
 
 
   @search
-  Scenario: An anonymous user should be able to check if an e-mail is already taken.
+  Scenario: An anonymous user should be able to check if an e-mail is already taken
     Given user borgana exists with e-mail bail.organa@galactic-republic.org
     When nobody sends a GET request to /api/users?email=bail.organa@galactic-republic.org
     Then the response code should be 200
@@ -338,7 +338,7 @@ Feature: User registration
 
 
   @search
-  Scenario: An anonymous user should be able to check if an e-mail is free.
+  Scenario: An anonymous user should be able to check if an e-mail is free
     Given user palpatine exists with e-mail supreme-chancellor@galactic-republic.org
     When nobody sends a GET request to /api/users?email=bail.organa@galactic-republic.org
     Then the response code should be 200

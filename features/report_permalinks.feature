@@ -11,7 +11,7 @@ Feature: Reports search
 
 
 
-  Scenario: An organization member should be able to find a private report with its UID.
+  Scenario: An organization member should be able to find a private report with its UID
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And user hsolo who is a member of Rebel Alliance exists
@@ -41,7 +41,7 @@ Feature: Reports search
 
 
 
-  Scenario: An organization member should be able to find a private report by the ID of one of its payloads.
+  Scenario: An organization member should be able to find a private report by the ID of one of its payloads
     Given private organization Rebel Alliance exists
     And project X-Wing exists within organization Rebel Alliance
     And user hsolo who is a member of Rebel Alliance exists

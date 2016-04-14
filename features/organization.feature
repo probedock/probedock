@@ -19,7 +19,7 @@ Feature: Organization
 
 
 
-  Scenario: A user should only be able to retrieve the organizations where he is an admin.
+  Scenario: A user should only be able to retrieve the organizations where he is an admin
     When borgana sends a GET request to /api/organizations?administered=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -48,7 +48,7 @@ Feature: Organization
 
 
 
-  Scenario: A Probe Dock admin should be able to retrieve all the organization administered or not.
+  Scenario: A Probe Dock admin should be able to retrieve all the organization administered or not
     And user master who is a Probe Dock admin exists
     When master sends a GET request to /api/organizations?administered=true
     Then the response code should be 200
@@ -87,7 +87,7 @@ Feature: Organization
 
 
 
-  Scenario: A super admin should be able to retrieve all the inactive organizations.
+  Scenario: A super admin should be able to retrieve all the inactive organizations
     And user master who is a Probe Dock admin exists
     When master sends a GET request to /api/organizations?active=false
     Then the response code should be 200
@@ -109,7 +109,7 @@ Feature: Organization
 
 
   @authorization
-  Scenario: An anonymous user should not be able to retrieve any organization when administered filter is set.
+  Scenario: An anonymous user should not be able to retrieve any organization when administered filter is set
     When nobody sends a GET request to /api/organizations?administered=true
     Then the response should be HTTP 401 with the following errors:
       | message                                        |

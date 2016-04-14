@@ -8,7 +8,7 @@ Feature: Organization accessibility
 
 
   @authorization @scoping
-  Scenario: An anonymous user should only see public organizations as accessible.
+  Scenario: An anonymous user should only see public organizations as accessible
     Given public organization Galactic Republic exists
     And private organization Rebel Alliance exists
     And private organization Sith Order exists
@@ -34,7 +34,7 @@ Feature: Organization accessibility
 
 
   @authorization @scoping
-  Scenario: An organization member should see public organizations and organizations he is a member of as accessible.
+  Scenario: An organization member should see public organizations and organizations he is a member of as accessible
     Given public organization Galactic Republic exists
     And private organization Rebel Alliance exists
     And private organization Sith Order exists
@@ -70,7 +70,7 @@ Feature: Organization accessibility
 
 
   @authorization @scoping
-  Scenario: An organization admin should see public organizations and organizations he is a member of as accessible.
+  Scenario: An organization admin should see public organizations and organizations he is a member of as accessible
     Given public organization Galactic Republic exists
     And private organization Rebel Alliance exists
     And private organization Sith Order exists
@@ -106,7 +106,7 @@ Feature: Organization accessibility
 
 
   @authorization @scoping
-  Scenario: A Probe Dock administrator should see all organizations as accessible.
+  Scenario: A Probe Dock administrator should see all organizations as accessible
     Given public organization Galactic Republic exists
     And private organization Rebel Alliance exists
     And private organization Sith Order exists
