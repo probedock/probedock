@@ -81,7 +81,7 @@ module ProbeDock
           report_joins << :runners if array_param?(:runnerIds) || params[:technical]
           report_joins << :projects if array_param?(:projectIds) || params[:projectId].present?
 
-          if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || array_param?(:categoryNames) || array_param?(:status) || array_param?(:kind)
+          if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || array_param?(:categoryNames) || array_param?(:status) || params[:newTests].present?
             payload_joins = []
             payload_joins << :project_version if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
             payload_joins << :categories if array_param?(:categoryNames)
@@ -124,32 +124,24 @@ module ProbeDock
             group = true
           end
 
-          if array_param?(:status) || array_param?(:kind)
-            where_clauses = []
+          if array_param?(:status)
+            payload_conditions = []
 
-            if array_param?(:status)
-              where_clauses << 'test_payloads.passed_results_count > 0' if params[:status].include?('passed')
-              where_clauses << 'test_payloads.results_count - test_payloads.passed_results_count - test_payloads.inactive_results_count > 0' if params[:status].include?('failed')
-              where_clauses << 'test_payloads.inactive_results_count > 0' if params[:status].include?('inactive')
-            end
+            payload_conditions << 'test_payloads.passed_results_count > test_payloads.inactive_passed_results_count' if params[:status].include?('passed')
+            payload_conditions << 'test_payloads.results_count - test_payloads.passed_results_count - test_payloads.inactive_results_count > 0' if params[:status].include?('failed')
+            payload_conditions << 'test_payloads.inactive_results_count > 0' if params[:status].include?('inactive')
 
-            if array_param?(:kind)
-              where_clauses << 'test_payloads.tests_count - test_payloads.new_tests_count > 0' if params[:kind].include?('existing')
-              where_clauses << 'test_payloads.new_tests_count > 0' if params[:kind].include?('new')
-            end
+            group = true
+            paginated_rel = paginated_rel.where(payload_conditions.join(' OR '))
+          end
 
-            complete_clause = ''
-            where_clauses.each_with_index do |clause, idx|
-              complete_clause += clause
-              if idx < where_clauses.size - 1
-                complete_clause += ' OR '
-              end
+          if params[:newTests].present?
+            if true_flag?(:newTests)
+              paginated_rel = paginated_rel.where('test_payloads.new_tests_count > 0')
+            else
+              paginated_rel = paginated_rel.where('test_payloads.tests_count - test_payloads.new_tests_count > 0')
             end
-
-            unless complete_clause.empty?
-              group = true
-              paginated_rel = paginated_rel.where(complete_clause)
-            end
+            group = true
           end
 
           @pagination_filtered_count = paginated_rel.count('distinct test_reports.id')

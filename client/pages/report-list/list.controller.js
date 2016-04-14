@@ -21,37 +21,6 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     filterStateLoaded = false;
   }, true);
 
-  /**
-   * Manage the filter based on toggle buttons (like: status or kind of tests)
-   *
-   * @param toggleName The name of the scope model
-   * @param paramName The name of query parameter
-   */
-  function manageToggleParams(toggleName, paramName) {
-    // Build the array of toggles
-    var params = _.reduce($scope[toggleName], function(memo, value, name) {
-      if (value) {
-        memo.push(name);
-      }
-      return memo;
-    }, []);
-
-    // Check if not all the toggles are active or if there is at least one toggle
-    if (params.length != _.keys($scope[toggleName]).length && params.length > 0) {
-      $scope.reportsList.params[paramName] = params;
-    } else if ($scope.reportsList.params[paramName]) { // Check if it is necessary to remove the params for the request
-      delete $scope.reportsList.params[paramName];
-    }
-  }
-
-  $scope.$watch('statuses', function() {
-    manageToggleParams('statuses', 'status');
-  }, true);
-
-  $scope.$watch('kinds', function() {
-    manageToggleParams('kinds', 'kind');
-  }, true);
-
   $scope.$on('reportsList.refresh', function() {
     $scope.noNewReports = false;
     if (hideNoNewReportsPromise) {
@@ -116,20 +85,20 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     status: 'passed'
   }];
 
-  $scope.kinds = [{
+  $scope.newTests = [{
     name: 'of any',
-    kind: 'any'
+    new: null
   }, {
     name: 'new',
-    kind: 'new'
+    new: true
   }, {
     name: 'recurring',
-    kind: 'existing'
+    new: false
   }];
 
   $scope.selectParams = {
     status: 'any',
-    kind: 'any'
+    new: null
   };
 
   $scope.$watch('selectParams', function(newValue) {
@@ -139,10 +108,10 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
       $scope.reportsList.params.status = [ newValue.status ];
     }
 
-    if (newValue.kind == 'any') {
-      delete $scope.reportsList.params.kind;
+    if (_.isNull(newValue.new)) {
+      delete $scope.reportsList.params.newTests;
     } else {
-      $scope.reportsList.params.kind = [ newValue.kind ];
+      $scope.reportsList.params.newTests = newValue.new;
     }
   }, true);
 

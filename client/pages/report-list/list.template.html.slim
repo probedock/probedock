@@ -22,14 +22,14 @@
                   .select-status
                     .select-label
                       | Show the reports containing at least one
-                      ui-select id='reports-list-status' ng-model='selectParams.status' reset-search-input=true
+                      ui-select<> id='reports-list-status' ng-model='selectParams.status' reset-search-input=true
                         ui-select-match allow-clear='false' {{ $select.selected.name }}
                         ui-select-choices repeat='item.status as item in statuses'
                           span ng-bind-html='item.name | highlight: $select.search'
                       | results or containing at least one
-                      ui-select id='reports-list-kinds' ng-model='selectParams.kind' reset-search-input=true
+                      ui-select<> id='reports-list-new-tests' ng-model='selectParams.new' reset-search-input=true
                         ui-select-match allow-clear='false' {{ $select.selected.name }}
-                        ui-select-choices repeat='item.kind as item in kinds'
+                        ui-select-choices repeat='item.new as item in newTests'
                           span ng-bind-html='item.name | highlight: $select.search'
                       | tests.
             .row
