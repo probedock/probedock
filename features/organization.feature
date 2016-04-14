@@ -48,7 +48,7 @@ Feature: Organization
 
 
 
-  Scenario: A super admin should be able to retrieve all the organizations administered.
+  Scenario: A Probe Dock admin should be able to retrieve all the organization administered or not.
     And user master who is a Probe Dock admin exists
     When master sends a GET request to /api/organizations?administered=true
     Then the response code should be 200
@@ -109,7 +109,7 @@ Feature: Organization
 
 
   @authorization
-  Scenario: A anonymous user should not be able to retrieve any organization when administered filter is set.
+  Scenario: An anonymous user should not be able to retrieve any organization when administered filter is set.
     When nobody sends a GET request to /api/organizations?administered=true
     Then the response should be HTTP 401 with the following errors:
       | message                                        |

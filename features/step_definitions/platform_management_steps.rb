@@ -1,4 +1,4 @@
-Then /the response body should be a JSON array with the following tables:/ do |tables|
+Then /the response should contain DB stats for the following tables:/ do |tables|
   raise 'No response body found' unless @response_body
 
   response_table_names = @response_body.collect{ |elem| elem['name'] }.sort
