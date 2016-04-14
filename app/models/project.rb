@@ -28,6 +28,7 @@ class Project < ActiveRecord::Base
   has_many :tests, class_name: 'ProjectTest'
   has_many :versions, class_name: 'ProjectVersion'
 
+  strip_attributes
   validates :name, presence: true, uniqueness: { scope: :organization_id, case_sensitive: false }, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:\-[a-z0-9]+)*\Z/i }
   validates :display_name, length: { maximum: 50, allow_blank: true }
   validates :organization, presence: true
