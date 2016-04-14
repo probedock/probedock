@@ -1,4 +1,4 @@
-form novalidate=true role='form' name='projectForm' ng-submit='projectForm.$valid && save()'
+form#project-edit-modal novalidate=true role='form' name='projectForm' ng-submit='projectForm.$valid && save()'
   .modal-header
     h3.modal-title ng-if='editedProject.id' Edit {{ project | projectName }}
     h3.modal-title ng-if='!editedProject.id' New Project
@@ -6,7 +6,8 @@ form novalidate=true role='form' name='projectForm' ng-submit='projectForm.$vali
     .form-group ng-class='{"has-error": projectForm.name.$dirty && projectForm.name.$invalid}'
       label for='projectName'
         | Name
-        span.required< *
+        span.required<
+          | (required)
       input#projectName.form-control type='string' name='name' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-project-name=true autofocus=true ng-model='editedProject.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
         | This is the identifier of the project and is used in URLs.
@@ -19,24 +20,49 @@ form novalidate=true role='form' name='projectForm' ng-submit='projectForm.$vali
       p.help-block
         | The is the name of the project as shown in ProbeDock.
     .form-group ng-class='{"has-error": projectForm.repoUrl.$dirty && projectForm.repoUrl.$invalid}'
-      label for='projectRepoUrl' Repository URL
-      input#projectRepoUrl.form-control type='string' name='repoUrl' placeholder='Project repository' maxlength=255 ng-model='editedProject.repoUrl' project-repo-url=true
+      label.custom-repo-url-pattern.pull-right
+        | use custom source file pattern
+        input< type='checkbox' ng-model='customRepoUrlPattern'
+      label for='projectRepoUrl' Repository link
+      input#projectRepoUrl.form-control type='string' name='repoUrl' placeholder='https://github.com/org/example' maxlength=255 ng-model='editedProject.repoUrl' project-repo-url=true
+      p.help-block ng-if='projectForm.repoUrl.$error.projectRepoUrl'
+        strong This must be a web address starting with http:// or https:// (i.e. not your Git URL starting with git://).
       p.help-block
-        | This is the link to your project repository. This link is used to build links from test results to source code.
-        |  The URL should starts with http or https.
-    .form-group ng-class='{"has-error": projectForm.repoUrl.$dirty && projectForm.repoUrl.$invalid}'
-      label for='projectRepoUrlPattern' Source file URL pattern
+        | This is the link to your project's repository on GitHub, Bitbucket, etc.
+        |  It is used to send you to the source code of your tests in your web browser.
+        |  It should starts with http or https.
+      p.help-block
+        | If you repository is not on GitHub, Bitbucket or GitLab, you might have to use a
+        a<> href='#' ng-click='setCustomRepoUrlPattern(true)' custom source file pattern
+        | for source code links to work.
+    .form-group ng-if='customRepoUrlPattern' ng-class='{"has-error": projectForm.repoUrlPattern.$dirty && projectForm.repoUrlPattern.$invalid}'
+      label for='projectRepoUrlPattern' Repository source file pattern
       input#projectRepoUrlPattern.form-control type='string' name='repoUrlPattern' maxlength=255 ng-model='editedProject.repoUrlPattern' placeholder='{{ repoUrlPatternPlaceholder }}'
-      p.help-block
-        | This pattern allow you to provide a specific pattern to build your source files URL. You have the following available replacements:
-        strong<> ng-non-bindable=true {{ repoUrl }}, {{ branch }}, {{ commit }} , {{ filePath}} and {{ fileLine }}.
-        | If not provided, we have defaults for URL containing: github.com, gitlab.com or bitbucket.com.
+      p.help-block>
+        | This pattern allows you to customize how Probe Dock builds links to your tests' source code.
+        |  We provide reasonable defaults for GitHub, Bitbucket and GitLab, but you might have to customize it if your repository is stored on another platform.
+      .help-block<>
+        span>
+          markdown:
+            The following variables will be interpolated into the pattern if you use double braces (e.g. `{{ "\{\{ repoUrl \}\}" }}`):
+        dl.dl-horizontal
+          dt repoUrl
+          dd
+            | The repository link you provided in the previous field.
+            |  If you do not use it, it will automatically be inserted before your pattern.
+          dt branch
+          dd The name of the current branch.
+          dt commit
+          dd The full commit hash.
+          dt filePath
+          dd The path of the file containing the test, relative to the repository's directory.
+          dt fileLine
+          dd The line at which the test can be found in the file.
     .form-group
       label for='projectDescription' Description
       textarea#projectDescription.form-control placeholder='Detailed description' maxlength=1000 ng-model='editedProject.description'
       p.help-block
         | A detailed description of the project, up to 1000 characters.
-    p * required fields
   .modal-footer.clearfix
     .btn-group.pull-right
       button.btn.btn-default type='button' ng-click='$dismiss()' Cancel
