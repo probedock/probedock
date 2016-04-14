@@ -14,20 +14,13 @@
       .col-lg-4.col-sm-12
         h5
           strong Workers
-        table.workers
-          tbody
-            tr
-              td.text-right.pending
-                span.glyphicon.glyphicon-flash tooltip='Busy workers'
-              td.text-left {{ resqueStats.workers.working | number }}
-            tr
-              td.text-right.success
-                span.glyphicon.glyphicon-hourglass tooltip='Free workers'
-              td.text-left {{ resqueStats.workers.total - resqueStats.workers.working | number }}
-            tr
-              td.text-right.success
-                span.glyphicon.glyphicon-equalizer tooltip='Total workers'
-              td.text-left {{ resqueStats.workers.total | number }}
+        .workers
+          .busy ng-if='resqueStats.workers.working > 0'
+            span.glyphicon.glyphicon-hourglass tooltip='{{ resqueStats.workers.working | number }} workers currently processing jobs'
+            span {{ resqueStats.workers.working | number }} / {{ resqueStats.workers.total | number }}
+          .available ng-if='resqueStats.workers.working == 0'
+            span.glyphicon.glyphicon-time tooltip='{{ resqueStats.workers.total - resqueStats.workers.working | number }} available workers waiting for jobs'
+            span {{ resqueStats.workers.working | number }} / {{ resqueStats.workers.total | number }}
       .col-lg-4.col-sm-12
         h5
           strong Jobs
@@ -45,18 +38,10 @@
               td.text-right.success
                 span.glyphicon.glyphicon-thumbs-up tooltip='Successful jobs'
               td.text-left {{ resqueStats.jobs.processed - resqueStats.jobs.failed | number }}
-            tr
-              td.text-right.success
-                span.glyphicon.glyphicon-stats tooltip='Processed jobs'
-              td.text-left {{ resqueStats.jobs.processed | number }}
       .col-lg-4.col-sm-12
         h5
-          strong Queues
+          strong Jobs in queues
         table.table
-          thead
-            tr
-              th.name.text-vertical-middle Name
-              th.rows.text-right Messages
           tbody
             tr ng-repeat='queue in resqueStats.queues'
               td.name {{ queue.name | capitalize }}
