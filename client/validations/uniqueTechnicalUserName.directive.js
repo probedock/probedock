@@ -16,6 +16,7 @@ angular.module('probedock.uniqueTechnicalUserNameValidation', [ 'probedock.api' 
           params: {
             name: modelValue,
             organizationId: $scope.currentOrganization.id,
+            technical: true,
             pageSize: 1
           }
         }).then(function(res) {

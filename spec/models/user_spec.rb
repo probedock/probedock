@@ -168,24 +168,99 @@ describe User, probedock: { tags: :unit } do
     end
 
     describe 'with an existing user' do
-      let!(:user){ create(:user) }
+      let(:organization) { create(:organization) }
+      let!(:user){ user = create(:user, organization: organization) }
       it(nil, probedock: { key: 'f9be952c7792' }){ should validate_uniqueness_of(:name) }
       it(nil, probedock: { key: 'hxfk' }){ should validate_uniqueness_of(:primary_email_id) }
 
       it "should validate that the :technical attribute doesn't change", probedock: { key: 'kgha' } do
+        user.memberships << build(:membership, user: user, organization: organization)
         user.technical = !user.technical
         expect(user).not_to be_valid
       end
     end
 
+    describe 'a human and a technical user can have the same name in the same organization' do
+      let(:organization) { create(:organization) }
+
+      let(:technical_user) do
+        technical_user = build(:technical_user, name: 'samename', organization: organization)
+        technical_user.memberships << build(:membership, user: technical_user, organization: organization)
+        technical_user
+      end
+
+      let(:human_user) do
+        human_user = build(:user, name: 'samename', organization: organization)
+        human_user.memberships << build(:membership, user: human_user, organization: organization)
+        human_user
+      end
+
+      it 'when the human user already exists', probedock: { key: '97nr' } do
+        human_user.save
+        expect(technical_user).to be_valid
+      end
+
+      it 'when the technical user already exists', probedock: { key: '2r0i' } do
+        technical_user.save
+        expect(human_user).to be_valid
+      end
+    end
+
+    describe 'renaming users is' do
+      let(:organization) { create(:organization) }
+
+      let(:technical_user) do
+        technical_user = build(:technical_user, name: 'samename', organization: organization)
+        technical_user.memberships << build(:membership, user: technical_user, organization: organization)
+        technical_user.save
+        technical_user
+      end
+
+      let(:human_user) do
+        human_user = build(:user, name: 'anothername', organization: organization)
+        human_user.memberships << build(:membership, user: human_user, organization: organization)
+        human_user.save
+        human_user
+      end
+
+      it 'possible when the human user is renamed with the same name of an existing technical user', probedock: { key: 'wofz' } do
+        human_user.name = 'samename'
+        expect(human_user).to be_valid
+      end
+
+      it 'possible when the technical user is renamed with the same name of an existing human user', probedock: { key: '6zua' } do
+        technical_user.name = 'anothername'
+        expect(technical_user).to be_valid
+      end
+
+      it 'is not possible when the technical user is renamed with the same name of an existing technical user', probedock: { key: '3dio' } do
+        another_technical_user = build(:technical_user, name: 'differentname', organization: organization)
+        another_technical_user.memberships << build(:membership, user: another_technical_user, organization: organization)
+        another_technical_user.save
+
+        technical_user.name = 'differentname'
+        expect(technical_user).not_to be_valid
+      end
+
+      it 'is not possible when the human user is renamed with the same name of an existing human user', probedock: { key: '66ic' } do
+        another_human_user = build(:user, name: 'differentname', organization: organization)
+        another_human_user.memberships << build(:membership, user: another_human_user, organization: organization)
+        another_human_user.save
+
+        human_user.name = 'differentname'
+        expect(human_user).not_to be_valid
+      end
+    end
+
     describe 'with an existing technical user' do
+      let(:organization) { create(:organization) }
+      let!(:first_tech_user) { create(:technical_user, name: 'tech', organization: organization) }
       subject do
-        organization = create(:organization)
-        create(:technical_user, name: 'tech', organization: organization)
         second_tech_user = build(:technical_user, name: 'tech', organization: organization)
         second_tech_user.memberships << build(:membership, user: second_tech_user, organization: organization)
         second_tech_user
       end
+
       it(nil, probedock: { key: 'iwzr' }) do
         expect(subject).not_to be_valid
         expect(subject.errors[:name].size).to eq(1)
