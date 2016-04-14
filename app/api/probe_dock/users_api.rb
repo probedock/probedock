@@ -31,6 +31,7 @@ module ProbeDock
         end
 
         def with_serialization_includes rel
+          rel = rel.preload(:emails).preload(:primary_email)
           rel = rel.includes(:memberships) if true_flag?(:withTechnicalMembership)
           rel = rel.includes(:organizations) if true_flag?(:withOrganizations)
           rel
@@ -104,7 +105,7 @@ module ProbeDock
 
           if params[:search].present?
             term = "%#{params[:search].downcase}%"
-            paginated_rel = paginated_rel.joins(:emails).where('LOWER(users.name) LIKE ? OR emails.address like ?', term, term)
+            paginated_rel = paginated_rel.joins(:emails).where('LOWER(users.name) LIKE ? OR emails.address LIKE ?', term, term)
             group = true
           end
 
