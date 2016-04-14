@@ -91,19 +91,16 @@ angular.module('probedock.testResultsWidget').directive('testResultsWidget', fun
       url: '/results',
       params: params
     }).then(function(response) {
-      if (response.data) {
-        $scope.pagination = response.pagination();
+      $scope.pagination = response.pagination();
 
-        // Reverse and prepend the test results
-        $scope.results = replace ? response.data.reverse() : response.data.reverse().concat($scope.results);
+      // Reverse and prepend the test results
+      $scope.results = replace ? response.data.reverse() : response.data.reverse().concat($scope.results);
 
-        // Calculate the next number of results to load
-        var remainingResults = $scope.pagination.total - $scope.results.length;
-        $scope.nextChunk = remainingResults > $scope.pageSize ? $scope.pageSize : remainingResults;
+      // Calculate the next number of results to load
+      var remainingResults = $scope.pagination.total - $scope.results.length;
+      $scope.nextChunk = remainingResults > $scope.pageSize ? $scope.pageSize : remainingResults;
 
-        $scope.loading = false;
-      }
-
+      $scope.loading = false;
       $scope.started = true;
     });
   }
