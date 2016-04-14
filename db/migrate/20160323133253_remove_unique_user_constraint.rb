@@ -8,7 +8,13 @@ class RemoveUniqueUserConstraint < ActiveRecord::Migration
     add_index :users, :normalized_name, unique: true
 
     User.all.each do |user|
-      user.save
+      normalized_name = if user.human?
+        "human-#{user.name.downcase}"
+      else
+        "technical-#{user.memberships.first.organization.normalized_name}-#{user.name.downcase}"
+      end
+
+      User.where(id: user.id).update_all(normalized_name: normalized_name)
     end
 
     change_column :users, :normalized_name, :string, null: false

@@ -15,6 +15,7 @@ angular.module('probedock.uniqueUserNameValidation', [ 'probedock.api' ]).direct
           url: '/users',
           params: {
             name: modelValue,
+            technical: false,
             pageSize: 1
           }
         }).then(function(res) {
