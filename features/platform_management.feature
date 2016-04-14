@@ -274,3 +274,27 @@ Feature: Platform management
       | message             |
       | Missing credentials |
     And nothing should have been added or deleted
+
+
+
+  @authorization
+  Scenario: An organization member should not be able to retrieve resque stats
+    Given organization Galactic Empire exists
+    And user vader who is an admin of Galactic Empire exists
+    And public organization Old Republic exists
+    When vader sends a GET request to /api/platformManagement/resqueStats
+    Then the response should be HTTP 403 with the following errors:
+      | message                                        |
+      | You are not authorized to perform this action. |
+    And nothing should have been added or deleted
+
+
+
+  @authorization
+  Scenario: An anonymous user should not be able to retrieve resque stats
+    Given organization Galactic Empire exists
+    When nobody sends a GET request to /api/platformManagement/resqueStats
+    Then the response should be HTTP 401 with the following errors:
+      | message             |
+      | Missing credentials |
+    And nothing should have been added or deleted

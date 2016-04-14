@@ -14,14 +14,17 @@
     td, th
       vertical-align middle !important
 
-  .jobs, .workers
+  .jobs
     width 100%
 
     td
       vertical-align middle
       padding-right 15px
-      font-size 1.7em
+      font-size 2em
       width 50%
+
+      .glyphicon
+        cursor default
 
     .success
       color passed-color
@@ -31,3 +34,23 @@
 
     .pending
       color inactive-color
+
+  .workers
+    justify-content center
+    align-items center
+    display flex
+
+    span
+      font-size 2em
+      margin 0 10px
+
+      &.glyphicon
+        cursor default
+
+    .available
+      .glyphicon
+        color passed-color
+
+    .busy
+      .glyphicon
+        color inactive-color

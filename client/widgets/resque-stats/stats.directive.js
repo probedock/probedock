@@ -19,10 +19,7 @@ angular.module('probedock.resqueStatsWidget').directive('resqueStatsWidget', fun
     return api({
       url: '/platformManagement/resqueStats'
     }).then(function(response) {
-      if (response.data) {
-        $scope.resqueStats = response.data;
-      }
-
+      $scope.resqueStats = response.data;
       $scope.loading = false;
     });
   }
