@@ -41,7 +41,6 @@
     "underscore": "~1.8",
     "ngInflection": "^1.1.10",
     "angular-pretty-bytes": "^1.0.1",
-    "jquery.sparkline": "^2.1.2",
     "angular-nvd3": "^1.0.6"
   },
   "resolutions": {

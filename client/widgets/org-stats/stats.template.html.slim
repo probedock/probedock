@@ -12,76 +12,8 @@
         p.empty No organizations present.
     .row.row-labels ng-if='stats.length > 0'
       .col-md-12
-        table.table
-          thead.hidden-md.hidden-sm.hidden-xs ng-if='currentUserIs("admin")'
-            tr
-              th.name.db-stats-right-border rowspan=2 Name
-              th.projects.text-center.db-stats-right-border rowspan=2 Projects
-              th.tests.text-center.db-stats-right-border rowspan=2 Tests
-              th.payloads.text-center.db-stats-right-border rowspan=2 Payloads
-              th.results.text-center colspan=3 Results
-            tr
-              th.results-count.text-right Count
-              th.results-prop.text-right %
-              th.results-trend.text-center Trend
-          thead.hidden-lg ng-if='currentUserIs("admin")'
-            tr
-              th.name.db-stats-right-border rowspan=2 Name
-              th.tests.text-center.db-stats-right-border rowspan=2 Tests
-              th.payloads.text-center.db-stats-right-border rowspan=2 Payloads
-              th.results.text-center colspan=2 Results
-            tr
-              th.results-count.text-right Count
-              th.results-trend.text-center Trend
-          thead.hidden-md.hidden-sm.hidden-xs ng-if='!currentUserIs("admin")'
-            tr
-              th.name.db-stats-right-border rowspan=2 Name
-              th.projects.text-center.db-stats-right-border rowspan=2 Projects
-              th.tests.text-center.db-stats-right-border rowspan=2 Tests
-              th.payloads.text-center.db-stats-right-border rowspan=2 Payloads
-              th.results.text-center colspan=2 Results
-            tr
-              th.results-count.text-right Count
-              th.results-trend.text-center Trend
-          thead.hidden-lg ng-if='!currentUserIs("admin")'
-            tr
-              th.name.db-stats-right-border rowspan=2 Name
-              th.tests.text-center.db-stats-right-border rowspan=2 Tests
-              th.payloads.text-center.db-stats-right-border rowspan=2 Payloads
-              th.results.text-center colspan=2 Results
-            tr
-              th.results-count.text-right Count
-              th.results-trend.text-center Trend
-          tbody
-            tr ng-repeat='stat in stats'
-              td.name.db-stats-right-border {{ stat | orgName }}
-              td.projects.text-right.db-stats-right-border.hidden-md.hidden-sm.hidden-xs {{ stat.projectsCount | number }}
-              td.tests.text-right.db-stats-right-border {{ stat.testsCount | number }}
-              td.payloads.text-right.db-stats-right-border {{ stat.payloadsCount | number }}
-              td.results-count.text-right {{ stat.resultsCount | number }}
-              td.results-prop.text-right.hidden-md.hidden-sm.hidden-xs ng-if='currentUserIs("admin")' {{ stat.resultsProp | number:2 }}%
-              td.results-trend.text-center
-                sparkline ng-if='stat.resultsTrend' data='stat.resultsTrend'
-          tfoot
-            tr ng-if='currentUserIs("admin") && !params.organization'
-              th.name.db-stats-right-border Top {{ params.top }} total
-              th.projects.text-right.db-stats-right-border.hidden-md.hidden-sm.hidden-xs {{ topStats.projectsCount | number }}
-              th.tests.text-right.db-stats-right-border {{ topStats.testsCount | number }}
-              th.payloads.text-right.db-stats-right-border {{ topStats.payloadsCount | number }}
-              th.results-count.text-right {{ topStats.resultsCount | number }}
-              th.results-prop.text-right.hidden-md.hidden-sm.hidden-xs {{ topStats.resultsProp | number:2 }}%
-              th.results-trend.text-center
-                sparkline ng-if='topStats.resultsTrend' data='topStats.resultsTrend'
-            tr ng-if='currentUserIs("admin")'
-              th.name.db-stats-right-border Total
-              th.projects.text-right.db-stats-right-border.hidden-md.hidden-sm.hidden-xs {{ total.projectsCount | number }}
-              th.tests.text-right.db-stats-right-border {{ total.testsCount | number }}
-              th.payloads.text-right.db-stats-right-border {{ total.payloadsCount | number }}
-              th.results-count.text-right {{ total.resultsCount | number }}
-              th.results-prop.text-right.hidden-md.hidden-sm.hidden-xs {{ 100 | number:2 }}%
-              th.results-trend.text-right
-                sparkline ng-if='total.resultsTrend' data='total.resultsTrend'
-
+        org-stats-table-admin ng-if='currentUserIs("admin")'
+        org-stats-table-org-admin ng-if='!currentUserIs("admin")'
     .row
       .col-md-12
         organization-select prefix='org-stats' organization='organization' extract='@model' model-object='params' administered='true' allow-clear='currentUserIs("admin")'

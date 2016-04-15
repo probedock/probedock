@@ -4,16 +4,18 @@ angular.module('probedock.dbStatsWidget').directive('dbStatsWidget', function() 
     controller: 'DbStatsWidgetCtrl',
     templateUrl: '/templates/widgets/db-stats/stats.template.html',
     scope: {
-      top: '@'
+      top: '=?'
     }
   };
-}).controller('DbStatsWidgetCtrl', function(api, $scope) {
+}).controller('DbStatsWidgetCtrl', function(api, $scope, bootstrap) {
   _.defaults($scope, {
     top: 5,
     loading: true
   });
 
   fetchStats();
+
+  bootstrap.forward($scope);
 
   $scope.hasMore = function() {
     return $scope.stats.length > $scope.currentStats.length;
