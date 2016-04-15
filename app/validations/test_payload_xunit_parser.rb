@@ -137,6 +137,7 @@ class TestPayloadXunitParser
       # parse the "name" attribute of the <testcase> (mandatory)
       check_string_attribute test_case, :name, limit: false do |value|
         normalized_value = value.strip
+        normalized_value = normalized_value.underscore.humanize unless normalized_value.include?(' ')
         result['n'] = normalized_value.length > 255 ? "#{normalized_value[0, 252]}..." : normalized_value
       end
 
