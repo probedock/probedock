@@ -206,7 +206,7 @@ describe User, probedock: { tags: :unit } do
       end
     end
 
-    describe 'renaming users is' do
+    describe 'renaming users' do
       let(:organization) { create(:organization) }
 
       let(:technical_user) do
@@ -223,12 +223,12 @@ describe User, probedock: { tags: :unit } do
         human_user
       end
 
-      it 'possible when the human user is renamed with the same name of an existing technical user', probedock: { key: 'wofz' } do
+      it 'is possible when the human user is renamed with the same name of an existing technical user', probedock: { key: 'wofz' } do
         human_user.name = 'samename'
         expect(human_user).to be_valid
       end
 
-      it 'possible when the technical user is renamed with the same name of an existing human user', probedock: { key: '6zua' } do
+      it 'is possible when the technical user is renamed with the same name of an existing human user', probedock: { key: '6zua' } do
         technical_user.name = 'anothername'
         expect(technical_user).to be_valid
       end
