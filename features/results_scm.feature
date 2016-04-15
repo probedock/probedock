@@ -397,7 +397,7 @@ Feature: Results with scm data
 
 
   Scenario: An organization member should be able to get results of a report in a private organization with scm data
-    And the project X-Wing updated with the repo url pattern {{ repoUrl }}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
+    And the project X-Wing has repo url pattern {{ repoUrl }}/{{ branch }}/{{ commit }}/{{ filePath }}#L{{ fileLine }}
     When hsolo sends a GET request to /api/results?reportId={@idOf: A}&withScm=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -503,7 +503,7 @@ Feature: Results with scm data
 
 
   Scenario: A member from another organization should be able to get results of a report of a public organization with scm data
-    And the project Senate updated with the repo url pattern {{ repoUrl }}/{{ branch }}/{{ commit }}/{{ filePath }}
+    And the project Senate has repo url pattern {{ repoUrl }}/{{ branch }}/{{ commit }}/{{ filePath }}
     When hsolo sends a GET request to /api/results?reportId={@idOf: B}&withScm=true
     Then the response code should be 200
     And the response body should be the following JSON:
@@ -607,7 +607,7 @@ Feature: Results with scm data
 
 
   Scenario: An anonymous user should be able to get results of a report of a public organization with scm data
-    And the project Senate updated with the repo url pattern {{ repoUrl }}/{{ branch }}/{{ commit }}/{{ filePath }}
+    And the project Senate has repo url pattern {{ repoUrl }}/{{ branch }}/{{ commit }}/{{ filePath }}
     When nobody sends a GET request to /api/results?reportId={@idOf: B}&withScm=true
     Then the response code should be 200
     And the response body should be the following JSON:

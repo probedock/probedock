@@ -10,7 +10,7 @@ Given /^project (.+) exists within organization (.+?)(?: with repo url (.+))?$/ 
   add_named_record(name, create(:project, options))
 end
 
-Given /^the project (.+) updated with the repo url pattern (.+)$/ do |name,repo_url_pattern|
+Given /^the project (.+) has repo url pattern (.+)$/ do |name,repo_url_pattern|
   project = named_record(name)
   project.repo_url_pattern = repo_url_pattern
   project.save
