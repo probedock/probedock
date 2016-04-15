@@ -176,6 +176,42 @@ describe TestPayloadProcessing::ProcessResult, probedock: { tags: :unit } do
     expect(cache_double).not_to have_received(:register_result)
   end
 
+  it 'should correct java class metatada when the value is wrong', probedock: { key: 'sn8o' } do
+    data = {
+      'n' => 'It should also work',
+      'k' => test_key.key,
+      'p' => false,
+      'v' => false,
+      'd' => 532,
+      'm' => 'Oops...',
+      'c' => category.name,
+      'g' => tags.collect(&:name),
+      't' => tickets.collect(&:name),
+      'a' => { 'java.class' => 'io.probedock.QualifiedClassName' }
+    }
+
+    process_result(data)
+    expect(last_result.custom_values['java.class']).to eq('QualifiedClassName')
+  end
+
+  it 'should keep java class metatada unchanged when the value is correct', probedock: { key: '683c' } do
+    data = {
+      'n' => 'It should also work',
+      'k' => test_key.key,
+      'p' => false,
+      'v' => false,
+      'd' => 532,
+      'm' => 'Oops...',
+      'c' => category.name,
+      'g' => tags.collect(&:name),
+      't' => tickets.collect(&:name),
+      'a' => { 'java.class' => 'CorrectClassName' }
+    }
+
+    process_result(data)
+    expect(last_result.custom_values['java.class']).to eq('CorrectClassName')
+  end
+
   private
 
   def process_result data
