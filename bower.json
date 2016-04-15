@@ -38,7 +38,10 @@
     "normalize.css": "~3.0.2",
     "tether": "~1.1.1",
     "tether-drop": "~1.4.2",
-    "underscore": "~1.8"
+    "underscore": "~1.8",
+    "ngInflection": "^1.1.10",
+    "angular-pretty-bytes": "^1.0.1",
+    "angular-nvd3": "^1.0.6"
   },
   "resolutions": {
     "angular": "~1.3"

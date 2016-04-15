@@ -24,6 +24,9 @@ Given /^test "(.+)" was created(?: (\d*) ((?:day|week)s?) ago)? by (.+) with key
   }
 
   add_named_record(name, create(:test, options))
+
+  project.tests_count += 1
+  project.save
 end
 
 Given /^test "(.+)" was first run by (.+)(?: (\d*) ((?:day|week)s?) ago)? for version (.+) of project (.+)$/ do |name,user_name,interval_count,interval,project_version,project_name|
@@ -47,6 +50,9 @@ Given /^test "(.+)" was first run by (.+)(?: (\d*) ((?:day|week)s?) ago)? for ve
   }
 
   add_named_record(name, create(:test, options))
+
+  project.tests_count += 1
+  project.save
 end
 
 Given /^test "(.+)"(?: is (passing|failing)(?: and (active|inactive))? and)?(?: was last run by (.+?))?(?:(?: and)? has category (.+?))?(?: and tags (.+?))?(?: and tickets (.+?))? for version (.+)$/ do |name,passing,active,runner_name,category_name,tag_names,ticket_names,version_name|

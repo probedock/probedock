@@ -80,6 +80,7 @@ module ProbeDock
     mount MetricsApi
     mount OrganizationsApi
     mount PayloadsApi
+    mount PlatformManagementApi
     mount ProjectsApi
     mount ProjectVersionsApi
     mount RegistrationsApi

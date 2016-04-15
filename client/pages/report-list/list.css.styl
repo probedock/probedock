@@ -4,6 +4,24 @@
     margin-top 15px
     padding 15px
 
+    .select-status
+      align-items center
+      flex-wrap wrap
+      display flex
+
+      .select-label
+        font-size 1.1em
+        padding 5px
+
+      .ui-select-container
+        vertical-align middle
+        display inline-block
+        margin 5px 0
+        width 100px
+
+      input
+        display inline-block
+
   table.latest-reports
     margin-top 1em
     th, td
@@ -11,6 +29,8 @@
         width 35%
       &.runners
         width 12em
+        .runner
+          white-space nowrap
         img
           margin 0 3px
       &.duration

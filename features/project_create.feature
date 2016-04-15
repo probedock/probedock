@@ -22,7 +22,7 @@ Feature: Creation of a project
       {
         "displayName": "Project",
         "name": "project",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }
       """
     Then the response should be HTTP 201 with the following JSON:
@@ -31,7 +31,7 @@ Feature: Creation of a project
         "id": "@alphanumeric",
         "name": "project",
         "displayName": "Project",
-        "organizationId": "{@idOf: Rebel Alliance}",
+        "organizationId": "@idOf: Rebel Alliance",
         "testsCount": 0,
         "createdAt": "@iso8601",
         "updatedAt": "@iso8601"
@@ -48,7 +48,7 @@ Feature: Creation of a project
         "displayName": "Project",
         "name": "project",
         "repoUrl": "http://localhost.localdomain",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }
       """
     Then the response should be HTTP 201 with the following JSON:
@@ -57,8 +57,37 @@ Feature: Creation of a project
         "id": "@alphanumeric",
         "name": "project",
         "displayName": "Project",
-        "organizationId": "{@idOf: Rebel Alliance}",
+        "organizationId": "@idOf: Rebel Alliance",
         "repoUrl": "http://localhost.localdomain",
+        "testsCount": 0,
+        "createdAt": "@iso8601",
+        "updatedAt": "@iso8601"
+      }
+      """
+    And the following changes should have occurred: +1 project
+
+
+
+  Scenario: An organization admin should be able to create a project in his organization with a repo URL pattern
+    When hsolo sends a POST request with the following JSON to /api/projects:
+      """
+      {
+        "displayName": "Project",
+        "name": "project",
+        "repoUrl": "http://localhost.localdomain",
+        "repoUrlPattern": "/blob/{{ commit }}/{{ file }}#L{{ line }}",
+        "organizationId": "@idOf: Rebel Alliance"
+      }
+      """
+    Then the response should be HTTP 201 with the following JSON:
+      """
+      {
+        "id": "@alphanumeric",
+        "name": "project",
+        "displayName": "Project",
+        "organizationId": "@idOf: Rebel Alliance",
+        "repoUrl": "http://localhost.localdomain",
+        "repoUrlPattern": "/blob/{{ commit }}/{{ file }}#L{{ line }}",
         "testsCount": 0,
         "createdAt": "@iso8601",
         "updatedAt": "@iso8601"
@@ -75,7 +104,7 @@ Feature: Creation of a project
       {
         "displayName": "Project",
         "name": "project",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }
       """
     Then the response should be HTTP 403 with the following errors:
@@ -92,7 +121,7 @@ Feature: Creation of a project
       {
         "displayName": "Project",
         "name": "project",
-        "organizationId": "{@idOf: Rebel Alliance}"
+        "organizationId": "@idOf: Rebel Alliance"
       }
       """
     Then the response should be HTTP 401 with the following errors:

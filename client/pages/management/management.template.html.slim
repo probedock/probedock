@@ -2,6 +2,8 @@
   .page-header
     h1 Management
   .row
-    .col-lg-8.col-md-6.col-xs-12
-    .col-lg-4.col-md-6.col-xs-12
-
+    .col-lg-6.col-md-12
+      org-stats-widget organization='currentOrganization'
+    .col-lg-6.col-md-12 ng-if='currentUserIs("admin")'
+      resque-stats-widget
+      db-stats-widget

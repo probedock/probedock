@@ -1,0 +1,59 @@
+div
+  / Visible when XS
+  table.table ng-if='bootstrapSize == "xs"'
+    thead
+      tr
+        th.name Name
+        th.tests.text-center Tests
+        th.payloads.text-center Payloads
+        th.results.text-center Results
+    tbody
+      tr ng-repeat='stat in stats'
+        td.name {{ stat | orgName }}
+        td.tests.text-right {{ stat.testsCount | number }}
+        td.payloads.text-right {{ stat.payloadsCount | number }}
+        td.results-count.text-right {{ stat.resultsCount | number }}
+
+  / Visible when SM / MD
+  table.table ng-if='bootstrapSize == "sm" || bootstrapSize == "md"'
+    thead
+      tr
+        th.name.db-stats-right-border rowspan=2 Name
+        th.projects.text-center.db-stats-right-border rowspan=2 Projects
+        th.tests.text-center.db-stats-right-border rowspan=2 Tests
+        th.payloads.text-center.db-stats-right-border rowspan=2 Payloads
+        th.results.text-center colspan=2 Results
+      tr
+        th.results-count.text-right Count
+        th.results-trend.text-center Trend
+    tbody
+      tr ng-repeat='stat in stats'
+        td.name.db-stats-right-border {{ stat | orgName }}
+        td.projects.text-right.db-stats-right-border {{ stat.projectsCount | number }}
+        td.tests.text-right.db-stats-right-border {{ stat.testsCount | number }}
+        td.payloads.text-right.db-stats-right-border {{ stat.payloadsCount | number }}
+        td.results-count.text-right {{ stat.resultsCount | number }}
+        td.results-trend.text-center
+          sparkline ng-if='stat.resultsTrend' data='stat.resultsTrend'
+
+  / Visible when LG
+  table.table ng-if='bootstrapSize == "lg"'
+    thead
+      tr
+        th.name.db-stats-right-border rowspan=2 Name
+        th.projects.text-center.db-stats-right-border rowspan=2 Projects
+        th.tests.text-center.db-stats-right-border rowspan=2 Tests
+        th.payloads.text-center.db-stats-right-border rowspan=2 Payloads
+        th.results.text-center colspan=2 Results
+      tr
+        th.results-count.text-right Count
+        th.results-trend.text-center Trend
+    tbody
+      tr ng-repeat='stat in stats'
+        td.name.db-stats-right-border {{ stat | orgName }}
+        td.projects.text-right.db-stats-right-border {{ stat.projectsCount | number }}
+        td.tests.text-right.db-stats-right-border {{ stat.testsCount | number }}
+        td.payloads.text-right.db-stats-right-border {{ stat.payloadsCount | number }}
+        td.results-count.text-right {{ stat.resultsCount | number }}
+        td.results-trend.text-center
+          sparkline ng-if='stat.resultsTrend' data='stat.resultsTrend'

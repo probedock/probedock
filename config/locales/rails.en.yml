@@ -14,9 +14,9 @@ en:
     # Don't forget the nil at the beginning; there's no such thing as a 0th month
     month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
     abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
-    
+
     # Used in date_select and datime_select.
-    order: 
+    order:
       - :year
       - :month
       - :day
@@ -89,7 +89,7 @@ en:
         significant: false
         # If set, the zeros after the decimal separator will always be stripped (eg.: 1.200 will be 1.2)
         strip_insignificant_zeros: false
-        
+
       # Used in number_to_currency()
       currency:
         format:
@@ -106,7 +106,7 @@ en:
       percentage:
         format:
           # These three are to override number.format and are optional
-          # separator: 
+          # separator:
           delimiter: ""
           # precision:
       # Used in number_to_precision()
@@ -120,7 +120,7 @@ en:
       human:
         format:
           # These three are to override number.format and are optional
-          # separator: 
+          # separator:
           delimiter: ""
           precision: 1
           significant: true
@@ -140,7 +140,7 @@ en:
       decimal_units:
         format: "%n %u"
         # Decimal units output formatting
-        # By default we will only quantify some of the exponents but the 
+        # By default we will only quantify some of the exponents but the
         # commented ones might be defined or overridden by the user.
         units:
           # femto: Quadrillionth
@@ -160,14 +160,14 @@ en:
           billion: Billion
           trillion: Trillion
           quadrillion: Quadrillion
-              
+
   # Used in array.to_sentence.
   support:
     array:
       words_connector: ", "
       two_words_connector: " and "
-      last_word_connector: ", and "   
-  
+      last_word_connector: ", and "
+
     select:
       # default value for :prompt => true in FormOptionsHelper
       prompt: "Please select"
@@ -179,11 +179,11 @@ en:
       create: 'Create %{model}'
       update: 'Update %{model}'
       submit: 'Save %{model}'
-      
+
   errors:
     # The default format to use in full error messages.
     format: "%{attribute} %{message}"
-    errors: 
+    errors:
       template: &errors_template
         header:
           one:  "1 error prohibited this %{model} from being saved"
@@ -196,6 +196,7 @@ en:
         must_not_change: "cannot be changed"
         must_be_owned_by_user: "must be owned by the user"
         must_not_be_technical_user_from_another_organization: "must not be a technical user of another organization"
+        must_be_unique_by_org: "must be unique in organization"
 
   activerecord:
     errors:

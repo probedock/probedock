@@ -32,6 +32,7 @@ html ng-app='probedock' ng-strict-di=true
     meta http-equiv='X-UA-Compatible' content='IE=edge'
     meta name='viewport' content='width=device-width, initial-scale=1.0'
   body
+    bootstrap-size-detector
     nav.navbar.navbar-inverse.navbar-fixed-top role='navigation' ng-controller='LayoutNavCtrl'
       .container-fluid
         .navbar-header
@@ -71,6 +72,12 @@ html ng-app='probedock' ng-strict-di=true
                 | Admin
                 span.caret
               ul.dropdown-menu role='menu'
+                li.dropdown-header Organization
+                li
+                  a ui-sref='org.dashboard.members({ orgName: currentOrganization.name })' Members
+                li
+                  a ui-sref='org.dashboard.default.edit({ orgName: currentOrganization.name })' Edit organization
+                li.dropdown-header Platform
                 li ng-if='currentUserIs("admin")'
                   a ui-sref='admin.users' Users
                 li

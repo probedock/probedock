@@ -34,6 +34,15 @@ angular.module('probedock.auth').factory('auth', function(appStore, $base64, $ht
     updateCurrentUser: function(user) {
       setUser(user);
       appStore.set('auth.user', user);
+    },
+
+    addAuthFunctions: function($scope) {
+      $scope.currentUserIs = function() {
+        var currentUser = $rootScope.currentUser,
+            roles = Array.prototype.slice.call(arguments);
+
+        return currentUser && _.isArray(currentUser.roles) && _.intersection(currentUser.roles, roles).length == roles.length;
+      };
     }
   };
 

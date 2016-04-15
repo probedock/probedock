@@ -1,0 +1,19 @@
+.org-stats.panel.panel-default
+  .panel-heading
+    help-button
+      p Help will be there
+    h3.panel-title Organizations stats
+  .panel-body
+    .row ng-if='loading && !stats'
+      .col-md-12
+        p.loading Loading...
+    .row ng-if='!loading && stats.length === 0'
+      .col-md-12
+        p.empty No organizations present.
+    .row.row-labels ng-if='stats.length > 0'
+      .col-md-12
+        org-stats-table-admin ng-if='currentUserIs("admin")'
+        org-stats-table-org-admin ng-if='!currentUserIs("admin")'
+    .row
+      .col-md-12
+        organization-select prefix='org-stats' organization='organization' extract='@model' model-object='params' administered='true' allow-clear='currentUserIs("admin")'

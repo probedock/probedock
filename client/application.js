@@ -27,39 +27,53 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require underscore
+// jQuery javascript (Must be the first one)
 //= require jquery
-//= require moment
-//= require jvent
-//= require jqcloud2
-//= require chart
-//= require zero-clipboard
-//= require js-yaml
-//= require dropzone
-//= require tether
-//= require tether-drop
-//= require angular
-//= require angular-animate
-//= require angular-sanitize
-//= require angular-ui-router
-//= require angular-ui-router-title
-//= require angular-ui-bootstrap-tpls
-//= require angular-ui-select
-//= require angular-local-storage
-//= require angular-moment
-//= require angular-base64
-//= require angular-smart-table
-//= require angular-gravatar
-//= require angular-ng-infinite-scroll
-//= require angular-jqcloud
-//= require angular-ng-clip
-//= require angular-loading-bar
-//= require angular-chart
-//= require angular-truncate
-//= require angular-scroll
-//= require drop-ng
+//
+// libraries javascripts
 //= require bootstrap-tooltip
 //= require bootstrap-popover
+//= require chart
+//= require d3
+//= require dropzone
+//= require inflection
+//= require jqcloud2
+//= require js-yaml
+//= require jvent
+//= require moment
+//= require nvd3
+//= require pretty-bytes
+//= require tether
+//= require tether-drop
+//= require underscore
+//= require zero-clipboard
+//
+// angular javascripts
+//= require angular
+//= require angular-animate
+//= require angular-base64
+//= require angular-chart
+//= require angular-gravatar
+//= require angular-jqcloud
+//= require angular-loading-bar
+//= require angular-local-storage
+//= require angular-moment
+//= require angular-nvd3
+//= require angular-ng-clip
+//= require angular-ng-infinite-scroll
+//= require angular-ng-inflection
+//= require angular-pretty-bytes
+//= require angular-sanitize
+//= require angular-scroll
+//= require angular-smart-table
+//= require angular-truncate
+//= require angular-ui-bootstrap-tpls
+//= require angular-ui-router
+//= require angular-ui-router-title
+//= require angular-ui-select
+//= require drop-ng
+//
+// application javascripts
 //= require ./boot
 //= require_tree ./initializers
 //= require_tree ./components

@@ -1,11 +1,30 @@
 angular.module('probedock.userListPage').controller('UserListPageCtrl', function($q, $scope, $state, states, tables, users) {
 
+  $scope.states = [{
+    active: 1,
+    name: 'Active'
+  },{
+    active: 0,
+    name: 'Inactive'
+  }];
+
+  $scope.types = [{
+    technical: true,
+    name: 'Technical'
+  },{
+    technical: false,
+    name: 'Human'
+  }];
+
   $scope.userTabs = [];
   $scope.activeTabs = {};
 
   tables.create($scope, 'usersList', {
     url: '/users',
-    pageSize: 15
+    pageSize: 15,
+    params: {
+      withOrganizations: 1
+    }
   });
 
   users.forward($scope, 'update', { prefix: 'users.' });

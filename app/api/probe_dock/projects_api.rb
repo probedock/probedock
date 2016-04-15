@@ -20,7 +20,7 @@ module ProbeDock
     namespace :projects do
       helpers do
         def parse_project
-          parse_object :name, :displayName, :description, :repoUrl
+          parse_object :name, :displayName, :description, :repoUrl, :repoUrlPattern
         end
 
         def current_organization

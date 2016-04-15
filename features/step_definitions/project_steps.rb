@@ -7,5 +7,11 @@ Given /^project (.+) exists within organization (.+?)(?: with repo url (.+))?$/ 
   options[:display_name] = name if name != options[:name]
   options[:repo_url] = repo_url if repo_url
 
-  add_named_record name, create(:project, options)
+  add_named_record(name, create(:project, options))
+end
+
+Given /^the project (.+) has repo url pattern (.+)$/ do |name,repo_url_pattern|
+  project = named_record(name)
+  project.repo_url_pattern = repo_url_pattern
+  project.save
 end

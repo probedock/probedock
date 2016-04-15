@@ -101,6 +101,10 @@ class UserPolicy < ApplicationPolicy
           json.technicalMembership serialize(record.memberships.first, options)
         end
 
+        if options[:with_organizations] && admin?
+          json.organizations record.organizations.collect{ |org| serialize(org, options[:organization_options]) }
+        end
+
         unless options[:link]
           json.active record.active
           json.roles record.roles.collect(&:to_s)

@@ -52,6 +52,11 @@ module PolicyHelpers
     role?(:admin)
   end
 
+  # Indicates if the user is admin of the organization
+  def org_admin?(organization)
+    user.try(:membership_in, organization).try(:is?, :admin)
+  end
+
   # Indicates whether the current user is human (i.e. not a technical user).
   def human?
     user.kind_of(User) && user.try(:human?)

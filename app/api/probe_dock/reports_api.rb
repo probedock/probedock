@@ -62,6 +62,7 @@ module ProbeDock
         test_report_rel = policy_scope(TestReport).order('test_reports.created_at DESC')
 
         test_report_rel = paginated(test_report_rel) do |paginated_rel|
+          group = false
 
           if params[:uid]
             paginated_rel = paginated_rel.where(uid: params[:uid].to_s)
@@ -76,17 +77,23 @@ module ProbeDock
             paginated_rel = paginated_rel.where('test_reports.created_at > ?', ref.created_at)
           end
 
-          paginated_rel = paginated_rel.joins(:runners) if array_param?(:runnerIds) || params[:technical]
-          paginated_rel = paginated_rel.joins(:projects) if array_param?(:projectIds) || params[:projectId].present?
-          paginated_rel = paginated_rel.joins(test_payloads: :project_version) if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
-          paginated_rel = paginated_rel.joins(results: :category) if array_param?(:categoryNames)
+          report_joins = []
+          report_joins << :runners if array_param?(:runnerIds) || params[:technical]
+          report_joins << :projects if array_param?(:projectIds) || params[:projectId].present?
 
-          if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || array_param?(:categoryNames)
+          if array_param?(:projectVersionIds) || array_param?(:projectVersionNames) || array_param?(:categoryNames) || array_param?(:status) || params[:newTests].present?
             payload_joins = []
             payload_joins << :project_version if array_param?(:projectVersionIds) || array_param?(:projectVersionNames)
             payload_joins << :categories if array_param?(:categoryNames)
-            paginated_rel = paginated_rel.joins(test_payloads: payload_joins)
+
+            if payload_joins.empty?
+              report_joins << :test_payloads
+            else
+              report_joins << { test_payloads: payload_joins }
+            end
           end
+
+          paginated_rel = paginated_rel.joins(report_joins)
 
           if array_param?(:runnerIds)
             paginated_rel = paginated_rel.where('users.api_id in (?)', params[:runnerIds].collect(&:to_s).to_a)
@@ -114,9 +121,32 @@ module ProbeDock
 
           if array_param?(:categoryNames)
             paginated_rel = paginated_rel.where('categories.name in (?)', params[:categoryNames].collect(&:to_s).to_a)
+            group = true
+          end
+
+          if array_param?(:status)
+            payload_conditions = []
+
+            payload_conditions << 'test_payloads.passed_results_count > test_payloads.inactive_passed_results_count' if params[:status].include?('passed')
+            payload_conditions << 'test_payloads.results_count - test_payloads.passed_results_count - test_payloads.inactive_results_count > 0' if params[:status].include?('failed')
+            payload_conditions << 'test_payloads.inactive_results_count > 0' if params[:status].include?('inactive')
+
+            group = true
+            paginated_rel = paginated_rel.where(payload_conditions.join(' OR '))
+          end
+
+          if params[:newTests].present?
+            if true_flag?(:newTests)
+              paginated_rel = paginated_rel.where('test_payloads.new_tests_count > 0')
+            else
+              paginated_rel = paginated_rel.where('test_payloads.tests_count - test_payloads.new_tests_count > 0')
+            end
+            group = true
           end
 
           @pagination_filtered_count = paginated_rel.count('distinct test_reports.id')
+
+          paginated_rel = paginated_rel.group('test_reports.id') if group
 
           paginated_rel
         end

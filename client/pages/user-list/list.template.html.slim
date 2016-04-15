@@ -4,41 +4,59 @@
   tabset type='pills'
     tab ui-sref='admin.users' active='activeTabs.list'
       tab-heading User List
-      table.table.table-hover st-pipe='usersList.refresh' st-table='usersList.records'
-        thead
-          tr
-            th colspan=2 User
-            th.hidden-xs.hidden-sm.hidden-md E-mail
-            th.hidden-xs Registered since
-            th
-        tbody
-          tr ng-repeat='user in usersList.records'
-            td.avatar
-              a href='#' ui-sref='admin.users.show({ id: user.id })'
-                user-avatar user='user'
-            td.name
-              a ui-sref='admin.users.show({ id: user.id })' {{ user.name }}
-            td.email.hidden-xs.hidden-sm.hidden-md
-              span ng-if='user.primaryEmail' {{ user.primaryEmail }}
-              span ng-if='!user.primaryEmail'
-                | -
-            td.registeredAt.hidden-xs
-              | {{ user.createdAt | amDateFormat:'ll' }}
-              |  
-              | ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
-            td.actions
-              .btn-group.btn-group-sm
-                a.btn.btn-danger ng-click='delete(user)' tooltip='Delete User' tooltip-append-to-body='true'
-                  span.glyphicon.glyphicon-remove
-        tfoot
-          tr
-            td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
+      div st-pipe='usersList.refresh' st-table='usersList.records'
+        .well.filters
+          .row st-filters='usersList.params'
+            .col-md-6.col-sm-12
+              simple-select prefix='users-list-states' select-choices='states' label='Filter by state' placeholder='All states' model-object='usersList.params' model-property='active' displayed-property='name' extract='active'
+            .col-md-6.col-sm-12
+              simple-select prefix='users-list-types' select-choices='types' label='Filter by type' placeholder='All types' model-object='usersList.params' model-property='technical' displayed-property='name' extract='technical'
+            .col-md-6.col-sm-12
+              organization-select prefix='users-list' placeholder='All organizations' model-object='usersList.params' only-active='false'
+            .col-md-6.col-sm-12
+              label Search
+              input.form-control type='text' name='search' value='{{ usersList.params.search }}' ng-model='usersList.params.search' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' placeholder='User name or email'
+        table.table.table-hover
+          thead
+            tr
+              th.text-center.hidden-xs Active
+              th colspan=2 User
+              th.hidden-xs.hidden-sm.hidden-md E-mail
+              th Organizations
+              th.hidden-xs Registered since
+              th
+          tbody
+            tr ng-if='!loading && usersList.records.length == 0'
+              td colspan=7
+                p.empty No users matching the criteria.
+            tr ng-repeat='user in usersList.records'
+              td.text-center.hidden-xs
+                i.active.glyphicon.glyphicon-ok tooltip='Active' ng-if='user.active'
+                i.inactive.glyphicon.glyphicon-remove tooltip='Inactive' ng-if='!user.active'
+              td.avatar
+                a href='#' ui-sref='admin.users.show({ id: user.id })'
+                  user-avatar user='user'
+              td.name
+                a ui-sref='admin.users.show({ id: user.id })' {{ user.name }}
+              td.email.hidden-xs.hidden-sm.hidden-md
+                span ng-if='user.primaryEmail' {{ user.primaryEmail }}
+                span ng-if='!user.primaryEmail' -
+              td.organizations
+                simple-label type='default' ng-repeat='organization in user.organizations' label='{{ organization | orgName }}'
+              td.registeredAt.hidden-xs {{ user.createdAt | amDateFormat:'ll' }} ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
+              td.actions
+                .btn-group.btn-group-sm
+                  a.btn.btn-danger ng-click='delete(user)' tooltip='Delete User' tooltip-append-to-body='true'
+                    span.glyphicon.glyphicon-remove
+          tfoot
+            tr
+              td.clearfix colspan=7 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
     tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
       tab-heading
-        | {{ userTab.user.name }} 
+        | {{ userTab.user.name }}
         a ng-click='removeTab(userTab)'
           span.glyphicon.glyphicon-remove
       .col-md-6.col-xs-12
-        user-details-widget user='userTab.user'
+        user-details-widget user='userTab.user' complete='true'
     li.instructions ng-if='!userTabs.length'
       .message Select a user from the list to show more information

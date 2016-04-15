@@ -72,6 +72,8 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
 
         return org && _.isArray(org.roles) && _.intersection(org.roles, roles).length == roles.length;
       };
+
+      auth.addAuthFunctions($scope);
     },
 
     refreshOrgs: function() {

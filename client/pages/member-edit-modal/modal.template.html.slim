@@ -35,7 +35,7 @@ form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && s
         | Roles give a member additional privileges within the organization.
     .form-group ng-if='settings.technicalUser' ng-class='{"has-error": membershipForm.name.$dirty && membershipForm.name.$invalid}'
       label for='user-name' Username
-      input#user-name.form-control type='text' name='name' ng-model='technicalUser.name' placeholder='Unique username' required=true maxlength=25 autofocus=true unique-user-name=true ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
+      input#user-name.form-control type='text' name='name' ng-model='technicalUser.name' placeholder='Unique username' required=true maxlength=25 autofocus=true unique-technical-user-name=true ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block ng-if='membershipForm.name.$error.uniqueUserName'
         strong This username is already taken.
   .modal-footer.clearfix

@@ -19,7 +19,8 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       var modal = $modal.open({
         templateUrl: '/templates/pages/project-edit-modal/modal.template.html',
         controller: 'ProjectEditModalCtrl',
-        scope: scope
+        scope: scope,
+        size: 'lg'
       });
 
       $scope.$on('$stateChangeStart', function() {
@@ -31,13 +32,15 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
   };
 }).controller('ProjectEditModalCtrl', function(api, forms, $modalInstance, orgs, $scope) {
 
+  $scope.repoUrlPatternPlaceholder = '{{ repoUrl }}/example/{{ commit }}/{{ filePath }}#{{ fileLine }}';
+
   $scope.project = $scope.project || {};
   $scope.editedProject = {};
 
   if ($scope.project && $scope.project.id) {
     // Edit the specified project.
     reset();
-  } if ($scope.projectId) {
+  } else if ($scope.projectId) {
     // Fetch and edit a project.
     api({
       url: '/projects/' + $scope.projectId
@@ -78,6 +81,28 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       $modalInstance.close(res.data);
     });
   };
+
+  $scope.setCustomRepoUrlPattern = function(enabled) {
+    $scope.customRepoUrlPattern = !!enabled;
+  };
+
+  $scope.$watch('project', function(value) {
+    if (value) {
+      $scope.customRepoUrlPattern = !!value.repoUrlPattern;
+    }
+  });
+
+  $scope.$watch('editedProject.repoUrlPattern', function(value, oldValue) {
+    if (value && !oldValue) {
+      $scope.customRepoUrlPattern = true;
+    }
+  });
+
+  $scope.$watch('customRepoUrlPattern', function(value, oldValue) {
+    if (!value && oldValue) {
+      delete $scope.editedProject.repoUrlPattern;
+    }
+  });
 
   function reset() {
     $scope.editedProject = angular.copy($scope.project);

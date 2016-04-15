@@ -138,7 +138,7 @@ module ApiSpecHelper
 
       registration.otp
     else
-      interpolate_content value
+      value
     end
   end
 

@@ -1,5 +1,5 @@
 @api @metrics
-Feature: Retrieve the versions for a test where there is no results.
+Feature: Retrieve the versions for a test where there is no results
 
   This will allow identifying tests that are not executed for some versions.
 
@@ -45,15 +45,15 @@ Feature: Retrieve the versions for a test where there is no results.
 
 
 
-  Scenario: An organization member should be able to get versions with no result for a test in his organization.
+  Scenario: An organization member should be able to get versions with no result for a test in his organization
     When hsolo sends a GET request to /api/metrics/versionsWithNoResult?organizationId={@idOf: Rebel Alliance}&testId={@idOf: Engine should be powered}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
       [{
-        "id": "{@idOf: 1.2.3}",
+        "id": "@idOf: 1.2.3",
         "name": "1.2.3",
-        "projectId": "{@idOf: X-Wing}",
+        "projectId": "@idOf: X-Wing",
         "createdAt": "@iso8601"
       }]
       """
@@ -61,15 +61,15 @@ Feature: Retrieve the versions for a test where there is no results.
 
 
 
-  Scenario: A member from different organization should be able to get versions with no result for a test in a public organization.
+  Scenario: A member from different organization should be able to get versions with no result for a test in a public organization
     When hsolo sends a GET request to /api/metrics/versionsWithNoResult?organizationId={@idOf: Old Republic}&testId={@idOf: Senate should be big enough}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
       [{
-        "id": "{@idOf: 2.1}",
+        "id": "@idOf: 2.1",
         "name": "2.1",
-        "projectId": "{@idOf: Senate}",
+        "projectId": "@idOf: Senate",
         "createdAt": "@iso8601"
       }]
       """
@@ -77,15 +77,15 @@ Feature: Retrieve the versions for a test where there is no results.
 
 
 
-  Scenario: An anonymous usershould be able to get versions with no result for a test in a public organization.
+  Scenario: An anonymous usershould be able to get versions with no result for a test in a public organization
     When nobody sends a GET request to /api/metrics/versionsWithNoResult?organizationId={@idOf: Old Republic}&testId={@idOf: Senate should be big enough}
     Then the response code should be 200
     And the response body should be the following JSON:
       """
       [{
-        "id": "{@idOf: 2.1}",
+        "id": "@idOf: 2.1",
         "name": "2.1",
-        "projectId": "{@idOf: Senate}",
+        "projectId": "@idOf: Senate",
         "createdAt": "@iso8601"
       }]
       """
@@ -94,7 +94,7 @@ Feature: Retrieve the versions for a test where there is no results.
 
 
   @authorization
-  Scenario: An anonymous user should not be able to get versions with no results from a private organization.
+  Scenario: An anonymous user should not be able to get versions with no results from a private organization
     When nobody sends a GET request to /api/metrics/versionsWithNoResult?organizationId={@idOf: Rebel Alliance}&testId={@idOf: Senate should be big enough}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |
@@ -104,7 +104,7 @@ Feature: Retrieve the versions for a test where there is no results.
 
 
   @authorization
-  Scenario: A member from another organization should not be able to get versions with no results from a private organization.
+  Scenario: A member from another organization should not be able to get versions with no results from a private organization
     When borgana sends a GET request to /api/metrics/versionsWithNoResult?organizationId={@idOf: Rebel Alliance}&testId={@idOf: Senate should be big enough}
     Then the response should be HTTP 403 with the following errors:
       | message                                        |

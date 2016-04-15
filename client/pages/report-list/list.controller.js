@@ -71,6 +71,50 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     $scope.filtersClass = $scope.filtersClass == 'hidden-xs' ? '' : 'hidden-xs';
   };
 
+  $scope.statuses = [{
+    name: 'of any',
+    status: 'any'
+  }, {
+    name: 'failing',
+    status: 'failed'
+  }, {
+    name: 'inactive',
+    status: 'inactive'
+  }, {
+    name: 'passing',
+    status: 'passed'
+  }];
+
+  $scope.newTests = [{
+    name: 'of any',
+    new: null
+  }, {
+    name: 'new',
+    new: true
+  }, {
+    name: 'recurring',
+    new: false
+  }];
+
+  $scope.selectParams = {
+    status: 'any',
+    new: null
+  };
+
+  $scope.$watch('selectParams', function(newValue) {
+    if (newValue.status == 'any') {
+      delete $scope.reportsList.params.status;
+    } else {
+      $scope.reportsList.params.status = [ newValue.status ];
+    }
+
+    if (_.isNull(newValue.new)) {
+      delete $scope.reportsList.params.newTests;
+    } else {
+      $scope.reportsList.params.newTests = newValue.new;
+    }
+  }, true);
+
   $scope.reportTabs = [];
   $scope.activeTabs = {};
 

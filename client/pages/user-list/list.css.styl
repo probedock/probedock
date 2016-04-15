@@ -1,4 +1,9 @@
+@import '../../styles/mixins.css.styl'
+
 #user-list-page
+  .filters
+    padding 15px 15px 0 15px
+
   .tab-content
     margin-top 1em
   table
@@ -15,3 +20,14 @@
           &.actions
             width 4em
             text-align center
+
+          .active, .inactive
+            font-size 1.3em
+
+          .active
+            color passed-color
+          .inactive
+            color failed-color
+
+          p.empty
+            margin-bottom 0

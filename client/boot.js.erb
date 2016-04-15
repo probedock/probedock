@@ -21,22 +21,28 @@ angular.module('probedock', [
   'angular-jqcloud',
   'angular-loading-bar',
   'chart.js',
+  'drop-ng',
   'duScroll',
   'infinite-scroll',
-  'drop-ng',
-  'ngClipboard',
-  'ngSanitize',
   'ngAnimate',
+  'ngClipboard',
+  'ngInflection',
+  'ngSanitize',
+  'nvd3',
+  'prettyBytes',
   'smart-table',
   'truncate',
-  'ui.gravatar',
   'ui.bootstrap',
+  'ui.gravatar',
   'ui.select',
+
   // services
   'probedock.auth',
+  'probedock.bootstrap',
   'probedock.errors',
   'probedock.orgs',
   'probedock.profile',
+
   // pages
   'probedock.layout',
   'probedock.appSettingsPage',
@@ -57,11 +63,15 @@ angular.module('probedock', [
   'probedock.userListPage',
   'probedock.userRegistrationPage',
   'probedock.userConfirmRegistrationPage',
+
   // widgets
+  'probedock.dbStatsWidget',
   'probedock.orgMemberDetailsWidget',
+  'probedock.orgStatsWidget',
   'probedock.projectDetailsWidget',
   'probedock.projectHealthWidget',
   'probedock.recentActivityWidget',
+  'probedock.resqueStatsWidget',
   'probedock.tagCloudWidget',
   'probedock.testCategoriesBarWidget',
   'probedock.testContributionsWidget',
@@ -72,6 +82,7 @@ angular.module('probedock', [
   'probedock.testResultsWidget',
   'probedock.testSuiteSizeWidget',
   'probedock.userDetailsWidget',
+
   // components
   'probedock.dataLabels',
   'probedock.helpButton',
@@ -80,18 +91,24 @@ angular.module('probedock', [
   'probedock.reportHealthBar',
   'probedock.select',
   'probedock.selectOnClick',
+  'probedock.sparkline',
   'probedock.testStatusIcon',
   'probedock.userAvatar',
+
   // filters
   'probedock.formatDurationFilter',
   'probedock.orgNameFilter',
   'probedock.projectNameFilter',
+
   // validations
   'probedock.confirmationForValidation',
+  'probedock.projectRepoUrlValidation',
   'probedock.uniqueOrgNameValidation',
   'probedock.uniqueProjectNameValidation',
+  'probedock.uniqueTechnicalUserNameValidation',
   'probedock.uniqueUserEmailValidation',
   'probedock.uniqueUserNameValidation',
+
   // routes
   'probedock.routes'
 ])

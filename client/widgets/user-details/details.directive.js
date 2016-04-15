@@ -5,7 +5,8 @@ angular.module('probedock.userDetailsWidget').directive('userDetailsWidget', fun
     templateUrl: '/templates/widgets/user-details/details.template.html',
     scope: {
       user: '=',
-      mode: '@'
+      mode: '@',
+      complete: '='
     }
   };
 }).controller('UserDetailsWidgetCtrl', function($scope, $state, $stateParams, states, userEditModal) {

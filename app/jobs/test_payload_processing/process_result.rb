@@ -45,6 +45,11 @@ module TestPayloadProcessing
 
       @test_result.custom_values = data['a'] if data.key? 'a'
 
+      # Fix java.class that contains package. This fix avoid old JUnit probes to continue corrupting the test metadata
+      if @test_result.custom_values['java.class']
+        @test_result.custom_values['java.class'] = @test_result.custom_values['java.class'].gsub(/.*\./, '')
+      end
+
       # TODO: save contributors
 
       @test_result.payload_properties_set = payload_properties_set data

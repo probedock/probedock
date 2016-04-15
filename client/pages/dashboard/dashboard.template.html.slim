@@ -1,13 +1,5 @@
 .container-fluid
-  header.dashboard-header ng-controller='DashboardHeaderCtrl'
-    .btn-group.pull-right role='group' aria-label='Organization Controls'
-      button.btn.btn-primary tooltip='Dashboard' tooltip-append-to-body='true' ui-sref='org.dashboard.default({ orgName: currentOrganization.name })' ng-class='{active: currentState == "org.dashboard.default"}'
-        span.glyphicon.glyphicon-stats
-      button.btn.btn-info tooltip='Members' tooltip-append-to-body='true' ui-sref='org.dashboard.members({ orgName: currentOrganization.name })' ng-class='{active: currentState == "org.dashboard.members"}'
-        span.glyphicon.glyphicon-user
-        span.member-count.badge.badge-default {{ currentOrganization.membershipsCount }}
-      button.btn.btn-warning tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.default.edit({ orgName: currentOrganization.name })' ng-if='currentMemberIs("admin")' ng-class='{active: currentState == "org.dashboard.default.edit"}'
-        span.glyphicon.glyphicon-pencil
+  header ng-controller='DashboardHeaderCtrl'
     .page-header
       h1 {{ currentOrganization | orgName }}
   div ui-view=true
