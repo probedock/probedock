@@ -13,7 +13,7 @@ angular.module('probedock.sparkline').directive('sparkline', function($timeout) 
       // time it is displayed as there is no window resize event and the
       // trend line does not take 100% width every time.
       $timeout(function() {
-        delete $scope.options.chart.width;
+        delete $scope.chartOptions.chart.width;
       }, 200);
     }
   };
@@ -28,18 +28,17 @@ angular.module('probedock.sparkline').directive('sparkline', function($timeout) 
   });
 
   // Transform the data to an array of object with { x: <value>, y: <value> } if necessary, otherwise use as it is
-  if (_.isObject($scope.data[0]) && !_.isUndefined($scope.data[0].x) && _.isUndefined($scope.data[0].y)) {
+  if (_.isObject($scope.data[0]) && !_.isUndefined($scope.data[0].x) && !_.isUndefined($scope.data[0].y)) {
     $scope.chartData = $scope.data;
-  }
-  else {
+  } else {
     $scope.chartData = _.map($scope.data, function(item, idx) {
       return { x: idx, y: item };
     });
   }
 
   _.defaults($scope, {
-    options: {
-      chart:{
+    chartOptions: {
+      chart: {
         type: 'sparklinePlus',
         height: 30,
         width: 100,

@@ -8,7 +8,19 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
       top: '=?'
     }
   };
-}).controller('OrgStatsWidgetCtrl', function(api, $scope, orgs) {
+}).directive('orgStatsTableAdmin', function() {
+  return {
+    restrict: 'E',
+    require: '^orgStatsWidget',
+    templateUrl: '/templates/widgets/org-stats/stats.tableAdmin.template.html'
+  };
+}).directive('orgStatsTableOrgAdmin', function() {
+  return {
+    restrict: 'E',
+    require: '^orgStatsWidget',
+    templateUrl: '/templates/widgets/org-stats/stats.tableOrgAdmin.template.html'
+  };
+}).controller('OrgStatsWidgetCtrl', function(api, $scope, orgs, bootstrap) {
   orgs.addAuthFunctions($scope);
 
   _.defaults($scope, {
@@ -18,6 +30,8 @@ angular.module('probedock.orgStatsWidget').directive('orgStatsWidget', function(
     },
     loading: false
   });
+
+  bootstrap.forward($scope);
 
   $scope.$watch('params', function(newParams, oldParams) {
     if (!_.isUndefined(newParams.organization) || newParams.organization != oldParams.organization) {
