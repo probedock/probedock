@@ -1,7 +1,7 @@
 .user-details.panel.panel-default
   .panel-heading.clearfix
     .btn-group.btn-group-xs.pull-right
-      a.btn.btn-warning ng-click='edit()' tooltip='Edit' tooltip-append-to-body='true'
+      a.btn.btn-warning ng-click='edit()' uib-tooltip='Edit' tooltip-append-to-body='true'
         span.glyphicon.glyphicon-pencil
     h3.panel-title User Details
   .panel-body
@@ -23,6 +23,6 @@
       dd {{ user.createdAt | amDateFormat:'ll' }}
       dt ng-if='complete' Active
       dd ng-if='complete'
-        i.active.glyphicon.glyphicon-ok tooltip='Active' ng-if='user.active'
-        i.inactive.glyphicon.glyphicon-remove tooltip='Inactive' ng-if='!user.active'
+        i.active.glyphicon.glyphicon-ok uib-tooltip='Active' ng-if='user.active'
+        i.inactive.glyphicon.glyphicon-remove uib-tooltip='Inactive' ng-if='!user.active'
 

@@ -69,6 +69,7 @@
 //= require angular-truncate
 //= require angular-ui-bootstrap-tpls
 //= require angular-ui-router
+//= require angular-ui-router-events
 //= require angular-ui-router-title
 //= require angular-ui-select
 //= require drop-ng

@@ -23,7 +23,7 @@
       table
         tr
           td.text-center rowspan='3'
-            button.btn.btn-link type='button' ng-if='hasPrev' ng-click='fetchPrev()' tooltip='Show older results'
+            button.btn.btn-link type='button' ng-if='hasPrev' ng-click='fetchPrev()' uib-tooltip='Show older results'
               i.glyphicon.glyphicon-chevron-left
             button.btn.btn-link type='button' ng-if='!hasPrev' disabled=true
               i.glyphicon.glyphicon-chevron-left
@@ -35,7 +35,7 @@
           td.text-center
             strong Latest
           td.text-center rowspan='3'
-            button.btn.btn-link type='button' ng-if='hasNext' ng-click='fetchNext()' tooltip='Show recent results'
+            button.btn.btn-link type='button' ng-if='hasNext' ng-click='fetchNext()' uib-tooltip='Show recent results'
               i.glyphicon.glyphicon-chevron-right
             button.btn.btn-link type='button' ng-if='!hasNext' disabled=true
               i.glyphicon.glyphicon-chevron-right

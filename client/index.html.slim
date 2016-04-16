@@ -42,11 +42,11 @@ html ng-app='probedock' ng-strict-di=true
             span.icon-bar
             span.icon-bar
           a.navbar-brand href='/' Probe Dock
-        #menu.collapse.navbar-collapse collapse='!navbarOpen'
+        #menu.collapse.navbar-collapse uib-collapse='!navbarOpen'
           ul.nav.navbar-nav
             li ng-if='organizations.length >= 2'
-              .btn-group.navbar-btn dropdown=true
-                button.btn.btn-primary.dropdown-toggle type='button' dropdown-toggle=true
+              .btn-group.navbar-btn uib-dropdown=true
+                button.btn.btn-primary.dropdown-toggle type='button' uib-dropdown-toggle=true
                   span ng-if='currentOrganization' {{ currentOrganization | orgName }}
                   em ng-if='!currentOrganization' Select an organization
                   '
@@ -58,17 +58,17 @@ html ng-app='probedock' ng-strict-di=true
               a href='#' ui-sref='org.dashboard.default({ orgName: currentOrganization.name })' Dashboard
             li ng-if='currentOrganization' ng-class='{active: baseStateIs("org.reports")}'
               a href='#' ui-sref='org.reports({ orgName: currentOrganization.name })' Reports
-            li ng-if='currentOrganization'  ng-class='{active: baseStateIs("org.projects.list")}'
+            li ng-if='currentOrganization'  ng-class='{active: baseStateIs("org.projects")}'
               a href='#' ui-sref='org.projects.list({ orgName: currentOrganization.name })' Projects
-            li.dropdown dropdown=true ng-class='{active: baseStateIs("help")}' ng-show='currentUser'
-              a.dropdown-toggle href='#' dropdown-toggle=true
+            li.dropdown uib-dropdown=true ng-class='{active: baseStateIs("help")}' ng-show='currentUser'
+              a.dropdown-toggle href='#' uib-dropdown-toggle=true
                 | Help
                 span.caret
               ul.dropdown-menu role='menu'
                 li
                   a href='#' ui-sref='help.gettingStarted' Getting Started
-            li.dropdown dropdown=true ng-class='{active: baseStateIs("admin")}' ng-show='currentUserIs("admin") || currentMemberIs("admin")'
-              a.dropdown-toggle href='#' dropdown-toggle=true
+            li.dropdown uib-dropdown=true ng-class='{active: baseStateIs("admin")}' ng-show='currentUserIs("admin") || currentMemberIs("admin")'
+              a.dropdown-toggle href='#' uib-dropdown-toggle=true
                 | Admin
                 span.caret
               ul.dropdown-menu role='menu'
@@ -86,10 +86,10 @@ html ng-app='probedock' ng-strict-di=true
                   a ui-sref='admin.settings' Settings
           ul.nav.navbar-nav.navbar-right ng-controller='AuthCtrl'
             li ng-if='pendingMemberships.length'
-              button.btn.btn-success.navbar-btn.btn-sm tooltip='You have been invited to join an organization!' tooltip-append-to-body='true' tooltip-placement='bottom' ui-sref='profile'
+              button.btn.btn-success.navbar-btn.btn-sm uib-tooltip='You have been invited to join an organization!' tooltip-append-to-body='true' tooltip-placement='bottom' ui-sref='profile'
                 span.glyphicon.glyphicon-exclamation-sign
             li ng-if='currentUser' ng-class='{active: baseStateIs("profile")}'
-              a href='#' tooltip='Your profile' tooltip-placement='bottom' ui-sref='profile' {{ currentUser.name }}
+              a href='#' uib-tooltip='Your profile' tooltip-placement='bottom' ui-sref='profile' {{ currentUser.name }}
             li ng-if='!currentUser'
               button#login.btn.btn-default.navbar-btn.btn-sm type='button' ng-click='openSignInDialog()'
                 span.glyphicon.glyphicon-log-in

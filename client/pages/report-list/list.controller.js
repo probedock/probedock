@@ -1,4 +1,4 @@
-angular.module('probedock.reportListPage').controller('ReportListPageCtrl', function(api, orgs, $scope, $stateParams, states, tables, $timeout) {
+angular.module('probedock.reportListPage').controller('ReportListPageCtrl', function(api, orgs, routeOrgName, $scope, states, tables, $timeout) {
   orgs.forwardData($scope);
 
   var filterStateLoaded,
@@ -9,7 +9,7 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     url: '/reports',
     pageSize: 15,
     params: {
-      organizationName: $stateParams.orgName,
+      organizationName: routeOrgName,
       withRunners: 1,
       withProjects: 1,
       withProjectVersions: 1,
@@ -116,7 +116,9 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
   }, true);
 
   $scope.reportTabs = [];
-  $scope.activeTabs = {};
+  $scope.tabset = {
+    active: 0
+  };
 
   states.onState($scope, [ 'org.reports', 'org.reports.show' ], function(state, params) {
     if (state && state.name == 'org.reports.show') {
@@ -134,15 +136,12 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
       $scope.reportTabs.push(tab);
     }
 
-    selectTab(reportId);
+    $timeout(function() {
+      selectTab($scope.reportTabs.indexOf(tab) + 1);
+    });
   }
 
   function selectTab(id) {
-
-    _.each($scope.activeTabs, function(value, key) {
-      $scope.activeTabs[key] = false;
-    });
-
-    $scope.activeTabs[id] = true;
+    $scope.tabset.active = id == 'latest' ? 0 : id;
   }
 });

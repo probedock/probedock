@@ -20,7 +20,7 @@
             tr ng-repeat='stat in currentStats'
               td.name {{ stat.name }}
               td.rows.text-right {{ stat.rowsCount | number }}
-              td.total-size.text-right tooltip='Table: {{ stat.tableSize | prettyBytes }}, Indexes: {{ stat.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ stat.totalSize | prettyBytes }}
+              td.total-size.text-right uib-tooltip='Table: {{ stat.tableSize | prettyBytes }}, Indexes: {{ stat.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ stat.totalSize | prettyBytes }}
             tr.more-tables ng-if='hasMore()'
               td.text-right.hidden-lg colspan=3
                 a href='#' ng-click='more()' Show remaining {{ stats.length - top }} tables
@@ -31,7 +31,7 @@
             tr.hidden-sm.hidden-md.hidden-lg
               th.name Total
               th.rows.text-right {{ total.rowsCount | number }}
-              th.total-size.text-right tooltip='Table: {{ total.tableSize | prettyBytes }}, Indexes: {{ total.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ total.totalSize | prettyBytes }}
+              th.total-size.text-right uib-tooltip='Table: {{ total.tableSize | prettyBytes }}, Indexes: {{ total.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ total.totalSize | prettyBytes }}
 
         / Visible when SM / MD
         table.table ng-if='bootstrapSize == "sm" || bootstrapSize == "md"'
@@ -50,7 +50,7 @@
               td.rows.text-right {{ stat.rowsCount | number }}
               td.rows-trend.text-center.db-stats-right-border.hidden-xs
                 sparkline ng-if='stat.rowsCountTrend' data='stat.rowsCountTrend'
-              td.total-size.text-right tooltip='Table: {{ stat.tableSize | prettyBytes }}, Indexes: {{ stat.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ stat.totalSize | prettyBytes }}
+              td.total-size.text-right uib-tooltip='Table: {{ stat.tableSize | prettyBytes }}, Indexes: {{ stat.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ stat.totalSize | prettyBytes }}
             tr.more-tables ng-if='hasMore()'
               td.text-right.hidden-lg colspan=4
                 a href='#' ng-click='more()' Show remaining {{ stats.length - top }} tables
@@ -63,7 +63,7 @@
               th.rows.text-right {{ total.rowsCount | number }}
               th.rows-trend.text-center.db-stats-right-border
                 sparkline ng-if='total.rowsCountTrend' data='total.rowsCountTrend'
-              th.total-size.text-right tooltip='Table: {{ total.tableSize | prettyBytes }}, Indexes: {{ total.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ total.totalSize | prettyBytes }}
+              th.total-size.text-right uib-tooltip='Table: {{ total.tableSize | prettyBytes }}, Indexes: {{ total.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ total.totalSize | prettyBytes }}
 
         / Visisble when LG
         table.table ng-if='bootstrapSize == "lg"'
@@ -85,7 +85,7 @@
               td.rows-proportion.text-right{{ stat.rowsProportion | number:2 }}%
               td.rows-trend.text-center.db-stats-right-border
                 sparkline ng-if='stat.rowsCountTrend' data='stat.rowsCountTrend'
-              td.total-size.text-right tooltip='Table: {{ stat.tableSize | prettyBytes }}, Indexes: {{ stat.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ stat.totalSize | prettyBytes }}
+              td.total-size.text-right uib-tooltip='Table: {{ stat.tableSize | prettyBytes }}, Indexes: {{ stat.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ stat.totalSize | prettyBytes }}
               td.total-size-proportion.text-right {{ stat.totalSizeProportion | number:2 }}%
             tr.more-tables ng-if='hasMore()'
               td.text-right colspan=6
@@ -100,5 +100,5 @@
               th.rows-proportion.text-right {{ 100 | number:2 }}%
               th.rows-trend.text-center.db-stats-right-border
                 sparkline ng-if='total.rowsCountTrend' data='total.rowsCountTrend'
-              th.total-size.text-right tooltip='Table: {{ total.tableSize | prettyBytes }}, Indexes: {{ total.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ total.totalSize | prettyBytes }}
+              th.total-size.text-right uib-tooltip='Table: {{ total.tableSize | prettyBytes }}, Indexes: {{ total.indexesSize | prettyBytes }}' tooltip-append-to-body='true' {{ total.totalSize | prettyBytes }}
               th.total-size-proportion.text-right {{ 100 | number:2 }}%

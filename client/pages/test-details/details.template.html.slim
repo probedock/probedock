@@ -36,7 +36,7 @@
               dd
                 strong Contributors
               dd
-                user-avatar ng-if='test.contributions.length > 0' ng-repeat='contribution in test.contributions' user='contribution.user' tooltip='{{ contribution.user.name }}' tooltip-append-to-body='true'
+                user-avatar ng-if='test.contributions.length > 0' ng-repeat='contribution in test.contributions' user='contribution.user' uib-tooltip='{{ contribution.user.name }}' tooltip-append-to-body='true'
                 p.empty ng-if='test.contributions.length === 0'
                   em No users are known to have contributed to this test.
     .col-lg-4.col-md-6.col-xs-12

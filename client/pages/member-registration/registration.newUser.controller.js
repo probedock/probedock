@@ -1,4 +1,4 @@
-angular.module('probedock.memberRegistrationPage').controller('NewUserMemberRegistrationModalCtrl', function(api, auth, $modalInstance, $scope, $state, $stateParams) {
+angular.module('probedock.memberRegistrationPage').controller('NewUserMemberRegistrationModalCtrl', function(api, auth, $scope, $state, $stateParams, states, $uibModalInstance) {
 
   $scope.user = {
     primaryEmail: $scope.membership.organizationEmail
@@ -8,13 +8,13 @@ angular.module('probedock.memberRegistrationPage').controller('NewUserMemberRegi
 
   $scope.register = function() {
     register().then(autoSignIn).then(function() {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
       $state.go('org.dashboard.default', { orgName: $scope.membership.organization.name });
     });
   };
 
-  $scope.$on('$stateChangeSuccess', function() {
-    $modalInstance.dismiss('stateChange');
+  states.onStateChange($scope, null, function() {
+    $uibModalInstance.dismiss('stateChange');
   });
 
   function register() {

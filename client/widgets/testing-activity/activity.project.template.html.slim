@@ -8,12 +8,12 @@
   canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
   form.form role='form' ng-if='chart.data.length'
     .form-group
-      .btn-group.btn-group-sm.btn-group-justified role='group' tooltip='Display' tooltip-append-to-body='true'
-        label.btn.btn-default ng-model='chart.type' btn-radio='"written"'
+      .btn-group.btn-group-sm.btn-group-justified role='group' uib-tooltip='Display' tooltip-append-to-body='true'
+        label.btn.btn-default ng-model='chart.type' uib-btn-radio='"written"'
           span.hidden-md New tests
-          span.visible-md tooltip='New tests' tooltip-append-to-body='true' N
-        label.btn.btn-default ng-model='chart.type' btn-radio='"run"'
+          span.visible-md uib-tooltip='New tests' tooltip-append-to-body='true' N
+        label.btn.btn-default ng-model='chart.type' uib-btn-radio='"run"'
           span.hidden-md Test runs
-          span.visible-md tooltip='Tests run' tooltip-append-to-body='true' R
+          span.visible-md uib-tooltip='Tests run' tooltip-append-to-body='true' R
   .empty ng-if='chart.data.length === 0'
     em No recent activity.

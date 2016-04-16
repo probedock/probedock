@@ -1,22 +1,17 @@
-angular.module('probedock.dashboardPage').controller('DashboardHeaderCtrl', function(orgEditModal, $scope, $state, $stateParams) {
+angular.module('probedock.dashboardPage').controller('DashboardHeaderCtrl', function(orgEditModal, $scope, $state, states) {
 
-  var modal;
-  $scope.currentState = $state.current.name;
+  states.onState($scope, 'org.dashboard.default.edit', function(state, params, resolves) {
 
-  $scope.$on('$stateChangeSuccess', function(event, toState) {
+    var modal = orgEditModal.open($scope, {
+      organizationName: resolves.routeOrgName
+    });
 
-    $scope.currentState = toState.name;
-
-    if (toState.name == 'org.dashboard.default.edit') {
-      modal = orgEditModal.open($scope);
-
-      modal.result.then(function() {
+    modal.result.then(function() {
+      $state.go('^', {}, { inherit: true });
+    }, function(reason) {
+      if (reason != 'stateChange') {
         $state.go('^', {}, { inherit: true });
-      }, function(reason) {
-        if (reason != 'stateChange') {
-          $state.go('^', {}, { inherit: true });
-        }
-      });
-    }
+      }
+    });
   });
 });

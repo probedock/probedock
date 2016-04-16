@@ -1,4 +1,4 @@
-angular.module('probedock.auth').controller('LoginModalCtrl', function(auth, $http, $modalInstance, $scope, $location) {
+angular.module('probedock.auth').controller('LoginModalCtrl', function(auth, $http, $scope, $location, $uibModalInstance) {
 
   $scope.credentials = {};
 
@@ -19,7 +19,7 @@ angular.module('probedock.auth').controller('LoginModalCtrl', function(auth, $ht
   };
 
   $scope.$on('$stateChangeSuccess', function() {
-    $modalInstance.dismiss('stateChange');
+    $uibModalInstance.dismiss('stateChange');
   });
 
   function showError() {

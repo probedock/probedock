@@ -1,10 +1,11 @@
-angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, eventUtils, $modal, $rootScope, $state, $stateParams, $q) {
+angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, eventUtils, $rootScope, $state, states, $q) {
 
   var service = eventUtils.service({
 
     organizations: [],
 
     currentOrganization: appStore.get('currentOrganization'),
+    currentOrganizationName: null,
 
     addOrganization: function(org) {
       service.organizations.push(org);
@@ -94,10 +95,9 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
   $rootScope.$on('auth.signIn', service.refreshOrgs);
   $rootScope.$on('auth.signOut', forgetPrivateData);
 
-  $rootScope.$on('$stateChangeSuccess', function(event, toState) {
-    if (toState.name.indexOf('org.') === 0) {
-      setCurrentOrganization(_.findWhere(service.organizations, { name: $stateParams.orgName }));
-    }
+  states.onState($rootScope, /^org\./, function(state, params, resolves) {
+    service.currentOrganizationName = resolves.routeOrgName;
+    setCurrentOrganization(_.findWhere(service.organizations, { name: resolves.routeOrgName }));
   });
 
   function forgetPrivateData() {
@@ -123,8 +123,8 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
 
     if (service.currentOrganization) {
       setCurrentOrganization(_.findWhere(orgs, { id: service.currentOrganization.id }));
-    } else if ($stateParams.orgName) {
-      setCurrentOrganization(_.findWhere(orgs, { name: $stateParams.orgName }));
+    } else if (service.currentOrganizationName) {
+      setCurrentOrganization(_.findWhere(orgs, { name: service.currentOrganizationName }));
     }
   }
 

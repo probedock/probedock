@@ -2,9 +2,9 @@
   .page-header
     h1 {{ currentOrganization | orgName }}
   .col-xs-12
-    tabset type='pills'
-      tab ui-sref='org.reports' active='activeTabs.latest'
-        tab-heading Latest Reports
+    uib-tabset type='pills' active='tabset.active'
+      uib-tab ui-sref='org.reports' index='0'
+        uib-tab-heading Latest Reports
         .row st-pipe='reportsList.refresh' st-table='reportsList.records'
           .col-md-12
             .well.filters st-filters='reportsList.params' class='{{ filtersClass }}'
@@ -45,7 +45,7 @@
                       th.runners
                         | Runners
                         .pull-right.visible-xs
-                          a.btn.btn-primary.btn-xs tooltip='Filters' tooltip-append-to-body='true' ng-click='toggleFilters()'
+                          a.btn.btn-primary.btn-xs uib-tooltip='Filters' tooltip-append-to-body='true' ng-click='toggleFilters()'
                             span.glyphicon.glyphicon-search
                       th.duration.hidden-xs.hidden-sm Duration
                       th.date.hidden-xs.hidden-sm.hidden-md Date
@@ -57,7 +57,7 @@
                           span.text-danger ng-show='noNewReports' ng-animate='{show: "animate-show", hide: "animate-hide"}' no new reports
                           .btn-group
                             refresh-table
-                            a.btn.btn-primary.btn-xs tooltip='Filters' tooltip-append-to-body='true' ng-click='toggleFilters()'
+                            a.btn.btn-primary.btn-xs uib-tooltip='Filters' tooltip-append-to-body='true' ng-click='toggleFilters()'
                               span.glyphicon.glyphicon-search
                   tbody
                     tr.empty ng-show='!reportsList.initialized'
@@ -91,6 +91,7 @@
                   tfoot
                     tr
                       td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
-      tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' active='activeTabs[reportTab.id]' ng-controller='ReportListTabCtrl'
-        tab-heading {{ reportTime() }}
-        report-details report='report' organization='currentOrganization'
+      uib-tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' index='$index + 1'
+        uib-tab-heading Yeehaw
+        div ng-controller='ReportListTabCtrl'
+          report-details report='report' organization='currentOrganization'

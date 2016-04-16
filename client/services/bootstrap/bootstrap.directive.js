@@ -22,13 +22,6 @@ angular.module('probedock.bootstrap').directive('bootstrapSizeDetector', functio
 
         bootstrap.setSize(size);
       });
-
-      // FIXME: Remove this event listener once Angular has been updated and the watch is working as expected
-      angular.element($window).bind('resize', function() {
-        $timeout(function() {
-          $scope.$apply()
-        });
-      })
     }
   };
 });

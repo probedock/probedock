@@ -40,9 +40,9 @@
       strong
         markdown:
           This is something you only need to do *once* for this Probe Dock server.
-    tabset.clearfix
-      tab active='true'
-        tab-heading
+    uib-tabset.clearfix
+      uib-tab active='true'
+        uib-tab-heading
           span.glyphicon.glyphicon-file
           |  Configuration
         p
@@ -52,17 +52,17 @@
         form
           .form-group
             textarea.form-control rows=7 readonly=true select-on-click=true ng-model='homeYaml'
-          button.btn.btn-primary.pull-right clip-copy='homeYaml' tooltip='Copy to clipboard'
+          button.btn.btn-primary.pull-right clip-copy='homeYaml' uib-tooltip='Copy to clipboard'
             span.glyphicon.glyphicon-copy
-      tab
-        tab-heading
+      uib-tab
+        uib-tab-heading
           span.glyphicon.glyphicon-sunglasses
           |  Shell Script
         p This shell script will set up your personal configuration file.
         form
           .form-group
             textarea.form-control rows=7 readonly=true select-on-click=true ng-model='homeScript'
-          button.copy.btn.btn-primary.pull-right clip-copy='homeScript' tooltip='Copy to clipboard'
+          button.copy.btn.btn-primary.pull-right clip-copy='homeScript' uib-tooltip='Copy to clipboard'
             span.glyphicon.glyphicon-copy
         p
           strong.text-warning If you already have a personal configuration file, this script will overwrite it. To add or update a Probe Dock server in an existing configuration file, go back to the Configuration tab and copy only the relevant section.
@@ -95,9 +95,9 @@
     p ng-if='projectConfigSelection.orgId && projectConfigSelection.projectId'
       strong.text-success
         | Your project's configuration is ready. Copy and paste away!
-    tabset.clearfix
-      tab active='true'
-        tab-heading
+    uib-tabset.clearfix
+      uib-tab active='true'
+        uib-tab-heading
           span.glyphicon.glyphicon-file
           |  Configuration
         p
@@ -108,10 +108,10 @@
         form
           .form-group
             textarea.form-control rows=4 readonly=true select-on-click=true ng-model='projectYaml'
-          button.btn.btn-primary.pull-right clip-copy='projectYaml' tooltip='Copy to clipboard'
+          button.btn.btn-primary.pull-right clip-copy='projectYaml' uib-tooltip='Copy to clipboard'
             span.glyphicon.glyphicon-copy
-      tab
-        tab-heading
+      uib-tab
+        uib-tab-heading
           span.glyphicon.glyphicon-sunglasses
           |  Shell Script
         markdown:
@@ -120,7 +120,7 @@
         form
           .form-group
             textarea.form-control rows=4 readonly=true select-on-click=true ng-model='projectScript'
-          button.btn.btn-primary.pull-right clip-copy='projectScript' tooltip='Copy to clipboard'
+          button.btn.btn-primary.pull-right clip-copy='projectScript' uib-tooltip='Copy to clipboard'
             span.glyphicon.glyphicon-copy
         p
           strong.text-warning If your project already has a configuration file, this script will overwrite it.

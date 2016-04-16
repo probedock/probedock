@@ -1,59 +1,101 @@
-angular.module('probedock.states').factory('states', function($rootScope, $state, $stateParams, $timeout) {
+angular.module('probedock.states').factory('states', function($rootScope, $state, $stateParams, $timeout, $transitions) {
 
-  var onStateCallbacks = [];
+  var currentStateName = $state.$current ? $state.$current.name : null,
+      currentStateParams = $state.$current ? $state.$current.params : {},
+      onStateCallbacks = [],
+      onStateChangeCallbacks = [];
 
-  $rootScope.$on('$stateChangeSuccess', checkState);
+  $transitions.onStart({}, [ '$transition$', function(transition) {
+    checkStateChange(transition.to(), transition.params(), transition.resolves());
+  } ]);
 
-  function checkState(event, toState, toParams, fromState, fromParams) {
+  $transitions.onSuccess({}, [ '$transition$', function(transition) {
+    checkState(transition.to(), transition.params(), transition.resolves(), onStateCallbacks);
+  } ]);
+
+  function buildCallback(matcher, options, func) {
+    var callback = {
+      matcher: matcher
+    };
+
+    if (typeof(options) == 'function') {
+      callback.options = {};
+      callback.func = options;
+    } else {
+      callback.options = options || {};
+      callback.func = callback;
+    }
+
+    return callback;
+  }
+
+  function stateMatches(state, matcher, options) {
+    if (!matcher) {
+      return true;
+    } else if (_.isRegExp(matcher) && !state.name.match(matcher)) {
+      return false;
+    } else if (_.isString(matcher) && state.name !== matcher) {
+      return false;
+    } else if (_.isArray(matcher) && !_.contains(matcher, state.name)) {
+      return false;
+    }
+
+    if (options.params && _.some(options.params, function(value, name) {
+      return toParams[name] !== value;
+    })) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function checkState(toState, toParams, toResolve, callbacks) {
+
+    currentStateName = toState.name;
+    currentStateParams = toParams || {};
 
     _.each(onStateCallbacks, function(callback) {
-
-      var matcher = callback.matcher,
-          options = callback.options,
-          func = callback.func;
-
-      if (_.isRegExp(matcher) && !toState.name.match(matcher)) {
-        return;
-      } else if (_.isString(matcher) && toState.name !== matcher) {
-        return;
-      } else if (_.isArray(matcher) && !_.contains(matcher, toState.name)) {
-        return;
+      if (stateMatches(toState, callback.matcher, callback.options)) {
+        callback.func(toState, toParams || {}, toResolve || {});
       }
+    });
+  }
 
-      if (options.params && _.some(options.params, function(value, name) {
-        return toParams[name] !== value;
-      })) {
-        return;
+  function checkStateChange(toState, toParams, toResolve) {
+    _.each(onStateChangeCallbacks, function(callback) {
+      if (stateMatches(toState, callback.matcher, callback.options)) {
+        callback.func(toState, toParams || {}, toResolve || {});
       }
-
-      callback.func(toState, toParams, fromState, fromParams);
     });
   }
 
   return {
+    onStateChange: function($scope, matcher, options, func) {
+
+      var callback = buildCallback(matcher, options, func);
+      onStateChangeCallbacks.push(callback);
+
+      if ($scope != $rootScope) {
+        $scope.$on('$destroy', function() {
+          onStateChangeCallbacks.splice(onStateChangeCallbacks.indexOf(callback), 1);
+        });
+      }
+    },
+
     onState: function($scope, matcher, options, func) {
 
-      var callback = {
-        matcher: matcher
-      };
-
-      if (typeof(options) == 'function') {
-        callback.options = {};
-        callback.func = options;
-      } else {
-        callback.options = options || {};
-        callback.func = callback;
-      }
-
+      var callback = buildCallback(matcher, options, func);
       onStateCallbacks.push(callback);
 
-      $timeout(function() {
-        checkState(undefined, $state.current, $stateParams);
-      });
+      if ($state.$current) {
+        checkState($state.$current, $state.params || {}, $state.$current.resolve || {}, [ callback ]);
+      }
 
-      $scope.$on('$destroy', function() {
-        onStateCallbacks.splice(onStateCallbacks.indexOf(callback), 1);
-      });
+      if ($scope != $rootScope) {
+        $scope.$on('$destroy', function() {
+          onStateCallbacks.splice(onStateCallbacks.indexOf(callback), 1);
+        });
+      }
     }
   };
 });

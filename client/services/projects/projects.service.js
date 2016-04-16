@@ -1,4 +1,4 @@
-angular.module('probedock.projects').factory('projects', function(api, eventUtils, $modal, $q) {
+angular.module('probedock.projects').factory('projects', function(api, eventUtils, $q) {
 
   var currentOrg = null;
 

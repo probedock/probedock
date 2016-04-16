@@ -1,8 +1,8 @@
-angular.module('probedock.userEditModal').factory('userEditModal', function($modal) {
+angular.module('probedock.userEditModal').factory('userEditModal', function($uibModal) {
   return {
     open: function($scope) {
 
-      var modal = $modal.open({
+      var modal = $uibModal.open({
         templateUrl: '/templates/pages/user-edit-modal/modal.template.html',
         controller: 'UserEditModalCtrl',
         scope: $scope
@@ -15,7 +15,7 @@ angular.module('probedock.userEditModal').factory('userEditModal', function($mod
       return modal;
     }
   };
-}).controller('UserEditModalCtrl', function(forms, $modalInstance, $scope, users) {
+}).controller('UserEditModalCtrl', function(forms, $scope, $uibModalInstance, users) {
 
   $scope.editedUser = angular.copy($scope.user);
 
@@ -24,6 +24,6 @@ angular.module('probedock.userEditModal').factory('userEditModal', function($mod
   };
 
   $scope.save = function() {
-    users.updateUser($scope.editedUser).then($modalInstance.close);
+    users.updateUser($scope.editedUser).then($uibModalInstance.close);
   };
 });

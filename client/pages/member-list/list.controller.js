@@ -1,4 +1,4 @@
-angular.module('probedock.memberListPage').controller('MemberListPageCtrl', function(api, memberEditModal, orgs, $scope, $state, $stateParams) {
+angular.module('probedock.memberListPage').controller('MemberListPageCtrl', function(api, memberEditModal, orgs, routeOrgName, $scope, $state, states) {
 
   $scope.memberships = [];
 
@@ -19,20 +19,18 @@ angular.module('probedock.memberListPage').controller('MemberListPageCtrl', func
 
   fetchMemberships();
 
-  $scope.$on('$stateChangeSuccess', function(event, toState) {
-    if (toState.name.match(/^org\.dashboard\.members\.(?:new|edit)$/)) {
+  states.onState($scope, /^org\.dashboard\.members\.(?:new|edit)$/, function() {
 
-      var modal = memberEditModal.open($scope);
+    var modal = memberEditModal.open($scope);
 
-      modal.result.then(function(membership) {
-        updateMembership(membership);
+    modal.result.then(function(membership) {
+      updateMembership(membership);
+      $state.go('^', {}, { inherit: true });
+    }, function(reason) {
+      if (reason != 'stateChange') {
         $state.go('^', {}, { inherit: true });
-      }, function(reason) {
-        if (reason != 'stateChange') {
-          $state.go('^', {}, { inherit: true });
-        }
-      });
-    }
+      }
+    });
   });
 
   function fetchMemberships(page) {
@@ -41,7 +39,7 @@ angular.module('probedock.memberListPage').controller('MemberListPageCtrl', func
     api({
       url: '/memberships',
       params: {
-        organizationName: $stateParams.orgName,
+        organizationName: routeOrgName,
         withUser: 1,
         pageSize: 25,
         page: page

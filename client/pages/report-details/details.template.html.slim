@@ -33,16 +33,16 @@
               label Filter by result
               div
                 .btn-group
-                  label.btn.btn-success btn-checkbox=true ng-model='reportFilters.showPassed' tooltip='Click to show/hide passed results' tooltip-append-to-body='true'
+                  label.btn.btn-success uib-btn-checkbox=true ng-model='reportFilters.showPassed' uib-tooltip='Click to show/hide passed results' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-thumbs-up
-                  label.btn.btn-danger btn-checkbox=true ng-model='reportFilters.showFailed' tooltip='Click to show/hide failed results' tooltip-append-to-body='true'
+                  label.btn.btn-danger uib-btn-checkbox=true ng-model='reportFilters.showFailed' uib-tooltip='Click to show/hide failed results' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-thumbs-down
-                  label.btn.btn-warning btn-checkbox=true ng-model='reportFilters.showInactive' tooltip='Click to show/hide inactive results' tooltip-append-to-body='true'
+                  label.btn.btn-warning uib-btn-checkbox=true ng-model='reportFilters.showInactive' uib-tooltip='Click to show/hide inactive results' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-ban-circle
                 .btn-group<
-                  label.btn.btn-default btn-checkbox=true ng-model='reportFilters.showExisting' tooltip='Click to show/hide results of existing tests' tooltip-append-to-body='true'
+                  label.btn.btn-default uib-btn-checkbox=true ng-model='reportFilters.showExisting' uib-tooltip='Click to show/hide results of existing tests' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-time
-                  label.btn.btn-default btn-checkbox=true ng-model='reportFilters.showNew' tooltip='Click to show/hide results of new tests' tooltip-append-to-body='true'
+                  label.btn.btn-default uib-btn-checkbox=true ng-model='reportFilters.showNew' uib-tooltip='Click to show/hide results of new tests' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-plus
             .form-group
               label.control-label for='report-filters-name' Filter by name

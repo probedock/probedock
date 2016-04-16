@@ -11,27 +11,30 @@ angular.module('angular-storage',
     ]);
 
 angular.module('angular-storage.cookieStorage', [])
-  .service('cookieStorage', ["$injector", function ($injector) {
-    var $cookieStore = $injector.get('$cookieStore');
+  .service('cookieStorage', ["$cookies", function ($cookies) {
 
     this.set = function (what, value) {
-      return $cookieStore.put(what, value);
+      return $cookies.put(what, value);
     };
 
     this.get = function (what) {
-      return $cookieStore.get(what);
+      return $cookies.get(what);
     };
 
     this.remove = function (what) {
-      return $cookieStore.remove(what);
+      return $cookies.remove(what);
     };
   }]);
 
 angular.module('angular-storage.internalStore', ['angular-storage.localStorage', 'angular-storage.sessionStorage'])
   .factory('InternalStore', ["$log", "$injector", function($log, $injector) {
 
-    function InternalStore(namespace, storage, delimiter) {
+    function InternalStore(namespace, storage, delimiter, useCache) {
       this.namespace = namespace || null;
+      if (angular.isUndefined(useCache) || useCache == null) {
+        useCache = true;
+      }
+      this.useCache = useCache;
       this.delimiter = delimiter || '.';
       this.inMemoryCache = {};
       this.storage = $injector.get(storage || 'localStorage');
@@ -46,13 +49,15 @@ angular.module('angular-storage.internalStore', ['angular-storage.localStorage',
     };
 
     InternalStore.prototype.set = function(name, elem) {
-      this.inMemoryCache[name] = elem;
+      if (this.useCache) {
+        this.inMemoryCache[name] = elem;
+      }
       this.storage.set(this.getNamespacedKey(name), JSON.stringify(elem));
     };
 
     InternalStore.prototype.get = function(name) {
       var obj = null;
-      if (name in this.inMemoryCache) {
+      if (this.useCache && name in this.inMemoryCache) {
         return this.inMemoryCache[name];
       }
       var saved = this.storage.get(this.getNamespacedKey(name));
@@ -64,7 +69,9 @@ angular.module('angular-storage.internalStore', ['angular-storage.localStorage',
           obj = JSON.parse(saved);
         }
 
-        this.inMemoryCache[name] = obj;
+        if (this.useCache) {
+          this.inMemoryCache[name] = obj;
+        }
       } catch(e) {
         $log.error('Error parsing saved value', e);
         this.remove(name);
@@ -73,7 +80,9 @@ angular.module('angular-storage.internalStore', ['angular-storage.localStorage',
     };
 
     InternalStore.prototype.remove = function(name) {
-      this.inMemoryCache[name] = null;
+      if (this.useCache) {
+        this.inMemoryCache[name] = null;
+      }
       this.storage.remove(this.getNamespacedKey(name));
     };
 
@@ -83,17 +92,16 @@ angular.module('angular-storage.internalStore', ['angular-storage.localStorage',
 
 angular.module('angular-storage.localStorage', ['angular-storage.cookieStorage'])
   .service('localStorage', ["$window", "$injector", function ($window, $injector) {
-    var localStorageAvailable = !!$window.localStorage;
+    var localStorageAvailable;
 
-    if (localStorageAvailable) {
-      try {
-        $window.localStorage.setItem('testKey', 'test');
-        $window.localStorage.removeItem('testKey');
-        localStorageAvailable = true;
-      } catch(e) {
-        localStorageAvailable = false;
-      }
+    try {
+      $window.localStorage.setItem('testKey', 'test');
+      $window.localStorage.removeItem('testKey');
+      localStorageAvailable = true;
+    } catch(e) {
+      localStorageAvailable = false;
     }
+
     if (localStorageAvailable) {
       this.set = function (what, value) {
         return $window.localStorage.setItem(what, value);
@@ -106,6 +114,10 @@ angular.module('angular-storage.localStorage', ['angular-storage.cookieStorage']
       this.remove = function (what) {
         return $window.localStorage.removeItem(what);
       };
+      
+      this.clear = function () {
+        $window.localStorage.clear();
+      };
     } else {
       var cookieStorage = $injector.get('cookieStorage');
 
@@ -117,7 +129,17 @@ angular.module('angular-storage.localStorage', ['angular-storage.cookieStorage']
 
 angular.module('angular-storage.sessionStorage', ['angular-storage.cookieStorage'])
   .service('sessionStorage', ["$window", "$injector", function ($window, $injector) {
-    if ($window.sessionStorage) {
+    var sessionStorageAvailable;
+
+    try {
+      $window.sessionStorage.setItem('testKey', 'test');
+      $window.sessionStorage.removeItem('testKey');
+      sessionStorageAvailable = true;
+    } catch(e) {
+      sessionStorageAvailable = false;
+    }
+
+    if (sessionStorageAvailable) {
       this.set = function (what, value) {
         return $window.sessionStorage.setItem(what, value);
       };
@@ -144,6 +166,9 @@ angular.module('angular-storage.store', ['angular-storage.internalStore'])
     // the default storage
     var _storage = 'localStorage';
 
+    //caching is on by default
+    var _caching = true;
+
     /**
      * Sets the storage.
      *
@@ -155,19 +180,29 @@ angular.module('angular-storage.store', ['angular-storage.internalStore'])
       }
     };
 
+    /**
+     * Sets the internal cache usage
+     *
+     * @param {boolean} useCache Whether to use internal cache
+     */
+    this.setCaching = function(useCache) {
+      _caching = !!useCache;
+    };
+
     this.$get = ["InternalStore", function(InternalStore) {
-      var store = new InternalStore(null, _storage);
+      var store = new InternalStore(null, _storage, null, _caching);
 
       /**
        * Returns a namespaced store
        *
        * @param {String} namespace The namespace
        * @param {String} storage The name of the storage service
-       * @param {String} key The key
+       * @param {String} delimiter The key delimiter
+       * @param {boolean} useCache whether to use the internal caching
        * @returns {InternalStore}
        */
-      store.getNamespacedStore = function(namespace, storage, key) {
-        return new InternalStore(namespace, storage, key);
+      store.getNamespacedStore = function(namespace, storage, delimiter, useCache) {
+        return new InternalStore(namespace, storage, delimiter, useCache);
       };
 
       return store;

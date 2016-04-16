@@ -16,10 +16,10 @@
           strong Workers
         .workers
           .busy ng-if='resqueStats.workers.working > 0'
-            span.glyphicon.glyphicon-hourglass tooltip='{{ resqueStats.workers.working | number }} workers currently processing jobs'
+            span.glyphicon.glyphicon-hourglass uib-tooltip='{{ resqueStats.workers.working | number }} workers currently processing jobs'
             span {{ resqueStats.workers.working | number }} / {{ resqueStats.workers.total | number }}
           .available ng-if='resqueStats.workers.working == 0'
-            span.glyphicon.glyphicon-time tooltip='{{ resqueStats.workers.total - resqueStats.workers.working | number }} available workers waiting for jobs'
+            span.glyphicon.glyphicon-time uib-tooltip='{{ resqueStats.workers.total - resqueStats.workers.working | number }} available workers waiting for jobs'
             span {{ resqueStats.workers.working | number }} / {{ resqueStats.workers.total | number }}
       .col-lg-4.col-sm-12
         h5
@@ -28,15 +28,15 @@
           tbody
             tr
               td.text-right.failed
-                span.glyphicon.glyphicon-warning-sign tooltip='Failed jobs'
+                span.glyphicon.glyphicon-warning-sign uib-tooltip='Failed jobs'
               td.text-left {{ resqueStats.jobs.failed | number }}
             tr
               td.text-right.pending
-                span.glyphicon.glyphicon-time tooltip='Pending jobs'
+                span.glyphicon.glyphicon-time uib-tooltip='Pending jobs'
               td.text-left {{ resqueStats.jobs.pending | number }}
             tr
               td.text-right.success
-                span.glyphicon.glyphicon-thumbs-up tooltip='Successful jobs'
+                span.glyphicon.glyphicon-thumbs-up uib-tooltip='Successful jobs'
               td.text-left {{ resqueStats.jobs.processed - resqueStats.jobs.failed | number }}
       .col-lg-4.col-sm-12
         h5

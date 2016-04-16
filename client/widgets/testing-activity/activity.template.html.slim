@@ -14,12 +14,12 @@
         .form-group
           label for='testing-activity-type' Display
           .btn-group.btn-group-sm.btn-group-justified#testing-activity-type role='group'
-            label.btn.btn-default ng-model='chart.type' btn-radio='"written"'
+            label.btn.btn-default ng-model='chart.type' uib-btn-radio='"written"'
               span.hidden-md New tests
-              span.visible-md tooltip='New tests' tooltip-append-to-body='true' N
-            label.btn.btn-default ng-model='chart.type' btn-radio='"run"'
+              span.visible-md uib-tooltip='New tests' tooltip-append-to-body='true' N
+            label.btn.btn-default ng-model='chart.type' uib-btn-radio='"run"'
               span.hidden-md Test runs
-              span.visible-md tooltip='Test runs' tooltip-append-to-body='true' R
+              span.visible-md uib-tooltip='Test runs' tooltip-append-to-body='true' R
       .col-sm-4.col-xs-12 ng-if='!project'
         project-select prefix='testing-activity-widget' organization='organization' model-object='chart.params' multiple='true'
       .col-xs-12 ng-class='{"col-sm-4": !project, "col-sm-6": project }'

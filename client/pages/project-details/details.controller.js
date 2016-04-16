@@ -1,10 +1,10 @@
-angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtrl', function(api, orgs, projectEditModal, $scope, $state, states, $stateParams) {
+angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtrl', function(api, orgs, projectEditModal, routeOrgName, $scope, $state, states, $stateParams) {
   orgs.forwardData($scope);
 
   api({
     url: '/projects',
     params: {
-      organizationName: $stateParams.orgName,
+      organizationName: routeOrgName,
       name: $stateParams.projectName
     }
   }).then(function(response) {

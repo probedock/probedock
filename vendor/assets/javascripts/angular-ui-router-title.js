@@ -12,9 +12,16 @@
 
 "use strict";
 angular.module("ui.router.title", ["ui.router"])
-	.run(["$rootScope", "$timeout", "$state", function($rootScope, $timeout, $state) {
+	.run(["$rootScope", "$timeout", "$transitions", function($rootScope, $timeout, $transitions) {
 
-		$rootScope.$on("$stateChangeSuccess", function() {
+    $transitions.onSuccess({}, [ '$transition$', function($transition$) {
+      var title = $transition$.resolves().$title;
+      $timeout(function() {
+        $rootScope.$title = title;
+      });
+    } ]);
+
+		/*$rootScope.$on("$stateChangeSuccess", function() {
 			var title = getTitleValue($state.$current.locals.globals.$title);
 			$timeout(function() {
 				$rootScope.$title = title;
@@ -36,7 +43,7 @@ angular.module("ui.router.title", ["ui.router"])
 
 		function getTitleValue(title) {
 			return angular.isFunction(title) ? title() : title;
-		}
+		}*/
 
 	}]);
 

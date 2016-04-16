@@ -1,11 +1,11 @@
-angular.module('probedock.layout').controller('LayoutNavCtrl', function(api, appSettings, orgs, profile, $rootScope, $scope, $state) {
+angular.module('probedock.layout').controller('LayoutNavCtrl', function(api, appSettings, orgs, profile, $rootScope, $scope, $state, states) {
 
   appSettings.forwardSettings($scope);
 
   var state = $state.current;
-  $rootScope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {
+  states.onState($scope, null, function(toState, toParams, toResolves) {
     state = toState;
-    $scope.orgName = toStateParams.orgName;
+    $scope.orgName = toParams.orgName || toResolves.routeOrgName;
   });
 
   $scope.baseStateIs = function() {

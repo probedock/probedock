@@ -1,11 +1,11 @@
 span.category style='border-left-color: {{ getColor(categoryIndex) }};'
   strong.visible-md-inline.visible-lg-inline> {{ category.name }}
-  strong.visible-xs-inline.visible-sm-inline> tooltip='{{ category.percentage | number : 1 }}% / {{ getTestsCountDescription() }}' {{ category.name }}
+  strong.visible-xs-inline.visible-sm-inline> uib-tooltip='{{ category.percentage | number : 1 }}% / {{ getTestsCountDescription() }}' {{ category.name }}
   span.visible-lg-inline> {{ category.percentage | number : 1 }}%
-  span.visible-md-inline> tooltip='{{ getTestsCountDescription() }}' {{ category.percentage | number : 1 }}%
+  span.visible-md-inline> uib-tooltip='{{ getTestsCountDescription() }}' {{ category.percentage | number : 1 }}%
   span.visible-lg-inline>
     | / {{ getTestsCountDescription() }}
-  a.show-other-categories.btn.btn-default.btn-xs.pull-right href='#' role='button' ng-if='category.others' tooltip='Show all others'
+  a.show-other-categories.btn.btn-default.btn-xs.pull-right href='#' role='button' ng-if='category.others' uib-tooltip='Show all others'
     i.glyphicon.glyphicon-eye-open
     drop constrain-to-scroll-parent='true' constrain-to-window='true' open-on='"click"' position='"left top"' tether-options='{offset: "-5px -5px"}'
       .panel.panel-default.tests-by-category-filters

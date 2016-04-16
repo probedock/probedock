@@ -1,6 +1,9 @@
-angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
+angular.module('probedock.routes', [ 'ui.router', 'ui.router.state.events', 'ui.router.title' ])
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateEventsProvider, $stateProvider, $urlRouterProvider) {
+
+    $stateEventsProvider.enable();
+
     var titleElementLimit = 25;
 
     $stateProvider
@@ -143,7 +146,12 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
       .state('org', {
         url: '/:orgName',
         abstract: true,
-        template: '<div ui-view />'
+        template: '<div ui-view />',
+        resolve: {
+          routeOrgName: function($stateParams) {
+            return $stateParams.orgName;
+          }
+        }
       })
 
       .state('org.dashboard', {

@@ -1,4 +1,4 @@
-angular.module('probedock.dashboardPage').controller('DashboardPageCtrl', function(api, orgs, $scope, $stateParams) {
+angular.module('probedock.dashboardPage').controller('DashboardPageCtrl', function(api, orgs, routeOrgName, $scope) {
   orgs.forwardData($scope);
 
   $scope.orgIsActive = function() {
@@ -11,7 +11,7 @@ angular.module('probedock.dashboardPage').controller('DashboardPageCtrl', functi
     url: '/reports',
     params: {
       pageSize: 1,
-      organizationName: $stateParams.orgName
+      organizationName: routeOrgName
     }
   }).then(function(res) {
     if (!res.pagination().total) {
