@@ -20,12 +20,10 @@ angular.module('probedock.testingActivityWidget').directive('testingActivityWidg
   var chartConfig = {
     written: {
       url: '/metrics/newTestsByDay',
-      tooltipTemplate: '<%= value %> new tests on <%= label %>',
       valueFieldName: 'testsCount'
     },
     run: {
       url: '/metrics/reportsByDay',
-      tooltipTemplate: '<%= value %> runs on <%= label %>',
       valueFieldName: 'runsCount'
     }
   };
@@ -42,18 +40,18 @@ angular.module('probedock.testingActivityWidget').directive('testingActivityWidg
       nbDays: $scope.nbDays
     },
     options: {
-      pointHitDetectionRadius: 5,
-
-      // Will be set from chartConfig based on chart type
-      tooltipTemplate: '',
-
-      /*
-       * Fix for space issue in the Y axis labels
-       * see: https://github.com/nnnick/Chart.js/issues/729
-       * see: http://stackoverflow.com/questions/26498171/how-do-i-prevent-the-scale-labels-from-being-cut-off-in-chartjs
-       */
-      scaleLabel: function(object) {
-        return '  ' + object.value;
+      tooltips: {
+        callbacks: {
+          title: function() { return ''; },
+          label: function(tooltipItems, data) {
+            if ($scope.chart.type == 'written') {
+              return tooltipItems.yLabel + ' new test' + (tooltipItems.yLabel > 1 ? 's' : '') + ' on ' + tooltipItems.xLabel;
+            }
+            else {
+              return tooltipItems.yLabel + ' run' + (tooltipItems.yLabel > 1 ? 's' : '') + ' on ' + tooltipItems.xLabel;
+            }
+          }
+        }
       }
     }
   };
@@ -94,8 +92,6 @@ angular.module('probedock.testingActivityWidget').directive('testingActivityWidg
     if (!response.data.length) {
       return;
     }
-
-    $scope.chart.options.tooltipTemplate = chartConfig[$scope.chart.type].tooltipTemplate;
 
     var series = [];
     $scope.chart.data = [ series ];
