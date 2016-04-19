@@ -270,7 +270,7 @@ describe User, probedock: { tags: :unit } do
 
     describe 'human normalized name' do
       subject { create(:user, name: 'palpatine') }
-      it(nil, probedock: { key: 'vm23' }){ expect(subject.normalized_name).to eq('human-palpatine') }
+      it(nil, probedock: { key: 'vm23' }){ expect(subject.normalized_name).to eq('human||palpatine') }
     end
 
     describe 'technical normalized name' do
@@ -281,7 +281,7 @@ describe User, probedock: { tags: :unit } do
         tech_user.save
         tech_user
       end
-      it(nil, probedock: { key: 'km4x' }){ expect(subject.normalized_name).to eq('technical-rebel-alliance-c3po') }
+      it(nil, probedock: { key: 'km4x' }){ expect(subject.normalized_name).to eq('technical||rebel-alliance||c3po') }
     end
 
     describe 'for inactive users' do
