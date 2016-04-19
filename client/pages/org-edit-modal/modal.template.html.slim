@@ -5,7 +5,7 @@ form#org-edit-modal novalidate=true name='orgForm' ng-submit='orgForm.$valid && 
     h3.modal-title ng-if='!editedOrg.id' New Organization
   .modal-body
     .form-group ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
-      label-required for='orgName' label='Name'
+      label-required for='orgName' Name
       input#orgName.form-control type='string' name='name' placeholder='Name (used in URLs)' required=true maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-org-name=true autofocus=true ng-model='editedOrg.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
         | This is the identifier of the organization and is used in URLs.
@@ -13,7 +13,7 @@ form#org-edit-modal novalidate=true name='orgForm' ng-submit='orgForm.$valid && 
       .alert.alert-danger ng-if='orgForm.name.$error.uniqueOrgName'
         strong An organization with this name already exists.
     .form-group
-      label-required for='orgDisplayName' label='Display name'
+      label-required for='orgDisplayName' Display name
       input#orgDisplayName.form-control type='string' placeholder='{{ editedOrg.name }}' maxlength=50 ng-model='editedOrg.displayName'
       p.help-block
         | The is the name of the organization as shown in Probe Dock.
