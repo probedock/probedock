@@ -25,14 +25,7 @@ angular.module('probedock.userRegistrationPage').controller('UserRegistrationPag
 
   $scope.$watch('organization.displayName', function(value) {
     value = value || '';
-
-    $scope.organizationNamePlaceholder = value
-      .replace(/[^a-z0-9\- ]+/gi, '')
-      .replace(/ +/g, '-')
-      .replace(/\-+/g, '-')
-      .replace(/\-+$/, '')
-      .replace(/^\-+/, '')
-      .toLowerCase();
+    $scope.organizationNamePlaceholder = api.slugify(value);
   });
 
   $scope.$watch('organizationNamePlaceholder', function(value) {
