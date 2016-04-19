@@ -284,6 +284,22 @@ describe User, probedock: { tags: :unit } do
       it(nil, probedock: { key: 'km4x' }){ expect(subject.normalized_name).to eq('technical||rebel-alliance||c3po') }
     end
 
+    describe 'user names cannot collision' do
+      let(:first_org) { create(:organization, name: 'rebel-alliance') }
+      let(:second_org) { create(:organization, name: 'rebel') }
+      let(:first_user) { create(:user, name: 'one', organization: first_org) }
+      let(:second_user) { create(:user, name: 'alliance-one', organization: second_org) }
+      let(:first_tech_user) { create(:technical_user, name: 'tech', organization: first_org) }
+      let(:second_tech_user) { create(:technical_user, name: 'alliance-tech', organization: second_org) }
+
+      it(nil, probedock: { key: 'wd6t' }) do
+        expect(first_user.normalized_name).to eq('human||one')
+        expect(second_user.normalized_name).to eq('human||alliance-one')
+        expect(first_tech_user.normalized_name).to eq('technical||rebel-alliance||tech')
+        expect(second_tech_user.normalized_name).to eq('technical||rebel||alliance-tech')
+      end
+    end
+
     describe 'for inactive users' do
       subject{ described_class.new(active: false) }
       it(nil, probedock: { key: '703a' }){ should validate_absence_of(:password) }
