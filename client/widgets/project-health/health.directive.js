@@ -146,7 +146,11 @@ angular.module('probedock.projectHealthWidget').directive('projectHealthWidget',
       $scope.stateChart = {
         labels: ['passed', 'failed', 'inactive'],
         data: [numberPassed, numberFailed, numberInactive],
-        colors: ['#62c462', '#ee5f5b', '#fbb450']
+        colors: [
+          { pointBackgroundColor: '#62c462', backgroundColor: '#82e482' },
+          { pointBackgroundColor: '#ee5f5b', backgroundColor: '#fe7f7b' },
+          { pointBackgroundColor: '#fbb450', backgroundColor: '#ffd470' }
+        ]
       };
     } else { // Empty chart
       $scope.stateChart = emptyStateChart;

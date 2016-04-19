@@ -2,8 +2,7 @@ div
   .row
     / Pie chart
     .col-md-6
-      a href='#' ui-sref='org.reports.show({ id: project.lastReportId })' ng-if='showChart'
-        canvas.chart.chart-pie height='{{ chartHeight }}' data='stateChart.data' labels='stateChart.labels' colours='stateChart.colors'
+      canvas.chart.chart-pie ng-if='showChart' ui-sref='org.reports.show({ id: project.lastReportId })' height='{{ chartHeight }}' chart-data='stateChart.data' chart-labels='stateChart.labels' chart-colors='stateChart.colors'
 
     / Report data
     .col-md-6.info ng-if='report'

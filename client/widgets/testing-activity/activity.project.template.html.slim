@@ -5,7 +5,7 @@
     ng-pluralize ng-if='chart.type === "written"' count='totalCount' when='{"1": " new test was run over the last", "other": " new tests were run over the last"}'
     ng-pluralize ng-if='chart.type === "run"' count='totalCount' when='{"1": " test run over the last", "other": " test runs over the last"}'
     ng-pluralize count='nbDays' when='{"1": " day.", "other": " {{ nbDays }} days"}'
-  canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+  canvas.chart.chart-line height='150' ng-if='chart.data.length' chart-data='chart.data' chart-labels='chart.labels' chart-options='chart.options'
   form.form role='form' ng-if='chart.data.length'
     .form-group
       .btn-group.btn-group-sm.btn-group-justified role='group' uib-tooltip='Display' tooltip-append-to-body='true'

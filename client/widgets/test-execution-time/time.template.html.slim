@@ -18,7 +18,7 @@
           span ng-if='results.length > 1' Showing results {{ range.down }}-{{ range.up }} out of {{ pagination.total }} available results.
     .row.chart-row ng-if='results.length > 1'
       .col-md-12
-        canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+        canvas.chart.chart-line ng-if='chart.data.length' height='150' chart-data='chart.data' chart-labels='chart.labels' chart-options='chart.options'
     .row.stats-row ng-if='results.length > 1'
       table
         tr

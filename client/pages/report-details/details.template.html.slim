@@ -21,7 +21,7 @@
         .panel-heading
           h3.panel-title Summary
         .panel-body
-          canvas.chart.chart-doughnut data='healthChart.data' labels='healthChart.labels' colours='healthChart.colors' ng-if='healthChart'
+          canvas.chart.chart-doughnut ng-if='healthChart' chart-data='healthChart.data' chart-labels='healthChart.labels' chart-colors='healthChart.colors'
     .col-lg-8.col-md-6
       report-health ng-if='report' report='report' health-filters='reportFilters'
   .row.filters
