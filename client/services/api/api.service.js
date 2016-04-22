@@ -101,14 +101,8 @@ angular.module('probedock.api').factory('api', function(apiPagination, auth, $ht
   };
 
   api.slugify = function(str) {
-    return str
-      .replace(/[^a-z0-9\- ]+/gi, '')
-      .replace(/ +/g, '-')
-      .replace(/\-+/g, '-')
-      .replace(/\-+$/, '')
-      .replace(/^\-+/, '')
-      .toLowerCase();
-  }
+    return str.replace(/[^a-z0-9]+/gi, '').toLowerCase();
+  };
 
   return api;
 });

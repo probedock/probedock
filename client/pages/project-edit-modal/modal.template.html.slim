@@ -8,9 +8,9 @@ form#project-edit-modal novalidate=true role='form' name='projectForm' ng-submit
         | Name
         span.required<
           | (required)
-      input#projectDisplayName.form-control type='string' name='displayName' placeholder='Name' maxlength=50 ng-model='editedProject.displayName' unique-project-name=true autofocus=true
+      input#projectDisplayName.form-control type='string' name='displayName' placeholder='Name' maxlength=50 ng-model='editedProject.displayName' unique-project-name=true autofocus=true ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
-        | This is the name of the project as shown in ProbeDock.
+        | The unique name of the project, up to 50 characters.
       .alert.alert-danger ng-if='projectForm.displayName.$error.uniqueProjectName'
         strong A project with this name already exists within the organization.
     .form-group ng-class='{"has-error": projectForm.repoUrl.$dirty && projectForm.repoUrl.$invalid}'
