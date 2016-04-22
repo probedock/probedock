@@ -6,7 +6,7 @@
   .registration-successful ng-if='registration'
     p.lead.text-success Registration successful!
     p.text-success
-      | We have sent a confirmation e-mail to 
+      | We have sent a confirmation e-mail to
       strong {{ registration.user.email }}
       | .
       |  Please follow the link in the e-mail to complete the registration.
@@ -51,22 +51,14 @@
         |  You will create an organization now as part of the registration process.
         |  You will be the administrator of this organization and may invite other members later.
 
-    .col-sm-6.col-xs-12
-      .form-group
-        label for='organization-display-name' Name
-        input#organization-display-name.form-control type='string' maxlength=50 ng-model='organization.displayName' required=true
-        p.help-block
-          | The name of the organization.
-
-    .col-sm-6.col-xs-12
-      .form-group ng-class='{"has-error": registrationForm.name.$dirty && registrationForm.name.$invalid || organizationNamePlaceholderTaken}'
+    .col-sm-12.col-xs-12
+      .form-group ng-class='{"has-error": registrationForm.organizationName.$dirty && registrationForm.organizationName.$invalid}'
         label for='organization-name' Identifier
-        input#organization-name.form-control type='string' name='organizationName' placeholder='{{ organizationNamePlaceholder }}' maxlength=50 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-org-name=true autofocus=true ng-model='organization.name' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
+        input#organization-name.form-control type='string' name='organizationName' maxlength=50 unique-org-name=true ng-model='organization.displayName' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
         p.help-block
-          | The unique identifier of the organization (used in URLs).
-          |  It can only contain alphanumeric characters and single hyphens (not at the beginning or end).
-        p.help-block ng-if='registrationForm.name.$error.uniqueOrgName || organizationNamePlaceholderTaken'
-          strong An organization with this identifier already exists.
+          | The unique name of the organization, up to 50 characters.
+        p.help-block ng-if='registrationForm.organizationName.$error.uniqueOrgName'
+          strong An organization with this name already exists.
 
     .col-xs-12
       .checkbox
