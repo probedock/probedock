@@ -90,6 +90,7 @@ module.exports = function(grunt) {
         }
       },
 
+      // Copy binary assets separately. Do not pass them through `removeSourceMaps` or they will be corrupted.
       binary: {
         files: [
           // fonts
