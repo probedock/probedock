@@ -1,7 +1,7 @@
 angular.module('probedock.homePage').controller('HomePageCtrl', function(orgEditModal, orgs, $scope, $state, states) {
   orgs.forwardData($scope);
 
-  states.onState($scope, 'home.newOrg', function() {
+  states.onStateChangeSuccess($scope, 'home.newOrg', function() {
     var modal = orgEditModal.open($scope);
 
     modal.result.then(function(org) {

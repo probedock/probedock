@@ -8,7 +8,7 @@ angular.module('probedock.userEditModal').factory('userEditModal', function(stat
         scope: $scope
       });
 
-      states.onStateChange($scope, null, function() {
+      states.onStateChangeStart($scope, true, function() {
         modal.dismiss('stateChange');
       });
 

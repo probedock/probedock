@@ -18,7 +18,7 @@ angular.module('probedock.auth').controller('LoginModalCtrl', function(auth, $ht
       '.%0A%0AThanks!').replace(' ', '%20');
   };
 
-  states.onStateChange($scope, null, function() {
+  states.onStateChangeStart($scope, true, function() {
     $uibModalInstance.dismiss('stateChange');
   });
 

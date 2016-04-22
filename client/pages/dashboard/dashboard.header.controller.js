@@ -1,6 +1,6 @@
 angular.module('probedock.dashboardPage').controller('DashboardHeaderCtrl', function(orgEditModal, $scope, $state, states) {
 
-  states.onState($scope, 'org.dashboard.default.edit', function(state, params, resolves) {
+  states.onStateChangeSuccess($scope, 'org.dashboard.default.edit', function(state, params, resolves) {
 
     var modal = orgEditModal.open($scope, {
       organizationName: resolves.routeOrgName

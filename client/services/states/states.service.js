@@ -1,20 +1,102 @@
-angular.module('probedock.states').factory('states', function($rootScope, $state, $stateParams, $timeout, $transitions) {
+angular.module('probedock.states').factory('states', function($rootScope, $transitions) {
 
-  var currentStateName = $state.$current ? $state.$current.name : null,
-      currentStateParams = $state.$current ? $state.$current.params : {},
-      currentStateResolves = {},
-      onStateCallbacks = [],
-      onStateChangeCallbacks = [];
+  var currentState = null,
+      onStateChangeSuccessCallbacks = [],
+      onStateChangeStartCallbacks = [];
 
+  var service = {
+
+    /**
+     * Registers a callback function that will be called when a state transition is started that
+     * matches the specified criteria.
+     *
+     * The current $scope must be given as the first argument. The callback function will automatically
+     * be unregistered when that scope is destroyed.
+     *
+     * The matcher can be one of the following:
+     *
+     * * String: only a transition to a state with a name that is an exact match will trigger the callback.
+     * * RegExp: only a transition to a state with a name that matches the regular expression will trigger the callback.
+     * * Array[String]: only a transition to a state with a name included in the array will trigger the callback.
+     * * true: any transition will trigger the callback.
+     * * false: no transition will trigger the callback.
+     *
+     * The options argument is reserved for future use. It may be omitted.
+     *
+     *     states.onStateChangeStart($scope, 'org.projects.list', function(state, params, resolves) { ... });
+     *     states.onStateChangeStart($scope, /^admin\.users\./, function(state, params, resolves) { ... });
+     *     states.onStateChangeStart($scope, [ 'org.reports', 'org.reports.show' ], function(state, params, resolves) { ... });
+     *     states.onStateChangeStart($scope, true, function(state, params, resolves) { ... });
+     */
+    onStateChangeStart: function($scope, matcher, options, func) {
+
+      var stateCallback = buildStateCallback(matcher, options, func);
+      onStateChangeStartCallbacks.push(stateCallback);
+
+      $scope.$on('$destroy', function() {
+        onStateChangeStartCallbacks.splice(onStateChangeStartCallbacks.indexOf(stateCallback), 1);
+      });
+    },
+
+    /**
+     * Registers a callback function that will be called when a state transition finishes that
+     * matches the specified criteria. If the current state matches the criteria when the callback
+     * function is registered, it is called immediately.
+     *
+     * The current $scope must be given as the first argument. The callback function will automatically
+     * be unregistered when that scope is destroyed.
+     *
+     * The matcher can be one of the following:
+     *
+     * * String: only a transition to a state with a name that is an exact match will trigger the callback.
+     * * RegExp: only a transition to a state with a name that matches the regular expression will trigger the callback.
+     * * Array[String]: only a transition to a state with a name included in the array will trigger the callback.
+     * * true: any transition will trigger the callback.
+     * * false: no transition will trigger the callback.
+     *
+     * The options argument is reserved for future use. It may be omitted.
+     *
+     *     states.onStateChangeStart($scope, 'org.projects.list', function(state, params, resolves) { ... });
+     *     states.onStateChangeStart($scope, /^admin\.users\./, function(state, params, resolves) { ... });
+     *     states.onStateChangeStart($scope, [ 'org.reports', 'org.reports.show' ], function(state, params, resolves) { ... });
+     *     states.onStateChangeStart($scope, true, function(state, params, resolves) { ... });
+     */
+    onStateChangeSuccess: function($scope, matcher, options, func) {
+
+      var stateCallback = buildStateCallback(matcher, options, func);
+      onStateChangeSuccessCallbacks.push(stateCallback);
+
+      if (currentState) {
+        triggerStateCallbacks(currentState, [ stateCallback ]);
+      }
+
+      $scope.$on('$destroy', function() {
+        onStateChangeSuccessCallbacks.splice(onStateChangeSuccessCallbacks.indexOf(stateCallback), 1);
+      });
+    }
+  };
+
+  // Called when state transitions start.
   $transitions.onStart({}, [ '$transition$', function(transition) {
-    checkStateChange(transition.to(), transition.params(), transition.resolves());
+    triggerStateCallbacks(stateFromTransition(transition), onStateChangeStartCallbacks);
   } ]);
 
+  // Called when state transitions succeed.
   $transitions.onSuccess({}, [ '$transition$', function(transition) {
-    checkState(transition.to(), transition.params(), transition.resolves(), onStateCallbacks);
+
+    var state = stateFromTransition(transition);
+
+    // Keep track of current state.
+    currentState = state;
+
+    triggerStateCallbacks(state, onStateChangeSuccessCallbacks);
   } ]);
 
-  function buildCallback(matcher, options, func) {
+  function buildStateCallback(matcher, options, func) {
+    if (matcher !== true && matcher !== false && !_.isString(matcher) && !_.isRegExp(matcher) && !_.isArray(matcher)) {
+      throw new Error('Unsupported matcher type; must be one of true, false, string, regexp, array; got ' + matcher + ' (' + typeof(matcher) + ')');
+    }
+
     var callback = {
       matcher: matcher
     };
@@ -24,15 +106,36 @@ angular.module('probedock.states').factory('states', function($rootScope, $state
       callback.func = options;
     } else {
       callback.options = options || {};
-      callback.func = callback;
+      callback.func = func;
     }
 
     return callback;
   }
 
-  function stateMatches(state, matcher, options) {
-    if (!matcher) {
+  function stateFromTransition(transition) {
+    return {
+      name: transition.to().name,
+      params: transition.params() || {},
+      resolves: transition.resolves() || {}
+    };
+  }
+
+  function triggerStateCallbacks(state, stateCallbacks) {
+    _.each(stateCallbacks, function(stateCallback) {
+      if (stateMatches(state, stateCallback)) {
+        callStateCallback(state, stateCallback);
+      }
+    });
+  }
+
+  function stateMatches(state, stateCallback) {
+
+    var matcher = stateCallback.matcher;
+
+    if (matcher === true) {
       return true;
+    } else if (matcher === false) {
+      return false;
     } else if (_.isRegExp(matcher) && !state.name.match(matcher)) {
       return false;
     } else if (_.isString(matcher) && state.name !== matcher) {
@@ -41,63 +144,16 @@ angular.module('probedock.states').factory('states', function($rootScope, $state
       return false;
     }
 
-    if (options.params && _.some(options.params, function(value, name) {
-      return toParams[name] !== value;
-    })) {
-      return false;
-    }
-
     return true;
   }
 
-  function checkState(toState, toParams, toResolve, callbacks) {
-
-    currentStateName = toState.name;
-    currentStateParams = toParams || {};
-    currentStateResolves = toResolve || {};
-
-    _.each(onStateCallbacks, function(callback) {
-      if (stateMatches(toState, callback.matcher, callback.options)) {
-        callback.func(toState, toParams || {}, toResolve || {});
-      }
-    });
+  function callStateCallback(state, stateCallback) {
+    stateCallback.func(state.name, state.params, state.resolves);
   }
 
-  function checkStateChange(toState, toParams, toResolve) {
-    _.each(onStateChangeCallbacks, function(callback) {
-      if (stateMatches(toState, callback.matcher, callback.options)) {
-        callback.func(toState, toParams || {}, toResolve || {});
-      }
-    });
-  }
-
-  return {
-    onStateChange: function($scope, matcher, options, func) {
-
-      var callback = buildCallback(matcher, options, func);
-      onStateChangeCallbacks.push(callback);
-
-      if ($scope != $rootScope) {
-        $scope.$on('$destroy', function() {
-          onStateChangeCallbacks.splice(onStateChangeCallbacks.indexOf(callback), 1);
-        });
-      }
-    },
-
-    onState: function($scope, matcher, options, func) {
-
-      var callback = buildCallback(matcher, options, func);
-      onStateCallbacks.push(callback);
-
-      if (currentStateName && $state.$current) {
-        checkState($state.$current, currentStateParams, currentStateResolves, [ callback ]);
-      }
-
-      if ($scope != $rootScope) {
-        $scope.$on('$destroy', function() {
-          onStateCallbacks.splice(onStateCallbacks.indexOf(callback), 1);
-        });
-      }
-    }
-  };
+  return service;
+}).run(function(states) {
+  // This run function is here only to ensure that the state service is instantiated
+  // as soon as possible, before transitions events start being triggered.
+  states.active = true;
 });

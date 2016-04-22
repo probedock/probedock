@@ -46,11 +46,11 @@ angular.module('probedock.userListPage').controller('UserListPageCtrl', function
     }
   });
 
-  states.onState($scope, 'admin.users', function() {
+  states.onStateChangeSuccess($scope, 'admin.users', function() {
     selectTab('list');
   });
 
-  states.onState($scope, /^admin.users.show\.?/, function(toState, toParams) {
+  states.onStateChangeSuccess($scope, /^admin.users.show\.?/, function(toState, toParams) {
     openUserTab(toParams.id);
   });
 

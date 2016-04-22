@@ -7,7 +7,7 @@ angular.module('probedock.testResultModal').service('testResultModal', function(
         size: 'lg'
       });
 
-      states.onStateChange($scope, null, function() {
+      states.onStateChangeStart($scope, true, function() {
         modal.dismiss('stateChange');
       });
 

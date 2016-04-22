@@ -3,7 +3,7 @@ angular.module('probedock.layout').controller('LayoutNavCtrl', function(api, app
   appSettings.forwardSettings($scope);
 
   var state = $state.current;
-  states.onState($scope, null, function(toState, toParams, toResolves) {
+  states.onStateChangeSuccess($scope, true, function(toState, toParams, toResolves) {
     state = toState;
     $scope.orgName = toParams.orgName || toResolves.routeOrgName;
   });

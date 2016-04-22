@@ -19,7 +19,7 @@ angular.module('probedock.memberListPage').controller('MemberListPageCtrl', func
 
   fetchMemberships();
 
-  states.onState($scope, /^org\.dashboard\.members\.(?:new|edit)$/, function() {
+  states.onStateChangeSuccess($scope, /^org\.dashboard\.members\.(?:new|edit)$/, function() {
 
     var modal = memberEditModal.open($scope);
 

@@ -7,7 +7,7 @@ angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', fu
     }
   });
 
-  states.onState($scope, /^org.projects.list.(?:new|edit)$/, function(toState, toParams) {
+  states.onStateChangeSuccess($scope, /^org.projects.list.(?:new|edit)$/, function(toState, toParams) {
     var modal = projectEditModal.open($scope, { projectId: toParams.id });
 
     modal.result.then(function(project) {

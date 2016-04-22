@@ -31,7 +31,7 @@ angular.module('probedock.projectDetailsPage').controller('ProjectDetailsPageCtr
    * Will open the edit project modal if the state is or changes to "org.projects.show.edit".
    */
   function registerOnEditProject() {
-    states.onState($scope, 'org.projects.show.edit', function(toState) {
+    states.onStateChangeSuccess($scope, 'org.projects.show.edit', function(toState) {
       var modal = projectEditModal.open($scope, { project: $scope.project });
 
       modal.result.then(function(updatedProject) {

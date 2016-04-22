@@ -23,7 +23,7 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
         size: 'lg'
       });
 
-      states.onStateChange($scope, null, function() {
+      states.onStateChangeStart($scope, true, function() {
         modal.dismiss('stateChange');
       });
 

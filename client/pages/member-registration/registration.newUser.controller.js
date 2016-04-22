@@ -13,7 +13,7 @@ angular.module('probedock.memberRegistrationPage').controller('NewUserMemberRegi
     });
   };
 
-  states.onStateChange($scope, null, function() {
+  states.onStateChangeStart($scope, true, function() {
     $uibModalInstance.dismiss('stateChange');
   });
 

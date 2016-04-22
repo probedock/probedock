@@ -19,7 +19,7 @@ angular.module('probedock.userDetailsWidget').directive('userDetailsWidget', fun
     }
   };
 
-  states.onState($scope, /\.edit$/, function() {
+  states.onStateChangeSuccess($scope, /\.edit$/, function() {
     modal = userEditModal.open($scope);
 
     modal.result.then(function(user) {

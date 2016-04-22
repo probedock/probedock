@@ -12,7 +12,7 @@ angular.module('probedock.orgEditModal').factory('orgEditModal', function(states
         scope: scope
       });
 
-      states.onStateChange($scope, null, function() {
+      states.onStateChangeStart($scope, true, function() {
         modal.dismiss('stateChange');
       });
 

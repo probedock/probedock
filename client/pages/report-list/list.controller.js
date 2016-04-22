@@ -120,7 +120,7 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     active: 0
   };
 
-  states.onState($scope, [ 'org.reports', 'org.reports.show' ], function(state, params) {
+  states.onStateChangeSuccess($scope, [ 'org.reports', 'org.reports.show' ], function(state, params) {
     if (state && state.name == 'org.reports.show') {
       openReportTab(params.id);
     } else {

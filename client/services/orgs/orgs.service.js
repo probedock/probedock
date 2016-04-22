@@ -95,7 +95,7 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
   $rootScope.$on('auth.signIn', service.refreshOrgs);
   $rootScope.$on('auth.signOut', forgetPrivateData);
 
-  states.onState($rootScope, /^org\./, function(state, params, resolves) {
+  states.onStateChangeSuccess($rootScope, /^org\./, function(state, params, resolves) {
     var name = resolves.routeOrgName;
     service.currentOrganizationName = name;
     setCurrentOrganization(_.findWhere(service.organizations, { name: name }));
