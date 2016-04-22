@@ -116,6 +116,7 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
   }, true);
 
   $scope.reportTabs = [];
+  $scope.lastReportTabIndex = 1;
   $scope.tabset = {
     active: 0
   };
@@ -128,20 +129,64 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     }
   });
 
+  $scope.reportTime = function(report) {
+    if (!report) {
+      return 'Loading...';
+    }
+
+    var reportTime = moment(report.startedAt);
+
+    if (reportTime.isAfter(moment().startOf('day'))) {
+      reportTime = reportTime.format('HH:mm');
+    } else if (reportTime.isAfter(moment().startOf('year'))) {
+      reportTime = reportTime.format('MMM D HH:mm');
+    } else {
+      reportTime = reportTime.format('MMM D YYYY HH:mm');
+    }
+
+    var runners = _.first(_.pluck(report.runners, 'name'), 3);
+    return reportTime + ' by ' + runners.join(', ');
+  };
+
   function openReportTab(reportId) {
 
     var tab = _.findWhere($scope.reportTabs, { id: reportId });
     if (!tab) {
-      tab = { id: reportId, loading: true };
+      tab = {
+        id: reportId,
+        index: $scope.lastReportTabIndex++
+      };
+
       $scope.reportTabs.push(tab);
     }
 
     $timeout(function() {
-      selectTab($scope.reportTabs.indexOf(tab) + 1);
+      selectTab(tab.index);
     });
+
+    if (!tab.report) {
+      if (tab.loading) {
+        return;
+      }
+
+      tab.loading = true;
+
+      fetchReport(reportId).then(function(report) {
+        tab.loading = false;
+        tab.report = report;
+      });
+    }
   }
 
   function selectTab(index) {
     $scope.tabset.active = index == 'latest' ? 0 : index;
+  }
+
+  function fetchReport(id) {
+    return api({
+      url: '/reports/' + id
+    }).then(function(res) {
+      return res.data;
+    });
   }
 });

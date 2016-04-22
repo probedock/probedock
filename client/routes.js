@@ -1,4 +1,4 @@
-angular.module('probedock.routes', [ 'ui.router' ])
+angular.module('probedock.routes', [ 'probedock.states', 'ui.router' ])
 
   .config(function($stateProvider, $urlRouterProvider) {
 
@@ -295,13 +295,10 @@ angular.module('probedock.routes', [ 'ui.router' ])
     }
   })
 
-  .run(function($rootScope, $timeout, $transitions) {
-    $transitions.onSuccess({}, [ '$transition$', function($transition$) {
-      var title = $transition$.resolves().$title;
-      $timeout(function() {
-        $rootScope.$title = title;
-      });
-    } ]);
+  .run(function($rootScope, states) {
+    states.onStateChangeSuccess($rootScope, true, function(state, params, resolves) {
+      $rootScope.$title = resolves.$title;
+    });
   })
 
 ;

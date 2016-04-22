@@ -51,9 +51,11 @@
           tfoot
             tr
               td.clearfix colspan=7 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
-    uib-tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' index='$index + 1'
+    uib-tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' index='userTab.index'
       uib-tab-heading
         | {{ userTab.user.name }}
+        a< ng-click='removeTab(userTab)'
+          span.glyphicon.glyphicon-remove
       .col-md-6.col-xs-12
         user-details-widget user='userTab.user' complete='true'
     li.instructions ng-if='!userTabs.length'

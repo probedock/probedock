@@ -40,8 +40,8 @@
       strong
         markdown:
           This is something you only need to do *once* for this Probe Dock server.
-    uib-tabset.clearfix
-      uib-tab active='true'
+    uib-tabset.clearfix active='0'
+      uib-tab index='0'
         uib-tab-heading
           span.glyphicon.glyphicon-file
           |  Configuration
@@ -54,7 +54,7 @@
             textarea.form-control rows=7 readonly=true select-on-click=true ng-model='homeYaml'
           button.btn.btn-primary.pull-right clip-copy='homeYaml' uib-tooltip='Copy to clipboard'
             span.glyphicon.glyphicon-copy
-      uib-tab
+      uib-tab index='1'
         uib-tab-heading
           span.glyphicon.glyphicon-sunglasses
           |  Shell Script
@@ -95,8 +95,8 @@
     p ng-if='projectConfigSelection.orgId && projectConfigSelection.projectId'
       strong.text-success
         | Your project's configuration is ready. Copy and paste away!
-    uib-tabset.clearfix
-      uib-tab active='true'
+    uib-tabset.clearfix active='0'
+      uib-tab index='0'
         uib-tab-heading
           span.glyphicon.glyphicon-file
           |  Configuration
@@ -110,7 +110,7 @@
             textarea.form-control rows=4 readonly=true select-on-click=true ng-model='projectYaml'
           button.btn.btn-primary.pull-right clip-copy='projectYaml' uib-tooltip='Copy to clipboard'
             span.glyphicon.glyphicon-copy
-      uib-tab
+      uib-tab index='1'
         uib-tab-heading
           span.glyphicon.glyphicon-sunglasses
           |  Shell Script

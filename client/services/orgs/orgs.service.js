@@ -4,7 +4,7 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
 
     organizations: [],
 
-    currentOrganization: appStore.get('currentOrganization'),
+    currentOrganization: null,
     currentOrganizationName: null,
 
     addOrganization: function(org) {
@@ -91,6 +91,8 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
     }
   });
 
+  setCurrentOrganization(appStore.get('currentOrganization'));
+
   service.refreshOrgs();
   $rootScope.$on('auth.signIn', service.refreshOrgs);
   $rootScope.$on('auth.signOut', forgetPrivateData);
@@ -113,7 +115,12 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
   }
 
   function setCurrentOrganization(org) {
+
     service.currentOrganization = org;
+    if (org) {
+      service.currentOrganizationName = org.name;
+    }
+
     appStore.set('currentOrganization', org);
     service.emit('changedOrg', org);
   }

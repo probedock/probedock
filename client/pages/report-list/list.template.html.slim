@@ -91,7 +91,6 @@
                   tfoot
                     tr
                       td.clearfix colspan=5 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
-      uib-tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' index='$index + 1'
-        uib-tab-heading Yeehaw
-        div ng-controller='ReportListTabCtrl'
-          report-details report='report' organization='currentOrganization'
+      uib-tab ng-repeat='reportTab in reportTabs' ui-sref='org.reports.show({ id: reportTab.id })' index='reportTab.index'
+        uib-tab-heading {{ reportTime(reportTab.report) }}
+        report-details ng-if='reportTab.report' report='reportTab.report' organization='currentOrganization'

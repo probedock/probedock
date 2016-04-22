@@ -1,8 +1,8 @@
 angular.module('probedock.states').factory('states', function($rootScope, $transitions) {
 
   var currentState = null,
-      onStateChangeSuccessCallbacks = [],
-      onStateChangeStartCallbacks = [];
+      onStateChangeStartCallbacks = [],
+      onStateChangeSuccessCallbacks = [];
 
   var service = {
 
@@ -17,7 +17,7 @@ angular.module('probedock.states').factory('states', function($rootScope, $trans
      *
      * * String: only a transition to a state with a name that is an exact match will trigger the callback.
      * * RegExp: only a transition to a state with a name that matches the regular expression will trigger the callback.
-     * * Array[String]: only a transition to a state with a name included in the array will trigger the callback.
+     * * Array: only a transition to a state with a name included in the array will trigger the callback.
      * * true: any transition will trigger the callback.
      * * false: no transition will trigger the callback.
      *
@@ -27,6 +27,14 @@ angular.module('probedock.states').factory('states', function($rootScope, $trans
      *     states.onStateChangeStart($scope, /^admin\.users\./, function(state, params, resolves) { ... });
      *     states.onStateChangeStart($scope, [ 'org.reports', 'org.reports.show' ], function(state, params, resolves) { ... });
      *     states.onStateChangeStart($scope, true, function(state, params, resolves) { ... });
+     *
+     * The callback function will be called with the state object, the state params, and the resolved state params:
+     *
+     *     states.onStateChangeStart($scope, true, function(state, params, resolves) {
+     *       console.log(state.name);
+     *       console.log(params.id);
+     *       console.log(resolves.customData);
+     *     });
      */
     onStateChangeStart: function($scope, matcher, options, func) {
 
@@ -50,7 +58,7 @@ angular.module('probedock.states').factory('states', function($rootScope, $trans
      *
      * * String: only a transition to a state with a name that is an exact match will trigger the callback.
      * * RegExp: only a transition to a state with a name that matches the regular expression will trigger the callback.
-     * * Array[String]: only a transition to a state with a name included in the array will trigger the callback.
+     * * Array: only a transition to a state with a name included in the array will trigger the callback.
      * * true: any transition will trigger the callback.
      * * false: no transition will trigger the callback.
      *
@@ -60,6 +68,14 @@ angular.module('probedock.states').factory('states', function($rootScope, $trans
      *     states.onStateChangeStart($scope, /^admin\.users\./, function(state, params, resolves) { ... });
      *     states.onStateChangeStart($scope, [ 'org.reports', 'org.reports.show' ], function(state, params, resolves) { ... });
      *     states.onStateChangeStart($scope, true, function(state, params, resolves) { ... });
+     *
+     * The callback function will be called with the state object, the state params, and the resolved state params:
+     *
+     *     states.onStateChangeStart($scope, true, function(state, params, resolves) {
+     *       console.log(state.name);
+     *       console.log(params.id);
+     *       console.log(resolves.customData);
+     *     });
      */
     onStateChangeSuccess: function($scope, matcher, options, func) {
 
@@ -102,9 +118,13 @@ angular.module('probedock.states').factory('states', function($rootScope, $trans
     };
 
     if (typeof(options) == 'function') {
+      // No options were given, use `options` as the callback function.
       callback.options = {};
       callback.func = options;
+    } else if (typeof(func) != 'function') {
+      throw new Error('A callback function must be given as the third or fourth argument to #onStateChangeStart or #onStateChangeSuccess');
     } else {
+      // Options were given.
       callback.options = options || {};
       callback.func = func;
     }
@@ -148,7 +168,7 @@ angular.module('probedock.states').factory('states', function($rootScope, $trans
   }
 
   function callStateCallback(state, stateCallback) {
-    stateCallback.func(state.name, state.params, state.resolves);
+    stateCallback.func(state, state.params, state.resolves);
   }
 
   return service;

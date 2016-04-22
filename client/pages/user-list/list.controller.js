@@ -1,4 +1,4 @@
-angular.module('probedock.userListPage').controller('UserListPageCtrl', function($q, $scope, $state, states, tables, users) {
+angular.module('probedock.userListPage').controller('UserListPageCtrl', function($q, $scope, $state, states, tables, $timeout, users) {
 
   $scope.states = [{
     active: 1,
@@ -17,8 +17,10 @@ angular.module('probedock.userListPage').controller('UserListPageCtrl', function
   }];
 
   $scope.userTabs = [];
+  $scope.lastUserTabIndex = 1;
   $scope.tabset = {
-    active: 0
+    active: 0,
+    lastTabId: 0
   };
 
   tables.create($scope, 'usersList', {
@@ -66,6 +68,12 @@ angular.module('probedock.userListPage').controller('UserListPageCtrl', function
       if (listUser) {
         $scope.usersList.records.splice($scope.usersList.records.indexOf(listUser), 1);
       }
+
+      // close user tab if open
+      var userTab = _.findWhere($scope.userTabs, { id: user.id });
+      if (userTab) {
+        $scope.removeTab(userTab);
+      }
     });
   };
 
@@ -77,11 +85,17 @@ angular.module('probedock.userListPage').controller('UserListPageCtrl', function
 
     var tab = _.findWhere($scope.userTabs, { id: userId });
     if (!tab) {
-      tab = { id: userId };
+      tab = {
+        id: userId,
+        index: $scope.lastUserTabIndex++
+      };
+
       $scope.userTabs.push(tab);
     }
 
-    selectTab($scope.userTabs.indexOf(tab) + 1);
+    $timeout(function() {
+      selectTab(tab.index);
+    });
 
     if (!tab.user) {
       if (tab.loading) {
@@ -111,4 +125,13 @@ angular.module('probedock.userListPage').controller('UserListPageCtrl', function
   function selectTab(index) {
     $scope.tabset.active = index == 'list' ? 0 : index;
   }
+
+  $scope.removeTab = function(tab) {
+
+    $scope.userTabs.splice($scope.userTabs.indexOf(tab), 1);
+
+    if ($scope.tabset.active == tab.index) {
+      $state.go('admin.users');
+    }
+  };
 });

@@ -1,4 +1,4 @@
-angular.module('probedock.memberEditModal').factory('memberEditModal', function(api, $rootScope, states, $uibModal) {
+angular.module('probedock.memberEditModal').factory('memberEditModal', function(api, states, $uibModal) {
   return {
     open: function($scope) {
 

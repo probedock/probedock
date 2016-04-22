@@ -1,20 +1,18 @@
-angular.module('probedock.layout').controller('LayoutNavCtrl', function(api, appSettings, orgs, profile, $rootScope, $scope, $state, states) {
+angular.module('probedock.layout').controller('LayoutNavCtrl', function(api, appSettings, orgs, profile, $rootScope, $scope, states) {
 
+  orgs.forwardData($scope);
+  profile.forwardData($scope);
   appSettings.forwardSettings($scope);
 
-  var state = $state.current;
-  states.onStateChangeSuccess($scope, true, function(toState, toParams, toResolves) {
-    state = toState;
-    $scope.orgName = toParams.orgName || toResolves.routeOrgName;
+  var currentStateName = null;
+  states.onStateChangeSuccess($scope, true, function(state, params, resolves) {
+    currentStateName = state.name;
   });
 
   $scope.baseStateIs = function() {
     var names = Array.prototype.slice.call(arguments);
-    return _.some(names, function(name) {
-      return state && state.name && state.name.indexOf(name) === 0;
+    return currentStateName && _.some(names, function(name) {
+      return currentStateName.indexOf(name) === 0;
     });
   };
-
-  profile.forwardData($scope);
-  orgs.forwardData($scope);
 });

@@ -26,7 +26,7 @@ angular.module('probedock.testSuiteSizeWidget', [ 'probedock.api' ]).directive('
           callbacks: {
             title: function() { return ''; },
             label: function(tooltipItems, data) {
-              return tooltipItems.yLabel + ' test' + (tooltipItems.yLabel > 1 ? 's' : '') + ' on ' + tooltipItems.yLabel;
+              return tooltipItems.yLabel + ' test' + (tooltipItems.yLabel > 1 ? 's' : '') + ' on ' + tooltipItems.xLabel;
             }
           }
         }

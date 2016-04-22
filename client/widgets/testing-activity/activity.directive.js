@@ -46,8 +46,7 @@ angular.module('probedock.testingActivityWidget').directive('testingActivityWidg
           label: function(tooltipItems, data) {
             if ($scope.chart.type == 'written') {
               return tooltipItems.yLabel + ' new test' + (tooltipItems.yLabel > 1 ? 's' : '') + ' on ' + tooltipItems.xLabel;
-            }
-            else {
+            } else {
               return tooltipItems.yLabel + ' run' + (tooltipItems.yLabel > 1 ? 's' : '') + ' on ' + tooltipItems.xLabel;
             }
           }
