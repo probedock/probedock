@@ -1,8 +1,6 @@
-angular.module('probedock.routes', [ 'ui.router', 'ui.router.state.events' ])
+angular.module('probedock.routes', [ 'ui.router' ])
 
-  .config(function($stateEventsProvider, $stateProvider, $urlRouterProvider) {
-
-    $stateEventsProvider.enable();
+  .config(function($stateProvider, $urlRouterProvider) {
 
     var titleElementLimit = 25;
 

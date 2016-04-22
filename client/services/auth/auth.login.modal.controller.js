@@ -1,4 +1,4 @@
-angular.module('probedock.auth').controller('LoginModalCtrl', function(auth, $http, $scope, $location, $uibModalInstance) {
+angular.module('probedock.auth').controller('LoginModalCtrl', function(auth, $http, $location, $scope, states, $uibModalInstance) {
 
   $scope.credentials = {};
 
@@ -18,7 +18,7 @@ angular.module('probedock.auth').controller('LoginModalCtrl', function(auth, $ht
       '.%0A%0AThanks!').replace(' ', '%20');
   };
 
-  $scope.$on('$stateChangeSuccess', function() {
+  states.onStateChange($scope, null, function() {
     $uibModalInstance.dismiss('stateChange');
   });
 

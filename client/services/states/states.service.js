@@ -2,6 +2,7 @@ angular.module('probedock.states').factory('states', function($rootScope, $state
 
   var currentStateName = $state.$current ? $state.$current.name : null,
       currentStateParams = $state.$current ? $state.$current.params : {},
+      currentStateResolves = {},
       onStateCallbacks = [],
       onStateChangeCallbacks = [];
 
@@ -53,6 +54,7 @@ angular.module('probedock.states').factory('states', function($rootScope, $state
 
     currentStateName = toState.name;
     currentStateParams = toParams || {};
+    currentStateResolves = toResolve || {};
 
     _.each(onStateCallbacks, function(callback) {
       if (stateMatches(toState, callback.matcher, callback.options)) {
@@ -87,8 +89,8 @@ angular.module('probedock.states').factory('states', function($rootScope, $state
       var callback = buildCallback(matcher, options, func);
       onStateCallbacks.push(callback);
 
-      if ($state.$current) {
-        checkState($state.$current, $state.params || {}, $state.$current.resolve || {}, [ callback ]);
+      if (currentStateName && $state.$current) {
+        checkState($state.$current, currentStateParams, currentStateResolves, [ callback ]);
       }
 
       if ($scope != $rootScope) {

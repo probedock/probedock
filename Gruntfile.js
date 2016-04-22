@@ -71,7 +71,6 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-smart-table/dist/smart-table.js', dest: 'vendor/assets/javascripts/angular-smart-table.js' },
           { nonull: true, src: 'bower_components/angular-truncate/src/truncate.js', dest: 'vendor/assets/javascripts/angular-truncate.js' },
           { nonull: true, src: 'bower_components/angular-ui-router/release/angular-ui-router.js', dest: 'vendor/assets/javascripts/angular-ui-router.js' },
-          { nonull: true, src: 'bower_components/angular-ui-router/release/stateEvents.js', dest: 'vendor/assets/javascripts/angular-ui-router-events.js' },
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.js', dest: 'vendor/assets/javascripts/angular-ui-select.js' },
           // Wait for this PR to be merged or this fix applied to master: https://github.com/sroze/ngInfiniteScroll/pull/187 (related also to: https://github.com/sroze/ngInfiniteScroll/issues/235)
           //{ nonull: true, src: 'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js', dest: 'vendor/assets/javascripts/angular-ng-infinite-scroll.js' },
