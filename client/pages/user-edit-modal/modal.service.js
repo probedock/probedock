@@ -1,4 +1,4 @@
-angular.module('probedock.userEditModal').factory('userEditModal', function($uibModal) {
+angular.module('probedock.userEditModal').factory('userEditModal', function(states, $uibModal) {
   return {
     open: function($scope) {
 
@@ -8,7 +8,7 @@ angular.module('probedock.userEditModal').factory('userEditModal', function($uib
         scope: $scope
       });
 
-      $scope.$on('$stateChangeStart', function() {
+      states.onStateChange($scope, null, function() {
         modal.dismiss('stateChange');
       });
 

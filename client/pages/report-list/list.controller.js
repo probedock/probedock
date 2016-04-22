@@ -141,7 +141,7 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     });
   }
 
-  function selectTab(id) {
-    $scope.tabset.active = id == 'latest' ? 0 : id;
+  function selectTab(index) {
+    $scope.tabset.active = index == 'latest' ? 0 : index;
   }
 });

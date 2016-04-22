@@ -1,8 +1,8 @@
 #user-list-page.container
   .page-header
     h1 User Management
-  uib-tabset type='pills'
-    uib-tab ui-sref='admin.users' active='activeTabs.list'
+  uib-tabset type='pills' active='tabset.active'
+    uib-tab ui-sref='admin.users' index='0'
       uib-tab-heading User List
       div st-pipe='usersList.refresh' st-table='usersList.records'
         .well.filters
@@ -51,11 +51,9 @@
           tfoot
             tr
               td.clearfix colspan=7 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
-    uib-tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
+    uib-tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' index='$index + 1'
       uib-tab-heading
         | {{ userTab.user.name }}
-        a ng-click='removeTab(userTab)'
-          span.glyphicon.glyphicon-remove
       .col-md-6.col-xs-12
         user-details-widget user='userTab.user' complete='true'
     li.instructions ng-if='!userTabs.length'
