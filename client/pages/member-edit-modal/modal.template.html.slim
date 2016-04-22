@@ -5,7 +5,7 @@ form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && s
     h3.modal-title ng-if='!editedMembership.id' New Member
   .modal-body
     .form-group ng-if='!membership.id'
-      label-required for='technical' Type
+      label for='technical' Type
       .radio
         label
           input type='radio' ng-model='settings.technicalUser' name='technical' ng-value='false'
