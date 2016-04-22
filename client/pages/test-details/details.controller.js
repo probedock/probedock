@@ -2,7 +2,7 @@ angular.module('probedock.testDetailsPage').controller('TestDetailsPageCtrl', fu
   orgs.forwardData($scope);
 
   api({
-    url: '/tests/' + $stateParams.testId,
+    url: '/tests/' + $stateParams.id,
     params: {
       withProject: 1,
       withContributions: 1,

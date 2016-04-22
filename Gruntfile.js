@@ -72,8 +72,6 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-truncate/src/truncate.js', dest: 'vendor/assets/javascripts/angular-truncate.js' },
           { nonull: true, src: 'bower_components/angular-ui-router/release/angular-ui-router.js', dest: 'vendor/assets/javascripts/angular-ui-router.js' },
           { nonull: true, src: 'bower_components/angular-ui-router/release/stateEvents.js', dest: 'vendor/assets/javascripts/angular-ui-router-events.js' },
-          // The current version of https://github.com/nonplus/angular-ui-router-title is not compatible with the 1.x version of angular-ui-router.
-          //{ nonull: true, src: 'bower_components/angular-ui-router-title/angular-ui-router-title.js', dest: 'vendor/assets/javascripts/angular-ui-router-title.js' },
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.js', dest: 'vendor/assets/javascripts/angular-ui-select.js' },
           // Wait for this PR to be merged or this fix applied to master: https://github.com/sroze/ngInfiniteScroll/pull/187 (related also to: https://github.com/sroze/ngInfiniteScroll/issues/235)
           //{ nonull: true, src: 'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js', dest: 'vendor/assets/javascripts/angular-ng-infinite-scroll.js' },
