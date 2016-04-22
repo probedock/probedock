@@ -130,9 +130,9 @@ class User < ActiveRecord::Base
 
   def normalize_name
     self.normalized_name = if human?
-      "human-#{name.downcase}"
+      "human||#{name.downcase}"
     else
-      "technical-#{memberships.first.organization.normalized_name}-#{name.downcase}"
+      "technical||#{memberships.first.organization.normalized_name}||#{name.downcase}"
     end
   end
 end

@@ -5,7 +5,7 @@ form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && s
     h3.modal-title ng-if='!editedMembership.id' New Member
   .modal-body
     .form-group ng-if='!membership.id'
-      label Type
+      label for='technical' Type
       .radio
         label
           input type='radio' ng-model='settings.technicalUser' name='technical' ng-value='false'
@@ -20,7 +20,7 @@ form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && s
         markdown:
           *Technical users* are meant to be used on continuous integration servers. They have no e-mail and cannot log in, but they can publish test results to Probe Dock.
     .form-group ng-if='!settings.technicalUser' ng-class='{"has-error": orgForm.name.$dirty && orgForm.name.$invalid}'
-      label for='membershipOrgEmail' E-mail
+      label-required for='membershipOrgEmail' E-mail
       input#membershipOrgEmail.form-control type='email' name='orgEmail' placeholder='E-mail of the member within the organization' required=true maxlength=255 autofocus=true ng-model='editedMembership.organizationEmail' ng-disabled='editedMembership.id'
       p.help-block
         | This e-mail is used to contact the member about activity regarding the organization.
@@ -34,7 +34,7 @@ form novalidate=true name='membershipForm' ng-submit='membershipForm.$valid && s
       p.help-block
         | Roles give a member additional privileges within the organization.
     .form-group ng-if='settings.technicalUser' ng-class='{"has-error": membershipForm.name.$dirty && membershipForm.name.$invalid}'
-      label for='user-name' Username
+      label-required for='user-name' Username
       input#user-name.form-control type='text' name='name' ng-model='technicalUser.name' placeholder='Unique username' required=true maxlength=25 autofocus=true unique-technical-user-name=true ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block ng-if='membershipForm.name.$error.uniqueUserName'
         strong This username is already taken.
