@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160413123914) do
+ActiveRecord::Schema.define(version: 20160422080018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 20160413123914) do
   create_table "organizations", force: :cascade do |t|
     t.string   "api_id",            limit: 5,                  null: false
     t.string   "name",              limit: 50,                 null: false
-    t.string   "display_name",      limit: 50
+    t.string   "display_name",      limit: 50,                 null: false
     t.string   "normalized_name",   limit: 50,                 null: false
     t.boolean  "public_access",                default: false, null: false
     t.integer  "memberships_count",            default: 0,     null: false
@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 20160413123914) do
   create_table "projects", force: :cascade do |t|
     t.string   "api_id",           limit: 12,              null: false
     t.string   "name",             limit: 50,              null: false
-    t.string   "display_name",     limit: 50
+    t.string   "display_name",     limit: 50,              null: false
     t.string   "normalized_name",  limit: 50,              null: false
     t.text     "description"
     t.integer  "organization_id",                          null: false

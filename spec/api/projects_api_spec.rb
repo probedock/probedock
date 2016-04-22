@@ -26,7 +26,7 @@ RSpec.describe ProbeDock::ProjectsApi do
     it 'should create a project' do
 
       expect do
-        api_post '/api/projects', { name: 'probedock', organizationId: organization.api_id }.to_json, user: user
+        api_post '/api/projects', { name: 'probedock', displayName: 'Probe Dock', organizationId: organization.api_id }.to_json, user: user
       end.to change(Project, :count).by(1)
 
       expect(response.status).to eq(201)
@@ -35,6 +35,7 @@ RSpec.describe ProbeDock::ProjectsApi do
       expect(MultiJson.load(response.body)).to eq({
         'id' => created_project.api_id,
         'name' => 'probedock',
+        'displayName' => 'Probe Dock',
         'organizationId' => organization.api_id,
         'testsCount' => created_project.tests_count,
         'createdAt' => created_project.created_at.iso8601(3),
