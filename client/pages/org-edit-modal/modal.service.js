@@ -26,13 +26,13 @@ angular.module('probedock.orgEditModal').factory('orgEditModal', function(states
 
   if ($scope.organization && $scope.organization.id) {
     // Edit the specified organization.
-    reset();
+    resetEditedOrganization();
   } else if ($scope.organizationId) {
     api({
       url: '/organizations/' + $scope.organizationId
     }).then(function(res) {
       $scope.organization = res.data;
-      reset();
+      resetEditedOrganization();
     });
   } else if ($scope.organizationName) {
     api({
@@ -43,13 +43,13 @@ angular.module('probedock.orgEditModal').factory('orgEditModal', function(states
     }).then(function(res) {
       // TODO: handle not found
       $scope.organization = res.data.length ? res.data[0] : null;
-      reset();
+      resetEditedOrganization();
     });
   } else {
-    reset();
+    resetEditedOrganization();
   }
 
-  $scope.reset = reset;
+  $scope.reset = resetEditedOrganization;
   $scope.changed = function() {
     return !forms.dataEquals($scope.organization, $scope.editedOrg);
   };
@@ -74,7 +74,7 @@ angular.module('probedock.orgEditModal').factory('orgEditModal', function(states
     });
   };
 
-  function reset() {
+  function resetEditedOrganization() {
     $scope.editedOrg = angular.copy($scope.organization);
   }
 });
