@@ -7,7 +7,7 @@
     p.lead.text-success Registration successful!
     p.text-success
       | We have sent a confirmation e-mail to
-      strong {{ registration.user.email }}
+      strong< {{ registration.user.email }}
       | .
       |  Please follow the link in the e-mail to complete the registration.
     p.text-muted
@@ -51,16 +51,16 @@
         |  You will create an organization now as part of the registration process.
         |  You will be the administrator of this organization and may invite other members later.
 
-    .col-sm-12.col-xs-12
+    .col-sm-6.col-xs-12
       .form-group ng-class='{"has-error": registrationForm.organizationName.$dirty && registrationForm.organizationName.$invalid}'
-        label for='organization-name' Identifier
+        label for='organization-name' Name
         input#organization-name.form-control type='string' name='organizationName' maxlength=50 unique-org-name=true ng-model='organization.displayName' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
         p.help-block
           | The unique name of the organization, up to 50 characters.
         p.help-block ng-if='registrationForm.organizationName.$error.uniqueOrgName'
           strong An organization with this name already exists.
 
-    .col-xs-12
+    .col-sm-6.col-xs-12
       .checkbox
         label
           input type='checkbox' ng-model='organization.public' Make the organization public
