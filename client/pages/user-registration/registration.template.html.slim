@@ -25,7 +25,7 @@
 
     .col-sm-6.col-xs-12
       .form-group ng-class='{"has-error": registrationForm.userName.$dirty && registrationForm.userName.$invalid}'
-        label for='user-name' Username
+        label-required for='user-name' Username
         input#user-name.form-control type='text' name='userName' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' required=true maxlength=25 ng-pattern='/^[a-z0-9]+(?:-[a-z0-9]+)*$/i' unique-user-name=true autofocus=true ng-model='user.name'
         p.help-block
           | User names can only contain alphanumeric characters and single hyphens (not at the beginning or end).
@@ -34,7 +34,7 @@
 
     .col-sm-6.col-xs-12
       .form-group ng-class='{"has-error": registrationForm.userEmail.$dirty && registrationForm.userEmail.$invalid}'
-        label for='user-email' E-mail
+        label-required for='user-email' E-mail
         input#user-email.form-control type='email' name='userEmail' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}' required=true maxlength=255 unique-user-email=true ng-model='user.primaryEmail'
         p.help-block
           | This will be your primary e-mail in Probe Dock.
@@ -53,7 +53,7 @@
 
     .col-sm-6.col-xs-12
       .form-group ng-class='{"has-error": registrationForm.organizationName.$dirty && registrationForm.organizationName.$invalid}'
-        label for='organization-name' Name
+        label-required for='organization-name' Name
         input#organization-name.form-control type='string' name='organizationName' maxlength=50 unique-org-name=true ng-model='organization.displayName' ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
         p.help-block
           | The unique name of the organization, up to 50 characters.

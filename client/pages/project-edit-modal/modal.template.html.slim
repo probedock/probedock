@@ -3,11 +3,8 @@ form#project-edit-modal novalidate=true role='form' name='projectForm' ng-submit
     h3.modal-title ng-if='editedProject.id' Edit {{ project | projectName }}
     h3.modal-title ng-if='!editedProject.id' New Project
   .modal-body
-    .form-group ng-class='{"has-error": projectForm.displayName.$dirty && projectForm.displayName.$invalid}'
-      label for='projectDisplayName'
-        | Name
-        span.required<
-          | (required)
+    .form-group ng-class='{"has-error": projectForm.name.$dirty && projectForm.name.$invalid}'
+      label-required for='projectName' Name
       input#projectDisplayName.form-control type='string' name='displayName' placeholder='Name' maxlength=50 ng-model='editedProject.displayName' unique-project-name=true autofocus=true ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
         | The name of the project, unique within the organization, up to 50 characters.

@@ -72,10 +72,10 @@ html ng-app='probedock' ng-strict-di=true
                 | Admin
                 span.caret
               ul.dropdown-menu role='menu'
-                li.dropdown-header Organization
-                li
+                li.dropdown-header ng-if='currentOrganization' Organization
+                li ng-if='currentOrganization'
                   a ui-sref='org.dashboard.members({ orgName: currentOrganization.name })' Members
-                li
+                li ng-if='currentOrganization'
                   a ui-sref='org.dashboard.default.edit({ orgName: currentOrganization.name })' Edit organization
                 li.dropdown-header Platform
                 li ng-if='currentUserIs("admin")'

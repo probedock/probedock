@@ -5,7 +5,7 @@ form#org-edit-modal novalidate=true name='orgForm' ng-submit='orgForm.$valid && 
     h3.modal-title ng-if='!editedOrg.id' New Organization
   .modal-body
     .form-group ng-class='{"has-error": orgForm.displayName.$dirty && orgForm.displayName.$invalid}'
-      label for='org-display-name' Name
+      label-required for='org-display-name' Name
       input#org-display-name.form-control type='string' name='displayName' maxlength=50 ng-model='editedOrg.displayName' unique-org-name=true ng-model-options='{updateOn: "default blur", debounce: {default: 500, blur: 0}}'
       p.help-block
         | The unique name of the organization, up to 50 characters.
