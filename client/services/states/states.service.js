@@ -1,3 +1,8 @@
+/**
+ * Service that abstracts the management of UI Router state transitions.
+ *
+ * Documentation: http://angular-ui.github.io/ui-router/feature-1.0/index.html
+ */
 angular.module('probedock.states').factory('states', function($rootScope, $transitions) {
 
   var currentState = null,
