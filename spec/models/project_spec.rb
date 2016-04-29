@@ -37,8 +37,8 @@ describe Project do
     it(nil, probedock: { key: '38a831c819f7' }){ should validate_length_of(:name).is_at_most(50) }
     it(nil, probedock: { key: '2ujf' }){ should allow_value('foo', 'FoO', 'foo-bar', 'Foo-Bar-Baz').for(:name) }
     it(nil, probedock: { key: 'iwil' }){ should_not allow_value('---', '-foo', 'foo-', '$oo', 'Yee haw').for(:name) }
+    it(nil, probedock: { key: 'v951' }){ should validate_presence_of(:display_name) }
     it(nil, probedock: { key: 'uuoy' }){ should validate_length_of(:display_name).is_at_most(50) }
-    it(nil, probedock: { key: 'jjm9' }){ should allow_value('', nil).for(:display_name) }
     it(nil, probedock: { key: 's3g2' }){ should validate_presence_of(:organization) }
     it(nil, probedock: { key: 'k0ts' }){ should validate_length_of(:repo_url).is_at_most(255) }
     it(nil, probedock: { key: '0xqz' }){ should allow_value('http://localhost.localdomain', 'https://example.com').for(:repo_url) }
@@ -67,6 +67,7 @@ describe Project do
     it(nil, probedock: { key: 'ben8' }){ should have_db_column(:last_report_id).of_type(:integer).with_options(null: true) }
     it(nil, probedock: { key: 'df86a430816f' }){ should have_db_column(:api_id).of_type(:string).with_options(null: false, limit: 12) }
     it(nil, probedock: { key: '66b088f28c76' }){ should have_db_column(:name).of_type(:string).with_options(null: false, limit: 50) }
+    it(nil, probedock: { key: 'ler1' }){ should have_db_column(:display_name).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probedock: { key: '2s5c' }){ should have_db_column(:normalized_name).of_type(:string).with_options(null: false, limit: 50) }
     it(nil, probedock: { key: 'jomh' }){ should have_db_column(:description).of_type(:text).with_options(null: true) }
     it(nil, probedock: { key: '89de5255730b' }){ should have_db_column(:tests_count).of_type(:integer).with_options(null: false, default: 0) }

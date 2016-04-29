@@ -69,6 +69,8 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       url += '/' + $scope.project.id;
     }
 
+    $scope.editedProject.name = api.slugify($scope.editedProject.displayName);
+
     api({
       method: method,
       url: url,

@@ -8,9 +8,6 @@ angular.module('probedock.bootstrap').factory('bootstrap', function($log, $rootS
 
         var oldSize = service.size;
         service.size = size;
-
-        $log.debug('Bootstrap size changed to ' + size);
-
         service.emit('bootstrap.size', size, oldSize);
       }
     },

@@ -14,7 +14,7 @@ angular.module('probedock.uniqueProjectNameValidation', [ 'probedock.api' ]).dir
         return api({
           url: '/projects',
           params: {
-            name: modelValue,
+            name: api.slugify(modelValue),
             organizationId: scope.project.organizationId,
             pageSize: 1,
           }

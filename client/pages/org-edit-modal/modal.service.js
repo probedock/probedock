@@ -64,6 +64,8 @@ angular.module('probedock.orgEditModal').factory('orgEditModal', function(states
       url += '/' + $scope.organization.id;
     }
 
+    $scope.editedOrg.name = api.slugify($scope.editedOrg.displayName);
+
     api({
       method: method,
       url: url,

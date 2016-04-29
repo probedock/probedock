@@ -10,9 +10,7 @@ angular.module('probedock.userRegistrationPage').controller('UserRegistrationPag
       organization: $scope.organization
     };
 
-    if (_.isBlank(data.organization.name) && _.isPresent($scope.organizationNamePlaceholder)) {
-      data.organization.name = $scope.organizationNamePlaceholder;
-    }
+    data.organization.name = api.slugify(data.organization.displayName);
 
     api({
       method: 'POST',
@@ -22,44 +20,4 @@ angular.module('probedock.userRegistrationPage').controller('UserRegistrationPag
       $scope.registration = res.data;
     });
   };
-
-  $scope.$watch('organization.displayName', function(value) {
-    value = value || '';
-
-    $scope.organizationNamePlaceholder = value
-      .replace(/[^a-z0-9\- ]+/gi, '')
-      .replace(/ +/g, '-')
-      .replace(/\-+/g, '-')
-      .replace(/\-+$/, '')
-      .replace(/^\-+/, '')
-      .toLowerCase();
-  });
-
-  $scope.$watch('organizationNamePlaceholder', function(value) {
-    if (_.isPresent($scope.organizationNamePlaceholder) && _.isBlank($scope.organization.name)) {
-      checkOrganizationNamePlaceholderDebounced();
-    } else {
-      $scope.organizationNamePlaceholderTaken = false;
-    }
-  });
-
-  var checkOrganizationNamePlaceholderDebounced = _.debounce(checkOrganizationNamePlaceholder, 500);
-
-  function checkOrganizationNamePlaceholder() {
-    $scope.organizationNamePlaceholderTaken = false;
-
-    if (_.isBlank($scope.organizationNamePlaceholder)) {
-      return;
-    }
-
-    api({
-      url: '/organizations',
-      params: {
-        name: $scope.organizationNamePlaceholder,
-        pageSize: 1
-      }
-    }).then(function(res) {
-      $scope.organizationNamePlaceholderTaken = !!res.data.length;
-    });
-  }
 });
