@@ -16,7 +16,8 @@ angular.module('probedock.states').factory('states', function($rootScope, $trans
      * matches the specified criteria.
      *
      * The current $scope must be given as the first argument. The callback function will automatically
-     * be unregistered when that scope is destroyed.
+     * be unregistered when that scope is destroyed. If you need a permanent callback function to be
+     * registered, for example in a service, pass the $rootScope.
      *
      * The matcher can be one of the following:
      *
