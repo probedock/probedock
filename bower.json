@@ -26,7 +26,7 @@
     "angular-ui-router": "~1.0.0",
     "angular-ui-select": "~0.16.1",
     "bootstrap": "~3.3.6",
-    "drop-ng": "git@github.com:stevenh77/drop-ng.git#b3f30fb275a60ae351ba7624a2c6b1d6dd78136a",
+    "drop-ng": "~0.1.5",
     "dropzone": "~4.3.0",
     "font-awesome": "~4.6.1",
     "jquery": "~2.2.3",
