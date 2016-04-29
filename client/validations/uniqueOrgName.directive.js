@@ -14,7 +14,7 @@ angular.module('probedock.uniqueOrgNameValidation', [ 'probedock.api' ]).directi
         return api({
           url: '/organizations',
           params: {
-            name: modelValue,
+            name: api.slugify(modelValue),
             pageSize: 1
           }
         }).then(function(res) {

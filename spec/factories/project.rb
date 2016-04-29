@@ -20,8 +20,13 @@ FactoryGirl.define do
     "project-#{n}"
   end
 
+  sequence :project_display_name do |n|
+    "project-displ-#{n}"
+  end
+
   factory :project do
     name{ generate(:project_name) }
+    display_name{ generate(:project_display_name) }
     organization
   end
 end

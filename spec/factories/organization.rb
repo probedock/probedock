@@ -20,8 +20,13 @@ FactoryGirl.define do
     "org-#{n}"
   end
 
+  sequence :organization_display_name do |n|
+    "org-disp-#{n}"
+  end
+
   factory :organization do
     name{ generate(:organization_name) }
+    display_name{ generate(:organization_display_name) }
     active true
 
     factory :new_organization do

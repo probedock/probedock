@@ -30,7 +30,7 @@ class Organization < ActiveRecord::Base
 
   # TODO: do not accept UUIDs
   validates :name, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50, allow_blank: true }, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\Z/i, allow_blank: true }
-  validates :display_name, length: { maximum: 50, allow_blank: true }
+  validates :display_name, presence:true, length: { maximum: 50, allow_blank: true }
   validates :public_access, inclusion: { in: [ true, false ] }
   validate :name_must_not_be_reserved
 
