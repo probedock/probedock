@@ -1,4 +1,4 @@
-angular.module('probedock.auth').factory('auth', function(appStore, $base64, $http, $log, $modal, $rootScope) {
+angular.module('probedock.auth').factory('auth', function(appStore, $base64, $http, $log, $rootScope, $uibModal) {
 
   var service = {
 
@@ -25,7 +25,7 @@ angular.module('probedock.auth').factory('auth', function(appStore, $base64, $ht
     },
 
     openSignInDialog: function() {
-      $modal.open({
+      $uibModal.open({
         templateUrl: '/templates/services/auth/auth.login.modal.template.html',
         controller: 'LoginModalCtrl'
       });

@@ -1,4 +1,4 @@
-angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', function(api, orgs, projectEditModal, $scope, $state, $stateParams) {
+angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', function(api, orgs, projectEditModal, routeOrgName, $scope, $state, states) {
   orgs.forwardData($scope);
 
   $scope.$watch('projectName', function(value, oldValue) {
@@ -7,19 +7,17 @@ angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', fu
     }
   });
 
-  $scope.$on('$stateChangeSuccess', function(event, toState, toStateParams) {
-    if (toState.name.match(/^org.projects.list.(?:new|edit)$/)) {
-      modal = projectEditModal.open($scope, { projectId: toStateParams.id });
+  states.onStateChangeSuccess($scope, /^org.projects.list.(?:new|edit)$/, function(toState, toParams) {
+    var modal = projectEditModal.open($scope, { projectId: toParams.id });
 
-      modal.result.then(function(project) {
-        api.pushOrUpdate($scope.projects, project);
+    modal.result.then(function(project) {
+      api.pushOrUpdate($scope.projects, project);
+      $state.go('^', {}, { inherit: true });
+    }, function(reason) {
+      if (reason != 'stateChange') {
         $state.go('^', {}, { inherit: true });
-      }, function(reason) {
-        if (reason != 'stateChange') {
-          $state.go('^', {}, { inherit: true });
-        }
-      });
-    }
+      }
+    });
   });
 
   $scope.orderProject = function(project) {
@@ -39,7 +37,7 @@ angular.module('probedock.projectListPage').controller('ProjectListPageCtrl', fu
 
     $scope.page++;
     var params = {
-      organizationName: $stateParams.orgName,
+      organizationName: routeOrgName,
       pageSize: 10,
       page: $scope.page
     };

@@ -1,4 +1,4 @@
-angular.module('probedock.reportListPage').controller('ReportListPageCtrl', function(api, orgs, $scope, $stateParams, states, tables, $timeout) {
+angular.module('probedock.reportListPage').controller('ReportListPageCtrl', function(api, orgs, routeOrgName, $scope, states, tables, $timeout) {
   orgs.forwardData($scope);
 
   var filterStateLoaded,
@@ -9,7 +9,7 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     url: '/reports',
     pageSize: 15,
     params: {
-      organizationName: $stateParams.orgName,
+      organizationName: routeOrgName,
       withRunners: 1,
       withProjects: 1,
       withProjectVersions: 1,
@@ -116,9 +116,12 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
   }, true);
 
   $scope.reportTabs = [];
-  $scope.activeTabs = {};
+  $scope.lastReportTabIndex = 1;
+  $scope.tabset = {
+    active: 0
+  };
 
-  states.onState($scope, [ 'org.reports', 'org.reports.show' ], function(state, params) {
+  states.onStateChangeSuccess($scope, [ 'org.reports', 'org.reports.show' ], function(state, params) {
     if (state && state.name == 'org.reports.show') {
       openReportTab(params.id);
     } else {
@@ -126,23 +129,64 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     }
   });
 
+  $scope.reportTime = function(report) {
+    if (!report) {
+      return 'Loading...';
+    }
+
+    var reportTime = moment(report.startedAt);
+
+    if (reportTime.isAfter(moment().startOf('day'))) {
+      reportTime = reportTime.format('HH:mm');
+    } else if (reportTime.isAfter(moment().startOf('year'))) {
+      reportTime = reportTime.format('MMM D HH:mm');
+    } else {
+      reportTime = reportTime.format('MMM D YYYY HH:mm');
+    }
+
+    var runners = _.first(_.pluck(report.runners, 'name'), 3);
+    return reportTime + ' by ' + runners.join(', ');
+  };
+
   function openReportTab(reportId) {
 
     var tab = _.findWhere($scope.reportTabs, { id: reportId });
     if (!tab) {
-      tab = { id: reportId, loading: true };
+      tab = {
+        id: reportId,
+        index: $scope.lastReportTabIndex++
+      };
+
       $scope.reportTabs.push(tab);
     }
 
-    selectTab(reportId);
-  }
-
-  function selectTab(id) {
-
-    _.each($scope.activeTabs, function(value, key) {
-      $scope.activeTabs[key] = false;
+    $timeout(function() {
+      selectTab(tab.index);
     });
 
-    $scope.activeTabs[id] = true;
+    if (!tab.report) {
+      if (tab.loading) {
+        return;
+      }
+
+      tab.loading = true;
+
+      fetchReport(reportId).then(function(report) {
+        tab.loading = false;
+        tab.report = report;
+      });
+    }
+  }
+
+  function selectTab(index) {
+    $scope.tabset.active = index == 'latest' ? 0 : index;
+  }
+
+  function fetchReport(id) {
+    return api({
+      url: '/reports/' + id
+    }).then(function(res) {
+      return res.data;
+    });
   }
 });

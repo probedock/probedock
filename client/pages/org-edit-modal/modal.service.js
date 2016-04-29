@@ -1,39 +1,55 @@
-angular.module('probedock.orgEditModal').factory('orgEditModal', function($modal) {
+angular.module('probedock.orgEditModal').factory('orgEditModal', function(states, $uibModal) {
   return {
-    open: function($scope) {
+    open: function($scope, options) {
+      options = _.extend({}, options);
 
-      var modal = $modal.open({
+      var scope = $scope.$new();
+      _.extend(scope, _.pick(options, 'organization', 'organizationId', 'organizationName'));
+
+      var modal = $uibModal.open({
         templateUrl: '/templates/pages/org-edit-modal/modal.template.html',
         controller: 'OrgEditModalCtrl',
-        scope: $scope
+        scope: scope
       });
 
-      $scope.$on('$stateChangeStart', function() {
+      states.onStateChangeStart($scope, true, function() {
         modal.dismiss('stateChange');
       });
 
       return modal;
     }
   };
-}).controller('OrgEditModalCtrl', function(api, forms, $modalInstance, orgs, $scope, $stateParams) {
+}).controller('OrgEditModalCtrl', function(api, forms, orgs, $scope, $uibModalInstance) {
 
-  $scope.organization = {};
+  $scope.organization = $scope.organization || {};
   $scope.editedOrg = {};
 
-  if ($stateParams.orgName) {
+  if ($scope.organization && $scope.organization.id) {
+    // Edit the specified organization.
+    resetEditedOrganization();
+  } else if ($scope.organizationId) {
+    api({
+      url: '/organizations/' + $scope.organizationId
+    }).then(function(res) {
+      $scope.organization = res.data;
+      resetEditedOrganization();
+    });
+  } else if ($scope.organizationName) {
     api({
       url: '/organizations',
       params: {
-        name: $stateParams.orgName
+        name: $scope.organizationName
       }
     }).then(function(res) {
       // TODO: handle not found
       $scope.organization = res.data.length ? res.data[0] : null;
-      reset();
+      resetEditedOrganization();
     });
+  } else {
+    resetEditedOrganization();
   }
 
-  $scope.reset = reset;
+  $scope.reset = resetEditedOrganization;
   $scope.changed = function() {
     return !forms.dataEquals($scope.organization, $scope.editedOrg);
   };
@@ -56,11 +72,11 @@ angular.module('probedock.orgEditModal').factory('orgEditModal', function($modal
       data: $scope.editedOrg
     }).then(function(res) {
       orgs[$scope.organization.id ? 'updateOrganization' : 'addOrganization'](res.data);
-      $modalInstance.close(res.data);
+      $uibModalInstance.close(res.data);
     });
   };
 
-  function reset() {
+  function resetEditedOrganization() {
     $scope.editedOrg = angular.copy($scope.organization);
   }
 });

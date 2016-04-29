@@ -1,13 +1,16 @@
 language: ruby
 rvm:
   - 2.2.1
+
 addons:
   postgresql: "9.3"
 services:
   - redis-server
+
 before_script:
   - psql -c 'create database "probedock-test";' -U postgres
   - bundle exec rake db:schema:load db:seed
+
 env:
   global:
     - RAILS_ENV=test
@@ -21,3 +24,26 @@ env:
     - PROBEDOCK_TEST_APP_PORT=3001
     - PROBEDOCK_TEST_MAIL_FROM=no-reply@probedock.io
     - PROBEDOCK_TEST_MAIL_FROM_NAME="ProbeDock"
+
+# TODO: remove the following configuration once Travis has upgraded to PhantomJS 2.x
+#
+# This installs PhantomJS 2.1.1 before installing dependencies.
+#
+# https://github.com/johnpapa/generator-hottowel/issues/154
+# https://github.com/travis-ci/travis-ci/issues/3225
+
+sudo: false
+
+cache:
+  directories:
+    - 'travis_phantomjs'
+
+before_install:
+  - 'phantomjs --version'
+  - 'export PATH=$PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH'
+  - 'phantomjs --version'
+  - 'if [ $(phantomjs --version) != "2.1.1" ]; then rm -rf $PWD/travis_phantomjs; mkdir -p $PWD/travis_phantomjs; fi'
+  - 'if [ $(phantomjs --version) != "2.1.1" ]; then wget https://assets.membergetmember.co/software/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2; fi'
+  - 'if [ $(phantomjs --version) != "2.1.1" ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi'
+  - 'which phantomjs'
+  - 'phantomjs --version'

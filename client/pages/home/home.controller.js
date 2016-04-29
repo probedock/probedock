@@ -1,18 +1,16 @@
-angular.module('probedock.homePage').controller('HomePageCtrl', function(orgEditModal, orgs, $scope, $state) {
+angular.module('probedock.homePage').controller('HomePageCtrl', function(orgEditModal, orgs, $scope, $state, states) {
   orgs.forwardData($scope);
 
-  $scope.$on('$stateChangeSuccess', function(even, toState) {
-    if (toState.name == 'home.newOrg') {
-      var modal = orgEditModal.open($scope);
+  states.onStateChangeSuccess($scope, 'home.newOrg', function() {
+    var modal = orgEditModal.open($scope);
 
-      modal.result.then(function(org) {
-        $state.go('org.dashboard.members', { orgName: org.name });
-      }, function(reason) {
-        if (reason != 'stateChange') {
-          $state.go('^', {}, { inherit: true });
-        }
-      });
-    }
+    modal.result.then(function(org) {
+      $state.go('org.dashboard.members', { orgName: org.name });
+    }, function(reason) {
+      if (reason != 'stateChange') {
+        $state.go('^', {}, { inherit: true });
+      }
+    });
   });
 
   $scope.orderOrganization = function(org) {

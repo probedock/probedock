@@ -49,7 +49,7 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
         return _.isString($scope.key) ? _.isBlank($scope.key) : _.isBlank($scope.key.key);
       }
     },
-    template: '<div class="data-label test-key-label" ng-if="!isBlank()" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" tooltip="Click to copy">{{ key.key || key }}</div>'
+    template: '<div class="data-label test-key-label" ng-if="!isBlank()" ng-class="{copied: copied}" clip-copy="key.key || key" clip-click="onCopied({ key: key })" uib-tooltip="Click to copy">{{ key.key || key }}</div>'
   };
 }).directive('apiIdLabel', function() {
   return {
@@ -67,7 +67,7 @@ angular.module('probedock.dataLabels').directive('simpleLabel', function() {
         return _.isBlank($scope.apiId);
       }
     },
-    template: '<div class="data-label api-id-label" ng-if="!isBlank()" clip-copy="apiId" tooltip="{{ copyTooltip }}">{{ apiId }}</div>'
+    template: '<div class="data-label api-id-label" ng-if="!isBlank()" clip-copy="apiId" uib-tooltip="{{ copyTooltip }}">{{ apiId }}</div>'
   };
 })
 

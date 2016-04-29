@@ -1,6 +1,7 @@
-angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
+angular.module('probedock.routes', [ 'probedock.states', 'ui.router' ])
 
   .config(function($stateProvider, $urlRouterProvider) {
+
     var titleElementLimit = 25;
 
     $stateProvider
@@ -10,14 +11,14 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'HomePageCtrl',
         templateUrl: '/templates/pages/home/home.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Home'); }
+          $title: function() { return buildTitle('Home'); }
         }
       })
 
       .state('home.newOrg', {
         url: 'new',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Home', 'New organization'); }
+          $title: function() { return buildTitle('Home', 'New organization'); }
         }
       })
 
@@ -26,7 +27,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'ErrorPageCtrl',
         templateUrl: '/templates/pages/error/error.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Error'); }
+          $title: function() { return buildTitle('Error'); }
         }
       })
 
@@ -47,7 +48,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'GettingStartedPageCtrl',
         templateUrl: '/templates/pages/getting-started/started.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Help', 'Getting started'); }
+          $title: function() { return buildTitle('Help', 'Getting started'); }
         }
       })
 
@@ -56,7 +57,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'MemberRegistrationPageCtrl',
         templateUrl: '/templates/pages/member-registration/registration.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Join organization'); }
+          $title: function() { return buildTitle('Join organization'); }
         }
       })
 
@@ -65,7 +66,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'UserRegistrationPageCtrl',
         templateUrl: '/templates/pages/user-registration/registration.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Register'); }
+          $title: function() { return buildTitle('Register'); }
         }
       })
 
@@ -74,7 +75,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'UserConfirmRegistrationPageCtrl',
         templateUrl: '/templates/pages/user-confirm-registration/confirm.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Confirm registration'); }
+          $title: function() { return buildTitle('Confirm registration'); }
         }
       })
 
@@ -82,14 +83,14 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         url: '/profile',
         templateUrl: '/templates/pages/profile/profile.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Profile'); }
+          $title: function() { return buildTitle('Profile'); }
         }
       })
 
       .state('profile.edit', {
         url: '/edit',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Edit profile'); }
+          $title: function() { return buildTitle('Edit profile'); }
         }
       })
 
@@ -104,7 +105,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'UserListPageCtrl',
         templateUrl: '/templates/pages/user-list/list.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Users'); }
+          $title: function() { return buildTitle('Users'); }
         }
       })
 
@@ -113,7 +114,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'ManagementPageCtrl',
         templateUrl: '/templates/pages/management/management.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Management'); }
+          $title: function() { return buildTitle('Management'); }
         }
       })
 
@@ -122,28 +123,36 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'AppSettingsPageCtrl',
         templateUrl: '/templates/pages/app-settings/settings.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Settings'); }
+          $title: function() { return buildTitle('Settings'); }
         }
       })
 
       .state('admin.users.show', {
         url: '/:id',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Users', ':id'); }
+          routeUserId: function($stateParams) {
+            return $stateParams.id;
+          },
+          $title: function($stateParams) { return buildTitle('Users', $stateParams.id); }
         }
       })
 
       .state('admin.users.show.edit', {
         url: '/edit',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Users', ':id', 'Edit'); }
+          $title: function(routeUserId) { return buildTitle('Users', routeUserId, 'Edit'); }
         }
       })
 
       .state('org', {
         url: '/:orgName',
         abstract: true,
-        template: '<div ui-view />'
+        template: '<div ui-view />',
+        resolve: {
+          routeOrgName: function($stateParams) {
+            return $stateParams.orgName;
+          }
+        }
       })
 
       .state('org.dashboard', {
@@ -157,14 +166,14 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         url: '',
         templateUrl: '/templates/pages/dashboard-default/default.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Dashboard'); }
+          $title: function() { return buildTitle('Dashboard'); }
         }
       })
 
       .state('org.dashboard.default.edit', {
         url: '/edit',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Dashboard', 'Edit organization'); }
+          $title: function() { return buildTitle('Dashboard', 'Edit organization'); }
         }
       })
 
@@ -173,21 +182,21 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'MemberListPageCtrl',
         templateUrl: '/templates/pages/member-list/list.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Organization members'); }
+          $title: function() { return buildTitle('Organization members'); }
         }
       })
 
       .state('org.dashboard.members.new', {
         url: '/new',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Dashboard', 'Organization members', 'Add member'); }
+          $title: function() { return buildTitle('Dashboard', 'Organization members', 'Add member'); }
         }
       })
 
       .state('org.dashboard.members.edit', {
         url: '/:id/edit',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Dashboard', 'Organization members', ':id', 'Edit'); }
+          $title: function($stateParams) { return buildTitle('Dashboard', 'Organization members', $stateParams.id, 'Edit'); }
         }
       })
 
@@ -201,21 +210,21 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'ProjectListPageCtrl',
         templateUrl: '/templates/pages/project-list/list.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Projects'); }
+          $title: function() { return buildTitle('Projects'); }
         }
       })
 
       .state('org.projects.list.new', {
         url: '/new',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Projects', 'New'); }
+          $title: function() { return buildTitle('Projects', 'New'); }
         }
       })
 
       .state('org.projects.list.edit', {
         url: '/edit?id',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Projects', ':id', 'Edit'); }
+          $title: function() { return buildTitle('Projects', $stateParams.id, 'Edit'); }
         }
       })
 
@@ -224,14 +233,14 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'ReportListPageCtrl',
         templateUrl: '/templates/pages/report-list/list.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Reports'); }
+          $title: function() { return buildTitle('Reports'); }
         }
       })
 
       .state('org.reports.show', {
         url: '/:id',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Reports', ':id'); }
+          $title: function($stateParams) { return buildTitle('Reports', $stateParams.id); }
         }
       })
 
@@ -242,11 +251,11 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
       })
 
       .state('org.tests.show', {
-        url: '/:testId',
+        url: '/:id',
         controller: 'TestDetailsPageCtrl',
         templateUrl: '/templates/pages/test-details/details.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Tests', ':testId'); }
+          $title: function($stateParams) { return buildTitle('Tests', $stateParams.id); }
         }
       })
 
@@ -256,7 +265,7 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
         controller: 'ProjectDetailsPageCtrl',
         templateUrl: '/templates/pages/project-details/details.template.html',
         resolve: {
-          $title: function($stateParams) { return buildTitle($stateParams, 'Projects', ':projectName'); }
+          $title: function($stateParams) { return buildTitle('Projects', $stateParams.projectName); }
         }
       })
 
@@ -269,38 +278,27 @@ angular.module('probedock.routes', [ 'ui.router', 'ui.router.title' ])
       $injector.get('$state').go('home');
     });
 
-    function buildTitle($stateParams) {
+    function buildTitle() {
       var title = 'Probe Dock';
 
-      if ($stateParams.orgName) {
+      _.each(Array.prototype.slice.call(arguments), function(part) {
         title += ' > ';
 
-        if ($stateParams.orgName.length > titleElementLimit) {
-          title += $stateParams.orgName.substr(0, titleElementLimit - 3) + '...'
+        if (part.length > titleElementLimit) {
+          title += part.substr(0, titleElementLimit - 3) + '...';
         } else {
-          title += $stateParams.orgName;
-        }
-      }
-
-      _.each(Array.prototype.slice.call(arguments, 1), function(part) {
-        title += ' > ';
-
-        var realPart;
-        if (part.charAt(0) == ':') {
-          realPart = $stateParams[part.substr(1)];
-        } else {
-          realPart = part;
-        }
-
-        if (realPart.length > titleElementLimit) {
-          title += realPart.substr(0, titleElementLimit - 3) + '...';
-        } else {
-          title += realPart;
+          title += part;
         }
       });
 
       return title;
     }
+  })
+
+  .run(function($rootScope, states) {
+    states.onStateChangeSuccess($rootScope, true, function(state, params, resolves) {
+      $rootScope.$title = resolves.$title;
+    });
   })
 
 ;

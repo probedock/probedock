@@ -1,4 +1,4 @@
-angular.module('probedock.users').factory('users', function(api, auth, eventUtils, $modal, $rootScope) {
+angular.module('probedock.users').factory('users', function(api, auth, eventUtils, $rootScope) {
 
   var service = eventUtils.service({
 

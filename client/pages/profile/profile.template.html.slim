@@ -12,7 +12,7 @@
           p.text-success You have been invited to join the following organizations:
           ul.list-group
             li.list-group-item.list-group-item-success.clearfix ng-repeat='membership in pendingMemberships'
-              button.btn.btn-success.btn-xs.pull-right tooltip='Join' ng-click='accept(membership)'
+              button.btn.btn-success.btn-xs.pull-right uib-tooltip='Join' ng-click='accept(membership)'
                 span.glyphicon.glyphicon-ok
               a href='#' ng-if='membership.organization.public' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
                 | {{ membership.organization | orgName }}
@@ -42,5 +42,5 @@
             .input-group
               input.form-control type='text' value='{{ token }}' readonly=true select-on-click=true
               .input-group-btn
-                .btn.btn-primary clip-copy='token' tooltip='Click to copy'
+                .btn.btn-primary clip-copy='token' uib-tooltip='Click to copy'
                   span.glyphicon.glyphicon-share

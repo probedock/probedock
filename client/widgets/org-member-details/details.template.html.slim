@@ -6,9 +6,9 @@
     em ng-if='!membership.user' Waiting for user to accept...
 
     .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
-      button.btn.btn-warning type='button' tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.members.edit({ id: membership.id })'
+      button.btn.btn-warning type='button' uib-tooltip='Edit' tooltip-append-to-body='true' ui-sref='org.dashboard.members.edit({ id: membership.id })'
         span.glyphicon.glyphicon-pencil
-      button.btn.btn-danger type='button' tooltip='Remove Member' tooltip-append-to-body='true' ng-click='remove()'
+      button.btn.btn-danger type='button' uib-tooltip='Remove Member' tooltip-append-to-body='true' ng-click='remove()'
         span.glyphicon.glyphicon-remove
 
   .panel-body
@@ -47,5 +47,5 @@
           .input-group
             input.form-control type='text' value='{{ accessToken }}' readonly=true select-on-click=true
             .input-group-btn
-              .btn.btn-primary clip-copy='accessToken' tooltip='Click to copy' tooltip-append-to-body='true'
+              .btn.btn-primary clip-copy='accessToken' uib-tooltip='Click to copy' tooltip-append-to-body='true'
                 span.glyphicon.glyphicon-share

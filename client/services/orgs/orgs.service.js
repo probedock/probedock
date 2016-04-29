@@ -1,10 +1,11 @@
-angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, eventUtils, $modal, $rootScope, $state, $stateParams, $q) {
+angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, eventUtils, $rootScope, $state, states, $q) {
 
   var service = eventUtils.service({
 
     organizations: [],
 
-    currentOrganization: appStore.get('currentOrganization'),
+    currentOrganization: null,
+    currentOrganizationName: null,
 
     addOrganization: function(org) {
       service.organizations.push(org);
@@ -90,14 +91,16 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
     }
   });
 
+  setCurrentOrganization(appStore.get('currentOrganization'));
+
   service.refreshOrgs();
   $rootScope.$on('auth.signIn', service.refreshOrgs);
   $rootScope.$on('auth.signOut', forgetPrivateData);
 
-  $rootScope.$on('$stateChangeSuccess', function(event, toState) {
-    if (toState.name.indexOf('org.') === 0) {
-      setCurrentOrganization(_.findWhere(service.organizations, { name: $stateParams.orgName }));
-    }
+  states.onStateChangeSuccess($rootScope, /^org\./, function(state, params, resolves) {
+    var name = resolves.routeOrgName;
+    service.currentOrganizationName = name;
+    setCurrentOrganization(_.findWhere(service.organizations, { name: name }));
   });
 
   function forgetPrivateData() {
@@ -112,7 +115,12 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
   }
 
   function setCurrentOrganization(org) {
+
     service.currentOrganization = org;
+    if (org) {
+      service.currentOrganizationName = org.name;
+    }
+
     appStore.set('currentOrganization', org);
     service.emit('changedOrg', org);
   }
@@ -123,8 +131,8 @@ angular.module('probedock.orgs').factory('orgs', function(api, appStore, auth, e
 
     if (service.currentOrganization) {
       setCurrentOrganization(_.findWhere(orgs, { id: service.currentOrganization.id }));
-    } else if ($stateParams.orgName) {
-      setCurrentOrganization(_.findWhere(orgs, { name: $stateParams.orgName }));
+    } else if (service.currentOrganizationName) {
+      setCurrentOrganization(_.findWhere(orgs, { name: service.currentOrganizationName }));
     }
   }
 

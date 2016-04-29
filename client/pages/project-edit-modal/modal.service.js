@@ -1,4 +1,4 @@
-angular.module('probedock.projectEditModal').service('projectEditModal', function($modal) {
+angular.module('probedock.projectEditModal').service('projectEditModal', function(states, $uibModal) {
   return {
     /**
      * Opens a modal to create or edit a project.
@@ -16,21 +16,21 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       var scope = $scope.$new();
       _.extend(scope, _.pick(options, 'project', 'projectId'));
 
-      var modal = $modal.open({
+      var modal = $uibModal.open({
         templateUrl: '/templates/pages/project-edit-modal/modal.template.html',
         controller: 'ProjectEditModalCtrl',
         scope: scope,
         size: 'lg'
       });
 
-      $scope.$on('$stateChangeStart', function() {
+      states.onStateChangeStart($scope, true, function() {
         modal.dismiss('stateChange');
       });
 
       return modal;
     }
   };
-}).controller('ProjectEditModalCtrl', function(api, forms, $modalInstance, orgs, $scope) {
+}).controller('ProjectEditModalCtrl', function(api, forms, orgs, $scope, $uibModalInstance) {
 
   $scope.repoUrlPatternPlaceholder = '{{ repoUrl }}/example/{{ commit }}/{{ filePath }}#{{ fileLine }}';
 
@@ -80,7 +80,7 @@ angular.module('probedock.projectEditModal').service('projectEditModal', functio
       // TODO: move this to projects service
       orgs.updateOrganization(_.extend(orgs.currentOrganization, { projectsCount: orgs.currentOrganization.projectsCount + 1 }));
 
-      $modalInstance.close(res.data);
+      $uibModalInstance.close(res.data);
     });
   };
 

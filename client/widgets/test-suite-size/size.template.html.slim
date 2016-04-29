@@ -19,7 +19,7 @@
         span ng-if='countDelta >= 0' added
         span ng-if='countDelta < 0' removed
         ng-pluralize count='nbWeeks' when='{"1": " over the last week.", "other": " over the last {{ nbWeeks }} weeks."}'
-    canvas.chart.chart-line height='150' ng-if='chart.data.length' data='chart.data' labels='chart.labels' options='chart.options'
+    canvas.chart.chart-line ng-if='chart.data.length' height='150' chart-data='chart.data' chart-labels='chart.labels' chart-options='chart.options'
     form.form role='form' ng-if='chart.data.length'
       .col-sm-6.col-xs-12 ng-if='!project'
         project-select prefix='test-suite-size' organization='organization' model-object='chart.params' multiple='true'

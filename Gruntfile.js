@@ -16,6 +16,16 @@
 // along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 module.exports = function(grunt) {
 
+  function removeSourceMaps(content, path) {
+    if (path.match(/\.(?:css|js)$/)) {
+      return content
+        .replace(/\/\/\#\s*sourceMappingURL=.*/, '')
+        .replace(/\/\*\#\s*sourceMappingURL=.*\s*\*\//, '');
+    } else {
+      return content;
+    }
+  }
+
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
@@ -26,7 +36,7 @@ module.exports = function(grunt) {
           // javascripts libraries
           { nonull: true, src: 'bower_components/bootstrap/js/popover.js', dest: 'vendor/assets/javascripts/bootstrap-popover.js' },
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
-          { nonull: true, src: 'bower_components/Chart.js/Chart.js', dest: 'vendor/assets/javascripts/chart.js' },
+          { nonull: true, src: 'bower_components/Chart.js/dist/Chart.js', dest: 'vendor/assets/javascripts/chart.js' },
           { nonull: true, src: 'bower_components/d3/d3.js', dest: 'vendor/assets/javascripts/d3.js' },
           { nonull: true, src: 'bower_components/drop-ng/src/drop-ng.js', dest: 'vendor/assets/javascripts/drop-ng.js' },
           { nonull: true, src: 'bower_components/dropzone/dist/dropzone.js', dest: 'vendor/assets/javascripts/dropzone.js' },
@@ -61,7 +71,6 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/angular-smart-table/dist/smart-table.js', dest: 'vendor/assets/javascripts/angular-smart-table.js' },
           { nonull: true, src: 'bower_components/angular-truncate/src/truncate.js', dest: 'vendor/assets/javascripts/angular-truncate.js' },
           { nonull: true, src: 'bower_components/angular-ui-router/release/angular-ui-router.js', dest: 'vendor/assets/javascripts/angular-ui-router.js' },
-          { nonull: true, src: 'bower_components/angular-ui-router-title/angular-ui-router-title.js', dest: 'vendor/assets/javascripts/angular-ui-router-title.js' },
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.js', dest: 'vendor/assets/javascripts/angular-ui-select.js' },
           // Wait for this PR to be merged or this fix applied to master: https://github.com/sroze/ngInfiniteScroll/pull/187 (related also to: https://github.com/sroze/ngInfiniteScroll/issues/235)
           //{ nonull: true, src: 'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js', dest: 'vendor/assets/javascripts/angular-ng-infinite-scroll.js' },
@@ -69,14 +78,21 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/ng-clip/src/ngClip.js', dest: 'vendor/assets/javascripts/angular-ng-clip.js' },
 
           // stylesheets
-          { nonull: true, src: 'bower_components/angular-chart.js/dist/angular-chart.css', dest: 'vendor/assets/stylesheets/angular-chart.css' },
           { nonull: true, src: 'bower_components/angular-loading-bar/build/loading-bar.css', dest: 'vendor/assets/stylesheets/angular-loading-bar.css' },
           { nonull: true, src: 'bower_components/angular-ui-select/dist/select.css', dest: 'vendor/assets/stylesheets/angular-ui-select.css' },
           { nonull: true, src: 'bower_components/dropzone/dist/dropzone.css', dest: 'vendor/assets/stylesheets/dropzone.css' },
           { nonull: true, src: 'bower_components/jqcloud2/dist/jqcloud.css', dest: 'vendor/assets/stylesheets/jqcloud2.css' },
           { nonull: true, src: 'bower_components/normalize.css/normalize.css', dest: 'vendor/assets/stylesheets/normalize.css' },
-          { nonull: true, src: 'bower_components/nvd3/build/nv.d3.css', dest: 'vendor/assets/stylesheets/nvd3.css' },
+          { nonull: true, src: 'bower_components/nvd3/build/nv.d3.css', dest: 'vendor/assets/stylesheets/nvd3.css' }
+        ],
+        options: {
+          process: removeSourceMaps
+        }
+      },
 
+      // Copy binary assets separately. Do not pass them through `removeSourceMaps` or they will be corrupted.
+      binary: {
+        files: [
           // fonts
           { nonull: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
           { nonull: true, cwd: 'bower_components/font-awesome/fonts/', src: '**', dest: 'vendor/assets/fonts/', flatten: true, expand: true },
@@ -137,5 +153,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-raml2boot');
 
   grunt.registerTask('default', [ 'jshint' ]);
-  grunt.registerTask('vendor', [ 'copy:assets', 'copy:bootstrap', 'copy:fontAwesome' ]);
+  grunt.registerTask('vendor', [ 'copy:assets', 'copy:binary', 'copy:bootstrap', 'copy:fontAwesome' ]);
 };

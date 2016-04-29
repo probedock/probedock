@@ -13,7 +13,6 @@
  *= require jqcloud2
  *= require dropzone
  *= require nvd3
- *= require angular-chart
  *= require angular-loading-bar
  *= require angular-ui-select
  *= require ./styles

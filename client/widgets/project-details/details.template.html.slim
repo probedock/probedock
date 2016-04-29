@@ -1,9 +1,9 @@
 .project-details-widget.panel.panel-default
   .panel-heading.clearfix
     .btn-group.btn-group-xs.pull-right ng-if='currentMemberIs("admin")'
-      a.btn.btn-primary ng-if='project.repoUrl' href='{{ project.repoUrl }}' tooltip='Open repository' tooltip-append-to-body='true' target='_blank'
+      a.btn.btn-primary ng-if='project.repoUrl' href='{{ project.repoUrl }}' uib-tooltip='Open repository' tooltip-append-to-body='true' target='_blank'
         repo-icon url='project.repoUrl'
-      a.btn.btn-warning ui-sref='org.projects.list.edit({ id: project.id })' tooltip='Edit' tooltip-append-to-body='true'
+      a.btn.btn-warning ui-sref='org.projects.list.edit({ id: project.id })' uib-tooltip='Edit' tooltip-append-to-body='true'
         span.glyphicon.glyphicon-pencil
     api-id-label.pull-right api-id='project.id' copy-tooltip='Project ID (click to copy)'
     h3.panel-title

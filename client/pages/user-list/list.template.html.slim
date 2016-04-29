@@ -1,9 +1,9 @@
 #user-list-page.container
   .page-header
     h1 User Management
-  tabset type='pills'
-    tab ui-sref='admin.users' active='activeTabs.list'
-      tab-heading User List
+  uib-tabset type='pills' active='tabset.active'
+    uib-tab ui-sref='admin.users' index='0'
+      uib-tab-heading User List
       div st-pipe='usersList.refresh' st-table='usersList.records'
         .well.filters
           .row st-filters='usersList.params'
@@ -31,8 +31,8 @@
                 p.empty No users matching the criteria.
             tr ng-repeat='user in usersList.records'
               td.text-center.hidden-xs
-                i.active.glyphicon.glyphicon-ok tooltip='Active' ng-if='user.active'
-                i.inactive.glyphicon.glyphicon-remove tooltip='Inactive' ng-if='!user.active'
+                i.active.glyphicon.glyphicon-ok uib-tooltip='Active' ng-if='user.active'
+                i.inactive.glyphicon.glyphicon-remove uib-tooltip='Inactive' ng-if='!user.active'
               td.avatar
                 a href='#' ui-sref='admin.users.show({ id: user.id })'
                   user-avatar user='user'
@@ -46,15 +46,15 @@
               td.registeredAt.hidden-xs {{ user.createdAt | amDateFormat:'ll' }} ({{ -timeFromNow(user.createdAt) | amDurationFormat:null:true }})
               td.actions
                 .btn-group.btn-group-sm
-                  a.btn.btn-danger ng-click='delete(user)' tooltip='Delete User' tooltip-append-to-body='true'
+                  a.btn.btn-danger ng-click='delete(user)' uib-tooltip='Delete User' tooltip-append-to-body='true'
                     span.glyphicon.glyphicon-remove
           tfoot
             tr
               td.clearfix colspan=7 st-pagination=true st-items-by-page=15 st-template='/templates/services/tables/tables.pagination.template.html'
-    tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' active='activeTabs[userTab.id]'
-      tab-heading
+    uib-tab ng-repeat='userTab in userTabs' ui-sref='admin.users.show({ id: userTab.user.id })' index='userTab.index'
+      uib-tab-heading
         | {{ userTab.user.name }}
-        a ng-click='removeTab(userTab)'
+        a< ng-click='removeTab(userTab)'
           span.glyphicon.glyphicon-remove
       .col-md-6.col-xs-12
         user-details-widget user='userTab.user' complete='true'

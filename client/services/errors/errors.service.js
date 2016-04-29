@@ -1,7 +1,7 @@
 /**
  * Error handling service. Can be used to show a dialog detailing a server error.
  */
-angular.module('probedock.errors').service('errors', function($log, $modal) {
+angular.module('probedock.errors').service('errors', function($log, $uibModal) {
   var service = {
 
     /**
@@ -37,7 +37,7 @@ angular.module('probedock.errors').service('errors', function($log, $modal) {
         errors: errors
       });
 
-      return $modal.open({
+      return $uibModal.open({
         scope: scope,
         templateUrl: '/templates/services/errors/errors.modal.template.html'
       });

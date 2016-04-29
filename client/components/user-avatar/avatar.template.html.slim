@@ -1,3 +1,3 @@
-.user-avatar ng-class='{"avatar-lg": size == "large"}' tooltip='{{ user.name }}' tooltip-append-to-body=true tooltip-enable='{{ tooltipEnabled }}'
+.user-avatar ng-class='{"avatar-lg": size == "large"}' uib-tooltip='{{ user.name }}' tooltip-append-to-body=true tooltip-enable='{{ tooltipEnabled }}'
   span.glyphicon.glyphicon-cog ng-if='user.technical'
   img ng-if='user.primaryEmailMd5 && gravatarSize' gravatar-src='user.primaryEmailMd5' gravatar-size='{{ gravatarSize }}'

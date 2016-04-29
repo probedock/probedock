@@ -23,10 +23,19 @@ angular.module('probedock.testExecutionTimeWidget').directive('testExecutionTime
       data: [],
       labels: [],
       options: {
-        showTooltips: false,
-        pointDot: false,
-        datasetFill: false,
-        scaleShowVerticalLines: false
+        scaleShowVerticalLines: false,
+        elements: {
+          line: {
+            fill: false
+          },
+          point: {
+            radius: 0,
+            hoverRadius: 0
+          }
+        },
+        tooltips: {
+          enabled: false
+        }
       }
     }
   });

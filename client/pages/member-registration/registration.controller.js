@@ -1,4 +1,4 @@
-angular.module('probedock.memberRegistrationPage').controller('MemberRegistrationPageCtrl', function(api, auth, $modal, orgs, $q, $scope, $state, $stateParams) {
+angular.module('probedock.memberRegistrationPage').controller('MemberRegistrationPageCtrl', function(api, auth, orgs, $q, $scope, $state, $stateParams, $uibModal) {
 
   api({
     url: '/memberships',
@@ -39,7 +39,7 @@ angular.module('probedock.memberRegistrationPage').controller('MemberRegistratio
   };
 
   $scope.openRegistrationDialog = function() {
-    $modal.open({
+    $uibModal.open({
       scope: $scope,
       controller: 'NewUserMemberRegistrationModalCtrl',
       templateUrl: '/templates/pages/member-registration/registration.newUser.template.html'

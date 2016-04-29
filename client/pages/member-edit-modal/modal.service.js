@@ -1,21 +1,21 @@
-angular.module('probedock.memberEditModal').factory('memberEditModal', function(api, $modal, $rootScope) {
+angular.module('probedock.memberEditModal').factory('memberEditModal', function(api, states, $uibModal) {
   return {
     open: function($scope) {
 
-      var modal = $modal.open({
+      var modal = $uibModal.open({
         controller: 'MemberEditModalCtrl',
         templateUrl: '/templates/pages/member-edit-modal/modal.template.html',
         scope: $scope
       });
 
-      $rootScope.$on('$stateChangeSuccess', function() {
+      states.onStateChangeStart($scope, true, function() {
         modal.dismiss('stateChange');
       });
 
       return modal;
     }
   };
-}).controller('MemberEditModalCtrl', function(api, forms, $modalInstance, orgs, $scope, $stateParams) {
+}).controller('MemberEditModalCtrl', function(api, forms, orgs, $scope, $stateParams, $uibModalInstance) {
   // TODO: display message if user is aleady a member
 
   orgs.forwardData($scope);
@@ -80,7 +80,7 @@ angular.module('probedock.memberEditModal').factory('memberEditModal', function(
     }
 
     promise.then(function(membership) {
-      $modalInstance.close(membership);
+      $uibModalInstance.close(membership);
     });
   };
 
