@@ -34,15 +34,15 @@ module ProbeDock
           end
         end
 
-        def with_serialization_includes rel
-          rel = rel.includes :organization
-          rel = rel.includes :projects if true_flag? :withProjects
-          rel = rel.includes :project_versions if true_flag? :withProjectVersions
-          rel = rel.includes :runners if true_flag? :withRunners
+        def with_serialization_includes(rel)
+          rel = rel.preload(:organization)
+          rel = rel.preload(:projects) if true_flag? :withProjects
+          rel = rel.preload(:project_versions) if true_flag? :withProjectVersions
+          rel = rel.preload(:runners) if true_flag? :withRunners
           rel
         end
 
-        def serialization_options reports
+        def serialization_options(reports)
           @serialization_options ||= {
             with_organization: true_flag?(:withOrganization),
             with_projects: true_flag?(:withProjects),
