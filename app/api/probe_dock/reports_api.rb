@@ -128,7 +128,7 @@ module ProbeDock
             payload_conditions = []
 
             payload_conditions << 'test_payloads.passed_results_count > test_payloads.inactive_passed_results_count' if params[:status].include?('passed')
-            payload_conditions << 'test_payloads.results_count - test_payloads.passed_results_count - test_payloads.inactive_results_count > 0' if params[:status].include?('failed')
+            payload_conditions << 'test_payloads.results_count - test_payloads.passed_results_count + test_payloads.inactive_passed_results_count - test_payloads.inactive_results_count > 0' if params[:status].include?('failed')
             payload_conditions << 'test_payloads.inactive_results_count > 0' if params[:status].include?('inactive')
 
             group = true

@@ -356,6 +356,18 @@ Feature: Various filters to get reports
     Then the response should be HTTP 200 with the following JSON:
       """
       [{
+        "id": "@idOf: D",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 0,
+        "inactiveResultsCount": 1,
+        "inactivePassedResultsCount": 1,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance"
+      }, {
         "id": "@idOf: C",
         "duration": "@integer",
         "resultsCount": 1,
