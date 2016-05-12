@@ -538,6 +538,198 @@ Feature: Various filters to get reports
 
 
 
+  @search @regression
+  Scenario: An organization member should be able to to retrieve reports by project and status passed
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&status[]=passed&projectIds[]={@idOf: X-Wing}&withCategories=1&withProjectVersions=1&withProjects=1&withRunners=1
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "@idOf: E",
+        "duration": "@integer",
+        "resultsCount": 4,
+        "passedResultsCount": 4,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 2,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance",
+        "projects": [{
+          "id": "@idOf: X-Wing",
+          "name": "x-wing",
+          "displayName": "X-Wing",
+          "organizationId": "@idOf: Rebel Alliance"
+        }],
+        "projectVersions": [{
+          "id": "@idOf: 1.2.3",
+          "name": "1.2.3",
+          "projectId": "@idOf: X-Wing",
+          "createdAt": "@iso8601"
+        }],
+        "runners": [{
+          "id": "@idOf: hsolo",
+          "name": "hsolo",
+          "technical": false,
+          "primaryEmailMd5": "@md5",
+          "primaryEmail": "@email"
+        }],
+        "categories": [ "CAT1", "CAT2" ]
+      }, {
+        "id": "@idOf: A",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 1,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance",
+        "projects": [{
+          "id": "@idOf: X-Wing",
+          "name": "x-wing",
+          "displayName": "X-Wing",
+          "organizationId": "@idOf: Rebel Alliance"
+        }],
+        "projectVersions": [{
+          "id": "@idOf: 1.2.3",
+          "name": "1.2.3",
+          "projectId": "@idOf: X-Wing",
+          "createdAt": "@iso8601"
+        }],
+        "runners": [{
+          "id": "@idOf: lskywalker",
+          "name": "lskywalker",
+          "technical": false,
+          "primaryEmailMd5": "@md5",
+          "primaryEmail": "@email"
+        }],
+        "categories": [ ]
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+  @search @regression
+  Scenario: An organization member should be able to to retrieve reports by runner and status passed
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&status[]=passed&runnerIds[]={@idOf: hsolo}&withCategories=1&withProjectVersions=1&withProjects=1&withRunners=1
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "@idOf: E",
+        "duration": "@integer",
+        "resultsCount": 4,
+        "passedResultsCount": 4,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 2,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance",
+        "projects": [{
+          "id": "@idOf: X-Wing",
+          "name": "x-wing",
+          "displayName": "X-Wing",
+          "organizationId": "@idOf: Rebel Alliance"
+        }],
+        "projectVersions": [{
+          "id": "@idOf: 1.2.3",
+          "name": "1.2.3",
+          "projectId": "@idOf: X-Wing",
+          "createdAt": "@iso8601"
+        }],
+        "runners": [{
+          "id": "@idOf: hsolo",
+          "name": "hsolo",
+          "technical": false,
+          "primaryEmailMd5": "@md5",
+          "primaryEmail": "@email"
+        }],
+        "categories": [ "CAT1", "CAT2" ]
+      }, {
+        "id": "@idOf: B",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 1,
+        "inactiveResultsCount": 0,
+        "inactivePassedResultsCount": 0,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance",
+        "projects": [{
+          "id": "@idOf: Y-Wing",
+          "name": "y-wing",
+          "displayName": "Y-Wing",
+          "organizationId": "@idOf: Rebel Alliance"
+        }],
+        "projectVersions": [{
+          "id": "@idOf: 1.0.0",
+          "name": "1.0.0",
+          "projectId": "@idOf: Y-Wing",
+          "createdAt": "@iso8601"
+        }],
+        "runners": [{
+          "id": "@idOf: hsolo",
+          "name": "hsolo",
+          "technical": false,
+          "primaryEmailMd5": "@md5",
+          "primaryEmail": "@email"
+        }],
+        "categories": [ ]
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
+  @search @regression
+  Scenario: An organization member should be able to to retrieve reports by project and category
+    When hsolo sends a GET request to /api/reports?organizationId={@idOf: Rebel Alliance}&projectIds[]={@idOf: X-Wing}&categoryNames[]=c1&withCategories=1&withProjectVersions=1&withProjects=1&withRunners=1
+    Then the response should be HTTP 200 with the following JSON:
+      """
+      [{
+        "id": "@idOf: D",
+        "duration": "@integer",
+        "resultsCount": 1,
+        "passedResultsCount": 0,
+        "inactiveResultsCount": 1,
+        "inactivePassedResultsCount": 1,
+        "newTestsCount": 0,
+        "startedAt": "@iso8601",
+        "endedAt": "@iso8601",
+        "createdAt": "@iso8601",
+        "organizationId": "@idOf: Rebel Alliance",
+        "projects": [{
+          "id": "@idOf: X-Wing",
+          "name": "x-wing",
+          "displayName": "X-Wing",
+          "organizationId": "@idOf: Rebel Alliance"
+        }],
+        "projectVersions": [{
+          "id": "@idOf: 1.2.3",
+          "name": "1.2.3",
+          "projectId": "@idOf: X-Wing",
+          "createdAt": "@iso8601"
+        }],
+        "runners": [{
+          "id": "@idOf: hsolo",
+          "name": "hsolo",
+          "technical": false,
+          "primaryEmailMd5": "@md5",
+          "primaryEmail": "@email"
+        }],
+        "categories": [ "c1" ]
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   @authorization
   Scenario: A member of another organization should not be able to get a list report with a project id of a private organization
     When hsolo sends a GET request to /api/reports?projectId={@idOf: Star Destroyer}
