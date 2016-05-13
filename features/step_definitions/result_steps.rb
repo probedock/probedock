@@ -25,7 +25,7 @@ def create_test_result(name, test_name, new_test, passing, active, category_name
 
   # Update the counts related to states
   payload.results_count += 1
-  payload.passed_results_count += 1 if options[:passed] && options[:active]
+  payload.passed_results_count += 1 if options[:passed]
   payload.inactive_results_count += 1 unless options[:active]
   payload.inactive_passed_results_count += 1 if !options[:active] && options[:passed]
 
