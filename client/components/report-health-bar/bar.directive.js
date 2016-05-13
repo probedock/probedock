@@ -71,6 +71,8 @@ angular.module('probedock.reportHealthBar').directive('reportHealthBar', functio
    *
    * Threshold: 5
    *
+   * The goal is to have no percentage under this threshold. So that they will be all visible when displayed.
+   *
    * Sum increased percentage: 0
    * Sum decreased percentage: 0
    *
@@ -171,15 +173,13 @@ angular.module('probedock.reportHealthBar').directive('reportHealthBar', functio
       if (percentage.value == 0.0) {
         // When the percentage is equal to zero, we do nothing special
         correctedPercentages.push(percentage);
-      }
-      else if (percentage.value <= $scope.percentageMinimumThreshold) {
+      } else if (percentage.value <= $scope.percentageMinimumThreshold) {
         // When the percentage is less than or equal to the threshold we
         // fix it to the threshold and sum the difference.
         sumIncreasedPercentage += $scope.percentageMinimumThreshold - percentage.value;
         percentage.value = $scope.percentageMinimumThreshold;
         correctedPercentages.push(percentage);
-      }
-      else {
+      } else {
         // We calculate the reduction
         var reduction = ((sumIncreasedPercentage / sumReducablePercentages) * percentage.value);
 
