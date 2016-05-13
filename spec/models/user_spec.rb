@@ -170,12 +170,20 @@ describe User, probedock: { tags: :unit } do
     describe 'with an existing user' do
       let(:organization) { create(:organization) }
       let!(:user){ user = create(:user, organization: organization) }
-      it(nil, probedock: { key: 'f9be952c7792' }){ should validate_uniqueness_of(:name) }
+      it(nil, probedock: { key: 'f9be952c7792' }){ should validate_uniqueness_of(:name).case_insensitive }
       it(nil, probedock: { key: 'hxfk' }){ should validate_uniqueness_of(:primary_email_id) }
 
       it "should validate that the :technical attribute doesn't change", probedock: { key: 'kgha' } do
         user.memberships << build(:membership, user: user, organization: organization)
         user.technical = !user.technical
+        expect(user).not_to be_valid
+      end
+    end
+
+    describe 'name uniqueness' do
+      let!(:persisted_user) { create(:user, name: 'name') }
+      it 'should not be possible to choose an existing name in a different case', probedock: { key: 'qwj8' } do
+        user = build(:user, name: 'NaMe')
         expect(user).not_to be_valid
       end
     end

@@ -573,6 +573,26 @@ Feature: Users
 
 
 
+  @regression
+  Scenario: An organization member should be able to retrieve a user by name (in different case)
+    When borgana sends a GET request to /api/users?name=hSoLo
+    Then the response code should be 200
+    And the response body should be the following JSON:
+      """
+      [{
+        "id": "@idOf: hsolo",
+        "name": "hsolo",
+        "technical": false,
+        "primaryEmailMd5": "@md5",
+        "active": true,
+        "roles": [],
+        "createdAt": "@iso8601"
+      }]
+      """
+    And nothing should have been added or deleted
+
+
+
   Scenario: An organization member should be able to retrieve inactive users
     When borgana sends a GET request to /api/users?active=false
     Then the response code should be 200

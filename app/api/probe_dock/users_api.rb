@@ -110,7 +110,7 @@ module ProbeDock
           end
 
           if params[:name].present?
-            paginated_rel = paginated_rel.where('users.name = ?', params[:name].to_s)
+            paginated_rel = paginated_rel.where('LOWER(users.name) = ?', params[:name].to_s.downcase)
           end
 
           if params[:active].present?
