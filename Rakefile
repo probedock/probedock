@@ -37,6 +37,6 @@ if Rails.env != 'production'
   Rake::Task['spec'].prerequisites.unshift('spec:server:start')
 
   require 'probedock-rspec'
-  ProbeDockProbe::Tasks.new
+  ProbeDockProbe::Tasks.new workspace: 'tmp/probedock'
   Rake::Task['spec'].prerequisites.unshift('spec:probedock:uid')
 end
