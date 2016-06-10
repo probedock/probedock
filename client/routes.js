@@ -229,7 +229,8 @@ angular.module('probedock.routes', [ 'probedock.states', 'ui.router' ])
       })
 
       .state('org.reports', {
-        url: '/reports',
+        url: '/reports?categories&projects&versions&runners&status&tests',
+        reloadOnSearch: false,
         controller: 'ReportListPageCtrl',
         templateUrl: '/templates/pages/report-list/list.template.html',
         resolve: {
