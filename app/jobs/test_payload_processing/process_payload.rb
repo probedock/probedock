@@ -86,6 +86,8 @@ module TestPayloadProcessing
 
           @test_payload.finish_processing!
 
+          import_all_test_results_into_elasticsearch
+
           # Mark test keys as used.
           free_keys = @cache.test_keys.values.select &:free?
           TestKey.where(id: free_keys.collect(&:id)).update_all free: false if free_keys.any?
@@ -110,6 +112,29 @@ module TestPayloadProcessing
         # except those that have already been used
         assigned_results.include? r
       end
+    end
+
+    def import_all_test_results_into_elasticsearch
+
+      bulk = []
+      TestResult.where(id: @cache.test_results.collect(&:id)).includes([ :category, :runner, :tags, :tickets, :test, { key: :user, project_version: { project: :organization } }, test_payload: :test_reports ]).find_each do |result|
+        bulk << {
+          index: {
+            _index: ElasticTestResult.index_name.to_s,
+            _type: ElasticTestResult.name,
+            _id: result.id,
+            data: ElasticTestResult.from_test_result(result).as_json
+          }
+        }
+      end
+
+      ElasticTestResult.gateway.client.bulk body: bulk
+    rescue StandardError => e
+      Rails.logger.warn("Could not import test results into elasticsearch: #{e.message}")
+    end
+
+    def import_test_result_into_elasticsearch result
+      ElasticTestResult.from_test_result(result).save
     end
   end
 end
