@@ -17,11 +17,63 @@
 # along with ProbeDock.  If not, see <http://www.gnu.org/licenses/>.
 namespace :elastic do
 
-  desc "Import all test results into Elasticsearch"
+  desc "Enable Elasticsearch analysis for an organization"
+  task :enable, [ :organization_name ] => :environment do |t,args|
+
+    raise "The organization name must be given as the first argument" unless args[:organization_name]
+    organization = Organization.where(name: args[:organization_name]).first!
+
+    if $redis.sismember "elastic:organizations", organization.api_id
+      puts Paint["Organization #{organization.effective_name.inspect} is already analyzed with Elasticsearch", :yellow]
+      next
+    end
+
+    $redis.sadd "elastic:organizations", organization.api_id
+
+    puts Paint["New test results for organization #{organization.effective_name.inspect} will now be analyzed with Elasticsearch", :green]
+    puts Paint["Run `rake elastic:import[#{organization.name}]` to import existing test results", :bold]
+  end
+
+  desc "Disable Elasticsearch analysis for an organization"
+  task :disable, [ :organization_name ] => :environment do |t,args|
+
+    raise "The organization name must be given as the first argument" unless args[:organization_name]
+    organization = Organization.where(name: args[:organization_name]).first!
+
+    unless $redis.sismember "elastic:organizations", organization.api_id
+      puts Paint["Organization #{organization.effective_name.inspect} is not analyzed with Elasticsearch", :yellow]
+      next
+    end
+
+    $redis.srem "elastic:organizations", organization.api_id
+
+    puts Paint["New test results for organization #{organization.effective_name.inspect} will no longer be analyzed with Elasticsearch", :green]
+  end
+
+  desc "List organizations analyzed with Elasticsearch"
+  task enabled: :environment do
+
+    api_ids = $redis.smembers "elastic:organizations"
+    organizations = Organization.where(api_id: api_ids).order(:name).to_a
+
+    if organizations.blank?
+      puts Paint["No organizations are analyzed with Elasticsearch", :yellow]
+    else
+      organizations.each do |organization|
+        puts Paint[organization.name, :green]
+      end
+    end
+  end
+
+  desc "Import an organization's test results into Elasticsearch"
   task :import, [ :organization_name ] => :environment do |t,args|
 
     raise "The organization name must be given as the first argument" unless args[:organization_name]
     organization = Organization.where(name: args[:organization_name]).first!
+
+    $redis.sadd "elastic:organizations", organization.api_id
+
+    ElasticTestResult.create_index!
 
     rel = TestResult.joins(project_version: :project).where('test_results.test_id IS NOT NULL AND projects.organization_id = ?', organization.id)
     last_id = rel.order('test_results.id DESC').first.try(:id)
@@ -61,6 +113,22 @@ namespace :elastic do
       percentage = (current.to_f * 100 / total.to_f).round(2)
 
       puts "#{current} / #{total} (#{percentage}%)"
+    end
+  end
+
+  namespace :index do
+    desc "Create the Elasticsearch index"
+    task create: :environment do
+      result = ElasticTestResult.create_index!
+      puts result.inspect if result
+    end
+
+    namespace :create do
+      desc "Force-create the Elastic search index"
+      task force: :environment do
+        result = ElasticTestResult.create_index! force: true
+        puts result.inspect if result
+      end
     end
   end
 

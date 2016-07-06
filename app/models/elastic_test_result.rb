@@ -3,46 +3,48 @@ require 'elasticsearch/persistence/model'
 class ElasticTestResult
   include Elasticsearch::Persistence::Model
 
+  ELASTIC_RAW_STRING_MAPPING = { fields: { raw: { type: 'string', index: :not_analyzed } } }
+
   index_name [ Rails.application.config_for(:elastic)['index_prefix'], 'test_results' ].join('_')
 
   attribute :id, String
-  attribute :name, String
+  attribute :name, String, mapping: ELASTIC_RAW_STRING_MAPPING.dup
   attribute :passed, Boolean
   attribute :active, Boolean
   attribute :duration, Integer
   attribute :message, String
-  attribute :custom_values, Hash[String => String]
+  attribute :custom_values, Hash[String => String], mapping: { type: 'object' }
   attribute :created_at, Time
   attribute :run_at, Time
 
-  attribute :category, String
+  attribute :category, String, mapping: ELASTIC_RAW_STRING_MAPPING.dup
   attribute :tags, Array[String]
   attribute :tickets, Array[String]
 
   attribute :key, String
   attribute :key_user_api_id, String
-  attribute :key_user_name, String
+  attribute :key_user_name, String, mapping: ELASTIC_RAW_STRING_MAPPING.dup
 
   attribute :test_api_id, String
   attribute :new_test, Boolean
 
   attribute :organization_api_id, String
-  attribute :organization_name, String
+  attribute :organization_name, String, mapping: ELASTIC_RAW_STRING_MAPPING.dup
 
   attribute :payload_api_id, String
   attribute :payload_index, Integer
 
   attribute :project_api_id, String
-  attribute :project_name, String
+  attribute :project_name, String, mapping: ELASTIC_RAW_STRING_MAPPING.dup
 
   attribute :project_version_api_id, String
-  attribute :project_version_name, String
+  attribute :project_version_name, String, mapping: ELASTIC_RAW_STRING_MAPPING.dup
 
   attribute :report_api_id, String
   attribute :report_uid, String
 
   attribute :runner_api_id, String
-  attribute :runner_name, String
+  attribute :runner_name, String, mapping: ELASTIC_RAW_STRING_MAPPING.dup
 
   def self.from_test_result result
     new.tap do |r|

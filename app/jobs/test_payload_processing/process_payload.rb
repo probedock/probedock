@@ -86,7 +86,9 @@ module TestPayloadProcessing
 
           @test_payload.finish_processing!
 
-          import_all_test_results_into_elasticsearch
+          if $redis.sismember "elastic:organizations", organization.api_id
+            import_all_test_results_into_elasticsearch
+          end
 
           # Mark test keys as used.
           free_keys = @cache.test_keys.values.select &:free?
