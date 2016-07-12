@@ -4,10 +4,7 @@
 .row
   .col-md-4.col-sm-12.col-xs-12
     .form-group
-      ui-select#author-select-single ng-model="author" on-select="getNewTests(author)" 
-        ui-select-match placeholder="Developer" {{$select.selected})
-        ui-select-choices repeat="author in authors"
-          span ng-bind-html="author | highlight: $select.search"
+      user-select prefix='new-tests' organization='organization' model-object='author'
   .col-md-2.col-sm-6.col-xs-3
     .min
       strong Min:

@@ -4,7 +4,4 @@
 .row
   .col-md-12
     .form-group
-      ui-select#treemap-project-select multiple="" ng-model="projectChoices" on-remove="getProjects(projectChoices)" on-select="getProjects(projectChoices)" reset-search-input="" 
-        ui-select-match placeholder="Select projects" {{$item.name})
-        ui-select-choices repeat="project in projects | filter:$select.search"
-          span ng-bind-html="project.name | highlight: $select.search"
+      project-select prefix='project-state' organization='organization' model-object='projectChoices' multiple='true'
