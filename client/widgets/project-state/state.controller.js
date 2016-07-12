@@ -1,4 +1,4 @@
-angular.module('probedock.projectStateWidget').controller('ProjectStateContentCtrl', ['$scope', 'api', '__env', '$filter', function ($scope, api, __env, $filter) {
+angular.module('probedock.projectStateWidget').controller('ProjectStateContentCtrl', ['$scope', 'api', '$filter', function ($scope, api, $filter) {
 
     var width = $('.projectState-widget').width() - 60,
         height = 290,

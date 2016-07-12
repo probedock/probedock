@@ -1,4 +1,4 @@
-angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$scope', 'api', '__env', function ($scope, api, __env) {
+angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$scope', 'api', function ($scope, api) {
     var width = $('.newtests-widget').width(),
         height = 200,
         colorRange = ["#eeeeee", "#446e9b"],
