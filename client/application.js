@@ -35,6 +35,7 @@
 //= require bootstrap-popover
 //= require chart
 //= require d3
+//= require d3-tip
 //= require dropzone
 //= require inflection
 //= require jqcloud2

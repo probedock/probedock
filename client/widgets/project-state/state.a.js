@@ -1,0 +1,1 @@
+angular.module('probedock.projectStateWidget', ['probedock.api']);

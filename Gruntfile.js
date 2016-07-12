@@ -38,6 +38,7 @@ module.exports = function(grunt) {
           { nonull: true, src: 'bower_components/bootstrap/js/tooltip.js', dest: 'vendor/assets/javascripts/bootstrap-tooltip.js' },
           { nonull: true, src: 'bower_components/Chart.js/dist/Chart.js', dest: 'vendor/assets/javascripts/chart.js' },
           { nonull: true, src: 'bower_components/d3/d3.js', dest: 'vendor/assets/javascripts/d3.js' },
+          { nonull: true, src: 'bower_components/d3-tip/index.js', dest: 'vendor/assets/javascripts/d3-tip.js' },
           { nonull: true, src: 'bower_components/drop-ng/src/drop-ng.js', dest: 'vendor/assets/javascripts/drop-ng.js' },
           { nonull: true, src: 'bower_components/dropzone/dist/dropzone.js', dest: 'vendor/assets/javascripts/dropzone.js' },
           { nonull: true, src: 'bower_components/inflection/lib/inflection.js', dest: 'vendor/assets/javascripts/inflection.js' },
