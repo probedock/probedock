@@ -186,11 +186,11 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
   };
 
   // Request to API, Get all contributors from an organization
-  api({
+  /*api({
     url: '../vizapi/authors?organization=' + $scope.organization.id
   }).then(function (res) {
     $scope.getNewTests(res.data[0]);
-  });
+  });*/
 
   setup('.newtests-chart');
 
@@ -207,7 +207,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
 
     api({
-      url: '../vizapi/testsResult?author=' + author.id + '&dateAt=' + yearAgo +
+      url: '../vizapi/testsResult?author=' + $scope.author.id + '&dateAt=' + yearAgo +
       '&dateEnd=' + now + '&organization=' + $scope.organization.id,
     }).then(function (res) {
       $scope.data = res.data.data;
