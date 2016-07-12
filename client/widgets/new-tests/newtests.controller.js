@@ -203,6 +203,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * @param author name of the contributor
    */
   $scope.getNewTests = function (author) {
+    console.log(author, $scope.author);
     var now = moment().endOf('day').format('YYYY-MM-DD'),
       yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
 
