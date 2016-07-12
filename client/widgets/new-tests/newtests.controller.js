@@ -187,7 +187,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
 
     // Request to API, Get all contributors from an organization
     api({
-        url: '/vizapi/authors?organization=' + $scope.organization
+        url: '/vizapi/authors?organization=' + $scope.organization.name
     }).then(function (res) {
         $scope.authors = res.data;
         $scope.author = $scope.authors[0];
@@ -206,7 +206,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
 
         api({
             url: '/vizapi/testsResult?author=' + author + '&dateAt=' + yearAgo +
-            '&dateEnd=' + now + '&organization=' + $scope.organization,
+            '&dateEnd=' + now + '&organization=' + $scope.organization.name,
         }).then(function (res) {
             $scope.data = res.data.data;
             $scope.summary = res.data.summary

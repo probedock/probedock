@@ -129,7 +129,7 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
 
         // Request to API
         api({
-            url: '/vizapi/projects?organization=' + $scope.organization + list
+            url: '/vizapi/projects?organization=' + $scope.organization.name + list
         }).then(function (res) {
             treemapChart.remove();
             setup('.projectState-chart');
