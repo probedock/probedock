@@ -129,15 +129,10 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
    */
   $scope.getProjects = function () {
     var list = '';
-    /*$scope.projectChoices = projects;
 
-    if (projects && projects.length > 0) {
-      list += '&projects=';
-      angular.forEach(projects, function (project) {
-        list += project.id + ',';
-      });
-    }*/
-    console.log('params.projectIds', $scope.params.projectIds);
+    if ($scope.params.projectIds) {
+      list = $scope.params.projectIds;
+    }
 
     // Request to API
     api({
