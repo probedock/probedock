@@ -343,6 +343,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
   };
 
   $scope.$watch('params.versionId', function () {
+    console.log('params', params);
     $scope.getDurationTest();
   }, true);
 
@@ -359,7 +360,6 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
 
   /**
    * Request the api for get the duration for each test
-   * @param version
    */
   $scope.getDurationTest = function () {
     api({
