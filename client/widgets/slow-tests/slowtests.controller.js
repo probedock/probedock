@@ -6,7 +6,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
       projectVersionId: null
     }
   });
-  var width = $('.newtests-widget').width() - 80,
+  var width = $('.slowtests-widget').width() - 80,
     height = 500,
     x,
     y,
@@ -21,7 +21,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
     colorBar = "#3a87ad";
 
   $(window).resize(function () {
-    width = $('.newtests-widget').width() - 80;
+    width = $('.slowtests-widget').width() - 80;
     d3.select('.slowtests-chart').selectAll('*').remove();
     setup('.slowtests-chart', $scope.testSelected.category, $scope.testSelected.data);
   });
