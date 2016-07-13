@@ -130,7 +130,7 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
   $scope.getProjects = function () {
     var list = '';
 
-    if ($scope.params.projectIds) {
+    if ($scope.params.projectIds && $scope.params.projectIds.length > 0) {
       list += '&projects=';
       angular.forEach($scope.params.projectIds, function (projectId) {
         list += projectId + ',';
