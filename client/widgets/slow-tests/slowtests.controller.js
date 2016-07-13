@@ -3,7 +3,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
   _.defaults($scope, {
     params: {
       categoryId: null,
-      versionId: null
+      projectVersionId: null
     }
   });
   var width = $('.newtests-widget').width() - 80,
@@ -342,9 +342,9 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
       .text("Median");
   };
 
-  $scope.$watch('params.versionId', function () {
+  $scope.$watch('params', function () {
     console.log('params', $scope.params);
-    if ($scope.params.versionId !== null) {
+    if ($scope.params.projectVersionId !== null) {
       $scope.getDurationTest();
     }
   }, true);
@@ -365,7 +365,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
    */
   $scope.getDurationTest = function () {
     api({
-      url: '../vizapi/testsResult/duration?version=' + $scope.params.versionId + "&project=" + $scope.project.id + "&organization=" + $scope.organization.id
+      url: '../vizapi/testsResult/duration?version=' + $scope.params.projectVersionId + "&project=" + $scope.project.id + "&organization=" + $scope.organization.id
     }).then(function (res) {
       $scope.data = res.data;
       d3.select('.slowtests-chart').selectAll('*').remove();

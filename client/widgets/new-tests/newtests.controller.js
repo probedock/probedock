@@ -198,7 +198,9 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
   console.log('hideSelect', $scope.hideSelect);
 
   $scope.$watch('params', function () {
-    $scope.getNewTests();
+    if ($scope.params.userId !== null || $scope.user !== null) {
+      $scope.getNewTests();
+    }
   }, true);
 
   /**
