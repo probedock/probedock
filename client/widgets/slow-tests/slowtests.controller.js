@@ -348,7 +348,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
     if ($scope.params.projectVersionId !== null) {
       $scope.getDurationTest();
     }
-    if ($scope.params.categoryName !== null) {
+    if ($scope.params.categoryName !== null && typeof $scope.data !== 'undefined') {
       $scope.changeCategory($scope.params.categoryName);
     }
   }, true);
@@ -378,6 +378,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
       url: '../vizapi/testsResult/duration?version=' + $scope.params.projectVersionId + "&project=" + $scope.project.id + "&organization=" + $scope.organization.id
     }).then(function (res) {
       $scope.data = res.data;
+      $scope.changeCategory();
       //d3.select('.slowtests-chart').selectAll('*').remove();
       //$scope.category = $scope.data[0];
       //$scope.testSelected = $scope.data[0];
