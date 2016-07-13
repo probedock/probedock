@@ -1,4 +1,11 @@
 angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$scope', 'api', function ($scope, api) {
+
+  _.defaults($scope, {
+    params: {
+      userId: null
+    }
+  });
+
   var width = $('.newtests-widget').width(),
     height = 200,
     colorRange = ["#eeeeee", "#446e9b"],
@@ -184,35 +191,26 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       return count;
     }
   };
-
-  // Request to API, Get all contributors from an organization
-  /*api({
-    url: '../vizapi/authors?organization=' + $scope.organization.id
-  }).then(function (res) {
-    $scope.getNewTests(res.data[0]);
-  });*/
-
+  
   setup('.newtests-chart');
 
-  $scope.$watch('author', function (value) {
-    $scope.getNewTests(value);
+  $scope.$watch('params', function () {
+    $scope.getNewTests();
   }, true);
 
   /**
-   * Get new test for a contributor
-   * @param author name of the contributor
+   * Get new tests for a contributor
    */
-  $scope.getNewTests = function (author) {
-    console.log(author, $scope.author);
+  $scope.getNewTests = function () {
     var now = moment().endOf('day').format('YYYY-MM-DD'),
       yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
 
     api({
-      url: '../vizapi/testsResult?author=' + $scope.author.id + '&dateAt=' + yearAgo +
-      '&dateEnd=' + now + '&organization=' + $scope.organization.id,
+      url: '../vizapi/testsResult?author=' + $scope.params.userId + '&dateAt=' + yearAgo +
+      '&dateEnd=' + now + '&organization=' + $scope.organization.id
     }).then(function (res) {
       $scope.data = res.data.data;
-      $scope.summary = res.data.summary
+      $scope.summary = res.data.summary;
 
       svg.selectAll('*').remove();
       chart($scope.data);

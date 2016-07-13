@@ -1,5 +1,11 @@
 angular.module('probedock.projectStateWidget').controller('ProjectStateContentCtrl', ['$scope', 'api', '$filter', function ($scope, api, $filter) {
 
+  _.defaults($scope, {
+    params: {
+      projectIds: []
+    }
+  });
+
   var width = $('.projectState-widget').width() - 60,
     height = 290,
     colorRange = ["#FF0000", "#EC1300", "#DA2500", "#C73800", "#B54A00", "#A25D00", "#906F00", "#7D8200",
@@ -113,24 +119,25 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
     }
   };
 
-  $scope.$watch('projectChoices', function (value) {
-    $scope.getProjects(value);
+  $scope.$watch('params', function () {
+    $scope.getProjects();
   }, true);
 
 
   /**
    * Get all projects or some project from an organization
-   * @param projects list of project
    */
-  $scope.getProjects = function (projects) {
-    $scope.projectChoices = projects;
+  $scope.getProjects = function () {
     var list = '';
+    /*$scope.projectChoices = projects;
+
     if (projects && projects.length > 0) {
       list += '&projects=';
       angular.forEach(projects, function (project) {
         list += project.id + ',';
       });
-    }
+    }*/
+    console.log('params.projectIds', $scope.params.projectIds);
 
     // Request to API
     api({
