@@ -343,8 +343,10 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
   };
 
   $scope.$watch('params.versionId', function () {
-    console.log('params', params);
-    $scope.getDurationTest();
+    console.log('params', $scope.params);
+    if ($scope.params.versionId !== null) {
+      $scope.getDurationTest();
+    }
   }, true);
 
   /**
