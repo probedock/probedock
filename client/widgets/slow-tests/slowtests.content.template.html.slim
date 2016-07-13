@@ -4,10 +4,7 @@
 .row
   .col-md-6.col-sm-6.col-xs-12
     .form-group
-      project-version-select prefix='slow-tests' organization='organization' project='project' model-object='params' auto-select='true' allow-clear='false'
+        project-version-select prefix='slow-tests' organization='organization' project='project' model-object='params' auto-select='true' allow-clear='false'
   .col-md-6.col-sm-6.col-xs-12
     .form-group
-      ui-select#category-select-single ng-model="category" on-select="changeCategory(category)"
-        ui-select-match placeholder="Category" {{$select.selected.category})
-        ui-select-choices repeat="val in data"
-          span ng-bind-html="val.category | highlight: $select.search"
+      category-select prefix='slow-tests' organization='organization' model-object='params' auto-select='true'

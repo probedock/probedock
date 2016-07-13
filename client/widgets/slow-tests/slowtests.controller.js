@@ -2,7 +2,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
 
   _.defaults($scope, {
     params: {
-      categoryId: null,
+      categoryName: null,
       projectVersionId: null
     }
   });
@@ -342,22 +342,31 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
       .text("Median");
   };
 
-  $scope.$watch('params', function () {
+  $scope.$watch('params', function (test, test2) {
+    console.log(test, test2);
     console.log('params', $scope.params);
     if ($scope.params.projectVersionId !== null) {
       $scope.getDurationTest();
+    }
+    if ($scope.params.categoryName !== null) {
+      $scope.changeCategory($scope.params.categoryName);
     }
   }, true);
 
   /**
    * When the category change, generate a new graph
-   * @param test
    */
-  $scope.changeCategory = function (test) {
+  $scope.changeCategory = function () {
+    angular.forEach($scope.data, function (test) {
+      if (test.category === $scope.params.categoryName) {
+        d3.select('.slowtests-chart').selectAll('*').remove();
+        setup('.slowtests-chart', test.category, test.data);
+      }
+    });/*
     $scope.testSelected = test;
     $scope.category = test.category;
     d3.select('.slowtests-chart').selectAll('*').remove();
-    setup('.slowtests-chart', test.category, test.data);
+    setup('.slowtests-chart', test.category, test.data);*/
   };
 
   /**
@@ -368,10 +377,10 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
       url: '../vizapi/testsResult/duration?version=' + $scope.params.projectVersionId + "&project=" + $scope.project.id + "&organization=" + $scope.organization.id
     }).then(function (res) {
       $scope.data = res.data;
-      d3.select('.slowtests-chart').selectAll('*').remove();
-      $scope.category = $scope.data[0];
-      $scope.testSelected = $scope.data[0];
-      setup('.slowtests-chart', $scope.data[0].category, $scope.data[0].data);
+      //d3.select('.slowtests-chart').selectAll('*').remove();
+      //$scope.category = $scope.data[0];
+      //$scope.testSelected = $scope.data[0];
+      //setup('.slowtests-chart', $scope.data[0].category, $scope.data[0].data);
     });
   };
 
