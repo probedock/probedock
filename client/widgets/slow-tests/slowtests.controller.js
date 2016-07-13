@@ -357,7 +357,8 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
    * When the category change, generate a new graph
    */
   $scope.changeCategory = function () {
-    angular.forEach($scope.data, function (test) {
+    $scope.data.forEach(function (test) {
+      console.log(test.category === $scope.params.categoryName, test.category, $scope.params.categoryName);
       if (test.category === $scope.params.categoryName) {
         d3.select('.slowtests-chart').selectAll('*').remove();
         setup('.slowtests-chart', test.category, test.data);
