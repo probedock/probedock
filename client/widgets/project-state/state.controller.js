@@ -131,9 +131,11 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
     var list = '';
 
     if ($scope.params.projectIds) {
-      list = $scope.params.projectIds;
+      list += '&projects=';
+      angular.forEach($scope.params.projectIds, function (projectId) {
+        list += projectId + ',';
+      });
     }
-
     // Request to API
     api({
       url: '../vizapi/projects?organization=' + $scope.organization.id + list
