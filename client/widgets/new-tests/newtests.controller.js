@@ -195,6 +195,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
   };
 
   setup('.newtests-chart');
+  console.log('hideSelect', $scope.hideSelect);
 
   $scope.$watch('params', function () {
     $scope.getNewTests();
