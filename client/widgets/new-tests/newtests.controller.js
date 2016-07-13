@@ -1,6 +1,8 @@
 angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$scope', 'api', function ($scope, api) {
 
   _.defaults($scope, {
+    user: null,
+    hideSelect: false,
     params: {
       userId: null
     }
@@ -205,8 +207,10 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     var now = moment().endOf('day').format('YYYY-MM-DD'),
       yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
 
+    var user = $scope.user ? $scope.user.id : $scope.params.userId;
+
     api({
-      url: '../vizapi/testsResult?author=' + $scope.params.userId + '&dateAt=' + yearAgo +
+      url: '../vizapi/testsResult?author=' + user  + '&dateAt=' + yearAgo +
       '&dateEnd=' + now + '&organization=' + $scope.organization.id
     }).then(function (res) {
       $scope.data = res.data.data;
