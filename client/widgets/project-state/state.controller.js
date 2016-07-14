@@ -132,7 +132,7 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
 
     if ($scope.params.projectIds && $scope.params.projectIds.length > 0) {
       list += '&projects=';
-      angular.forEach($scope.params.projectIds, function (projectId) {
+      $scope.params.projectIds.forEach(function (projectId) {
         list += projectId + ',';
       });
     }
@@ -141,18 +141,20 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
       url: '../vizapi/projects?organization=' + $scope.organization.id + list
     }).then(function (res) {
       treemapChart.remove();
-      setup('.projectState-chart');
+      if (res.data.length > 0) {
+        setup('.projectState-chart');
 
-      if ($scope.projects.length === 0) {
-        $scope.projects = res.data;
+        if ($scope.projects.length === 0) {
+          $scope.projects = res.data;
+        }
+
+        // Create a tree
+        $scope.tree = {
+          name: 'projects',
+          children: res.data
+        };
+        chart($scope.tree);
       }
-
-      // Create a tree
-      $scope.tree = {
-        name: 'projects',
-        children: res.data
-      };
-      chart($scope.tree);
     });
   };
 

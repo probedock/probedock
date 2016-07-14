@@ -175,7 +175,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
 
       // Retrieve data for circle
       var circles = [];
-      angular.forEach(value, function (test, pos) {
+      value.forEach(function (test, pos) {
         var tests2 = test.tests.reduce(function (nbrCount, current) {
           var tmp = {};
           tmp.nbr = countOccurrenceDuration(test.durations, current.duration);
@@ -205,7 +205,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
         .domain([0, 50, 100]);
 
       // Generate circles
-      angular.forEach(circles, function (c) {
+      circles.forEach(function (c) {
         // Object to Array
         c = Object.keys(c).map(function (k) {
           return c[k]
@@ -240,7 +240,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
     }
 
     // Generate regression line
-    angular.forEach(value, function (test, index) {
+    value.forEach(function (test, index) {
       var previousX = x(index) - 1;
       for (var r = 0; r < test.regression.length - 1; r++) {
         svg.append("line")
@@ -358,16 +358,11 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
    */
   $scope.changeCategory = function () {
     $scope.data.forEach(function (test) {
-      console.log(test.category === $scope.params.categoryName, test.category, $scope.params.categoryName);
       if (test.category === $scope.params.categoryName) {
         d3.select('.slowtests-chart').selectAll('*').remove();
         setup('.slowtests-chart', test.category, test.data);
       }
-    });/*
-    $scope.testSelected = test;
-    $scope.category = test.category;
-    d3.select('.slowtests-chart').selectAll('*').remove();
-    setup('.slowtests-chart', test.category, test.data);*/
+    });
   };
 
   /**
@@ -379,10 +374,6 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
     }).then(function (res) {
       $scope.data = res.data;
       $scope.changeCategory();
-      //d3.select('.slowtests-chart').selectAll('*').remove();
-      //$scope.category = $scope.data[0];
-      //$scope.testSelected = $scope.data[0];
-      //setup('.slowtests-chart', $scope.data[0].category, $scope.data[0].data);
     });
   };
 

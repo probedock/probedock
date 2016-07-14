@@ -209,7 +209,6 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
   $scope.getNewTests = function () {
     var now = moment().endOf('day').format('YYYY-MM-DD'),
       yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
-    console.log($scope.user);
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
 
     api({
@@ -220,7 +219,9 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       $scope.summary = res.data.summary;
 
       svg.selectAll('*').remove();
-      chart($scope.data);
+      if ($scope.data.length > 0) {
+        chart($scope.data);
+      }
     });
   };
 }]);
