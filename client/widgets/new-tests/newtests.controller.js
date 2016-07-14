@@ -195,7 +195,6 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
   };
 
   setup('.newtests-chart');
-  console.log('hideSelect', $scope.hideSelect);
 
   $scope.$watch('params', function () {
     if ($scope.params.userId !== null || $scope.user !== null) {
@@ -215,11 +214,12 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
       '&dateEnd=' + now + '&organization=' + $scope.organization.id
     }).then(function (res) {
-      $scope.data = res.data.data;
-      $scope.summary = res.data.summary;
 
       svg.selectAll('*').remove();
-      if ($scope.data.length > 0) {
+
+      if (res.data.length > 0) {
+        $scope.data = res.data.data;
+        $scope.summary = res.data.summary;
         chart($scope.data);
       }
     });
