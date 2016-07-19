@@ -52,10 +52,14 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * @param value data
    */
   var chart = function (value) {
+    console.log(dateStart, now);
     // Set date
     var dateRange = d3.time.days(dateStart, now);
     var monthRange = d3.time.months(moment(dateStart).startOf('month').toDate(), now);
     var firstDate = moment(dateRange[0]);
+    console.log(dateRange);
+    console.log(monthRange);
+    console.log(firstDate);
 
     var tip = d3.tip()
       .attr('class', 'd3-tip')
@@ -217,6 +221,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     } else {
       dateStart = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
     }
+
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
     $scope.data = [];
     if (typeof $scope.organization !== 'undefined' && $scope.organization !== null && $scope.organization.id !== null) {
