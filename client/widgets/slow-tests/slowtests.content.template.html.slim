@@ -1,7 +1,8 @@
 .row
   .col-md-12
     .slowtests-chart
-    span ng-if="!data" no data
+    p.empty ng-if="!data"
+      em No data
 .row
   .col-md-6.col-sm-6.col-xs-12
     .form-group
