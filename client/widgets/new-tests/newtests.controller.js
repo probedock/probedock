@@ -7,37 +7,25 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       userId: null
     }
   });
-
+  
   var width = $('.newtests-widget').width(),
     height = 200,
     colorRange = ["#eeeeee", "#446e9b"],
     days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    now,
-    dateStart,
+    now = moment().endOf('day').toDate(),
+    yearAgo = moment().startOf('day').subtract(1, 'year').startOf('week').toDate(),
     RECT_SIZE = 11,
     RECT_PADDING = 2,
     MONTH_LABEL_PADDING = 6,
     PADDING_TOP = 20,
     PADDING_LEFT = 20,
-    WIDTH_MIN = 550,
     svg;
-
-  now = moment().endOf('day').format('YYYY-MM-DD');
-  if (width < WIDTH_MIN) {
-    dateStart = moment().startOf('day').subtract(6, 'month').format('YYYY-MM-DD');
-  } else {
-    dateStart = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
-  }
 
   $(window).resize(function () {
     width = $('.newtests-widget').width();
-    if (width < WIDTH_MIN) {
-      $scope.getNewTests();
-    } else {
-      svg.selectAll('*').remove();
-      chart($scope.data);
-    }
+    svg.selectAll('*').remove();
+    chart($scope.data);
   });
 
   /**
@@ -59,14 +47,10 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * @param value data
    */
   var chart = function (value) {
-    console.log(dateStart, now);
     // Set date
-    var dateRange = d3.time.days(dateStart, now);
-    var monthRange = d3.time.months(moment(dateStart).startOf('month').toDate(), now);
+    var dateRange = d3.time.days(yearAgo, now);
+    var monthRange = d3.time.months(moment(yearAgo).startOf('month').toDate(), now);
     var firstDate = moment(dateRange[0]);
-    console.log(dateRange);
-    console.log(monthRange);
-    console.log(firstDate);
 
     var tip = d3.tip()
       .attr('class', 'd3-tip')
@@ -93,7 +77,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Day rectangle
     var dayRects = svg.selectAll('.day-cell')
       .data(dateRange);
-
+    
     // Set the cells
     dayRects.enter().append('rect')
       .attr('class', 'day-cell')
@@ -113,13 +97,13 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Mouse event on cells
     dayRects.on('mouseover', tip.show)
       .on('mouseout', tip.hide);
-
+    
     // Set legend
     var colors = [color(0)];
     for (var i = 3; i > 0; i--) {
       colors.push(color(max / i));
     }
-
+    
     var legend = svg.append('g');
     legend.selectAll('.heatmap-legend')
       .data(colors)
@@ -171,7 +155,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         return Math.floor(matchIndex / 7) * 13 + PADDING_LEFT;
       })
       .attr('y', PADDING_TOP);
-
+    
     // y-axis : day
     days.forEach(function (day, index) {
       if (index % 2) {
@@ -222,18 +206,13 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * Get new tests for a contributor
    */
   $scope.getNewTests = function () {
-    now = moment().endOf('day').format('YYYY-MM-DD');
-    if (width < WIDTH_MIN) {
-      dateStart = moment().startOf('day').subtract(6, 'month').format('YYYY-MM-DD');
-    } else {
-      dateStart = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
-    }
-
+    var now = moment().endOf('day').format('YYYY-MM-DD'),
+      yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
     $scope.data = [];
     if (typeof $scope.organization !== 'undefined' && $scope.organization !== null && $scope.organization.id !== null) {
       api({
-        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateStart +
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
         '&dateEnd=' + now + '&organization=' + $scope.organization.id
       }).then(function (res) {
         svg.selectAll('*').remove();
@@ -245,7 +224,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       });
     } else {
       api({
-        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateStart +
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
         '&dateEnd=' + now
       }).then(function (res) {
 
