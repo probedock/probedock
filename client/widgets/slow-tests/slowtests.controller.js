@@ -371,7 +371,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
     api({
       url: '../vizapi/testsResult/duration?version=' + $scope.params.projectVersionId + "&project=" + $scope.project.id + "&organization=" + $scope.organization.id
     }).then(function (res) {
-      if (res.data.length >= 0) {
+      if (res.data.length > 0) {
         $scope.data = res.data;
         $scope.changeCategory();
       }
