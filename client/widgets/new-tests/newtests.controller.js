@@ -231,7 +231,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
 
         svg.selectAll('*').remove();
 
-        if (res.data && res.data.data && res.data.datalength > 0) {
+        if (res.data && res.data.data && res.data.data.length > 0) {
           $scope.data = res.data.data;
           $scope.summary = res.data.summary;
           chart($scope.data);
