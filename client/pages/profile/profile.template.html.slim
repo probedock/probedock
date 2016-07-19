@@ -2,8 +2,8 @@
   h1.text-center Profile
   .col-lg-4.col-md-5.col-sm-6.col-xs-12
     user-details-widget user='currentUser' mode='profile'
-  .col-lg-4.col-md-5.col-sm-6.col-xs-12
-    .profile-memberships.panel.panel-default ng-controller='ProfileMembershipsCtrl'
+  .col-lg-4.col-md-5.col-sm-6.col-xs-12 ng-controller='ProfileMembershipsCtrl'
+    .profile-memberships.panel.panel-default
       .panel-heading
         h3.panel-title Memberships
       .panel-body
@@ -23,7 +23,7 @@
             li.list-group-item ng-repeat='membership in memberships | orderBy: "acceptedAt"'
               a href='#' ui-sref='org.dashboard.default({ orgName: membership.organization.name })'
                 | {{ membership.organization | orgName }}
-    new-tests-widget organization='currentOrganization' hide-select='true' user='currentUser' ng-controller='ProfileMembershipsCtrl'
+    new-tests-widget organization='currentOrganization' hide-select='true' user='currentUser'
   .col-lg-4.col-md-5.col-sm-6.col-xs-12
     .profile-access-tokens.panel.panel-default ng-controller='ProfileAccessTokensCtrl'
       .panel-heading
