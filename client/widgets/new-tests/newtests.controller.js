@@ -7,9 +7,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       userId: null
     }
   });
-
-  console.log($scope.organization);
-
+  
   var width = $('.newtests-widget').width(),
     height = 200,
     colorRange = ["#eeeeee", "#446e9b"],
