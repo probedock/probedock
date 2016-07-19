@@ -7,7 +7,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       userId: null
     }
   });
-  
+
   var width = $('.newtests-widget').width(),
     height = 200,
     colorRange = ["#eeeeee", "#446e9b"],
@@ -22,6 +22,13 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     PADDING_LEFT = 20,
     WIDTH_MIN = 550,
     svg;
+
+  now = moment().endOf('day').format('YYYY-MM-DD');
+  if (width < WIDTH_MIN) {
+    dateStart = moment().startOf('day').subtract(6, 'month').format('YYYY-MM-DD');
+  } else {
+    dateStart = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
+  }
 
   $(window).resize(function () {
     width = $('.newtests-widget').width();
@@ -86,7 +93,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Day rectangle
     var dayRects = svg.selectAll('.day-cell')
       .data(dateRange);
-    
+
     // Set the cells
     dayRects.enter().append('rect')
       .attr('class', 'day-cell')
@@ -106,13 +113,13 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Mouse event on cells
     dayRects.on('mouseover', tip.show)
       .on('mouseout', tip.hide);
-    
+
     // Set legend
     var colors = [color(0)];
     for (var i = 3; i > 0; i--) {
       colors.push(color(max / i));
     }
-    
+
     var legend = svg.append('g');
     legend.selectAll('.heatmap-legend')
       .data(colors)
@@ -164,7 +171,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         return Math.floor(matchIndex / 7) * 13 + PADDING_LEFT;
       })
       .attr('y', PADDING_TOP);
-    
+
     // y-axis : day
     days.forEach(function (day, index) {
       if (index % 2) {
