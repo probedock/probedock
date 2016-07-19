@@ -25,14 +25,15 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
 
   $(window).resize(function () {
     width = $('.newtests-widget').width();
-    
-    if (WIDTH_MIN > width) {
-      $scope.getNewTests();
-    } else {
-      now = moment().endOf('day').toDate();
-      dateAt = moment().startOf('day').subtract(1, 'year').startOf('week').toDate();
-      svg.selectAll('*').remove();
-      chart($scope.data);
+    if ($scope.data.length !== 0) {
+      if (WIDTH_MIN > width) {
+        $scope.getNewTests();
+      } else {
+        now = moment().endOf('day').toDate();
+        dateAt = moment().startOf('day').subtract(1, 'year').startOf('week').toDate();
+        svg.selectAll('*').remove();
+        chart($scope.data);
+      }
     }
   });
 
