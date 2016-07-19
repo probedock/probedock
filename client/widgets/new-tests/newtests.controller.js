@@ -25,7 +25,8 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
 
   $(window).resize(function () {
     width = $('.newtests-widget').width();
-    if (WIDTH_MIN < width) {
+    
+    if (WIDTH_MIN > width) {
       $scope.getNewTests();
     } else {
       now = moment().endOf('day').toDate();
@@ -214,20 +215,24 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * Get new tests for a contributor
    */
   $scope.getNewTests = function () {
+    var nowParam = moment().endOf('day').format('YYYY-MM-DD'),
+      dateAtParam;
 
     now = moment().endOf('day').toDate();
-    if (WIDTH_MIN < width) {
-      dateAt = moment().startOf('day').subtract(6, 'mont').startOf('week').toDate();
+    if (WIDTH_MIN > width) {
+      dateAt = moment().startOf('day').subtract(6, 'month').startOf('week').toDate();
+      dateAtParam = moment().startOf('day').subtract(6, 'month').format('YYYY-MM-DD');
     } else {
       dateAt = moment().startOf('day').subtract(1, 'year').startOf('week').toDate();
+      dateAtParam = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
     }
 
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
     $scope.data = [];
     if (typeof $scope.organization !== 'undefined' && $scope.organization !== null && $scope.organization.id !== null) {
       api({
-        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateAt.format('YYYY-MM-DD') +
-        '&dateEnd=' + now.format('YYYY-MM-DD') + '&organization=' + $scope.organization.id
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateAtParam +
+        '&dateEnd=' + nowParam + '&organization=' + $scope.organization.id
       }).then(function (res) {
         svg.selectAll('*').remove();
         if (res.data && res.data.data && res.data.data.length > 0) {
