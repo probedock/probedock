@@ -47,7 +47,6 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * @param value data
    */
   var chart = function (value) {
-    console.log('value', value);
     // Set date
     var dateRange = d3.time.days(yearAgo, now);
     var monthRange = d3.time.months(moment(yearAgo).startOf('month').toDate(), now);
@@ -78,7 +77,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Day rectangle
     var dayRects = svg.selectAll('.day-cell')
       .data(dateRange);
-    console.log('DayRects Start');
+    
     // Set the cells
     dayRects.enter().append('rect')
       .attr('class', 'day-cell')
@@ -98,14 +97,13 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Mouse event on cells
     dayRects.on('mouseover', tip.show)
       .on('mouseout', tip.hide);
-
-    console.log('DayRects End');
+    
     // Set legend
     var colors = [color(0)];
     for (var i = 3; i > 0; i--) {
       colors.push(color(max / i));
     }
-    console.log('Legend Start');
+    
     var legend = svg.append('g');
     legend.selectAll('.heatmap-legend')
       .data(colors)
@@ -135,11 +133,8 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       .attr('x', 60 + (colors.length + 1) * 13)
       .attr('y', height - 40)
       .text('More');
-    console.log('Legend End');
 
     dayRects.exit().remove();
-
-    console.log('Month Start');
 
     // x-axis : month
     svg.selectAll('.month')
@@ -160,7 +155,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         return Math.floor(matchIndex / 7) * 13 + PADDING_LEFT;
       })
       .attr('y', PADDING_TOP);
-    console.log('Day Start');
+    
     // y-axis : day
     days.forEach(function (day, index) {
       if (index % 2) {
@@ -220,15 +215,10 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
         '&dateEnd=' + now + '&organization=' + $scope.organization.id
       }).then(function (res) {
-        console.log("before svg remove");
         svg.selectAll('*').remove();
-        console.log("after svg remove");
-        if (res.data.length > 0) {
-          console.log("in if");
+        if (res.length > 0) {
           $scope.data = res.data.data;
-          console.log('$scope.data', $scope.data);
           $scope.summary = res.data.summary;
-          console.log('$scope.summary', $scope.summary);
           chart($scope.data);
         }
       });
@@ -240,7 +230,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
 
         svg.selectAll('*').remove();
 
-        if (res.data.length > 0) {
+        if (res.length > 0) {
           $scope.data = res.data.data;
           $scope.summary = res.data.summary;
           chart($scope.data);
