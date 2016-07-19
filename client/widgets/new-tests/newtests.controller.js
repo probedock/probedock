@@ -13,19 +13,24 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     colorRange = ["#eeeeee", "#446e9b"],
     days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    now = moment().endOf('day').toDate(),
-    yearAgo = moment().startOf('day').subtract(1, 'year').startOf('week').toDate(),
+    now,
+    dateStart,
     RECT_SIZE = 11,
     RECT_PADDING = 2,
     MONTH_LABEL_PADDING = 6,
     PADDING_TOP = 20,
     PADDING_LEFT = 20,
+    WIDTH_MIN = 550,
     svg;
 
   $(window).resize(function () {
     width = $('.newtests-widget').width();
-    svg.selectAll('*').remove();
-    chart($scope.data);
+    if (width < WIDTH_MIN) {
+      $scope.getNewTests();
+    } else {
+      svg.selectAll('*').remove();
+      chart($scope.data);
+    }
   });
 
   /**
@@ -48,8 +53,8 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    */
   var chart = function (value) {
     // Set date
-    var dateRange = d3.time.days(yearAgo, now);
-    var monthRange = d3.time.months(moment(yearAgo).startOf('month').toDate(), now);
+    var dateRange = d3.time.days(dateStart, now);
+    var monthRange = d3.time.months(moment(dateStart).startOf('month').toDate(), now);
     var firstDate = moment(dateRange[0]);
 
     var tip = d3.tip()
@@ -206,13 +211,17 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * Get new tests for a contributor
    */
   $scope.getNewTests = function () {
-    var now = moment().endOf('day').format('YYYY-MM-DD'),
-      yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
+    now = moment().endOf('day').format('YYYY-MM-DD');
+    if (width < WIDTH_MIN) {
+      dateStart = moment().startOf('day').subtract(6, 'month').format('YYYY-MM-DD');
+    } else {
+      dateStart = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
+    }
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
     $scope.data = [];
     if (typeof $scope.organization !== 'undefined' && $scope.organization !== null && $scope.organization.id !== null) {
       api({
-        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateStart +
         '&dateEnd=' + now + '&organization=' + $scope.organization.id
       }).then(function (res) {
         svg.selectAll('*').remove();
@@ -224,7 +233,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       });
     } else {
       api({
-        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateStart +
         '&dateEnd=' + now
       }).then(function (res) {
 
