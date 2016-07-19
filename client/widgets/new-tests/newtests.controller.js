@@ -31,7 +31,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       now = moment().endOf('day').toDate();
       dateAt = moment().startOf('day').subtract(1, 'year').startOf('week').toDate();
       svg.selectAll('*').remove();
-      chart($scope.data, dateAt, now);
+      chart($scope.data);
     }
   });
 
@@ -54,10 +54,10 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * @param value data
    */
   var chart = function (value) {
-    console.log(yearAgo, now);
+
     // Set date
-    var dateRange = d3.time.days(yearAgo, now);
-    var monthRange = d3.time.months(moment(yearAgo).startOf('month').toDate(), now);
+    var dateRange = d3.time.days(dateAt, now);
+    var monthRange = d3.time.months(moment(dateAt).startOf('month').toDate(), now);
     var firstDate = moment(dateRange[0]);
 
     var tip = d3.tip()
@@ -235,7 +235,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         if (res.data && res.data.data && res.data.data.length > 0) {
           $scope.data = res.data.data;
           $scope.summary = res.data.summary;
-          chart($scope.data, dateAt, now);
+          chart($scope.data);
         }
       });
     } else {
@@ -249,7 +249,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         if (res.data && res.data.data && res.data.data.length > 0) {
           $scope.data = res.data.data;
           $scope.summary = res.data.summary;
-          chart($scope.data, dateAt, now);
+          chart($scope.data);
         }
       });
     }
