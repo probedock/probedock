@@ -355,12 +355,14 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
    * When the category change, generate a new graph
    */
   $scope.changeCategory = function () {
-    $scope.data.forEach(function (test) {
-      if (test.category === $scope.params.categoryName) {
-        d3.select('.slowtests-chart').selectAll('*').remove();
-        setup('.slowtests-chart', test.category, test.data);
-      }
-    });
+    if ($scope.data) {
+      $scope.data.forEach(function (test) {
+        if (test.category === $scope.params.categoryName) {
+          d3.select('.slowtests-chart').selectAll('*').remove();
+          setup('.slowtests-chart', test.category, test.data);
+        }
+      });
+    }
   };
 
   /**
@@ -371,6 +373,7 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
     api({
       url: '../vizapi/testsResult/duration?version=' + $scope.params.projectVersionId + "&project=" + $scope.project.id + "&organization=" + $scope.organization.id
     }).then(function (res) {
+      console.log(res.data);
       if (res.data.length > 0) {
         $scope.data = res.data;
         $scope.changeCategory();
