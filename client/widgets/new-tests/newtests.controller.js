@@ -7,25 +7,31 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       userId: null
     }
   });
-  
+
   var width = $('.newtests-widget').width(),
     height = 200,
     colorRange = ["#eeeeee", "#446e9b"],
     days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     now = moment().endOf('day').toDate(),
-    yearAgo = moment().startOf('day').subtract(1, 'year').startOf('week').toDate(),
+    dateAt = moment().startOf('day').subtract(1, 'year').startOf('week').toDate(),
     RECT_SIZE = 11,
     RECT_PADDING = 2,
     MONTH_LABEL_PADDING = 6,
     PADDING_TOP = 20,
     PADDING_LEFT = 20,
+    WIDTH_MIN = 550,
     svg;
 
   $(window).resize(function () {
     width = $('.newtests-widget').width();
-    svg.selectAll('*').remove();
-    chart($scope.data);
+    if (WIDTH_MIN < width) {
+      svg.selectAll('*').remove();
+      chart($scope.data);
+    } else {
+      $scope.getNewTests();
+    }
+
   });
 
   /**
@@ -77,7 +83,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Day rectangle
     var dayRects = svg.selectAll('.day-cell')
       .data(dateRange);
-    
+
     // Set the cells
     dayRects.enter().append('rect')
       .attr('class', 'day-cell')
@@ -97,13 +103,13 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     // Mouse event on cells
     dayRects.on('mouseover', tip.show)
       .on('mouseout', tip.hide);
-    
+
     // Set legend
     var colors = [color(0)];
     for (var i = 3; i > 0; i--) {
       colors.push(color(max / i));
     }
-    
+
     var legend = svg.append('g');
     legend.selectAll('.heatmap-legend')
       .data(colors)
@@ -155,7 +161,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         return Math.floor(matchIndex / 7) * 13 + PADDING_LEFT;
       })
       .attr('y', PADDING_TOP);
-    
+
     // y-axis : day
     days.forEach(function (day, index) {
       if (index % 2) {
@@ -206,13 +212,18 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
    * Get new tests for a contributor
    */
   $scope.getNewTests = function () {
-    var now = moment().endOf('day').format('YYYY-MM-DD'),
-      yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
+    now = moment().endOf('day').format('YYYY-MM-DD');
+    if (WIDTH_MIN < width) {
+      dateAt = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
+    } else {
+      dateAt = moment().startOf('day').subtract(6, 'month').format('YYYY-MM-DD');
+    }
+
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
     $scope.data = [];
     if (typeof $scope.organization !== 'undefined' && $scope.organization !== null && $scope.organization.id !== null) {
       api({
-        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateAt +
         '&dateEnd=' + now + '&organization=' + $scope.organization.id
       }).then(function (res) {
         svg.selectAll('*').remove();
@@ -224,7 +235,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       });
     } else {
       api({
-        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + dateAt +
         '&dateEnd=' + now
       }).then(function (res) {
 
