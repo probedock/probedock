@@ -1,10 +1,7 @@
 angular.module('probedock.profilePage').controller('ProfileMembershipsCtrl', function(api, auth, profile, orgs, $scope) {
 
   orgs.forwardData($scope);
-
-  console.log(orgs);
-  console.log($scope);
-
+  
   $scope.memberships = [];
 
   api({
