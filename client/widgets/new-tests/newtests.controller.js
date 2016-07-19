@@ -220,12 +220,15 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
         '&dateEnd=' + now + '&organization=' + $scope.organization.id
       }).then(function (res) {
-
+        console.log("before svg remove");
         svg.selectAll('*').remove();
-
+        console.log("after svg remove");
         if (res.data.length > 0) {
+          console.log("in if");
           $scope.data = res.data.data;
+          console.log('$scope.data', $scope.data);
           $scope.summary = res.data.summary;
+          console.log('$scope.summary', $scope.summary);
           chart($scope.data);
         }
       });
