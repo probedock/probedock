@@ -2,6 +2,9 @@ angular.module('probedock.profilePage').controller('ProfileMembershipsCtrl', fun
 
   orgs.forwardData($scope);
 
+  console.log(orgs);
+  console.log($scope);
+
   $scope.memberships = [];
 
   api({
