@@ -217,12 +217,9 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       }).then(function (res) {
         console.log('res', res);
         svg.selectAll('*').remove();
-        console.log('res.length', res.length);
-        if (res.length > 0) {
+        if (res.data && res.data.data && res.data.data.length > 0) {
           $scope.data = res.data.data;
-          console.log('$scope.data', $scope.data);
           $scope.summary = res.data.summary;
-          console.log('$scope.summary', $scope.summary);
           chart($scope.data);
         }
       });
@@ -234,7 +231,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
 
         svg.selectAll('*').remove();
 
-        if (res.length > 0) {
+        if (res.data && res.data.data && res.data.datalength > 0) {
           $scope.data = res.data.data;
           $scope.summary = res.data.summary;
           chart($scope.data);
