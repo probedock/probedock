@@ -367,11 +367,14 @@ angular.module('probedock.slowTestsWidget').controller('SlowTestsContentCtrl', [
    * Request the api for get the duration for each test
    */
   $scope.getDurationTest = function () {
+    $scope.data = null;
     api({
       url: '../vizapi/testsResult/duration?version=' + $scope.params.projectVersionId + "&project=" + $scope.project.id + "&organization=" + $scope.organization.id
     }).then(function (res) {
-      $scope.data = res.data;
-      $scope.changeCategory();
+      if (res.data.length >= 0) {
+        $scope.data = res.data;
+        $scope.changeCategory();
+      }
     });
   };
 

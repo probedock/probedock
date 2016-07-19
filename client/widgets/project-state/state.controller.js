@@ -136,6 +136,7 @@ angular.module('probedock.projectStateWidget').controller('ProjectStateContentCt
         list += projectId + ',';
       });
     }
+    $scope.tree = null;
     // Request to API
     api({
       url: '../vizapi/projects?organization=' + $scope.organization.id + list

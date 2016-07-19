@@ -209,7 +209,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     var now = moment().endOf('day').format('YYYY-MM-DD'),
       yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
-
+    $scope.data = [];
     if (typeof $scope.organization !== 'undefined' && $scope.organization !== null && $scope.organization.id !== null) {
       api({
         url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
