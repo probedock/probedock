@@ -215,7 +215,6 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
         url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
         '&dateEnd=' + now + '&organization=' + $scope.organization.id
       }).then(function (res) {
-        console.log('res', res);
         svg.selectAll('*').remove();
         if (res.data && res.data.data && res.data.data.length > 0) {
           $scope.data = res.data.data;
