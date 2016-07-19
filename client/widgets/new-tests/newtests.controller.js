@@ -210,18 +210,34 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
       yearAgo = moment().startOf('day').subtract(1, 'year').format('YYYY-MM-DD');
     var user = $scope.user !== null ? $scope.user.id : $scope.params.userId;
 
-    api({
-      url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
-      '&dateEnd=' + now + '&organization=' + $scope.organization.id
-    }).then(function (res) {
+    if (typeof $scope.organization !== 'undefined' && $scope.organization !== null && $scope.organization.id !== null) {
+      api({
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
+        '&dateEnd=' + now + '&organization=' + $scope.organization.id
+      }).then(function (res) {
 
-      svg.selectAll('*').remove();
+        svg.selectAll('*').remove();
 
-      if (res.data.length > 0) {
-        $scope.data = res.data.data;
-        $scope.summary = res.data.summary;
-        chart($scope.data);
-      }
-    });
+        if (res.data.length > 0) {
+          $scope.data = res.data.data;
+          $scope.summary = res.data.summary;
+          chart($scope.data);
+        }
+      });
+    } else {
+      api({
+        url: '../vizapi/testsResult?author=' + user + '&dateAt=' + yearAgo +
+        '&dateEnd=' + now
+      }).then(function (res) {
+
+        svg.selectAll('*').remove();
+
+        if (res.data.length > 0) {
+          $scope.data = res.data.data;
+          $scope.summary = res.data.summary;
+          chart($scope.data);
+        }
+      });
+    }
   };
 }]);
