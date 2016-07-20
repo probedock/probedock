@@ -20,7 +20,7 @@ angular.module('probedock.newTestsWidget').controller('NewTestsContentCtrl', ['$
     MONTH_LABEL_PADDING = 6,
     PADDING_TOP = 20,
     PADDING_LEFT = 20,
-    WIDTH_MIN = 550,
+    WIDTH_MIN = 560,
     svg;
 
   $(window).resize(function () {
