@@ -224,7 +224,7 @@ angular.module('probedock.routes', [ 'probedock.states', 'ui.router' ])
       .state('org.projects.list.edit', {
         url: '/edit?id',
         resolve: {
-          $title: function() { return buildTitle('Projects', $stateParams.id, 'Edit'); }
+          $title: function($stateParams) { return buildTitle('Projects', $stateParams.id, 'Edit'); }
         }
       })
 
