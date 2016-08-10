@@ -6,7 +6,7 @@ angular.module('probedock.tables').factory('tables', function(api) {
       var list = $scope[name] = {
         initialized: false,
         records: [],
-        params: _.extend({}, options.params)
+        params: {}
       };
 
       list.refresh = function(table) {
@@ -14,7 +14,7 @@ angular.module('probedock.tables').factory('tables', function(api) {
         table.pagination.start = table.pagination.start || 0;
         table.pagination.number = table.pagination.number || options.pageSize || 15;
 
-        var params = _.extend({}, list.params, {
+        var params = _.extend({}, options.params, list.params, {
           page: table.pagination.start / table.pagination.number + 1,
           pageSize: table.pagination.number
         });

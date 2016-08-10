@@ -5,7 +5,12 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
       latestReport,
       hideNoNewReportsPromise;
 
-  var params = {
+  tables.create($scope, 'reportsList', {
+    url: '/reports',
+    pageSize: 15
+  });
+
+  $scope.reportsList.params = {
     organizationName: routeOrgName,
     withRunners: 1,
     withProjects: 1,
@@ -75,13 +80,7 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     versions: null
   };
 
-  manageLocationParams($stateParams, params);
-
-  tables.create($scope, 'reportsList', {
-    url: '/reports',
-    pageSize: 15,
-    params: params
-  });
+  manageLocationParams($stateParams);
 
   $scope.$watch('reportsList.params', function() {
     filterStateLoaded = false;
@@ -257,8 +256,9 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
    * @param paramsProvider The parameters provider
    * @param parameters Optional map of parameters to update. Useful for initial creation of params
    */
-  function manageLocationParams(paramsProvider, parameters) {
-    var params = parameters ? parameters : $scope.reportsList.params;
+  function manageLocationParams(paramsProvider) {
+
+    var params = $scope.reportsList.params;
 
     /**
      * When the controller is initialized, we retrieve the array parameters from the
