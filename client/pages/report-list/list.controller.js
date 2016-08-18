@@ -5,7 +5,12 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
       latestReport,
       hideNoNewReportsPromise;
 
-  var params = {
+  tables.create($scope, 'reportsList', {
+    url: '/reports',
+    pageSize: 15
+  });
+
+  $scope.reportsList.params = {
     organizationName: routeOrgName,
     withRunners: 1,
     withProjects: 1,
@@ -61,13 +66,21 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     publicName: 'categories'
   }];
 
-  manageLocationParams($stateParams, params);
+  /**
+   * This list MUST be alphabetically ordered to avoid a side effect due to $location which encode the URL after the
+   * last modification and then reorder the query parameters. During the reordering, the URL is considered changed
+   * and then the history has an additional entry.
+   */
+  var queryParams = {
+    categories: null,
+    projects: null,
+    runners: null,
+    status: null,
+    tests: null,
+    versions: null
+  };
 
-  tables.create($scope, 'reportsList', {
-    url: '/reports',
-    pageSize: 15,
-    params: params
-  });
+  manageLocationParams($stateParams);
 
   $scope.$watch('reportsList.params', function() {
     filterStateLoaded = false;
@@ -78,14 +91,15 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
    */
   _.each(arrayParamDefs, function(paramDef) {
     $scope.$watch('reportsList.params.' + paramDef.privateName, function(newValue, oldValue) {
-      if (newValue != null && newValue != undefined) {
-        $location.search(paramDef.publicName, newValue);
+      if (newValue != null && newValue != undefined && !_.isEqual(newValue, oldValue)) {
+        queryParams[paramDef.publicName] = newValue;
+        $location.search(queryParams);
       }
     });
   });
 
   // Listener to detect the location changes and reflect them to the filters
-  $scope.$on('$locationChangeSuccess', function() {
+  $scope.$on('$locationChangeSuccess', function(event, newUrl, oldUrl, newState, oldState) {
     manageLocationParams($location.search());
   });
 
@@ -141,18 +155,22 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
 
   $scope.$watch('selectParams', function(newValue) {
     if (newValue.status == 'any') {
-      $location.search('status', null);
+      queryParams.status = null;
+      $location.search(queryParams);
       delete $scope.reportsList.params.status;
     } else {
-      $location.search('status', _.findWhere($scope.statuses, { status: newValue.status }).name);
+      queryParams.status = _.findWhere($scope.statuses, { status: newValue.status }).name;
+      $location.search(queryParams);
       $scope.reportsList.params.status = [ newValue.status ];
     }
 
     if (_.isNull(newValue.new)) {
-      $location.search('tests', null);
+      queryParams.tests = null;
+      $location.search(queryParams);
       delete $scope.reportsList.params.newTests;
     } else {
-      $location.search('tests', _.findWhere($scope.newTests, { new: newValue.new }).name);
+      queryParams.tests = _.findWhere($scope.newTests, { new: newValue.new }).name;
+      $location.search(queryParams);
       $scope.reportsList.params.newTests = newValue.new;
     }
   }, true);
@@ -238,8 +256,9 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
    * @param paramsProvider The parameters provider
    * @param parameters Optional map of parameters to update. Useful for initial creation of params
    */
-  function manageLocationParams(paramsProvider, parameters) {
-    var params = parameters ? parameters : $scope.reportsList.params;
+  function manageLocationParams(paramsProvider) {
+
+    var params = $scope.reportsList.params;
 
     /**
      * When the controller is initialized, we retrieve the array parameters from the
@@ -292,5 +311,18 @@ angular.module('probedock.reportListPage').controller('ReportListPageCtrl', func
     } else {
       $scope.selectParams.status = 'any';
     }
+
+    /**
+     * Reflects the query parameters to the internal state of the parameters used
+     * to make sure the parameters are always alphabetically ordered. See the comments on
+     * the var definition.
+     */
+    _.each(_.keys(queryParams), function(queryParamName) {
+      if (paramsProvider[queryParamName]) {
+        queryParams[queryParamName] = paramsProvider[queryParamName];
+      } else {
+        queryParams[queryParamName] = null;
+      }
+    });
   }
 });
