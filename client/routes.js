@@ -32,7 +32,7 @@ angular.module('probedock.routes', [ 'probedock.states', 'ui.router' ])
       })
 
       .state('permalinks', {
-        url: '/go/:target',
+        url: '/go/:target?uid&organizationId',
         controller: 'PermalinksPageCtrl',
         templateUrl: '/templates/pages/permalinks/permalinks.template.html'
       })
