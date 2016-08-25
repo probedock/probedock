@@ -36,7 +36,10 @@
     recent-activity-widget organization='currentOrganization'
     test-suite-size-widget organization='currentOrganization' nb-weeks='30'
     tag-cloud-widget organization='currentOrganization'
-  .col-md-6.col-xs-12 ng-if='orgIsActive()'
-    testing-activity-widget organization='currentOrganization'
-    test-contributions-widget organization='currentOrganization'
     test-key-generator-widget ng-if='currentMember()'
+  .col-md-6.col-xs-12 ng-if='orgIsActive()'
+    project-state-widget organization='currentOrganization'
+    testing-activity-widget organization='currentOrganization'
+    new-tests-widget organization='currentOrganization'
+    test-contributions-widget organization='currentOrganization'
+

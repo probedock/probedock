@@ -19,8 +19,6 @@ source 'https://rubygems.org'
 
 gem 'rails', '~> 4.2'
 
-gem 'pg'
-
 # Assets
 gem 'slim-rails'
 gem 'redcarpet'
@@ -43,6 +41,13 @@ gem 'grape'
 gem 'jbuilder'
 #gem 'errapi', path: "#{ENV['HOME']}/Projects/errapi"
 gem 'errapi', git: 'https://github.com/AlphaHydrae/errapi.git'
+
+# Relational Database
+gem 'pg'
+
+# Search Database
+gem 'elasticsearch-rails'
+gem 'elasticsearch-persistence'
 
 # Memory Database
 gem 'redis'

@@ -1,0 +1,9 @@
+.row
+  .col-md-12
+    .projectState-chart
+    p.empty ng-if="!tree"
+      em No data
+.row
+  .col-md-12
+    .form-group
+      project-select prefix='project-state' organization='organization' model-object='params' multiple='true'

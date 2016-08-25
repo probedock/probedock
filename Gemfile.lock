@@ -100,12 +100,34 @@ GEM
     dotenv (2.0.1)
     dotenv-rails (2.0.1)
       dotenv (= 2.0.1)
+    elasticsearch (1.0.18)
+      elasticsearch-api (= 1.0.18)
+      elasticsearch-transport (= 1.0.18)
+    elasticsearch-api (1.0.18)
+      multi_json
+    elasticsearch-model (0.1.9)
+      activesupport (> 3)
+      elasticsearch (> 0.4)
+      hashie
+    elasticsearch-persistence (0.1.9)
+      activemodel (> 3)
+      activesupport (> 3)
+      elasticsearch (> 0.4)
+      elasticsearch-model (>= 0.1)
+      hashie
+      virtus
+    elasticsearch-rails (0.1.9)
+    elasticsearch-transport (1.0.18)
+      faraday
+      multi_json
     equalizer (0.0.11)
     erubis (2.7.0)
     eventmachine (1.0.7)
     execjs (2.5.2)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
+    faraday (0.9.2)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.8)
     forgery (0.6.0)
     formatador (0.2.5)
@@ -190,6 +212,7 @@ GEM
     multi_json (1.11.2)
     multi_test (0.1.2)
     multi_xml (0.5.5)
+    multipart-post (2.0.0)
     nenv (0.2.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -433,6 +456,8 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   dotenv-rails
+  elasticsearch-persistence
+  elasticsearch-rails
   errapi!
   factory_girl
   forgery

@@ -1,0 +1,1 @@
+angular.module('probedock.slowTestsWidget', ['probedock.api']);

@@ -1,0 +1,28 @@
+.row
+  .col-md-12
+    .newtests-chart
+    p.empty ng-if='data.length === 0'
+      em No data
+.row
+  .col-md-4.col-sm-12.col-xs-12
+    .form-group ng-if="!hideSelect"
+      user-select prefix='new-tests' organization='organization' model-object='params' allow-clear='false' auto-select='true'
+    .form-group ng-if="hideSelect"
+      span.label.label-info ng-if="organization" {{ organization.name }}
+      span.label.label-info ng-if="!organization" All memberships
+  .col-md-2.col-sm-6.col-xs-3
+    .min
+      strong Min:
+      span  {{ summary.min | number }}
+  .col-md-2.col-sm-6.col-xs-3
+    .avg
+      strong Avg:
+      span  {{ summary.avg | number }}
+  .col-md-2.col-sm-6.col-xs-3
+    .max
+      strong Max:
+      span  {{ summary.max | number }}
+  .col-md-2.col-sm-6.col-xs-3
+    .sum
+      strong Total:
+      span  {{ summary.sum | number }}

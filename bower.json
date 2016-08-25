@@ -40,7 +40,8 @@
     "underscore": "~1.8",
     "ngInflection": "^1.1.10",
     "angular-pretty-bytes": "^1.0.1",
-    "angular-nvd3": "^1.0.6"
+    "angular-nvd3": "^1.0.6",
+    "d3-tip": "^0.6.7"
   },
   "resolutions": {
     "angular": "~1.5.4",

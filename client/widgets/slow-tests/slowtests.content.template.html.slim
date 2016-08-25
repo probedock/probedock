@@ -1,0 +1,12 @@
+.row
+  .col-md-12
+    .slowtests-chart
+    p.empty ng-if="!data || noData"
+      em No data
+.row
+  .col-md-6.col-sm-6.col-xs-12
+    .form-group
+        project-version-select prefix='slow-tests' organization='organization' project='project' model-object='params' auto-select='true' allow-clear='false'
+  .col-md-6.col-sm-6.col-xs-12
+    .form-group
+      category-select prefix='slow-tests' organization='organization' model-object='params' auto-select='true' allow-clear='false'

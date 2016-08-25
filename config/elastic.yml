@@ -1,0 +1,12 @@
+development:
+  url: <%= ENV['PROBEDOCK_ELASTIC_URL'] %>
+  index_prefix: <%= ENV['PROBEDOCK_ELASTIC_PREFIX'] %>
+test:
+  url: <%= ENV['PROBEDOCK_TEST_ELASTIC_URL'] %>
+  index_prefix: <%= ENV['PROBEDOCK_TEST_ELASTIC_PREFIX'] %>
+cucumber:
+  url: <%= ENV['PROBEDOCK_TEST_ELASTIC_URL'] %>
+  index_prefix: <%= ENV['PROBEDOCK_TEST_ELASTIC_PREFIX'] %>
+production:
+  url: <%= ENV['PROBEDOCK_ELASTIC_URL'] %>
+  index_prefix: <%= ENV['PROBEDOCK_ELASTIC_PREFIX'] %>

@@ -1,0 +1,40 @@
+.newtests-widget
+  .day-cell-tooltip
+    position absolute
+    z-index 9999
+    padding 5px 9px
+    color #fff
+    font-size 12px
+    background rgba(0, 0, 0, 0.85)
+    border-radius 3px
+    text-align center
+  .day-cell
+    border 1px solid gray
+  rect
+    &.day-cell
+      &:hover
+        stroke #555555
+        stroke-width 1px
+
+.d3-tip
+  line-height 1
+  padding 12px
+  background rgba(0, 0, 0, 0.8)
+  color #fff
+  border-radius 2px
+  max-width 250px
+  &:after
+    box-sizing border-box
+    display inline
+    font-size 10px
+    width 100%
+    line-height 1
+    color rgba(0, 0, 0, 0.8)
+    content "\25BC"
+    position absolute
+    text-align center
+  &.n
+    &:after
+      margin -1px 0 0 0
+      top 100%
+      left 0
